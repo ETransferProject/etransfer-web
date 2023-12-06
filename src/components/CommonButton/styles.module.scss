@@ -1,0 +1,94 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+
+.common-button {
+  border-radius: 6px;
+  box-shadow: none;
+  span {
+    @extend .font-family-medium;
+  }
+}
+
+.primary {
+  background: $brand;
+  border: 1px solid $brand;
+  color: $white-text;
+  &:hover {
+    background: $hover;
+    border-color: $hover;
+    color: $white-text;
+  }
+  &:checked {
+    background: $click;
+    border-color: $click;
+    color: $white-text;
+  }
+  &:disabled,
+  &[disabled]:hover {
+    background: $disable;
+    border-color: $disable;
+    color: $white-text;
+  }
+  &:focus {
+    background: $click;
+    border-color: $click;
+    color: $white-text;
+  }
+}
+
+.secondary {
+  background: $normal-bg;
+  border: 1px solid $normal-bg;
+  color: $primary-text;
+  &:hover {
+    background: $hover-bg;
+    border-color: $hover-bg;
+    color: $primary-text;
+  }
+  &:checked {
+    background: $click-bg;
+    border-color: $click-bg;
+    color: $primary-text;
+  }
+  &:disabled {
+    background: $hover-bg;
+    border-color: $hover-bg;
+    color: $primary-text;
+  }
+  &:focus {
+    background: $click-bg;
+    border-color: $click-bg;
+    color: $primary-text;
+  }
+}
+
+.small {
+  height: 40px;
+  padding: 0 20px;
+  span {
+    font-size: 14px;
+    line-height: 22px;
+  }
+}
+
+.middle {
+  height: 48px;
+  padding: 0 28px;
+  span {
+    font-size: 16px;
+    line-height: 24px;
+  }
+}
+
+.large {
+  height: 56px;
+  padding: 0 32px;
+  span {
+    font-size: 16px;
+    line-height: 24px;
+  }
+}
+
+.stretched {
+  width: 100%;
+}

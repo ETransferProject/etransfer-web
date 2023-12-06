@@ -1,0 +1,34 @@
+@import 'src/assets/theme/font.scss';
+
+.common-modal {
+  :global {
+    .ant-modal-content {
+      border-radius: 8px;
+    }
+    .ant-modal-close-x {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: calc(20px + (16px * 2));
+    }
+    .ant-modal-header {
+      height: 54px;
+      border-radius: 8px 8px 0 0;
+      border: none;
+      text-align: center;
+      font-size: 16px;
+      line-height: 1.5;
+      font-weight: $font-family-medium-weight;
+      font-family: $font-family-medium-family;
+    }
+    .ant-modal-body {
+      padding: 0 24px 24px;
+    }
+  }
+}
+
+.footer {
+  gap: 12px;
+  width: 100%;
+  margin-top: 32px;
+}

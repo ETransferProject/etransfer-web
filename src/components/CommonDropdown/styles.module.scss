@@ -1,0 +1,23 @@
+@import '/src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.children-container {
+  height: 40px;
+  padding: 8px 16px;
+  border: 1px solid $border;
+  border-radius: 6px;
+  &:hover {
+    border-color: $hover;
+  }
+}
+
+.children-icon {
+  width: 16px;
+  height: 16px;
+  margin-left: 16px;
+  color: $secondary-text;
+}
+
+.children-icon-rotate {
+  transform: rotate(180deg);
+}
