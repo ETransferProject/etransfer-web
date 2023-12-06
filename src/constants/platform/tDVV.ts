@@ -6,5 +6,5 @@ export const CHAIN_INFO = {
 };
 
 export const TOKEN_CONTRACT = '7RzVGiuVWkvL4VfVHdZfQF2Tri3sgLe9U991bohHFfSRZXuGX';
-export const ETRANSFER_CONTRACT = ''; // TODO
+export const ETRANSFER_CONTRACT = 'x4CTSuM8typUbpdfxRZDTqYVa42RdxrwwPkXX7WUJHeRmzE6k';
 export const CA_CONTRACT = '"2cLA9kJW3gdHuGoYNY16Qir69J3Nkn6MSsuYxRkUHbz4SG2hZr"';
