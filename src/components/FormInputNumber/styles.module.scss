@@ -1,0 +1,50 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/styles/common.scss';
+
+.input-number-wrapper {
+  gap: 16px;
+  @extend .form-item-wrapper;
+  input {
+    height: 24px;
+    padding: 0;
+    @extend .form-item-value;
+  }
+}
+
+.input-number {
+  width: 100%;
+}
+
+.input-number-addon-after {
+  @include media-mobile-and-pad {
+    gap: 8px;
+  }
+  @include media-web {
+    gap: 16px;
+  }
+}
+
+.unit, .max {
+  @extend .font-family-medium;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.unit {
+  color: $primary-text;
+}
+
+.max {
+  color: $normal;
+  &:hover {
+    color: $hover;
+  }
+  &:checked {
+    color: $click;
+  }
+  &:focus {
+    color: $click;
+  }
+}

@@ -1,0 +1,21 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/breakpoint.scss';
+
+.common-tooltip-overlay {
+  @extend .font-family-regular;
+  font-size: 12px;
+  line-height: 20px;
+  :global {
+    .ant-tooltip-inner {
+      padding: 6px 12px;
+      border-radius: 4px;
+    }
+  }
+  @include media-mobile-and-pad {
+    :global {
+      .ant-tooltip-inner {
+        padding: 6px 8px;
+      }
+    }
+  }
+}

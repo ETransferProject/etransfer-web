@@ -1,0 +1,24 @@
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/styles/variable.scss';
+
+.layout-wrapper {
+  &.layout-wrapper-weight,
+  .layout-content-wrapper {
+    background-color: $page-bg;
+  }
+  &.layout-wrapper-weight {
+    height: 100vh;
+  }
+  .layout-content-wrapper {
+    flex-direction: row;
+  }
+  .layout-content-wrapper-with-header {
+    @include media-mobile-and-pad {
+      margin-top: $mobile-header-height;
+    }
+    @include media-web {
+      margin-top: $web-header-height;
+    }
+  }
+}

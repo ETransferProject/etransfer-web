@@ -1,0 +1,29 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+
+.deposit-select-chain-wrapper {
+  margin-bottom: 40px;
+}
+
+.content-wrapper {
+  gap: 24px;
+}
+
+.qr-code-placeholder {
+  width: 164px;
+  height: 164px;
+}
+
+.data-wrapper {
+  border: 1px solid $dividers;
+  border-radius: 6px;
+}
+
+.data-divider {
+  margin: 0px 12px;
+  border-top: 1px solid $dividers;
+}
+
+.data-address-wrapper {
+  padding: 16px 12px;
+}

@@ -1,0 +1,37 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+
+.common-drawer {
+  :global {
+    .ant-drawer-content {
+      border-radius: 8px 8px 0px 0px;
+      background-color: $page-bg;
+    }
+    .ant-drawer-header {
+      flex: none;
+      height: 56px;
+      padding: 15px 16px;
+      border: none;
+      .ant-drawer-header-title {
+        text-align: center;
+        position: relative;
+        .ant-drawer-title {
+          color: $primary-text;
+          font-size: 16px;
+          line-height: 24px;
+          font-weight: $font-family-medium-weight;
+          font-family: $font-family-medium-family;
+        }
+        .ant-drawer-close {
+          position: absolute;
+          right: 0;
+          margin: 0;
+        }
+      }
+    }
+    .ant-drawer-body {
+      overflow-y: auto;
+      padding: 0 16px 16px;
+    }
+  }
+}

@@ -1,0 +1,19 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+
+.description-wrapper {
+  padding: 16px 24px;
+  border-radius: 6px;
+  background-color: $hover-bg;
+  color: $secondary-text;
+}
+
+.mobile-description-wrapper {
+  padding: 16px 12px;
+}
+
+.description-item {
+  font-size: 12px;
+  line-height: 20px;
+  @extend .font-family-regular;
+}

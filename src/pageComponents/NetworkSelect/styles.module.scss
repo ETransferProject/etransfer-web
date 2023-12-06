@@ -1,0 +1,72 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+
+.network-select {
+  width: 100%;
+  .network-select-tip {
+    padding: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    border-radius: 6px;
+    background: $normal-bg;
+    .network-select-tip-icon {
+      width: 16px;
+      height: 16px;
+      min-width: 16px;
+      min-height: 16px;
+    }
+    .network-select-tip-text {
+      color: $secondary-text;
+      font-size: 12px;
+      line-height: 16px;
+      @extend .font-family-regular;
+    }
+  }
+  .network-select-tip-highlight {
+    margin-top: 8px;
+    color: $success;
+    font-size: 12px;
+    line-height: 16px;
+    @extend .font-family-regular;
+  }
+}
+
+.network-select-tip-wrapper {
+  margin-bottom: 8px;
+}
+
+.network-select-for-mobile {
+  .network-select-tip-wrapper-deposit {
+    margin-bottom: 12px;
+  }
+  .network-select-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    .network-card-selected {
+      border: 1px solid $brand;
+    }
+  }
+}
+
+.network-select-for-web {
+  overflow: scroll;
+  max-height: 400px;
+  padding: 16px 0;
+  background-color: $page-bg;
+  border-radius: 6px;
+  box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.12);
+  .network-select-tip {
+    margin: 0 24px;
+  }
+  .network-select-list {
+    .network-card-selected {
+      background: $hover-bg;
+    }
+  }
+  .network-select-tip-highlight {
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+}

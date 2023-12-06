@@ -1,0 +1,31 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
+
+.select-chain-wrapper {
+  display: flex;
+  align-items: center;
+  @include media-mobile-and-pad {
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+  @include media-web {
+    margin-bottom: 48px;
+  }
+}
+
+.select-chain-label {
+  @include media-mobile-and-pad {
+    margin-right: 8px;
+    font-size: 14px;
+    line-height: 22px;
+    color: $secondary-text;
+    @include font-family-regular-mixin;
+  }
+  @include media-web {
+    margin-right: 16px;
+    font-size: 24px;
+    line-height: 32px;
+    @include font-family-medium-mixin;
+  }
+}

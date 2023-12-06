@@ -1,0 +1,15 @@
+@mixin text-overflow($n: 1) {
+  text-overflow: -o-ellipsis-lastline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  line-clamp: $n;
+  -webkit-line-clamp: $n;
+}
+
+@mixin rotate($deg, $duration) {
+  transform: rotate($deg);
+  -moz-transform: rotate($deg);
+  -webkit-transform: rotate($deg);
+  transition: transform $duration linear;
+}

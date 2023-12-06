@@ -1,0 +1,97 @@
+@import './color.scss';
+
+.flex {
+  display: flex;
+}
+.flex-1 {
+  flex: 1;
+}
+.flex-none {
+  flex: none;
+}
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+.align-end {
+  align-items: flex-end;
+}
+.flex-column-center {
+  align-items: center;
+  @extend .flex-column;
+}
+.flex-row-wrap {
+  flex-wrap: wrap;
+  @extend .flex-row;
+}
+.flex-row-center {
+  align-items: center;
+  @extend .flex-row;
+}
+.flex-row-content-center {
+  justify-content: center;
+  @extend .flex-row;
+}
+.row-center {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.flex-row-content-end {
+  justify-content: flex-end;
+  @extend .flex-row;
+}
+.flex-row-between {
+  justify-content: space-between;
+  @extend .flex-row;
+}
+.flex-row-center-between {
+  justify-content: space-between;
+  @extend .flex-row-center;
+}
+.flex-row-start {
+  align-items: flex-start;
+  @extend .flex-row;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.margin-auto {
+  margin: auto;
+}
+.margin-top-10 {
+  margin-top: 10px;
+}
+
+.text-center {
+  text-align: center;
+}
+.text-right {
+  text-align: right;
+}
+.text-underline {
+  text-decoration: underline;
+}
+.text-link {
+  @extend .text-underline;
+  @extend .cursor-pointer;
+  &:hover {
+    color: $hover;
+  }
+  &:active {
+    color: $click;
+  }
+}
+.text-break {
+  word-break: break-all;
+}

@@ -1,0 +1,32 @@
+$font-family-semibold-weight: bold;
+$font-family-medium-weight: 500;
+$font-family-regular-weight: 400;
+
+$font-family-semibold-family: Roboto-Bold, PingFangSC-Semibold, PingFang SC, sans-serif;
+$font-family-medium-family: Roboto-Medium, PingFangSC-Medium, PingFang SC, sans-serif;
+$font-family-regular-family: Roboto-Regular, PingFangSC-Regular, PingFang SC, sans-serif;
+
+@mixin font-family-semibold-mixin {
+  font-weight: $font-family-semibold-weight;
+  font-family: $font-family-semibold-family;
+}
+
+@mixin font-family-medium-mixin {
+  font-weight: $font-family-medium-weight;
+  font-family: $font-family-medium-family;
+}
+
+@mixin font-family-regular-mixin {
+  font-weight: $font-family-regular-weight;
+  font-family: $font-family-regular-family;
+}
+
+.font-family-semibold {
+  @include font-family-semibold-mixin;
+}
+.font-family-medium {
+  @include font-family-medium-mixin;
+}
+.font-family-regular {
+  @include font-family-regular-mixin;
+}
