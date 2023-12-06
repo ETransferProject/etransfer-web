@@ -16,7 +16,7 @@ import { SupportedELFChainId } from 'constants/index';
 import { CaHolderWithGuardian } from '@portkey/graphql';
 import isMobile from 'utils/isMobile';
 import { isPortkey } from 'utils/portkey';
-
+import { GetCAHolderByManagerResult, GetCAHolderByManagerParams } from '@portkey/services';
 const ec = new elliptic.ec('secp256k1');
 
 export interface IPortkeyWalletAttribute {
@@ -120,7 +120,7 @@ class PortkeyWallet implements IPortkeyWallet {
     if (networkType !== this.matchNetworkType) throw Error('networkType error');
 
     if (!this.caHash) {
-      await this.getCaHashByManagerAddress();
+      await this.getCaHash();
     }
     await sleep(500);
     await queryAuthToken(
@@ -158,21 +158,42 @@ class PortkeyWallet implements IPortkeyWallet {
     this.managerAddress = managerAddress;
     return managerAddress;
   }
+  public getCaHash: () => Promise<GetCAHolderByManagerResult> = async () => {
+    try {
+      if (!this.managerAddress) await this.getManagerAddress();
 
-  public async getCaHashByManagerAddress() {
-    if (!this.managerAddress) {
-      await this.getManagerAddress();
+      const provider = await this.getProvider();
+      if (!provider) throw Error('provider init error');
+
+      const accounts = await provider.request({ method: MethodsBase.ACCOUNTS });
+
+      // get current ca address;
+      const caAddress = Object.values(accounts)
+        .filter((i) => Array.isArray(i) && i.length > 0)
+        .map((i) => i[0])[0]
+        // format
+        .split('_')[1];
+
+      // get ca info by indexer;
+      const res = await did.services.getHolderInfoByManager({
+        caAddresses: [caAddress],
+      } as unknown as GetCAHolderByManagerParams);
+
+      const caInfo = res[0];
+      const { managerInfos, caHash } = caInfo;
+      const isExist = managerInfos?.some((i) => i?.address === this.managerAddress);
+      if (isExist && caHash) {
+        this.caHash = caHash;
+        this.manager = caInfo;
+        return res;
+      }
+    } catch (error) {
+      console.log(error, '===error');
     }
-    console.log('getCaHashByManagerAddress this.managerAddress:', this.managerAddress);
-    const res = await did.services.getHolderInfoByManager({
-      chainId: 'AELF',
-      manager: this.managerAddress || '',
-    });
-    console.log('getCaHashByManagerAddress res:', res);
-    this.caHash = res[0]?.caHash || '';
-    this.manager = res[0];
-    return res;
-  }
+    // sleep wait indexer
+    await sleep(3000);
+    return this.getCaHash();
+  };
 
   public async getSignature(data: string) {
     if (!this.provider || !this.provider?.request) return {}; // TODO
