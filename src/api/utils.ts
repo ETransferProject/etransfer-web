@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { BaseConfig, RequestConfig } from './types';
 import { stringify } from 'query-string';
-import { SupportedELFChainId } from 'constants/index';
+import { ETransferHost, SupportedELFChainId } from 'constants/index';
 import { LocalStorageKey } from 'constants/localStorage';
-import { ETransferHost } from 'constants/testnet';
 import portkeyWallet from 'wallet/portkeyWallet';
 import AElf from 'aelf-sdk';
 import service from './axios';
