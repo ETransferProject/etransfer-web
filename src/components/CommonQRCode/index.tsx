@@ -9,13 +9,13 @@ export default function CommonQRCode({ value, logoUrl }: { value: string; logoUr
       size={isMobilePX ? 164 : 120}
       quietZone={0}
       logoImage={logoUrl}
-      logoWidth={isMobilePX ? 36 : 26}
-      logoHeight={isMobilePX ? 36 : 26}
-      logoPadding={isMobilePX ? 4 : 3}
+      logoWidth={isMobilePX ? 28 : 20}
+      logoHeight={isMobilePX ? 28 : 20}
+      logoPadding={isMobilePX ? 3 : 2}
       logoPaddingStyle="square"
       qrStyle={'squares'}
       eyeRadius={{ outer: 7, inner: 4 }}
-      ecLevel={'L'}
+      ecLevel={'M'}
     />
   );
 }
