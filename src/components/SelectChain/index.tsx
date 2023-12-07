@@ -7,7 +7,7 @@ import { setCurrentChainItem } from 'store/reducers/common/slice';
 import { store } from 'store/Provider/store';
 import { CommonSelectChainProps, SelectChainProps } from './types';
 
-export default function SelectChain({ clickCallback }: SelectChainProps) {
+export default function SelectChain({ title, clickCallback }: SelectChainProps) {
   const { isMobilePX, currentChainItem } = useCommonState();
   useEffect(() => {
     if (!currentChainItem) {
@@ -23,7 +23,7 @@ export default function SelectChain({ clickCallback }: SelectChainProps) {
     },
   };
   return isMobilePX ? (
-    <MobileSelectChain {...dropdownProps} />
+    <MobileSelectChain {...dropdownProps} title={title} />
   ) : (
     <WebSelectChain {...dropdownProps} />
   );

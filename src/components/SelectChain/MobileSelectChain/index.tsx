@@ -6,10 +6,11 @@ import { CommonSelectChainProps } from '../types';
 import styles from './styles.module.scss';
 
 export default function MobileSelectChain({
+  title,
   menuItems,
   selectedItem,
   onClick,
-}: CommonSelectChainProps) {
+}: CommonSelectChainProps & { title: string }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   return (
     <>
@@ -19,7 +20,7 @@ export default function MobileSelectChain({
         <div className={styles['trigger-text']}>{selectedItem?.label}</div>
         <SmallDownIcon className={clsx('flex-none', styles['children-icon'])} />
       </div>
-      <CommonDrawer title="Deposit to" open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
+      <CommonDrawer title={title} open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
         <div className={clsx('flex-column', styles['drawer-content'])}>
           {menuItems?.map((item) => (
             <div

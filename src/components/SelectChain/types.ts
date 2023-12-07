@@ -7,5 +7,6 @@ export interface CommonSelectChainProps {
 }
 
 export interface SelectChainProps {
+  title: string;
   clickCallback: (item: ChainNameItem) => void;
 }
