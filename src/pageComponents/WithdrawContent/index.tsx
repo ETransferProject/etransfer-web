@@ -620,6 +620,7 @@ export default function WithdrawContent() {
   return (
     <>
       <SelectChainWrapper
+        mobileTitle="Withdraw from"
         mobileLabel="from"
         webLabel="Withdraw USDT from"
         chainChanged={(item: ChainNameItem) => handleChainChanged(item)}

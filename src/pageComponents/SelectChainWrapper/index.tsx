@@ -6,6 +6,7 @@ import { ChainNameItem } from 'constants/index';
 
 interface SelectChainWrapperProps {
   className?: string;
+  mobileTitle?: string;
   mobileLabel?: string;
   webLabel?: string;
   chainChanged: (item: ChainNameItem) => void;
@@ -13,6 +14,7 @@ interface SelectChainWrapperProps {
 
 export default function SelectChainWrapper({
   className,
+  mobileTitle = '',
   mobileLabel,
   webLabel,
   chainChanged,
@@ -22,7 +24,7 @@ export default function SelectChainWrapper({
   return (
     <div className={clsx(styles['select-chain-wrapper'], className)}>
       <span className={styles['select-chain-label']}>{isMobilePX ? mobileLabel : webLabel}</span>
-      <SelectChain clickCallback={chainChanged} />
+      <SelectChain title={mobileTitle} clickCallback={chainChanged} />
     </div>
   );
 }

@@ -40,6 +40,7 @@ export default function MobileDepositContent({
     <>
       <SelectChainWrapper
         className={styles['deposit-select-chain-wrapper']}
+        mobileTitle="Deposit to"
         mobileLabel="to"
         chainChanged={chainChanged}
       />
