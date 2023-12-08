@@ -21,4 +21,4 @@ export const prefixCls = 'etransfer-web';
 export const AppName = 'ETransfer Web';
 export const BrandName = 'ETransfer';
 
-export * from './mainnet';
+export * from './testnet';
