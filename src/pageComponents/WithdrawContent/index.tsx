@@ -108,7 +108,7 @@ export default function WithdrawContent() {
   });
 
   const minAmount = useMemo(() => {
-    return withdrawInfo?.minAmount || '0.2';
+    return withdrawInfo?.minAmount || '1';
   }, [withdrawInfo?.minAmount]);
   const receiveAmount = useMemo(() => {
     if (
