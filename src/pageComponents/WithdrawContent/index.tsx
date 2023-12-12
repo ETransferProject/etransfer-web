@@ -57,6 +57,7 @@ import { useEffectOnce } from 'react-use';
 
 enum ValidateStatus {
   Error = 'error',
+  Warning = 'warning',
   Normal = '',
 }
 
@@ -421,9 +422,17 @@ export default function WithdrawContent() {
       form.setFieldValue(FormKeys.AMOUNT, '');
       setBalance('');
       handleAmountValidate();
+      // TODO: check network gas price
+      handleFormValidateDataChange({
+        [FormKeys.NETWORK]: {
+          validateStatus: ValidateStatus.Warning,
+          errorMessage:
+            'The current Ethereum network gas price is high, it is recommended to withdraw later.',
+        },
+      });
       await getWithdrawData();
     },
-    [dispatch, form, getWithdrawData, handleAmountValidate],
+    [dispatch, form, getWithdrawData, handleAmountValidate, handleFormValidateDataChange],
   );
 
   const handleApproveToken = useCallback(async () => {
@@ -557,7 +566,7 @@ export default function WithdrawContent() {
         await getWithdrawData();
       }
       return;
-    } else if (address.length < 34 || address.length > 44) {
+    } else if (address.length < 32 || address.length > 44) {
       handleFormValidateDataChange({
         [FormKeys.ADDRESS]: {
           validateStatus: ValidateStatus.Error,
@@ -565,6 +574,14 @@ export default function WithdrawContent() {
         },
       });
       return;
+    } else if (address.length >= 32 && address.length <= 39) {
+      handleFormValidateDataChange({
+        [FormKeys.ADDRESS]: {
+          validateStatus: ValidateStatus.Warning,
+          errorMessage:
+            'The address you entered is shorter than usual, please carefully verify its accuracy.',
+        },
+      });
     }
 
     await getNetworkData({
@@ -647,7 +664,9 @@ export default function WithdrawContent() {
             <Form.Item
               className={styles['form-item']}
               label="Withdrawal Network"
-              name={FormKeys.NETWORK}>
+              name={FormKeys.NETWORK}
+              validateStatus={formValidateData[FormKeys.NETWORK].validateStatus}
+              help={formValidateData[FormKeys.NETWORK].errorMessage}>
               <SelectNetwork
                 isFormItemStyle
                 type={SideMenuKey.Withdraw}
