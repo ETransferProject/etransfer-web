@@ -108,7 +108,7 @@ export default function WithdrawContent() {
   });
 
   const minAmount = useMemo(() => {
-    return withdrawInfo?.minAmount || '0.2';
+    return withdrawInfo?.minAmount || '1';
   }, [withdrawInfo?.minAmount]);
   const receiveAmount = useMemo(() => {
     if (
@@ -620,6 +620,7 @@ export default function WithdrawContent() {
   return (
     <>
       <SelectChainWrapper
+        mobileTitle="Withdraw from"
         mobileLabel="from"
         webLabel="Withdraw USDT from"
         chainChanged={(item: ChainNameItem) => handleChainChanged(item)}
