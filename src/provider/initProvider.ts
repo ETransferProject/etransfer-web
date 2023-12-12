@@ -10,7 +10,7 @@ import {
 } from 'store/reducers/portkeyWallet/actions';
 import { initialPortkeyWalletState } from 'store/reducers/portkeyWallet/slice';
 import portkeyWallet from 'wallet/portkeyWallet';
-import { NETWORK_TYPE } from 'constants/index';
+import { NETWORK_TYPE, NETWORK_TYPE_ERROR_MESSAGE } from 'constants/index';
 import { useEffectOnce } from 'react-use';
 import { useThrottleCallback } from 'hooks';
 import { usePortkeyProvider } from 'hooks/usePortkeyProvider';
@@ -37,6 +37,7 @@ export default function InitProvider() {
     );
     provider.on(NotificationEvents.NETWORK_CHANGED, (networkType: NetworkType) => {
       if (networkType !== NETWORK_TYPE) {
+        singleMessage.error(NETWORK_TYPE_ERROR_MESSAGE);
         store.dispatch(setDisconnectedAction(initialPortkeyWalletState));
       }
     });

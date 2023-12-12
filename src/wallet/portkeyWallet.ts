@@ -12,11 +12,13 @@ import { zeroFill } from 'utils/calculate';
 import { sleep } from 'utils/common';
 import { did } from 'aelf-web-login';
 import { queryAuthToken } from 'api/utils';
-import { SupportedELFChainId } from 'constants/index';
+import { SupportedELFChainId, NETWORK_TYPE_ERROR_MESSAGE } from 'constants/index';
 import { CaHolderWithGuardian } from '@portkey/graphql';
 import isMobile from 'utils/isMobile';
 import { isPortkey } from 'utils/portkey';
 import { GetCAHolderByManagerResult, GetCAHolderByManagerParams } from '@portkey/services';
+import singleMessage from 'components/SingleMessage';
+
 const ec = new elliptic.ec('secp256k1');
 
 export interface IPortkeyWalletAttribute {
@@ -117,7 +119,10 @@ class PortkeyWallet implements IPortkeyWallet {
       provider.request({ method: MethodsBase.NETWORK }),
     ]);
     console.log('from provider - name,networkType:', name, networkType);
-    if (networkType !== this.matchNetworkType) throw Error('networkType error');
+    if (networkType !== this.matchNetworkType) {
+      singleMessage.error(NETWORK_TYPE_ERROR_MESSAGE);
+      throw Error('networkType error');
+    }
 
     if (!this.caHash) {
       await this.getCaHash();

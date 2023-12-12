@@ -21,4 +21,6 @@ export const prefixCls = 'etransfer-web';
 export const AppName = 'ETransfer Web';
 export const BrandName = 'ETransfer';
 
+export const NETWORK_TYPE_ERROR_MESSAGE = 'Please switch Portkey to aelf Mainnet.';
+
 export * from './mainnet';
