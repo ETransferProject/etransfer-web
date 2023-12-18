@@ -16,13 +16,20 @@
         font-family: $font-family-regular-family;
       }
     }
-    .ant-form-item-explain-error {
+    .ant-form-item-explain-error,
+    .ant-form-item-explain-warning {
       margin-top: 4px;
       font-size: 12px;
       line-height: 16px;
-      color: #d43939;
+
       font-weight: $font-family-regular-weight;
       font-family: $font-family-regular-family;
+    }
+    .ant-form-item-explain-error {
+      color: #d43939;
+    }
+    .ant-form-item-explain-warning {
+      color: #ff9900;
     }
   }
 }
@@ -199,6 +206,9 @@
     flex-direction: column;
     gap: 16px;
   }
+  .info-value {
+    gap: 4px;
+  }
 }
 
 .form-submit-button-wrapper {
@@ -206,7 +216,11 @@
 }
 
 .form-submit-button {
-  @include media-mobile-and-pad {
+  @include media-mobile {
+    width: 108px;
+    padding: 0;  
+  }
+  @include media-pad {
     width: 120px;
   }
   @include media-web {

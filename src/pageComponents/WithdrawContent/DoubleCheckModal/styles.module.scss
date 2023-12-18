@@ -26,6 +26,7 @@
     margin-top: 40px;
   }
   .value {
+    gap: 8px;
     font-size: 24px;
     line-height: 32px;
   }
@@ -53,4 +54,11 @@
 
 .divider {
   @extend .divider;
+}
+
+.transaction-fee-wrapper {
+  .value {
+    justify-content: flex-end;
+    gap: 4px;
+  }
 }

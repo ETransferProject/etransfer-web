@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useState, useMemo, useCallback, useRef } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { Form } from 'antd';
 import clsx from 'clsx';
 import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
@@ -7,7 +7,7 @@ import CommonButton from 'components/CommonButton';
 import FormTextarea from 'components/FormTextarea';
 import FormInputNumber from 'components/FormInputNumber';
 import SelectNetwork from 'pageComponents/SelectNetwork';
-import DoubleCheckModal from './DoubleCheckModal';
+import DoubleCheckModal, { DoubleCheckModalProps } from './DoubleCheckModal';
 import SuccessModal from './SuccessModal';
 import FailModal from './FailModal';
 import {
@@ -35,7 +35,7 @@ import {
   initialWithdrawInfoCheck,
   initialWithdrawSuccessCheck,
 } from 'constants/deposit';
-import { WithdrawInfoCheck, WithdrawInfoSuccess } from 'types/deposit';
+import { WithdrawInfoSuccess } from 'types/deposit';
 import { checkTokenAllowanceAndApprove, createTransferTokenTransaction } from 'utils/aelfUtils';
 import portkeyWallet from 'wallet/portkeyWallet';
 import singleMessage from 'components/SingleMessage';
@@ -54,6 +54,8 @@ import {
 } from 'store/reducers/userAction/slice';
 import { useDebounceCallback } from 'hooks';
 import { useEffectOnce } from 'react-use';
+import SimpleLoading from 'components/SimpleLoading';
+import { WITHDRAW_AMOUNT_NOT_ENOUGH_ERROR_MESSAGE_BEGINNING } from 'constants/withdraw';
 
 enum ValidateStatus {
   Error = 'error',
@@ -96,7 +98,7 @@ export default function WithdrawContent() {
   const [isFailModalOpen, setIsFailModalOpen] = useState(false);
   const [failModalReason, setFailModalReason] = useState('');
   const [withdrawInfoCheck, setWithdrawInfoCheck] =
-    useState<WithdrawInfoCheck>(initialWithdrawInfoCheck);
+    useState<DoubleCheckModalProps['withdrawInfo']>(initialWithdrawInfoCheck);
   const [withdrawInfoSuccess, setWithdrawInfoSuccessCheck] = useState<WithdrawInfoSuccess>(
     initialWithdrawSuccessCheck,
   );
@@ -107,9 +109,12 @@ export default function WithdrawContent() {
     [FormKeys.NETWORK]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
     [FormKeys.AMOUNT]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
   });
+  const [isTransactionFeeLoading, setIsTransactionFeeLoading] = useState(false);
+
+  const getTransactionFeeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const minAmount = useMemo(() => {
-    return withdrawInfo?.minAmount || '1';
+    return withdrawInfo?.minAmount || '0.2';
   }, [withdrawInfo?.minAmount]);
   const receiveAmount = useMemo(() => {
     if (
@@ -147,8 +152,14 @@ export default function WithdrawContent() {
         currency: withdrawInfo.transactionUnit,
         name: withdrawInfo.transactionUnit,
       },
+      AElfTransactionFee: {
+        amount: withdrawInfo.AElfTransactionFee,
+        currency: withdrawInfo.AElfTransactionUnit,
+        name: withdrawInfo.AElfTransactionUnit,
+      },
       symbol: currentSymbol,
     });
+    getWithdrawData();
     setIsDoubleCheckModalOpen(true);
   };
 
@@ -182,6 +193,7 @@ export default function WithdrawContent() {
     (currentFormValidateData: typeof formValidateData) => {
       const isValueUndefined = (value: unknown) => value === undefined || value === '';
       const isDisabled =
+        isTransactionFeeLoading ||
         currentFormValidateData[FormKeys.ADDRESS].validateStatus === ValidateStatus.Error ||
         currentFormValidateData[FormKeys.NETWORK].validateStatus === ValidateStatus.Error ||
         currentFormValidateData[FormKeys.AMOUNT].validateStatus === ValidateStatus.Error ||
@@ -190,7 +202,7 @@ export default function WithdrawContent() {
         isValueUndefined(form.getFieldValue(FormKeys.AMOUNT));
       setIsSubmitDisabled(isDisabled);
     },
-    [form],
+    [form, isTransactionFeeLoading],
   );
 
   const handleFormValidateDataChange = useCallback(
@@ -275,6 +287,7 @@ export default function WithdrawContent() {
 
   const getWithdrawData = useCallback(async () => {
     try {
+      setIsTransactionFeeLoading(true);
       const params: GetWithdrawInfoRequest = {
         chainId: currentChainItemRef.current.key,
         symbol: currentSymbol,
@@ -287,8 +300,28 @@ export default function WithdrawContent() {
       setWithdrawInfo(res.withdrawInfo);
     } catch (error) {
       singleMessage.error(handleErrorMessage(error));
+    } finally {
+      setIsTransactionFeeLoading(false);
     }
   }, [currentSymbol]);
+
+  useEffect(() => {
+    if (currentNetwork?.network === 'ETH' && Number(withdrawInfo.transactionFee) > 60) {
+      handleFormValidateDataChange({
+        [FormKeys.NETWORK]: {
+          validateStatus: ValidateStatus.Warning,
+          errorMessage:
+            'The current Ethereum network gas price is high, it is recommended to withdraw later.',
+        },
+      });
+    }
+  }, [currentNetwork?.network, handleFormValidateDataChange, withdrawInfo.transactionFee]);
+
+  useEffect(() => {
+    if (isTransactionFeeLoading) {
+      setIsSubmitDisabled(true);
+    }
+  }, [isTransactionFeeLoading]);
 
   const getMaxBalance = useCallback(async () => {
     try {
@@ -414,6 +447,26 @@ export default function WithdrawContent() {
     ],
   );
 
+  useEffect(() => {
+    if (!withdrawInfo.expiredTimestamp) {
+      return;
+    }
+    if (getTransactionFeeTimerRef.current) {
+      clearInterval(getTransactionFeeTimerRef.current);
+    }
+    getTransactionFeeTimerRef.current = setInterval(async () => {
+      if (new Date().getTime() + 10000 > withdrawInfo.expiredTimestamp) {
+        await getWithdrawData();
+        handleAmountValidate();
+      }
+    }, 10000);
+    return () => {
+      if (getTransactionFeeTimerRef.current) {
+        clearInterval(getTransactionFeeTimerRef.current);
+      }
+    };
+  }, [getWithdrawData, handleAmountValidate, withdrawInfo.expiredTimestamp]);
+
   const handleNetworkChanged = useCallback(
     async (item: NetworkItem) => {
       setCurrentNetwork(item);
@@ -422,17 +475,9 @@ export default function WithdrawContent() {
       form.setFieldValue(FormKeys.AMOUNT, '');
       setBalance('');
       handleAmountValidate();
-      // TODO: check network gas price
-      handleFormValidateDataChange({
-        [FormKeys.NETWORK]: {
-          validateStatus: ValidateStatus.Warning,
-          errorMessage:
-            'The current Ethereum network gas price is high, it is recommended to withdraw later.',
-        },
-      });
       await getWithdrawData();
     },
-    [dispatch, form, getWithdrawData, handleAmountValidate, handleFormValidateDataChange],
+    [dispatch, form, getWithdrawData, handleAmountValidate],
   );
 
   const handleApproveToken = useCallback(async () => {
@@ -502,6 +547,16 @@ export default function WithdrawContent() {
           fromChainId: currentChainItemRef.current.key,
           toAddress: address,
           rawTransaction: transaction,
+          feeInfo: {
+            thirdPart: {
+              amount: withdrawInfo.transactionFee,
+              unit: withdrawInfo.transactionUnit,
+            },
+            aelf: {
+              amount: withdrawInfo.AElfTransactionFee,
+              unit: withdrawInfo.AElfTransactionUnit,
+            },
+          },
         });
         console.log('🌈 🌈 🌈 🌈 🌈 🌈 createWithdrawOrderRes', createWithdrawOrderRes);
         if (createWithdrawOrderRes.orderId) {
@@ -528,6 +583,9 @@ export default function WithdrawContent() {
       setLoading(false);
       if (error?.code == 4001) {
         setFailModalReason('The request is rejected. ETransfer needs your permission to proceed.');
+      } else if (error?.message?.startsWidth(WITHDRAW_AMOUNT_NOT_ENOUGH_ERROR_MESSAGE_BEGINNING)) {
+        const reason = error.message.split(WITHDRAW_AMOUNT_NOT_ENOUGH_ERROR_MESSAGE_BEGINNING)[1];
+        setFailModalReason(reason);
       } else {
         setFailModalReason(
           'The transaction failed due to an unexpected error. Please try again later.',
@@ -564,6 +622,7 @@ export default function WithdrawContent() {
           address: address,
         });
         await getWithdrawData();
+        handleAmountValidate();
       }
       return;
     } else if (address.length < 32 || address.length > 44) {
@@ -590,6 +649,7 @@ export default function WithdrawContent() {
     });
 
     await getWithdrawData();
+    handleAmountValidate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -633,6 +693,23 @@ export default function WithdrawContent() {
       if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
     };
   });
+
+  const renderTransactionFeeValue = () => {
+    if (!withdrawInfo.transactionFee || !withdrawInfo.AElfTransactionFee) {
+      return '-';
+    } else {
+      return (
+        <>
+          {isTransactionFeeLoading && <SimpleLoading />}
+          <span>
+            {!isTransactionFeeLoading && `${withdrawInfo.transactionFee} `}
+            {withdrawInfo.transactionUnit} + {withdrawInfo.AElfTransactionFee}{' '}
+            {withdrawInfo.AElfTransactionUnit}
+          </span>
+        </>
+      );
+    }
+  };
 
   return (
     <>
@@ -747,8 +824,8 @@ export default function WithdrawContent() {
             <div className={clsx('flex-1', 'flex-column', styles['transaction-info-wrapper'])}>
               <div className={clsx('flex-row-center', styles['info-wrapper'])}>
                 <div className={styles['info-label']}>Transaction Fee: </div>
-                <div className={styles['info-value']}>
-                  {withdrawInfo.transactionFee || '-'} {withdrawInfo.transactionUnit}
+                <div className={clsx('flex-row-center', styles['info-value'])}>
+                  {renderTransactionFeeValue()}
                 </div>
               </div>
               <div className={'flex-column'}>
@@ -782,6 +859,7 @@ export default function WithdrawContent() {
             sendTransferTokenTransaction();
           },
         }}
+        isTransactionFeeLoading={isTransactionFeeLoading}
       />
       <SuccessModal
         withdrawInfo={withdrawInfoSuccess}

@@ -84,8 +84,16 @@ export type WithdrawInfo = {
   limitCurrency: string;
   totalLimit: string;
   remainingLimit: string;
+  /** cobo */
   transactionFee: string;
+  /** cobo */
   transactionUnit: string;
+  /** cobo */
+  expiredTimestamp: number;
+  /** AElf */
+  AElfTransactionFee: string;
+  /** AElf */
+  AElfTransactionUnit: string;
   receiveAmount: string;
   feeList: FeeItem[];
 };
@@ -96,6 +104,11 @@ export type FeeItem = {
   amount: string;
 };
 
+export type FeeInfoItem = {
+  amount: string;
+  unit: string;
+};
+
 export type CreateWithdrawOrderRequest = {
   network: string;
   symbol: string;
@@ -103,6 +116,10 @@ export type CreateWithdrawOrderRequest = {
   fromChainId: ChainId;
   toAddress: string;
   rawTransaction: string;
+  feeInfo: {
+    thirdPart: FeeInfoItem;
+    aelf: FeeInfoItem;
+  };
 };
 
 export type CreateWithdrawOrderResult = {

@@ -1,5 +1,6 @@
 import { CHAIN_LIST } from 'constants/index';
-import { NetworkStatus } from 'types/api';
+import { DoubleCheckModalProps } from 'pageComponents/WithdrawContent/DoubleCheckModal';
+import { NetworkStatus, WithdrawInfo } from 'types/api';
 import { WithdrawInfoSuccess } from 'types/deposit';
 
 export const DEPOSIT_ADDRESS_LABEL = 'Deposit Address';
@@ -13,7 +14,7 @@ export const initDepositInfo = {
   minAmount: '',
 };
 
-export const initialWithdrawInfo = {
+export const initialWithdrawInfo: WithdrawInfo = {
   maxAmount: '',
   minAmount: '',
   limitCurrency: 'USDT',
@@ -21,6 +22,9 @@ export const initialWithdrawInfo = {
   remainingLimit: '',
   transactionFee: '',
   transactionUnit: 'USDT',
+  expiredTimestamp: 0,
+  AElfTransactionFee: '',
+  AElfTransactionUnit: 'ELF',
   receiveAmount: '',
   feeList: [],
 };
@@ -35,12 +39,17 @@ export const initialNetwork = {
   status: NetworkStatus.Health,
 };
 
-export const initialWithdrawInfoCheck = {
+export const initialWithdrawInfoCheck: DoubleCheckModalProps['withdrawInfo'] = {
   receiveAmount: '',
   address: '',
   network: initialNetwork,
   amount: '',
   transactionFee: {
+    amount: '',
+    currency: '',
+    name: '',
+  },
+  AElfTransactionFee: {
     amount: '',
     currency: '',
     name: '',

@@ -6,19 +6,6 @@ export type ContractAddress = {
   addressLink: string;
 };
 
-export type WithdrawInfoCheck = {
-  receiveAmount: string;
-  address: string;
-  network: NetworkItem;
-  amount: string;
-  transactionFee: {
-    amount: string;
-    currency: string;
-    name: string;
-  };
-  symbol: string;
-};
-
 export type WithdrawInfoSuccess = {
   receiveAmount: string;
   network: NetworkItem;
