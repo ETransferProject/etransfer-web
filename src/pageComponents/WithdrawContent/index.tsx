@@ -216,6 +216,26 @@ export default function WithdrawContent() {
     [judgeIsSubmitDisabled],
   );
 
+  const handleAddressWarningValidate = useCallback(() => {
+    const address = form.getFieldValue(FormKeys.ADDRESS);
+    if (address.length >= 32 && address.length <= 39) {
+      handleFormValidateDataChange({
+        [FormKeys.ADDRESS]: {
+          validateStatus: ValidateStatus.Warning,
+          errorMessage:
+            'The address you entered is shorter than usual, please carefully verify its accuracy.',
+        },
+      });
+    } else {
+      handleFormValidateDataChange({
+        [FormKeys.ADDRESS]: {
+          validateStatus: ValidateStatus.Normal,
+          errorMessage: '',
+        },
+      });
+    }
+  }, [form, handleFormValidateDataChange]);
+
   const getNetworkData = useCallback(
     async ({ symbol, address }: Omit<GetNetworkListRequest, 'type' | 'chainId'>) => {
       try {
@@ -247,12 +267,7 @@ export default function WithdrawContent() {
             dispatch(setWithdrawCurrentNetwork(undefined));
           }
         }
-        handleFormValidateDataChange({
-          [FormKeys.ADDRESS]: {
-            validateStatus: ValidateStatus.Normal,
-            errorMessage: '',
-          },
-        });
+        handleAddressWarningValidate();
         setLoading(false);
       } catch (error) {
         setLoading(false);
@@ -265,12 +280,7 @@ export default function WithdrawContent() {
             },
           });
         } else {
-          handleFormValidateDataChange({
-            [FormKeys.ADDRESS]: {
-              validateStatus: ValidateStatus.Normal,
-              errorMessage: '',
-            },
-          });
+          handleAddressWarningValidate();
           singleMessage.error(handleErrorMessage(error));
         }
         setNetworkList([]);
@@ -282,7 +292,7 @@ export default function WithdrawContent() {
         setLoading(false);
       }
     },
-    [dispatch, handleFormValidateDataChange, setLoading],
+    [dispatch, handleAddressWarningValidate, handleFormValidateDataChange, setLoading],
   );
 
   const getWithdrawData = useCallback(async () => {
@@ -633,14 +643,6 @@ export default function WithdrawContent() {
         },
       });
       return;
-    } else if (address.length >= 32 && address.length <= 39) {
-      handleFormValidateDataChange({
-        [FormKeys.ADDRESS]: {
-          validateStatus: ValidateStatus.Warning,
-          errorMessage:
-            'The address you entered is shorter than usual, please carefully verify its accuracy.',
-        },
-      });
     }
 
     await getNetworkData({
