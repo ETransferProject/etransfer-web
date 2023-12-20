@@ -23,4 +23,4 @@ export const BrandName = 'ETransfer';
 
 export const NETWORK_TYPE_ERROR_MESSAGE = 'Please switch Portkey to aelf Mainnet.';
 
-export * from './mainnet';
+export * from './testnet';

@@ -90,10 +90,10 @@ export type WithdrawInfo = {
   transactionUnit: string;
   /** cobo */
   expiredTimestamp: number;
-  /** AElf */
-  AElfTransactionFee: string;
-  /** AElf */
-  AElfTransactionUnit: string;
+  /** aelf */
+  aelfTransactionFee: string;
+  /** aelf */
+  aelfTransactionUnit: string;
   receiveAmount: string;
   feeList: FeeItem[];
 };

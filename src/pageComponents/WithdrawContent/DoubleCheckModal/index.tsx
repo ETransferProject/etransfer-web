@@ -13,7 +13,7 @@ export interface DoubleCheckModalProps {
     network: NetworkItem;
     amount: string;
     transactionFee: FeeItem;
-    AElfTransactionFee: FeeItem;
+    aelfTransactionFee: FeeItem;
     symbol: string;
   };
   modalProps: CommonModalSwitchDrawerProps;
@@ -42,7 +42,7 @@ export default function DoubleCheckModal({
   };
 
   const renderTransactionFeeValue = () => {
-    if (!withdrawInfo.transactionFee?.amount || !withdrawInfo.AElfTransactionFee?.amount) {
+    if (!withdrawInfo.transactionFee?.amount || !withdrawInfo.aelfTransactionFee?.amount) {
       return '-';
     } else {
       return (
@@ -50,8 +50,8 @@ export default function DoubleCheckModal({
           {isTransactionFeeLoading && <SimpleLoading />}
           <span>
             {!isTransactionFeeLoading && `${withdrawInfo.transactionFee.amount} `}
-            {withdrawInfo.transactionFee.currency} + {withdrawInfo.AElfTransactionFee.amount}{' '}
-            {withdrawInfo.AElfTransactionFee.currency}
+            {withdrawInfo.transactionFee.currency} + {withdrawInfo.aelfTransactionFee.amount}{' '}
+            {withdrawInfo.aelfTransactionFee.currency}
           </span>
         </>
       );

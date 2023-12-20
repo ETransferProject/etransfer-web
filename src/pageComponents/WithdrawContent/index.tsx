@@ -152,10 +152,10 @@ export default function WithdrawContent() {
         currency: withdrawInfo.transactionUnit,
         name: withdrawInfo.transactionUnit,
       },
-      AElfTransactionFee: {
-        amount: withdrawInfo.AElfTransactionFee,
-        currency: withdrawInfo.AElfTransactionUnit,
-        name: withdrawInfo.AElfTransactionUnit,
+      aelfTransactionFee: {
+        amount: withdrawInfo.aelfTransactionFee,
+        currency: withdrawInfo.aelfTransactionUnit,
+        name: withdrawInfo.aelfTransactionUnit,
       },
       symbol: currentSymbol,
     });
@@ -553,8 +553,8 @@ export default function WithdrawContent() {
               unit: withdrawInfo.transactionUnit,
             },
             aelf: {
-              amount: withdrawInfo.AElfTransactionFee,
-              unit: withdrawInfo.AElfTransactionUnit,
+              amount: withdrawInfo.aelfTransactionFee,
+              unit: withdrawInfo.aelfTransactionUnit,
             },
           },
         });
@@ -695,7 +695,7 @@ export default function WithdrawContent() {
   });
 
   const renderTransactionFeeValue = () => {
-    if (!withdrawInfo.transactionFee || !withdrawInfo.AElfTransactionFee) {
+    if (!withdrawInfo.transactionFee || !withdrawInfo.aelfTransactionFee) {
       return '-';
     } else {
       return (
@@ -703,8 +703,8 @@ export default function WithdrawContent() {
           {isTransactionFeeLoading && <SimpleLoading />}
           <span>
             {!isTransactionFeeLoading && `${withdrawInfo.transactionFee} `}
-            {withdrawInfo.transactionUnit} + {withdrawInfo.AElfTransactionFee}{' '}
-            {withdrawInfo.AElfTransactionUnit}
+            {withdrawInfo.transactionUnit} + {withdrawInfo.aelfTransactionFee}{' '}
+            {withdrawInfo.aelfTransactionUnit}
           </span>
         </>
       );

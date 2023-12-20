@@ -23,8 +23,8 @@ export const initialWithdrawInfo: WithdrawInfo = {
   transactionFee: '',
   transactionUnit: 'USDT',
   expiredTimestamp: 0,
-  AElfTransactionFee: '',
-  AElfTransactionUnit: 'ELF',
+  aelfTransactionFee: '',
+  aelfTransactionUnit: 'ELF',
   receiveAmount: '',
   feeList: [],
 };
@@ -49,7 +49,7 @@ export const initialWithdrawInfoCheck: DoubleCheckModalProps['withdrawInfo'] = {
     currency: '',
     name: '',
   },
-  AElfTransactionFee: {
+  aelfTransactionFee: {
     amount: '',
     currency: '',
     name: '',
