@@ -593,7 +593,7 @@ export default function WithdrawContent() {
       setLoading(false);
       if (error?.code == 4001) {
         setFailModalReason('The request is rejected. ETransfer needs your permission to proceed.');
-      } else if (error?.message?.startsWidth(WITHDRAW_AMOUNT_NOT_ENOUGH_ERROR_MESSAGE_BEGINNING)) {
+      } else if (error?.message?.startsWith(WITHDRAW_AMOUNT_NOT_ENOUGH_ERROR_MESSAGE_BEGINNING)) {
         const reason = error.message.split(WITHDRAW_AMOUNT_NOT_ENOUGH_ERROR_MESSAGE_BEGINNING)[1];
         setFailModalReason(reason);
       } else {
@@ -652,8 +652,16 @@ export default function WithdrawContent() {
 
     await getWithdrawData();
     handleAmountValidate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [
+    currentSymbol,
+    dispatch,
+    form,
+    getNetworkData,
+    getWithdrawData,
+    handleAmountValidate,
+    handleFormValidateDataChange,
+    networkList,
+  ]);
 
   const onAddressChange = useCallback(
     (value: string | null) => {
@@ -703,7 +711,7 @@ export default function WithdrawContent() {
       return (
         <>
           {isTransactionFeeLoading && <SimpleLoading />}
-          <span>
+          <span className={styles['transaction-fee-value-data']}>
             {!isTransactionFeeLoading && `${withdrawInfo.transactionFee} `}
             {withdrawInfo.transactionUnit} + {withdrawInfo.aelfTransactionFee}{' '}
             {withdrawInfo.aelfTransactionUnit}

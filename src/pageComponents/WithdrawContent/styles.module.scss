@@ -1,5 +1,6 @@
 @import 'src/assets/theme/font.scss';
 @import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/constants.scss';
 @import 'src/assets/theme/breakpoint.scss';
 @import 'src/styles/variable.scss';
 
@@ -166,7 +167,6 @@
     border-top: 1px solid $dividers;
     background-color: $page-bg;
     width: 100vw;
-    height: $mobile-form-footer-height;
     margin-left: -16px;
     padding: 10px 16px;
   }
@@ -189,6 +189,22 @@
 }
 
 .transaction-info-wrapper {
+  @include media-mobile {
+    min-width: 0;
+    .info-wrapper {
+      flex-wrap: wrap;
+      gap: 0;
+    }
+    .info-label {
+      margin-right: 8px;
+    }
+    .info-value {
+      min-width: 0;
+    }
+    .transaction-fee-value-data {
+      @include text-overflow;
+    }
+  }
   @include media-mobile-and-pad {
     flex-direction: column-reverse;
     gap: 2px;
@@ -205,6 +221,9 @@
   @include media-web {
     flex-direction: column;
     gap: 16px;
+  }
+  .info-label {
+    flex: none;
   }
   .info-value {
     gap: 4px;

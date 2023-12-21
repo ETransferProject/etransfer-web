@@ -1,6 +1,8 @@
 @mixin text-overflow($n: 1) {
   text-overflow: -o-ellipsis-lastline;
   overflow: hidden;
+  display: -webkit-box;
+  display: box;
   text-overflow: ellipsis;
   -webkit-box-orient: vertical;
   line-clamp: $n;
