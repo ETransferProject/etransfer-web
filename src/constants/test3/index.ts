@@ -64,7 +64,7 @@ export const AELF_NODES = {
   tDVV: tDVV.CHAIN_INFO,
 };
 
-export const ETransferHost = 'http://192.168.64.151:'; // TODO
+export const ETransferHost = 'http://192.168.64.151:5011';
 export const WebLoginGraphqlUrl =
   'http://192.168.66.203:8083/AElfIndexer_DApp/PortKeyIndexerCASchema/graphql';
 export const WebLoginRequestDefaultsUrl = 'http://192.168.66.203:5001';
