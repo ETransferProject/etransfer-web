@@ -189,21 +189,21 @@
 }
 
 .transaction-info-wrapper {
-  @include media-mobile {
+  min-width: 0;
+  .info-wrapper {
+    flex-wrap: wrap;
+    gap: 0;
+  }
+  .info-label {
+    flex: none;
+    margin-right: 8px;
+  }
+  .info-value {
+    gap: 4px;
     min-width: 0;
-    .info-wrapper {
-      flex-wrap: wrap;
-      gap: 0;
-    }
-    .info-label {
-      margin-right: 8px;
-    }
-    .info-value {
-      min-width: 0;
-    }
-    .transaction-fee-value-data {
-      @include text-overflow;
-    }
+  }
+  .transaction-fee-value-data {
+    @include text-overflow;
   }
   @include media-mobile-and-pad {
     flex-direction: column-reverse;
@@ -222,12 +222,6 @@
     flex-direction: column;
     gap: 16px;
   }
-  .info-label {
-    flex: none;
-  }
-  .info-value {
-    gap: 4px;
-  }
 }
 
 .form-submit-button-wrapper {
@@ -237,7 +231,7 @@
 .form-submit-button {
   @include media-mobile {
     width: 108px;
-    padding: 0;  
+    padding: 0;
   }
   @include media-pad {
     width: 120px;
