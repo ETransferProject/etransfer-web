@@ -12,7 +12,11 @@ import { zeroFill } from 'utils/calculate';
 import { sleep } from 'utils/common';
 import { did } from 'aelf-web-login';
 import { queryAuthToken } from 'api/utils';
-import { SupportedELFChainId, NETWORK_TYPE_ERROR_MESSAGE } from 'constants/index';
+import {
+  SupportedELFChainId,
+  NetworkType as NetworkTypeEnum,
+  NetworkTypeText,
+} from 'constants/index';
 import { CaHolderWithGuardian } from '@portkey/graphql';
 import isMobile from 'utils/isMobile';
 import { isPortkey } from 'utils/portkey';
@@ -120,7 +124,13 @@ class PortkeyWallet implements IPortkeyWallet {
     ]);
     console.log('from provider - name,networkType:', name, networkType);
     if (networkType !== this.matchNetworkType) {
-      singleMessage.error(NETWORK_TYPE_ERROR_MESSAGE);
+      singleMessage.error(
+        `Please switch Portkey to aelf ${
+          this.matchNetworkType === NetworkTypeEnum.TESTNET
+            ? NetworkTypeText.TESTNET
+            : NetworkTypeText.MAIN
+        }.`,
+      );
       throw Error('networkType error');
     }
 

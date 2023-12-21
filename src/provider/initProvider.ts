@@ -1,5 +1,5 @@
 'use client';
-import { NetworkType, NotificationEvents } from '@portkey/provider-types';
+import { NotificationEvents } from '@portkey/provider-types';
 import { useCallback } from 'react';
 import { store } from 'store/Provider/store';
 import {
@@ -10,7 +10,7 @@ import {
 } from 'store/reducers/portkeyWallet/actions';
 import { initialPortkeyWalletState } from 'store/reducers/portkeyWallet/slice';
 import portkeyWallet from 'wallet/portkeyWallet';
-import { NETWORK_TYPE, NETWORK_TYPE_ERROR_MESSAGE } from 'constants/index';
+import { NetworkType, NetworkTypeText, NETWORK_TYPE } from 'constants/index';
 import { useEffectOnce } from 'react-use';
 import { useThrottleCallback } from 'hooks';
 import { usePortkeyProvider } from 'hooks/usePortkeyProvider';
@@ -37,7 +37,11 @@ export default function InitProvider() {
     );
     provider.on(NotificationEvents.NETWORK_CHANGED, (networkType: NetworkType) => {
       if (networkType !== NETWORK_TYPE) {
-        singleMessage.error(NETWORK_TYPE_ERROR_MESSAGE);
+        singleMessage.error(
+          `Please switch Portkey to aelf ${
+            NETWORK_TYPE === NetworkType.TESTNET ? NetworkTypeText.TESTNET : NetworkTypeText.MAIN
+          }.`,
+        );
         store.dispatch(setDisconnectedAction(initialPortkeyWalletState));
       }
     });

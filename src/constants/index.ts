@@ -9,6 +9,11 @@ export enum NetworkType {
   TESTNET = 'TESTNET',
 }
 
+export enum NetworkTypeText {
+  MAIN = 'Mainnet',
+  TESTNET = 'Testnet',
+}
+
 export const ChainNamePrefix = {
   MainChain: 'MainChain',
   SideChain: 'SideChain',
@@ -20,7 +25,5 @@ export const SECONDS_60 = 60000;
 export const prefixCls = 'etransfer-web';
 export const AppName = 'ETransfer Web';
 export const BrandName = 'ETransfer';
-
-export const NETWORK_TYPE_ERROR_MESSAGE = 'Please switch Portkey to aelf Mainnet.';
 
 export * from './testnet';
