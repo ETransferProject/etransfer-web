@@ -1,5 +1,5 @@
-import { ADDRESS_MAP, AllSupportedELFChainId, ContractType } from 'constants/chain';
-import { SupportedELFChainId } from 'constants/index';
+import { AllSupportedELFChainId, ContractType } from 'constants/chain';
+import { ADDRESS_MAP, SupportedELFChainId } from 'constants/index';
 import portkeyWallet from 'wallet/portkeyWallet';
 import { IContract } from '@portkey/types';
 

@@ -27,7 +27,7 @@ import {
   useUserActionState,
 } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { ChainNameItem, USDT_DECIMAL } from 'constants/index';
+import { ADDRESS_MAP, ChainNameItem, USDT_DECIMAL } from 'constants/index';
 import { createWithdrawOrder, getNetworkList, getWithdrawInfo } from 'utils/api/deposit';
 import {
   CONTRACT_ADDRESS,
@@ -44,7 +44,7 @@ import { divDecimals, timesDecimals } from 'utils/calculate';
 import { ContractMethodName } from 'constants/contract';
 import { ZERO } from 'constants/misc';
 import contractUnity from 'contract/portkey';
-import { ADDRESS_MAP, ContractType } from 'constants/chain';
+import { ContractType } from 'constants/chain';
 import BigNumber from 'bignumber.js';
 import { SideMenuKey } from 'constants/home';
 import {

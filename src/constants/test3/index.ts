@@ -1,6 +1,6 @@
 import { ContractType } from 'constants/chain';
-import * as AELF from '../platform/AELF';
-import * as tDVV from '../platform/tDVV';
+import * as AELF from '../platform/AELF_test3';
+import * as tDVV from '../platform/tDVV_test3';
 import { NetworkType } from '@portkey/provider-types';
 
 export const NETWORK_TYPE: NetworkType = 'MAIN';
@@ -64,10 +64,10 @@ export const AELF_NODES = {
   tDVV: tDVV.CHAIN_INFO,
 };
 
-export const ETransferHost = 'https://etransfer.exchange';
+export const ETransferHost = 'http://192.168.64.151:5011';
 export const WebLoginGraphqlUrl =
-  'https://dapp-portkey.portkey.finance/Portkey_DID/PortKeyIndexerCASchema/graphql';
-export const WebLoginRequestDefaultsUrl = 'https://did-portkey.portkey.finance';
+  'http://192.168.66.203:8083/AElfIndexer_DApp/PortKeyIndexerCASchema/graphql';
+export const WebLoginRequestDefaultsUrl = 'http://192.168.66.203:5001';
 
 export const ADDRESS_MAP = {
   [SupportedELFChainId.AELF]: {
