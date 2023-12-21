@@ -193,7 +193,6 @@ export default function WithdrawContent() {
     (currentFormValidateData: typeof formValidateData) => {
       const isValueUndefined = (value: unknown) => value === undefined || value === '';
       const isDisabled =
-        isTransactionFeeLoading ||
         currentFormValidateData[FormKeys.ADDRESS].validateStatus === ValidateStatus.Error ||
         currentFormValidateData[FormKeys.NETWORK].validateStatus === ValidateStatus.Error ||
         currentFormValidateData[FormKeys.AMOUNT].validateStatus === ValidateStatus.Error ||
@@ -202,7 +201,7 @@ export default function WithdrawContent() {
         isValueUndefined(form.getFieldValue(FormKeys.AMOUNT));
       setIsSubmitDisabled(isDisabled);
     },
-    [form, isTransactionFeeLoading],
+    [form],
   );
 
   const handleFormValidateDataChange = useCallback(
@@ -326,12 +325,6 @@ export default function WithdrawContent() {
       });
     }
   }, [currentNetwork?.network, handleFormValidateDataChange, withdrawInfo.transactionFee]);
-
-  useEffect(() => {
-    if (isTransactionFeeLoading) {
-      setIsSubmitDisabled(true);
-    }
-  }, [isTransactionFeeLoading]);
 
   const getMaxBalance = useCallback(async () => {
     try {
@@ -852,7 +845,7 @@ export default function WithdrawContent() {
                 className={styles['form-submit-button']}
                 // htmlType="submit"
                 onClick={onSubmit}
-                disabled={isSubmitDisabled}>
+                disabled={isTransactionFeeLoading || isSubmitDisabled}>
                 Withdraw
               </CommonButton>
             </Form.Item>
