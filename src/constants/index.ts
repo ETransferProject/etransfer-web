@@ -1,3 +1,5 @@
+export * from './mainnet';
+
 export enum WalletType {
   unknown = 'unknown',
   discover = 'discover',
@@ -25,5 +27,3 @@ export const SECONDS_60 = 60000;
 export const prefixCls = 'etransfer-web';
 export const AppName = 'ETransfer Web';
 export const BrandName = 'ETransfer';
-
-export * from './testnet';
