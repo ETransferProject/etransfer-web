@@ -159,7 +159,6 @@ export default function WithdrawContent() {
       },
       symbol: currentSymbol,
     });
-    getWithdrawData();
     setIsDoubleCheckModalOpen(true);
   };
 
