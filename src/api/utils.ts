@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { BaseConfig, RequestConfig } from './types';
 import { stringify } from 'query-string';
-import { ETransferHost, SupportedELFChainId } from 'constants/index';
+import { ETransferAuthHost, SupportedELFChainId } from 'constants/index';
 import { LocalStorageKey } from 'constants/localStorage';
 import portkeyWallet from 'wallet/portkeyWallet';
 import AElf from 'aelf-sdk';
@@ -84,7 +84,7 @@ export const setLocalJWT = (key: string, data: LocalJWTData) => {
 
 export const queryAuthApi = async (config: QueryAuthApiExtraRequest) => {
   const data = { ...queryAuthApiBaseConfig, ...config };
-  const res = await axios.post<JWTData>(`${ETransferHost}/connect/token`, stringify(data), {
+  const res = await axios.post<JWTData>(`${ETransferAuthHost}/connect/token`, stringify(data), {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
   });
   const token_type = res.data.token_type;
