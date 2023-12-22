@@ -65,6 +65,7 @@ export const AELF_NODES = {
 };
 
 export const ETransferHost = 'https://etransfer.exchange';
+export const ETransferAuthHost = 'https://etransfer.exchange';
 export const WebLoginGraphqlUrl =
   'https://dapp-portkey.portkey.finance/Portkey_DID/PortKeyIndexerCASchema/graphql';
 export const WebLoginRequestDefaultsUrl = 'https://did-portkey.portkey.finance';
