@@ -65,8 +65,7 @@ export const AELF_NODES = {
 };
 
 export const ETransferHost = 'http://192.168.64.151:5011';
-export const WebLoginGraphqlUrl =
-  'http://192.168.66.203:8083/AElfIndexer_DApp/PortKeyIndexerCASchema/graphql';
+export const WebLoginGraphqlUrl = '/graphql';
 export const WebLoginRequestDefaultsUrl = 'http://192.168.66.203:5001';
 
 export const ADDRESS_MAP = {
