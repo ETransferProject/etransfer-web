@@ -628,14 +628,12 @@ export default function WithdrawContent() {
           errorMessage: '',
         },
       });
-      if (!Array.isArray(networkList) || networkList.length === 0) {
-        await getNetworkData({
-          symbol: currentSymbol,
-          address: address,
-        });
-        await getWithdrawData();
-        handleAmountValidate();
-      }
+      await getNetworkData({
+        symbol: currentSymbol,
+        address: address,
+      });
+      await getWithdrawData();
+      handleAmountValidate();
       return;
     } else if (address.length < 32 || address.length > 44) {
       handleFormValidateDataChange({
@@ -662,7 +660,6 @@ export default function WithdrawContent() {
     getWithdrawData,
     handleAmountValidate,
     handleFormValidateDataChange,
-    networkList,
   ]);
 
   const onAddressChange = useCallback(
