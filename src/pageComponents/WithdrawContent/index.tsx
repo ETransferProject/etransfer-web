@@ -467,7 +467,7 @@ export default function WithdrawContent() {
       clearInterval(getTransactionFeeTimerRef.current);
     }
     getTransactionFeeTimerRef.current = setInterval(async () => {
-      if (new Date().getTime() + 10000 > withdrawInfo.expiredTimestamp) {
+      if (new Date().getTime() > withdrawInfo.expiredTimestamp) {
         await getWithdrawData();
         handleAmountValidate();
       }
