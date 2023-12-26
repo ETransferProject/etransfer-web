@@ -214,26 +214,6 @@ export default function WithdrawContent() {
     [judgeIsSubmitDisabled],
   );
 
-  const handleAddressWarningValidate = useCallback(() => {
-    const address = form.getFieldValue(FormKeys.ADDRESS);
-    if (address.length >= 32 && address.length <= 39) {
-      handleFormValidateDataChange({
-        [FormKeys.ADDRESS]: {
-          validateStatus: ValidateStatus.Warning,
-          errorMessage:
-            'The address you entered is shorter than usual, please carefully verify its accuracy.',
-        },
-      });
-    } else {
-      handleFormValidateDataChange({
-        [FormKeys.ADDRESS]: {
-          validateStatus: ValidateStatus.Normal,
-          errorMessage: '',
-        },
-      });
-    }
-  }, [form, handleFormValidateDataChange]);
-
   const getNetworkData = useCallback(
     async ({ symbol, address }: Omit<GetNetworkListRequest, 'type' | 'chainId'>) => {
       try {
@@ -265,7 +245,29 @@ export default function WithdrawContent() {
             dispatch(setWithdrawCurrentNetwork(undefined));
           }
         }
-        handleAddressWarningValidate();
+        if (
+          networkList?.length === 1 &&
+          networkList.some((item) => item.network === 'Solana') &&
+          params.address &&
+          params.address.length >= 32 &&
+          params.address.length <= 39
+        ) {
+          // Only the Solana network has this warning
+          handleFormValidateDataChange({
+            [FormKeys.ADDRESS]: {
+              validateStatus: ValidateStatus.Warning,
+              errorMessage:
+                'The address you entered is shorter than usual, please carefully verify its accuracy.',
+            },
+          });
+        } else {
+          handleFormValidateDataChange({
+            [FormKeys.ADDRESS]: {
+              validateStatus: ValidateStatus.Normal,
+              errorMessage: '',
+            },
+          });
+        }
         setLoading(false);
       } catch (error) {
         setLoading(false);
@@ -278,7 +280,12 @@ export default function WithdrawContent() {
             },
           });
         } else {
-          handleAddressWarningValidate();
+          handleFormValidateDataChange({
+            [FormKeys.ADDRESS]: {
+              validateStatus: ValidateStatus.Normal,
+              errorMessage: '',
+            },
+          });
           singleMessage.error(handleErrorMessage(error));
         }
         setNetworkList([]);
@@ -290,7 +297,7 @@ export default function WithdrawContent() {
         setLoading(false);
       }
     },
-    [dispatch, handleAddressWarningValidate, handleFormValidateDataChange, setLoading],
+    [dispatch, handleFormValidateDataChange, setLoading],
   );
 
   const getWithdrawData = useCallback(async () => {
