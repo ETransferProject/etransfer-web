@@ -196,7 +196,7 @@ export default function WithdrawContent() {
         currentFormValidateData[FormKeys.NETWORK].validateStatus === ValidateStatus.Error ||
         currentFormValidateData[FormKeys.AMOUNT].validateStatus === ValidateStatus.Error ||
         isValueUndefined(form.getFieldValue(FormKeys.ADDRESS)) ||
-        isValueUndefined(form.getFieldValue(FormKeys.NETWORK)) ||
+        isValueUndefined(currentNetworkRef.current) ||
         isValueUndefined(form.getFieldValue(FormKeys.AMOUNT));
       setIsSubmitDisabled(isDisabled);
     },
