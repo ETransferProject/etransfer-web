@@ -69,6 +69,12 @@ export const ETransferAuthHost = '';
 export const WebLoginGraphqlUrl = '/graphql';
 export const WebLoginRequestDefaultsUrl = 'http://192.168.66.203:5001';
 
+// dev
+// export const ETransferHost = 'http://192.168.64.151:5011';
+// export const ETransferAuthHost = 'http://192.168.64.151:8011';
+// export const WebLoginGraphqlUrl = '/graphql';
+// export const WebLoginRequestDefaultsUrl = '';
+
 export const ADDRESS_MAP = {
   [SupportedELFChainId.AELF]: {
     [ContractType.CA]: AELF.CA_CONTRACT,
