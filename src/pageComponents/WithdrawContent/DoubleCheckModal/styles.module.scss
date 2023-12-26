@@ -19,6 +19,11 @@
   color: $primary-text;
 }
 
+.secondary-value {
+  @extend .font-family-regular;
+  color: $secondary-text;
+}
+
 .receive-amount-wrapper {
   gap: 4px;
   margin: 32px 0 24px;
@@ -60,5 +65,12 @@
   .value {
     justify-content: flex-end;
     gap: 4px;
+  }
+}
+
+.withdrawal-network-wrapper {
+  .value {
+    justify-content: flex-end;
+    gap: 8px;
   }
 }
