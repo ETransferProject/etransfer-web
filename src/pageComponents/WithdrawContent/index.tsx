@@ -54,7 +54,7 @@ import {
 import { useDebounceCallback } from 'hooks';
 import { useEffectOnce } from 'react-use';
 import SimpleLoading from 'components/SimpleLoading';
-import { WITHDRAW_AMOUNT_NOT_ENOUGH_ERROR_MESSAGE_BEGINNING } from 'constants/withdraw';
+import { CreateWithdrawOrderErrorCode } from 'constants/withdraw';
 
 enum ValidateStatus {
   Error = 'error',
@@ -582,9 +582,13 @@ export default function WithdrawContent() {
       setLoading(false);
       if (error?.code == 4001) {
         setFailModalReason('The request is rejected. ETransfer needs your permission to proceed.');
-      } else if (error?.message?.startsWith(WITHDRAW_AMOUNT_NOT_ENOUGH_ERROR_MESSAGE_BEGINNING)) {
-        const reason = error.message.split(WITHDRAW_AMOUNT_NOT_ENOUGH_ERROR_MESSAGE_BEGINNING)[1];
-        setFailModalReason(reason);
+      } else if (
+        [
+          CreateWithdrawOrderErrorCode.TRANSACTION_FEES_FLUCTUATED,
+          CreateWithdrawOrderErrorCode.INSUFFICIENT_BALANCE,
+        ].includes(error.code)
+      ) {
+        setFailModalReason(error.message);
       } else {
         setFailModalReason(
           'The transaction failed due to an unexpected error. Please try again later.',

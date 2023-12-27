@@ -1,5 +1,6 @@
 import { handleErrorMessage } from '@portkey/did-ui-react';
 import { request } from 'api';
+import { CreateWithdrawOrderErrorCode } from 'constants/withdraw';
 import {
   CreateWithdrawOrderRequest,
   CreateWithdrawOrderResult,
@@ -62,6 +63,14 @@ export const createWithdrawOrder = async (
     const res = await request.deposit.createWithdrawOrder({ data: params });
     return res.data;
   } catch (error) {
+    if (
+      [
+        CreateWithdrawOrderErrorCode.TRANSACTION_FEES_FLUCTUATED,
+        CreateWithdrawOrderErrorCode.INSUFFICIENT_BALANCE,
+      ].includes((error as { code: number; message: string }).code)
+    ) {
+      throw error;
+    }
     throw new Error(handleErrorMessage(error, 'createWithdrawOrder error'));
   }
 };

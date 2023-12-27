@@ -1,1 +1,4 @@
-export const WITHDRAW_AMOUNT_NOT_ENOUGH_ERROR_MESSAGE_BEGINNING = 'withdraw amount not enough.';
+export enum CreateWithdrawOrderErrorCode {
+  TRANSACTION_FEES_FLUCTUATED = 40001,
+  INSUFFICIENT_BALANCE = 40002,
+}
