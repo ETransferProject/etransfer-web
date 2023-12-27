@@ -817,17 +817,31 @@ export default function WithdrawContent() {
           </div>
           {isMobilePX && remainingLimitComponent}
           <div className={clsx(styles['form-footer'], styles['form-footer-safe-area'])}>
-            <div className={clsx('flex-1', 'flex-column', styles['transaction-info-wrapper'])}>
-              <div className={clsx('flex-row-center', styles['info-wrapper'])}>
+            <div className={clsx('flex-1', 'flex-column', styles['footer-info-wrapper'])}>
+              <div
+                className={clsx(
+                  'flex-row-center',
+                  styles['info-wrapper'],
+                  styles['transaction-fee-wrapper'],
+                )}>
                 <div className={styles['info-label']}>Transaction Fee: </div>
                 <div className={clsx('flex-row-center', styles['info-value'])}>
                   {renderTransactionFeeValue()}
                 </div>
               </div>
-              <div className={'flex-column'}>
+              <div className={clsx('flex-column', styles['receive-amount-wrapper'])}>
                 <div className={styles['info-label']}>Amount to Be Received</div>
-                <div className={clsx(styles['info-value'], styles['info-value-big-font'])}>
-                  {receiveAmount || '-'} {withdrawInfo.transactionUnit}
+                <div
+                  className={clsx(
+                    'flex-row-center',
+                    styles['info-value'],
+                    styles['info-value-big-font'],
+                  )}>
+                  {isTransactionFeeLoading && <SimpleLoading />}
+                  <span>
+                    {!isTransactionFeeLoading && `${receiveAmount || '-'} `}
+                    {withdrawInfo.transactionUnit}
+                  </span>
                 </div>
               </div>
             </div>

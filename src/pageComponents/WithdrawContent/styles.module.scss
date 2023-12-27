@@ -188,22 +188,27 @@
   }
 }
 
-.transaction-info-wrapper {
+.footer-info-wrapper {
   min-width: 0;
-  .info-wrapper {
+  .transaction-fee-wrapper {
     flex-wrap: wrap;
     gap: 0;
+    .info-value {
+      gap: 4px;
+      min-width: 0;
+    }
   }
   .info-label {
     flex: none;
     margin-right: 8px;
   }
-  .info-value {
-    gap: 4px;
-    min-width: 0;
-  }
   .transaction-fee-value-data {
     @include text-overflow;
+  }
+  .receive-amount-wrapper {
+    .info-value {
+      gap: 8px;
+    }
   }
   @include media-mobile-and-pad {
     flex-direction: column-reverse;
