@@ -1,5 +1,4 @@
 import { CHAIN_LIST } from 'constants/index';
-import { DoubleCheckModalProps } from 'pageComponents/WithdrawContent/DoubleCheckModal';
 import { NetworkStatus, WithdrawInfo } from 'types/api';
 import { WithdrawInfoSuccess } from 'types/deposit';
 
@@ -37,24 +36,6 @@ export const initialNetwork = {
   contractAddress: '',
   explorerUrl: '',
   status: NetworkStatus.Health,
-};
-
-export const initialWithdrawInfoCheck: DoubleCheckModalProps['withdrawInfo'] = {
-  receiveAmount: '',
-  address: '',
-  network: initialNetwork,
-  amount: '',
-  transactionFee: {
-    amount: '',
-    currency: '',
-    name: '',
-  },
-  aelfTransactionFee: {
-    amount: '',
-    currency: '',
-    name: '',
-  },
-  symbol: '',
 };
 
 export const initialWithdrawSuccessCheck: WithdrawInfoSuccess = {

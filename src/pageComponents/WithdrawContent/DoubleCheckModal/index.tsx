@@ -10,8 +10,8 @@ import styles from './styles.module.scss';
 export interface DoubleCheckModalProps {
   withdrawInfo: {
     receiveAmount: string;
-    address: string;
-    network: NetworkItem;
+    address?: string;
+    network?: NetworkItem;
     amount: string;
     transactionFee: FeeItem;
     aelfTransactionFee: FeeItem;

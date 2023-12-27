@@ -7,7 +7,7 @@ import CommonButton from 'components/CommonButton';
 import FormTextarea from 'components/FormTextarea';
 import FormInputNumber from 'components/FormInputNumber';
 import SelectNetwork from 'pageComponents/SelectNetwork';
-import DoubleCheckModal, { DoubleCheckModalProps } from './DoubleCheckModal';
+import DoubleCheckModal from './DoubleCheckModal';
 import SuccessModal from './SuccessModal';
 import FailModal from './FailModal';
 import {
@@ -32,7 +32,6 @@ import { createWithdrawOrder, getNetworkList, getWithdrawInfo } from 'utils/api/
 import {
   CONTRACT_ADDRESS,
   initialWithdrawInfo,
-  initialWithdrawInfoCheck,
   initialWithdrawSuccessCheck,
 } from 'constants/deposit';
 import { WithdrawInfoSuccess } from 'types/deposit';
@@ -97,8 +96,6 @@ export default function WithdrawContent() {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isFailModalOpen, setIsFailModalOpen] = useState(false);
   const [failModalReason, setFailModalReason] = useState('');
-  const [withdrawInfoCheck, setWithdrawInfoCheck] =
-    useState<DoubleCheckModalProps['withdrawInfo']>(initialWithdrawInfoCheck);
   const [withdrawInfoSuccess, setWithdrawInfoSuccessCheck] = useState<WithdrawInfoSuccess>(
     initialWithdrawSuccessCheck,
   );
@@ -142,23 +139,6 @@ export default function WithdrawContent() {
 
   const onSubmit = () => {
     if (!currentNetwork) return;
-    setWithdrawInfoCheck({
-      receiveAmount: receiveAmount,
-      address: form.getFieldValue(FormKeys.ADDRESS) || '',
-      network: currentNetwork,
-      amount: balance,
-      transactionFee: {
-        amount: withdrawInfo.transactionFee,
-        currency: withdrawInfo.transactionUnit,
-        name: withdrawInfo.transactionUnit,
-      },
-      aelfTransactionFee: {
-        amount: withdrawInfo.aelfTransactionFee,
-        currency: withdrawInfo.aelfTransactionUnit,
-        name: withdrawInfo.aelfTransactionUnit,
-      },
-      symbol: currentSymbol,
-    });
     setIsDoubleCheckModalOpen(true);
   };
 
@@ -866,7 +846,23 @@ export default function WithdrawContent() {
         </Form>
       </div>
       <DoubleCheckModal
-        withdrawInfo={withdrawInfoCheck}
+        withdrawInfo={{
+          receiveAmount,
+          address: form.getFieldValue(FormKeys.ADDRESS),
+          network: currentNetwork,
+          amount: balance,
+          transactionFee: {
+            amount: withdrawInfo.transactionFee,
+            currency: withdrawInfo.transactionUnit,
+            name: withdrawInfo.transactionUnit,
+          },
+          aelfTransactionFee: {
+            amount: withdrawInfo.aelfTransactionFee,
+            currency: withdrawInfo.aelfTransactionUnit,
+            name: withdrawInfo.aelfTransactionUnit,
+          },
+          symbol: currentSymbol,
+        }}
         modalProps={{
           open: isDoubleCheckModalOpen,
           onClose: () => setIsDoubleCheckModalOpen(false),
