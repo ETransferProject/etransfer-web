@@ -237,7 +237,7 @@ export default function WithdrawContent() {
             [FormKeys.ADDRESS]: {
               validateStatus: ValidateStatus.Warning,
               errorMessage:
-                'The address you entered is shorter than usual, please carefully verify its accuracy.',
+                "The address you entered is shorter than usual. Please double-check to ensure it's the correct address.",
             },
           });
         } else {
