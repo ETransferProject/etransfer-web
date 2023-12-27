@@ -309,7 +309,7 @@ export default function WithdrawContent() {
         [FormKeys.NETWORK]: {
           validateStatus: ValidateStatus.Warning,
           errorMessage:
-            'The current Ethereum network gas price is high, it is recommended to withdraw later.',
+            'Due to the currently high gas price on Ethereum, it is recommended to wait a while before initiating the withdrawal.',
         },
       });
     } else {
