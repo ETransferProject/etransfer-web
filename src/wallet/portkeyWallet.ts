@@ -52,6 +52,8 @@ export interface IPortkeyWallet extends IPortkeyWalletAttribute {
   connectEagerly: () => Promise<{ accounts: Accounts }>;
   connected: () => Promise<ProviderInfo>;
   getProvider: () => Promise<IPortkeyProvider | undefined>;
+  clearData: () => void;
+  getCaHash: () => Promise<string | undefined>;
 }
 
 export interface PortkeyWalletOptions {
@@ -173,7 +175,14 @@ class PortkeyWallet implements IPortkeyWallet {
     this.managerAddress = managerAddress;
     return managerAddress;
   }
-  public getCaHash: () => Promise<GetCAHolderByManagerResult> = async () => {
+  public async getCaHash() {
+    if (this?.caHash) return this.caHash;
+    await this.refreshCaHash();
+    return this.caHash;
+  }
+  public refreshCaHash: (count?: number) => Promise<GetCAHolderByManagerResult> = async (
+    count = 0,
+  ) => {
     try {
       if (!this.managerAddress) await this.getManagerAddress();
 
@@ -207,7 +216,9 @@ class PortkeyWallet implements IPortkeyWallet {
     }
     // sleep wait indexer
     await sleep(3000);
-    return this.getCaHash();
+    if (count >= 10) throw Error('Please try again');
+    count++;
+    return this.refreshCaHash(count);
   };
 
   public async getSignature(data: string) {
@@ -240,6 +251,12 @@ class PortkeyWallet implements IPortkeyWallet {
     const pubKey = ec.keyFromPublic(publicKey).getPublic('hex');
 
     return { signatureStr, pubKey };
+  }
+
+  public clearData() {
+    this.managerAddress = '';
+    this.caHash = '';
+    this.manager = undefined;
   }
 }
 
