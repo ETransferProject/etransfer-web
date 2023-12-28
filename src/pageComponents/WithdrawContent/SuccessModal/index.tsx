@@ -34,7 +34,7 @@ export default function SuccessModal({ withdrawInfo, modalProps }: SuccessModalP
           <div className={styles['detail-row']}>
             <div className={styles['label']}>Amount to Be Received</div>
             <div className={styles['value']}>
-              {withdrawInfo.receiveAmount} {withdrawInfo.symbol}
+              {withdrawInfo.receiveAmount || '--'} {withdrawInfo.symbol}
             </div>
           </div>
           <div className={styles['detail-row']}>

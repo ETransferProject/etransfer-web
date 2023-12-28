@@ -29,24 +29,20 @@ export default function DoubleCheckModal({
   const { isMobilePX } = useCommonState();
 
   const renderAmountToBeReceived = () => {
-    if (!withdrawInfo.receiveAmount) {
-      return '-';
-    } else {
-      return (
-        <>
-          {isTransactionFeeLoading && <SimpleLoading />}
-          <span>
-            {!isTransactionFeeLoading && `${withdrawInfo.receiveAmount} `}
-            {withdrawInfo.symbol}
-          </span>
-        </>
-      );
-    }
+    return (
+      <>
+        {isTransactionFeeLoading && <SimpleLoading />}
+        <span>
+          {!isTransactionFeeLoading && `${withdrawInfo.receiveAmount || '--'} `}
+          {withdrawInfo.symbol}
+        </span>
+      </>
+    );
   };
 
   const renderTransactionFeeValue = () => {
     if (!withdrawInfo.transactionFee?.amount || !withdrawInfo.aelfTransactionFee?.amount) {
-      return '-';
+      return isTransactionFeeLoading ? <SimpleLoading /> : '--';
     } else {
       return (
         <>
@@ -65,7 +61,7 @@ export default function DoubleCheckModal({
     <CommonModalSwitchDrawer
       {...modalProps}
       title="Withdrawal Information"
-      isOkButtonDisabled={isTransactionFeeLoading}>
+      isOkButtonDisabled={isTransactionFeeLoading || !withdrawInfo.receiveAmount}>
       <div>
         <div className={clsx('flex-column-center', styles['receive-amount-wrapper'])}>
           <span className={styles['label']}>Amount to Be Received</span>
@@ -77,7 +73,7 @@ export default function DoubleCheckModal({
         <div className={clsx('flex-column', styles['detail-wrapper'])}>
           <div className={styles['detail-row']}>
             <div className={styles['label']}>Withdrawal Address</div>
-            <div className={styles['value']}>{withdrawInfo.address}</div>
+            <div className={styles['value']}>{withdrawInfo.address || '--'}</div>
           </div>
           <div className={clsx(styles['detail-row'], styles['withdrawal-network-wrapper'])}>
             <div className={styles['label']}>Withdrawal Network</div>
@@ -94,7 +90,9 @@ export default function DoubleCheckModal({
           </div>
           <div className={styles['detail-row']}>
             <div className={styles['label']}>Withdraw Amount</div>
-            <div className={styles['value']}>{`${withdrawInfo.amount} ${withdrawInfo.symbol}`}</div>
+            <div className={styles['value']}>{`${withdrawInfo.amount || '--'} ${
+              withdrawInfo.symbol
+            }`}</div>
           </div>
           <div className={clsx(styles['detail-row'], styles['transaction-fee-wrapper'])}>
             <div className={styles['label']}>Transaction Fee</div>

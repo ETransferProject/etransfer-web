@@ -120,7 +120,7 @@ export default function WithdrawContent() {
       ZERO.plus(balance).isLessThan(ZERO.plus(withdrawInfo.transactionFee)) ||
       ZERO.plus(balance).isLessThan(ZERO.plus(minAmount))
     ) {
-      return '-';
+      return '';
     } else {
       const res = BigNumber(balance).minus(BigNumber(withdrawInfo.transactionFee)).toFixed();
       return res;
@@ -156,8 +156,10 @@ export default function WithdrawContent() {
           {isMobilePX && '• '}Remaining Withdrawal Quota{isMobilePX && ':'}
         </span>
         <span className={styles['remaining-limit-value']}>
-          {withdrawInfo.remainingLimit} {withdrawInfo.limitCurrency} / {withdrawInfo.totalLimit}{' '}
-          {withdrawInfo.limitCurrency}
+          {withdrawInfo.remainingLimit && withdrawInfo.totalLimit
+            ? `${withdrawInfo.remainingLimit} ${withdrawInfo.limitCurrency} / ${withdrawInfo.totalLimit} 
+          ${withdrawInfo.limitCurrency}`
+            : '--'}
         </span>
       </div>
     );
@@ -294,6 +296,7 @@ export default function WithdrawContent() {
 
       setWithdrawInfo(res.withdrawInfo);
     } catch (error) {
+      setWithdrawInfo(initialWithdrawInfo);
       singleMessage.error(handleErrorMessage(error));
     } finally {
       setIsTransactionFeeLoading(false);
@@ -373,7 +376,7 @@ export default function WithdrawContent() {
         },
       });
     } else if (
-      withdrawInfo?.remainingLimit &&
+      withdrawInfo.remainingLimit &&
       parserNumber > Number(parserWithThousandsSeparator(withdrawInfo.remainingLimit))
     ) {
       handleFormValidateDataChange({
@@ -695,7 +698,7 @@ export default function WithdrawContent() {
 
   const renderTransactionFeeValue = () => {
     if (!withdrawInfo.transactionFee || !withdrawInfo.aelfTransactionFee) {
-      return '-';
+      return isTransactionFeeLoading ? <SimpleLoading /> : '--';
     } else {
       return (
         <>
@@ -842,7 +845,7 @@ export default function WithdrawContent() {
                   )}>
                   {isTransactionFeeLoading && <SimpleLoading />}
                   <span>
-                    {!isTransactionFeeLoading && `${receiveAmount || '-'} `}
+                    {!isTransactionFeeLoading && `${receiveAmount || '--'} `}
                     {withdrawInfo.transactionUnit}
                   </span>
                 </div>
@@ -855,7 +858,7 @@ export default function WithdrawContent() {
                 className={styles['form-submit-button']}
                 // htmlType="submit"
                 onClick={onSubmit}
-                disabled={isTransactionFeeLoading || isSubmitDisabled}>
+                disabled={isTransactionFeeLoading || !receiveAmount || isSubmitDisabled}>
                 Withdraw
               </CommonButton>
             </Form.Item>
