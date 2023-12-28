@@ -67,7 +67,7 @@ export const createWithdrawOrder = async (
       [
         CreateWithdrawOrderErrorCode.TRANSACTION_FEES_FLUCTUATED,
         CreateWithdrawOrderErrorCode.INSUFFICIENT_BALANCE,
-      ].includes((error as { code: number; message: string }).code)
+      ].includes((error as { code: CreateWithdrawOrderErrorCode; message: string }).code)
     ) {
       throw error;
     }
