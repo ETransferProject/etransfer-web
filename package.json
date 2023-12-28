@@ -1,6 +1,6 @@
 {
   "name": "etransfer-web",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "dev": "NEXT_PUBLIC_APP_ENV=development next dev -p 4200",
