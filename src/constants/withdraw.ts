@@ -1,4 +1,7 @@
 export enum CreateWithdrawOrderErrorCode {
   TRANSACTION_FEES_FLUCTUATED = '40001',
-  INSUFFICIENT_BALANCE = '40002',
+}
+
+export enum ErrorNameType {
+  FAIL_MODAL_REASON = 'failModalReason',
 }

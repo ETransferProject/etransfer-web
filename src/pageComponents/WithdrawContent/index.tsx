@@ -54,7 +54,7 @@ import {
 import { useDebounceCallback } from 'hooks';
 import { useEffectOnce } from 'react-use';
 import SimpleLoading from 'components/SimpleLoading';
-import { CreateWithdrawOrderErrorCode } from 'constants/withdraw';
+import { ErrorNameType } from 'constants/withdraw';
 
 enum ValidateStatus {
   Error = 'error',
@@ -337,10 +337,12 @@ export default function WithdrawContent() {
         symbol: currentSymbol,
         owner: caAddress, // caAddress
       });
-      setMaxBalance(divDecimals(maxBalance, currentTokenDecimal).toFixed());
-      return maxBalance;
+      const tempMaxBalance = divDecimals(maxBalance, currentTokenDecimal).toFixed();
+      setMaxBalance(tempMaxBalance);
+      return tempMaxBalance;
     } catch (error) {
       singleMessage.error(handleErrorMessage(error));
+      throw new Error();
     }
   }, [accounts, currentSymbol, currentTokenDecimal]);
 
@@ -488,9 +490,11 @@ export default function WithdrawContent() {
     const newMaxBalance = await getMaxBalance();
     console.log('🌈 🌈 🌈 🌈 🌈 🌈 newMaxBalance ', newMaxBalance);
     if (ZERO.plus(newMaxBalance).isLessThan(ZERO.plus(balance))) {
-      throw new Error(
+      const error = new Error(
         `Insufficient ${currentSymbol} balance in your account. Please consider transferring a smaller amount or topping up before you try again.`,
       );
+      error.name = ErrorNameType.FAIL_MODAL_REASON;
+      throw error;
     }
 
     const ownerAddress = accounts?.[currentChainItemRef.current.key]?.[0] || '';
@@ -582,12 +586,7 @@ export default function WithdrawContent() {
       setLoading(false);
       if (error?.code == 4001) {
         setFailModalReason('The request is rejected. ETransfer needs your permission to proceed.');
-      } else if (
-        [
-          CreateWithdrawOrderErrorCode.TRANSACTION_FEES_FLUCTUATED,
-          CreateWithdrawOrderErrorCode.INSUFFICIENT_BALANCE,
-        ].includes(error.code)
-      ) {
+      } else if (error.name === ErrorNameType.FAIL_MODAL_REASON) {
         setFailModalReason(error.message);
       } else {
         setFailModalReason(
