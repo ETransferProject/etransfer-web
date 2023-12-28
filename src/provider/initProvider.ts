@@ -28,6 +28,7 @@ export default function InitProvider() {
     provider.on(NotificationEvents.ACCOUNTS_CHANGED, (accounts) => {
       if (Object.keys(accounts).length === 0) {
         store.dispatch(setDisconnectedAction(initialPortkeyWalletState));
+        portkeyWallet.clearData();
         return;
       }
       store.dispatch(setAccountsAction(accounts));
@@ -43,6 +44,7 @@ export default function InitProvider() {
           }.`,
         );
         store.dispatch(setDisconnectedAction(initialPortkeyWalletState));
+        portkeyWallet.clearData();
       }
     });
     // provider.on(NotificationEvents.CONNECTED, async () => {
@@ -51,6 +53,7 @@ export default function InitProvider() {
     // });
     provider.on(NotificationEvents.DISCONNECTED, () => {
       store.dispatch(setDisconnectedAction(initialPortkeyWalletState));
+      portkeyWallet.clearData();
     });
   }, []);
 
@@ -83,6 +86,7 @@ export default function InitProvider() {
       singleMessage.error('Login expired, please log in again');
       resetJWT();
       store.dispatch(setDisconnectedAction(initialPortkeyWalletState));
+      portkeyWallet.clearData();
     });
     const timer = setTimeout(init(), 1000);
     return () => {
