@@ -227,13 +227,10 @@ export default function WithdrawContent() {
             dispatch(setWithdrawCurrentNetwork(undefined));
           }
         }
-        if (
-          networkList?.length === 1 &&
-          networkList.some((item) => item.network === 'Solana') &&
-          params.address &&
-          params.address.length >= 32 &&
-          params.address.length <= 39
-        ) {
+        const isSolanaNetwork = networkList?.length === 1 && networkList[0].network === 'Solana';
+        const isAddressShorterThanUsual =
+          params.address && params.address.length >= 32 && params.address.length <= 39;
+        if (isSolanaNetwork && isAddressShorterThanUsual) {
           // Only the Solana network has this warning
           handleFormValidateDataChange({
             [FormKeys.ADDRESS]: {
@@ -345,7 +342,7 @@ export default function WithdrawContent() {
       return tempMaxBalance;
     } catch (error) {
       singleMessage.error(handleErrorMessage(error));
-      throw new Error();
+      throw new Error('Failed to get balance.');
     }
   }, [accounts, currentSymbol, currentTokenDecimal]);
 

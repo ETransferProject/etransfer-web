@@ -1,6 +1,6 @@
 import { handleErrorMessage } from '@portkey/did-ui-react';
 import { request } from 'api';
-import { CreateWithdrawOrderErrorCode, ErrorNameType } from 'constants/withdraw';
+import { ErrorNameType, FAIL_MODAL_REASON_ERROR_CODE_LIST } from 'constants/withdraw';
 import {
   CreateWithdrawOrderRequest,
   CreateWithdrawOrderResult,
@@ -65,8 +65,9 @@ export const createWithdrawOrder = async (
   } catch (error) {
     const newError = new Error(handleErrorMessage(error, 'createWithdrawOrder error'));
     if (
-      [CreateWithdrawOrderErrorCode.TRANSACTION_FEES_FLUCTUATED].includes(
-        (error as { code: CreateWithdrawOrderErrorCode; message: string }).code,
+      FAIL_MODAL_REASON_ERROR_CODE_LIST.includes(
+        (error as { code: (typeof FAIL_MODAL_REASON_ERROR_CODE_LIST)[number]; message: string })
+          .code,
       )
     ) {
       newError.name = ErrorNameType.FAIL_MODAL_REASON;
