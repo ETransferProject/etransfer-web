@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ChainNameItem, CHAIN_LIST } from 'constants/index';
+import { IChainNameItem, CHAIN_LIST } from 'constants/index';
 import { SideMenuKey } from 'constants/home';
 
 export interface CommonState {
   isMobile: boolean;
   isMobilePX: boolean;
   activeMenuKey: SideMenuKey;
-  currentChainItem: ChainNameItem;
+  currentChainItem: IChainNameItem;
 }
 
 export const initialState: CommonState = {
@@ -30,7 +30,7 @@ export const CommonSlice = createSlice({
     setActiveMenuKey: (state, action: PayloadAction<SideMenuKey>) => {
       state.activeMenuKey = action.payload;
     },
-    setCurrentChainItem: (state, action: PayloadAction<ChainNameItem>) => {
+    setCurrentChainItem: (state, action: PayloadAction<IChainNameItem>) => {
       state.currentChainItem = action.payload;
     },
     initCommon: (state) => {

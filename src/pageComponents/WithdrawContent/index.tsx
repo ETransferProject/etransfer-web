@@ -27,7 +27,7 @@ import {
   useUserActionState,
 } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { ADDRESS_MAP, ChainNameItem, USDT_DECIMAL } from 'constants/index';
+import { ADDRESS_MAP, IChainNameItem, USDT_DECIMAL } from 'constants/index';
 import { createWithdrawOrder, getNetworkList, getWithdrawInfo } from 'utils/api/deposit';
 import {
   CONTRACT_ADDRESS,
@@ -79,7 +79,7 @@ const NETWORK_DATA_ERROR_LIST = ['address', 'is currently not supported'];
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const { isMobilePX, currentChainItem } = useCommonState();
-  const currentChainItemRef = useRef<ChainNameItem>(currentChainItem);
+  const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
   const { accounts } = usePortkeyWalletState();
   const { currentSymbol, tokenList } = useTokenState();
   const { withdraw } = useUserActionState();
@@ -409,7 +409,7 @@ export default function WithdrawContent() {
   ]);
 
   const handleChainChanged = useCallback(
-    async (item: ChainNameItem) => {
+    async (item: IChainNameItem) => {
       try {
         setLoading(true);
         currentChainItemRef.current = item;
@@ -716,7 +716,7 @@ export default function WithdrawContent() {
         mobileTitle="Withdraw from"
         mobileLabel="from"
         webLabel="Withdraw USDT from"
-        chainChanged={(item: ChainNameItem) => handleChainChanged(item)}
+        chainChanged={(item: IChainNameItem) => handleChainChanged(item)}
       />
       <div>
         <Form className={styles['form-wrapper']} layout="vertical" requiredMark={false} form={form}>

@@ -25,12 +25,12 @@ export enum CHAIN_NAME_ENUM {
   'SideChain' = 'SideChain tDVW',
 }
 
-export interface ChainNameItem {
+export interface IChainNameItem {
   key: SupportedELFChainId;
   label: CHAIN_NAME_ENUM;
 }
 
-export const CHAIN_LIST: ChainNameItem[] = [
+export const CHAIN_LIST: IChainNameItem[] = [
   {
     key: SupportedELFChainId.AELF,
     label: CHAIN_NAME_ENUM.MainChain,

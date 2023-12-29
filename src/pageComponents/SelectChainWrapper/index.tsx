@@ -2,14 +2,14 @@ import clsx from 'clsx';
 import SelectChain from 'components/SelectChain';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { ChainNameItem } from 'constants/index';
+import { IChainNameItem } from 'constants/index';
 
 interface SelectChainWrapperProps {
   className?: string;
   mobileTitle?: string;
   mobileLabel?: string;
   webLabel?: string;
-  chainChanged: (item: ChainNameItem) => void;
+  chainChanged: (item: IChainNameItem) => void;
 }
 
 export default function SelectChainWrapper({
