@@ -2,6 +2,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAnalytics, logEvent, Analytics } from 'firebase/analytics';
 import { NETWORK_TYPE } from 'constants/index';
+import * as Sentry from '@sentry/nextjs';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -28,11 +29,16 @@ const firebaseConfigTestnet = {
 };
 // Initialize Firebase
 const app = initializeApp(NETWORK_TYPE === 'MAIN' ? firebaseConfigMainnet : firebaseConfigTestnet);
-let analytics: Analytics;
+// let analytics: Analytics;
 // only for csr
 if (typeof window !== 'undefined') {
-  analytics = getAnalytics(app);
+  getAnalytics(app);
+  // analytics = getAnalytics(app);
 }
-export const setEvent = (eventName: string, params?: object) => {
-  logEvent(analytics, eventName, params);
-};
+// export const setEvent = (eventName: string, params?: object) => {
+//   logEvent(analytics, eventName, params);
+// };
+
+const reportError = Sentry.captureException;
+
+export { reportError };
