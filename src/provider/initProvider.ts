@@ -17,9 +17,16 @@ import { usePortkeyProvider } from 'hooks/usePortkeyProvider';
 import myEvents from 'utils/myEvent';
 import { resetJWT } from 'api/utils';
 import singleMessage from 'components/SingleMessage';
+import { initCommon } from 'store/reducers/common/slice';
+import { initUserAction } from 'store/reducers/userAction/slice';
 
 export default function InitProvider() {
   const { connectEagerly } = usePortkeyProvider();
+
+  const initData = useCallback(() => {
+    store.dispatch(initCommon());
+    store.dispatch(initUserAction());
+  }, []);
 
   const listener = useCallback(async () => {
     const provider = await portkeyWallet.getProvider();
@@ -29,6 +36,7 @@ export default function InitProvider() {
       if (Object.keys(accounts).length === 0) {
         store.dispatch(setDisconnectedAction(initialPortkeyWalletState));
         portkeyWallet.clearData();
+        initData();
         return;
       }
       store.dispatch(setAccountsAction(accounts));
@@ -45,6 +53,7 @@ export default function InitProvider() {
         );
         store.dispatch(setDisconnectedAction(initialPortkeyWalletState));
         portkeyWallet.clearData();
+        initData();
       }
     });
     // provider.on(NotificationEvents.CONNECTED, async () => {
@@ -54,6 +63,7 @@ export default function InitProvider() {
     provider.on(NotificationEvents.DISCONNECTED, () => {
       store.dispatch(setDisconnectedAction(initialPortkeyWalletState));
       portkeyWallet.clearData();
+      initData();
     });
   }, []);
 
@@ -87,6 +97,7 @@ export default function InitProvider() {
       resetJWT();
       store.dispatch(setDisconnectedAction(initialPortkeyWalletState));
       portkeyWallet.clearData();
+      initData();
     });
     const timer = setTimeout(init(), 1000);
     return () => {

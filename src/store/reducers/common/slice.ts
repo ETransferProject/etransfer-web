@@ -33,10 +33,14 @@ export const CommonSlice = createSlice({
     setCurrentChainItem: (state, action: PayloadAction<ChainNameItem>) => {
       state.currentChainItem = action.payload;
     },
+    initCommon: (state) => {
+      state.activeMenuKey = initialState.activeMenuKey;
+      state.currentChainItem = initialState.currentChainItem;
+    },
   },
 });
 
-export const { setIsMobile, setIsMobilePX, setActiveMenuKey, setCurrentChainItem } =
+export const { setIsMobile, setIsMobilePX, setActiveMenuKey, setCurrentChainItem, initCommon } =
   CommonSlice.actions;
 
 export default CommonSlice;
