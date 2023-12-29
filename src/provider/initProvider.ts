@@ -19,6 +19,7 @@ import { resetJWT } from 'api/utils';
 import singleMessage from 'components/SingleMessage';
 import { initCommon } from 'store/reducers/common/slice';
 import { initUserAction } from 'store/reducers/userAction/slice';
+import 'utils/firebase';
 
 export default function InitProvider() {
   const { connectEagerly } = usePortkeyProvider();
