@@ -118,13 +118,8 @@ class PortkeyWallet implements IPortkeyWallet {
       throw Error('provider init error');
     }
 
-    const accounts = await provider.request({ method: MethodsBase.REQUEST_ACCOUNTS });
-    console.log('from provider - accounts:', accounts);
-    const [name, networkType] = await Promise.all([
-      provider.request({ method: MethodsWallet.GET_WALLET_NAME }),
-      provider.request({ method: MethodsBase.NETWORK }),
-    ]);
-    console.log('from provider - name,networkType:', name, networkType);
+    const networkType = await provider.request({ method: MethodsBase.NETWORK });
+    console.log('from provider - networkType:', networkType);
     if (networkType !== this.matchNetworkType) {
       singleMessage.error(
         `Please switch Portkey to aelf ${
@@ -135,6 +130,11 @@ class PortkeyWallet implements IPortkeyWallet {
       );
       throw Error('networkType error');
     }
+
+    const accounts = await provider.request({ method: MethodsBase.REQUEST_ACCOUNTS });
+    console.log('from provider - accounts:', accounts);
+    const name = await provider.request({ method: MethodsWallet.GET_WALLET_NAME });
+    console.log('from provider - name:', name);
 
     if (!this.caHash) {
       await this.getCaHash();
