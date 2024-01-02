@@ -116,10 +116,6 @@ export type CreateWithdrawOrderRequest = {
   fromChainId: ChainId;
   toAddress: string;
   rawTransaction: string;
-  feeInfo: {
-    thirdPart: FeeInfoItem;
-    aelf: FeeInfoItem;
-  };
 };
 
 export type CreateWithdrawOrderResult = {

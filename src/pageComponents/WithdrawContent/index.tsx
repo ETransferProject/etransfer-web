@@ -550,16 +550,6 @@ export default function WithdrawContent() {
           fromChainId: currentChainItemRef.current.key,
           toAddress: address,
           rawTransaction: transaction,
-          feeInfo: {
-            thirdPart: {
-              amount: withdrawInfo.transactionFee,
-              unit: withdrawInfo.transactionUnit,
-            },
-            aelf: {
-              amount: withdrawInfo.aelfTransactionFee,
-              unit: withdrawInfo.aelfTransactionUnit,
-            },
-          },
         });
         console.log('🌈 🌈 🌈 🌈 🌈 🌈 createWithdrawOrderRes', createWithdrawOrderRes);
         if (createWithdrawOrderRes.orderId) {
