@@ -4,7 +4,7 @@ import * as tDVV from '../platform/tDVV_test3';
 import { NetworkType } from '@portkey/provider-types';
 import { NetworkName } from 'constants/network';
 
-export const NETWORK_NAME = NetworkName.test3;
+export const NETWORK_NAME = NetworkName.test3 as NetworkName;
 
 export const NETWORK_TYPE: NetworkType = 'MAIN';
 
