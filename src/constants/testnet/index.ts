@@ -2,6 +2,9 @@ import { ContractType } from 'constants/chain';
 import * as AELF_Test from '../platform/AELF_Test';
 import * as tDVW_Test from '../platform/tDVW_Test';
 import { NetworkType } from '@portkey/provider-types';
+import { NetworkName } from 'constants/network';
+
+export const NETWORK_NAME: NetworkName = NetworkName.testnet;
 
 export const NETWORK_TYPE: NetworkType = 'TESTNET';
 

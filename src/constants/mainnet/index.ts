@@ -2,6 +2,9 @@ import { ContractType } from 'constants/chain';
 import * as AELF from '../platform/AELF';
 import * as tDVV from '../platform/tDVV';
 import { NetworkType } from '@portkey/provider-types';
+import { NetworkName } from 'constants/network';
+
+export const NETWORK_NAME = NetworkName.mainnet;
 
 export const NETWORK_TYPE: NetworkType = 'MAIN';
 
