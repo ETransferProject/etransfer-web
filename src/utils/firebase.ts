@@ -1,7 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
 import { getAnalytics, logEvent, Analytics } from 'firebase/analytics';
-import { NETWORK_TYPE } from 'constants/index';
+import { NETWORK_NAME, NETWORK_TYPE } from 'constants/index';
+import { NetworkName } from 'constants/network';
 import * as Sentry from '@sentry/nextjs';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -31,13 +32,20 @@ const firebaseConfigTestnet = {
   measurementId: process.env.NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
-const app = initializeApp(NETWORK_TYPE === 'MAIN' ? firebaseConfigMainnet : firebaseConfigTestnet);
 let analytics: Analytics;
-// only for csr
-if (typeof window !== 'undefined') {
-  analytics = getAnalytics(app);
+
+if (NETWORK_NAME === NetworkName.mainnet || NETWORK_NAME === NetworkName.testnet) {
+  // Initialize Firebase
+  const app = initializeApp(
+    NETWORK_TYPE === 'MAIN' ? firebaseConfigMainnet : firebaseConfigTestnet,
+  );
+
+  // only for csr
+  if (typeof window !== 'undefined') {
+    analytics = getAnalytics(app);
+  }
 }
+
 export const setEvent = (eventName: string, params?: object) => {
   logEvent(analytics, eventName, params);
 };
