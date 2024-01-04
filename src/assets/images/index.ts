@@ -13,6 +13,7 @@ import Wallet from './wallet.svg';
 import LargeWallet from './largeWallet.svg';
 import LargeLogo from './largeLogo.png';
 import qrCodePlaceholder from './qrCodePlaceholder.png';
+import SmallExclamationFilled from './smallExclamationFilled.svg';
 
 export {
   Info,
@@ -30,4 +31,5 @@ export {
   SmallCopy,
   LargeLogo,
   qrCodePlaceholder,
+  SmallExclamationFilled,
 };

@@ -1,4 +1,4 @@
-import { ChainNameItem } from 'constants/index';
+import { IChainNameItem } from 'constants/index';
 import { NetworkItem } from './api';
 
 export type ContractAddress = {
@@ -6,24 +6,11 @@ export type ContractAddress = {
   addressLink: string;
 };
 
-export type WithdrawInfoCheck = {
-  receiveAmount: string;
-  address: string;
-  network: NetworkItem;
-  amount: string;
-  transactionFee: {
-    amount: string;
-    currency: string;
-    name: string;
-  };
-  symbol: string;
-};
-
 export type WithdrawInfoSuccess = {
   receiveAmount: string;
   network: NetworkItem;
   amount: string;
   symbol: string;
-  chainItem: ChainNameItem;
+  chainItem: IChainNameItem;
   arriveTime: string;
 };

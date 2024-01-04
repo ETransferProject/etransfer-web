@@ -1,5 +1,6 @@
 import { handleErrorMessage } from '@portkey/did-ui-react';
 import { request } from 'api';
+import { ErrorNameType, FAIL_MODAL_REASON_ERROR_CODE_LIST } from 'constants/withdraw';
 import {
   CreateWithdrawOrderRequest,
   CreateWithdrawOrderResult,
@@ -62,6 +63,15 @@ export const createWithdrawOrder = async (
     const res = await request.deposit.createWithdrawOrder({ data: params });
     return res.data;
   } catch (error) {
-    throw new Error(handleErrorMessage(error, 'createWithdrawOrder error'));
+    const newError = new Error(handleErrorMessage(error, 'createWithdrawOrder error'));
+    if (
+      FAIL_MODAL_REASON_ERROR_CODE_LIST.includes(
+        (error as { code: (typeof FAIL_MODAL_REASON_ERROR_CODE_LIST)[number]; message: string })
+          .code,
+      )
+    ) {
+      newError.name = ErrorNameType.FAIL_MODAL_REASON;
+    }
+    throw newError;
   }
 };

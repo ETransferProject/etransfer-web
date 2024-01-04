@@ -12,11 +12,17 @@ import { zeroFill } from 'utils/calculate';
 import { sleep } from 'utils/common';
 import { did } from 'aelf-web-login';
 import { queryAuthToken } from 'api/utils';
-import { SupportedELFChainId } from 'constants/index';
+import {
+  SupportedELFChainId,
+  NetworkType as NetworkTypeEnum,
+  NetworkTypeText,
+} from 'constants/index';
 import { CaHolderWithGuardian } from '@portkey/graphql';
 import isMobile from 'utils/isMobile';
 import { isPortkey } from 'utils/portkey';
 import { GetCAHolderByManagerResult, GetCAHolderByManagerParams } from '@portkey/services';
+import singleMessage from 'components/SingleMessage';
+
 const ec = new elliptic.ec('secp256k1');
 
 export interface IPortkeyWalletAttribute {
@@ -46,6 +52,8 @@ export interface IPortkeyWallet extends IPortkeyWalletAttribute {
   connectEagerly: () => Promise<{ accounts: Accounts }>;
   connected: () => Promise<ProviderInfo>;
   getProvider: () => Promise<IPortkeyProvider | undefined>;
+  clearData: () => void;
+  getCaHash: () => Promise<string | undefined>;
 }
 
 export interface PortkeyWalletOptions {
@@ -110,14 +118,23 @@ class PortkeyWallet implements IPortkeyWallet {
       throw Error('provider init error');
     }
 
+    const networkType = await provider.request({ method: MethodsBase.NETWORK });
+    console.log('from provider - networkType:', networkType);
+    if (networkType !== this.matchNetworkType) {
+      singleMessage.error(
+        `Please switch Portkey to aelf ${
+          this.matchNetworkType === NetworkTypeEnum.TESTNET
+            ? NetworkTypeText.TESTNET
+            : NetworkTypeText.MAIN
+        }.`,
+      );
+      throw Error('networkType error');
+    }
+
     const accounts = await provider.request({ method: MethodsBase.REQUEST_ACCOUNTS });
     console.log('from provider - accounts:', accounts);
-    const [name, networkType] = await Promise.all([
-      provider.request({ method: MethodsWallet.GET_WALLET_NAME }),
-      provider.request({ method: MethodsBase.NETWORK }),
-    ]);
-    console.log('from provider - name,networkType:', name, networkType);
-    if (networkType !== this.matchNetworkType) throw Error('networkType error');
+    const name = await provider.request({ method: MethodsWallet.GET_WALLET_NAME });
+    console.log('from provider - name:', name);
 
     if (!this.caHash) {
       await this.getCaHash();
@@ -158,7 +175,14 @@ class PortkeyWallet implements IPortkeyWallet {
     this.managerAddress = managerAddress;
     return managerAddress;
   }
-  public getCaHash: () => Promise<GetCAHolderByManagerResult> = async () => {
+  public async getCaHash() {
+    if (this?.caHash) return this.caHash;
+    await this.refreshCaHash();
+    return this.caHash;
+  }
+  public refreshCaHash: (count?: number) => Promise<GetCAHolderByManagerResult> = async (
+    count = 0,
+  ) => {
     try {
       if (!this.managerAddress) await this.getManagerAddress();
 
@@ -192,7 +216,9 @@ class PortkeyWallet implements IPortkeyWallet {
     }
     // sleep wait indexer
     await sleep(3000);
-    return this.getCaHash();
+    if (count >= 10) throw Error('Please try again');
+    count++;
+    return this.refreshCaHash(count);
   };
 
   public async getSignature(data: string) {
@@ -225,6 +251,12 @@ class PortkeyWallet implements IPortkeyWallet {
     const pubKey = ec.keyFromPublic(publicKey).getPublic('hex');
 
     return { signatureStr, pubKey };
+  }
+
+  public clearData() {
+    this.managerAddress = '';
+    this.caHash = '';
+    this.manager = undefined;
   }
 }
 

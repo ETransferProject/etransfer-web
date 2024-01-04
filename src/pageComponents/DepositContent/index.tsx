@@ -10,7 +10,7 @@ import {
 } from 'store/Provider/hooks';
 import { BusinessType, DepositInfo, GetNetworkListRequest, NetworkItem } from 'types/api';
 import { getDepositInfo, getNetworkList } from 'utils/api/deposit';
-import { ChainNameItem, SupportedELFChainId } from 'constants/index';
+import { IChainNameItem, SupportedELFChainId } from 'constants/index';
 import {
   setDepositAddress,
   setDepositCurrentNetwork,
@@ -29,7 +29,7 @@ export type DepositContentProps = {
   qrCodeValue: string;
   networkSelected?: NetworkItem;
   tokenLogoUrl?: string;
-  chainChanged: (item: ChainNameItem) => void;
+  chainChanged: (item: IChainNameItem) => void;
   networkChanged: (item: NetworkItem) => Promise<void>;
 };
 
@@ -117,7 +117,7 @@ export default function Content() {
   );
 
   const handleChainChanged = useCallback(
-    async (item: ChainNameItem) => {
+    async (item: IChainNameItem) => {
       await getNetworkData({
         chainId: item.key,
         symbol: currentSymbol,

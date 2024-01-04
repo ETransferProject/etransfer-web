@@ -47,6 +47,9 @@ export const UserActionSlice = createSlice({
     setWithdrawNetworkList: (state, action: PayloadAction<NetworkItem[]>) => {
       state.withdraw.networkList = action.payload;
     },
+    initUserAction: () => {
+      return initialUserActionState;
+    },
   },
 });
 
@@ -58,6 +61,7 @@ export const {
   setWithdrawAddress,
   setWithdrawCurrentNetwork,
   setWithdrawNetworkList,
+  initUserAction,
 } = UserActionSlice.actions;
 
 export default UserActionSlice;

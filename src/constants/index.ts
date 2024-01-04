@@ -1,3 +1,5 @@
+export * from './mainnet';
+
 export enum WalletType {
   unknown = 'unknown',
   discover = 'discover',
@@ -7,6 +9,11 @@ export enum WalletType {
 export enum NetworkType {
   MAIN = 'MAIN',
   TESTNET = 'TESTNET',
+}
+
+export enum NetworkTypeText {
+  MAIN = 'Mainnet',
+  TESTNET = 'Testnet',
 }
 
 export const ChainNamePrefix = {
@@ -20,5 +27,3 @@ export const SECONDS_60 = 60000;
 export const prefixCls = 'etransfer-web';
 export const AppName = 'ETransfer Web';
 export const BrandName = 'ETransfer';
-
-export * from './mainnet';

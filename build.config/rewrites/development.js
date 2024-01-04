@@ -11,10 +11,11 @@ module.exports = [
   },
   // {
   //   source: '/api/:path*',
-  //   destination: `${commonHost}/api/:path*`,
+  //   destination: 'http://192.168.66.203:5001/api/:path*',
   // },
   // {
   //   source: '/graphql/:path*',
-  //   destination: `${GraphqlHost}/Portkey_DID/PortKeyIndexerCASchema/graphql/:path*`,
+  //   destination:
+  //     'http://192.168.66.203:8083/AElfIndexer_DApp/PortKeyIndexerCASchema/graphql/:path*',
   // },
 ];
