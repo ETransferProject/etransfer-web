@@ -308,7 +308,8 @@ export default function WithdrawContent() {
       handleFormValidateDataChange({
         [FormKeys.NETWORK]: {
           validateStatus: ValidateStatus.Warning,
-          errorMessage: "Due to Ethereum's high gas price, it's advisable to delay your withdrawal",
+          errorMessage:
+            "Due to Ethereum's high gas price, it's advisable to delay your withdrawal.",
         },
       });
     } else {
