@@ -365,7 +365,7 @@ export default function WithdrawContent() {
       return;
     }
     const parserNumber = Number(parserWithThousandsSeparator(amount));
-    if (parserNumber <= Number(parserWithThousandsSeparator(minAmount))) {
+    if (parserNumber < Number(parserWithThousandsSeparator(minAmount))) {
       handleFormValidateDataChange({
         [FormKeys.AMOUNT]: {
           validateStatus: ValidateStatus.Error,
