@@ -20,6 +20,7 @@ import { useEffectOnce } from 'react-use';
 import singleMessage from 'components/SingleMessage';
 import { handleErrorMessage } from 'aelf-web-login';
 import { initDepositInfo } from 'constants/deposit';
+import { CommonErrorNameType } from 'api/types';
 
 export type DepositContentProps = {
   networkList: NetworkItem[];
@@ -65,12 +66,14 @@ export default function Content() {
         setLoading(false);
         setDepositInfo(res.depositInfo);
         dispatch(setDepositAddress(res.depositInfo.depositAddress));
-      } catch (error) {
+      } catch (error: any) {
         setLoading(false);
         setDepositInfo(initDepositInfo);
         dispatch(setDepositAddress(initDepositInfo.depositAddress));
         console.log('getDepositInfo error:', error);
-        singleMessage.error('The deposit service is busy. Please try again later.');
+        if (error.name !== CommonErrorNameType.CANCEL) {
+          singleMessage.error('The deposit service is busy. Please try again later.');
+        }
       } finally {
         setLoading(false);
       }
@@ -106,9 +109,11 @@ export default function Content() {
           }
         }
         setLoading(false);
-      } catch (error) {
+      } catch (error: any) {
         setLoading(false);
-        singleMessage.error(handleErrorMessage(error));
+        if (error.name !== CommonErrorNameType.CANCEL) {
+          singleMessage.error(handleErrorMessage(error));
+        }
       } finally {
         setLoading(false);
       }

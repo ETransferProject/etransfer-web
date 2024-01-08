@@ -1,5 +1,9 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 
+export enum CommonErrorNameType {
+  CANCEL = 'cancel',
+}
+
 export enum CancelTokenSourceKey {
   GET_DEPOSIT_INFO = 'getDepositInfo',
   GET_WITHDRAW_INFO = 'getWithdrawInfo',
