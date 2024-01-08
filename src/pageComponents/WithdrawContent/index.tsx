@@ -295,13 +295,13 @@ export default function WithdrawContent() {
       const res = await getWithdrawInfo(params);
 
       setWithdrawInfo(res.withdrawInfo);
+      setIsTransactionFeeLoading(false);
     } catch (error: any) {
       setWithdrawInfo(initialWithdrawInfo);
       if (error.name !== CommonErrorNameType.CANCEL) {
         singleMessage.error(handleErrorMessage(error));
+        setIsTransactionFeeLoading(false);
       }
-    } finally {
-      setIsTransactionFeeLoading(false);
     }
   }, [currentSymbol]);
 
