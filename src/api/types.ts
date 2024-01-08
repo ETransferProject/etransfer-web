@@ -1,7 +1,12 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 
+export enum CancelTokenSourceKey {
+  GET_WITHDRAW_INFO = 'getWithdrawInfo',
+}
+
 export type RequestConfig = {
   query?: string; //this for url parameter； example: test/:id
+  cancelTokenSourceKey?: CancelTokenSourceKey;
 } & AxiosRequestConfig;
 
 export type IBaseRequest = {
