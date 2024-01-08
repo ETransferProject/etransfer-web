@@ -55,6 +55,7 @@ import { useDebounceCallback } from 'hooks';
 import { useEffectOnce } from 'react-use';
 import SimpleLoading from 'components/SimpleLoading';
 import { ErrorNameType } from 'constants/withdraw';
+import { CommonErrorNameType } from 'api/types';
 
 enum ValidateStatus {
   Error = 'error',
@@ -248,9 +249,9 @@ export default function WithdrawContent() {
           });
         }
         setLoading(false);
-      } catch (error) {
+      } catch (error: any) {
         setLoading(false);
-        const errorString = (error as Error).message;
+        const errorString = error.message;
         if (NETWORK_DATA_ERROR_LIST.some((item) => errorString.includes(item))) {
           handleFormValidateDataChange({
             [FormKeys.ADDRESS]: {
@@ -265,7 +266,9 @@ export default function WithdrawContent() {
               errorMessage: '',
             },
           });
-          singleMessage.error(handleErrorMessage(error));
+          if (error.name !== CommonErrorNameType.CANCEL) {
+            singleMessage.error(handleErrorMessage(error));
+          }
         }
         setNetworkList([]);
         dispatch(setWithdrawNetworkList([]));
@@ -292,9 +295,11 @@ export default function WithdrawContent() {
       const res = await getWithdrawInfo(params);
 
       setWithdrawInfo(res.withdrawInfo);
-    } catch (error) {
+    } catch (error: any) {
       setWithdrawInfo(initialWithdrawInfo);
-      singleMessage.error(handleErrorMessage(error));
+      if (error.name !== CommonErrorNameType.CANCEL) {
+        singleMessage.error(handleErrorMessage(error));
+      }
     } finally {
       setIsTransactionFeeLoading(false);
     }

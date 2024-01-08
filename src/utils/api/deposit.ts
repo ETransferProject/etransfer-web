@@ -1,6 +1,7 @@
+import axios from 'axios';
 import { handleErrorMessage } from '@portkey/did-ui-react';
 import { request } from 'api';
-import { CancelTokenSourceKey } from 'api/types';
+import { CancelTokenSourceKey, CommonErrorNameType } from 'api/types';
 import { ErrorNameType, FAIL_MODAL_REASON_ERROR_CODE_LIST } from 'constants/withdraw';
 import {
   CreateWithdrawOrderRequest,
@@ -34,7 +35,11 @@ export const getNetworkList = async (
     });
     return res.data;
   } catch (error) {
-    throw new Error(handleErrorMessage(error, 'getNetworkList error'));
+    const newError = new Error(handleErrorMessage(error, 'getNetworkList error'));
+    if (axios.isCancel(error)) {
+      newError.name = CommonErrorNameType.CANCEL;
+    }
+    throw newError;
   }
 };
 
@@ -48,7 +53,11 @@ export const getDepositInfo = async (
     });
     return res.data;
   } catch (error) {
-    throw new Error(handleErrorMessage(error, 'getDepositInfo error'));
+    const newError = new Error(handleErrorMessage(error, 'getDepositInfo error'));
+    if (axios.isCancel(error)) {
+      newError.name = CommonErrorNameType.CANCEL;
+    }
+    throw newError;
   }
 };
 
@@ -56,13 +65,17 @@ export const getWithdrawInfo = async (
   params: GetWithdrawInfoRequest,
 ): Promise<GetWithdrawInfoResult> => {
   try {
-    const res = await request.deposit.getWithdrawInfo({
+    const res = await request.deposit.getNetworkList({
       params,
       cancelTokenSourceKey: CancelTokenSourceKey.GET_WITHDRAW_INFO,
     });
     return res.data;
   } catch (error) {
-    throw new Error(handleErrorMessage(error, 'getWithdrawInfo error'));
+    const newError = new Error(handleErrorMessage(error, 'getWithdrawInfo error'));
+    if (axios.isCancel(error)) {
+      newError.name = CommonErrorNameType.CANCEL;
+    }
+    throw newError;
   }
 };
 
