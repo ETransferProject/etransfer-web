@@ -1,7 +1,9 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 export enum CancelTokenSourceKey {
+  GET_DEPOSIT_INFO = 'getDepositInfo',
   GET_WITHDRAW_INFO = 'getWithdrawInfo',
+  GET_NETWORK_LIST = 'getNetworkList',
 }
 
 export type RequestConfig = {
