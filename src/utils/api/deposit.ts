@@ -65,7 +65,7 @@ export const getWithdrawInfo = async (
   params: GetWithdrawInfoRequest,
 ): Promise<GetWithdrawInfoResult> => {
   try {
-    const res = await request.deposit.getNetworkList({
+    const res = await request.deposit.getWithdrawInfo({
       params,
       cancelTokenSourceKey: CancelTokenSourceKey.GET_WITHDRAW_INFO,
     });
