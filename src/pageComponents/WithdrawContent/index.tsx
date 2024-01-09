@@ -108,25 +108,31 @@ export default function WithdrawContent() {
     [FormKeys.AMOUNT]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
   });
   const [isTransactionFeeLoading, setIsTransactionFeeLoading] = useState(false);
+  const [isWithdrawalAmountInputting, setIsWithdrawalAmountInputting] = useState(false);
 
   const getTransactionFeeTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const preReceiveAmountRef = useRef('');
 
   const minAmount = useMemo(() => {
     return withdrawInfo?.minAmount || '0.2';
   }, [withdrawInfo?.minAmount]);
   const receiveAmount = useMemo(() => {
-    if (
+    let result = '';
+    if (isWithdrawalAmountInputting) {
+      result = preReceiveAmountRef.current;
+    } else if (
       !balance ||
       !withdrawInfo.transactionFee ||
       ZERO.plus(balance).isLessThan(ZERO.plus(withdrawInfo.transactionFee)) ||
       ZERO.plus(balance).isLessThan(ZERO.plus(minAmount))
     ) {
-      return '';
+      result = '';
     } else {
-      const res = BigNumber(balance).minus(BigNumber(withdrawInfo.transactionFee)).toFixed();
-      return res;
+      result = BigNumber(balance).minus(BigNumber(withdrawInfo.transactionFee)).toFixed();
     }
-  }, [balance, minAmount, withdrawInfo.transactionFee]);
+    preReceiveAmountRef.current = result;
+    return result;
+  }, [balance, minAmount, withdrawInfo.transactionFee, isWithdrawalAmountInputting]);
 
   const getMaxBalanceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -798,7 +804,13 @@ export default function WithdrawContent() {
                   setBalance(value || '');
                   form.setFieldValue(FormKeys.AMOUNT, value || '');
                 }}
-                onBlur={handleAmountValidate}
+                onFocus={() => {
+                  setIsWithdrawalAmountInputting(true);
+                }}
+                onBlur={() => {
+                  setIsWithdrawalAmountInputting(false);
+                  handleAmountValidate();
+                }}
               />
             </Form.Item>
           </div>
