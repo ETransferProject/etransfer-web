@@ -6,6 +6,7 @@ import { store } from 'store/Provider/store';
 import { useCommonState } from 'store/Provider/hooks';
 import { SideMenuKey, MENU_ITEMS } from 'constants/home';
 import styles from './styles.module.scss';
+import { setHash } from 'utils/useLocation';
 
 export default function Sider() {
   const { activeMenuKey } = useCommonState();
@@ -13,6 +14,8 @@ export default function Sider() {
     // init activeMenuKey
     if (!activeMenuKey) {
       store.dispatch(setActiveMenuKey(SideMenuKey.Deposit));
+
+      setHash(SideMenuKey.Deposit);
     }
   }, [activeMenuKey]);
   return (

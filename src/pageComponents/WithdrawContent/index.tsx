@@ -713,7 +713,7 @@ export default function WithdrawContent() {
         webLabel="Withdraw USDT from"
         chainChanged={(item: IChainNameItem) => handleChainChanged(item)}
       />
-      <div>
+      <div id="withdraw">
         <Form className={styles['form-wrapper']} layout="vertical" requiredMark={false} form={form}>
           <div className={styles['form-item-wrapper']}>
             <Form.Item

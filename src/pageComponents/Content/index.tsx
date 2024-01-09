@@ -11,6 +11,7 @@ import clsx from 'clsx';
 import { getTokenList } from 'utils/api/deposit';
 import { BusinessType } from 'types/api';
 import { setCurrentSymbol, setTokenList } from 'store/reducers/token/slice';
+import { setHash } from 'utils/useLocation';
 
 export default function Content() {
   const dispatch = useAppDispatch();
@@ -54,6 +55,8 @@ export default function Content() {
   useEffect(() => {
     if (routeQuery.type) {
       dispatch(setActiveMenuKey(routeQuery.type));
+
+      setHash(routeQuery.type);
     }
     if (routeQuery.chainId) {
       const ChainItemKey = CHAIN_LIST.filter((item) => item.key === routeQuery.chainId);
