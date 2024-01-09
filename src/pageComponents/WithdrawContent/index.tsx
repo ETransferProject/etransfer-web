@@ -792,6 +792,7 @@ export default function WithdrawContent() {
                   placeholder: `Minimum: ${minAmount}`,
                   stringMode: true,
                   min: '0',
+                  max: '999999999.999999',
                   precision: 6,
                   formatter: (value, info) =>
                     formatWithThousandsSeparator(value, {
