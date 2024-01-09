@@ -7,6 +7,7 @@ import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { store } from 'store/Provider/store';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
+import { setHash } from 'utils/useLocation';
 
 export default function SelectMenu() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
@@ -17,6 +18,8 @@ export default function SelectMenu() {
     // init activeMenuKey
     if (!activeMenuKey) {
       store.dispatch(setActiveMenuKey(SideMenuKey.Deposit));
+
+      setHash(SideMenuKey.Deposit);
     }
   }, [activeMenuKey]);
 
@@ -45,6 +48,8 @@ export default function SelectMenu() {
               onClick={() => {
                 store.dispatch(setActiveMenuKey(item.key));
                 setIsDrawerOpen(false);
+
+                setHash(item.key);
               }}>
               <MenuIcon className={styles['menu-item-icon']} />
               <div className={styles['menu-item-label']}>{item.label}</div>

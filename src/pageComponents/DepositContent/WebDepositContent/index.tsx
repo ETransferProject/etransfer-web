@@ -41,7 +41,7 @@ export default function WebContent({
       </div>
       {!!depositInfo.depositAddress && (
         <>
-          <div className={clsx('flex-row-center', styles['deposit-address-wrapper'])}>
+          <div id="deposit" className={clsx('flex-row-center', styles['deposit-address-wrapper'])}>
             {qrCodeValue ? (
               <CommonQRCode value={qrCodeValue} logoUrl={tokenLogoUrl} />
             ) : (

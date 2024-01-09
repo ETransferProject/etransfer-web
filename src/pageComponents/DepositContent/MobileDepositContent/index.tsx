@@ -44,7 +44,7 @@ export default function MobileDepositContent({
         mobileLabel="to"
         chainChanged={chainChanged}
       />
-      <div className={clsx('flex-column', styles['content-wrapper'])}>
+      <div id="deposit" className={clsx('flex-column', styles['content-wrapper'])}>
         <div className={clsx('flex-row-content-center', styles['QR-code-wrapper'])}>
           {qrCodeValue ? (
             <CommonQRCode value={qrCodeValue} logoUrl={tokenLogoUrl} />
