@@ -10,7 +10,7 @@ import {
 } from 'store/Provider/hooks';
 import { BusinessType, DepositInfo, GetNetworkListRequest, NetworkItem } from 'types/api';
 import { getDepositInfo, getNetworkList } from 'utils/api/deposit';
-import { ChainNameItem, SupportedELFChainId } from 'constants/index';
+import { IChainNameItem, SupportedELFChainId } from 'constants/index';
 import {
   setDepositAddress,
   setDepositCurrentNetwork,
@@ -20,6 +20,7 @@ import { useEffectOnce } from 'react-use';
 import singleMessage from 'components/SingleMessage';
 import { handleErrorMessage } from 'aelf-web-login';
 import { initDepositInfo } from 'constants/deposit';
+import { CommonErrorNameType } from 'api/types';
 
 export type DepositContentProps = {
   networkList: NetworkItem[];
@@ -29,7 +30,7 @@ export type DepositContentProps = {
   qrCodeValue: string;
   networkSelected?: NetworkItem;
   tokenLogoUrl?: string;
-  chainChanged: (item: ChainNameItem) => void;
+  chainChanged: (item: IChainNameItem) => void;
   networkChanged: (item: NetworkItem) => Promise<void>;
 };
 
@@ -65,12 +66,14 @@ export default function Content() {
         setLoading(false);
         setDepositInfo(res.depositInfo);
         dispatch(setDepositAddress(res.depositInfo.depositAddress));
-      } catch (error) {
+      } catch (error: any) {
         setLoading(false);
         setDepositInfo(initDepositInfo);
         dispatch(setDepositAddress(initDepositInfo.depositAddress));
         console.log('getDepositInfo error:', error);
-        singleMessage.error('The deposit service is busy. Please try again later.');
+        if (error.name !== CommonErrorNameType.CANCEL) {
+          singleMessage.error('The deposit service is busy. Please try again later.');
+        }
       } finally {
         setLoading(false);
       }
@@ -106,9 +109,11 @@ export default function Content() {
           }
         }
         setLoading(false);
-      } catch (error) {
+      } catch (error: any) {
         setLoading(false);
-        singleMessage.error(handleErrorMessage(error));
+        if (error.name !== CommonErrorNameType.CANCEL) {
+          singleMessage.error(handleErrorMessage(error));
+        }
       } finally {
         setLoading(false);
       }
@@ -117,7 +122,7 @@ export default function Content() {
   );
 
   const handleChainChanged = useCallback(
-    async (item: ChainNameItem) => {
+    async (item: IChainNameItem) => {
       await getNetworkData({
         chainId: item.key,
         symbol: currentSymbol,

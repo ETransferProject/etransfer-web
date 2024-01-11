@@ -12,6 +12,7 @@ type CommonModalProps = Omit<
   okText?: string;
   hideCancelButton?: boolean;
   hideOkButton?: boolean;
+  isOkButtonDisabled?: boolean;
 };
 
 export default function CommonModal({
@@ -20,6 +21,7 @@ export default function CommonModal({
   okText,
   hideCancelButton,
   hideOkButton,
+  isOkButtonDisabled,
   ...props
 }: CommonModalProps) {
   return (
@@ -44,7 +46,10 @@ export default function CommonModal({
             </CommonButton>
           )}
           {!hideOkButton && (
-            <CommonButton className={clsx('flex-1', styles['ok-button'])} onClick={props.onOk}>
+            <CommonButton
+              className={clsx('flex-1', styles['ok-button'])}
+              disabled={isOkButtonDisabled}
+              onClick={props.onOk}>
               {okText || 'Confirm'}
             </CommonButton>
           )}

@@ -1,5 +1,6 @@
 @import 'src/assets/theme/font.scss';
 @import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/constants.scss';
 @import 'src/assets/theme/breakpoint.scss';
 @import 'src/styles/variable.scss';
 
@@ -16,13 +17,20 @@
         font-family: $font-family-regular-family;
       }
     }
-    .ant-form-item-explain-error {
+    .ant-form-item-explain-error,
+    .ant-form-item-explain-warning {
       margin-top: 4px;
       font-size: 12px;
       line-height: 16px;
-      color: #d43939;
+
       font-weight: $font-family-regular-weight;
       font-family: $font-family-regular-family;
+    }
+    .ant-form-item-explain-error {
+      color: #d43939;
+    }
+    .ant-form-item-explain-warning {
+      color: #ff9900;
     }
   }
 }
@@ -159,7 +167,6 @@
     border-top: 1px solid $dividers;
     background-color: $page-bg;
     width: 100vw;
-    height: $mobile-form-footer-height;
     margin-left: -16px;
     padding: 10px 16px;
   }
@@ -181,7 +188,28 @@
   }
 }
 
-.transaction-info-wrapper {
+.footer-info-wrapper {
+  min-width: 0;
+  .transaction-fee-wrapper {
+    flex-wrap: wrap;
+    gap: 0;
+    .info-value {
+      gap: 4px;
+      min-width: 0;
+    }
+  }
+  .info-label {
+    flex: none;
+    margin-right: 8px;
+  }
+  .transaction-fee-value-data {
+    @include text-overflow;
+  }
+  .receive-amount-wrapper {
+    .info-value {
+      gap: 8px;
+    }
+  }
   @include media-mobile-and-pad {
     flex-direction: column-reverse;
     gap: 2px;
@@ -206,7 +234,11 @@
 }
 
 .form-submit-button {
-  @include media-mobile-and-pad {
+  @include media-mobile {
+    width: 108px;
+    padding: 0;
+  }
+  @include media-pad {
     width: 120px;
   }
   @include media-web {

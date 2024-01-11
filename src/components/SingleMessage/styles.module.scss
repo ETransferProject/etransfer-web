@@ -1,0 +1,30 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+
+.message {
+  :global {
+    .ant-message-notice-content {
+      padding: 12px;
+      border-radius: 6px;
+      box-shadow: 0px 2px 24px 0px rgba(0, 0, 0, 0.12);
+    }
+    .ant-message-custom-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .anticon {
+        top: 0;
+        margin-right: 0;
+      }
+
+      span:not(.anticon) {
+        color: $primary-text;
+        font-size: 16px;
+        line-height: 24px;
+        font-weight: $font-family-regular-weight;
+        font-family: $font-family-regular-family;
+      }
+    }
+  }
+}

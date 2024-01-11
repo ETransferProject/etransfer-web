@@ -14,6 +14,7 @@ export interface CommonModalSwitchDrawerProps {
   hideOkButton?: boolean;
   cancelText?: string;
   okText?: string;
+  isOkButtonDisabled?: boolean;
   open?: boolean;
   onClose?: () => void;
   onOk?: () => void;
@@ -42,7 +43,10 @@ export default function CommonModalSwitchDrawer({
               </CommonButton>
             )}
             {!props.hideOkButton && (
-              <CommonButton className={styles['ok-button']} onClick={props.onOk}>
+              <CommonButton
+                className={styles['ok-button']}
+                disabled={props.isOkButtonDisabled}
+                onClick={props.onOk}>
                 {props.okText || 'Confirm'}
               </CommonButton>
             )}

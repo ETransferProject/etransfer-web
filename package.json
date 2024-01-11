@@ -1,10 +1,13 @@
 {
   "name": "etransfer-web",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
-    "dev": "NEXT_PUBLIC_APP_ENV=development next dev",
+    "dev": "NEXT_PUBLIC_APP_ENV=development next dev -p 4200",
     "build": "next build",
+    "build:mainnet": "node ./scripts/handleNetwork_mainnet.js && next build",
+    "build:testnet": "node ./scripts/handleNetwork_testnet.js && next build",
+    "build:test3": "node ./scripts/handleNetwork_test3.js && next build",
     "start": "next start",
     "lint": "next lint",
     "prettier": "prettier -c --write '**/*'",

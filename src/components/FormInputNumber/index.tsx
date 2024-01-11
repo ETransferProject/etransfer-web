@@ -15,6 +15,7 @@ interface FormInputNumberProps<T extends ValueType> {
   >;
   value?: T;
   onChange?: (value: T | null) => void;
+  onFocus?: React.FocusEventHandler<HTMLInputElement>;
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
 }
 
@@ -23,6 +24,7 @@ export default function FormInputNumber<T extends ValueType>({
   maxButtonConfig,
   value,
   onChange,
+  onFocus,
   onBlur,
   inputNumberProps,
   ...props
@@ -38,6 +40,10 @@ export default function FormInputNumber<T extends ValueType>({
         bordered={false}
         value={value}
         onChange={(data) => onChange?.(data)}
+        onFocus={(...args) => {
+          onFocus?.(...args);
+          inputNumberProps?.onFocus?.(...args);
+        }}
         onBlur={(...args) => {
           onBlur?.(...args);
           inputNumberProps?.onBlur?.(...args);

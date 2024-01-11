@@ -2,10 +2,12 @@ import { randomId } from 'aelf-web-login';
 import { message } from 'antd';
 import { MessageApi, ArgsProps, typeList, MessageInstance } from 'antd/lib/message';
 import { renderToString } from 'react-dom/server';
+import { SmallExclamationFilled } from 'assets/images';
+import styles from './styles.module.scss';
 
 const singleMessage = {} as Omit<MessageApi, 'useMessage'>;
 
-const defaultMessageArgs: Partial<ArgsProps> = {};
+const defaultMessageArgs: Partial<ArgsProps> = { className: styles.message };
 
 function isArgsProps(content: Parameters<MessageInstance['success']>[0]): content is ArgsProps {
   return (
@@ -49,7 +51,14 @@ typeList.forEach((type) => {
         };
     message.destroy(content.content as any);
 
-    return message[type](setDefaultArgs(content, defaultMessageArgs), params[1], params[2]);
+    return message[type](
+      setDefaultArgs(content, {
+        ...defaultMessageArgs,
+        icon: type === 'error' ? <SmallExclamationFilled /> : null,
+      }),
+      params[1],
+      params[2],
+    );
   };
 });
 

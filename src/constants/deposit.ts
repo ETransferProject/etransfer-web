@@ -1,5 +1,5 @@
 import { CHAIN_LIST } from 'constants/index';
-import { NetworkStatus } from 'types/api';
+import { NetworkStatus, WithdrawInfo } from 'types/api';
 import { WithdrawInfoSuccess } from 'types/deposit';
 
 export const DEPOSIT_ADDRESS_LABEL = 'Deposit Address';
@@ -13,7 +13,7 @@ export const initDepositInfo = {
   minAmount: '',
 };
 
-export const initialWithdrawInfo = {
+export const initialWithdrawInfo: WithdrawInfo = {
   maxAmount: '',
   minAmount: '',
   limitCurrency: 'USDT',
@@ -21,6 +21,9 @@ export const initialWithdrawInfo = {
   remainingLimit: '',
   transactionFee: '',
   transactionUnit: 'USDT',
+  expiredTimestamp: 0,
+  aelfTransactionFee: '',
+  aelfTransactionUnit: 'ELF',
   receiveAmount: '',
   feeList: [],
 };
@@ -33,19 +36,6 @@ export const initialNetwork = {
   contractAddress: '',
   explorerUrl: '',
   status: NetworkStatus.Health,
-};
-
-export const initialWithdrawInfoCheck = {
-  receiveAmount: '',
-  address: '',
-  network: initialNetwork,
-  amount: '',
-  transactionFee: {
-    amount: '',
-    currency: '',
-    name: '',
-  },
-  symbol: '',
 };
 
 export const initialWithdrawSuccessCheck: WithdrawInfoSuccess = {
