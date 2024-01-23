@@ -80,3 +80,10 @@ export const formatWithThousandsSeparator = (
 export const parserWithThousandsSeparator = (value?: string | null) => {
   return value ? new BigNumber(value.replace(/,/g, '')).toFixed() : '';
 };
+
+export function openWithBlank(url: string): void {
+  const newWindow = window.open(url, '_blank');
+  if (newWindow) {
+    newWindow.opener = null;
+  }
+}

@@ -5,6 +5,10 @@ import { SideMenuKey } from 'constants/home';
 import Info from 'assets/images/info.svg';
 import { NetworkCardForMobile, NetworkCardForWeb } from 'pageComponents/NetworkCard';
 import { useCommonState } from 'store/Provider/hooks';
+import {
+  NetworkListSkeletonForMobile,
+  NetworkListSkeletonForWeb,
+} from 'pageComponents/Skeleton/NetworkListSkeleton';
 
 export interface NetworkSelectProps {
   className?: string;
@@ -20,7 +24,13 @@ const DEPOSIT_TIP_CONTENT =
 const WITHDRAW_TIP_CONTENT =
   'Please ensure that your receiving platform supports the token and network. If you are unsure, kindly check with the platform before proceeding.';
 
-function NetworkSelectTip({ menuType = SideMenuKey.Deposit }: { menuType?: SideMenuKey }) {
+function NetworkSelectTip({
+  menuType = SideMenuKey.Deposit,
+  showHighlight = true,
+}: {
+  menuType?: SideMenuKey;
+  showHighlight?: boolean;
+}) {
   return (
     <div
       className={clsx('flex-column', styles['network-select-tip-wrapper'], {
@@ -32,7 +42,7 @@ function NetworkSelectTip({ menuType = SideMenuKey.Deposit }: { menuType?: SideM
           {menuType === SideMenuKey.Deposit ? DEPOSIT_TIP_CONTENT : WITHDRAW_TIP_CONTENT}
         </span>
       </div>
-      {menuType === SideMenuKey.Withdraw && (
+      {menuType === SideMenuKey.Withdraw && showHighlight && (
         <div className={styles['network-select-tip-highlight']}>
           Networks not matching your withdrawal address have been automatically excluded. Please
           select from the networks listed below.
@@ -52,8 +62,13 @@ export function NetworkSelectForMobile({
   const { activeMenuKey } = useCommonState();
   return (
     <div className={clsx(styles['network-select'], styles['network-select-for-mobile'], className)}>
-      <NetworkSelectTip menuType={activeMenuKey} />
+      <NetworkSelectTip
+        menuType={activeMenuKey}
+        showHighlight={Array.isArray(networkList) && networkList.length > 0}
+      />
       <div className={styles['network-select-list']}>
+        {!Array.isArray(networkList) ||
+          (networkList.length == 0 && <NetworkListSkeletonForMobile />)}
         {networkList.map((item, idx) => {
           return (
             <NetworkCardForMobile
@@ -86,8 +101,12 @@ export function NetworkSelectForWeb({
   const { activeMenuKey } = useCommonState();
   return (
     <div className={clsx(styles['network-select'], styles['network-select-for-web'], className)}>
-      <NetworkSelectTip menuType={activeMenuKey} />
+      <NetworkSelectTip
+        menuType={activeMenuKey}
+        showHighlight={Array.isArray(networkList) && networkList.length > 0}
+      />
       <div className={styles['network-select-list']}>
+        {!Array.isArray(networkList) || (networkList.length == 0 && <NetworkListSkeletonForWeb />)}
         {networkList.map((item, idx) => {
           return (
             <NetworkCardForWeb

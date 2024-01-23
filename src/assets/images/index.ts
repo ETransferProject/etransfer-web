@@ -14,6 +14,7 @@ import LargeWallet from './largeWallet.svg';
 import LargeLogo from './largeLogo.png';
 import qrCodePlaceholder from './qrCodePlaceholder.png';
 import SmallExclamationFilled from './smallExclamationFilled.svg';
+import OpenLinkIcon from './openLink.svg';
 
 export {
   Info,
@@ -32,4 +33,5 @@ export {
   LargeLogo,
   qrCodePlaceholder,
   SmallExclamationFilled,
+  OpenLinkIcon,
 };

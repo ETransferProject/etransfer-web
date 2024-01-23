@@ -669,6 +669,14 @@ export default function WithdrawContent() {
     getWithdrawData();
   }, [form, getWithdrawData, handleAmountValidate]);
 
+  const clickFailedOk = useCallback(() => {
+    setIsFailModalOpen(false);
+    form.setFieldValue(FormKeys.AMOUNT, '');
+    handleAmountValidate();
+
+    getWithdrawData();
+  }, [form, getWithdrawData, handleAmountValidate]);
+
   useEffectOnce(() => {
     form.setFieldValue(FormKeys.ADDRESS, withdraw.address || '');
 
@@ -910,8 +918,8 @@ export default function WithdrawContent() {
         failReason={failModalReason}
         modalProps={{
           open: isFailModalOpen,
-          onClose: () => setIsFailModalOpen(false),
-          onOk: () => setIsFailModalOpen(false),
+          onClose: clickFailedOk,
+          onOk: clickFailedOk,
         }}
       />
     </>

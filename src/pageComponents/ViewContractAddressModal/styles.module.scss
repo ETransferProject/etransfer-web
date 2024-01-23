@@ -1,0 +1,42 @@
+@import 'src/assets/theme/color.scss';
+
+.viewContractAddressModal {
+  width: 335px !important;
+  .viewContractAddressModalBody {
+    .viewContractAddressModalTitle {
+      color: $secondary-text;
+      font-size: 14px;
+      font-weight: 400;
+    }
+    .viewContractAddressModalContent {
+      margin-top: 16px;
+      .viewContractAddressModalContract {
+        color: $primary-text;
+        font-size: 16px;
+        font-weight: 400;
+        overflow-wrap: anywhere;
+      }
+      .viewContractAddressModalAction {
+        margin-left: 16px;
+        gap: 16px;
+        .copyIcon {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+  }
+  .viewContractAddressModalFooter {
+    margin-top: 16px;
+  }
+  :global {
+    .ant-modal-content {
+      .ant-modal-header {
+        display: none !important;
+      }
+      .ant-modal-body {
+        padding: 20px;
+      }
+    }
+  }
+}

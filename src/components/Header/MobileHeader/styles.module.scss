@@ -3,6 +3,7 @@
 @import 'src/styles/variable.scss';
 
 .header-wrapper {
+  min-width: $page-min-width;
   width: 100%;
   height: $mobile-header-height;
   @include media-mobile {

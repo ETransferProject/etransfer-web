@@ -17,7 +17,7 @@ const WebLoginProviderDynamic = dynamic(
 
     webLogin.setGlobalConfig({
       appName: AppName,
-      chainId: SupportedELFChainId.AELF, // TODO
+      chainId: SupportedELFChainId.AELF,
       networkType: 'MAIN',
       portkey: {
         graphQLUrl: WebLoginGraphqlUrl,
@@ -29,7 +29,7 @@ const WebLoginProviderDynamic = dynamic(
         appName: AppName,
         nodes: AelfReact,
       },
-      defaultRpcUrl: AelfReact.AELF.rpcUrl, // TODO
+      defaultRpcUrl: AelfReact.AELF.rpcUrl,
     });
     return webLogin.WebLoginProvider;
   },

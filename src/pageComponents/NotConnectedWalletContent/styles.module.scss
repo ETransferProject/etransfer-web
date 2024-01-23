@@ -79,6 +79,7 @@ $mobile-connect-wallet-button-padding-bottom: 30px;
 }
 
 .connect-wallet-button-wrapper {
+  min-width: $page-min-width;
   @include media-mobile {
     position: absolute;
     bottom: 0;
