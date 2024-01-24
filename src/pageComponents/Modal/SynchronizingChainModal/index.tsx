@@ -1,7 +1,4 @@
-import Copy from 'components/Copy';
-import OpenLink from 'components/OpenLink';
 import styles from './styles.module.scss';
-import clsx from 'clsx';
 import CommonModalTips from 'components/CommonModalTips';
 
 export type TSynchronizingChainModal = {

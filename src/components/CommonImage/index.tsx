@@ -5,13 +5,13 @@ import styles from './styles.module.scss';
 export default function CommonImage({
   className,
   style,
-  layout = 'fill',
+  fill = true,
   alt = 'img',
   ...props
 }: ImageProps) {
   return (
     <div className={clsx(styles['common-img'], className)} style={style}>
-      <Image {...props} layout={layout} alt={alt} />
+      <Image {...props} fill={fill} alt={alt} />
     </div>
   );
 }
