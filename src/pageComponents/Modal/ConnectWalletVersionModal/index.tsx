@@ -1,0 +1,51 @@
+import CommonModalTips from 'components/CommonModalTips';
+import styles from './styles.module.scss';
+import { PortkeyVersion } from 'constants/index';
+import { Wallet } from 'assets/images';
+
+export type TConnectWalletVersionModal = {
+  open?: boolean;
+  onSelect?: () => void;
+  onCancel?: () => void;
+};
+
+const ConnectWalletVersionModalTitle = 'Connect a Wallet';
+const ConnectWalletVersionModalContent = [
+  {
+    key: PortkeyVersion.v1,
+    text: 'Portkey (Early Access)',
+  },
+  { key: PortkeyVersion.v2, text: 'Portkey' },
+];
+
+export default function ConnectWalletVersionModal({
+  open = false,
+  onSelect,
+  onCancel,
+}: TConnectWalletVersionModal) {
+  return (
+    <CommonModalTips
+      className={styles.connectWalletVersionModal}
+      footerClassName={styles.connectWalletVersionModalFooter}
+      getContainer="body"
+      open={open}
+      closable={true}
+      hideOkButton={true}
+      title={ConnectWalletVersionModalTitle}
+      onCancel={onCancel}>
+      <div className={styles.connectWalletVersionModalBody}>
+        {ConnectWalletVersionModalContent.map((item) => {
+          return (
+            <div
+              key={`ConnectWalletVersionModal_${item.key}`}
+              className={styles.connectWalletVersionModalItem}
+              onClick={onSelect}>
+              <Wallet className={styles.walletIcon} />
+              <span className={styles.connectWalletVersionModalText}>{item.text}</span>
+            </div>
+          );
+        })}
+      </div>
+    </CommonModalTips>
+  );
+}

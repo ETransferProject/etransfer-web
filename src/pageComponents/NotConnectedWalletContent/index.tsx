@@ -6,13 +6,27 @@ import ConnectWalletButton from 'pageComponents/ConnectWalletButton';
 import styles from './styles.module.scss';
 import { usePortkeyProvider } from 'hooks/usePortkeyProvider';
 import CommonImage from 'components/CommonImage';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { LargeLogo, Logo } from 'assets/images';
+import ConnectWalletVersionModal from 'pageComponents/Modal/ConnectWalletVersionModal';
 
 export default function NotConnectedWalletContent() {
   const { isMobilePX } = useCommonState();
   const { activate } = usePortkeyProvider();
-  const connectWallet = useCallback(async () => {
+  const [openConnectWalletVersionModal, setOpenConnectWalletVersionModal] = useState(false);
+
+  const connectWallet = useCallback(() => {
+    setOpenConnectWalletVersionModal(true);
+  }, []);
+
+  const handleCancel = useCallback(async () => {
+    console.log('');
+    setOpenConnectWalletVersionModal(false);
+  }, []);
+
+  const handleSelect = useCallback(async () => {
+    console.log('');
+    setOpenConnectWalletVersionModal(false);
     await activate();
   }, [activate]);
 
@@ -42,6 +56,11 @@ export default function NotConnectedWalletContent() {
           />
         </div>
       </div>
+      <ConnectWalletVersionModal
+        open={openConnectWalletVersionModal}
+        onCancel={handleCancel}
+        onSelect={handleSelect}
+      />
     </div>
   );
 }
