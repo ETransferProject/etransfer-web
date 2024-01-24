@@ -9,3 +9,5 @@ export enum ContractType {
   TOKEN = 'TOKEN_CONTRACT',
   ETRANSFER = 'ETRANSFER_CONTRACT',
 }
+
+export const SynchronizingAddress = 'Synchronizing the address...';

@@ -1,7 +1,6 @@
 @import 'src/assets/theme/color.scss';
 
 .viewContractAddressModal {
-  width: 335px !important;
   .viewContractAddressModalBody {
     .viewContractAddressModalTitle {
       color: $secondary-text;
@@ -26,9 +25,7 @@
       }
     }
   }
-  .viewContractAddressModalFooter {
-    margin-top: 16px;
-  }
+
   :global {
     .ant-modal-content {
       .ant-modal-header {

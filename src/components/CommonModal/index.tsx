@@ -4,7 +4,7 @@ import CloseIcon from 'assets/images/close.svg';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import styles from './styles.module.scss';
 
-type CommonModalProps = Omit<
+export type CommonModalProps = Omit<
   ModalProps,
   'footer' | 'closeIcon' | 'confirmLoading' | 'okButtonProps' | 'okType'
 > & {

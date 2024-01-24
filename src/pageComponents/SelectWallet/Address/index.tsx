@@ -5,6 +5,7 @@ import { useCommonState, usePortkeyWalletState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { CHAIN_LIST } from 'constants/index';
 import { CopySize } from 'components/Copy';
+import { SynchronizingAddress } from 'constants/chain';
 
 export default function Address() {
   const { isMobilePX } = useCommonState();
@@ -34,7 +35,8 @@ export default function Address() {
               valueClassName={styles['value']}
               valueWrapperClassName={'flex-row-start'}
               label={item.label}
-              value={item.value}
+              value={item.value || SynchronizingAddress}
+              showCopy={item.value !== SynchronizingAddress}
               copySize={CopySize.Small}
             />
           </div>

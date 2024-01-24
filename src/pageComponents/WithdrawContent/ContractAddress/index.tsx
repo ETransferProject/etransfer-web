@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { CONTRACT_ADDRESS } from 'constants/deposit';
 import { QuestionMarkIcon } from 'assets/images';
-import ViewContractAddressModal from 'pageComponents/ViewContractAddressModal';
+import ViewContractAddressModal from 'pageComponents/Modal/ViewContractAddressModal';
 import { useCallback, useState } from 'react';
 import { formatStr2Ellipsis } from 'utils/format';
 
@@ -31,7 +31,7 @@ export function ContractAddressForMobile({
         open={openModal}
         value={address}
         link={explorerUrl}
-        onConfirm={() => setOpenModal(false)}
+        onOk={() => setOpenModal(false)}
       />
     </div>
   );

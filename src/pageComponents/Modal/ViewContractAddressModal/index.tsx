@@ -1,14 +1,14 @@
-import CommonModal from 'components/CommonModal';
 import Copy from 'components/Copy';
 import OpenLink from 'components/OpenLink';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
+import CommonModalTips from 'components/CommonModalTips';
 
 export type TViewContractAddressModal = {
   open?: boolean;
   value: string;
   link?: string;
-  onConfirm?: () => void;
+  onOk?: () => void;
 };
 
 const ViewContractAddressModalTitle = 'USDT Contract Address on Polygon Network';
@@ -17,18 +17,17 @@ export default function ViewContractAddressModal({
   open = false,
   value,
   link,
-  onConfirm,
+  onOk,
 }: TViewContractAddressModal) {
   return (
-    <CommonModal
+    <CommonModalTips
       className={styles.viewContractAddressModal}
       footerClassName={styles.viewContractAddressModalFooter}
       getContainer="body"
       open={open}
       closable={false}
-      hideCancelButton={true}
       okText="OK"
-      onOk={onConfirm}>
+      onOk={onOk}>
       <div className={styles.viewContractAddressModalBody}>
         <div className={styles.viewContractAddressModalTitle}>{ViewContractAddressModalTitle}</div>
         <div className={clsx('flex-row-between', styles.viewContractAddressModalContent)}>
@@ -39,6 +38,6 @@ export default function ViewContractAddressModal({
           </div>
         </div>
       </div>
-    </CommonModal>
+    </CommonModalTips>
   );
 }

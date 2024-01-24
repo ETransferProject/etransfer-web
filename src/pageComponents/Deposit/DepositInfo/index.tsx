@@ -5,7 +5,7 @@ import { CONTRACT_ADDRESS, MINIMUM_DEPOSIT } from 'constants/deposit';
 import { useCommonState, useTokenState } from 'store/Provider/hooks';
 import { QuestionMarkIcon } from 'assets/images';
 import { formatStr2Ellipsis } from 'utils/format';
-import ViewContractAddressModal from 'pageComponents/ViewContractAddressModal';
+import ViewContractAddressModal from 'pageComponents/Modal/ViewContractAddressModal';
 import { openWithBlank } from 'utils/common';
 
 export interface DepositInfoProps {
@@ -66,7 +66,7 @@ export default function DepositInfo({
         open={openAddressModal}
         value={contractAddress}
         link={contractAddressLink}
-        onConfirm={() => setOpenAddressModal(false)}
+        onOk={() => setOpenAddressModal(false)}
       />
     </div>
   );
