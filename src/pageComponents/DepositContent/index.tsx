@@ -30,6 +30,8 @@ export type DepositContentProps = {
   qrCodeValue: string;
   networkSelected?: NetworkItem;
   tokenLogoUrl?: string;
+  showRetry?: boolean;
+  onRetry?: () => void;
   chainChanged: (item: IChainNameItem) => void;
   networkChanged: (item: NetworkItem) => Promise<void>;
 };
@@ -44,6 +46,7 @@ export default function Content() {
   const [currentNetwork, setCurrentNetwork] = useState<NetworkItem>();
   const currentNetworkRef = useRef<NetworkItem>();
   const [depositInfo, setDepositInfo] = useState<DepositInfo>(initDepositInfo);
+  const [showRetry, setShowRetry] = useState(false);
 
   const tokenLogoUrl = useMemo(() => {
     const res = tokenList.filter((item) => item.symbol === currentSymbol);
@@ -70,9 +73,8 @@ export default function Content() {
         setLoading(false);
         setDepositInfo(initDepositInfo);
         dispatch(setDepositAddress(initDepositInfo.depositAddress));
-        console.log('getDepositInfo error:', error);
-        if (error.name !== CommonErrorNameType.CANCEL) {
-          singleMessage.error('The deposit service is busy. Please try again later.');
+        if (error.name !== CommonErrorNameType.CANCEL && error.code === '50000') {
+          setShowRetry(true);
         }
       } finally {
         setLoading(false);
@@ -143,6 +145,10 @@ export default function Content() {
     [currentChainItem.key, currentSymbol, dispatch, getDepositData],
   );
 
+  const handleRetry = useCallback(async () => {
+    await getDepositData(currentChainItem.key, currentSymbol);
+  }, [currentChainItem.key, currentSymbol, getDepositData]);
+
   useEffectOnce(() => {
     if (
       deposit?.currentNetwork?.network &&
@@ -171,6 +177,8 @@ export default function Content() {
       qrCodeValue={depositInfo.depositAddress}
       networkSelected={currentNetwork}
       tokenLogoUrl={tokenLogoUrl}
+      showRetry={showRetry}
+      onRetry={handleRetry}
       chainChanged={handleChainChanged}
       networkChanged={handleNetworkChanged}
     />
@@ -183,6 +191,8 @@ export default function Content() {
       qrCodeValue={depositInfo.depositAddress}
       networkSelected={currentNetwork}
       tokenLogoUrl={tokenLogoUrl}
+      showRetry={showRetry}
+      onRetry={handleRetry}
       chainChanged={handleChainChanged}
       networkChanged={handleNetworkChanged}
     />

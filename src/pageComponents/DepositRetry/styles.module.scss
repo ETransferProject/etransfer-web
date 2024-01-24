@@ -1,4 +1,23 @@
-.deposit-address-wrapper {
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.deposit-retry {
+  .retryText {
+    font-size: 16px;
+    color: $secondary-text;
+    @extend .font-family-medium;
+  }
+  .retryBtn {
+    width: 80px;
+    height: 32px;
+    margin-top: 16px;
+    span {
+      font-size: 12px;
+    }
+  }
+}
+
+.deposit-retry-for-web {
   gap: 24px;
   height: 168px;
   padding: 24px;

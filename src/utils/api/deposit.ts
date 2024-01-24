@@ -52,11 +52,13 @@ export const getDepositInfo = async (
       cancelTokenSourceKey: CancelTokenSourceKey.GET_DEPOSIT_INFO,
     });
     return res.data;
-  } catch (error) {
-    const newError = new Error(handleErrorMessage(error, 'getDepositInfo error'));
+  } catch (error: any) {
+    const newError: any = new Error(handleErrorMessage(error, 'getDepositInfo error'));
     if (axios.isCancel(error)) {
       newError.name = CommonErrorNameType.CANCEL;
     }
+    newError.code = error?.code;
+
     throw newError;
   }
 };

@@ -13,6 +13,7 @@ import { useTokenState } from 'store/Provider/hooks';
 import CommonImage from 'components/CommonImage';
 import { qrCodePlaceholder } from 'assets/images';
 import { SideMenuKey } from 'constants/home';
+import { DepositRetryForWeb } from 'pageComponents/DepositRetry';
 
 export default function WebContent({
   networkList,
@@ -22,6 +23,8 @@ export default function WebContent({
   qrCodeValue,
   networkSelected,
   tokenLogoUrl,
+  showRetry = false,
+  onRetry,
   chainChanged,
   networkChanged,
 }: DepositContentProps) {
@@ -39,7 +42,8 @@ export default function WebContent({
           selected={networkSelected}
         />
       </div>
-      {!!depositInfo.depositAddress && (
+      {showRetry && <DepositRetryForWeb isShowImage={true} onClick={onRetry} />}
+      {!showRetry && !!depositInfo.depositAddress && (
         <>
           <div className={clsx('flex-row-center', styles['deposit-address-wrapper'])}>
             {qrCodeValue ? (
