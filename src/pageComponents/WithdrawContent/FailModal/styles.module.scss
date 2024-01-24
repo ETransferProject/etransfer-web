@@ -29,10 +29,8 @@
 }
 
 .fail-reason {
-  @extend .font-family-regular;
   font-size: 14px;
   line-height: 22px;
   color: $secondary-text;
   text-align: center;
 }
-

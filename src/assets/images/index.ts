@@ -15,6 +15,7 @@ import LargeLogo from './largeLogo.png';
 import qrCodePlaceholder from './qrCodePlaceholder.png';
 import SmallExclamationFilled from './smallExclamationFilled.svg';
 import OpenLinkIcon from './openLink.svg';
+import QuestionMarkIcon from './questionMark.svg';
 
 export {
   Info,
@@ -34,4 +35,5 @@ export {
   qrCodePlaceholder,
   SmallExclamationFilled,
   OpenLinkIcon,
+  QuestionMarkIcon,
 };

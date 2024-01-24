@@ -16,13 +16,13 @@
     color: $primary-text;
     font-size: 14px;
     line-height: 22px;
+    @extend .font-family-medium;
   }
   .network-card-arrival-time span,
   .network-card-confirm-time {
     color: $secondary-text;
     font-size: 12px;
     line-height: 16px;
-    @extend .font-family-regular;
   }
 }
 
@@ -46,13 +46,13 @@
     color: $primary-text;
     font-size: 16px;
     line-height: 24px;
+    @extend .font-family-medium;
   }
   .network-card-name,
   .network-card-confirm-time {
     color: $secondary-text;
     font-size: 14px;
     line-height: 22px;
-    @extend .font-family-regular;
   }
 }
 

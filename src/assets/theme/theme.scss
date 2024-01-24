@@ -1,7 +1,9 @@
+@import './color.scss';
+
 :root {
-  --brand: #285EFF;
+  --brand: $brand;
 }
 
 .dark-theme {
-  --brand: #1370DD;
+  --brand: $brand;
 }

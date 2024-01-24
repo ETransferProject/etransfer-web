@@ -82,6 +82,9 @@
 .text-underline {
   text-decoration: underline;
 }
+.text-underline-none {
+  text-decoration: none;
+}
 .text-link {
   @extend .text-underline;
   @extend .cursor-pointer;

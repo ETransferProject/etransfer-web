@@ -23,7 +23,7 @@
     &.select-network-result-form-item {
       @extend .form-item-wrapper;
       .select-network-value-row .select-network-value .select-network-value-placeholder {
-        color: #d4d4d4;
+        color: $disable-text;
       }
     }
 
@@ -35,13 +35,13 @@
       color: $secondary-text;
       font-size: 14px;
       line-height: 22px;
-      @extend .font-family-regular;
     }
     .select-network-value-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       width: 100%;
+      @extend .font-family-medium;
       .select-network-value {
         .select-network-value-selected {
           .primary {
@@ -55,7 +55,6 @@
             color: $secondary-text;
             font-size: 14px;
             line-height: 22px;
-            @extend .font-family-regular;
           }
         }
         .select-network-value-placeholder {
@@ -70,10 +69,10 @@
           height: 32px;
           border-radius: 4px;
           &:hover {
-            background-color: #e5ecff;
+            background-color: $blue-bg;
             .select-network-swap-icon {
               path {
-                fill: #285eff;
+                fill: $brand;
               }
             }
           }

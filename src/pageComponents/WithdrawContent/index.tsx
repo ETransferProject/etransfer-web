@@ -56,6 +56,7 @@ import { useEffectOnce } from 'react-use';
 import SimpleLoading from 'components/SimpleLoading';
 import { ErrorNameType } from 'constants/withdraw';
 import { CommonErrorNameType } from 'api/types';
+import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
 
 enum ValidateStatus {
   Error = 'error',
@@ -760,23 +761,12 @@ export default function WithdrawContent() {
                 selectCallback={handleNetworkChanged}
               />
             </Form.Item>
-            {!!currentNetwork?.contractAddress && (
-              <div className={clsx('flex-row-start', styles['info-wrapper-contract-address'])}>
-                <div className={clsx('flex-none', styles['info-label'])}>{CONTRACT_ADDRESS}</div>
-                <div className={clsx('flex-1', 'flex-row-content-end')}>
-                  <span
-                    className={clsx('text-right', 'text-break', styles['info-value'], {
-                      'text-link': !!currentNetwork?.explorerUrl,
-                    })}
-                    onClick={() => {
-                      if (currentNetwork?.explorerUrl) {
-                        window?.open(currentNetwork.explorerUrl, '_blank');
-                      }
-                    }}>
-                    {currentNetwork?.contractAddress}
-                  </span>
-                </div>
-              </div>
+            {!isMobilePX && !!currentNetwork?.contractAddress && (
+              <ContractAddressForWeb
+                label={CONTRACT_ADDRESS}
+                address={currentNetwork.contractAddress}
+                explorerUrl={currentNetwork?.explorerUrl}
+              />
             )}
           </div>
           <div className={styles['form-item-wrapper']}>
@@ -835,6 +825,13 @@ export default function WithdrawContent() {
             </div>
           </div>
           {isMobilePX && remainingLimitComponent}
+          {isMobilePX && currentNetwork?.contractAddress && (
+            <ContractAddressForMobile
+              label={CONTRACT_ADDRESS}
+              address={currentNetwork.contractAddress}
+              explorerUrl={currentNetwork?.explorerUrl}
+            />
+          )}
           <div className={clsx(styles['form-footer'], styles['form-footer-safe-area'])}>
             <div className={clsx('flex-1', 'flex-column', styles['footer-info-wrapper'])}>
               <div

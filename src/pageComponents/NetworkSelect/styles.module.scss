@@ -20,20 +20,14 @@
       color: $secondary-text;
       font-size: 12px;
       line-height: 16px;
-      @extend .font-family-regular;
     }
   }
   .network-select-tip-highlight {
-    margin-top: 8px;
+    margin: 8px 0;
     color: $success;
     font-size: 12px;
     line-height: 16px;
-    @extend .font-family-regular;
   }
-}
-
-.network-select-tip-wrapper {
-  margin-bottom: 8px;
 }
 
 .network-select-for-mobile {

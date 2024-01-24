@@ -1,0 +1,33 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/constants.scss';
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/styles/variable.scss';
+
+.contract-address-for-mobile {
+  margin-top: 8px;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 16px;
+  color: $secondary-text;
+  .info-value {
+    gap: 4px;
+    cursor: pointer;
+  }
+}
+
+.contract-address-for-web {
+  gap: 16px;
+  margin-top: 12px;
+  .info-label {
+    color: $secondary-text;
+    width: 120px;
+  }
+  @include media-mobile-and-pad {
+    .info-label,
+    .info-value {
+      font-size: 12px;
+      line-height: 16px;
+    }
+  }
+}

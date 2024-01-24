@@ -12,7 +12,7 @@ const GraphqlHost = 'http://192.168.66.203:8083/AElfIndexer_DApp/PortKeyIndexerC
 module.exports = [
   {
     source: '/api/etransfer/:path*',
-    destination: `${ETransferHost}/api/:path*`,
+    destination: `${ETransferHost}/api/app/:path*`,
   },
   {
     source: '/connect/:path*',

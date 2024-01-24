@@ -10,10 +10,10 @@ export function NetworkListSkeletonForWeb() {
           <div className={styles.skeleton} key={'NetworkListSkeletonForWeb' + index}>
             <div className={styles.left}>
               <div className={styles.row1}>
-                <Skeleton.Input />
+                <Skeleton.Input active />
               </div>
               <div className={styles.row2}>
-                <Skeleton.Input />
+                <Skeleton.Input active />
               </div>
             </div>
             <div className={styles.right}>
@@ -37,10 +37,10 @@ export function NetworkListSkeletonForMobile() {
         return (
           <div className={styles.skeleton} key={'NetworkListSkeletonForMobile' + index}>
             <div className={styles.row1}>
-              <Skeleton.Input />
+              <Skeleton.Input active />
             </div>
             <div className={styles.row2}>
-              <Skeleton.Input />
+              <Skeleton.Input active />
             </div>
             <div className={styles.row3}>
               <Skeleton.Input active />

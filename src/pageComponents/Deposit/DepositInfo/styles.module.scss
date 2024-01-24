@@ -9,7 +9,6 @@
 .info-value {
   font-size: 12px;
   line-height: 16px;
-  @extend .font-family-regular;
 }
 
 .info-title {
@@ -21,4 +20,9 @@
 .info-value {
   word-break: break-all;
   color: $primary-text;
+}
+
+.addressEllipsis {
+  gap: 4px;
+  cursor: pointer;
 }

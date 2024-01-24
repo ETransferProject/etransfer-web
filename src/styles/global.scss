@@ -13,6 +13,8 @@ body {
   overflow-y: auto;
   background-color: $page-bg;
   min-width: $page-min-width;
+  font-size: 14px;
+  @extend .font-family-regular;
 }
 body {
   margin: 0;
@@ -34,6 +36,5 @@ input[type='number'] {
 }
 
 * {
-  @extend .font-family-medium;
   transition: background 0.3s, fill 0.3s, stork 0.3s, color 0.3s, box-shadow 0.3s;
 }
