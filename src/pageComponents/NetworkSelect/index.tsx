@@ -15,6 +15,7 @@ export interface NetworkSelectProps {
   type: SideMenuKey;
   networkList: NetworkItem[];
   selectedNetwork?: string;
+  isDisabled?: boolean;
   onSelect: (item: NetworkItem) => Promise<void>;
 }
 
@@ -57,6 +58,7 @@ export function NetworkSelectForMobile({
   type,
   networkList,
   selectedNetwork,
+  isDisabled,
   onSelect,
 }: NetworkSelectProps) {
   const { activeMenuKey } = useCommonState();
@@ -64,7 +66,7 @@ export function NetworkSelectForMobile({
     <div className={clsx(styles['network-select'], styles['network-select-for-mobile'], className)}>
       <NetworkSelectTip
         menuType={activeMenuKey}
-        showHighlight={Array.isArray(networkList) && networkList.length > 0}
+        showHighlight={!isDisabled && Array.isArray(networkList) && networkList.length > 0}
       />
       <div className={styles['network-select-list']}>
         {!Array.isArray(networkList) ||
@@ -76,6 +78,7 @@ export function NetworkSelectForMobile({
               className={
                 selectedNetwork == item.network ? styles['network-card-selected'] : undefined
               }
+              isDisabled={isDisabled}
               name={item.name}
               type={type}
               transactionFee={item.withdrawFee}
@@ -96,6 +99,7 @@ export function NetworkSelectForWeb({
   type,
   networkList,
   selectedNetwork,
+  isDisabled,
   onSelect,
 }: NetworkSelectProps) {
   const { activeMenuKey } = useCommonState();
@@ -103,7 +107,7 @@ export function NetworkSelectForWeb({
     <div className={clsx(styles['network-select'], styles['network-select-for-web'], className)}>
       <NetworkSelectTip
         menuType={activeMenuKey}
-        showHighlight={Array.isArray(networkList) && networkList.length > 0}
+        showHighlight={!isDisabled && Array.isArray(networkList) && networkList.length > 0}
       />
       <div className={styles['network-select-list']}>
         {!Array.isArray(networkList) || (networkList.length == 0 && <NetworkListSkeletonForWeb />)}
@@ -114,6 +118,7 @@ export function NetworkSelectForWeb({
               className={
                 selectedNetwork == item.network ? styles['network-card-selected'] : undefined
               }
+              isDisabled={isDisabled}
               network={item.network}
               name={item.name}
               type={type}

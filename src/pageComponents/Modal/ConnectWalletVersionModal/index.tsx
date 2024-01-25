@@ -15,10 +15,10 @@ export type TConnectWalletVersionModal = {
 const ConnectWalletVersionModalTitle = 'Connect a Wallet';
 const ConnectWalletVersionModalContent = [
   {
-    key: PortkeyVersion.v1,
+    key: PortkeyVersion.v2,
     text: 'Portkey (Early Access)',
   },
-  { key: PortkeyVersion.v2, text: 'Portkey' },
+  { key: PortkeyVersion.v1, text: 'Portkey' },
 ];
 
 export default function ConnectWalletVersionModal({

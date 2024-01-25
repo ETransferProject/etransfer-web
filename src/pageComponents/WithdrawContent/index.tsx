@@ -103,6 +103,7 @@ export default function WithdrawContent() {
   const [withdrawInfoSuccess, setWithdrawInfoSuccessCheck] = useState<WithdrawInfoSuccess>(
     initialWithdrawSuccessCheck,
   );
+  const [isNetworkDisable, setIsNetworkDisable] = useState(false);
   const [formValidateData, setFormValidateData] = useState<{
     [key in FormKeys]: { validateStatus: ValidateStatus; errorMessage: string };
   }>({
@@ -206,10 +207,20 @@ export default function WithdrawContent() {
     [judgeIsSubmitDisabled],
   );
 
+  const getAllNetworkData = useCallback(async () => {
+    // only get data and render page, don't update error
+    const { networkList } = await getNetworkList({
+      type: BusinessType.Withdraw,
+      chainId: currentChainItemRef.current.key,
+      symbol: currentSymbol,
+    });
+    setNetworkList(networkList);
+    dispatch(setWithdrawNetworkList(networkList));
+  }, [currentSymbol, dispatch]);
+
   const getNetworkData = useCallback(
     async ({ symbol, address }: Omit<GetNetworkListRequest, 'type' | 'chainId'>) => {
       try {
-        setLoading(true);
         const params: GetNetworkListRequest = {
           type: BusinessType.Withdraw,
           chainId: currentChainItemRef.current.key,
@@ -257,9 +268,8 @@ export default function WithdrawContent() {
             },
           });
         }
-        setLoading(false);
+        setIsNetworkDisable(false);
       } catch (error: any) {
-        setLoading(false);
         const errorString = error.message;
         if (NETWORK_DATA_ERROR_LIST.some((item) => errorString.includes(item))) {
           handleFormValidateDataChange({
@@ -268,6 +278,8 @@ export default function WithdrawContent() {
               errorMessage: errorString,
             },
           });
+          setIsNetworkDisable(true);
+          getAllNetworkData();
         } else {
           handleFormValidateDataChange({
             [FormKeys.ADDRESS]: {
@@ -278,17 +290,15 @@ export default function WithdrawContent() {
           if (error.name !== CommonErrorNameType.CANCEL) {
             singleMessage.error(handleErrorMessage(error));
           }
+          setNetworkList([]);
         }
-        setNetworkList([]);
         dispatch(setWithdrawNetworkList([]));
         setCurrentNetwork(undefined);
         currentNetworkRef.current = undefined;
         dispatch(setWithdrawCurrentNetwork(undefined));
-      } finally {
-        setLoading(false);
       }
     },
-    [dispatch, handleFormValidateDataChange, setLoading],
+    [dispatch, getAllNetworkData, handleFormValidateDataChange],
   );
 
   const getWithdrawData = useCallback(async () => {
@@ -642,6 +652,8 @@ export default function WithdrawContent() {
           errorMessage: 'Please enter a correct address.',
         },
       });
+      setIsNetworkDisable(true);
+      await getAllNetworkData();
       return;
     }
 
@@ -656,6 +668,7 @@ export default function WithdrawContent() {
     currentSymbol,
     dispatch,
     form,
+    getAllNetworkData,
     getNetworkData,
     getWithdrawData,
     handleAmountValidate,
@@ -766,6 +779,7 @@ export default function WithdrawContent() {
                 type={SideMenuKey.Withdraw}
                 networkList={networkList}
                 selected={currentNetwork}
+                isDisabled={isNetworkDisable}
                 selectCallback={handleNetworkChanged}
               />
             </Form.Item>
