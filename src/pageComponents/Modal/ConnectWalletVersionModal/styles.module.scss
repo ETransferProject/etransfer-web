@@ -14,10 +14,15 @@
       border-radius: 6px;
       background: $normal-bg;
       margin-top: 12px;
+      cursor: pointer;
 
       .walletIcon {
         width: 24px;
         height: 24px;
+        svg {
+          width: 24px;
+          height: 24px;
+        }
       }
       .connectWalletVersionModalText {
         font-size: 16px;
