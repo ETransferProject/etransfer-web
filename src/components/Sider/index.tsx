@@ -6,6 +6,7 @@ import { store } from 'store/Provider/store';
 import { useCommonState } from 'store/Provider/hooks';
 import { SideMenuKey, MENU_ITEMS } from 'constants/home';
 import styles from './styles.module.scss';
+import SupportEntry from 'pageComponents/SupportEntry';
 
 export default function Sider() {
   const { activeMenuKey } = useCommonState();
@@ -16,7 +17,7 @@ export default function Sider() {
     }
   }, [activeMenuKey]);
   return (
-    <div className={styles['menu-container']}>
+    <div className={clsx('flex-column-between', styles['menu-container'])}>
       <Space className={styles['menu-items-wrapper']} direction="vertical">
         {MENU_ITEMS.map((item) => {
           const MenuIcon = item.icon;
@@ -35,6 +36,7 @@ export default function Sider() {
           );
         })}
       </Space>
+      <SupportEntry className={styles.supportEntry} />
     </div>
   );
 }

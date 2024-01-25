@@ -17,6 +17,7 @@ import qrCodePlaceholder from './qrCodePlaceholder.png';
 import SmallExclamationFilled from './smallExclamationFilled.svg';
 import OpenLinkIcon from './openLink.svg';
 import QuestionMarkIcon from './questionMark.svg';
+import SupportIcon from './supportIcon.svg';
 
 export {
   Info,
@@ -38,4 +39,5 @@ export {
   SmallExclamationFilled,
   OpenLinkIcon,
   QuestionMarkIcon,
+  SupportIcon,
 };
