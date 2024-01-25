@@ -21,6 +21,10 @@
   }
 }
 
+.menu-drawer-body {
+  height: 100%;
+}
+
 .menu-item {
   gap: 12px;
   height: 56px;
@@ -46,6 +50,6 @@
   @extend .font-family-medium;
 }
 
-.supportEntry{
+.supportEntry {
   margin-bottom: 69px; // 85-16
 }

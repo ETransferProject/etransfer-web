@@ -1,10 +1,14 @@
 import { useCallback, useMemo } from 'react';
 import getPortkeyWallet from 'wallet/portkeyWallet';
-import { useAppDispatch, useLoading, usePortkeyWalletState } from 'store/Provider/hooks';
+import { useAppDispatch, useCommonState, useLoading } from 'store/Provider/hooks';
 import {
   setV1ConnectedInfoAction,
   setV1DisconnectedAction,
+  setV2ConnectedInfoAction,
+  setV2DisconnectedAction,
 } from 'store/reducers/portkeyWallet/actions';
+import { setSwitchVersionAction } from 'store/reducers/common/slice';
+import { PortkeyVersion } from 'constants/index';
 
 export interface PortkeyProviderResult {
   activate: () => Promise<void>;
@@ -15,7 +19,7 @@ export interface PortkeyProviderResult {
 export function usePortkeyProvider(): PortkeyProviderResult {
   const dispatch = useAppDispatch();
   const { setLoading } = useLoading();
-  const { currentVersion } = usePortkeyWalletState();
+  const { currentVersion } = useCommonState();
   const portkeyWallet = useMemo(() => getPortkeyWallet(currentVersion), [currentVersion]);
 
   const activate = useCallback(async () => {
@@ -23,33 +27,52 @@ export function usePortkeyProvider(): PortkeyProviderResult {
       setLoading(true);
       const { accounts, name } = await portkeyWallet.activate();
       setLoading(false);
-      dispatch(
-        setV1ConnectedInfoAction({
-          accounts,
-          name,
-          isActive: true,
-        }),
-      );
+      if (currentVersion === PortkeyVersion.v1) {
+        dispatch(
+          setV1ConnectedInfoAction({
+            accounts,
+            name,
+            isActive: true,
+          }),
+        );
+      }
+      if (currentVersion === PortkeyVersion.v2) {
+        dispatch(
+          setV2ConnectedInfoAction({
+            accounts,
+            name,
+            isActive: true,
+          }),
+        );
+      }
     } catch (error) {
       setLoading(false);
     } finally {
       setLoading(false);
     }
-  }, [dispatch, portkeyWallet, setLoading]);
+  }, [currentVersion, dispatch, portkeyWallet, setLoading]);
 
   const deactivate = useCallback(() => {
-    dispatch(setV1DisconnectedAction());
+    if (currentVersion === PortkeyVersion.v1) {
+      dispatch(setV1DisconnectedAction());
+    }
+    if (currentVersion === PortkeyVersion.v2) {
+      dispatch(setV2DisconnectedAction());
+    }
+
+    dispatch(setSwitchVersionAction(undefined));
     return true;
-  }, [dispatch]);
+  }, [currentVersion, dispatch]);
 
   const connectEagerly = useCallback(async () => {
     try {
+      if (!currentVersion) return;
       await portkeyWallet.connectEagerly();
       activate();
     } catch (error) {
       console.log(error, '====error');
     }
-  }, [activate, portkeyWallet]);
+  }, [activate, currentVersion, portkeyWallet]);
 
   return {
     activate,

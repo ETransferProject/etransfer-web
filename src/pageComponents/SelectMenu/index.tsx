@@ -28,14 +28,14 @@ export default function SelectMenu() {
         onClick={() => {
           setIsDrawerOpen(true);
         }}>
-        <MenuOutlined className={styles['header-icon']} rev />
+        <MenuOutlined className={styles['header-icon']} rev={undefined} />
       </div>
       <CommonDrawer
         className={clsx(styles['menu-drawer'], styles['menu-drawer-weight'])}
         height="100%"
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}>
-        <div className="flex-column-between">
+        <div className={clsx('flex-column-between', styles['menu-drawer-body'])}>
           <div>
             {MENU_ITEMS.map((item) => {
               const MenuIcon = item.icon;

@@ -11,21 +11,22 @@ import { LargeLogo, Logo } from 'assets/images';
 import ConnectWalletVersionModal from 'pageComponents/Modal/ConnectWalletVersionModal';
 
 export default function NotConnectedWalletContent() {
-  const { isMobilePX } = useCommonState();
+  const { isMobilePX, currentVersion } = useCommonState();
   const { activate } = usePortkeyProvider();
   const [openConnectWalletVersionModal, setOpenConnectWalletVersionModal] = useState(false);
-  const { currentVersion } = usePortkeyWalletState();
 
   const connectWallet = useCallback(() => {
     setOpenConnectWalletVersionModal(true);
   }, []);
 
   const handleCancel = useCallback(async () => {
+    // TODO v2
     console.log('currentVersion', currentVersion);
     setOpenConnectWalletVersionModal(false);
   }, []);
 
   const handleSelect = useCallback(async () => {
+    // TODO v2
     console.log('currentVersion', currentVersion);
     setOpenConnectWalletVersionModal(false);
     await activate();

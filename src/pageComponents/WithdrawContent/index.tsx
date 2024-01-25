@@ -22,7 +22,6 @@ import {
   useAppDispatch,
   useCommonState,
   useLoading,
-  usePortkeyWalletState,
   useTokenState,
   useUserActionState,
 } from 'store/Provider/hooks';
@@ -98,10 +97,9 @@ const WithdrawSendTxErrorCodeList = [
 
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
-  const { isMobilePX, currentChainItem } = useCommonState();
+  const { isMobilePX, currentChainItem, currentVersion } = useCommonState();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
   const accounts = useAccounts();
-  const { currentVersion } = usePortkeyWalletState();
   const { currentSymbol, tokenList } = useTokenState();
   const { withdraw } = useUserActionState();
   const { setLoading } = useLoading();

@@ -13,7 +13,7 @@ import {
 } from 'constants/index';
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
-import { usePortkeyWalletState } from 'store/Provider/hooks';
+import { useCommonState } from 'store/Provider/hooks';
 const InitProviderV1 = dynamic(() => import('./initProviderV1'), { ssr: false });
 const InitProviderV2 = dynamic(() => import('./initProviderV2'), { ssr: false });
 
@@ -50,7 +50,7 @@ const WebLoginProviderDynamic = dynamic(
 );
 
 export default function Providers({ children }: { children: ReactNode }) {
-  const { currentVersion } = usePortkeyWalletState();
+  const { currentVersion } = useCommonState();
 
   if (currentVersion === PortkeyVersion.v1) {
     return (

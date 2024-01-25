@@ -4,7 +4,7 @@ import { PortkeyVersion } from 'constants/index';
 import { WalletIcon24 } from 'assets/images';
 import { useCallback } from 'react';
 import { useAppDispatch } from 'store/Provider/hooks';
-import { setSwitchVersionAction } from 'store/reducers/portkeyWallet/actions';
+import { setSwitchVersionAction } from 'store/reducers/common/slice';
 
 export type TConnectWalletVersionModal = {
   open?: boolean;

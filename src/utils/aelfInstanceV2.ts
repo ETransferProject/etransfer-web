@@ -17,16 +17,16 @@ export interface IAelfInstanceV2 {
 
 export type AelfInstanceTypeV2 = { getAelfInstance: (rpcUrl: string, timeout?: number) => any };
 
-export type AelfInstanceOptions = {
+export type AelfInstanceOptionsV2 = {
   chainId: AllSupportedELFChainId;
 };
 
-class AelfInstance implements IAelfInstanceV2 {
+class AelfInstanceV2 implements IAelfInstanceV2 {
   public instances: AELFInstancesV2;
   public rpcUrl?: string;
   public aelfSDK?: any;
 
-  constructor(_options?: AelfInstanceOptions) {
+  constructor(_options?: AelfInstanceOptionsV2) {
     this.instances = {
       [AllSupportedELFChainId.AELF]: undefined,
       [AllSupportedELFChainId.tDVV]: undefined,
@@ -47,6 +47,6 @@ class AelfInstance implements IAelfInstanceV2 {
   };
 }
 
-const aelfInstanceV2 = new AelfInstance();
+const aelfInstanceV2 = new AelfInstanceV2();
 
 export default aelfInstanceV2;

@@ -2,7 +2,6 @@ import { createSlice } from '@reduxjs/toolkit';
 import { Accounts, ChainIds } from '@portkey/provider-types';
 import {
   setDisconnectedAction,
-  setSwitchVersionAction,
   setV1AccountsAction,
   setV1ChainIdsAction,
   setV1ConnectedInfoAction,
@@ -12,7 +11,6 @@ import {
   setV2ConnectedInfoAction,
   setV2DisconnectedAction,
 } from './actions';
-import { PortkeyVersion } from 'constants/index';
 
 export interface PortkeyWalletInfo {
   isActive: boolean; // is connected
@@ -22,13 +20,11 @@ export interface PortkeyWalletInfo {
 }
 
 export interface PortkeyWalletState {
-  currentVersion: PortkeyVersion;
   v1: PortkeyWalletInfo;
   v2: PortkeyWalletInfo;
 }
 
 export const initialPortkeyWalletState: PortkeyWalletState = {
-  currentVersion: PortkeyVersion.v2,
   v1: {
     isActive: false,
     name: '',
@@ -74,9 +70,6 @@ export const PortkeyWalletSlice = createSlice({
       })
       .addCase(setV2DisconnectedAction, (state) => {
         state.v2 = { ...initialPortkeyWalletState.v2 };
-      })
-      .addCase(setSwitchVersionAction, (state, action) => {
-        state.currentVersion = action.payload;
       })
       .addCase(setDisconnectedAction, () => ({ ...initialPortkeyWalletState }));
   },

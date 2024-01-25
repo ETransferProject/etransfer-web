@@ -2,7 +2,7 @@
 import { useCallback, useMemo } from 'react';
 import getPortkeyWallet from 'wallet/portkeyWallet';
 import { SupportedELFChainId } from 'constants/index';
-import { usePortkeyWalletState } from 'store/Provider/hooks';
+import { useCommonState } from 'store/Provider/hooks';
 
 export type GetBalancesProps = {
   tokenContractAddress: string;
@@ -12,7 +12,8 @@ export type GetBalancesProps = {
 };
 
 export const useBalances = () => {
-  const { currentVersion } = usePortkeyWalletState();
+  // TODO v2
+  const { currentVersion } = useCommonState();
   const portkeyWallet = useMemo(() => getPortkeyWallet(currentVersion), [currentVersion]);
 
   return useCallback(
