@@ -2,15 +2,16 @@ import React, { useCallback, useEffect, useState } from 'react';
 import WebSelectChain from './WebSelectChain';
 import MobileSelectChain from './MobileSelectChain';
 import { CHAIN_LIST } from 'constants/index';
-import { useCommonState, usePortkeyWalletState } from 'store/Provider/hooks';
+import { useCommonState } from 'store/Provider/hooks';
 import { setCurrentChainItem } from 'store/reducers/common/slice';
 import { store } from 'store/Provider/store';
 import { CommonSelectChainProps, SelectChainProps } from './types';
 import SynchronizingChainModal from 'pageComponents/Modal/SynchronizingChainModal';
+import { useAccounts } from 'hooks/portkeyWallet';
 
 export default function SelectChain({ title, clickCallback }: SelectChainProps) {
   const { isMobilePX, currentChainItem } = useCommonState();
-  const { accounts } = usePortkeyWalletState();
+  const accounts = useAccounts();
   const [openSynchronizingModal, setOpenSynchronizingModal] = useState(false);
 
   const closeSynchronizingModal = useCallback(() => {

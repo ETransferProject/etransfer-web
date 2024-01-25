@@ -1,6 +1,6 @@
 'use client';
 import clsx from 'clsx';
-import { useCommonState } from 'store/Provider/hooks';
+import { useCommonState, usePortkeyWalletState } from 'store/Provider/hooks';
 import { CommonButtonSize } from 'components/CommonButton';
 import ConnectWalletButton from 'pageComponents/ConnectWalletButton';
 import styles from './styles.module.scss';
@@ -14,18 +14,19 @@ export default function NotConnectedWalletContent() {
   const { isMobilePX } = useCommonState();
   const { activate } = usePortkeyProvider();
   const [openConnectWalletVersionModal, setOpenConnectWalletVersionModal] = useState(false);
+  const { currentVersion } = usePortkeyWalletState();
 
   const connectWallet = useCallback(() => {
     setOpenConnectWalletVersionModal(true);
   }, []);
 
   const handleCancel = useCallback(async () => {
-    console.log('');
+    console.log('currentVersion', currentVersion);
     setOpenConnectWalletVersionModal(false);
   }, []);
 
   const handleSelect = useCallback(async () => {
-    console.log('');
+    console.log('currentVersion', currentVersion);
     setOpenConnectWalletVersionModal(false);
     await activate();
   }, [activate]);

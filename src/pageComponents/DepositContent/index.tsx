@@ -18,9 +18,9 @@ import {
 } from 'store/reducers/userAction/slice';
 import { useEffectOnce } from 'react-use';
 import singleMessage from 'components/SingleMessage';
-import { handleErrorMessage } from 'aelf-web-login';
 import { initDepositInfo } from 'constants/deposit';
 import { CommonErrorNameType } from 'api/types';
+import { handleErrorMessage } from '@portkey/did-ui-react';
 
 export type DepositContentProps = {
   networkList: NetworkItem[];

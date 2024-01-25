@@ -4,7 +4,7 @@ import myEvents from 'utils/myEvent';
 const isDeniedRequest = (error: { message: string }) => {
   try {
     const message: string = error.message;
-    if (message.includes('401')) return true;
+    if (message?.includes('401')) return true;
   } catch (error) {
     console.log(error);
     //

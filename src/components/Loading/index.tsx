@@ -3,9 +3,9 @@ import { Modal } from 'antd';
 import CircleLoading from 'components/CircleLoading';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { eventBus } from 'aelf-web-login';
 import { SET_GLOBAL_LOADING } from 'constants/events';
 import { useCallback, useEffect, useState } from 'react';
+import { eventBus } from 'utils/myEvent';
 
 export interface LoadingProps {
   className?: string;

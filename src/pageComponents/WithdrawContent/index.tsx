@@ -36,9 +36,7 @@ import {
 } from 'constants/deposit';
 import { WithdrawInfoSuccess } from 'types/deposit';
 import { checkTokenAllowanceAndApprove, createTransferTokenTransaction } from 'utils/aelfUtils';
-import portkeyWallet from 'wallet/portkeyWallet';
 import singleMessage from 'components/SingleMessage';
-import { handleErrorMessage } from 'aelf-web-login';
 import { divDecimals, timesDecimals } from 'utils/calculate';
 import { ContractMethodName } from 'constants/contract';
 import { ZERO } from 'constants/misc';
@@ -57,6 +55,9 @@ import SimpleLoading from 'components/SimpleLoading';
 import { ErrorNameType } from 'constants/withdraw';
 import { CommonErrorNameType } from 'api/types';
 import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
+import { handleErrorMessage } from '@portkey/did-ui-react';
+import { useAccounts } from 'hooks/portkeyWallet';
+import getPortkeyWallet from 'wallet/portkeyWallet';
 
 enum ValidateStatus {
   Error = 'error',
@@ -82,7 +83,8 @@ export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const { isMobilePX, currentChainItem } = useCommonState();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
-  const { accounts } = usePortkeyWalletState();
+  const accounts = useAccounts();
+  const { currentVersion } = usePortkeyWalletState();
   const { currentSymbol, tokenList } = useTokenState();
   const { withdraw } = useUserActionState();
   const { setLoading } = useLoading();
@@ -339,16 +341,19 @@ export default function WithdrawContent() {
       const tokenContract = await contractUnity.getContract({
         chainId: currentChainItemRef.current.key,
         contractType: ContractType.TOKEN,
+        version: currentVersion,
       });
+      console.log('🌈 🌈 🌈 🌈 🌈 🌈 tokenContract', tokenContract);
 
       const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
-
+      console.log('🌈 🌈 🌈 🌈 🌈 🌈 caAddress', caAddress);
       const {
         data: { balance: maxBalance },
       } = await tokenContract.callViewMethod(ContractMethodName.GetBalance, {
         symbol: currentSymbol,
         owner: caAddress, // caAddress
       });
+      console.log('🌈 🌈 🌈 🌈 🌈 🌈 maxBalance', maxBalance);
       const tempMaxBalance = divDecimals(maxBalance, currentTokenDecimal).toFixed();
       setMaxBalance(tempMaxBalance);
       return tempMaxBalance;
@@ -356,7 +361,7 @@ export default function WithdrawContent() {
       singleMessage.error(handleErrorMessage(error));
       throw new Error('Failed to get balance.');
     }
-  }, [accounts, currentSymbol, currentTokenDecimal]);
+  }, [accounts, currentSymbol, currentTokenDecimal, currentVersion]);
 
   const getMaxBalanceInterval = useCallback(async () => {
     if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
@@ -497,6 +502,7 @@ export default function WithdrawContent() {
     const tokenContract = await contractUnity.getContract({
       chainId: currentChainItemRef.current.key,
       contractType: ContractType.TOKEN,
+      version: currentVersion,
     });
 
     const newMaxBalance = await getMaxBalance();
@@ -522,7 +528,7 @@ export default function WithdrawContent() {
     });
 
     return checkRes;
-  }, [accounts, balance, currentSymbol, getMaxBalance]);
+  }, [accounts, balance, currentSymbol, currentVersion, getMaxBalance]);
 
   const sendTransferTokenTransaction = useDebounceCallback(async () => {
     console.log('🌈 🌈 🌈 🌈 🌈 🌈 sendTransferTokenTransaction', sendTransferTokenTransaction);
@@ -539,6 +545,7 @@ export default function WithdrawContent() {
       console.log('🌈 🌈 🌈 🌈 🌈 🌈 approveRes', approveRes);
 
       if (approveRes) {
+        const portkeyWallet = getPortkeyWallet(currentVersion);
         if (!portkeyWallet?.manager?.caAddress) throw new Error('no caContractAddress');
         if (!portkeyWallet?.caHash) throw new Error('no caHash');
 
@@ -550,6 +557,7 @@ export default function WithdrawContent() {
           symbol: currentSymbol,
           amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
           chainId: currentChainItemRef.current.key,
+          version: currentVersion,
         });
         console.log(transaction, '=====transaction');
 

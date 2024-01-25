@@ -1,15 +1,16 @@
 import React, { useMemo } from 'react';
 import CommonAddress from 'components/CommonAddress';
 import LogoutButton from 'pageComponents/LogoutButton';
-import { useCommonState, usePortkeyWalletState } from 'store/Provider/hooks';
+import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { CHAIN_LIST } from 'constants/index';
 import { CopySize } from 'components/Copy';
 import { SynchronizingAddress } from 'constants/chain';
+import { useAccounts } from 'hooks/portkeyWallet';
 
 export default function Address() {
   const { isMobilePX } = useCommonState();
-  const { accounts } = usePortkeyWalletState();
+  const accounts = useAccounts();
 
   const accountsList = useMemo(
     () => [

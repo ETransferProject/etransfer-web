@@ -1,11 +1,10 @@
-import { useCallback } from 'react';
-import portkeyWallet from 'wallet/portkeyWallet';
-import { useAppDispatch, useLoading } from 'store/Provider/hooks';
+import { useCallback, useMemo } from 'react';
+import getPortkeyWallet from 'wallet/portkeyWallet';
+import { useAppDispatch, useLoading, usePortkeyWalletState } from 'store/Provider/hooks';
 import {
-  setConnectedInfoAction,
-  setDisconnectedAction,
+  setV1ConnectedInfoAction,
+  setV1DisconnectedAction,
 } from 'store/reducers/portkeyWallet/actions';
-import { initialPortkeyWalletState } from 'store/reducers/portkeyWallet/slice';
 
 export interface PortkeyProviderResult {
   activate: () => Promise<void>;
@@ -16,6 +15,8 @@ export interface PortkeyProviderResult {
 export function usePortkeyProvider(): PortkeyProviderResult {
   const dispatch = useAppDispatch();
   const { setLoading } = useLoading();
+  const { currentVersion } = usePortkeyWalletState();
+  const portkeyWallet = useMemo(() => getPortkeyWallet(currentVersion), [currentVersion]);
 
   const activate = useCallback(async () => {
     try {
@@ -23,7 +24,7 @@ export function usePortkeyProvider(): PortkeyProviderResult {
       const { accounts, name } = await portkeyWallet.activate();
       setLoading(false);
       dispatch(
-        setConnectedInfoAction({
+        setV1ConnectedInfoAction({
           accounts,
           name,
           isActive: true,
@@ -34,10 +35,10 @@ export function usePortkeyProvider(): PortkeyProviderResult {
     } finally {
       setLoading(false);
     }
-  }, [dispatch, setLoading]);
+  }, [dispatch, portkeyWallet, setLoading]);
 
   const deactivate = useCallback(() => {
-    dispatch(setDisconnectedAction(initialPortkeyWalletState));
+    dispatch(setV1DisconnectedAction());
     return true;
   }, [dispatch]);
 
@@ -48,7 +49,7 @@ export function usePortkeyProvider(): PortkeyProviderResult {
     } catch (error) {
       console.log(error, '====error');
     }
-  }, [activate]);
+  }, [activate, portkeyWallet]);
 
   return {
     activate,

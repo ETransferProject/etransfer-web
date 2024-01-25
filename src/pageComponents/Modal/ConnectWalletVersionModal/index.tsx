@@ -1,7 +1,10 @@
 import CommonModalTips from 'components/CommonModalTips';
 import styles from './styles.module.scss';
 import { PortkeyVersion } from 'constants/index';
-import { Wallet } from 'assets/images';
+import { WalletIcon24 } from 'assets/images';
+import { useCallback } from 'react';
+import { useAppDispatch } from 'store/Provider/hooks';
+import { setSwitchVersionAction } from 'store/reducers/portkeyWallet/actions';
 
 export type TConnectWalletVersionModal = {
   open?: boolean;
@@ -23,6 +26,15 @@ export default function ConnectWalletVersionModal({
   onSelect,
   onCancel,
 }: TConnectWalletVersionModal) {
+  const dispatch = useAppDispatch();
+  const handleClick = useCallback(
+    (version: PortkeyVersion) => {
+      dispatch(setSwitchVersionAction(version));
+      onSelect?.();
+    },
+    [dispatch, onSelect],
+  );
+
   return (
     <CommonModalTips
       className={styles.connectWalletVersionModal}
@@ -39,8 +51,8 @@ export default function ConnectWalletVersionModal({
             <div
               key={`ConnectWalletVersionModal_${item.key}`}
               className={styles.connectWalletVersionModalItem}
-              onClick={onSelect}>
-              <Wallet className={styles.walletIcon} />
+              onClick={() => handleClick(item.key)}>
+              <WalletIcon24 className={styles.walletIcon} />
               <span className={styles.connectWalletVersionModalText}>{item.text}</span>
             </div>
           );

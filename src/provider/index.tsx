@@ -8,7 +8,6 @@ import StoreProvider from 'store/Provider/StoreProvider';
 import WebLoginProvider from './webLoginProvider';
 // import Loading from 'components/Loading';
 import dynamic from 'next/dynamic';
-const InitProvider = dynamic(() => import('./initProvider'), { ssr: false });
 const Loading = dynamic(() => import('components/Loading'), { ssr: false });
 // import { ANTD_LOCAL } from 'i18n/config';
 
@@ -49,7 +48,6 @@ export default function RootProviders({ children }: { children?: React.ReactNode
     <ConfigProvider autoInsertSpaceInButton={false}>
       <StoreProvider>
         <WebLoginProvider>
-          <InitProvider />
           <Loading />
           {children}
         </WebLoginProvider>

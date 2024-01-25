@@ -1,12 +1,13 @@
 import { ContractType } from 'constants/chain';
 import * as AELF from '../platform/AELF';
 import * as tDVV from '../platform/tDVV';
-import { NetworkType } from '@portkey/provider-types';
+import { TNetworkTypeV1, TNetworkTypeV2 } from 'types/index';
 import { NetworkName } from 'constants/network';
 
 export const NETWORK_NAME = NetworkName.mainnet;
 
-export const NETWORK_TYPE: NetworkType = 'MAIN';
+export const NETWORK_TYPE_V1: TNetworkTypeV1 = 'MAIN';
+export const NETWORK_TYPE_V2: TNetworkTypeV2 = 'MAINNET';
 
 export enum SupportedELFChainId {
   AELF = 'AELF',

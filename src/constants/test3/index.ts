@@ -1,12 +1,13 @@
 import { ContractType } from 'constants/chain';
 import * as AELF from '../platform/AELF_test3';
 import * as tDVV from '../platform/tDVV_test3';
-import { NetworkType } from '@portkey/provider-types';
+import { TNetworkTypeV1, TNetworkTypeV2 } from 'types/index';
 import { NetworkName } from 'constants/network';
 
 export const NETWORK_NAME = NetworkName.test3 as NetworkName;
 
-export const NETWORK_TYPE: NetworkType = 'MAIN';
+export const NETWORK_TYPE_V1: TNetworkTypeV1 = 'MAIN';
+export const NETWORK_TYPE_V2: TNetworkTypeV2 = 'MAINNET';
 
 export enum SupportedELFChainId {
   AELF = 'AELF',
@@ -67,14 +68,15 @@ export const AELF_NODES = {
   tDVV: tDVV.CHAIN_INFO,
 };
 
+// test3-jenkins
 export const ETransferHost = 'http://192.168.64.151:5011';
 export const ETransferAuthHost = '';
 export const WebLoginGraphqlUrl = '/graphql';
 export const WebLoginRequestDefaultsUrl = 'http://192.168.66.203:5001';
 
-// dev
+// test3-dev
 // export const ETransferHost = 'http://192.168.64.151:5011';
-// export const ETransferAuthHost = 'http://192.168.64.151:8011';
+// export const ETransferAuthHost = '';
 // export const WebLoginGraphqlUrl = '/graphql';
 // export const WebLoginRequestDefaultsUrl = '';
 

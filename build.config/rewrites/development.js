@@ -6,8 +6,10 @@
 // test3
 const ETransferHost = 'http://192.168.64.151:5011';
 const AuthHost = 'http://192.168.64.151:8011';
-const ApiHost = 'http://192.168.66.203:5001';
-const GraphqlHost = 'http://192.168.66.203:8083/AElfIndexer_DApp/PortKeyIndexerCASchema';
+const ApiHostV1 = 'http://192.168.66.203:5001';
+const ApiHostV2 = 'http://192.168.67.127:5001';
+const GraphqlHostV1 = 'http://192.168.66.203:8083/AElfIndexer_DApp/PortKeyIndexerCASchema';
+const GraphqlHostV2 = 'http://192.168.67.99:8083/AElfIndexer_DApp/PortKeyIndexerCASchema';
 
 module.exports = [
   {
@@ -19,11 +21,19 @@ module.exports = [
     destination: `${AuthHost}/connect/:path*`,
   },
   {
-    source: '/api/:path*',
-    destination: `${ApiHost}/api/:path*`,
+    source: '/v1/api/:path*',
+    destination: `${ApiHostV1}/api/:path*`,
   },
   {
-    source: '/graphql/:path*',
-    destination: `${GraphqlHost}/graphql/:path*`,
+    source: '/v2/api/:path*',
+    destination: `${ApiHostV2}/api/:path*`,
+  },
+  {
+    source: '/graphql/v1/:path*',
+    destination: `${GraphqlHostV1}/graphql/:path*`,
+  },
+  {
+    source: '/graphql/v2/:path*',
+    destination: `${GraphqlHostV2}/graphql/:path*`,
   },
 ];

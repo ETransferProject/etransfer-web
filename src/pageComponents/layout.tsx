@@ -7,11 +7,11 @@ import Loading from 'components/Loading';
 import { devices } from '@portkey/utils';
 import { setIsMobile, setIsMobilePX } from 'store/reducers/common/slice';
 import { store } from 'store/Provider/store';
-import { usePortkeyWalletState } from 'store/Provider/hooks';
 import { useCommonState } from 'store/Provider/hooks';
 import { MOBILE_PX } from 'constants/media';
 import clsx from 'clsx';
 import styles from './styles.module.scss';
+import { useIsActive } from 'hooks/portkeyWallet';
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   useEffect((): any => {
@@ -35,7 +35,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
   const { isMobilePX } = useCommonState();
-  const { isActive } = usePortkeyWalletState();
+  const isActive = useIsActive();
   return (
     <AntdLayout
       className={clsx(

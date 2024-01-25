@@ -10,6 +10,7 @@ import Copy from './copy.svg';
 import SmallCopy from './smallCopy.svg';
 import SmallWallet from './smallWallet.svg';
 import Wallet from './wallet.svg';
+import WalletIcon24 from './walletIcon24.svg';
 import LargeWallet from './largeWallet.svg';
 import LargeLogo from './largeLogo.png';
 import qrCodePlaceholder from './qrCodePlaceholder.png';
@@ -28,6 +29,7 @@ export {
   SmallCheck,
   SmallWallet,
   Wallet,
+  WalletIcon24,
   LargeWallet,
   Copy,
   SmallCopy,
