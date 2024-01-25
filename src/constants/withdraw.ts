@@ -11,3 +11,6 @@ export const FAIL_MODAL_REASON_ERROR_CODE_LIST = [
 export enum ErrorNameType {
   FAIL_MODAL_REASON = 'failModalReason',
 }
+
+export const DefaultWithdrawErrorMessage =
+  'The transaction failed due to an unexpected error. Please try again later.';

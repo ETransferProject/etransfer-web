@@ -23,6 +23,7 @@ export default function MobileDepositContent({
   networkSelected,
   tokenLogoUrl,
   showRetry = false,
+  isShowLoading = false,
   onRetry,
   chainChanged,
   networkChanged,
@@ -35,6 +36,7 @@ export default function MobileDepositContent({
         selectCallback={networkChanged}
         selected={networkSelected}
         noBorder={noBorder}
+        isShowLoading={isShowLoading}
       />
     );
   };
@@ -75,6 +77,7 @@ export default function MobileDepositContent({
               <>
                 <div className={styles['info-wrapper']}>
                   <DepositInfo
+                    networkName={networkSelected.name}
                     minimumDeposit={depositInfo.minAmount}
                     contractAddress={contractAddress}
                     contractAddressLink={contractAddressLink}

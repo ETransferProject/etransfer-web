@@ -34,11 +34,13 @@ export const getNetworkList = async (
       cancelTokenSourceKey: CancelTokenSourceKey.GET_NETWORK_LIST,
     });
     return res.data;
-  } catch (error) {
-    const newError = new Error(handleErrorMessage(error, 'getNetworkList error'));
+  } catch (error: any) {
+    const newError: any = new Error(handleErrorMessage(error, 'getNetworkList error'));
     if (axios.isCancel(error)) {
       newError.name = CommonErrorNameType.CANCEL;
     }
+    newError.code = error?.code;
+
     throw newError;
   }
 };

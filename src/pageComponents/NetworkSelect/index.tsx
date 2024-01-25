@@ -16,6 +16,7 @@ export interface NetworkSelectProps {
   networkList: NetworkItem[];
   selectedNetwork?: string;
   isDisabled?: boolean;
+  isShowLoading?: boolean;
   onSelect: (item: NetworkItem) => Promise<void>;
 }
 
@@ -59,6 +60,7 @@ export function NetworkSelectForMobile({
   networkList,
   selectedNetwork,
   isDisabled,
+  isShowLoading = false,
   onSelect,
 }: NetworkSelectProps) {
   const { activeMenuKey } = useCommonState();
@@ -69,26 +71,28 @@ export function NetworkSelectForMobile({
         showHighlight={!isDisabled && Array.isArray(networkList) && networkList.length > 0}
       />
       <div className={styles['network-select-list']}>
-        {!Array.isArray(networkList) ||
-          (networkList.length == 0 && <NetworkListSkeletonForMobile />)}
-        {networkList.map((item, idx) => {
-          return (
-            <NetworkCardForMobile
-              key={'network-select' + item.network + idx}
-              className={
-                selectedNetwork == item.network ? styles['network-card-selected'] : undefined
-              }
-              isDisabled={isDisabled}
-              name={item.name}
-              type={type}
-              transactionFee={item.withdrawFee}
-              transactionFeeUnit={item.withdrawFeeUnit}
-              multiConfirmTime={item.multiConfirmTime}
-              multiConfirm={item.multiConfirm}
-              onClick={() => onSelect(item)}
-            />
-          );
-        })}
+        {(isShowLoading || !Array.isArray(networkList) || networkList.length == 0) && (
+          <NetworkListSkeletonForMobile />
+        )}
+        {!isShowLoading &&
+          networkList.map((item, idx) => {
+            return (
+              <NetworkCardForMobile
+                key={'network-select' + item.network + idx}
+                className={
+                  selectedNetwork == item.network ? styles['network-card-selected'] : undefined
+                }
+                isDisabled={isDisabled}
+                name={item.name}
+                type={type}
+                transactionFee={item.withdrawFee}
+                transactionFeeUnit={item.withdrawFeeUnit}
+                multiConfirmTime={item.multiConfirmTime}
+                multiConfirm={item.multiConfirm}
+                onClick={() => onSelect(item)}
+              />
+            );
+          })}
       </div>
     </div>
   );
@@ -100,6 +104,7 @@ export function NetworkSelectForWeb({
   networkList,
   selectedNetwork,
   isDisabled,
+  isShowLoading = false,
   onSelect,
 }: NetworkSelectProps) {
   const { activeMenuKey } = useCommonState();
@@ -110,26 +115,29 @@ export function NetworkSelectForWeb({
         showHighlight={!isDisabled && Array.isArray(networkList) && networkList.length > 0}
       />
       <div className={styles['network-select-list']}>
-        {!Array.isArray(networkList) || (networkList.length == 0 && <NetworkListSkeletonForWeb />)}
-        {networkList.map((item, idx) => {
-          return (
-            <NetworkCardForWeb
-              key={'network-select' + item.network + idx}
-              className={
-                selectedNetwork == item.network ? styles['network-card-selected'] : undefined
-              }
-              isDisabled={isDisabled}
-              network={item.network}
-              name={item.name}
-              type={type}
-              transactionFee={item.withdrawFee}
-              transactionFeeUnit={item.withdrawFeeUnit}
-              multiConfirmTime={item.multiConfirmTime}
-              multiConfirm={item.multiConfirm}
-              onClick={() => onSelect(item)}
-            />
-          );
-        })}
+        {(isShowLoading || !Array.isArray(networkList) || networkList.length == 0) && (
+          <NetworkListSkeletonForWeb />
+        )}
+        {!isShowLoading &&
+          networkList.map((item, idx) => {
+            return (
+              <NetworkCardForWeb
+                key={'network-select' + item.network + idx}
+                className={
+                  selectedNetwork == item.network ? styles['network-card-selected'] : undefined
+                }
+                isDisabled={isDisabled}
+                network={item.network}
+                name={item.name}
+                type={type}
+                transactionFee={item.withdrawFee}
+                transactionFeeUnit={item.withdrawFeeUnit}
+                multiConfirmTime={item.multiConfirmTime}
+                multiConfirm={item.multiConfirm}
+                onClick={() => onSelect(item)}
+              />
+            );
+          })}
       </div>
     </div>
   );

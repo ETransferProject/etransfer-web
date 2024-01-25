@@ -52,7 +52,7 @@ import {
 import { useDebounceCallback } from 'hooks';
 import { useEffectOnce } from 'react-use';
 import SimpleLoading from 'components/SimpleLoading';
-import { ErrorNameType } from 'constants/withdraw';
+import { DefaultWithdrawErrorMessage, ErrorNameType } from 'constants/withdraw';
 import { CommonErrorNameType } from 'api/types';
 import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
 import { handleErrorMessage } from '@portkey/did-ui-react';
@@ -77,7 +77,24 @@ type FormValuesType = {
   [FormKeys.AMOUNT]: string;
 };
 
-const NETWORK_DATA_ERROR_LIST = ['address', 'is currently not supported'];
+const AddressErrorCodeList = ['40100', '40101'];
+const WithdrawSendTxErrorCodeList = [
+  '40001',
+  '40002',
+  '40003',
+  '40004',
+  '40005',
+  '40006',
+  '40007',
+  '40008',
+  '40009',
+  '40010',
+  '40011',
+  '40012',
+  '40013',
+  '40014',
+  '40015',
+];
 
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
@@ -88,6 +105,7 @@ export default function WithdrawContent() {
   const { currentSymbol, tokenList } = useTokenState();
   const { withdraw } = useUserActionState();
   const { setLoading } = useLoading();
+  const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
   const [currentNetwork, setCurrentNetwork] = useState<NetworkItem>();
   const currentNetworkRef = useRef<NetworkItem>();
@@ -209,18 +227,26 @@ export default function WithdrawContent() {
 
   const getAllNetworkData = useCallback(async () => {
     // only get data and render page, don't update error
-    const { networkList } = await getNetworkList({
-      type: BusinessType.Withdraw,
-      chainId: currentChainItemRef.current.key,
-      symbol: currentSymbol,
-    });
-    setNetworkList(networkList);
-    dispatch(setWithdrawNetworkList(networkList));
+    try {
+      setIsShowNetworkLoading(true);
+      const { networkList } = await getNetworkList({
+        type: BusinessType.Withdraw,
+        chainId: currentChainItemRef.current.key,
+        symbol: currentSymbol,
+      });
+      setNetworkList(networkList);
+      dispatch(setWithdrawNetworkList(networkList));
+    } catch (error) {
+      setIsShowNetworkLoading(false);
+    } finally {
+      setIsShowNetworkLoading(false);
+    }
   }, [currentSymbol, dispatch]);
 
   const getNetworkData = useCallback(
     async ({ symbol, address }: Omit<GetNetworkListRequest, 'type' | 'chainId'>) => {
       try {
+        setIsShowNetworkLoading(true);
         const params: GetNetworkListRequest = {
           type: BusinessType.Withdraw,
           chainId: currentChainItemRef.current.key,
@@ -269,16 +295,18 @@ export default function WithdrawContent() {
           });
         }
         setIsNetworkDisable(false);
+        setIsShowNetworkLoading(false);
       } catch (error: any) {
-        const errorString = error.message;
-        if (NETWORK_DATA_ERROR_LIST.some((item) => errorString.includes(item))) {
+        setIsShowNetworkLoading(false);
+        if (AddressErrorCodeList.includes(error?.code)) {
           handleFormValidateDataChange({
             [FormKeys.ADDRESS]: {
               validateStatus: ValidateStatus.Error,
-              errorMessage: errorString,
+              errorMessage: error?.message,
             },
           });
           setIsNetworkDisable(true);
+          setCurrentNetwork(undefined);
           getAllNetworkData();
         } else {
           handleFormValidateDataChange({
@@ -296,6 +324,8 @@ export default function WithdrawContent() {
         setCurrentNetwork(undefined);
         currentNetworkRef.current = undefined;
         dispatch(setWithdrawCurrentNetwork(undefined));
+      } finally {
+        setIsShowNetworkLoading(false);
       }
     },
     [dispatch, getAllNetworkData, handleFormValidateDataChange],
@@ -540,6 +570,50 @@ export default function WithdrawContent() {
     return checkRes;
   }, [accounts, balance, currentSymbol, currentVersion, getMaxBalance]);
 
+  const handleCreateWithdrawOrder = useCallback(
+    async ({ address, rawTransaction }: { address: string; rawTransaction: string }) => {
+      try {
+        if (!currentNetworkRef.current?.network) throw new Error('please selected network');
+
+        const createWithdrawOrderRes = await createWithdrawOrder({
+          network: currentNetworkRef.current.network,
+          symbol: currentSymbol,
+          amount: balance,
+          fromChainId: currentChainItemRef.current.key,
+          toAddress: address,
+          rawTransaction: rawTransaction,
+        });
+        console.log('🌈 🌈 🌈 🌈 🌈 🌈 createWithdrawOrderRes', createWithdrawOrderRes);
+
+        if (createWithdrawOrderRes.orderId) {
+          setWithdrawInfoSuccessCheck({
+            receiveAmount: receiveAmount,
+            network: currentNetworkRef.current,
+            amount: balance,
+            symbol: currentSymbol,
+            chainItem: currentChainItemRef.current,
+            arriveTime: currentNetworkRef.current.multiConfirmTime,
+          });
+          setIsSuccessModalOpen(true);
+        } else {
+          setFailModalReason(DefaultWithdrawErrorMessage);
+          setIsFailModalOpen(true);
+        }
+      } catch (error: any) {
+        if (WithdrawSendTxErrorCodeList.includes(error?.code)) {
+          setFailModalReason(error?.message);
+        } else {
+          setFailModalReason(DefaultWithdrawErrorMessage);
+        }
+        setIsFailModalOpen(true);
+      } finally {
+        setLoading(false);
+        setIsDoubleCheckModalOpen(false);
+      }
+    },
+    [balance, currentSymbol, receiveAmount, setLoading],
+  );
+
   const sendTransferTokenTransaction = useDebounceCallback(async () => {
     console.log('🌈 🌈 🌈 🌈 🌈 🌈 sendTransferTokenTransaction', sendTransferTokenTransaction);
     try {
@@ -571,33 +645,7 @@ export default function WithdrawContent() {
         });
         console.log(transaction, '=====transaction');
 
-        if (!currentNetworkRef.current?.network) throw new Error('please selected network');
-
-        const createWithdrawOrderRes = await createWithdrawOrder({
-          network: currentNetworkRef.current.network,
-          symbol: currentSymbol,
-          amount: balance,
-          fromChainId: currentChainItemRef.current.key,
-          toAddress: address,
-          rawTransaction: transaction,
-        });
-        console.log('🌈 🌈 🌈 🌈 🌈 🌈 createWithdrawOrderRes', createWithdrawOrderRes);
-        if (createWithdrawOrderRes.orderId) {
-          setWithdrawInfoSuccessCheck({
-            receiveAmount: receiveAmount,
-            network: currentNetworkRef.current,
-            amount: balance,
-            symbol: currentSymbol,
-            chainItem: currentChainItemRef.current,
-            arriveTime: currentNetworkRef.current.multiConfirmTime,
-          });
-          setIsSuccessModalOpen(true);
-        } else {
-          setFailModalReason(
-            'The transaction failed due to an unexpected error. Please try again later.',
-          );
-          setIsFailModalOpen(true);
-        }
+        await handleCreateWithdrawOrder({ address, rawTransaction: transaction });
       } else {
         throw new Error('Approve Failed');
       }
@@ -609,9 +657,7 @@ export default function WithdrawContent() {
       } else if (error.name === ErrorNameType.FAIL_MODAL_REASON) {
         setFailModalReason(error.message);
       } else {
-        setFailModalReason(
-          'The transaction failed due to an unexpected error. Please try again later.',
-        );
+        setFailModalReason(DefaultWithdrawErrorMessage);
       }
       console.log('sendTransferTokenTransaction error:', error);
       setIsFailModalOpen(true);
@@ -653,6 +699,7 @@ export default function WithdrawContent() {
         },
       });
       setIsNetworkDisable(true);
+      setCurrentNetwork(undefined);
       await getAllNetworkData();
       return;
     }
@@ -780,6 +827,7 @@ export default function WithdrawContent() {
                 networkList={networkList}
                 selected={currentNetwork}
                 isDisabled={isNetworkDisable}
+                isShowLoading={isShowNetworkLoading}
                 selectCallback={handleNetworkChanged}
               />
             </Form.Item>
@@ -850,6 +898,7 @@ export default function WithdrawContent() {
           {isMobilePX && currentNetwork?.contractAddress && (
             <ContractAddressForMobile
               label={CONTRACT_ADDRESS}
+              networkName={currentNetwork.name}
               address={currentNetwork.contractAddress}
               explorerUrl={currentNetwork?.explorerUrl}
             />

@@ -8,10 +8,12 @@ import { formatStr2Ellipsis } from 'utils/format';
 
 export function ContractAddressForMobile({
   label = CONTRACT_ADDRESS,
+  networkName,
   address,
   explorerUrl,
 }: {
   label?: string;
+  networkName: string;
   address: string;
   explorerUrl?: string;
 }) {
@@ -29,6 +31,7 @@ export function ContractAddressForMobile({
 
       <ViewContractAddressModal
         open={openModal}
+        network={networkName}
         value={address}
         link={explorerUrl}
         onOk={() => setOpenModal(false)}

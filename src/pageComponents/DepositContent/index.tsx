@@ -31,6 +31,7 @@ export type DepositContentProps = {
   networkSelected?: NetworkItem;
   tokenLogoUrl?: string;
   showRetry?: boolean;
+  isShowLoading?: boolean;
   onRetry?: () => void;
   chainChanged: (item: IChainNameItem) => void;
   networkChanged: (item: NetworkItem) => Promise<void>;
@@ -42,6 +43,7 @@ export default function Content() {
   const { deposit } = useUserActionState();
   const { currentSymbol, tokenList } = useTokenState();
   const { setLoading } = useLoading();
+  const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
   const [currentNetwork, setCurrentNetwork] = useState<NetworkItem>();
   const currentNetworkRef = useRef<NetworkItem>();
@@ -86,7 +88,7 @@ export default function Content() {
   const getNetworkData = useCallback(
     async ({ chainId, symbol }: Omit<GetNetworkListRequest, 'type'>) => {
       try {
-        setLoading(true);
+        setIsShowNetworkLoading(true);
         const { networkList } = await getNetworkList({
           type: BusinessType.Deposit,
           chainId: chainId,
@@ -110,17 +112,17 @@ export default function Content() {
             dispatch(setDepositCurrentNetwork(undefined));
           }
         }
-        setLoading(false);
+        setIsShowNetworkLoading(false);
       } catch (error: any) {
-        setLoading(false);
+        setIsShowNetworkLoading(false);
         if (error.name !== CommonErrorNameType.CANCEL) {
           singleMessage.error(handleErrorMessage(error));
         }
       } finally {
-        setLoading(false);
+        setIsShowNetworkLoading(false);
       }
     },
-    [currentChainItem.key, currentSymbol, dispatch, getDepositData, setLoading],
+    [currentChainItem.key, currentSymbol, dispatch, getDepositData],
   );
 
   const handleChainChanged = useCallback(
@@ -178,6 +180,7 @@ export default function Content() {
       networkSelected={currentNetwork}
       tokenLogoUrl={tokenLogoUrl}
       showRetry={showRetry}
+      isShowLoading={isShowNetworkLoading}
       onRetry={handleRetry}
       chainChanged={handleChainChanged}
       networkChanged={handleNetworkChanged}
@@ -192,6 +195,7 @@ export default function Content() {
       networkSelected={currentNetwork}
       tokenLogoUrl={tokenLogoUrl}
       showRetry={showRetry}
+      isShowLoading={isShowNetworkLoading}
       onRetry={handleRetry}
       chainChanged={handleChainChanged}
       networkChanged={handleNetworkChanged}

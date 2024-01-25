@@ -24,6 +24,7 @@ export default function WebContent({
   networkSelected,
   tokenLogoUrl,
   showRetry = false,
+  isShowLoading = false,
   onRetry,
   chainChanged,
   networkChanged,
@@ -40,6 +41,7 @@ export default function WebContent({
           networkList={networkList}
           selectCallback={networkChanged}
           selected={networkSelected}
+          isShowLoading={isShowLoading}
         />
       </div>
       {showRetry && <DepositRetryForWeb isShowImage={true} onClick={onRetry} />}

@@ -9,12 +9,14 @@ import ViewContractAddressModal from 'pageComponents/Modal/ViewContractAddressMo
 import { openWithBlank } from 'utils/common';
 
 export interface DepositInfoProps {
+  networkName?: string;
   minimumDeposit: string;
   contractAddress: string;
   contractAddressLink: string;
 }
 
 export default function DepositInfo({
+  networkName,
   minimumDeposit,
   contractAddress,
   contractAddressLink,
@@ -64,6 +66,7 @@ export default function DepositInfo({
 
       <ViewContractAddressModal
         open={openAddressModal}
+        network={networkName || ''}
         value={contractAddress}
         link={contractAddressLink}
         onOk={() => setOpenAddressModal(false)}

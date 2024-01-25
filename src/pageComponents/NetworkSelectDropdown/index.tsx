@@ -17,6 +17,7 @@ export default function NetworkSelectDropdown({
   networkList,
   selectedNetwork,
   isDisabled,
+  isShowLoading,
   onSelect,
   onClose,
 }: NetworkSelectDropdownProps) {
@@ -40,6 +41,7 @@ export default function NetworkSelectDropdown({
           selectedNetwork={selectedNetwork}
           onSelect={onSelect}
           isDisabled={isDisabled}
+          isShowLoading={isShowLoading}
         />
       </div>
     </div>

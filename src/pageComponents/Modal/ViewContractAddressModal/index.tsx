@@ -6,15 +6,17 @@ import CommonModalTips from 'components/CommonModalTips';
 
 export type TViewContractAddressModal = {
   open?: boolean;
+  network: string;
   value: string;
   link?: string;
   onOk?: () => void;
 };
 
-const ViewContractAddressModalTitle = 'USDT Contract Address on Polygon Network';
+const ViewContractAddressModalTitle = 'USDT Contract Address on ';
 
 export default function ViewContractAddressModal({
   open = false,
+  network,
   value,
   link,
   onOk,
@@ -29,7 +31,11 @@ export default function ViewContractAddressModal({
       okText="OK"
       onOk={onOk}>
       <div className={styles.viewContractAddressModalBody}>
-        <div className={styles.viewContractAddressModalTitle}>{ViewContractAddressModalTitle}</div>
+        <div className={styles.viewContractAddressModalTitle}>
+          {ViewContractAddressModalTitle}
+          {network}
+          {' Network'}
+        </div>
         <div className={clsx('flex-row-between', styles.viewContractAddressModalContent)}>
           <div className={styles.viewContractAddressModalContract}>{value}</div>
           <div className={clsx('flex-row-start', styles.viewContractAddressModalAction)}>
