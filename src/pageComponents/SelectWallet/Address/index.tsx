@@ -37,7 +37,7 @@ export default function Address() {
               valueWrapperClassName={'flex-row-start'}
               label={item.label}
               value={item.value || SynchronizingAddress}
-              showCopy={item.value !== SynchronizingAddress}
+              showCopy={!!item.value && item.value !== SynchronizingAddress}
               copySize={CopySize.Small}
             />
           </div>

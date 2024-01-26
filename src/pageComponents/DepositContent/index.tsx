@@ -68,6 +68,7 @@ export default function Content() {
           network: currentNetworkRef.current?.network || '',
           symbol,
         });
+        setShowRetry(false);
         setLoading(false);
         setDepositInfo(res.depositInfo);
         dispatch(setDepositAddress(res.depositInfo.depositAddress));
@@ -77,6 +78,8 @@ export default function Content() {
         dispatch(setDepositAddress(initDepositInfo.depositAddress));
         if (error.name !== CommonErrorNameType.CANCEL && error.code === '50000') {
           setShowRetry(true);
+        } else {
+          setShowRetry(false);
         }
       } finally {
         setLoading(false);
