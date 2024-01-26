@@ -130,7 +130,6 @@ export default function WithdrawContent() {
     [FormKeys.AMOUNT]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
   });
   const [isTransactionFeeLoading, setIsTransactionFeeLoading] = useState(false);
-  const [isWithdrawalAmountInputting, setIsWithdrawalAmountInputting] = useState(false);
 
   const getTransactionFeeTimerRef = useRef<NodeJS.Timeout | null>(null);
   const preReceiveAmountRef = useRef('');
@@ -140,9 +139,7 @@ export default function WithdrawContent() {
   }, [withdrawInfo?.minAmount]);
   const receiveAmount = useMemo(() => {
     let result = '';
-    if (isWithdrawalAmountInputting) {
-      result = preReceiveAmountRef.current;
-    } else if (
+    if (
       !balance ||
       !withdrawInfo.transactionFee ||
       ZERO.plus(balance).isLessThan(ZERO.plus(withdrawInfo.transactionFee)) ||
@@ -154,7 +151,7 @@ export default function WithdrawContent() {
     }
     preReceiveAmountRef.current = result;
     return result;
-  }, [balance, minAmount, withdrawInfo.transactionFee, isWithdrawalAmountInputting]);
+  }, [balance, minAmount, withdrawInfo.transactionFee]);
 
   const getMaxBalanceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -886,11 +883,7 @@ export default function WithdrawContent() {
                   const valueNotComma = parseWithCommas(value);
                   setBalance(valueNotComma || '');
                 }}
-                onFocus={() => {
-                  setIsWithdrawalAmountInputting(true);
-                }}
                 onBlur={() => {
-                  setIsWithdrawalAmountInputting(false);
                   handleAmountValidate();
                 }}
               />
