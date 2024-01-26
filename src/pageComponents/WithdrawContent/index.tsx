@@ -62,6 +62,8 @@ import { useAccounts } from 'hooks/portkeyWallet';
 import getPortkeyWallet from 'wallet/portkeyWallet';
 import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
 import { formatWithCommas, parseWithCommas } from 'utils/format';
+import { sleep } from 'utils/common';
+import { devices } from '@portkey/utils';
 
 enum ValidateStatus {
   Error = 'error',
@@ -104,6 +106,7 @@ const CheckNumberReg = /^[0-9]{1,9}((\.\d)|(\.\d{1,6}))?$/;
 
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
+  const isAndroid = devices.isMobile().android;
   const { isMobilePX, currentChainItem, currentVersion } = useCommonState();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
   const accounts = useAccounts();
@@ -877,6 +880,16 @@ export default function WithdrawContent() {
                     const beforePoint = formatWithCommas({ amount: valueNotComma });
                     const afterPoint = lastNumber === '.' ? '.' : '';
                     event.target.value = beforePoint + afterPoint;
+                  }
+                }}
+                onFocus={async () => {
+                  if (isAndroid) {
+                    // The keyboard does not block the input box
+                    await sleep(100);
+                    document.getElementById('inputAmountWrapper')?.scrollIntoView({
+                      block: 'center',
+                      behavior: 'smooth',
+                    });
                   }
                 }}
                 onChange={(event: any) => {

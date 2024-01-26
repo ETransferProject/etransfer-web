@@ -11,7 +11,9 @@ interface FormInputProps extends InputProps {
 
 export default function FormAmountInput({ unit, maxButtonConfig, ...props }: FormInputProps) {
   return (
-    <div className={clsx('flex-row-center', styles['input-amount-wrapper'])}>
+    <div
+      id="inputAmountWrapper"
+      className={clsx('flex-row-center', styles['input-amount-wrapper'])}>
       <Input {...props} className={styles['input-amount']} bordered={false} />
       <div className={clsx('flex-none', 'flex-row-center', styles['input-amount-addon-after'])}>
         {unit && <div className={styles['unit']}>{unit}</div>}
