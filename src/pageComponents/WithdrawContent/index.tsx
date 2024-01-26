@@ -49,7 +49,12 @@ import {
 import { useDebounceCallback } from 'hooks';
 import { useEffectOnce } from 'react-use';
 import SimpleLoading from 'components/SimpleLoading';
-import { DefaultWithdrawErrorMessage, ErrorNameType } from 'constants/withdraw';
+import {
+  AmountGreaterThanBalanceMessage,
+  DefaultWithdrawErrorMessage,
+  ErrorNameType,
+  InsufficientAllowanceMessage,
+} from 'constants/withdraw';
 import { CommonErrorNameType } from 'api/types';
 import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
 import { handleErrorMessage } from '@portkey/did-ui-react';
@@ -433,8 +438,7 @@ export default function WithdrawContent() {
       handleFormValidateDataChange({
         [FormKeys.AMOUNT]: {
           validateStatus: ValidateStatus.Error,
-          errorMessage:
-            'The amount exceeds the remaining withdrawal quota. Please consider transferring a smaller amount.',
+          errorMessage: AmountGreaterThanBalanceMessage,
         },
       });
     } else if (parserNumber > Number(parseWithCommas(maxBalance))) {
@@ -619,10 +623,7 @@ export default function WithdrawContent() {
       if (!address) throw new Error('Please enter a correct address.');
 
       const approveRes = await handleApproveToken();
-      if (!approveRes)
-        throw new Error(
-          'Insufficient allowance. Please try again, ensuring that you approve an adequate amount as the allowance.',
-        );
+      if (!approveRes) throw new Error(InsufficientAllowanceMessage);
       console.log('🌈 🌈 🌈 🌈 🌈 🌈 approveRes', approveRes);
 
       if (approveRes) {

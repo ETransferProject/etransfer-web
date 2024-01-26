@@ -47,5 +47,5 @@ export const initialWithdrawSuccessCheck: WithdrawInfoSuccess = {
   arriveTime: '',
 };
 
-export const DepositRetryText = 'The deposit service is busy, please try again later.';
+export const DepositRetryText = 'The deposit service is busy. please try again later.';
 export const DepositRetryBtnText = 'Retry';

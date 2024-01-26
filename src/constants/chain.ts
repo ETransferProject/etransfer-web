@@ -10,4 +10,4 @@ export enum ContractType {
   ETRANSFER = 'ETRANSFER_CONTRACT',
 }
 
-export const SynchronizingAddress = 'Synchronizing the address...';
+export const SynchronizingAddress = 'Synchronizing data on the blockchain…';

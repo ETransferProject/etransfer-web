@@ -34,7 +34,6 @@ export default function ViewContractAddressModal({
         <div className={styles.viewContractAddressModalTitle}>
           {ViewContractAddressModalTitle}
           {network}
-          {' Network'}
         </div>
         <div className={clsx('flex-row-between', styles.viewContractAddressModalContent)}>
           <div className={styles.viewContractAddressModalContract}>{value}</div>

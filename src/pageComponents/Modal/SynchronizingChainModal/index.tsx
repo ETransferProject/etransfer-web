@@ -8,7 +8,7 @@ export type TSynchronizingChainModal = {
 };
 
 const SynchronizingChainModalTitle =
-  'The on-chain accounting is synchronizing. Please wait a minute and try again.';
+  'Data is synchronizing on the blockchain. Please wait a minute and try again.';
 
 export default function SynchronizingChainModal({
   open = false,

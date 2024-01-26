@@ -13,4 +13,10 @@ export enum ErrorNameType {
 }
 
 export const DefaultWithdrawErrorMessage =
-  'The transaction failed due to an unexpected error. Please try again later.';
+  'Failed to initiate the transaction. Please try again later.';
+
+export const AmountGreaterThanBalanceMessage =
+  'The amount exceeds the remaining withdrawal quota. Please consider transferring a smaller amount.';
+
+export const InsufficientAllowanceMessage =
+  'Insufficient allowance. Please try again, ensuring that you approve an adequate amount as the allowance.';
