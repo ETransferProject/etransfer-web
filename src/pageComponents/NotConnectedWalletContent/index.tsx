@@ -1,6 +1,6 @@
 'use client';
 import clsx from 'clsx';
-import { useCommonState, usePortkeyWalletState } from 'store/Provider/hooks';
+import { useCommonState } from 'store/Provider/hooks';
 import { CommonButtonSize } from 'components/CommonButton';
 import ConnectWalletButton from 'pageComponents/ConnectWalletButton';
 import styles from './styles.module.scss';

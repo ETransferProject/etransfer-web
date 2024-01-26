@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
 import CommonButton from 'components/CommonButton';
 import FormTextarea from 'components/FormTextarea';
-import FormInputNumber from 'components/FormInputNumber';
 import SelectNetwork from 'pageComponents/SelectNetwork';
 import DoubleCheckModal from './DoubleCheckModal';
 import SuccessModal from './SuccessModal';
@@ -17,7 +16,6 @@ import {
   BusinessType,
   GetWithdrawInfoRequest,
 } from 'types/api';
-import { formatWithThousandsSeparator, parserWithThousandsSeparator } from 'utils/common';
 import {
   useAppDispatch,
   useCommonState,
@@ -57,6 +55,8 @@ import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddre
 import { handleErrorMessage } from '@portkey/did-ui-react';
 import { useAccounts } from 'hooks/portkeyWallet';
 import getPortkeyWallet from 'wallet/portkeyWallet';
+import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
+import { formatWithCommas, parseWithCommas } from 'utils/format';
 
 enum ValidateStatus {
   Error = 'error',
@@ -94,6 +94,8 @@ const WithdrawSendTxErrorCodeList = [
   '40014',
   '40015',
 ];
+
+const CheckNumberReg = /^[0-9]{1,9}((\.\d)|(\.\d{1,6}))?$/;
 
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
@@ -381,17 +383,17 @@ export default function WithdrawContent() {
         contractType: ContractType.TOKEN,
         version: currentVersion,
       });
-      console.log('🌈 🌈 🌈 🌈 🌈 🌈 tokenContract', tokenContract);
+      // console.log('🌈 🌈 🌈 🌈 🌈 🌈 tokenContract', tokenContract);
 
       const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
-      console.log('🌈 🌈 🌈 🌈 🌈 🌈 caAddress', caAddress);
+      // console.log('🌈 🌈 🌈 🌈 🌈 🌈 caAddress', caAddress);
       const {
         data: { balance: maxBalance },
       } = await tokenContract.callViewMethod(ContractMethodName.GetBalance, {
         symbol: currentSymbol,
         owner: caAddress, // caAddress
       });
-      console.log('🌈 🌈 🌈 🌈 🌈 🌈 maxBalance', maxBalance);
+      // console.log('🌈 🌈 🌈 🌈 🌈 🌈 maxBalance', maxBalance);
       const tempMaxBalance = divDecimals(maxBalance, currentTokenDecimal).toFixed();
       setMaxBalance(tempMaxBalance);
       return tempMaxBalance;
@@ -419,8 +421,8 @@ export default function WithdrawContent() {
       });
       return;
     }
-    const parserNumber = Number(parserWithThousandsSeparator(amount));
-    if (parserNumber < Number(parserWithThousandsSeparator(minAmount))) {
+    const parserNumber = Number(parseWithCommas(amount));
+    if (parserNumber < Number(parseWithCommas(minAmount))) {
       handleFormValidateDataChange({
         [FormKeys.AMOUNT]: {
           validateStatus: ValidateStatus.Error,
@@ -429,7 +431,7 @@ export default function WithdrawContent() {
       });
     } else if (
       withdrawInfo.remainingLimit &&
-      parserNumber > Number(parserWithThousandsSeparator(withdrawInfo.remainingLimit))
+      parserNumber > Number(parseWithCommas(withdrawInfo.remainingLimit))
     ) {
       handleFormValidateDataChange({
         [FormKeys.AMOUNT]: {
@@ -438,7 +440,7 @@ export default function WithdrawContent() {
             'The amount exceeds the remaining withdrawal quota. Please consider transferring a smaller amount.',
         },
       });
-    } else if (parserNumber > Number(parserWithThousandsSeparator(maxBalance))) {
+    } else if (parserNumber > Number(parseWithCommas(maxBalance))) {
       handleFormValidateDataChange({
         [FormKeys.AMOUNT]: {
           validateStatus: ValidateStatus.Error,
@@ -849,27 +851,40 @@ export default function WithdrawContent() {
               name={FormKeys.AMOUNT}
               validateStatus={formValidateData[FormKeys.AMOUNT].validateStatus}
               help={formValidateData[FormKeys.AMOUNT].errorMessage}>
-              <FormInputNumber
+              <FormInput
                 unit={withdrawInfo.transactionUnit}
                 maxButtonConfig={{
                   onClick: () => setMaxToken(),
                 }}
-                inputNumberProps={{
-                  placeholder: `Minimum: ${minAmount}`,
-                  stringMode: true,
-                  min: '0',
-                  max: '999999999.999999',
-                  precision: 6,
-                  formatter: (value, info) =>
-                    formatWithThousandsSeparator(value, {
-                      inputValue: info?.input,
-                      isTyping: info?.userTyping,
-                    }),
-                  parser: parserWithThousandsSeparator,
+                placeholder={`Minimum: ${minAmount}`}
+                max={999999999.999999}
+                onInput={(event: any) => {
+                  const value = event.target?.value;
+                  if (!value) return;
+
+                  const lastNumber = value.charAt(value.length - 1);
+                  const valueNotComma = parseWithCommas(value);
+                  const commaCount = value.match(/\./gim)?.length;
+
+                  if (commaCount > 1) {
+                    return (event.target.value = form.getFieldValue(FormKeys.AMOUNT));
+                  }
+
+                  if (!CheckNumberReg.exec(valueNotComma)) {
+                    if (lastNumber !== '.') {
+                      event.target.value = form.getFieldValue(FormKeys.AMOUNT);
+                      return;
+                    }
+                  } else {
+                    const beforePoint = formatWithCommas({ amount: valueNotComma });
+                    const afterPoint = lastNumber === '.' ? '.' : '';
+                    event.target.value = beforePoint + afterPoint;
+                  }
                 }}
-                onChange={(value) => {
-                  setBalance(value || '');
-                  form.setFieldValue(FormKeys.AMOUNT, value || '');
+                onChange={(event: any) => {
+                  const value = event.target?.value;
+                  const valueNotComma = parseWithCommas(value);
+                  setBalance(valueNotComma || '');
                 }}
                 onFocus={() => {
                   setIsWithdrawalAmountInputting(true);
