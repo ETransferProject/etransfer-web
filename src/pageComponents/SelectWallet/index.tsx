@@ -8,6 +8,7 @@ import styles from './styles.module.scss';
 import { usePortkeyProvider } from 'hooks/usePortkeyProvider';
 import { useIsActive } from 'hooks/portkeyWallet';
 import ConnectWalletVersionModal from 'pageComponents/Modal/ConnectWalletVersionModal';
+import { PortkeyVersion } from 'constants/index';
 
 export default function SelectWallet() {
   const isActive = useIsActive();
@@ -20,15 +21,16 @@ export default function SelectWallet() {
   }, []);
 
   const handleCancel = useCallback(async () => {
-    console.log('');
     setOpenConnectWalletVersionModal(false);
   }, []);
 
-  const handleSelect = useCallback(async () => {
-    console.log('');
-    setOpenConnectWalletVersionModal(false);
-    await activate();
-  }, [activate]);
+  const handleSelect = useCallback(
+    async (version: PortkeyVersion) => {
+      setOpenConnectWalletVersionModal(false);
+      await activate(version);
+    },
+    [activate],
+  );
 
   if (!isActive) {
     return (

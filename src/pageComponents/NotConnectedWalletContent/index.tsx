@@ -9,9 +9,10 @@ import CommonImage from 'components/CommonImage';
 import { useCallback, useState } from 'react';
 import { LargeLogo, Logo } from 'assets/images';
 import ConnectWalletVersionModal from 'pageComponents/Modal/ConnectWalletVersionModal';
+import { PortkeyVersion } from 'constants/index';
 
 export default function NotConnectedWalletContent() {
-  const { isMobilePX, currentVersion } = useCommonState();
+  const { isMobilePX } = useCommonState();
   const { activate } = usePortkeyProvider();
   const [openConnectWalletVersionModal, setOpenConnectWalletVersionModal] = useState(false);
 
@@ -20,17 +21,16 @@ export default function NotConnectedWalletContent() {
   }, []);
 
   const handleCancel = useCallback(async () => {
-    // TODO v2
-    console.log('currentVersion', currentVersion);
     setOpenConnectWalletVersionModal(false);
   }, []);
 
-  const handleSelect = useCallback(async () => {
-    // TODO v2
-    console.log('currentVersion', currentVersion);
-    setOpenConnectWalletVersionModal(false);
-    await activate();
-  }, [activate]);
+  const handleSelect = useCallback(
+    async (version: PortkeyVersion) => {
+      setOpenConnectWalletVersionModal(false);
+      await activate(version);
+    },
+    [activate],
+  );
 
   return (
     <div className={clsx(styles['container'], styles['container-safe-area'])}>

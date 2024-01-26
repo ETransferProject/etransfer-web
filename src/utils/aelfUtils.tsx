@@ -267,6 +267,7 @@ export const createTransferTransaction = async ({
     address: fromManagerAddress,
     contractAddress: caContractAddress,
     functionName: ManagerForwardCall,
+    version,
   });
 
   const rpcUrl = getNodeByChainId(chainId as unknown as AllSupportedELFChainId).rpcUrl;
@@ -445,6 +446,7 @@ export const createTransferTokenTransaction = async ({
     address: fromManagerAddress,
     contractAddress: caContractAddress,
     functionName: ManagerForwardCall,
+    version,
   });
   console.log('🌈 🌈 🌈 🌈 🌈 🌈 transaction', transaction);
   return transaction;

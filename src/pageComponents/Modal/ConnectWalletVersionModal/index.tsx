@@ -8,7 +8,7 @@ import { setSwitchVersionAction } from 'store/reducers/common/slice';
 
 export type TConnectWalletVersionModal = {
   open?: boolean;
-  onSelect?: () => void;
+  onSelect?: (version: PortkeyVersion) => void;
   onCancel?: () => void;
 };
 
@@ -30,7 +30,7 @@ export default function ConnectWalletVersionModal({
   const handleClick = useCallback(
     (version: PortkeyVersion) => {
       dispatch(setSwitchVersionAction(version));
-      onSelect?.();
+      onSelect?.(version);
     },
     [dispatch, onSelect],
   );
