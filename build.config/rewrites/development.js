@@ -29,11 +29,11 @@ module.exports = [
     destination: `${ApiHostV2}/api/:path*`,
   },
   {
-    source: '/graphql/v1/:path*',
+    source: '/v1/graphql/:path*',
     destination: `${GraphqlHostV1}/graphql/:path*`,
   },
   {
-    source: '/graphql/v2/:path*',
+    source: '/v2/graphql/:path*',
     destination: `${GraphqlHostV2}/graphql/:path*`,
   },
 ];

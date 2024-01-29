@@ -26,13 +26,13 @@ const WebLoginProviderDynamic = dynamic(
       chainId: SupportedELFChainId.AELF,
       networkType: 'MAIN',
       portkey: {
-        graphQLUrl: `${WebLoginGraphqlUrl}/v1`,
+        graphQLUrl: `/v1${WebLoginGraphqlUrl}`,
         requestDefaults: {
           baseURL: `${WebLoginRequestDefaultsUrl}/v1`,
         },
       },
       portkeyV2: {
-        graphQLUrl: `${WebLoginGraphqlUrl}/v2`,
+        graphQLUrl: `/v2${WebLoginGraphqlUrl}`,
         networkType: 'MAINNET',
         requestDefaults: {
           baseURL: `${WebLoginRequestDefaultsUrl}/v2`,
