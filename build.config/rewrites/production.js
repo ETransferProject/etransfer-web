@@ -1,20 +1,39 @@
+// mainnet
 // const commonHost = 'https://did-portkey.portkey.finance';
-
-const ETransferHost = 'https://etransfer.exchange';
-
+// const ETransferHost = 'https://etransfer.exchange';
 // const GraphqlHost = 'https://dapp-portkey.portkey.finance';
+
+// test3
+const ETransferHost = 'http://192.168.64.151:5011';
+const AuthHost = 'http://192.168.64.151:8011';
+const ApiHostV1 = 'http://192.168.66.203:5001';
+const ApiHostV2 = 'http://192.168.67.127:5001';
+const GraphqlHostV1 = 'http://192.168.66.203:8083/AElfIndexer_DApp/PortKeyIndexerCASchema';
+const GraphqlHostV2 = 'http://192.168.67.99:8083/AElfIndexer_DApp/PortKeyIndexerCASchema';
 
 module.exports = [
   {
     source: '/api/etransfer/:path*',
-    destination: `${ETransferHost}/api/etransfer/:path*`,
+    destination: `${ETransferHost}/api/app/:path*`,
   },
-  // {
-  //   source: '/api/:path*',
-  //   destination: `${commonHost}/api/:path*`,
-  // },
-  // {
-  //   source: '/graphql/:path*',
-  //   destination: `${GraphqlHost}/Portkey_DID/PortKeyIndexerCASchema/graphql/:path*`,
-  // },
+  {
+    source: '/connect/:path*',
+    destination: `${AuthHost}/connect/:path*`,
+  },
+  {
+    source: '/v1/api/:path*',
+    destination: `${ApiHostV1}/api/:path*`,
+  },
+  {
+    source: '/v2/api/:path*',
+    destination: `${ApiHostV2}/api/:path*`,
+  },
+  {
+    source: '/v1/graphql/:path*',
+    destination: `${GraphqlHostV1}/graphql/:path*`,
+  },
+  {
+    source: '/v2/graphql/:path*',
+    destination: `${GraphqlHostV2}/graphql/:path*`,
+  },
 ];
