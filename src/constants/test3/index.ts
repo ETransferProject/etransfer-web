@@ -71,8 +71,10 @@ export const AELF_NODES = {
 // test3-jenkins
 export const ETransferHost = 'http://192.168.64.151:5011';
 export const ETransferAuthHost = '';
-export const WebLoginGraphqlUrl = '/graphql';
-export const WebLoginRequestDefaultsUrl = 'http://192.168.66.203:5001';
+export const WebLoginGraphqlUrlV1 = '/v1/graphql';
+export const WebLoginGraphqlUrlV2 = '/v2/graphql';
+export const WebLoginRequestDefaultsUrlV1 = 'http://192.168.66.203:5001';
+export const WebLoginRequestDefaultsUrlV2 = 'http://192.168.67.127:5001';
 
 // test3-dev
 // export const ETransferHost = 'http://192.168.64.151:5011';

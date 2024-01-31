@@ -69,10 +69,13 @@ export const AELF_NODES = {
 };
 
 export const ETransferHost = 'https://test.etransfer.exchange';
-export const ETransferAuthHost = '';
-export const WebLoginGraphqlUrl =
+export const ETransferAuthHost = 'https://test.etransfer.exchange';
+export const WebLoginGraphqlUrlV1 =
   'https://dapp-portkey-test.portkey.finance/Portkey_DID/PortKeyIndexerCASchema/graphql';
-export const WebLoginRequestDefaultsUrl = 'https://did-portkey-test.portkey.finance';
+export const WebLoginGraphqlUrlV2 =
+  'https://dapp-aa-portkey-test.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql';
+export const WebLoginRequestDefaultsUrlV1 = 'https://did-portkey-test.portkey.finance';
+export const WebLoginRequestDefaultsUrlV2 = 'https://aa-portkey-test.portkey.finance';
 
 export const ADDRESS_MAP = {
   [SupportedELFChainId.AELF]: {

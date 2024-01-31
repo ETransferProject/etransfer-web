@@ -8,8 +8,10 @@ import {
   NETWORK_TYPE_V2,
   PortkeyVersion,
   SupportedELFChainId,
-  WebLoginGraphqlUrl,
-  WebLoginRequestDefaultsUrl,
+  WebLoginGraphqlUrlV1,
+  WebLoginGraphqlUrlV2,
+  WebLoginRequestDefaultsUrlV1,
+  WebLoginRequestDefaultsUrlV2,
 } from 'constants/index';
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
@@ -26,16 +28,16 @@ const WebLoginProviderDynamic = dynamic(
       chainId: SupportedELFChainId.AELF,
       networkType: 'MAIN',
       portkey: {
-        graphQLUrl: `/v1${WebLoginGraphqlUrl}`,
+        graphQLUrl: WebLoginGraphqlUrlV1,
         requestDefaults: {
-          baseURL: `${WebLoginRequestDefaultsUrl}/v1`,
+          baseURL: WebLoginRequestDefaultsUrlV1,
         },
       },
       portkeyV2: {
-        graphQLUrl: `/v2${WebLoginGraphqlUrl}`,
+        graphQLUrl: WebLoginGraphqlUrlV2,
         networkType: 'MAINNET',
         requestDefaults: {
-          baseURL: `${WebLoginRequestDefaultsUrl}/v2`,
+          baseURL: WebLoginRequestDefaultsUrlV2,
         },
       },
       aelfReact: {
