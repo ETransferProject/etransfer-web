@@ -50,9 +50,8 @@ export function usePortkeyProvider(): PortkeyProviderResult {
             }),
           );
         }
-      } catch (error) {
-        singleMessage.error(ConnectWalletError, 3000);
-        setLoading(false);
+      } catch (error: any) {
+        if (error?.message === ConnectWalletError) singleMessage.error(ConnectWalletError, 3000);
       } finally {
         setLoading(false);
       }
