@@ -19,6 +19,7 @@ import { isPortkey } from 'utils/portkey';
 import { GetCAHolderByManagerResult, GetCAHolderByManagerParams } from '@portkey-v1/services';
 import singleMessage from 'components/SingleMessage';
 import { TNetworkTypeV1 } from 'types/index';
+import { NetworkNotMatchTipPrefix } from 'constants/wallet';
 
 const ec = new elliptic.ec('secp256k1');
 
@@ -121,7 +122,7 @@ class PortkeyWallet implements IPortkeyWalletV1 {
     console.log('from provider - networkType:', networkType);
     if (networkType !== this.matchNetworkType) {
       singleMessage.error(
-        `Please switch Portkey to aelf ${
+        `${NetworkNotMatchTipPrefix} ${
           this.matchNetworkType === NetworkTypeEnum.TESTNET
             ? NetworkTypeTextV1.TESTNET
             : NetworkTypeTextV1.MAIN

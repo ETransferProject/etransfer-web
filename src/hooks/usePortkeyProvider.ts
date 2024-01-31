@@ -9,6 +9,8 @@ import {
 } from 'store/reducers/portkeyWallet/actions';
 import { setSwitchVersionAction } from 'store/reducers/common/slice';
 import { PortkeyVersion } from 'constants/index';
+import { singleMessage } from '@portkey/did-ui-react';
+import { ConnectWalletError } from 'constants/wallet';
 
 export interface PortkeyProviderResult {
   activate: (version?: PortkeyVersion) => Promise<void>;
@@ -49,6 +51,7 @@ export function usePortkeyProvider(): PortkeyProviderResult {
           );
         }
       } catch (error) {
+        singleMessage.error(ConnectWalletError, 3000);
         setLoading(false);
       } finally {
         setLoading(false);

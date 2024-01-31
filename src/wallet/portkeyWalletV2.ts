@@ -24,6 +24,7 @@ import isMobile from 'utils/isMobile';
 import { isPortkey } from 'utils/portkey';
 import { GetCAHolderByManagerResult, GetCAHolderByManagerParams } from '@portkey/services';
 import singleMessage from 'components/SingleMessage';
+import { ConnectWalletError, NetworkNotMatchTipPrefix } from 'constants/wallet';
 
 const ec = new elliptic.ec('secp256k1');
 
@@ -126,7 +127,7 @@ class PortkeyWallet implements IPortkeyWalletV2 {
     console.log('from provider - networkType:', networkType);
     if (networkType !== this.matchNetworkType) {
       singleMessage.error(
-        `Please switch Portkey to aelf ${
+        `${NetworkNotMatchTipPrefix} ${
           this.matchNetworkType === NetworkTypeEnum.TESTNET
             ? NetworkTypeTextV2.TESTNET
             : NetworkTypeTextV2.MAINNET
@@ -221,7 +222,7 @@ class PortkeyWallet implements IPortkeyWalletV2 {
     }
     // sleep wait indexer
     await sleep(3000);
-    if (count >= 10) throw Error('Please try again');
+    if (count >= 10) throw Error(ConnectWalletError);
     count++;
     return this.refreshCaHash(count);
   };

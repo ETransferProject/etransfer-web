@@ -15,17 +15,13 @@ import { usePortkeyProvider } from 'hooks/usePortkeyProvider';
 import myEvents from 'utils/myEvent';
 import { resetJWT } from 'api/utils';
 import singleMessage from 'components/SingleMessage';
-import { initCommon } from 'store/reducers/common/slice';
-import { initUserAction } from 'store/reducers/userAction/slice';
 import 'utils/firebase';
+import { LoginExpiredTip, NetworkNotMatchTipPrefix } from 'constants/wallet';
+import { useResetStore } from 'store/Provider/hooks';
 
 export default function InitProvider() {
   const { connectEagerly } = usePortkeyProvider();
-
-  const initData = useCallback(() => {
-    store.dispatch(initCommon());
-    store.dispatch(initUserAction());
-  }, []);
+  const resetStore = useResetStore();
 
   const listener = useCallback(async () => {
     const provider = await portkeyWallet.getProvider();
@@ -35,7 +31,6 @@ export default function InitProvider() {
       if (Object.keys(accounts).length === 0) {
         store.dispatch(setV1DisconnectedAction());
         portkeyWallet.clearData();
-        initData();
         return;
       }
       store.dispatch(setV1AccountsAction(accounts));
@@ -46,7 +41,7 @@ export default function InitProvider() {
     provider.on(NotificationEvents.NETWORK_CHANGED, (networkType: NetworkTypeV1) => {
       if (networkType !== NETWORK_TYPE_V1) {
         singleMessage.error(
-          `Please switch Portkey to aelf ${
+          `${NetworkNotMatchTipPrefix} ${
             NETWORK_TYPE_V1 === NetworkTypeV1.TESTNET
               ? NetworkTypeTextV1.TESTNET
               : NetworkTypeTextV1.MAIN
@@ -54,7 +49,7 @@ export default function InitProvider() {
         );
         store.dispatch(setV1DisconnectedAction());
         portkeyWallet.clearData();
-        initData();
+        resetStore();
       }
     });
     // provider.on(NotificationEvents.CONNECTED, async () => {
@@ -64,7 +59,7 @@ export default function InitProvider() {
     provider.on(NotificationEvents.DISCONNECTED, () => {
       store.dispatch(setV1DisconnectedAction());
       portkeyWallet.clearData();
-      initData();
+      resetStore();
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -95,11 +90,11 @@ export default function InitProvider() {
 
   useEffectOnce(() => {
     const listener = myEvents.DeniedRequest.addListener(() => {
-      singleMessage.error('Login expired, please log in again');
+      singleMessage.error(LoginExpiredTip);
       resetJWT();
       store.dispatch(setV1DisconnectedAction());
       portkeyWallet.clearData();
-      initData();
+      resetStore();
     });
     const timer = setTimeout(init(), 1000);
     return () => {
