@@ -31,6 +31,7 @@ export default function InitProvider() {
       if (Object.keys(accounts).length === 0) {
         store.dispatch(setV1DisconnectedAction());
         portkeyWallet.clearData();
+        resetStore();
         return;
       }
       store.dispatch(setV1AccountsAction(accounts));

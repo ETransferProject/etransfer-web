@@ -203,9 +203,12 @@ class PortkeyWallet implements IPortkeyWalletV1 {
       // get ca info by indexer;
       const res = await PortkeyDidV1.did.services.getHolderInfoByManager({
         caAddresses: [caAddress],
+        maxResultCount: 100,
       } as unknown as GetCAHolderByManagerParams);
+      const _originChainId = res[0].originChainId;
 
-      const caInfo = res[0];
+      const caInfo = res.find((i) => i.chainId === _originChainId);
+      if (!caInfo) throw Error('caInfo not exits');
       const { managerInfos, caHash } = caInfo;
       const isExist = managerInfos?.some((i) => i?.address === this.managerAddress);
       if (isExist && caHash) {
