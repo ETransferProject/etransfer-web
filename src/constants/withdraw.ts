@@ -1,13 +1,22 @@
-export enum CreateWithdrawOrderErrorCode {
-  TRANSACTION_FEES_FLUCTUATED = '40001',
-  FEE_EXPIRED = '40002',
-}
+export const WithdrawAddressErrorCodeList = ['40100', '40101'];
 
-export const FAIL_MODAL_REASON_ERROR_CODE_LIST = [
-  CreateWithdrawOrderErrorCode.TRANSACTION_FEES_FLUCTUATED,
-  CreateWithdrawOrderErrorCode.FEE_EXPIRED,
+export const WithdrawSendTxErrorCodeList = [
+  '40001',
+  '40002',
+  '40003',
+  '40004',
+  '40005',
+  '40006',
+  '40007',
+  '40008',
+  '40009',
+  '40010',
+  '40011',
+  '40012',
+  '40013',
+  '40014',
+  '40015',
 ];
-
 export enum ErrorNameType {
   FAIL_MODAL_REASON = 'failModalReason',
 }

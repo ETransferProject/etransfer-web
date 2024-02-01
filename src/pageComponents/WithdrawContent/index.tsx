@@ -54,6 +54,8 @@ import {
   DefaultWithdrawErrorMessage,
   ErrorNameType,
   InsufficientAllowanceMessage,
+  WithdrawAddressErrorCodeList,
+  WithdrawSendTxErrorCodeList,
 } from 'constants/withdraw';
 import { CommonErrorNameType } from 'api/types';
 import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
@@ -82,25 +84,6 @@ type FormValuesType = {
   [FormKeys.NETWORK]: NetworkItem;
   [FormKeys.AMOUNT]: string;
 };
-
-const AddressErrorCodeList = ['40100', '40101'];
-const WithdrawSendTxErrorCodeList = [
-  '40001',
-  '40002',
-  '40003',
-  '40004',
-  '40005',
-  '40006',
-  '40007',
-  '40008',
-  '40009',
-  '40010',
-  '40011',
-  '40012',
-  '40013',
-  '40014',
-  '40015',
-];
 
 const CheckNumberReg = /^[0-9]{1,9}((\.\d)|(\.\d{1,6}))?$/;
 
@@ -303,7 +286,7 @@ export default function WithdrawContent() {
         setIsShowNetworkLoading(false);
       } catch (error: any) {
         setIsShowNetworkLoading(false);
-        if (AddressErrorCodeList.includes(error?.code)) {
+        if (WithdrawAddressErrorCodeList.includes(error?.code)) {
           handleFormValidateDataChange({
             [FormKeys.ADDRESS]: {
               validateStatus: ValidateStatus.Error,

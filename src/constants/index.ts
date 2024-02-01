@@ -1,4 +1,4 @@
-export * from './test3';
+export * from './testnet';
 
 export enum WalletType {
   unknown = 'unknown',
