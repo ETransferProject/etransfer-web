@@ -724,6 +724,7 @@ export default function WithdrawContent() {
 
   const clickFailedOk = useCallback(() => {
     setIsFailModalOpen(false);
+    setBalance('');
     form.setFieldValue(FormKeys.AMOUNT, '');
     handleAmountValidate();
 
