@@ -885,7 +885,7 @@ export default function WithdrawContent() {
                 onFocus={async () => {
                   if (isAndroid) {
                     // The keyboard does not block the input box
-                    await sleep(100);
+                    await sleep(200);
                     document.getElementById('inputAmountWrapper')?.scrollIntoView({
                       block: 'center',
                       behavior: 'smooth',
