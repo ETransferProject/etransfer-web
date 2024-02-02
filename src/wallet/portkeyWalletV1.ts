@@ -12,6 +12,7 @@ import {
   NetworkTypeTextV1,
   PortkeyNameVersion,
   PortkeyVersion,
+  NETWORK_TYPE_V1,
 } from 'constants/index';
 import { CaHolderWithGuardian } from '@portkey-v1/graphql';
 import isMobile from 'utils/isMobile';
@@ -67,6 +68,7 @@ class PortkeyWallet implements IPortkeyWalletV1 {
 
   constructor() {
     this.provider = undefined;
+    this.matchNetworkType = NETWORK_TYPE_V1;
   }
 
   public async getProvider() {
