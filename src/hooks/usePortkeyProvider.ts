@@ -8,9 +8,8 @@ import {
   setV2DisconnectedAction,
 } from 'store/reducers/portkeyWallet/actions';
 import { setSwitchVersionAction } from 'store/reducers/common/slice';
-import { PortkeyVersion } from 'constants/index';
+import { PortkeyVersion, ConnectWalletError } from 'constants/wallet';
 import { singleMessage } from '@portkey/did-ui-react';
-import { ConnectWalletError } from 'constants/wallet';
 
 export interface PortkeyProviderResult {
   activate: (version?: PortkeyVersion) => Promise<void>;

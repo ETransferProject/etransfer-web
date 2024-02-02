@@ -1,5 +1,6 @@
 import { AllSupportedELFChainId, ContractType } from 'constants/chain';
-import { ADDRESS_MAP, PortkeyVersion, SupportedELFChainId } from 'constants/index';
+import { ADDRESS_MAP, SupportedELFChainId } from 'constants/index';
+import { PortkeyVersion } from 'constants/wallet';
 import getPortkeyWallet from 'wallet/portkeyWallet';
 import { IContract } from '@portkey/types';
 
@@ -56,14 +57,18 @@ class ContractUnity implements IContractUnity {
     return await this.fetchContract({ chainId, contractType, version });
   }
 
-  async fetchContract({ chainId, contractType, version }: GetContractProps): Promise<IContract> {
+  async fetchContract({
+    chainId,
+    contractType,
+    version = PortkeyVersion.v2,
+  }: GetContractProps): Promise<IContract> {
     try {
       const portkeyWallet = getPortkeyWallet(version);
       const provider = await portkeyWallet?.getProvider();
       if (!provider) throw new Error('no provider');
 
       const chain = await provider?.getChain(chainId);
-      const targetContract = await chain.getContract(ADDRESS_MAP[chainId][contractType]);
+      const targetContract = await chain.getContract(ADDRESS_MAP[version][chainId][contractType]);
 
       // inject instance
       this.contract[chainId][contractType] = targetContract;

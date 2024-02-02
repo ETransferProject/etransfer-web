@@ -3,6 +3,7 @@ import * as AELF from '../platform/AELF_test3';
 import * as tDVV from '../platform/tDVV_test3';
 import { TNetworkTypeV1, TNetworkTypeV2 } from 'types/index';
 import { NetworkName } from 'constants/network';
+import { PortkeyVersion } from 'constants/wallet';
 
 export const NETWORK_NAME = NetworkName.test3 as NetworkName;
 
@@ -83,14 +84,28 @@ export const WebLoginRequestDefaultsUrlV2 = 'http://192.168.67.127:5001';
 // export const WebLoginRequestDefaultsUrl = '';
 
 export const ADDRESS_MAP = {
-  [SupportedELFChainId.AELF]: {
-    [ContractType.CA]: AELF.CA_CONTRACT,
-    [ContractType.TOKEN]: AELF.TOKEN_CONTRACT,
-    [ContractType.ETRANSFER]: AELF.ETRANSFER_CONTRACT,
+  [PortkeyVersion.v1]: {
+    [SupportedELFChainId.AELF]: {
+      [ContractType.CA]: AELF.CA_CONTRACT,
+      [ContractType.TOKEN]: AELF.TOKEN_CONTRACT,
+      [ContractType.ETRANSFER]: AELF.ETRANSFER_CONTRACT,
+    },
+    [SupportedELFChainId.tDVV]: {
+      [ContractType.CA]: tDVV.CA_CONTRACT,
+      [ContractType.TOKEN]: tDVV.TOKEN_CONTRACT,
+      [ContractType.ETRANSFER]: tDVV.ETRANSFER_CONTRACT,
+    },
   },
-  [SupportedELFChainId.tDVV]: {
-    [ContractType.CA]: tDVV.CA_CONTRACT,
-    [ContractType.TOKEN]: tDVV.TOKEN_CONTRACT,
-    [ContractType.ETRANSFER]: tDVV.ETRANSFER_CONTRACT,
+  [PortkeyVersion.v2]: {
+    [SupportedELFChainId.AELF]: {
+      [ContractType.CA]: AELF.CA_CONTRACT_V2,
+      [ContractType.TOKEN]: AELF.TOKEN_CONTRACT,
+      [ContractType.ETRANSFER]: AELF.ETRANSFER_CONTRACT,
+    },
+    [SupportedELFChainId.tDVV]: {
+      [ContractType.CA]: tDVV.CA_CONTRACT_V2,
+      [ContractType.TOKEN]: tDVV.TOKEN_CONTRACT,
+      [ContractType.ETRANSFER]: tDVV.ETRANSFER_CONTRACT,
+    },
   },
 };

@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IChainNameItem, CHAIN_LIST, PortkeyVersion } from 'constants/index';
+import { IChainNameItem, CHAIN_LIST } from 'constants/index';
+import { PortkeyVersion } from 'constants/wallet';
 import { SideMenuKey } from 'constants/home';
 
 export interface CommonState {

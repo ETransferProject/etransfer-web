@@ -8,7 +8,7 @@ import styles from './styles.module.scss';
 import { usePortkeyProvider } from 'hooks/usePortkeyProvider';
 import { useIsActive } from 'hooks/portkeyWallet';
 import ConnectWalletVersionModal from 'pageComponents/Modal/ConnectWalletVersionModal';
-import { PortkeyVersion } from 'constants/index';
+import { PortkeyVersion } from 'constants/wallet';
 import { isPortkeyV1, isPortkeyV2 } from 'utils/portkey';
 import { setSwitchVersionAction } from 'store/reducers/common/slice';
 

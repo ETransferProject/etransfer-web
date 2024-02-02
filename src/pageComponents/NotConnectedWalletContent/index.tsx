@@ -9,7 +9,7 @@ import CommonImage from 'components/CommonImage';
 import { useCallback, useState } from 'react';
 import { LargeLogo, Logo } from 'assets/images';
 import ConnectWalletVersionModal from 'pageComponents/Modal/ConnectWalletVersionModal';
-import { PortkeyVersion } from 'constants/index';
+import { PortkeyVersion } from 'constants/wallet';
 import { isPortkeyV1, isPortkeyV2 } from 'utils/portkey';
 import { setSwitchVersionAction } from 'store/reducers/common/slice';
 

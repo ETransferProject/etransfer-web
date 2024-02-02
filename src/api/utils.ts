@@ -1,11 +1,12 @@
 import axios from 'axios';
 import { BaseConfig, RequestConfig } from './types';
 import { stringify } from 'query-string';
-import { ETransferAuthHost, PortkeyVersion, SupportedELFChainId } from 'constants/index';
+import { ETransferAuthHost, SupportedELFChainId } from 'constants/index';
 import { LocalStorageKey } from 'constants/localStorage';
 import getPortkeyWallet from 'wallet/portkeyWallet';
 import AElf from 'aelf-sdk';
 import service from './axios';
+import { PortkeyVersion } from 'constants/wallet';
 
 export function spliceUrl(baseUrl: string, extendArg?: string) {
   return extendArg ? baseUrl + '/' + extendArg : baseUrl;

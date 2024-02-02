@@ -1,6 +1,6 @@
 import CommonModalTips from 'components/CommonModalTips';
 import styles from './styles.module.scss';
-import { PortkeyVersion } from 'constants/index';
+import { PortkeyVersion } from 'constants/wallet';
 import { WalletIcon24 } from 'assets/images';
 import { useCallback } from 'react';
 import { useAppDispatch } from 'store/Provider/hooks';

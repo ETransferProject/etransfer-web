@@ -1,7 +1,8 @@
 import AElf from 'aelf-sdk';
 import { AElfNodes } from 'constants/aelf';
 import { isSymbol } from './reg';
-import { PortkeyVersion, SupportedELFChainId } from 'constants/index';
+import { SupportedELFChainId } from 'constants/index';
+import { PortkeyVersion } from 'constants/wallet';
 import { AelfInstancesKey, ChainId } from 'types';
 import { isELFAddress } from './common';
 import {

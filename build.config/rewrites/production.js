@@ -12,9 +12,9 @@ const GraphqlHostV2 = 'http://192.168.67.99:8083/AElfIndexer_DApp/PortKeyIndexer
 // // const ApiHostV1 = 'https://did-portkey-test.portkey.finance';
 // // const ApiHostV2 = 'https://aa-portkey-test.portkey.finance';
 // const GraphqlHostV1 =
-//   'https://dapp-portkey-test.portkey.finance/Portkey_DID/PortKeyIndexerCASchema/graphql';
+//   'https://dapp-portkey-test.portkey.finance/Portkey_DID/PortKeyIndexerCASchema';
 // const GraphqlHostV2 =
-//   'https://dapp-aa-portkey-test.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql';
+//   'https://dapp-aa-portkey-test.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema';
 
 // mainnet
 // const ETransferHost = 'https://etransfer.exchange';

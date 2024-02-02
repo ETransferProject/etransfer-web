@@ -1,4 +1,4 @@
-import { PortkeyVersion } from 'constants/index';
+import { PortkeyVersion } from 'constants/wallet';
 import portkeyWalletV1 from './portkeyWalletV1';
 import portkeyWalletV2 from './portkeyWalletV2';
 

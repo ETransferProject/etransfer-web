@@ -10,8 +10,6 @@ import {
   SupportedELFChainId,
   NetworkTypeV1 as NetworkTypeEnum,
   NetworkTypeTextV1,
-  PortkeyNameVersion,
-  PortkeyVersion,
   NETWORK_TYPE_V1,
 } from 'constants/index';
 import { CaHolderWithGuardian } from '@portkey-v1/graphql';
@@ -20,7 +18,7 @@ import { isPortkey } from 'utils/portkey';
 import { GetCAHolderByManagerResult, GetCAHolderByManagerParams } from '@portkey-v1/services';
 import singleMessage from 'components/SingleMessage';
 import { TNetworkTypeV1 } from 'types/index';
-import { NetworkNotMatchTipPrefix } from 'constants/wallet';
+import { NetworkNotMatchTipPrefix, PortkeyNameVersion, PortkeyVersion } from 'constants/wallet';
 
 const ec = new elliptic.ec('secp256k1');
 

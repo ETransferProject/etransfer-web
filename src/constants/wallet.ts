@@ -1,3 +1,13 @@
+export enum PortkeyVersion {
+  v1 = 'v1',
+  v2 = 'v2',
+}
+
+export enum PortkeyNameVersion {
+  v1 = 'portkey',
+  v2 = 'Portkey',
+}
+
 export const ConnectWalletError =
   'Failed to connect wallet. Please check your internet connection and ensure your wallet is up-to-date.';
 

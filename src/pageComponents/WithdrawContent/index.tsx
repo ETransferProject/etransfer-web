@@ -66,6 +66,7 @@ import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
 import { formatWithCommas, parseWithCommas } from 'utils/format';
 import { sleep } from 'utils/common';
 import { devices } from '@portkey/utils';
+import { ConnectWalletError } from 'constants/wallet';
 
 enum ValidateStatus {
   Error = 'error',
@@ -366,6 +367,7 @@ export default function WithdrawContent() {
 
   const getMaxBalance = useCallback(async () => {
     try {
+      console.log('🌈 currentVersion', currentVersion);
       const tokenContract = await contractUnity.getContract({
         chainId: currentChainItemRef.current.key,
         contractType: ContractType.TOKEN,
@@ -526,6 +528,7 @@ export default function WithdrawContent() {
   );
 
   const handleApproveToken = useCallback(async () => {
+    if (!currentVersion) throw new Error(ConnectWalletError);
     const tokenContract = await contractUnity.getContract({
       chainId: currentChainItemRef.current.key,
       contractType: ContractType.TOKEN,
@@ -544,7 +547,7 @@ export default function WithdrawContent() {
 
     const ownerAddress = accounts?.[currentChainItemRef.current.key]?.[0] || '';
     const approveTargetAddress =
-      ADDRESS_MAP[currentChainItemRef.current.key][ContractType.ETRANSFER];
+      ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.ETRANSFER];
 
     const checkRes = await checkTokenAllowanceAndApprove({
       tokenContract,
@@ -602,8 +605,9 @@ export default function WithdrawContent() {
   );
 
   const sendTransferTokenTransaction = useDebounceCallback(async () => {
-    console.log('🌈 🌈 🌈 🌈 🌈 🌈 sendTransferTokenTransaction', sendTransferTokenTransaction);
+    console.log('🌈 🌈 🌈 🌈 🌈 🌈 sendTransferTokenTransaction');
     try {
+      if (!currentVersion) throw new Error(ConnectWalletError);
       setLoading(true, { text: 'Please approve the transaction in the wallet...' });
       const address = form.getFieldValue(FormKeys.ADDRESS);
       if (!address) throw new Error('Please enter a correct address.');
@@ -618,9 +622,10 @@ export default function WithdrawContent() {
         if (!portkeyWallet?.caHash) throw new Error('no caHash');
 
         const transaction = await createTransferTokenTransaction({
-          caContractAddress: ADDRESS_MAP[currentChainItemRef.current.key][ContractType.CA],
+          caContractAddress:
+            ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.CA],
           eTransferContractAddress:
-            ADDRESS_MAP[currentChainItemRef.current.key][ContractType.ETRANSFER],
+            ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.ETRANSFER],
           caHash: portkeyWallet.caHash,
           symbol: currentSymbol,
           amount: timesDecimals(balance, currentTokenDecimal).toFixed(),

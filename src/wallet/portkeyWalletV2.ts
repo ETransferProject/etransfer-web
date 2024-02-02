@@ -16,8 +16,6 @@ import {
   SupportedELFChainId,
   NetworkTypeV2 as NetworkTypeEnum,
   NetworkTypeTextV2,
-  PortkeyNameVersion,
-  PortkeyVersion,
   NETWORK_TYPE_V2,
 } from 'constants/index';
 import { CaHolderWithGuardian } from '@portkey/graphql';
@@ -25,7 +23,12 @@ import isMobile from 'utils/isMobile';
 import { isPortkey } from 'utils/portkey';
 import { GetCAHolderByManagerResult, GetCAHolderByManagerParams } from '@portkey/services';
 import singleMessage from 'components/SingleMessage';
-import { ConnectWalletError, NetworkNotMatchTipPrefix } from 'constants/wallet';
+import {
+  ConnectWalletError,
+  NetworkNotMatchTipPrefix,
+  PortkeyNameVersion,
+  PortkeyVersion,
+} from 'constants/wallet';
 
 const ec = new elliptic.ec('secp256k1');
 

@@ -36,13 +36,3 @@ export const SECONDS_60 = 60000;
 export const prefixCls = 'etransfer-web';
 export const AppName = 'ETransfer Web';
 export const BrandName = 'ETransfer';
-
-export enum PortkeyVersion {
-  v1 = 'v1',
-  v2 = 'v2',
-}
-
-export enum PortkeyNameVersion {
-  v1 = 'portkey',
-  v2 = 'Portkey',
-}

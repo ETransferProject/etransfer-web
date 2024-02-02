@@ -6,13 +6,13 @@ import {
   AppName,
   NETWORK_TYPE_V1,
   NETWORK_TYPE_V2,
-  PortkeyVersion,
   SupportedELFChainId,
   WebLoginGraphqlUrlV1,
   WebLoginGraphqlUrlV2,
   WebLoginRequestDefaultsUrlV1,
   WebLoginRequestDefaultsUrlV2,
 } from 'constants/index';
+import { PortkeyVersion } from 'constants/wallet';
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
 import { useCommonState } from 'store/Provider/hooks';

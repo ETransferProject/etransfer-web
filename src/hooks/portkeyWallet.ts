@@ -1,4 +1,4 @@
-import { PortkeyVersion } from 'constants/index';
+import { PortkeyVersion } from 'constants/wallet';
 import { useMemo } from 'react';
 import { useCommonState, usePortkeyWalletState } from 'store/Provider/hooks';
 
