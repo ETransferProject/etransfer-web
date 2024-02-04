@@ -35,9 +35,8 @@ import { WithdrawInfoSuccess } from 'types/deposit';
 import { checkTokenAllowanceAndApprove, createTransferTokenTransaction } from 'utils/aelfUtils';
 import singleMessage from 'components/SingleMessage';
 import { divDecimals, timesDecimals } from 'utils/calculate';
-import { ContractMethodName } from 'constants/contract';
 import { ZERO } from 'constants/misc';
-import contractUnity from 'contract/portkey';
+import portkeyContractUnity from 'contract/portkey';
 import { ContractType } from 'constants/chain';
 import BigNumber from 'bignumber.js';
 import { SideMenuKey } from 'constants/home';
@@ -67,6 +66,7 @@ import { formatWithCommas, parseWithCommas } from 'utils/format';
 import { sleep } from 'utils/common';
 import { devices } from '@portkey/utils';
 import { ConnectWalletError } from 'constants/wallet';
+import { useBalance } from 'hooks/useBalance';
 
 enum ValidateStatus {
   Error = 'error',
@@ -326,6 +326,7 @@ export default function WithdrawContent() {
       const params: GetWithdrawInfoRequest = {
         chainId: currentChainItemRef.current.key,
         symbol: currentSymbol,
+        version: currentVersion,
       };
       if (currentNetworkRef.current?.network) {
         params.network = currentNetworkRef.current?.network;
@@ -341,7 +342,7 @@ export default function WithdrawContent() {
         setIsTransactionFeeLoading(false);
       }
     }
-  }, [currentSymbol]);
+  }, [currentSymbol, currentVersion]);
 
   useEffect(() => {
     if (
@@ -365,25 +366,18 @@ export default function WithdrawContent() {
     }
   }, [currentNetwork?.network, handleFormValidateDataChange, withdrawInfo.transactionFee]);
 
+  const getBalance = useBalance();
   const getMaxBalance = useCallback(async () => {
     try {
       console.log('🌈 currentVersion', currentVersion);
-      const tokenContract = await contractUnity.getContract({
+      const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
+      if (!caAddress || !currentVersion) return '';
+      const maxBalance = await getBalance({
+        symbol: currentSymbol,
         chainId: currentChainItemRef.current.key,
-        contractType: ContractType.TOKEN,
+        caAddress,
         version: currentVersion,
       });
-      // console.log('🌈 🌈 🌈 🌈 🌈 🌈 tokenContract', tokenContract);
-
-      const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
-      // console.log('🌈 🌈 🌈 🌈 🌈 🌈 caAddress', caAddress);
-      const {
-        data: { balance: maxBalance },
-      } = await tokenContract.callViewMethod(ContractMethodName.GetBalance, {
-        symbol: currentSymbol,
-        owner: caAddress, // caAddress
-      });
-      // console.log('🌈 🌈 🌈 🌈 🌈 🌈 maxBalance', maxBalance);
       const tempMaxBalance = divDecimals(maxBalance, currentTokenDecimal).toFixed();
       setMaxBalance(tempMaxBalance);
       return tempMaxBalance;
@@ -391,7 +385,7 @@ export default function WithdrawContent() {
       singleMessage.error(handleErrorMessage(error));
       throw new Error('Failed to get balance.');
     }
-  }, [accounts, currentSymbol, currentTokenDecimal, currentVersion]);
+  }, [accounts, currentSymbol, currentTokenDecimal, currentVersion, getBalance]);
 
   const getMaxBalanceInterval = useCallback(async () => {
     if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
@@ -529,7 +523,7 @@ export default function WithdrawContent() {
 
   const handleApproveToken = useCallback(async () => {
     if (!currentVersion) throw new Error(ConnectWalletError);
-    const tokenContract = await contractUnity.getContract({
+    const tokenContract = await portkeyContractUnity.getContract({
       chainId: currentChainItemRef.current.key,
       contractType: ContractType.TOKEN,
       version: currentVersion,

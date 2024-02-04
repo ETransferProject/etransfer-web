@@ -110,10 +110,10 @@ export const queryAuthApi = async (config: QueryAuthApiExtraRequest) => {
 
 export const queryAuthToken = async ({
   chainId,
-  version = PortkeyVersion.v2,
+  version,
 }: {
   chainId: SupportedELFChainId;
-  version?: PortkeyVersion;
+  version: PortkeyVersion;
 }) => {
   const portkeyWallet = getPortkeyWallet(version);
   const managerAddress = await portkeyWallet.getManagerAddress();

@@ -12,9 +12,9 @@ import { PortkeyVersion, ConnectWalletError } from 'constants/wallet';
 import { singleMessage } from '@portkey/did-ui-react';
 
 export interface PortkeyProviderResult {
-  activate: (version?: PortkeyVersion) => Promise<void>;
+  activate: (version: PortkeyVersion) => Promise<void>;
   deactivate: () => boolean;
-  connectEagerly: () => Promise<void>;
+  connectEagerly: (version?: PortkeyVersion) => Promise<void>;
 }
 
 export function usePortkeyProvider(): PortkeyProviderResult {
@@ -23,7 +23,7 @@ export function usePortkeyProvider(): PortkeyProviderResult {
   const { currentVersion } = useCommonState();
 
   const activate = useCallback(
-    async (version?: PortkeyVersion) => {
+    async (version: PortkeyVersion) => {
       try {
         const versionNew = version || currentVersion;
         if (!versionNew) return;
@@ -73,10 +73,11 @@ export function usePortkeyProvider(): PortkeyProviderResult {
   const connectEagerly = useCallback(
     async (version?: PortkeyVersion) => {
       try {
-        if (!version && !currentVersion) return;
-        const portkeyWallet = getPortkeyWallet(version || currentVersion);
+        const versionNew = version || currentVersion;
+        if (!versionNew) return;
+        const portkeyWallet = getPortkeyWallet(versionNew);
         await portkeyWallet.connectEagerly();
-        activate(version || currentVersion);
+        activate(versionNew);
       } catch (error) {
         console.log(error, '====error');
       }

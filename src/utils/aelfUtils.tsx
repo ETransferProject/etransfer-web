@@ -97,7 +97,7 @@ type CreateHandleManagerForwardCall = {
   methodName: string;
   caHash: string;
   chainId: SupportedELFChainId;
-  version?: PortkeyVersion;
+  version: PortkeyVersion;
 };
 
 export const createManagerForwardCall = async ({
@@ -107,7 +107,7 @@ export const createManagerForwardCall = async ({
   methodName,
   caHash,
   chainId,
-  version = PortkeyVersion.v2,
+  version,
 }: CreateHandleManagerForwardCall) => {
   let instance, res, methods;
   if (version === PortkeyVersion.v1) {
@@ -162,7 +162,7 @@ export type GetRawTx = {
   address: string;
   contractAddress: string;
   functionName: string;
-  version?: PortkeyVersion;
+  version: PortkeyVersion;
 };
 
 export const getRawTx = ({
@@ -187,7 +187,7 @@ export const handleTransaction = async ({
   address,
   contractAddress,
   functionName,
-  version = PortkeyVersion.v2,
+  version,
 }: GetRawTx) => {
   // Create transaction
   const rawTx = getRawTx({
@@ -197,6 +197,7 @@ export const handleTransaction = async ({
     address,
     contractAddress,
     functionName,
+    version,
   });
   rawTx.params = Buffer.from(rawTx.params, 'hex');
 
@@ -231,7 +232,7 @@ export interface CreateTransferTransactionParams {
   amount: string; // with decimal
   memo?: string;
   chainId: SupportedELFChainId;
-  version?: PortkeyVersion;
+  version: PortkeyVersion;
 }
 export const createTransferTransaction = async ({
   caContractAddress,
@@ -242,7 +243,7 @@ export const createTransferTransaction = async ({
   amount,
   memo,
   chainId,
-  version = PortkeyVersion.v2,
+  version,
 }: CreateTransferTransactionParams) => {
   // await activate();
   const managerForwardCall = await createManagerForwardCall({
@@ -252,6 +253,7 @@ export const createTransferTransaction = async ({
     methodName: ContractMethodName.Transfer, // ContractMethodName.TransferToken,
     args: { symbol, to: toAddress, amount, memo },
     chainId,
+    version,
   });
 
   const transactionParams = AElf.utils.uint8ArrayToHex(managerForwardCall);
@@ -412,7 +414,7 @@ export interface CreateTransferTokenTransactionParams {
   symbol: string;
   amount: string;
   chainId: SupportedELFChainId;
-  version?: PortkeyVersion;
+  version: PortkeyVersion;
 }
 
 export const createTransferTokenTransaction = async ({
@@ -422,7 +424,7 @@ export const createTransferTokenTransaction = async ({
   symbol,
   amount,
   chainId,
-  version = PortkeyVersion.v2,
+  version,
 }: CreateTransferTokenTransactionParams) => {
   const managerForwardCall = await createManagerForwardCall({
     caContractAddress,
@@ -431,6 +433,7 @@ export const createTransferTokenTransaction = async ({
     methodName: ContractMethodName.TransferToken,
     args: { symbol, amount },
     chainId,
+    version,
   });
 
   const transactionParams = AElf.utils.uint8ArrayToHex(managerForwardCall);
