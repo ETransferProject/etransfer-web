@@ -1,6 +1,6 @@
 import { Accounts, IPortkeyProvider, MethodsBase, MethodsWallet } from '@portkey/provider-types';
 import detectProvider from '@portkey/detect-provider';
-import { evokePortkey } from '@portkey-v1/onboarding';
+import { evokePortkey } from '@portkey/onboarding';
 import elliptic from 'elliptic';
 import { zeroFill } from 'utils/calculate';
 import { sleep } from 'utils/common';
@@ -105,6 +105,7 @@ class PortkeyWallet implements IPortkeyWalletV1 {
       if (isMobileDevices() && !isPortkey()) {
         await evokePortkey.app({
           action: 'linkDapp',
+          version: PortkeyVersion.v1,
           custom: {
             url: window.location.href,
           },

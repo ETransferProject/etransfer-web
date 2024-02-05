@@ -68,7 +68,9 @@ export function NetworkSelectForMobile({
     <div className={clsx(styles['network-select'], styles['network-select-for-mobile'], className)}>
       <NetworkSelectTip
         menuType={activeMenuKey}
-        showHighlight={!isDisabled && Array.isArray(networkList) && networkList.length > 0}
+        showHighlight={
+          !isShowLoading && !isDisabled && Array.isArray(networkList) && networkList.length > 0
+        }
       />
       <div className={styles['network-select-list']}>
         {(isShowLoading || !Array.isArray(networkList) || networkList.length == 0) && (
@@ -112,7 +114,9 @@ export function NetworkSelectForWeb({
     <div className={clsx(styles['network-select'], styles['network-select-for-web'], className)}>
       <NetworkSelectTip
         menuType={activeMenuKey}
-        showHighlight={!isDisabled && Array.isArray(networkList) && networkList.length > 0}
+        showHighlight={
+          !isShowLoading && !isDisabled && Array.isArray(networkList) && networkList.length > 0
+        }
       />
       <div className={styles['network-select-list']}>
         {(isShowLoading || !Array.isArray(networkList) || networkList.length == 0) && (
