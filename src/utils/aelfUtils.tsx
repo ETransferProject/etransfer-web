@@ -21,8 +21,9 @@ import { ContractMethodName, ManagerForwardCall } from 'constants/contract';
 import BigNumber from 'bignumber.js';
 import { timesDecimals } from './calculate';
 import { IContract } from '@portkey/types';
-import { AllSupportedELFChainId } from 'constants/chain';
+import { AllSupportedELFChainId, ContractType } from 'constants/chain';
 import getPortkeyWallet from 'wallet/portkeyWallet';
+import portkeyContractUnity from 'contract/portkey';
 
 export function getNodeByChainId(chainId: AllSupportedELFChainId) {
   return AElfNodes[chainId as AelfInstancesKey];
@@ -454,4 +455,26 @@ export const createTransferTokenTransaction = async ({
   });
   console.log('🌈 🌈 🌈 🌈 🌈 🌈 transaction', transaction);
   return transaction;
+};
+
+export type GetBalancesProps = {
+  caAddress: string;
+  symbol: string;
+  chainId: SupportedELFChainId;
+  version: PortkeyVersion;
+};
+export const getBalance = async ({ symbol, chainId, caAddress, version }: GetBalancesProps) => {
+  const tokenContract = await portkeyContractUnity.getContract({
+    chainId,
+    contractType: ContractType.TOKEN,
+    version,
+  });
+
+  const {
+    data: { balance },
+  } = await tokenContract.callViewMethod(ContractMethodName.GetBalance, {
+    symbol,
+    owner: caAddress, // caAddress
+  });
+  return balance;
 };

@@ -13,7 +13,7 @@ export default function OpenLink({ className, href }: TOpenLink) {
 
   return (
     <div className={className} onClick={handleClick}>
-      <OpenLinkIcon></OpenLinkIcon>
+      <OpenLinkIcon />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import clsx from 'clsx';
 import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
 import CommonAddress from 'components/CommonAddress';
@@ -40,6 +40,13 @@ export default function MobileDepositContent({
       />
     );
   };
+
+  const renderDepositDescription = useMemo(() => {
+    return (
+      Array.isArray(depositInfo?.extraNotes) &&
+      depositInfo?.extraNotes.length > 0 && <DepositDescription list={depositInfo.extraNotes} />
+    );
+  }, [depositInfo.extraNotes]);
 
   return (
     <>
@@ -83,9 +90,7 @@ export default function MobileDepositContent({
                     contractAddressLink={contractAddressLink}
                   />
                 </div>
-                {Array.isArray(depositInfo?.extraNotes) && depositInfo?.extraNotes.length > 0 && (
-                  <DepositDescription list={depositInfo.extraNotes} />
-                )}
+                {renderDepositDescription}
               </>
             )}
           </>

@@ -32,7 +32,11 @@ import {
   initialWithdrawSuccessCheck,
 } from 'constants/deposit';
 import { WithdrawInfoSuccess } from 'types/deposit';
-import { checkTokenAllowanceAndApprove, createTransferTokenTransaction } from 'utils/aelfUtils';
+import {
+  checkTokenAllowanceAndApprove,
+  createTransferTokenTransaction,
+  getBalance,
+} from 'utils/aelfUtils';
 import singleMessage from 'components/SingleMessage';
 import { divDecimals, timesDecimals } from 'utils/calculate';
 import { ZERO } from 'constants/misc';
@@ -66,7 +70,6 @@ import { formatWithCommas, parseWithCommas } from 'utils/format';
 import { sleep } from 'utils/common';
 import { devices } from '@portkey/utils';
 import { ConnectWalletError } from 'constants/wallet';
-import { useBalance } from 'hooks/useBalance';
 
 enum ValidateStatus {
   Error = 'error',
@@ -366,7 +369,6 @@ export default function WithdrawContent() {
     }
   }, [currentNetwork?.network, handleFormValidateDataChange, withdrawInfo.transactionFee]);
 
-  const getBalance = useBalance();
   const getMaxBalance = useCallback(async () => {
     try {
       console.log('🌈 currentVersion', currentVersion);
@@ -385,7 +387,7 @@ export default function WithdrawContent() {
       singleMessage.error(handleErrorMessage(error));
       throw new Error('Failed to get balance.');
     }
-  }, [accounts, currentSymbol, currentTokenDecimal, currentVersion, getBalance]);
+  }, [accounts, currentSymbol, currentTokenDecimal, currentVersion]);
 
   const getMaxBalanceInterval = useCallback(async () => {
     if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);

@@ -31,6 +31,12 @@ export default function WebContent({
 }: DepositContentProps) {
   const { currentSymbol } = useTokenState();
   const webLabel = useMemo(() => `Deposit ${currentSymbol} to`, [currentSymbol]);
+  const renderDepositDescription = useMemo(() => {
+    return (
+      Array.isArray(depositInfo?.extraNotes) &&
+      depositInfo?.extraNotes.length > 0 && <DepositDescription list={depositInfo.extraNotes} />
+    );
+  }, [depositInfo.extraNotes]);
 
   return (
     <>
@@ -66,9 +72,7 @@ export default function WebContent({
               contractAddressLink={contractAddressLink}
             />
           </div>
-          {Array.isArray(depositInfo?.extraNotes) && depositInfo?.extraNotes.length > 0 && (
-            <DepositDescription list={depositInfo.extraNotes} />
-          )}
+          {renderDepositDescription}
         </>
       )}
     </>
