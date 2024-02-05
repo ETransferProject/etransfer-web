@@ -19,7 +19,7 @@ import {
   NETWORK_TYPE_V2,
 } from 'constants/index';
 import { CaHolderWithGuardian } from '@portkey/graphql';
-import isMobile from 'utils/isMobile';
+import { isMobileDevices } from 'utils/isMobile';
 import { isPortkey } from 'utils/portkey';
 import { GetCAHolderByManagerResult, GetCAHolderByManagerParams } from '@portkey/services';
 import singleMessage from 'components/SingleMessage';
@@ -109,18 +109,15 @@ class PortkeyWallet implements IPortkeyWalletV2 {
 
   public async activate() {
     if (!this.matchNetworkType) throw Error('please set network type');
-
     const provider = await this.getProvider();
     if (!provider) {
-      if (isMobile()) {
-        if (!isPortkey()) {
-          await evokePortkey.app({
-            action: 'linkDapp',
-            custom: {
-              url: window.location.href,
-            },
-          });
-        }
+      if (isMobileDevices() && !isPortkey()) {
+        await evokePortkey.app({
+          action: 'linkDapp',
+          custom: {
+            url: window.location.href,
+          },
+        });
       } else {
         const installed = await evokePortkey.extension();
         if (!installed) throw Error('provider not installed');
