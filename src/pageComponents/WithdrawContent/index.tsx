@@ -842,11 +842,12 @@ export default function WithdrawContent() {
                 maxButtonConfig={{
                   onClick: () => setMaxToken(),
                 }}
+                autoComplete="off"
                 placeholder={`Minimum: ${minAmount}`}
                 max={999999999.999999}
                 onInput={(event: any) => {
-                  const value = event.target?.value;
-                  if (!value) return;
+                  const value = event.target?.value.trim();
+                  if (!value) return (event.target.value = '');
 
                   const lastNumber = value.charAt(value.length - 1);
                   const valueNotComma = parseWithCommas(value);
