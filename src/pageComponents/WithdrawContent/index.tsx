@@ -825,7 +825,7 @@ export default function WithdrawContent() {
               />
             )}
           </div>
-          <div className={styles['form-item-wrapper']}>
+          <div className={clsx(styles['form-item-wrapper'], styles['amount-form-item-wrapper'])}>
             <Form.Item
               className={styles['form-item']}
               label={
