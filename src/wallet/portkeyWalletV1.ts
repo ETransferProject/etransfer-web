@@ -111,7 +111,7 @@ class PortkeyWallet implements IPortkeyWalletV1 {
           },
         });
       } else {
-        const installed = await evokePortkey.extension();
+        const installed = await evokePortkey.extension({ version: PortkeyVersion.v1 });
         if (!installed) throw Error('provider not installed');
       }
       throw Error('provider init error');
