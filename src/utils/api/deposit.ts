@@ -2,7 +2,6 @@ import axios from 'axios';
 import { handleErrorMessage } from '@portkey/did-ui-react';
 import { request } from 'api';
 import { CancelTokenSourceKey, CommonErrorNameType } from 'api/types';
-import { ErrorNameType, FAIL_MODAL_REASON_ERROR_CODE_LIST } from 'constants/withdraw';
 import {
   CreateWithdrawOrderRequest,
   CreateWithdrawOrderResult,
@@ -34,11 +33,13 @@ export const getNetworkList = async (
       cancelTokenSourceKey: CancelTokenSourceKey.GET_NETWORK_LIST,
     });
     return res.data;
-  } catch (error) {
-    const newError = new Error(handleErrorMessage(error, 'getNetworkList error'));
+  } catch (error: any) {
+    const newError: any = new Error(handleErrorMessage(error, 'getNetworkList error'));
     if (axios.isCancel(error)) {
       newError.name = CommonErrorNameType.CANCEL;
     }
+    newError.code = error?.code;
+
     throw newError;
   }
 };
@@ -52,11 +53,13 @@ export const getDepositInfo = async (
       cancelTokenSourceKey: CancelTokenSourceKey.GET_DEPOSIT_INFO,
     });
     return res.data;
-  } catch (error) {
-    const newError = new Error(handleErrorMessage(error, 'getDepositInfo error'));
+  } catch (error: any) {
+    const newError: any = new Error(handleErrorMessage(error, 'getDepositInfo error'));
     if (axios.isCancel(error)) {
       newError.name = CommonErrorNameType.CANCEL;
     }
+    newError.code = error?.code;
+
     throw newError;
   }
 };
@@ -70,11 +73,13 @@ export const getWithdrawInfo = async (
       cancelTokenSourceKey: CancelTokenSourceKey.GET_WITHDRAW_INFO,
     });
     return res.data;
-  } catch (error) {
-    const newError = new Error(handleErrorMessage(error, 'getWithdrawInfo error'));
+  } catch (error: any) {
+    const newError: any = new Error(handleErrorMessage(error, 'getWithdrawInfo error'));
     if (axios.isCancel(error)) {
       newError.name = CommonErrorNameType.CANCEL;
     }
+    newError.code = error?.code;
+
     throw newError;
   }
 };
@@ -85,16 +90,10 @@ export const createWithdrawOrder = async (
   try {
     const res = await request.deposit.createWithdrawOrder({ data: params });
     return res.data;
-  } catch (error) {
-    const newError = new Error(handleErrorMessage(error, 'createWithdrawOrder error'));
-    if (
-      FAIL_MODAL_REASON_ERROR_CODE_LIST.includes(
-        (error as { code: (typeof FAIL_MODAL_REASON_ERROR_CODE_LIST)[number]; message: string })
-          .code,
-      )
-    ) {
-      newError.name = ErrorNameType.FAIL_MODAL_REASON;
-    }
+  } catch (error: any) {
+    const newError: any = new Error(handleErrorMessage(error, 'createWithdrawOrder error'));
+
+    newError.code = error?.code;
     throw newError;
   }
 };

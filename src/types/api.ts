@@ -1,4 +1,5 @@
 import { ChainId } from '@portkey/provider-types';
+import { PortkeyVersion } from 'constants/wallet';
 
 export enum BusinessType {
   Deposit = 'Deposit',
@@ -72,6 +73,7 @@ export type GetWithdrawInfoRequest = {
   symbol?: string;
   amount?: string;
   address?: string;
+  version?: PortkeyVersion;
 };
 
 export type GetWithdrawInfoResult = {

@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
 import CommonButton from 'components/CommonButton';
 import FormTextarea from 'components/FormTextarea';
-import FormInputNumber from 'components/FormInputNumber';
 import SelectNetwork from 'pageComponents/SelectNetwork';
 import DoubleCheckModal from './DoubleCheckModal';
 import SuccessModal from './SuccessModal';
@@ -17,12 +16,10 @@ import {
   BusinessType,
   GetWithdrawInfoRequest,
 } from 'types/api';
-import { formatWithThousandsSeparator, parserWithThousandsSeparator } from 'utils/common';
 import {
   useAppDispatch,
   useCommonState,
   useLoading,
-  usePortkeyWalletState,
   useTokenState,
   useUserActionState,
 } from 'store/Provider/hooks';
@@ -35,14 +32,15 @@ import {
   initialWithdrawSuccessCheck,
 } from 'constants/deposit';
 import { WithdrawInfoSuccess } from 'types/deposit';
-import { checkTokenAllowanceAndApprove, createTransferTokenTransaction } from 'utils/aelfUtils';
-import portkeyWallet from 'wallet/portkeyWallet';
+import {
+  checkTokenAllowanceAndApprove,
+  createTransferTokenTransaction,
+  getBalance,
+} from 'utils/aelfUtils';
 import singleMessage from 'components/SingleMessage';
-import { handleErrorMessage } from 'aelf-web-login';
 import { divDecimals, timesDecimals } from 'utils/calculate';
-import { ContractMethodName } from 'constants/contract';
 import { ZERO } from 'constants/misc';
-import contractUnity from 'contract/portkey';
+import portkeyContractUnity from 'contract/portkey';
 import { ContractType } from 'constants/chain';
 import BigNumber from 'bignumber.js';
 import { SideMenuKey } from 'constants/home';
@@ -54,8 +52,24 @@ import {
 import { useDebounceCallback } from 'hooks';
 import { useEffectOnce } from 'react-use';
 import SimpleLoading from 'components/SimpleLoading';
-import { ErrorNameType } from 'constants/withdraw';
+import {
+  AmountGreaterThanBalanceMessage,
+  DefaultWithdrawErrorMessage,
+  ErrorNameType,
+  InsufficientAllowanceMessage,
+  WithdrawAddressErrorCodeList,
+  WithdrawSendTxErrorCodeList,
+} from 'constants/withdraw';
 import { CommonErrorNameType } from 'api/types';
+import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
+import { handleErrorMessage } from '@portkey/did-ui-react';
+import { useAccounts } from 'hooks/portkeyWallet';
+import getPortkeyWallet from 'wallet/portkeyWallet';
+import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
+import { formatWithCommas, parseWithCommas } from 'utils/format';
+import { sleep } from 'utils/common';
+import { devices } from '@portkey/utils';
+import { ConnectWalletError } from 'constants/wallet';
 
 enum ValidateStatus {
   Error = 'error',
@@ -75,16 +89,18 @@ type FormValuesType = {
   [FormKeys.AMOUNT]: string;
 };
 
-const NETWORK_DATA_ERROR_LIST = ['address', 'is currently not supported'];
+const CheckNumberReg = /^[0-9]{1,9}((\.\d)|(\.\d{1,6}))?$/;
 
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
-  const { isMobilePX, currentChainItem } = useCommonState();
+  const isAndroid = devices.isMobile().android;
+  const { isMobilePX, currentChainItem, currentVersion } = useCommonState();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
-  const { accounts } = usePortkeyWalletState();
+  const accounts = useAccounts();
   const { currentSymbol, tokenList } = useTokenState();
   const { withdraw } = useUserActionState();
   const { setLoading } = useLoading();
+  const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
   const [currentNetwork, setCurrentNetwork] = useState<NetworkItem>();
   const currentNetworkRef = useRef<NetworkItem>();
@@ -100,6 +116,7 @@ export default function WithdrawContent() {
   const [withdrawInfoSuccess, setWithdrawInfoSuccessCheck] = useState<WithdrawInfoSuccess>(
     initialWithdrawSuccessCheck,
   );
+  const [isNetworkDisable, setIsNetworkDisable] = useState(false);
   const [formValidateData, setFormValidateData] = useState<{
     [key in FormKeys]: { validateStatus: ValidateStatus; errorMessage: string };
   }>({
@@ -108,7 +125,6 @@ export default function WithdrawContent() {
     [FormKeys.AMOUNT]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
   });
   const [isTransactionFeeLoading, setIsTransactionFeeLoading] = useState(false);
-  const [isWithdrawalAmountInputting, setIsWithdrawalAmountInputting] = useState(false);
 
   const getTransactionFeeTimerRef = useRef<NodeJS.Timeout | null>(null);
   const preReceiveAmountRef = useRef('');
@@ -118,9 +134,7 @@ export default function WithdrawContent() {
   }, [withdrawInfo?.minAmount]);
   const receiveAmount = useMemo(() => {
     let result = '';
-    if (isWithdrawalAmountInputting) {
-      result = preReceiveAmountRef.current;
-    } else if (
+    if (
       !balance ||
       !withdrawInfo.transactionFee ||
       ZERO.plus(balance).isLessThan(ZERO.plus(withdrawInfo.transactionFee)) ||
@@ -132,7 +146,7 @@ export default function WithdrawContent() {
     }
     preReceiveAmountRef.current = result;
     return result;
-  }, [balance, minAmount, withdrawInfo.transactionFee, isWithdrawalAmountInputting]);
+  }, [balance, minAmount, withdrawInfo.transactionFee]);
 
   const getMaxBalanceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -203,10 +217,28 @@ export default function WithdrawContent() {
     [judgeIsSubmitDisabled],
   );
 
+  const getAllNetworkData = useCallback(async () => {
+    // only get data and render page, don't update error
+    try {
+      setIsShowNetworkLoading(true);
+      const { networkList } = await getNetworkList({
+        type: BusinessType.Withdraw,
+        chainId: currentChainItemRef.current.key,
+        symbol: currentSymbol,
+      });
+      setNetworkList(networkList);
+      dispatch(setWithdrawNetworkList(networkList));
+    } catch (error) {
+      setIsShowNetworkLoading(false);
+    } finally {
+      setIsShowNetworkLoading(false);
+    }
+  }, [currentSymbol, dispatch]);
+
   const getNetworkData = useCallback(
     async ({ symbol, address }: Omit<GetNetworkListRequest, 'type' | 'chainId'>) => {
       try {
-        setLoading(true);
+        setIsShowNetworkLoading(true);
         const params: GetNetworkListRequest = {
           type: BusinessType.Withdraw,
           chainId: currentChainItemRef.current.key,
@@ -254,17 +286,20 @@ export default function WithdrawContent() {
             },
           });
         }
-        setLoading(false);
+        setIsNetworkDisable(false);
+        setIsShowNetworkLoading(false);
       } catch (error: any) {
-        setLoading(false);
-        const errorString = error.message;
-        if (NETWORK_DATA_ERROR_LIST.some((item) => errorString.includes(item))) {
+        setIsShowNetworkLoading(false);
+        if (WithdrawAddressErrorCodeList.includes(error?.code)) {
           handleFormValidateDataChange({
             [FormKeys.ADDRESS]: {
               validateStatus: ValidateStatus.Error,
-              errorMessage: errorString,
+              errorMessage: error?.message,
             },
           });
+          setIsNetworkDisable(true);
+          setCurrentNetwork(undefined);
+          getAllNetworkData();
         } else {
           handleFormValidateDataChange({
             [FormKeys.ADDRESS]: {
@@ -275,17 +310,17 @@ export default function WithdrawContent() {
           if (error.name !== CommonErrorNameType.CANCEL) {
             singleMessage.error(handleErrorMessage(error));
           }
+          setNetworkList([]);
         }
-        setNetworkList([]);
         dispatch(setWithdrawNetworkList([]));
         setCurrentNetwork(undefined);
         currentNetworkRef.current = undefined;
         dispatch(setWithdrawCurrentNetwork(undefined));
       } finally {
-        setLoading(false);
+        setIsShowNetworkLoading(false);
       }
     },
-    [dispatch, handleFormValidateDataChange, setLoading],
+    [dispatch, getAllNetworkData, handleFormValidateDataChange],
   );
 
   const getWithdrawData = useCallback(async () => {
@@ -294,6 +329,7 @@ export default function WithdrawContent() {
       const params: GetWithdrawInfoRequest = {
         chainId: currentChainItemRef.current.key,
         symbol: currentSymbol,
+        version: currentVersion,
       };
       if (currentNetworkRef.current?.network) {
         params.network = currentNetworkRef.current?.network;
@@ -309,7 +345,7 @@ export default function WithdrawContent() {
         setIsTransactionFeeLoading(false);
       }
     }
-  }, [currentSymbol]);
+  }, [currentSymbol, currentVersion]);
 
   useEffect(() => {
     if (
@@ -335,18 +371,14 @@ export default function WithdrawContent() {
 
   const getMaxBalance = useCallback(async () => {
     try {
-      const tokenContract = await contractUnity.getContract({
-        chainId: currentChainItemRef.current.key,
-        contractType: ContractType.TOKEN,
-      });
-
+      console.log('🌈 currentVersion', currentVersion);
       const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
-
-      const {
-        data: { balance: maxBalance },
-      } = await tokenContract.callViewMethod(ContractMethodName.GetBalance, {
+      if (!caAddress || !currentVersion) return '';
+      const maxBalance = await getBalance({
         symbol: currentSymbol,
-        owner: caAddress, // caAddress
+        chainId: currentChainItemRef.current.key,
+        caAddress,
+        version: currentVersion,
       });
       const tempMaxBalance = divDecimals(maxBalance, currentTokenDecimal).toFixed();
       setMaxBalance(tempMaxBalance);
@@ -355,7 +387,7 @@ export default function WithdrawContent() {
       singleMessage.error(handleErrorMessage(error));
       throw new Error('Failed to get balance.');
     }
-  }, [accounts, currentSymbol, currentTokenDecimal]);
+  }, [accounts, currentSymbol, currentTokenDecimal, currentVersion]);
 
   const getMaxBalanceInterval = useCallback(async () => {
     if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
@@ -375,8 +407,8 @@ export default function WithdrawContent() {
       });
       return;
     }
-    const parserNumber = Number(parserWithThousandsSeparator(amount));
-    if (parserNumber < Number(parserWithThousandsSeparator(minAmount))) {
+    const parserNumber = Number(parseWithCommas(amount));
+    if (parserNumber < Number(parseWithCommas(minAmount))) {
       handleFormValidateDataChange({
         [FormKeys.AMOUNT]: {
           validateStatus: ValidateStatus.Error,
@@ -385,16 +417,15 @@ export default function WithdrawContent() {
       });
     } else if (
       withdrawInfo.remainingLimit &&
-      parserNumber > Number(parserWithThousandsSeparator(withdrawInfo.remainingLimit))
+      parserNumber > Number(parseWithCommas(withdrawInfo.remainingLimit))
     ) {
       handleFormValidateDataChange({
         [FormKeys.AMOUNT]: {
           validateStatus: ValidateStatus.Error,
-          errorMessage:
-            'The amount exceeds the remaining withdrawal quota. Please consider transferring a smaller amount.',
+          errorMessage: AmountGreaterThanBalanceMessage,
         },
       });
-    } else if (parserNumber > Number(parserWithThousandsSeparator(maxBalance))) {
+    } else if (parserNumber > Number(parseWithCommas(maxBalance))) {
       handleFormValidateDataChange({
         [FormKeys.AMOUNT]: {
           validateStatus: ValidateStatus.Error,
@@ -493,9 +524,11 @@ export default function WithdrawContent() {
   );
 
   const handleApproveToken = useCallback(async () => {
-    const tokenContract = await contractUnity.getContract({
+    if (!currentVersion) throw new Error(ConnectWalletError);
+    const tokenContract = await portkeyContractUnity.getContract({
       chainId: currentChainItemRef.current.key,
       contractType: ContractType.TOKEN,
+      version: currentVersion,
     });
 
     const newMaxBalance = await getMaxBalance();
@@ -510,7 +543,7 @@ export default function WithdrawContent() {
 
     const ownerAddress = accounts?.[currentChainItemRef.current.key]?.[0] || '';
     const approveTargetAddress =
-      ADDRESS_MAP[currentChainItemRef.current.key][ContractType.ETRANSFER];
+      ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.ETRANSFER];
 
     const checkRes = await checkTokenAllowanceAndApprove({
       tokenContract,
@@ -521,37 +554,11 @@ export default function WithdrawContent() {
     });
 
     return checkRes;
-  }, [accounts, balance, currentSymbol, getMaxBalance]);
+  }, [accounts, balance, currentSymbol, currentVersion, getMaxBalance]);
 
-  const sendTransferTokenTransaction = useDebounceCallback(async () => {
-    console.log('🌈 🌈 🌈 🌈 🌈 🌈 sendTransferTokenTransaction', sendTransferTokenTransaction);
-    try {
-      setLoading(true, { text: 'Please approve the transaction in the wallet...' });
-      const address = form.getFieldValue(FormKeys.ADDRESS);
-      if (!address) throw new Error('Please enter a correct address.');
-
-      const approveRes = await handleApproveToken();
-      if (!approveRes)
-        throw new Error(
-          'Insufficient allowance. Please try again, ensuring that you approve an adequate amount as the allowance.',
-        );
-      console.log('🌈 🌈 🌈 🌈 🌈 🌈 approveRes', approveRes);
-
-      if (approveRes) {
-        if (!portkeyWallet?.manager?.caAddress) throw new Error('no caContractAddress');
-        if (!portkeyWallet?.caHash) throw new Error('no caHash');
-
-        const transaction = await createTransferTokenTransaction({
-          caContractAddress: ADDRESS_MAP[currentChainItemRef.current.key][ContractType.CA],
-          eTransferContractAddress:
-            ADDRESS_MAP[currentChainItemRef.current.key][ContractType.ETRANSFER],
-          caHash: portkeyWallet.caHash,
-          symbol: currentSymbol,
-          amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
-          chainId: currentChainItemRef.current.key,
-        });
-        console.log(transaction, '=====transaction');
-
+  const handleCreateWithdrawOrder = useCallback(
+    async ({ address, rawTransaction }: { address: string; rawTransaction: string }) => {
+      try {
         if (!currentNetworkRef.current?.network) throw new Error('please selected network');
 
         const createWithdrawOrderRes = await createWithdrawOrder({
@@ -560,9 +567,10 @@ export default function WithdrawContent() {
           amount: balance,
           fromChainId: currentChainItemRef.current.key,
           toAddress: address,
-          rawTransaction: transaction,
+          rawTransaction: rawTransaction,
         });
         console.log('🌈 🌈 🌈 🌈 🌈 🌈 createWithdrawOrderRes', createWithdrawOrderRes);
+
         if (createWithdrawOrderRes.orderId) {
           setWithdrawInfoSuccessCheck({
             receiveAmount: receiveAmount,
@@ -574,11 +582,55 @@ export default function WithdrawContent() {
           });
           setIsSuccessModalOpen(true);
         } else {
-          setFailModalReason(
-            'The transaction failed due to an unexpected error. Please try again later.',
-          );
+          setFailModalReason(DefaultWithdrawErrorMessage);
           setIsFailModalOpen(true);
         }
+      } catch (error: any) {
+        if (WithdrawSendTxErrorCodeList.includes(error?.code)) {
+          setFailModalReason(error?.message);
+        } else {
+          setFailModalReason(DefaultWithdrawErrorMessage);
+        }
+        setIsFailModalOpen(true);
+      } finally {
+        setLoading(false);
+        setIsDoubleCheckModalOpen(false);
+      }
+    },
+    [balance, currentSymbol, receiveAmount, setLoading],
+  );
+
+  const sendTransferTokenTransaction = useDebounceCallback(async () => {
+    console.log('🌈 🌈 🌈 🌈 🌈 🌈 sendTransferTokenTransaction');
+    try {
+      if (!currentVersion) throw new Error(ConnectWalletError);
+      setLoading(true, { text: 'Please approve the transaction in the wallet...' });
+      const address = form.getFieldValue(FormKeys.ADDRESS);
+      if (!address) throw new Error('Please enter a correct address.');
+
+      const approveRes = await handleApproveToken();
+      if (!approveRes) throw new Error(InsufficientAllowanceMessage);
+      console.log('🌈 🌈 🌈 🌈 🌈 🌈 approveRes', approveRes);
+
+      if (approveRes) {
+        const portkeyWallet = getPortkeyWallet(currentVersion);
+        if (!portkeyWallet?.manager?.caAddress) throw new Error('no caContractAddress');
+        if (!portkeyWallet?.caHash) throw new Error('no caHash');
+
+        const transaction = await createTransferTokenTransaction({
+          caContractAddress:
+            ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.CA],
+          eTransferContractAddress:
+            ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.ETRANSFER],
+          caHash: portkeyWallet.caHash,
+          symbol: currentSymbol,
+          amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
+          chainId: currentChainItemRef.current.key,
+          version: currentVersion,
+        });
+        console.log(transaction, '=====transaction');
+
+        await handleCreateWithdrawOrder({ address, rawTransaction: transaction });
       } else {
         throw new Error('Approve Failed');
       }
@@ -590,9 +642,7 @@ export default function WithdrawContent() {
       } else if (error.name === ErrorNameType.FAIL_MODAL_REASON) {
         setFailModalReason(error.message);
       } else {
-        setFailModalReason(
-          'The transaction failed due to an unexpected error. Please try again later.',
-        );
+        setFailModalReason(DefaultWithdrawErrorMessage);
       }
       console.log('sendTransferTokenTransaction error:', error);
       setIsFailModalOpen(true);
@@ -633,6 +683,9 @@ export default function WithdrawContent() {
           errorMessage: 'Please enter a correct address.',
         },
       });
+      setIsNetworkDisable(true);
+      setCurrentNetwork(undefined);
+      await getAllNetworkData();
       return;
     }
 
@@ -647,6 +700,7 @@ export default function WithdrawContent() {
     currentSymbol,
     dispatch,
     form,
+    getAllNetworkData,
     getNetworkData,
     getWithdrawData,
     handleAmountValidate,
@@ -662,6 +716,15 @@ export default function WithdrawContent() {
 
   const clickSuccessOk = useCallback(() => {
     setIsSuccessModalOpen(false);
+    setBalance('');
+    form.setFieldValue(FormKeys.AMOUNT, '');
+    handleAmountValidate();
+
+    getWithdrawData();
+  }, [form, getWithdrawData, handleAmountValidate]);
+
+  const clickFailedOk = useCallback(() => {
+    setIsFailModalOpen(false);
     setBalance('');
     form.setFieldValue(FormKeys.AMOUNT, '');
     handleAmountValidate();
@@ -749,29 +812,20 @@ export default function WithdrawContent() {
                 type={SideMenuKey.Withdraw}
                 networkList={networkList}
                 selected={currentNetwork}
+                isDisabled={isNetworkDisable}
+                isShowLoading={isShowNetworkLoading}
                 selectCallback={handleNetworkChanged}
               />
             </Form.Item>
-            {!!currentNetwork?.contractAddress && (
-              <div className={clsx('flex-row-start', styles['info-wrapper-contract-address'])}>
-                <div className={clsx('flex-none', styles['info-label'])}>{CONTRACT_ADDRESS}</div>
-                <div className={clsx('flex-1', 'flex-row-content-end')}>
-                  <span
-                    className={clsx('text-right', 'text-break', styles['info-value'], {
-                      'text-link': !!currentNetwork?.explorerUrl,
-                    })}
-                    onClick={() => {
-                      if (currentNetwork?.explorerUrl) {
-                        window?.open(currentNetwork.explorerUrl, '_blank');
-                      }
-                    }}>
-                    {currentNetwork?.contractAddress}
-                  </span>
-                </div>
-              </div>
+            {!isMobilePX && !!currentNetwork?.contractAddress && (
+              <ContractAddressForWeb
+                label={CONTRACT_ADDRESS}
+                address={currentNetwork.contractAddress}
+                explorerUrl={currentNetwork?.explorerUrl}
+              />
             )}
           </div>
-          <div className={styles['form-item-wrapper']}>
+          <div className={clsx(styles['form-item-wrapper'], styles['amount-form-item-wrapper'])}>
             <Form.Item
               className={styles['form-item']}
               label={
@@ -783,33 +837,53 @@ export default function WithdrawContent() {
               name={FormKeys.AMOUNT}
               validateStatus={formValidateData[FormKeys.AMOUNT].validateStatus}
               help={formValidateData[FormKeys.AMOUNT].errorMessage}>
-              <FormInputNumber
+              <FormInput
                 unit={withdrawInfo.transactionUnit}
                 maxButtonConfig={{
                   onClick: () => setMaxToken(),
                 }}
-                inputNumberProps={{
-                  placeholder: `Minimum: ${minAmount}`,
-                  stringMode: true,
-                  min: '0',
-                  max: '999999999.999999',
-                  precision: 6,
-                  formatter: (value, info) =>
-                    formatWithThousandsSeparator(value, {
-                      inputValue: info?.input,
-                      isTyping: info?.userTyping,
-                    }),
-                  parser: parserWithThousandsSeparator,
+                autoComplete="off"
+                placeholder={`Minimum: ${minAmount}`}
+                max={999999999.999999}
+                onInput={(event: any) => {
+                  const value = event.target?.value.trim();
+                  if (!value) return (event.target.value = '');
+
+                  const lastNumber = value.charAt(value.length - 1);
+                  const valueNotComma = parseWithCommas(value);
+                  const commaCount = value.match(/\./gim)?.length;
+
+                  if (commaCount > 1) {
+                    return (event.target.value = form.getFieldValue(FormKeys.AMOUNT));
+                  }
+
+                  if (!CheckNumberReg.exec(valueNotComma)) {
+                    if (lastNumber !== '.') {
+                      event.target.value = form.getFieldValue(FormKeys.AMOUNT);
+                      return;
+                    }
+                  } else {
+                    const beforePoint = formatWithCommas({ amount: valueNotComma });
+                    const afterPoint = lastNumber === '.' ? '.' : '';
+                    event.target.value = beforePoint + afterPoint;
+                  }
                 }}
-                onChange={(value) => {
-                  setBalance(value || '');
-                  form.setFieldValue(FormKeys.AMOUNT, value || '');
+                onFocus={async () => {
+                  if (isAndroid) {
+                    // The keyboard does not block the input box
+                    await sleep(200);
+                    document.getElementById('inputAmountWrapper')?.scrollIntoView({
+                      block: 'center',
+                      behavior: 'smooth',
+                    });
+                  }
                 }}
-                onFocus={() => {
-                  setIsWithdrawalAmountInputting(true);
+                onChange={(event: any) => {
+                  const value = event.target?.value;
+                  const valueNotComma = parseWithCommas(value);
+                  setBalance(valueNotComma || '');
                 }}
                 onBlur={() => {
-                  setIsWithdrawalAmountInputting(false);
                   handleAmountValidate();
                 }}
               />
@@ -827,6 +901,14 @@ export default function WithdrawContent() {
             </div>
           </div>
           {isMobilePX && remainingLimitComponent}
+          {isMobilePX && currentNetwork?.contractAddress && (
+            <ContractAddressForMobile
+              label={CONTRACT_ADDRESS}
+              networkName={currentNetwork.name}
+              address={currentNetwork.contractAddress}
+              explorerUrl={currentNetwork?.explorerUrl}
+            />
+          )}
           <div className={clsx(styles['form-footer'], styles['form-footer-safe-area'])}>
             <div className={clsx('flex-1', 'flex-column', styles['footer-info-wrapper'])}>
               <div
@@ -910,8 +992,8 @@ export default function WithdrawContent() {
         failReason={failModalReason}
         modalProps={{
           open: isFailModalOpen,
-          onClose: () => setIsFailModalOpen(false),
-          onOk: () => setIsFailModalOpen(false),
+          onClose: clickFailedOk,
+          onOk: clickFailedOk,
         }}
       />
     </>

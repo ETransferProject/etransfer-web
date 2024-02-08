@@ -9,6 +9,7 @@ interface CommonAddressProps {
   valueWrapperClassName?: string;
   label?: string;
   value?: string;
+  showCopy?: boolean;
   copySize?: CopySize;
 }
 
@@ -18,6 +19,7 @@ export default function CommonAddress({
   valueWrapperClassName,
   label,
   value,
+  showCopy = true,
   copySize,
 }: CommonAddressProps) {
   return (
@@ -27,7 +29,9 @@ export default function CommonAddress({
         <div className={clsx('flex-1', styles['address-text-content'], valueClassName)}>
           {value}
         </div>
-        {!!value && <Copy className={'flex-none'} toCopy={value || ''} size={copySize} />}
+        {showCopy && !!value && (
+          <Copy className={'flex-none'} toCopy={value || ''} size={copySize} />
+        )}
       </div>
     </div>
   );

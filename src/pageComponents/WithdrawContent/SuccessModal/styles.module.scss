@@ -55,14 +55,13 @@
   }
 }
 
-.label ,
+.label,
 .value {
   font-size: 14px;
   line-height: 22px;
 }
 
 .label {
-  @extend .font-family-regular;
   color: $secondary-text;
 }
 

@@ -2,9 +2,12 @@ import type { HttpProvider } from 'web3-core';
 import type { AElfDappBridge } from '@aelf-react/types';
 import type { AElfContextType } from '@aelf-react/core/dist/types';
 import { AElfNodes } from 'constants/aelf';
-import { Accounts } from '@portkey/provider-types';
+import { Accounts, NetworkType } from '@portkey/provider-types';
 import { CHAIN_NAME } from 'constants/index';
 import { SideMenuKey } from 'constants/home';
+
+export type TNetworkTypeV1 = 'MAIN' | 'TESTNET';
+export type TNetworkTypeV2 = NetworkType;
 
 export type ChainId = keyof typeof CHAIN_NAME;
 

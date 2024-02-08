@@ -18,9 +18,9 @@ import {
 } from 'store/reducers/userAction/slice';
 import { useEffectOnce } from 'react-use';
 import singleMessage from 'components/SingleMessage';
-import { handleErrorMessage } from 'aelf-web-login';
 import { initDepositInfo } from 'constants/deposit';
 import { CommonErrorNameType } from 'api/types';
+import { handleErrorMessage } from '@portkey/did-ui-react';
 
 export type DepositContentProps = {
   networkList: NetworkItem[];
@@ -30,6 +30,9 @@ export type DepositContentProps = {
   qrCodeValue: string;
   networkSelected?: NetworkItem;
   tokenLogoUrl?: string;
+  showRetry?: boolean;
+  isShowLoading?: boolean;
+  onRetry?: () => void;
   chainChanged: (item: IChainNameItem) => void;
   networkChanged: (item: NetworkItem) => Promise<void>;
 };
@@ -40,10 +43,12 @@ export default function Content() {
   const { deposit } = useUserActionState();
   const { currentSymbol, tokenList } = useTokenState();
   const { setLoading } = useLoading();
+  const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
   const [currentNetwork, setCurrentNetwork] = useState<NetworkItem>();
   const currentNetworkRef = useRef<NetworkItem>();
   const [depositInfo, setDepositInfo] = useState<DepositInfo>(initDepositInfo);
+  const [showRetry, setShowRetry] = useState(false);
 
   const tokenLogoUrl = useMemo(() => {
     const res = tokenList.filter((item) => item.symbol === currentSymbol);
@@ -63,6 +68,7 @@ export default function Content() {
           network: currentNetworkRef.current?.network || '',
           symbol,
         });
+        setShowRetry(false);
         setLoading(false);
         setDepositInfo(res.depositInfo);
         dispatch(setDepositAddress(res.depositInfo.depositAddress));
@@ -70,9 +76,10 @@ export default function Content() {
         setLoading(false);
         setDepositInfo(initDepositInfo);
         dispatch(setDepositAddress(initDepositInfo.depositAddress));
-        console.log('getDepositInfo error:', error);
-        if (error.name !== CommonErrorNameType.CANCEL) {
-          singleMessage.error('The deposit service is busy. Please try again later.');
+        if (error.name !== CommonErrorNameType.CANCEL && error.code === '50000') {
+          setShowRetry(true);
+        } else {
+          setShowRetry(false);
         }
       } finally {
         setLoading(false);
@@ -84,7 +91,7 @@ export default function Content() {
   const getNetworkData = useCallback(
     async ({ chainId, symbol }: Omit<GetNetworkListRequest, 'type'>) => {
       try {
-        setLoading(true);
+        setIsShowNetworkLoading(true);
         const { networkList } = await getNetworkList({
           type: BusinessType.Deposit,
           chainId: chainId,
@@ -108,17 +115,17 @@ export default function Content() {
             dispatch(setDepositCurrentNetwork(undefined));
           }
         }
-        setLoading(false);
+        setIsShowNetworkLoading(false);
       } catch (error: any) {
-        setLoading(false);
+        setIsShowNetworkLoading(false);
         if (error.name !== CommonErrorNameType.CANCEL) {
           singleMessage.error(handleErrorMessage(error));
         }
       } finally {
-        setLoading(false);
+        setIsShowNetworkLoading(false);
       }
     },
-    [currentChainItem.key, currentSymbol, dispatch, getDepositData, setLoading],
+    [currentChainItem.key, currentSymbol, dispatch, getDepositData],
   );
 
   const handleChainChanged = useCallback(
@@ -142,6 +149,10 @@ export default function Content() {
     },
     [currentChainItem.key, currentSymbol, dispatch, getDepositData],
   );
+
+  const handleRetry = useCallback(async () => {
+    await getDepositData(currentChainItem.key, currentSymbol);
+  }, [currentChainItem.key, currentSymbol, getDepositData]);
 
   useEffectOnce(() => {
     if (
@@ -171,6 +182,9 @@ export default function Content() {
       qrCodeValue={depositInfo.depositAddress}
       networkSelected={currentNetwork}
       tokenLogoUrl={tokenLogoUrl}
+      showRetry={showRetry}
+      isShowLoading={isShowNetworkLoading}
+      onRetry={handleRetry}
       chainChanged={handleChainChanged}
       networkChanged={handleNetworkChanged}
     />
@@ -183,6 +197,9 @@ export default function Content() {
       qrCodeValue={depositInfo.depositAddress}
       networkSelected={currentNetwork}
       tokenLogoUrl={tokenLogoUrl}
+      showRetry={showRetry}
+      isShowLoading={isShowNetworkLoading}
+      onRetry={handleRetry}
       chainChanged={handleChainChanged}
       networkChanged={handleNetworkChanged}
     />

@@ -13,8 +13,6 @@
         font-size: 14px;
         line-height: 22px;
         color: $secondary-text;
-        font-weight: $font-family-regular-weight;
-        font-family: $font-family-regular-family;
       }
     }
     .ant-form-item-explain-error,
@@ -22,21 +20,22 @@
       margin-top: 4px;
       font-size: 12px;
       line-height: 16px;
-
-      font-weight: $font-family-regular-weight;
-      font-family: $font-family-regular-family;
     }
     .ant-form-item-explain-error {
-      color: #d43939;
+      color: $error;
     }
     .ant-form-item-explain-warning {
-      color: #ff9900;
+      color: $warning;
     }
   }
 }
 
 .form-item-wrapper {
   margin-bottom: 24px;
+}
+
+.amount-form-item-wrapper {
+  margin-bottom: 12px;
 }
 
 .form-item {
@@ -62,8 +61,6 @@
   font-size: 14px;
   line-height: 22px;
   color: $secondary-text;
-  font-weight: $font-family-regular-weight;
-  font-family: $font-family-regular-family;
 }
 
 .remaining-limit-wrapper {
@@ -72,7 +69,6 @@
   .remaining-limit-label {
     font-size: 12px;
     line-height: 16px;
-    @extend .font-family-regular;
   }
   .remaining-limit-value {
     color: $primary-text;
@@ -113,7 +109,7 @@
 .remaining-limit-error {
   .remaining-limit-label,
   .remaining-limit-value {
-    color: #d43939;
+    color: $error;
   }
 }
 
@@ -129,7 +125,6 @@
 
 .info-label {
   color: $secondary-text;
-  @extend .font-family-regular;
 }
 
 .info-value {
@@ -142,22 +137,8 @@
   line-height: 32px;
 }
 
-.info-wrapper-contract-address {
-  gap: 16px;
-  margin-top: 12px;
-  .info-label {
-    width: 120px;
-  }
-  @include media-mobile-and-pad {
-    .info-label,
-    .info-value {
-      font-size: 12px;
-      line-height: 16px;
-    }
-  }
-}
-
 .form-footer {
+  min-width: $page-min-width;
   display: flex;
   align-items: flex-end;
   gap: 12px;

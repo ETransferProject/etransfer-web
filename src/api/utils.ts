@@ -3,9 +3,10 @@ import { BaseConfig, RequestConfig } from './types';
 import { stringify } from 'query-string';
 import { ETransferAuthHost, SupportedELFChainId } from 'constants/index';
 import { LocalStorageKey } from 'constants/localStorage';
-import portkeyWallet from 'wallet/portkeyWallet';
+import getPortkeyWallet from 'wallet/portkeyWallet';
 import AElf from 'aelf-sdk';
 import service from './axios';
+import { PortkeyVersion } from 'constants/wallet';
 
 export function spliceUrl(baseUrl: string, extendArg?: string) {
   return extendArg ? baseUrl + '/' + extendArg : baseUrl;
@@ -40,6 +41,7 @@ type QueryAuthApiExtraRequest = {
   ca_hash: string;
   chain_id: string;
   managerAddress: string;
+  version: PortkeyVersion;
 };
 const queryAuthApiBaseConfig: QueryAuthApiBaseConfig = {
   grant_type: 'signature',
@@ -106,7 +108,14 @@ export const queryAuthApi = async (config: QueryAuthApiExtraRequest) => {
 // Nonce:
 // ${Date.now()}`;
 
-export const queryAuthToken = async (chainId: SupportedELFChainId) => {
+export const queryAuthToken = async ({
+  chainId,
+  version,
+}: {
+  chainId: SupportedELFChainId;
+  version: PortkeyVersion;
+}) => {
+  const portkeyWallet = getPortkeyWallet(version);
   const managerAddress = await portkeyWallet.getManagerAddress();
   const caHash = await portkeyWallet.getCaHash();
 
@@ -136,5 +145,6 @@ export const queryAuthToken = async (chainId: SupportedELFChainId) => {
     ca_hash: caHash,
     chain_id: chainId,
     managerAddress,
+    version: version,
   });
 };

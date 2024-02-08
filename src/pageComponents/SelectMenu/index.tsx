@@ -7,6 +7,7 @@ import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { store } from 'store/Provider/store';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
+import SupportEntry from 'pageComponents/SupportEntry';
 
 export default function SelectMenu() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
@@ -27,30 +28,35 @@ export default function SelectMenu() {
         onClick={() => {
           setIsDrawerOpen(true);
         }}>
-        <MenuOutlined className={styles['header-icon']} rev />
+        <MenuOutlined className={styles['header-icon']} rev={undefined} />
       </div>
       <CommonDrawer
         className={clsx(styles['menu-drawer'], styles['menu-drawer-weight'])}
         height="100%"
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}>
-        {MENU_ITEMS.map((item) => {
-          const MenuIcon = item.icon;
-          return (
-            <div
-              key={item.key}
-              className={clsx('flex-row-center', styles['menu-item'], {
-                [styles['menu-item-active']]: item.key === activeMenuKey,
-              })}
-              onClick={() => {
-                store.dispatch(setActiveMenuKey(item.key));
-                setIsDrawerOpen(false);
-              }}>
-              <MenuIcon className={styles['menu-item-icon']} />
-              <div className={styles['menu-item-label']}>{item.label}</div>
-            </div>
-          );
-        })}
+        <div className={clsx('flex-column-between', styles['menu-drawer-body'])}>
+          <div>
+            {MENU_ITEMS.map((item) => {
+              const MenuIcon = item.icon;
+              return (
+                <div
+                  key={item.key}
+                  className={clsx('flex-row-center', styles['menu-item'], {
+                    [styles['menu-item-active']]: item.key === activeMenuKey,
+                  })}
+                  onClick={() => {
+                    store.dispatch(setActiveMenuKey(item.key));
+                    setIsDrawerOpen(false);
+                  }}>
+                  <MenuIcon className={styles['menu-item-icon']} />
+                  <div className={styles['menu-item-label']}>{item.label}</div>
+                </div>
+              );
+            })}
+          </div>
+          <SupportEntry className={styles.supportEntry} />
+        </div>
       </CommonDrawer>
     </>
   );

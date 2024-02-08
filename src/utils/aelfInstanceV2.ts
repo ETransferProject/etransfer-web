@@ -2,31 +2,31 @@ import { getNodeByChainId } from './aelfUtils';
 import { aelf } from '@portkey/utils';
 import { AllSupportedELFChainId } from 'constants/chain';
 
-export type AELFInstances = {
-  [AllSupportedELFChainId.AELF]?: AelfInstanceType;
-  [AllSupportedELFChainId.tDVV]?: AelfInstanceType;
-  [AllSupportedELFChainId.tDVW]?: AelfInstanceType;
+export type AELFInstancesV2 = {
+  [AllSupportedELFChainId.AELF]?: AelfInstanceTypeV2;
+  [AllSupportedELFChainId.tDVV]?: AelfInstanceTypeV2;
+  [AllSupportedELFChainId.tDVW]?: AelfInstanceTypeV2;
 };
 
-export interface IAelfInstance {
-  instances?: AELFInstances;
+export interface IAelfInstanceV2 {
+  instances?: AELFInstancesV2;
   rpcUrl?: string;
   aelfSDK?: any;
-  getInstance: (chainId: AllSupportedELFChainId) => AelfInstanceType;
+  getInstance: (chainId: AllSupportedELFChainId) => AelfInstanceTypeV2;
 }
 
-export type AelfInstanceType = { getAelfInstance: (rpcUrl: string, timeout?: number) => any };
+export type AelfInstanceTypeV2 = { getAelfInstance: (rpcUrl: string, timeout?: number) => any };
 
-export type AelfInstanceOptions = {
+export type AelfInstanceOptionsV2 = {
   chainId: AllSupportedELFChainId;
 };
 
-class AelfInstance implements IAelfInstance {
-  public instances: AELFInstances;
+class AelfInstanceV2 implements IAelfInstanceV2 {
+  public instances: AELFInstancesV2;
   public rpcUrl?: string;
   public aelfSDK?: any;
 
-  constructor(_options?: AelfInstanceOptions) {
+  constructor(_options?: AelfInstanceOptionsV2) {
     this.instances = {
       [AllSupportedELFChainId.AELF]: undefined,
       [AllSupportedELFChainId.tDVV]: undefined,
@@ -40,13 +40,13 @@ class AelfInstance implements IAelfInstance {
     } else {
       const rpcUrl = getNodeByChainId(chainId).rpcUrl;
       const instance = aelf.getAelfInstance(rpcUrl);
-      console.log('🌈 🌈 🌈 🌈 🌈 🌈 instance', instance);
+      console.log('🌈 🌈 🌈 🌈 🌈 🌈 instance v2', instance);
       this.instances[chainId] = instance;
       return instance;
     }
   };
 }
 
-const aelfInstance = new AelfInstance();
+const aelfInstanceV2 = new AelfInstanceV2();
 
-export default aelfInstance;
+export default aelfInstanceV2;

@@ -2,17 +2,28 @@ import AElf from 'aelf-sdk';
 import { AElfNodes } from 'constants/aelf';
 import { isSymbol } from './reg';
 import { SupportedELFChainId } from 'constants/index';
+import { PortkeyVersion } from 'constants/wallet';
 import { AelfInstancesKey, ChainId } from 'types';
 import { isELFAddress } from './common';
-import portkeyWallet from 'wallet/portkeyWallet';
-import { handleManagerForwardCall, getContractMethods, getTxResult } from '@portkey/contracts';
-import aelfInstance from './aelfInstance';
+import {
+  handleManagerForwardCall as handleManagerForwardCallV1,
+  getContractMethods as getContractMethodsV1,
+  getTxResult as getTxResultV1,
+} from '@portkey-v1/contracts';
+import {
+  handleManagerForwardCall as handleManagerForwardCallV2,
+  getContractMethods as getContractMethodsV2,
+  getTxResult as getTxResultV2,
+} from '@portkey/contracts';
+import aelfInstanceV1 from './aelfInstanceV1';
+import aelfInstanceV2 from './aelfInstanceV2';
 import { ContractMethodName, ManagerForwardCall } from 'constants/contract';
 import BigNumber from 'bignumber.js';
 import { timesDecimals } from './calculate';
 import { IContract } from '@portkey/types';
-import { AllSupportedELFChainId } from 'constants/chain';
-// import { aelf } from '@portkey/utils';
+import { AllSupportedELFChainId, ContractType } from 'constants/chain';
+import getPortkeyWallet from 'wallet/portkeyWallet';
+import portkeyContractUnity from 'contract/portkey';
 
 export function getNodeByChainId(chainId: AllSupportedELFChainId) {
   return AElfNodes[chainId as AelfInstancesKey];
@@ -87,6 +98,7 @@ type CreateHandleManagerForwardCall = {
   methodName: string;
   caHash: string;
   chainId: SupportedELFChainId;
+  version: PortkeyVersion;
 };
 
 export const createManagerForwardCall = async ({
@@ -96,21 +108,39 @@ export const createManagerForwardCall = async ({
   methodName,
   caHash,
   chainId,
+  version,
 }: CreateHandleManagerForwardCall) => {
-  const instance = aelfInstance.getInstance(chainId as unknown as AllSupportedELFChainId);
-  const res = await handleManagerForwardCall({
-    paramsOption: {
-      contractAddress,
-      methodName,
-      args,
-      caHash,
-    },
-    functionName: ManagerForwardCall,
-    instance,
-  });
-  res.args = Buffer.from(AElf.utils.uint8ArrayToHex(res.args), 'hex').toString('base64');
+  let instance, res, methods;
+  if (version === PortkeyVersion.v1) {
+    instance = aelfInstanceV1.getInstance(chainId as unknown as AllSupportedELFChainId);
+    res = await handleManagerForwardCallV1({
+      paramsOption: {
+        contractAddress,
+        methodName,
+        args,
+        caHash,
+      },
+      functionName: ManagerForwardCall,
+      instance,
+    });
+    res.args = Buffer.from(AElf.utils.uint8ArrayToHex(res.args), 'hex').toString('base64');
+    methods = await getContractMethodsV1(instance, caContractAddress);
+  } else {
+    instance = aelfInstanceV2.getInstance(chainId as unknown as AllSupportedELFChainId);
+    res = await handleManagerForwardCallV2({
+      paramsOption: {
+        contractAddress,
+        methodName,
+        args,
+        caHash,
+      },
+      functionName: ManagerForwardCall,
+      instance,
+    });
+    res.args = Buffer.from(AElf.utils.uint8ArrayToHex(res.args), 'hex').toString('base64');
+    methods = await getContractMethodsV2(instance, caContractAddress);
+  }
 
-  const methods = await getContractMethods(instance, caContractAddress);
   const protoInputType = methods[ManagerForwardCall];
 
   let input = AElf.utils.transform.transformMapToArray(protoInputType, res);
@@ -133,6 +163,7 @@ export type GetRawTx = {
   address: string;
   contractAddress: string;
   functionName: string;
+  version: PortkeyVersion;
 };
 
 export const getRawTx = ({
@@ -157,6 +188,7 @@ export const handleTransaction = async ({
   address,
   contractAddress,
   functionName,
+  version,
 }: GetRawTx) => {
   // Create transaction
   const rawTx = getRawTx({
@@ -166,6 +198,7 @@ export const handleTransaction = async ({
     address,
     contractAddress,
     functionName,
+    version,
   });
   rawTx.params = Buffer.from(rawTx.params, 'hex');
 
@@ -174,6 +207,7 @@ export const handleTransaction = async ({
   const m = AElf.utils.sha256(ser);
   // signature
   let signatureStr = '';
+  const portkeyWallet = getPortkeyWallet(version);
   const signatureRes = await portkeyWallet.getSignature(m);
   signatureStr = signatureRes.signatureStr || '';
   if (!signatureStr) return;
@@ -199,6 +233,7 @@ export interface CreateTransferTransactionParams {
   amount: string; // with decimal
   memo?: string;
   chainId: SupportedELFChainId;
+  version: PortkeyVersion;
 }
 export const createTransferTransaction = async ({
   caContractAddress,
@@ -209,6 +244,7 @@ export const createTransferTransaction = async ({
   amount,
   memo,
   chainId,
+  version,
 }: CreateTransferTransactionParams) => {
   // await activate();
   const managerForwardCall = await createManagerForwardCall({
@@ -218,6 +254,7 @@ export const createTransferTransaction = async ({
     methodName: ContractMethodName.Transfer, // ContractMethodName.TransferToken,
     args: { symbol, to: toAddress, amount, memo },
     chainId,
+    version,
   });
 
   const transactionParams = AElf.utils.uint8ArrayToHex(managerForwardCall);
@@ -225,6 +262,7 @@ export const createTransferTransaction = async ({
   const aelf = getAElf(chainId as unknown as AllSupportedELFChainId);
   const { BestChainHeight, BestChainHash } = await aelf.chain.getChainStatus();
 
+  const portkeyWallet = getPortkeyWallet(version);
   const fromManagerAddress = await portkeyWallet.getManagerAddress();
   const transaction = await handleTransaction({
     blockHeightInput: BestChainHeight,
@@ -233,12 +271,16 @@ export const createTransferTransaction = async ({
     address: fromManagerAddress,
     contractAddress: caContractAddress,
     functionName: ManagerForwardCall,
+    version,
   });
 
   const rpcUrl = getNodeByChainId(chainId as unknown as AllSupportedELFChainId).rpcUrl;
   const aelfI = aelf.getAelfInstance(rpcUrl);
   const send = await aelfI.chain.sendTransaction(transaction);
-  const req = await getTxResult(aelfI, send.TransactionId);
+  const req =
+    version === PortkeyVersion.v1
+      ? await getTxResultV1(aelfI, send.TransactionId)
+      : await getTxResultV2(aelfI, send.TransactionId);
   console.log('TxResult:', req);
 };
 
@@ -373,6 +415,7 @@ export interface CreateTransferTokenTransactionParams {
   symbol: string;
   amount: string;
   chainId: SupportedELFChainId;
+  version: PortkeyVersion;
 }
 
 export const createTransferTokenTransaction = async ({
@@ -382,6 +425,7 @@ export const createTransferTokenTransaction = async ({
   symbol,
   amount,
   chainId,
+  version,
 }: CreateTransferTokenTransactionParams) => {
   const managerForwardCall = await createManagerForwardCall({
     caContractAddress,
@@ -390,6 +434,7 @@ export const createTransferTokenTransaction = async ({
     methodName: ContractMethodName.TransferToken,
     args: { symbol, amount },
     chainId,
+    version,
   });
 
   const transactionParams = AElf.utils.uint8ArrayToHex(managerForwardCall);
@@ -397,6 +442,7 @@ export const createTransferTokenTransaction = async ({
   const aelf = getAElf(chainId as unknown as AllSupportedELFChainId);
   const { BestChainHeight, BestChainHash } = await aelf.chain.getChainStatus();
 
+  const portkeyWallet = getPortkeyWallet(version);
   const fromManagerAddress = await portkeyWallet.getManagerAddress();
   const transaction = await handleTransaction({
     blockHeightInput: BestChainHeight,
@@ -405,7 +451,30 @@ export const createTransferTokenTransaction = async ({
     address: fromManagerAddress,
     contractAddress: caContractAddress,
     functionName: ManagerForwardCall,
+    version,
   });
   console.log('🌈 🌈 🌈 🌈 🌈 🌈 transaction', transaction);
   return transaction;
+};
+
+export type GetBalancesProps = {
+  caAddress: string;
+  symbol: string;
+  chainId: SupportedELFChainId;
+  version: PortkeyVersion;
+};
+export const getBalance = async ({ symbol, chainId, caAddress, version }: GetBalancesProps) => {
+  const tokenContract = await portkeyContractUnity.getContract({
+    chainId,
+    contractType: ContractType.TOKEN,
+    version,
+  });
+
+  const {
+    data: { balance },
+  } = await tokenContract.callViewMethod(ContractMethodName.GetBalance, {
+    symbol,
+    owner: caAddress, // caAddress
+  });
+  return balance;
 };

@@ -1,6 +1,8 @@
 @import 'src/assets/theme/color.scss';
+@import 'src/styles/variable.scss';
 
 .header-wrapper {
+  min-width: $page-min-width;
   position: fixed;
   top: 0;
   z-index: 1;

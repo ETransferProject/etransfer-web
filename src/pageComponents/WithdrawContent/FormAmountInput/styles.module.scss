@@ -3,7 +3,7 @@
 @import 'src/assets/theme/breakpoint.scss';
 @import 'src/styles/common.scss';
 
-.input-number-wrapper {
+.input-amount-wrapper {
   gap: 16px;
   @extend .form-item-wrapper;
   input {
@@ -13,11 +13,11 @@
   }
 }
 
-.input-number {
+.input-amount {
   width: 100%;
 }
 
-.input-number-addon-after {
+.input-amount-addon-after {
   @include media-mobile-and-pad {
     gap: 8px;
   }

@@ -5,7 +5,7 @@
 .menu-container {
   position: fixed;
   width: $sider-width;
-  height: 100%;
+  height: calc(100% - 80px);
   padding-top: 40px;
   background-color: $page-bg;
 }
@@ -38,4 +38,9 @@
   font-size: 16px;
   line-height: 1.5;
   @extend .font-family-medium;
+}
+
+.supportEntry {
+  margin-bottom: 64px; // 80-16
+  margin-right: 62px;
 }

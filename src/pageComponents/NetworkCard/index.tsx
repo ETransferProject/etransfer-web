@@ -10,6 +10,7 @@ interface NetworkCardProps {
   multiConfirmTime: string;
   multiConfirm: string;
   className?: string;
+  isDisabled?: boolean;
   onClick: () => void;
 }
 
@@ -25,10 +26,17 @@ export function NetworkCardForMobile({
   name,
   multiConfirmTime,
   multiConfirm,
+  isDisabled = false,
   onClick,
 }: NetworkCardProps) {
   return (
-    <div className={clsx(styles['network-card-for-mobile'], className)} onClick={onClick}>
+    <div
+      className={clsx(
+        styles['network-card-for-mobile'],
+        isDisabled && styles['network-card-disabled'],
+        className,
+      )}
+      onClick={onClick}>
       <div className={styles['network-card-name']}>{name}</div>
       <div className={styles['network-card-arrival-time']}>
         <span>Arrival Time ≈ </span>
@@ -52,6 +60,7 @@ export function NetworkCardForWeb({
   name,
   multiConfirmTime,
   multiConfirm,
+  isDisabled = false,
   onClick,
 }: NetworkCardForWebProps) {
   return (
@@ -60,6 +69,7 @@ export function NetworkCardForWeb({
         'flex-column',
         styles['network-card-for-web'],
         styles['network-card-for-web-hover'],
+        isDisabled && styles['network-card-disabled'],
         className,
       )}
       onClick={onClick}>

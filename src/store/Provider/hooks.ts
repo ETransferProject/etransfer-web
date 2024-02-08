@@ -3,6 +3,8 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from './store';
 import { emitLoading } from 'utils/events';
 import { LoadingProps } from 'components/Loading';
+import { initCommon } from 'store/reducers/common/slice';
+import { initUserAction } from 'store/reducers/userAction/slice';
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch: () => AppDispatch = useDispatch;
@@ -19,4 +21,13 @@ export const useLoading = () => {
     [],
   );
   return useMemo(() => ({ setLoading: _setLoading }), [_setLoading]);
+};
+
+export const useResetStore = () => {
+  const dispatch = useAppDispatch();
+
+  return useCallback(() => {
+    dispatch(initCommon());
+    dispatch(initUserAction());
+  }, [dispatch]);
 };

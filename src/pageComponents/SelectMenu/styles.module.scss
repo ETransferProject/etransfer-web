@@ -10,6 +10,10 @@
   font-size: 20px;
 }
 
+.menu-drawer {
+  z-index: 1001;
+}
+
 .menu-drawer.menu-drawer-weight {
   :global {
     .ant-drawer-content {
@@ -19,6 +23,10 @@
       padding: 0 0 16px 0;
     }
   }
+}
+
+.menu-drawer-body {
+  height: 100%;
 }
 
 .menu-item {
@@ -44,4 +52,8 @@
   font-size: 16px;
   line-height: 1.5;
   @extend .font-family-medium;
+}
+
+.supportEntry {
+  margin-bottom: 69px; // 85-16
 }

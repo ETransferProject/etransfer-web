@@ -1,0 +1,155 @@
+@import 'src/assets/theme/color.scss';
+
+.networkListSkeletonForWeb {
+  .skeleton {
+    display: flex;
+    flex-direction: 2px;
+    justify-content: space-between;
+    padding: 12px 24px;
+    border-bottom: 1px solid $dividers;
+
+    :global {
+      .ant-skeleton {
+        .ant-skeleton-input {
+          height: 22px !important;
+          background: $normal-bg;
+          border-radius: 4px;
+          &::after {
+            background: linear-gradient(
+              90deg,
+              hsla(0, 0%, 96%, 0.2) 25%,
+              hsla(0, 0%, 85%, 0.24) 37%,
+              hsla(0, 0%, 96%, 0.2) 63%
+            );
+          }
+        }
+      }
+    }
+    .left {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      .row1 {
+        height: 22px;
+        :global {
+          .ant-skeleton {
+            .ant-skeleton-input {
+              width: 100px !important;
+              min-width: 100px !important;
+            }
+          }
+        }
+      }
+      .row2 {
+        height: 22px;
+        :global {
+          .ant-skeleton {
+            .ant-skeleton-input {
+              width: 180px !important;
+              min-width: 180px !important;
+            }
+          }
+        }
+      }
+    }
+    .right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+      .row1 {
+        height: 22px;
+        :global {
+          .ant-skeleton {
+            .ant-skeleton-input {
+              width: 80px !important;
+              min-width: 80px !important;
+            }
+          }
+        }
+      }
+      .row2 {
+        height: 22px;
+        :global {
+          .ant-skeleton {
+            .ant-skeleton-input {
+              width: 120px !important;
+              min-width: 120px !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.networkListSkeletonForMobile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .skeleton {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    border: 1px solid $dividers;
+    border-radius: 6px;
+    padding: 12px;
+
+    :global {
+      .ant-skeleton {
+        .ant-skeleton-input {
+          background: $normal-bg;
+          border-radius: 4px;
+          &::after {
+            background: linear-gradient(
+              90deg,
+              hsla(0, 0%, 96%, 0.2) 25%,
+              hsla(0, 0%, 85%, 0.24) 37%,
+              hsla(0, 0%, 96%, 0.2) 63%
+            );
+          }
+        }
+      }
+    }
+
+    .row1 {
+      height: 22px;
+      :global {
+        .ant-skeleton {
+          .ant-skeleton-input {
+            width: 200px !important;
+            min-width: 200px !important;
+            height: 22px !important;
+          }
+        }
+      }
+    }
+    .row2 {
+      height: 16px;
+      :global {
+        .ant-skeleton {
+          .ant-skeleton-input {
+            width: 160px !important;
+            min-width: 160px !important;
+            height: 16px !important;
+          }
+        }
+      }
+    }
+    .row3 {
+      height: 16px;
+      :global {
+        .ant-skeleton {
+          .ant-skeleton-input {
+            width: 100px !important;
+            min-width: 100px !important;
+            height: 16px !important;
+          }
+        }
+      }
+    }
+  }
+}

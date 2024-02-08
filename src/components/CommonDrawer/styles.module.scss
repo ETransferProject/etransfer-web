@@ -1,7 +1,9 @@
 @import '/src/assets/theme/color.scss';
 @import '/src/assets/theme/font.scss';
+@import '/src/styles/variable.scss';
 
 .common-drawer {
+  min-width: $page-min-width;
   :global {
     .ant-drawer-content {
       border-radius: 8px 8px 0px 0px;

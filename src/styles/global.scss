@@ -5,12 +5,16 @@
 @import '/src/assets/theme/customize.scss';
 @import '/src/assets/theme/font.scss';
 @import '/src/assets/theme/theme.scss';
+@import './variable.scss';
 
 html,
 body {
   overflow-x: hidden;
   overflow-y: auto;
   background-color: $page-bg;
+  min-width: $page-min-width;
+  font-size: 14px;
+  @extend .font-family-regular;
 }
 body {
   margin: 0;
@@ -31,7 +35,6 @@ input[type='number'] {
   appearance: textfield;
 }
 
-* {
-  @extend .font-family-medium;
-  transition: background 0.3s, fill 0.3s, stork 0.3s, color 0.3s, box-shadow 0.3s;
-}
+// * {
+//   transition: background 0.3s, fill 0.3s, stork 0.3s, color 0.3s, box-shadow 0.3s;
+// }

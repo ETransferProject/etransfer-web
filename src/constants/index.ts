@@ -1,4 +1,4 @@
-export * from './mainnet';
+export * from './testnet';
 
 export enum WalletType {
   unknown = 'unknown',
@@ -6,13 +6,22 @@ export enum WalletType {
   portkey = 'portkey',
 }
 
-export enum NetworkType {
+export enum NetworkTypeV1 {
   MAIN = 'MAIN',
   TESTNET = 'TESTNET',
 }
+export enum NetworkTypeV2 {
+  MAINNET = 'MAINNET',
+  TESTNET = 'TESTNET',
+}
 
-export enum NetworkTypeText {
+export enum NetworkTypeTextV1 {
   MAIN = 'Mainnet',
+  TESTNET = 'Testnet',
+}
+
+export enum NetworkTypeTextV2 {
+  MAINNET = 'Mainnet',
   TESTNET = 'Testnet',
 }
 

@@ -13,6 +13,7 @@ import { useTokenState } from 'store/Provider/hooks';
 import CommonImage from 'components/CommonImage';
 import { qrCodePlaceholder } from 'assets/images';
 import { SideMenuKey } from 'constants/home';
+import { DepositRetryForWeb } from 'pageComponents/DepositRetry';
 
 export default function WebContent({
   networkList,
@@ -22,11 +23,20 @@ export default function WebContent({
   qrCodeValue,
   networkSelected,
   tokenLogoUrl,
+  showRetry = false,
+  isShowLoading = false,
+  onRetry,
   chainChanged,
   networkChanged,
 }: DepositContentProps) {
   const { currentSymbol } = useTokenState();
   const webLabel = useMemo(() => `Deposit ${currentSymbol} to`, [currentSymbol]);
+  const renderDepositDescription = useMemo(() => {
+    return (
+      Array.isArray(depositInfo?.extraNotes) &&
+      depositInfo?.extraNotes.length > 0 && <DepositDescription list={depositInfo.extraNotes} />
+    );
+  }, [depositInfo.extraNotes]);
 
   return (
     <>
@@ -37,9 +47,11 @@ export default function WebContent({
           networkList={networkList}
           selectCallback={networkChanged}
           selected={networkSelected}
+          isShowLoading={isShowLoading}
         />
       </div>
-      {!!depositInfo.depositAddress && (
+      {showRetry && <DepositRetryForWeb isShowImage={true} onClick={onRetry} />}
+      {!showRetry && !!depositInfo.depositAddress && (
         <>
           <div className={clsx('flex-row-center', styles['deposit-address-wrapper'])}>
             {qrCodeValue ? (
@@ -60,9 +72,7 @@ export default function WebContent({
               contractAddressLink={contractAddressLink}
             />
           </div>
-          {Array.isArray(depositInfo?.extraNotes) && depositInfo?.extraNotes.length > 0 && (
-            <DepositDescription list={depositInfo.extraNotes} />
-          )}
+          {renderDepositDescription}
         </>
       )}
     </>

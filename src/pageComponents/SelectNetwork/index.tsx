@@ -16,6 +16,8 @@ type NetworkSelectProps = {
   networkList: NetworkItem[];
   selected?: NetworkItem;
   noBorder?: boolean;
+  isDisabled?: boolean;
+  isShowLoading?: boolean;
   onChange?: (item: NetworkItem) => void;
   selectCallback: (item: NetworkItem) => Promise<void>;
 };
@@ -26,6 +28,8 @@ export default function SelectNetwork({
   networkList,
   selected,
   noBorder,
+  isDisabled,
+  isShowLoading,
   onChange,
   selectCallback,
 }: NetworkSelectProps) {
@@ -111,6 +115,8 @@ export default function SelectNetwork({
           type={type}
           networkList={networkList}
           selectedNetwork={selected?.network}
+          isDisabled={isDisabled}
+          isShowLoading={isShowLoading}
           onSelect={onSelectNetwork}
         />
       ) : (
@@ -120,6 +126,8 @@ export default function SelectNetwork({
           type={type}
           networkList={networkList}
           selectedNetwork={selected?.network}
+          isDisabled={isDisabled}
+          isShowLoading={isShowLoading}
           onSelect={onSelectNetwork}
           onClose={() => setIsShowNetworkSelectDropdown(false)}
         />

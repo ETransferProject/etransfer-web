@@ -46,3 +46,6 @@ export const initialWithdrawSuccessCheck: WithdrawInfoSuccess = {
   network: initialNetwork,
   arriveTime: '',
 };
+
+export const DepositRetryText = 'The deposit service is busy. Please try again later.';
+export const DepositRetryBtnText = 'Retry';

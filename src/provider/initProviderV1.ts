@@ -3,31 +3,25 @@ import { NotificationEvents } from '@portkey/provider-types';
 import { useCallback } from 'react';
 import { store } from 'store/Provider/store';
 import {
-  setAccountsAction,
-  setChainIdsAction,
-  // setConnectedInfoAction,
-  setDisconnectedAction,
+  setV1AccountsAction,
+  setV1ChainIdsAction,
+  setV1DisconnectedAction,
 } from 'store/reducers/portkeyWallet/actions';
-import { initialPortkeyWalletState } from 'store/reducers/portkeyWallet/slice';
-import portkeyWallet from 'wallet/portkeyWallet';
-import { NetworkType, NetworkTypeText, NETWORK_TYPE } from 'constants/index';
+import portkeyWallet from 'wallet/portkeyWalletV1';
+import { NetworkTypeV1, NetworkTypeTextV1, NETWORK_TYPE_V1 } from 'constants/index';
 import { useEffectOnce } from 'react-use';
 import { useThrottleCallback } from 'hooks';
 import { usePortkeyProvider } from 'hooks/usePortkeyProvider';
 import myEvents from 'utils/myEvent';
 import { resetJWT } from 'api/utils';
 import singleMessage from 'components/SingleMessage';
-import { initCommon } from 'store/reducers/common/slice';
-import { initUserAction } from 'store/reducers/userAction/slice';
 import 'utils/firebase';
+import { LoginExpiredTip, NetworkNotMatchTipPrefix } from 'constants/wallet';
+import { useResetStore } from 'store/Provider/hooks';
 
 export default function InitProvider() {
   const { connectEagerly } = usePortkeyProvider();
-
-  const initData = useCallback(() => {
-    store.dispatch(initCommon());
-    store.dispatch(initUserAction());
-  }, []);
+  const resetStore = useResetStore();
 
   const listener = useCallback(async () => {
     const provider = await portkeyWallet.getProvider();
@@ -35,37 +29,40 @@ export default function InitProvider() {
     if (!provider) return;
     provider.on(NotificationEvents.ACCOUNTS_CHANGED, (accounts) => {
       if (Object.keys(accounts).length === 0) {
-        store.dispatch(setDisconnectedAction(initialPortkeyWalletState));
+        store.dispatch(setV1DisconnectedAction());
         portkeyWallet.clearData();
-        initData();
+        resetStore();
         return;
       }
-      store.dispatch(setAccountsAction(accounts));
+      store.dispatch(setV1AccountsAction(accounts));
     });
     provider.on(NotificationEvents.CHAIN_CHANGED, (chainIds) =>
-      store.dispatch(setChainIdsAction(chainIds)),
+      store.dispatch(setV1ChainIdsAction(chainIds)),
     );
-    provider.on(NotificationEvents.NETWORK_CHANGED, (networkType: NetworkType) => {
-      if (networkType !== NETWORK_TYPE) {
+    provider.on(NotificationEvents.NETWORK_CHANGED, (networkType: NetworkTypeV1) => {
+      if (networkType !== NETWORK_TYPE_V1) {
         singleMessage.error(
-          `Please switch Portkey to aelf ${
-            NETWORK_TYPE === NetworkType.TESTNET ? NetworkTypeText.TESTNET : NetworkTypeText.MAIN
+          `${NetworkNotMatchTipPrefix} ${
+            NETWORK_TYPE_V1 === NetworkTypeV1.TESTNET
+              ? NetworkTypeTextV1.TESTNET
+              : NetworkTypeTextV1.MAIN
           }.`,
         );
-        store.dispatch(setDisconnectedAction(initialPortkeyWalletState));
+        store.dispatch(setV1DisconnectedAction());
         portkeyWallet.clearData();
-        initData();
+        resetStore();
       }
     });
     // provider.on(NotificationEvents.CONNECTED, async () => {
     //   const { accounts, name } = await portkeyWallet.connected();
-    //   store.dispatch(setConnectedInfoAction({ accounts, name, isActive: true }));
+    //   store.dispatch(setV1ConnectedInfoAction({ accounts, name, isActive: true }));
     // });
     provider.on(NotificationEvents.DISCONNECTED, () => {
-      store.dispatch(setDisconnectedAction(initialPortkeyWalletState));
+      store.dispatch(setV1DisconnectedAction());
       portkeyWallet.clearData();
-      initData();
+      resetStore();
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const removeListener = useCallback(async () => {
@@ -73,7 +70,7 @@ export default function InitProvider() {
     if (!provider) return;
 
     const disconnect = () => {
-      store.dispatch(setDisconnectedAction(initialPortkeyWalletState));
+      store.dispatch(setV1DisconnectedAction());
     };
     provider.removeListener(NotificationEvents.ACCOUNTS_CHANGED, disconnect);
     provider.removeListener(NotificationEvents.CHAIN_CHANGED, disconnect);
@@ -84,7 +81,7 @@ export default function InitProvider() {
 
   const init = useThrottleCallback(async () => {
     try {
-      await portkeyWallet.init({ networkType: NETWORK_TYPE });
+      await portkeyWallet.init({ networkType: NETWORK_TYPE_V1 });
       listener();
       await connectEagerly();
     } catch (error) {
@@ -94,11 +91,11 @@ export default function InitProvider() {
 
   useEffectOnce(() => {
     const listener = myEvents.DeniedRequest.addListener(() => {
-      singleMessage.error('Login expired, please log in again');
+      singleMessage.error(LoginExpiredTip);
       resetJWT();
-      store.dispatch(setDisconnectedAction(initialPortkeyWalletState));
+      store.dispatch(setV1DisconnectedAction());
       portkeyWallet.clearData();
-      initData();
+      resetStore();
     });
     const timer = setTimeout(init(), 1000);
     return () => {

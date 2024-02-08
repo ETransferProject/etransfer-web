@@ -1,11 +1,11 @@
 'use client';
 import Content from 'pageComponents/Content';
 import NotConnectedWalletContent from 'pageComponents/NotConnectedWalletContent';
-import { usePortkeyWalletState } from 'store/Provider/hooks'; //useLoading
 import styles from './styles.module.scss';
+import { useIsActive } from 'hooks/portkeyWallet';
 
 export default function Home() {
-  const { isActive } = usePortkeyWalletState();
+  const isActive = useIsActive();
 
   return (
     <div className={styles['content-wrapper']}>

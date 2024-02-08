@@ -1,14 +1,16 @@
 import React from 'react';
 import clsx from 'clsx';
-import { useCommonState, usePortkeyWalletState } from 'store/Provider/hooks';
+import { useCommonState } from 'store/Provider/hooks';
 import SelectMenu from 'pageComponents/SelectMenu';
 import SelectWallet from 'pageComponents/SelectWallet';
 import styles from './styles.module.scss';
 import { SideMenuKey } from 'constants/home';
+import { useIsActive } from 'hooks/portkeyWallet';
 
 export default function MobileHeader() {
   const { activeMenuKey } = useCommonState();
-  const { isActive } = usePortkeyWalletState();
+  const isActive = useIsActive();
+
   if (!isActive) {
     return null;
   }

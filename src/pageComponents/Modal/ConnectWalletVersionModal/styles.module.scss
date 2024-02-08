@@ -1,0 +1,36 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+
+.connectWalletVersionModal {
+  .connectWalletVersionModalBody {
+    .connectWalletVersionModalItem {
+      display: flex;
+      height: 64px;
+      padding: 0px 16px;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 4px;
+      border-radius: 6px;
+      background: $normal-bg;
+      margin-top: 12px;
+      cursor: pointer;
+
+      .walletIcon {
+        width: 24px;
+        height: 24px;
+        svg {
+          width: 24px;
+          height: 24px;
+        }
+      }
+      .connectWalletVersionModalText {
+        font-size: 16px;
+        @extend .font-family-medium;
+      }
+      &:first-child {
+        margin-top: 8px;
+      }
+    }
+  }
+}

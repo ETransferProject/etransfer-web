@@ -2,7 +2,6 @@
 @import 'src/assets/theme/breakpoint.scss';
 
 .common-tooltip-overlay {
-  @extend .font-family-regular;
   font-size: 12px;
   line-height: 20px;
   :global {

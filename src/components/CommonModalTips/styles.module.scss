@@ -1,0 +1,15 @@
+@import 'src/assets/theme/breakpoint.scss';
+
+.commonModalTips {
+  @include media-web {
+    width: 480px !important;
+  }
+
+  @include media-mobile-and-pad {
+    width: 335px !important;
+  }
+
+  .commonModalTipsFooter {
+    margin-top: 24px;
+  }
+}

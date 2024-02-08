@@ -5,6 +5,7 @@
   width: 100%;
   .network-select-tip {
     padding: 12px;
+    margin-bottom: 8px;
     display: flex;
     align-items: flex-start;
     gap: 8px;
@@ -20,20 +21,14 @@
       color: $secondary-text;
       font-size: 12px;
       line-height: 16px;
-      @extend .font-family-regular;
     }
   }
   .network-select-tip-highlight {
-    margin-top: 8px;
+    margin-bottom: 8px;
     color: $success;
     font-size: 12px;
     line-height: 16px;
-    @extend .font-family-regular;
   }
-}
-
-.network-select-tip-wrapper {
-  margin-bottom: 8px;
 }
 
 .network-select-for-mobile {
@@ -58,7 +53,7 @@
   border-radius: 6px;
   box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.12);
   .network-select-tip {
-    margin: 0 24px;
+    margin: 0 24px 8px;
   }
   .network-select-list {
     .network-card-selected {

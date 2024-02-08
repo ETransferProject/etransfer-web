@@ -10,7 +10,6 @@
 }
 
 .label {
-  @extend .font-family-regular;
   color: $secondary-text;
 }
 
@@ -20,7 +19,6 @@
 }
 
 .secondary-value {
-  @extend .font-family-regular;
   color: $secondary-text;
 }
 

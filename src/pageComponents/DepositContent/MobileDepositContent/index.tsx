@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import clsx from 'clsx';
 import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
 import CommonAddress from 'components/CommonAddress';
@@ -12,6 +12,7 @@ import { DEPOSIT_ADDRESS_LABEL } from 'constants/deposit';
 import CommonImage from 'components/CommonImage';
 import { qrCodePlaceholder } from 'assets/images';
 import { SideMenuKey } from 'constants/home';
+import { DepositRetryForMobile } from 'pageComponents/DepositRetry';
 
 export default function MobileDepositContent({
   networkList,
@@ -21,6 +22,9 @@ export default function MobileDepositContent({
   qrCodeValue,
   networkSelected,
   tokenLogoUrl,
+  showRetry = false,
+  isShowLoading = false,
+  onRetry,
   chainChanged,
   networkChanged,
 }: DepositContentProps) {
@@ -32,9 +36,17 @@ export default function MobileDepositContent({
         selectCallback={networkChanged}
         selected={networkSelected}
         noBorder={noBorder}
+        isShowLoading={isShowLoading}
       />
     );
   };
+
+  const renderDepositDescription = useMemo(() => {
+    return (
+      Array.isArray(depositInfo?.extraNotes) &&
+      depositInfo?.extraNotes.length > 0 && <DepositDescription list={depositInfo.extraNotes} />
+    );
+  }, [depositInfo.extraNotes]);
 
   return (
     <>
@@ -56,24 +68,30 @@ export default function MobileDepositContent({
             />
           )}
         </div>
-        {depositInfo.depositAddress ? (
+        {networkSelected ? (
           <>
             <div className={styles['data-wrapper']}>
               {renderSelectNetwork({ noBorder: true })}
               <div className={styles['data-divider']} />
               <div className={styles['data-address-wrapper']}>
-                <CommonAddress label={DEPOSIT_ADDRESS_LABEL} value={depositInfo.depositAddress} />
+                {showRetry && <DepositRetryForMobile onClick={onRetry} />}
+                {!showRetry && depositInfo?.depositAddress && (
+                  <CommonAddress label={DEPOSIT_ADDRESS_LABEL} value={depositInfo.depositAddress} />
+                )}
               </div>
             </div>
-            <div className={styles['info-wrapper']}>
-              <DepositInfo
-                minimumDeposit={depositInfo.minAmount}
-                contractAddress={contractAddress}
-                contractAddressLink={contractAddressLink}
-              />
-            </div>
-            {Array.isArray(depositInfo?.extraNotes) && depositInfo?.extraNotes.length > 0 && (
-              <DepositDescription list={depositInfo.extraNotes} />
+            {depositInfo?.depositAddress && (
+              <>
+                <div className={styles['info-wrapper']}>
+                  <DepositInfo
+                    networkName={networkSelected.name}
+                    minimumDeposit={depositInfo.minAmount}
+                    contractAddress={contractAddress}
+                    contractAddressLink={contractAddressLink}
+                  />
+                </div>
+                {renderDepositDescription}
+              </>
             )}
           </>
         ) : (

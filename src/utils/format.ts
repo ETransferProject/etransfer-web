@@ -1,0 +1,66 @@
+import BigNumber from 'bignumber.js';
+import { divDecimals } from './calculate';
+
+/**
+ * this function is to format address,just like "formatStr2EllipsisStr" ---> "for...Str"
+ * @param address
+ * @param digits [pre_count, suffix_count]
+ * @param type
+ * @returns
+ */
+export const formatStr2Ellipsis = (
+  address = '',
+  digits = [10, 10],
+  type: 'middle' | 'tail' = 'middle',
+): string => {
+  if (!address) return '';
+
+  const len = address.length;
+
+  if (type === 'tail') return `${address.slice(0, digits[0])}...`;
+
+  if (len < digits[0] + digits[1]) return address;
+  const pre = address.substring(0, digits[0]);
+  const suffix = address.substring(len - digits[1]);
+  return `${pre}...${suffix}`;
+};
+
+export enum AmountSign {
+  PLUS = '+',
+  MINUS = '-',
+  USD = '$ ',
+  EMPTY = '',
+}
+
+export interface IFormatWithCommasProps {
+  amount?: string | number;
+  decimals?: string | number;
+  digits?: number;
+  sign?: AmountSign;
+}
+export const DEFAULT_AMOUNT = 0;
+export const DEFAULT_DECIMAL = 6;
+export const DEFAULT_DIGITS = 6;
+export const ZERO = new BigNumber(0);
+/**
+ * formatAmount with prefix and thousand mark, not unit
+ * @example $11.1  +11.1  -11.1  9,999.9
+ */
+export function formatWithCommas({
+  amount = DEFAULT_AMOUNT,
+  decimals,
+  digits = DEFAULT_DIGITS,
+  sign = AmountSign.EMPTY,
+}: IFormatWithCommasProps): string {
+  const decimal = decimals || 0;
+  const amountTrans = `${divDecimals(ZERO.plus(amount), decimal).decimalPlaces(digits).toFormat()}`;
+
+  if (sign && amountTrans !== '0') {
+    return `${sign}${amountTrans}`;
+  }
+  return amountTrans;
+}
+
+export const parseWithCommas = (value?: string | null) => {
+  return value ? new BigNumber(value.replace(/,/g, '')).toFixed() : '';
+};

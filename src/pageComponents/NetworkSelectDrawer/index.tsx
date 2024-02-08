@@ -6,6 +6,8 @@ export default function NetworkSelectDrawer({
   type,
   networkList,
   selectedNetwork,
+  isDisabled,
+  isShowLoading,
   onSelect,
   ...props
 }: NetworkSelectProps & DrawerProps) {
@@ -22,6 +24,8 @@ export default function NetworkSelectDrawer({
         selectedNetwork={selectedNetwork}
         onSelect={onSelect}
         type={type}
+        isDisabled={isDisabled}
+        isShowLoading={isShowLoading}
       />
     </CommonDrawer>
   );

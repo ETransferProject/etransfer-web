@@ -15,7 +15,7 @@
   line-height: 1.5;
   @extend .font-family-medium;
   &::placeholder {
-    color: #d4d4d4;
+    color: $disable-text;
     font-size: 16px;
     line-height: 1.5;
     @extend .font-family-medium;

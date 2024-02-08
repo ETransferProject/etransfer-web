@@ -59,6 +59,10 @@
   justify-content: space-between;
   @extend .flex-row-center;
 }
+.flex-column-between {
+  justify-content: space-between;
+  @extend .flex-column;
+}
 .flex-row-start {
   align-items: flex-start;
   @extend .flex-row;
@@ -81,6 +85,9 @@
 }
 .text-underline {
   text-decoration: underline;
+}
+.text-underline-none {
+  text-decoration: none;
 }
 .text-link {
   @extend .text-underline;

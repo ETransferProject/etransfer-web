@@ -21,7 +21,7 @@
 .copy-icon-wrapper-background-color {
   @include media-mobile-and-pad {
     &:active {
-      background-color: #E5ECFF;
+      background-color: $blue-bg;
       path {
         fill: $hover;
       }
@@ -29,7 +29,7 @@
   }
   @include media-web {
     &:hover {
-      background-color: #E5ECFF;
+      background-color: $blue-bg;
       path {
         fill: $hover;
       }

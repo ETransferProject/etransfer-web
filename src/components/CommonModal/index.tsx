@@ -4,10 +4,11 @@ import CloseIcon from 'assets/images/close.svg';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import styles from './styles.module.scss';
 
-type CommonModalProps = Omit<
+export type CommonModalProps = Omit<
   ModalProps,
   'footer' | 'closeIcon' | 'confirmLoading' | 'okButtonProps' | 'okType'
 > & {
+  footerClassName?: string;
   cancelText?: string;
   okText?: string;
   hideCancelButton?: boolean;
@@ -17,6 +18,7 @@ type CommonModalProps = Omit<
 
 export default function CommonModal({
   className,
+  footerClassName,
   cancelText,
   okText,
   hideCancelButton,
@@ -36,7 +38,7 @@ export default function CommonModal({
       footer={null}>
       {props.children}
       {(!hideCancelButton || !hideOkButton) && (
-        <div className={clsx('flex-row-center', styles['footer'])}>
+        <div className={clsx('flex-row-center', styles['footer'], footerClassName)}>
           {!hideCancelButton && (
             <CommonButton
               className={clsx('flex-1', styles['cancel-button'])}

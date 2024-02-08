@@ -72,13 +72,13 @@ $mobile-connect-wallet-button-padding-bottom: 30px;
 }
 
 .secondary-text-item {
-  @extend .font-family-regular;
   font-size: 14px;
   line-height: 22px;
   color: $secondary-text;
 }
 
 .connect-wallet-button-wrapper {
+  min-width: $page-min-width;
   @include media-mobile {
     position: absolute;
     bottom: 0;
