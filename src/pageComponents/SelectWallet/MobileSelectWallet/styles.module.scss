@@ -1,0 +1,24 @@
+@import '/src/assets/theme/color.scss';
+
+.wallet-container {
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  border: 1px solid $border;
+  border-radius: 6px;
+}
+
+.drawer.drawer-weight {
+  :global {
+    .ant-drawer-content {
+      border-radius: 0;
+    }
+    .ant-drawer-body {
+      padding: 0;
+    }
+  }
+}
+
+.drawer-title-wrapper {
+  gap: 8px;
+}

@@ -1,0 +1,22 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/styles/variable.scss';
+
+.header-wrapper {
+  min-width: $page-min-width;
+  width: 100%;
+  height: $mobile-header-height;
+  @include media-mobile {
+    padding: 12px 16px;
+  }
+  @include media-pad {
+    padding: 16px 40px 8px;
+  }
+}
+
+.header-text {
+  height: 24px;
+  font-size: 16px;
+  line-height: 1.5;
+  @extend .font-family-medium;
+}

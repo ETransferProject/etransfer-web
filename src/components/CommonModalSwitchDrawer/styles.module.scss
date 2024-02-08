@@ -1,0 +1,17 @@
+.drawer-wrapper {
+  :global {
+    .ant-drawer-footer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      border: none;
+    }
+  }
+  .cancel-button {
+    flex: 4;
+  }
+  .ok-button {
+    flex: 6;
+  }
+}

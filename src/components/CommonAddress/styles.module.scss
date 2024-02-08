@@ -1,0 +1,22 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+
+.address-wrapper {
+  gap: 4px;
+  width: 100%;
+}
+
+.address-text-title {
+  font-size: 14px;
+  line-height: 22px;
+  color: $secondary-text;
+}
+
+.address-text-content {
+  margin-right: 24px;
+  word-break: break-all;
+  font-size: 16px;
+  line-height: 1.5;
+  color: $primary-text;
+  @extend .font-family-medium;
+}

@@ -1,0 +1,32 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/breakpoint.scss';
+
+.address-wrapper {
+  padding: 16px 24px;
+  border-bottom: 1px solid $dividers;
+  @include media-mobile-and-pad {
+    padding: 16px;
+  }
+  @include media-web {
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  .label {
+    color: $primary-text;
+    font-size: 16px;
+    line-height: 1.5;
+    @extend .font-family-medium;
+  }
+
+  .value {
+    color: $secondary-text;
+    font-size: 12px;
+    line-height: 16px;
+  }
+}
+
+.button-wrapper {
+  padding: 12px 24px;
+}

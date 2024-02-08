@@ -1,0 +1,228 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/constants.scss';
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/styles/variable.scss';
+
+.form-wrapper {
+  :global {
+    .ant-form-item-label {
+      padding-bottom: 4px;
+      label {
+        width: 100%;
+        font-size: 14px;
+        line-height: 22px;
+        color: $secondary-text;
+      }
+    }
+    .ant-form-item-explain-error,
+    .ant-form-item-explain-warning {
+      margin-top: 4px;
+      font-size: 12px;
+      line-height: 16px;
+    }
+    .ant-form-item-explain-error {
+      color: $error;
+    }
+    .ant-form-item-explain-warning {
+      color: $warning;
+    }
+  }
+}
+
+.form-item-wrapper {
+  margin-bottom: 24px;
+}
+
+.amount-form-item-wrapper {
+  margin-bottom: 12px;
+}
+
+.form-item {
+  margin-bottom: 0;
+}
+
+.balance-info-wrapper {
+  margin-top: 12px;
+  @include media-mobile-and-pad {
+    .info-label,
+    .info-value {
+      font-size: 12px;
+      line-height: 16px;
+    }
+  }
+}
+
+.form-label-wrapper {
+  width: 100%;
+}
+
+.form-label {
+  font-size: 14px;
+  line-height: 22px;
+  color: $secondary-text;
+}
+
+.remaining-limit-wrapper {
+  gap: 8px;
+  .remaining-limit-value,
+  .remaining-limit-label {
+    font-size: 12px;
+    line-height: 16px;
+  }
+  .remaining-limit-value {
+    color: $primary-text;
+  }
+  .remaining-limit-label {
+    color: $secondary-text;
+  }
+  @include media-mobile {
+    &::before {
+      left: -16px;
+      width: 100vw;
+    }
+  }
+  @include media-pad {
+    &::before {
+      width: $content-width;
+    }
+  }
+  @include media-mobile-and-pad {
+    flex-direction: row;
+    position: relative;
+    margin-top: 48px;
+    .remaining-limit-value {
+      color: $secondary-text;
+    }
+    &::before {
+      content: '';
+      position: absolute;
+      top: -24px;
+      height: 1px;
+      background-color: $dividers;
+    }
+  }
+  @include media-web {
+    flex-direction: row-reverse;
+  }
+}
+.remaining-limit-error {
+  .remaining-limit-label,
+  .remaining-limit-value {
+    color: $error;
+  }
+}
+
+.info-wrapper {
+  gap: 8px;
+}
+
+.info-label,
+.info-value {
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.info-label {
+  color: $secondary-text;
+}
+
+.info-value {
+  color: $primary-text;
+  @extend .font-family-medium;
+}
+
+.info-value-big-font {
+  font-size: 24px;
+  line-height: 32px;
+}
+
+.form-footer {
+  min-width: $page-min-width;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  @include media-mobile {
+    position: fixed;
+    bottom: 0;
+    border-top: 1px solid $dividers;
+    background-color: $page-bg;
+    width: 100vw;
+    margin-left: -16px;
+    padding: 10px 16px;
+  }
+  @include media-pad {
+    width: 100%;
+    margin-top: 64px;
+  }
+  @include media-web {
+    width: 100%;
+    margin-top: 64px;
+  }
+}
+
+// A separate class name is used here to avoid invalidation of the padding style by incorporating the padding property in the production css.
+.form-footer-safe-area {
+  @include media-mobile {
+    padding-bottom: calc(10px + constant(safe-area-inset-bottom));
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  }
+}
+
+.footer-info-wrapper {
+  min-width: 0;
+  .transaction-fee-wrapper {
+    flex-wrap: wrap;
+    gap: 0;
+    .info-value {
+      gap: 4px;
+      min-width: 0;
+    }
+  }
+  .info-label {
+    flex: none;
+    margin-right: 8px;
+  }
+  .transaction-fee-value-data {
+    @include text-overflow;
+  }
+  .receive-amount-wrapper {
+    .info-value {
+      gap: 8px;
+    }
+  }
+  @include media-mobile-and-pad {
+    flex-direction: column-reverse;
+    gap: 2px;
+    .info-label,
+    .info-value {
+      font-size: 12px;
+      line-height: 16px;
+    }
+    .info-value-big-font {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+  }
+  @include media-web {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.form-submit-button-wrapper {
+  margin-bottom: 0;
+}
+
+.form-submit-button {
+  @include media-mobile {
+    width: 108px;
+    padding: 0;
+  }
+  @include media-pad {
+    width: 120px;
+  }
+  @include media-web {
+    width: 160px;
+  }
+}

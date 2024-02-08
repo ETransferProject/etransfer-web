@@ -1,0 +1,38 @@
+@import 'assets/theme/color.scss';
+@import 'assets/theme/breakpoint.scss';
+
+.copy-icon-wrapper {
+  border-radius: 4px;
+  path {
+    fill: $secondary-text;
+  }
+}
+
+.copy-icon-wrapper-small {
+  width: 24px;
+  height: 24px;
+}
+
+.copy-icon-wrapper-normal {
+  width: 32px;
+  height: 32px;
+}
+
+.copy-icon-wrapper-background-color {
+  @include media-mobile-and-pad {
+    &:active {
+      background-color: $blue-bg;
+      path {
+        fill: $hover;
+      }
+    }
+  }
+  @include media-web {
+    &:hover {
+      background-color: $blue-bg;
+      path {
+        fill: $hover;
+      }
+    }
+  }
+}
