@@ -11,6 +11,7 @@ import SmallCopy from './smallCopy.svg';
 import SmallWallet from './smallWallet.svg';
 import Wallet from './wallet.svg';
 import WalletIcon24 from './walletIcon24.svg';
+import PortkeyV2 from './portkeyV2.svg';
 import LargeWallet from './largeWallet.svg';
 import LargeLogo from './largeLogo.png';
 import qrCodePlaceholder from './qrCodePlaceholder.png';
@@ -31,6 +32,7 @@ export {
   SmallWallet,
   Wallet,
   WalletIcon24,
+  PortkeyV2,
   LargeWallet,
   Copy,
   SmallCopy,
