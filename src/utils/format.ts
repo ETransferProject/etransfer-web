@@ -53,7 +53,12 @@ export function formatWithCommas({
   sign = AmountSign.EMPTY,
 }: IFormatWithCommasProps): string {
   const decimal = decimals || 0;
-  const amountTrans = `${divDecimals(ZERO.plus(amount), decimal).decimalPlaces(digits).toFormat()}`;
+  const splitList = (typeof amount === 'number' ? amount.toString() : amount).split('.');
+
+  const afterPoint = splitList[1];
+  const amountTrans =
+    `${divDecimals(ZERO.plus(splitList[0]), decimal).decimalPlaces(digits).toFormat()}` +
+    `${afterPoint ? '.' + afterPoint : ''}`;
 
   if (sign && amountTrans !== '0') {
     return `${sign}${amountTrans}`;
@@ -63,4 +68,8 @@ export function formatWithCommas({
 
 export const parseWithCommas = (value?: string | null) => {
   return value ? new BigNumber(value.replace(/,/g, '')).toFixed() : '';
+};
+
+export const parseWithStringCommas = (value?: string | null) => {
+  return value ? value.replace(/,/g, '') : '';
 };
