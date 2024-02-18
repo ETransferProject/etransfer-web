@@ -16,7 +16,7 @@ const ConnectWalletVersionModalTitle = 'Connect a Wallet';
 const ConnectWalletVersionModalContent = [
   {
     key: PortkeyVersion.v2,
-    text: 'Portkey (Early Access)',
+    text: 'Portkey Wallet',
   },
   { key: PortkeyVersion.v1, text: 'Portkey' },
 ];
