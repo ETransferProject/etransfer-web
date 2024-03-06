@@ -1,7 +1,7 @@
 import CommonModalTips from 'components/CommonModalTips';
 import styles from './styles.module.scss';
 import { PortkeyVersion } from 'constants/wallet';
-import { WalletIcon24 } from 'assets/images';
+import { WalletIcon24, PortkeyV2 } from 'assets/images';
 import { useCallback } from 'react';
 import { useAppDispatch } from 'store/Provider/hooks';
 import { setSwitchVersionAction } from 'store/reducers/common/slice';
@@ -16,9 +16,9 @@ const ConnectWalletVersionModalTitle = 'Connect a Wallet';
 const ConnectWalletVersionModalContent = [
   {
     key: PortkeyVersion.v2,
-    text: 'Portkey (Early Access)',
+    text: 'Portkey Wallet',
   },
-  { key: PortkeyVersion.v1, text: 'Portkey' },
+  { key: PortkeyVersion.v1, text: 'Portkey (Deprecated)' },
 ];
 
 export default function ConnectWalletVersionModal({
@@ -52,7 +52,11 @@ export default function ConnectWalletVersionModal({
               key={`ConnectWalletVersionModal_${item.key}`}
               className={styles.connectWalletVersionModalItem}
               onClick={() => handleClick(item.key)}>
-              <WalletIcon24 className={styles.walletIcon} />
+              {item.key === PortkeyVersion.v2 ? (
+                <PortkeyV2 className={styles.walletIcon} />
+              ) : (
+                <WalletIcon24 className={styles.walletIcon} />
+              )}
               <span className={styles.connectWalletVersionModalText}>{item.text}</span>
             </div>
           );

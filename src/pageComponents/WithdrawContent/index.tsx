@@ -66,7 +66,7 @@ import { handleErrorMessage } from '@portkey/did-ui-react';
 import { useAccounts } from 'hooks/portkeyWallet';
 import getPortkeyWallet from 'wallet/portkeyWallet';
 import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
-import { formatWithCommas, parseWithCommas } from 'utils/format';
+import { formatWithCommas, parseWithCommas, parseWithStringCommas } from 'utils/format';
 import { sleep } from 'utils/common';
 import { devices } from '@portkey/utils';
 import { ConnectWalletError } from 'constants/wallet';
@@ -850,7 +850,7 @@ export default function WithdrawContent() {
                   if (!value) return (event.target.value = '');
 
                   const lastNumber = value.charAt(value.length - 1);
-                  const valueNotComma = parseWithCommas(value);
+                  const valueNotComma = parseWithStringCommas(value);
                   const commaCount = value.match(/\./gim)?.length;
 
                   if (commaCount > 1) {
