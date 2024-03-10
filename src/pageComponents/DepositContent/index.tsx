@@ -5,7 +5,6 @@ import {
   useAppDispatch,
   useCommonState,
   useLoading,
-  useTokenState,
   useUserActionState,
 } from 'store/Provider/hooks';
 import { BusinessType, DepositInfo, GetNetworkListRequest, NetworkItem } from 'types/api';
@@ -21,6 +20,7 @@ import singleMessage from 'components/SingleMessage';
 import { initDepositInfo } from 'constants/deposit';
 import { CommonErrorNameType } from 'api/types';
 import { handleErrorMessage } from '@portkey/did-ui-react';
+import { useDeposit } from 'hooks/deposit';
 
 export type DepositContentProps = {
   networkList: NetworkItem[];
@@ -41,7 +41,7 @@ export default function Content() {
   const dispatch = useAppDispatch();
   const { isMobilePX, currentChainItem } = useCommonState();
   const { deposit } = useUserActionState();
-  const { currentSymbol, tokenList } = useTokenState();
+  const { currentSymbol, tokenList } = useDeposit();
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);

@@ -20,7 +20,6 @@ import {
   useAppDispatch,
   useCommonState,
   useLoading,
-  useTokenState,
   useUserActionState,
 } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
@@ -70,6 +69,7 @@ import { formatWithCommas, parseWithCommas, parseWithStringCommas } from 'utils/
 import { sleep } from 'utils/common';
 import { devices } from '@portkey/utils';
 import { ConnectWalletError } from 'constants/wallet';
+import { useWithdraw } from 'hooks/withdraw';
 
 enum ValidateStatus {
   Error = 'error',
@@ -97,7 +97,7 @@ export default function WithdrawContent() {
   const { isMobilePX, currentChainItem, currentVersion } = useCommonState();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
   const accounts = useAccounts();
-  const { currentSymbol, tokenList } = useTokenState();
+  const { currentSymbol, tokenList } = useWithdraw();
   const { withdraw } = useUserActionState();
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);

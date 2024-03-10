@@ -3,8 +3,8 @@ import clsx from 'clsx';
 import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
 import CommonAddress from 'components/CommonAddress';
 import SelectNetwork from 'pageComponents/SelectNetwork';
-import DepositInfo from 'pageComponents/Deposit/DepositInfo';
-import DepositDescription from 'pageComponents/Deposit/DepositDescription';
+import DepositInfo from 'pageComponents/DepositContent/DepositInfo';
+import DepositDescription from 'pageComponents/DepositContent/DepositDescription';
 import styles from './styles.module.scss';
 import { DepositContentProps } from '..';
 import CommonQRCode from 'components/CommonQRCode';
@@ -12,7 +12,7 @@ import { DEPOSIT_ADDRESS_LABEL } from 'constants/deposit';
 import CommonImage from 'components/CommonImage';
 import { qrCodePlaceholder } from 'assets/images';
 import { SideMenuKey } from 'constants/home';
-import { DepositRetryForMobile } from 'pageComponents/DepositRetry';
+import { DepositRetryForMobile } from 'pageComponents/DepositContent/DepositRetry';
 
 export default function MobileDepositContent({
   networkList,
