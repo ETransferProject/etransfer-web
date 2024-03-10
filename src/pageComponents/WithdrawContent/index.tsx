@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { Form } from 'antd';
+import { Form, Select } from 'antd';
 import clsx from 'clsx';
 import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
 import CommonButton from 'components/CommonButton';
 import FormTextarea from 'components/FormTextarea';
 import SelectNetwork from 'pageComponents/SelectNetwork';
+import SelectToken from 'pageComponents/SelectToken';
 import DoubleCheckModal from './DoubleCheckModal';
 import SuccessModal from './SuccessModal';
 import FailModal from './FailModal';
@@ -78,12 +79,14 @@ enum ValidateStatus {
 }
 
 enum FormKeys {
+  TOKEN = 'token',
   ADDRESS = 'address',
   NETWORK = 'network',
   AMOUNT = 'amount',
 }
 
 type FormValuesType = {
+  [FormKeys.TOKEN]: string;
   [FormKeys.ADDRESS]: string;
   [FormKeys.NETWORK]: NetworkItem;
   [FormKeys.AMOUNT]: string;
@@ -120,6 +123,7 @@ export default function WithdrawContent() {
   const [formValidateData, setFormValidateData] = useState<{
     [key in FormKeys]: { validateStatus: ValidateStatus; errorMessage: string };
   }>({
+    [FormKeys.TOKEN]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
     [FormKeys.ADDRESS]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
     [FormKeys.NETWORK]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
     [FormKeys.AMOUNT]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
@@ -707,6 +711,10 @@ export default function WithdrawContent() {
     handleFormValidateDataChange,
   ]);
 
+  const handleTokenChange = (value: string) => {
+    console.log(value);
+  };
+
   const onAddressChange = useCallback(
     (value: string | null) => {
       dispatch(setWithdrawAddress(value || ''));
@@ -779,11 +787,21 @@ export default function WithdrawContent() {
       <SelectChainWrapper
         mobileTitle="Withdraw from"
         mobileLabel="from"
-        webLabel="Withdraw USDT from"
+        webLabel="Withdraw Token from"
         chainChanged={(item: IChainNameItem) => handleChainChanged(item)}
       />
       <div>
         <Form className={styles['form-wrapper']} layout="vertical" requiredMark={false} form={form}>
+          <div className={styles['form-item-wrapper']}>
+            <Form.Item
+              className={styles['form-item']}
+              label="Withdrawal Token"
+              name={FormKeys.TOKEN}
+              validateStatus={formValidateData[FormKeys.TOKEN].validateStatus}
+              help={formValidateData[FormKeys.TOKEN].errorMessage}>
+              <SelectToken onChange={handleTokenChange} tokenList={tokenList}></SelectToken>
+            </Form.Item>
+          </div>
           <div className={styles['form-item-wrapper']}>
             <Form.Item
               className={styles['form-item']}
