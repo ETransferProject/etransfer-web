@@ -1,13 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TokenItem } from 'types/api';
+import { BusinessType, TokenItem } from 'types/api';
 import { USDT_DECIMAL } from 'constants/index';
 
-export interface TokenState {
-  tokenList: TokenItem[];
-  currentSymbol: string;
-}
+export type TokenState = {
+  [key in BusinessType]: {
+    tokenList: TokenItem[];
+    currentSymbol: string;
+  };
+};
 
-export const initialTokenState: TokenState = {
+const initTokenStateItem = {
   tokenList: [
     {
       name: 'USDT',
@@ -20,15 +22,24 @@ export const initialTokenState: TokenState = {
   currentSymbol: 'USDT',
 };
 
+export const initialTokenState: TokenState = {
+  [BusinessType.Deposit]: initTokenStateItem,
+  [BusinessType.Withdraw]: initTokenStateItem,
+};
+
 export const TokenSlice = createSlice({
   name: 'token',
   initialState: initialTokenState,
   reducers: {
-    setTokenList: (state, action: PayloadAction<TokenItem[]>) => {
-      state.tokenList = action.payload;
+    setTokenList: (state, action: PayloadAction<{ key: BusinessType; data: TokenItem[] }>) => {
+      state[action.payload.key].tokenList = action.payload.data;
     },
-    setCurrentSymbol: (state, action: PayloadAction<string>) => {
-      state.currentSymbol = action.payload;
+    setCurrentSymbol: (state, action: PayloadAction<{ key: BusinessType; symbol: string }>) => {
+      state[action.payload.key].currentSymbol = action.payload.symbol;
+    },
+    resetTokenState: (state) => {
+      state[BusinessType.Deposit] = initTokenStateItem;
+      state[BusinessType.Withdraw] = initTokenStateItem;
     },
   },
 });

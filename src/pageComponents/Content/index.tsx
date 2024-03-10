@@ -41,10 +41,17 @@ export default function Content() {
         type: activeMenuKey as unknown as BusinessType,
         chainId: currentChainItem.key,
       });
-      dispatch(setTokenList(res.tokenList));
+      dispatch(
+        setTokenList({ key: activeMenuKey as unknown as BusinessType, data: res.tokenList }),
+      );
 
       if (isInitCurrentSymbol) {
-        dispatch(setCurrentSymbol(res.tokenList[0].symbol));
+        dispatch(
+          setCurrentSymbol({
+            key: activeMenuKey as unknown as BusinessType,
+            symbol: res.tokenList[0].symbol,
+          }),
+        );
         return;
       }
     },
@@ -60,13 +67,18 @@ export default function Content() {
       dispatch(setCurrentChainItem(ChainItemKey[0]));
     }
     if (routeQuery.tokenSymbol) {
-      dispatch(setCurrentSymbol(routeQuery.tokenSymbol));
+      dispatch(
+        setCurrentSymbol({
+          key: activeMenuKey as unknown as BusinessType,
+          symbol: routeQuery.tokenSymbol,
+        }),
+      );
       getToken(false);
     } else {
       getToken(true);
     }
     router.push('/');
-  }, [dispatch, getToken, routeQuery, router]);
+  }, [activeMenuKey, dispatch, getToken, routeQuery, router]);
 
   const content = useMemo(
     () =>

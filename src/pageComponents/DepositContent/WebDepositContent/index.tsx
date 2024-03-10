@@ -3,17 +3,17 @@ import clsx from 'clsx';
 import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
 import CommonAddress from 'components/CommonAddress';
 import SelectNetwork from 'pageComponents/SelectNetwork';
-import DepositInfo from 'pageComponents/Deposit/DepositInfo';
-import DepositDescription from 'pageComponents/Deposit/DepositDescription';
+import DepositInfo from 'pageComponents/DepositContent/DepositInfo';
+import DepositDescription from 'pageComponents/DepositContent/DepositDescription';
 import styles from './styles.module.scss';
 import { DepositContentProps } from '..';
 import CommonQRCode from 'components/CommonQRCode';
 import { DEPOSIT_ADDRESS_LABEL } from 'constants/deposit';
-import { useTokenState } from 'store/Provider/hooks';
+import { useDeposit } from 'hooks/deposit';
 import CommonImage from 'components/CommonImage';
 import { qrCodePlaceholder } from 'assets/images';
 import { SideMenuKey } from 'constants/home';
-import { DepositRetryForWeb } from 'pageComponents/DepositRetry';
+import { DepositRetryForWeb } from 'pageComponents/DepositContent/DepositRetry';
 
 export default function WebContent({
   networkList,
@@ -29,7 +29,7 @@ export default function WebContent({
   chainChanged,
   networkChanged,
 }: DepositContentProps) {
-  const { currentSymbol } = useTokenState();
+  const { currentSymbol } = useDeposit();
   const webLabel = useMemo(() => `Deposit ${currentSymbol} to`, [currentSymbol]);
   const renderDepositDescription = useMemo(() => {
     return (

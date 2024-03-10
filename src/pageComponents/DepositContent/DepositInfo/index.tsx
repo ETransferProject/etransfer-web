@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { CONTRACT_ADDRESS, MINIMUM_DEPOSIT } from 'constants/deposit';
-import { useCommonState, useTokenState } from 'store/Provider/hooks';
+import { useCommonState } from 'store/Provider/hooks';
 import { QuestionMarkIcon } from 'assets/images';
 import { formatStr2Ellipsis } from 'utils/format';
 import ViewContractAddressModal from 'pageComponents/Modal/ViewContractAddressModal';
 import { openWithBlank } from 'utils/common';
+import { useDeposit } from 'hooks/deposit';
 
 export interface DepositInfoProps {
   networkName?: string;
@@ -22,7 +23,7 @@ export default function DepositInfo({
   contractAddressLink,
 }: DepositInfoProps) {
   const { isMobilePX } = useCommonState();
-  const { currentSymbol } = useTokenState();
+  const { currentSymbol } = useDeposit();
   const [openAddressModal, setOpenAddressModal] = useState(false);
 
   return (
