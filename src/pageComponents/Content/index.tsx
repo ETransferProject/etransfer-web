@@ -41,8 +41,20 @@ export default function Content() {
         type: activeMenuKey as unknown as BusinessType,
         chainId: currentChainItem.key,
       });
+
       dispatch(
-        setTokenList({ key: activeMenuKey as unknown as BusinessType, data: res.tokenList }),
+        setTokenList({
+          key: activeMenuKey as unknown as BusinessType,
+          data: res.tokenList.concat([
+            {
+              name: 'SRG',
+              symbol: 'SRG',
+              icon: 'https://d.cobo.com/public/logos/USDT%403x.png',
+              contractAddress: '2AgU8BfyKyrxUrmskVCUukw63Wk96MVfVoJzDDbwKszafioCN1',
+              decimals: 8,
+            },
+          ]),
+        }),
       );
 
       if (isInitCurrentSymbol) {

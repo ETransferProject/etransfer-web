@@ -7,6 +7,7 @@ export interface UserActionDeposit {
   networkList?: NetworkItem[];
   initOpenNetworkModalCount: number; // cant persist
 }
+
 export interface UserActionWithdraw {
   address?: string;
   currentNetwork?: NetworkItem;
