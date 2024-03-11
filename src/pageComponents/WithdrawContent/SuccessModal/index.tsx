@@ -22,19 +22,22 @@ export default function SuccessModal({ withdrawInfo, modalProps }: SuccessModalP
           <div className={styles['title']}>Withdrawal Request Submitted</div>
         </div>
         <div className={clsx('flex-column-center', styles['main-info-wrapper'])}>
-          <div className={styles['value']}>
-            {withdrawInfo.amount} {withdrawInfo.symbol}
-          </div>
           <div className={styles['label']}>
-            from {withdrawInfo.chainItem.label} to {withdrawInfo.network.name}
+            Amount to Be Received on {withdrawInfo.chainItem.label}
+          </div>
+          <div className={styles['value']}>
+            {withdrawInfo.receiveAmount || '--'} {withdrawInfo.symbol}
+            <div className={clsx(styles['receive-amount-usd'])}>
+              {'$ ' + (withdrawInfo.receiveAmountUsd || '--')}
+            </div>
           </div>
         </div>
         <div className={styles['divider']} />
         <div className={clsx('flex-column', styles['detail-wrapper'])}>
           <div className={styles['detail-row']}>
-            <div className={styles['label']}>Amount to Be Received</div>
+            <div className={styles['label']}>Withdrawal Amount</div>
             <div className={styles['value']}>
-              {withdrawInfo.receiveAmount || '--'} {withdrawInfo.symbol}
+              {withdrawInfo.amount} {withdrawInfo.symbol}
             </div>
           </div>
           <div className={styles['detail-row']}>

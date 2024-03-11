@@ -52,7 +52,7 @@
 .detail-row {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: 10px;
 }
 
 .divider {
@@ -71,4 +71,21 @@
     justify-content: flex-end;
     gap: 8px;
   }
+}
+
+.fee-usd, .amount-usd {
+  font-size: 12px;
+  text-align: right;
+  color: $secondary-text;
+}
+
+.fee-usd-box {
+  align-items: end;
+  gap: 0px;
+}
+
+.receive-amount-usd {
+  font-size: 14px;
+  text-align: center;
+  color: $secondary-text;
 }

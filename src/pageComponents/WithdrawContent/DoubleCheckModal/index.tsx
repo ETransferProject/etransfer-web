@@ -16,6 +16,9 @@ export interface DoubleCheckModalProps {
     transactionFee: FeeItem;
     aelfTransactionFee: FeeItem;
     symbol: string;
+    amountUsd: string;
+    receiveAmountUsd: string;
+    feeUsd: string;
   };
   modalProps: CommonModalSwitchDrawerProps;
   isTransactionFeeLoading: boolean;
@@ -47,11 +50,11 @@ export default function DoubleCheckModal({
       return (
         <>
           {isTransactionFeeLoading && <SimpleLoading />}
-          <span>
+          <div>
             {!isTransactionFeeLoading && `${withdrawInfo.transactionFee.amount} `}
             {withdrawInfo.transactionFee.currency} + {withdrawInfo.aelfTransactionFee.amount}{' '}
             {withdrawInfo.aelfTransactionFee.currency}
-          </span>
+          </div>
         </>
       );
     }
@@ -68,6 +71,9 @@ export default function DoubleCheckModal({
           <span className={clsx('flex-row-center', styles['value'])}>
             {renderAmountToBeReceived()}
           </span>
+          <div className={clsx(styles['receive-amount-usd'])}>
+            {'$ ' + (withdrawInfo.receiveAmountUsd || '--')}
+          </div>
         </div>
         <div className={styles['divider']} />
         <div className={clsx('flex-column', styles['detail-wrapper'])}>
@@ -90,14 +96,18 @@ export default function DoubleCheckModal({
           </div>
           <div className={styles['detail-row']}>
             <div className={styles['label']}>Withdraw Amount</div>
-            <div className={styles['value']}>{`${withdrawInfo.amount || '--'} ${
-              withdrawInfo.symbol
-            }`}</div>
+            <div className={styles['value']}>
+              {`${withdrawInfo.amount || '--'} ${withdrawInfo.symbol}`}
+              <div className={clsx(styles['amount-usd'])}>
+                {'$ ' + (withdrawInfo.amountUsd || '--')}
+              </div>
+            </div>
           </div>
           <div className={clsx(styles['detail-row'], styles['transaction-fee-wrapper'])}>
             <div className={styles['label']}>Transaction Fee</div>
-            <div className={clsx('flex-row-center', styles['value'])}>
+            <div className={clsx('flex-column-center', styles['value'], styles['fee-usd-box'])}>
               {renderTransactionFeeValue()}
+              <div className={clsx(styles['fee-usd'])}>{'$ ' + (withdrawInfo.feeUsd || '--')}</div>
             </div>
           </div>
         </div>
