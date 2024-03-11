@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import styles from './styles.module.scss';
-import { TokenSelectForWeb, TokenSelectProps } from 'pageComponents/TokenSelect';
+import { TokenSelectForWeb, TokenSelectProps } from 'pageComponents/SelectToken/TokenSelect';
 import { SideMenuKey } from 'constants/home';
 
 interface TokenSelectDropdownProps extends TokenSelectProps {

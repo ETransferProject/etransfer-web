@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { SideMenuKey } from 'constants/home';
-import { TokenCardForMobile, TokenCardForWeb } from 'pageComponents/TokenCard';
+import { TokenCardForMobile, TokenCardForWeb } from 'pageComponents/SelectToken/TokenCard';
 import { TokenItem } from 'types/api';
 
 export interface TokenSelectProps {

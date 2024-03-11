@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import styles from './styles.module.scss';
-import tokenDefault from 'assets/images/tokenDefault.svg';
 import CommonImage from 'components/CommonImage';
 
 interface TokenCardProps {
@@ -17,7 +16,7 @@ export function TokenCardForMobile({
   className,
   name,
   symbol,
-  icon = tokenDefault,
+  icon,
   isDisabled = false,
   onClick,
 }: TokenCardProps) {
@@ -29,7 +28,11 @@ export function TokenCardForMobile({
         className,
       )}
       onClick={onClick}>
-      <CommonImage src={icon} alt="token" className={styles['token-card-icon']} />
+      {icon ? (
+        <CommonImage src={icon} alt="token" className={styles['token-card-icon']} />
+      ) : (
+        <div className={styles['token-card-defaultIcon']}>D</div>
+      )}
       <span className={styles['token-card-name']}>{symbol}</span>
       <span className={styles['token-card-symbol']}>{name}</span>
     </div>
@@ -54,7 +57,13 @@ export function TokenCardForWeb({
         className,
       )}
       onClick={onClick}>
-      <CommonImage src={icon} alt="token" className={styles['token-card-icon']} />
+      {icon ? (
+        <CommonImage src={icon} alt="token" className={styles['token-card-icon']} />
+      ) : (
+        <div className={clsx(styles['token-card-defaultIcon'], styles['token-card-icon'])}>
+          {symbol.charAt(0)}
+        </div>
+      )}
       <span className={styles['token-card-name']}>{symbol}</span>
       <span className={styles['token-card-symbol']}>{name}</span>
     </div>

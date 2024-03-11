@@ -19,7 +19,6 @@ import SmallExclamationFilled from './smallExclamationFilled.svg';
 import OpenLinkIcon from './openLink.svg';
 import QuestionMarkIcon from './questionMark.svg';
 import SupportIcon from './supportIcon.svg';
-import tokenDefault from './tokenDefault.svg';
 
 export {
   Info,
@@ -43,5 +42,4 @@ export {
   OpenLinkIcon,
   QuestionMarkIcon,
   SupportIcon,
-  tokenDefault,
 };

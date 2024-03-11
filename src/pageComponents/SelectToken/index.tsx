@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import styles from './styles.module.scss';
 import { useAppDispatch, useCommonState } from 'store/Provider/hooks';
-import TokenSelectDrawer from 'pageComponents/TokenSelectDrawer';
-import TokenSelectDropdown from 'pageComponents/TokenSelectDropdown';
+import TokenSelectDrawer from 'pageComponents/SelectToken/TokenSelectDrawer';
+import TokenSelectDropdown from 'pageComponents/SelectToken/TokenSelectDropdown';
 import Down from 'assets/images/down.svg';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';

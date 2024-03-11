@@ -52,6 +52,11 @@
   height: 24px;
   margin-right: 8px;
 }
+.token-card-defaultIcon {
+  border-radius: 50%;
+  border: 1px solid $border;
+  text-align: center;
+}
 
 .token-card-for-web-hover {
   &:hover {
