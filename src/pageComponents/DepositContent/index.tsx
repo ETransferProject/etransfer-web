@@ -7,7 +7,13 @@ import {
   useLoading,
   useUserActionState,
 } from 'store/Provider/hooks';
-import { BusinessType, DepositInfo, GetNetworkListRequest, NetworkItem } from 'types/api';
+import {
+  BusinessType,
+  DepositInfo,
+  GetNetworkListRequest,
+  NetworkItem,
+  TokenItem,
+} from 'types/api';
 import { getDepositInfo, getNetworkList } from 'utils/api/deposit';
 import { IChainNameItem, SupportedELFChainId } from 'constants/index';
 import {
@@ -32,9 +38,12 @@ export type DepositContentProps = {
   tokenLogoUrl?: string;
   showRetry?: boolean;
   isShowLoading?: boolean;
+  currentToken?: TokenItem;
+  tokenList: TokenItem[];
   onRetry?: () => void;
   chainChanged: (item: IChainNameItem) => void;
   networkChanged: (item: NetworkItem) => Promise<void>;
+  onTokenChanged: (item: TokenItem) => void;
 };
 
 export default function Content() {
@@ -49,6 +58,7 @@ export default function Content() {
   const currentNetworkRef = useRef<NetworkItem>();
   const [depositInfo, setDepositInfo] = useState<DepositInfo>(initDepositInfo);
   const [showRetry, setShowRetry] = useState(false);
+  const [currentToken, setCurrentToken] = useState<TokenItem>();
 
   const tokenLogoUrl = useMemo(() => {
     const res = tokenList.filter((item) => item.symbol === currentSymbol);
@@ -154,6 +164,10 @@ export default function Content() {
     await getDepositData(currentChainItem.key, currentSymbol);
   }, [currentChainItem.key, currentSymbol, getDepositData]);
 
+  const handleTokenChange = (item: TokenItem) => {
+    setCurrentToken(item);
+  };
+
   useEffectOnce(() => {
     if (
       deposit?.currentNetwork?.network &&
@@ -187,6 +201,9 @@ export default function Content() {
       onRetry={handleRetry}
       chainChanged={handleChainChanged}
       networkChanged={handleNetworkChanged}
+      currentToken={currentToken}
+      tokenList={tokenList}
+      onTokenChanged={handleTokenChange}
     />
   ) : (
     <WebDepositContent
@@ -202,6 +219,9 @@ export default function Content() {
       onRetry={handleRetry}
       chainChanged={handleChainChanged}
       networkChanged={handleNetworkChanged}
+      currentToken={currentToken}
+      tokenList={tokenList}
+      onTokenChanged={handleTokenChange}
     />
   );
 }

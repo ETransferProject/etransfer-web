@@ -14,6 +14,7 @@ import CommonImage from 'components/CommonImage';
 import { qrCodePlaceholder } from 'assets/images';
 import { SideMenuKey } from 'constants/home';
 import { DepositRetryForWeb } from 'pageComponents/DepositContent/DepositRetry';
+import SelectToken from 'pageComponents/SelectToken';
 
 export default function WebContent({
   networkList,
@@ -25,9 +26,12 @@ export default function WebContent({
   tokenLogoUrl,
   showRetry = false,
   isShowLoading = false,
+  currentToken,
+  tokenList,
   onRetry,
   chainChanged,
   networkChanged,
+  onTokenChanged,
 }: DepositContentProps) {
   const { currentSymbol } = useDeposit();
   const webLabel = useMemo(() => `Deposit ${currentSymbol} to`, [currentSymbol]);
@@ -41,6 +45,15 @@ export default function WebContent({
   return (
     <>
       <SelectChainWrapper webLabel={webLabel} chainChanged={chainChanged} />
+      <div className={styles['select-network-wrapper']}>
+        <SelectToken
+          type={SideMenuKey.Withdraw}
+          selected={currentToken}
+          selectCallback={onTokenChanged}
+          tokenList={tokenList}
+        />
+      </div>
+
       <div className={styles['select-network-wrapper']}>
         <SelectNetwork
           type={SideMenuKey.Deposit}

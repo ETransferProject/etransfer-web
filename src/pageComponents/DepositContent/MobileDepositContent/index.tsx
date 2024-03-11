@@ -13,6 +13,7 @@ import CommonImage from 'components/CommonImage';
 import { qrCodePlaceholder } from 'assets/images';
 import { SideMenuKey } from 'constants/home';
 import { DepositRetryForMobile } from 'pageComponents/DepositContent/DepositRetry';
+import SelectToken from 'pageComponents/SelectToken';
 
 export default function MobileDepositContent({
   networkList,
@@ -24,9 +25,12 @@ export default function MobileDepositContent({
   tokenLogoUrl,
   showRetry = false,
   isShowLoading = false,
+  currentToken,
+  tokenList,
   onRetry,
   chainChanged,
   networkChanged,
+  onTokenChanged,
 }: DepositContentProps) {
   const renderSelectNetwork = ({ noBorder }: { noBorder?: boolean } = {}) => {
     return (
@@ -68,6 +72,12 @@ export default function MobileDepositContent({
             />
           )}
         </div>
+        <SelectToken
+          type={SideMenuKey.Withdraw}
+          selected={currentToken}
+          selectCallback={onTokenChanged}
+          tokenList={tokenList}
+        />
         {networkSelected ? (
           <>
             <div className={styles['data-wrapper']}>

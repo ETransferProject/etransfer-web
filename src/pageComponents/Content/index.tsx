@@ -49,7 +49,7 @@ export default function Content() {
             {
               name: 'SRG',
               symbol: 'SRG',
-              icon: 'https://d.cobo.com/public/logos/USDT%403x.png',
+              icon: '',
               contractAddress: '2AgU8BfyKyrxUrmskVCUukw63Wk96MVfVoJzDDbwKszafioCN1',
               decimals: 8,
             },

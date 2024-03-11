@@ -61,6 +61,12 @@
             height: 24px;
             margin-right: 8px;
           }
+          .default{
+            border-radius: 50%;
+            border: 1px solid $border;
+            text-align: center;
+            line-height: 24px;
+          }
         }
         .select-token-value-placeholder {
           color: $disable-text;
