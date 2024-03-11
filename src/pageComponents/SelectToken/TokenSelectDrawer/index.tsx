@@ -1,27 +1,31 @@
 import { DrawerProps } from 'antd';
 import CommonDrawer from 'components/CommonDrawer';
-import { NetworkSelectForMobile, NetworkSelectProps } from 'pageComponents/NetworkSelect';
+import { TokenSelectForMobile, TokenSelectProps } from 'pageComponents/SelectToken/TokenSelect';
+import { SideMenuKey } from 'constants/home';
 
 export default function NetworkSelectDrawer({
   type,
-  networkList,
-  selectedNetwork,
+  tokenList,
+  selectedToken,
   isDisabled,
   isShowLoading,
   onSelect,
   ...props
-}: NetworkSelectProps & DrawerProps) {
+}: TokenSelectProps & DrawerProps) {
   return (
     <CommonDrawer
       destroyOnClose
       placement="bottom"
-      title="Select Network"
+      title={type === SideMenuKey.Withdraw ? 'Withdraw Token' : 'Deposit Token'}
       closable={true}
       height="88%"
-      {...props}>
-      <NetworkSelectForMobile
-        networkList={networkList}
-        selectedNetwork={selectedNetwork}
+      {...props}
+      bodyStyle={{
+        padding: 0,
+      }}>
+      <TokenSelectForMobile
+        tokenList={tokenList}
+        selectedToken={selectedToken}
         onSelect={onSelect}
         type={type}
         isDisabled={isDisabled}

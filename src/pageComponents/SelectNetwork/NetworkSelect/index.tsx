@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import { NetworkItem } from 'types/api';
 import { SideMenuKey } from 'constants/home';
 import Info from 'assets/images/info.svg';
-import { NetworkCardForMobile, NetworkCardForWeb } from 'pageComponents/NetworkCard';
+import { NetworkCardForMobile, NetworkCardForWeb } from 'pageComponents/SelectNetwork/NetworkCard';
 import { useCommonState } from 'store/Provider/hooks';
 import {
   NetworkListSkeletonForMobile,

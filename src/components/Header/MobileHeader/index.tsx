@@ -1,7 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { useCommonState } from 'store/Provider/hooks';
-import SelectMenu from 'pageComponents/SelectMenu';
+import SelectMenu from 'components/Header/SelectMenu';
 import SelectWallet from 'pageComponents/SelectWallet';
 import styles from './styles.module.scss';
 import { SideMenuKey } from 'constants/home';

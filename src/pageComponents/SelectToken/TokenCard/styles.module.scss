@@ -1,0 +1,71 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+
+.token-card-for-mobile {
+  display: flex;
+  padding: 16px;
+  align-items: center;
+  gap: 2px;
+  border-bottom: 1px solid $dividers;
+  background: $page-bg;
+  cursor: pointer;
+
+  .token-card-name {
+    color: $primary-text;
+    font-size: 14px;
+    line-height: 24px;
+    @extend .font-family-medium;
+  }
+  .token-card-symbol {
+    color: $secondary-text;
+    margin-left: 8px;
+    line-height: 22px;
+  }
+}
+
+.token-card-for-web {
+  display: flex;
+  padding: 16px 24px;
+  align-items: center;
+  border-bottom: 1px solid $dividers;
+  background: $page-bg;
+  cursor: pointer;
+
+  &:nth-last-child(1) {
+    border-bottom: none;
+  }
+  .token-card-name {
+    color: $primary-text;
+    font-size: 16px;
+    line-height: 24px;
+    @extend .font-family-medium;
+  }
+  .token-card-symbol {
+    color: $secondary-text;
+    line-height: 22px;
+    margin-left: 8px;
+  }
+}
+
+.token-card-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+.token-card-defaultIcon {
+  border-radius: 50%;
+  border: 1px solid $border;
+  text-align: center;
+}
+
+.token-card-for-web-hover {
+  &:hover {
+    background: $hover-bg;
+  }
+}
+
+.token-card-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}

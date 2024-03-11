@@ -1,6 +1,9 @@
 import clsx from 'clsx';
 import styles from './styles.module.scss';
-import { NetworkSelectForWeb, NetworkSelectProps } from 'pageComponents/NetworkSelect';
+import {
+  NetworkSelectForWeb,
+  NetworkSelectProps,
+} from 'pageComponents/SelectNetwork/NetworkSelect';
 import { SideMenuKey } from 'constants/home';
 
 interface NetworkSelectDropdownProps extends NetworkSelectProps {

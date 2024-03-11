@@ -1,0 +1,97 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+@import '/src/assets/theme/breakpoint.scss';
+@import '/src/styles/common.scss';
+
+.select-token {
+  position: relative;
+  .select-token-result {
+    display: flex;
+    padding: 24px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 4px;
+    border-radius: 6px;
+    border: 1px solid $dividers;
+    cursor: pointer;
+
+    @include media-mobile-and-pad {
+      padding: 16px 12px;
+    }
+
+    &.select-token-result-form-item {
+      @extend .form-item-wrapper;
+      .select-token-value-row .select-token-value .select-token-value-placeholder {
+        color: $disable-text;
+      }
+    }
+
+    &.select-token-result-no-border {
+      border: none;
+    }
+
+    .select-token-label {
+      color: $secondary-text;
+      font-size: 14px;
+      line-height: 22px;
+    }
+    .select-token-value-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      @extend .font-family-medium;
+      .select-token-value {
+        .select-token-value-selected {
+          .primary {
+            color: $primary-text;
+            font-size: 16px;
+            line-height: 1.5;
+            @extend .font-family-medium;
+            margin-right: 8px;
+          }
+          .secondary {
+            color: $secondary-text;
+            font-size: 14px;
+            line-height: 22px;
+          }
+          .icon{
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+          }
+        }
+        .select-token-value-placeholder {
+          color: $disable-text;
+          font-size: 16px;
+          line-height: 1.5;
+        }
+      }
+      .select-token-swap-icon-wrapper {
+        @include media-web {
+          width: 32px;
+          height: 32px;
+          border-radius: 4px;
+          &:hover {
+            background-color: $blue-bg;
+            .select-token-swap-icon {
+              path {
+                fill: $brand;
+              }
+            }
+          }
+        }
+      }
+      .select-token-swap-icon {
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        min-height: 20px;
+      }
+      .select-token-down-icon-rotate {
+        transform: rotate(180deg);
+      }
+    }
+  }
+}

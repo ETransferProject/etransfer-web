@@ -16,6 +16,7 @@ import {
   GetNetworkListRequest,
   BusinessType,
   GetWithdrawInfoRequest,
+  TokenItem,
 } from 'types/api';
 import {
   useAppDispatch,
@@ -106,6 +107,7 @@ export default function WithdrawContent() {
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
   const [currentNetwork, setCurrentNetwork] = useState<NetworkItem>();
+  const [currentToken, setCurrentToken] = useState<TokenItem>();
   const currentNetworkRef = useRef<NetworkItem>();
   const [form] = Form.useForm<FormValuesType>();
   const [withdrawInfo, setWithdrawInfo] = useState<WithdrawInfo>(initialWithdrawInfo);
@@ -711,8 +713,8 @@ export default function WithdrawContent() {
     handleFormValidateDataChange,
   ]);
 
-  const handleTokenChange = (value: string) => {
-    console.log(value);
+  const handleTokenChange = (item: TokenItem) => {
+    setCurrentToken(item);
   };
 
   const onAddressChange = useCallback(
@@ -799,7 +801,13 @@ export default function WithdrawContent() {
               name={FormKeys.TOKEN}
               validateStatus={formValidateData[FormKeys.TOKEN].validateStatus}
               help={formValidateData[FormKeys.TOKEN].errorMessage}>
-              <SelectToken onChange={handleTokenChange} tokenList={tokenList}></SelectToken>
+              <SelectToken
+                isFormItemStyle
+                type={SideMenuKey.Withdraw}
+                selected={currentToken}
+                isDisabled={isNetworkDisable}
+                selectCallback={handleTokenChange}
+                tokenList={tokenList}></SelectToken>
             </Form.Item>
           </div>
           <div className={styles['form-item-wrapper']}>
