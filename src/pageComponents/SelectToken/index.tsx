@@ -65,19 +65,15 @@ export default function SelectToken({
           <div className={styles['select-token-value']}>
             {selected?.symbol ? (
               <span className={clsx('flex-row-center', styles['select-token-value-selected'])}>
-                {isMobilePX ? (
-                  <>
-                    <CommonImage src={selected.icon} alt="token" className={styles['icon']} />
-                    <span className={styles['primary']}>{selected.symbol}</span>
-                    <span className={styles['secondary']}>{selected.name}</span>
-                  </>
+                {selected.icon ? (
+                  <CommonImage src={selected.icon} alt="token" className={styles['icon']} />
                 ) : (
-                  <>
-                    <CommonImage src={selected.icon} alt="token" className={styles['icon']} />
-                    <span className={styles['primary']}>{selected.symbol}</span>
-                    <span className={styles['secondary']}>{selected.name}</span>
-                  </>
+                  <div className={clsx(styles['default'], styles['icon'])}>
+                    {selected.symbol.charAt(0)}
+                  </div>
                 )}
+                <span className={styles['primary']}>{selected.symbol}</span>
+                <span className={styles['secondary']}>{selected.name}</span>
               </span>
             ) : (
               <span className={styles['select-token-value-placeholder']}>Select a token</span>

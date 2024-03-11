@@ -805,9 +805,9 @@ export default function WithdrawContent() {
                 isFormItemStyle
                 type={SideMenuKey.Withdraw}
                 selected={currentToken}
-                isDisabled={isNetworkDisable}
                 selectCallback={handleTokenChange}
-                tokenList={tokenList}></SelectToken>
+                tokenList={tokenList}
+              />
             </Form.Item>
           </div>
           <div className={styles['form-item-wrapper']}>
