@@ -9,7 +9,7 @@ module.exports = {
   images: {
     // loader: 'akamai',
     // path: '',
-    domains: ['raw.githubusercontent.com'],
+    domains: ['raw.githubusercontent.com', 'd.cobo.com'],
   },
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],

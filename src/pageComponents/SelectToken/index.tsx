@@ -1,35 +1,126 @@
-import { Select } from 'antd';
+import { useState } from 'react';
+import styles from './styles.module.scss';
+import { useAppDispatch, useCommonState } from 'store/Provider/hooks';
+import TokenSelectDrawer from 'pageComponents/TokenSelectDrawer';
+import TokenSelectDropdown from 'pageComponents/TokenSelectDropdown';
+import Down from 'assets/images/down.svg';
+import clsx from 'clsx';
+import { SideMenuKey } from 'constants/home';
+
 import { BusinessType, TokenItem } from 'types/api';
 import { setCurrentSymbol } from 'store/reducers/token/slice';
+import CommonImage from 'components/CommonImage';
 
-import { useCommonState, useAppDispatch } from 'store/Provider/hooks';
+type TokenSelectProps = {
+  isFormItemStyle?: boolean;
+  type: SideMenuKey;
+  tokenList: TokenItem[];
+  selected?: TokenItem;
+  noBorder?: boolean;
+  isDisabled?: boolean;
+  isShowLoading?: boolean;
+  onChange?: (item: TokenItem) => void;
+  selectCallback: (item: TokenItem) => void;
+};
 
 export default function SelectToken({
+  isFormItemStyle,
+  type,
+  tokenList,
+  selected,
+  noBorder,
+  isDisabled,
+  isShowLoading,
   onChange,
-  tokenList = [],
-}: {
-  onChange?: (value: string) => void;
-  tokenList: TokenItem[];
-}) {
+  selectCallback,
+}: TokenSelectProps) {
+  const { isMobilePX } = useCommonState();
   const dispatch = useAppDispatch();
+  const [isShowTokenSelectDropdown, setIsShowTokenSelectDropdown] = useState<boolean>(false);
   const { activeMenuKey } = useCommonState();
 
-  const handleTokenChange = (value: string) => {
-    dispatch(setCurrentSymbol({ key: activeMenuKey as unknown as BusinessType, symbol: value }));
+  const onSelectToken = async (item: TokenItem) => {
     if (onChange) {
-      onChange(value);
+      onChange(item);
     }
+    dispatch(
+      setCurrentSymbol({ key: activeMenuKey as unknown as BusinessType, symbol: item.symbol }),
+    );
+    setIsShowTokenSelectDropdown(false);
+
+    selectCallback(item);
   };
 
   return (
-    <Select
-      style={{ width: '100%' }}
-      placeholder=""
-      onChange={handleTokenChange}
-      options={tokenList.map((item: TokenItem) => ({
-        label: item.name,
-        value: item.symbol,
-      }))}
-    />
+    <div className={styles['select-token']}>
+      <div
+        id="select-token-result"
+        className={clsx(styles['select-token-result'], {
+          [styles['select-token-result-form-item']]: isFormItemStyle,
+          [styles['select-token-result-no-border']]: noBorder,
+        })}
+        onClick={() => setIsShowTokenSelectDropdown(true)}>
+        {!isFormItemStyle && <div className={styles['select-token-label']}>Deposit token</div>}
+        <div className={styles['select-token-value-row']}>
+          <div className={styles['select-token-value']}>
+            {selected?.symbol ? (
+              <span className={clsx('flex-row-center', styles['select-token-value-selected'])}>
+                {isMobilePX ? (
+                  <>
+                    <CommonImage src={selected.icon} alt="token" className={styles['icon']} />
+                    <span className={styles['primary']}>{selected.symbol}</span>
+                    <span className={styles['secondary']}>{selected.name}</span>
+                  </>
+                ) : (
+                  <>
+                    <CommonImage src={selected.icon} alt="token" className={styles['icon']} />
+                    <span className={styles['primary']}>{selected.symbol}</span>
+                    <span className={styles['secondary']}>{selected.name}</span>
+                  </>
+                )}
+              </span>
+            ) : (
+              <span className={styles['select-token-value-placeholder']}>Select a token</span>
+            )}
+          </div>
+          {isFormItemStyle ? (
+            <Down
+              className={clsx({
+                [styles['select-token-down-icon-rotate']]: isShowTokenSelectDropdown,
+              })}
+            />
+          ) : (
+            <div className={clsx('flex-center', styles['select-token-swap-icon-wrapper'])}>
+              <Down className={styles['select-token-swap-icon']} />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {isMobilePX ? (
+        <TokenSelectDrawer
+          open={isShowTokenSelectDropdown}
+          onClose={() => setIsShowTokenSelectDropdown(false)}
+          type={type}
+          tokenList={tokenList}
+          selectedToken={selected?.symbol}
+          isDisabled={isDisabled}
+          isShowLoading={isShowLoading}
+          onSelect={onSelectToken}
+        />
+      ) : (
+        <TokenSelectDropdown
+          isFormItemStyle={isFormItemStyle}
+          open={isShowTokenSelectDropdown}
+          type={type}
+          tokenList={tokenList}
+          selectedToken={selected?.symbol}
+          isDisabled={isDisabled}
+          isShowLoading={isShowLoading}
+          onSelect={onSelectToken}
+          onClose={() => setIsShowTokenSelectDropdown(false)}
+        />
+      )}
+    </div>
   );
 }

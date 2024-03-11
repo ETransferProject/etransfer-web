@@ -1,0 +1,35 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+
+.token-select {
+  width: 100%;
+}
+
+.token-select-for-mobile {
+  .token-select-tip-wrapper-deposit {
+    margin-bottom: 12px;
+  }
+  .token-select-list {
+    display: flex;
+    flex-direction: column;
+    &:hover{
+      background-color: $hover-bg;
+    }
+  }
+  .token-card-selected{
+    background: $hover-bg;
+  }
+}
+
+.token-select-for-web {
+  overflow: scroll;
+  max-height: 400px;
+  background-color: $page-bg;
+  border-radius: 6px;
+  box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.12);
+  .token-select-list {
+    .token-card-selected {
+      background: $hover-bg;
+    }
+  }
+}
