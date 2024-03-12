@@ -164,8 +164,12 @@ export default function Content() {
     await getDepositData(currentChainItem.key, currentSymbol);
   }, [currentChainItem.key, currentSymbol, getDepositData]);
 
-  const handleTokenChange = (item: TokenItem) => {
+  const handleTokenChange = async (item: TokenItem) => {
     setCurrentToken(item);
+    await getNetworkData({
+      chainId: currentChainItem.key,
+      symbol: item.symbol,
+    });
   };
 
   useEffectOnce(() => {

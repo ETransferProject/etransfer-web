@@ -45,19 +45,11 @@ export default function Content() {
       dispatch(
         setTokenList({
           key: activeMenuKey as unknown as BusinessType,
-          data: res.tokenList.concat([
-            {
-              name: 'SGR',
-              symbol: 'SGR',
-              icon: '',
-              contractAddress: '2AgU8BfyKyrxUrmskVCUukw63Wk96MVfVoJzDDbwKszafioCN1',
-              decimals: 8,
-            },
-          ]),
+          data: res.tokenList,
         }),
       );
 
-      if (isInitCurrentSymbol) {
+      if (isInitCurrentSymbol && activeMenuKey === SideMenuKey.Withdraw) {
         dispatch(
           setCurrentSymbol({
             key: activeMenuKey as unknown as BusinessType,
