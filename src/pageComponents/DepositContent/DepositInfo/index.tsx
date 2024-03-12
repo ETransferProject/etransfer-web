@@ -14,6 +14,7 @@ export interface DepositInfoProps {
   minimumDeposit: string;
   contractAddress: string;
   contractAddressLink: string;
+  minAmountUsd: string;
 }
 
 export default function DepositInfo({
@@ -21,6 +22,7 @@ export default function DepositInfo({
   minimumDeposit,
   contractAddress,
   contractAddressLink,
+  minAmountUsd = '--',
 }: DepositInfoProps) {
   const { isMobilePX } = useCommonState();
   const { currentSymbol } = useDeposit();
@@ -31,8 +33,11 @@ export default function DepositInfo({
       {!!minimumDeposit && (
         <div className={clsx('flex', styles['info-line'])}>
           <div className={clsx('flex-none', styles['info-title'])}>{MINIMUM_DEPOSIT}</div>
-          <div className={clsx('flex-1', 'text-right', styles['info-value'])}>
-            {minimumDeposit} {currentSymbol}
+          <div className={clsx('flex-1')}>
+            <div className={clsx('text-right', styles['info-value'])}>
+              {minimumDeposit} {currentSymbol}
+            </div>
+            <div className={clsx('text-right', styles['info-exhibit'])}>{'$ ' + minAmountUsd}</div>
           </div>
         </div>
       )}
@@ -53,11 +58,13 @@ export default function DepositInfo({
               <span
                 className={clsx('text-right', styles['info-value'])}
                 onClick={() => setOpenAddressModal(true)}>
-                <span className={clsx('flex', styles.addressEllipsis)}>
+                <span className={clsx('flex-row-center', styles.addressEllipsis)}>
                   <span className="text-underline-none">
                     {formatStr2Ellipsis(contractAddress, [6, 6])}
                   </span>
-                  <QuestionMarkIcon />
+                  <span className={clsx(styles['question-mark-icon'])}>
+                    <QuestionMarkIcon />
+                  </span>
                 </span>
               </span>
             )}

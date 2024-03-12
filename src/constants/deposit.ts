@@ -26,6 +26,9 @@ export const initialWithdrawInfo: WithdrawInfo = {
   aelfTransactionUnit: 'ELF',
   receiveAmount: '',
   feeList: [],
+  receiveAmountUsd: '',
+  amountUsd: '',
+  feeUsd: '',
 };
 
 export const initialNetwork = {
@@ -45,6 +48,7 @@ export const initialWithdrawSuccessCheck: WithdrawInfoSuccess = {
   chainItem: CHAIN_LIST[0],
   network: initialNetwork,
   arriveTime: '',
+  receiveAmountUsd: '',
 };
 
 export const DepositRetryText = 'The deposit service is busy. Please try again later.';

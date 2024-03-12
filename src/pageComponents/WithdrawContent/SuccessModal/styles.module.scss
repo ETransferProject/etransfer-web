@@ -73,3 +73,10 @@
 .divider {
   @extend .divider;
 }
+
+.receive-amount-usd {
+  font-size: 14px;
+  text-align: center;
+  color: $secondary-text;
+}
+

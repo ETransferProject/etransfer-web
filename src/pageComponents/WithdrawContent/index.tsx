@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { Form, Select } from 'antd';
+import { Form, Tooltip } from 'antd';
 import clsx from 'clsx';
 import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
 import CommonButton from 'components/CommonButton';
@@ -60,6 +60,7 @@ import {
   InsufficientAllowanceMessage,
   WithdrawAddressErrorCodeList,
   WithdrawSendTxErrorCodeList,
+  RemainingWithdrawalQuotaTooltip,
 } from 'constants/withdraw';
 import { CommonErrorNameType } from 'api/types';
 import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
@@ -72,6 +73,7 @@ import { sleep } from 'utils/common';
 import { devices } from '@portkey/utils';
 import { ConnectWalletError } from 'constants/wallet';
 import { useWithdraw } from 'hooks/withdraw';
+import { QuestionMarkIcon } from 'assets/images';
 
 enum ValidateStatus {
   Error = 'error',
@@ -181,12 +183,28 @@ export default function WithdrawContent() {
         })}>
         <span className={styles['remaining-limit-label']}>
           {isMobilePX && '• '}Remaining Withdrawal Quota{isMobilePX && ':'}
+          {!isMobilePX && (
+            <Tooltip
+              className={clsx(styles['question-mark'])}
+              placement="top"
+              title={RemainingWithdrawalQuotaTooltip}>
+              <QuestionMarkIcon />
+            </Tooltip>
+          )}
         </span>
         <span className={styles['remaining-limit-value']}>
           {withdrawInfo.remainingLimit && withdrawInfo.totalLimit
             ? `${withdrawInfo.remainingLimit} ${withdrawInfo.limitCurrency} / ${withdrawInfo.totalLimit} 
           ${withdrawInfo.limitCurrency}`
             : '--'}
+          {isMobilePX && (
+            <Tooltip
+              className={clsx(styles['question-mark'])}
+              placement="top"
+              title={RemainingWithdrawalQuotaTooltip}>
+              <QuestionMarkIcon />
+            </Tooltip>
+          )}
         </span>
       </div>
     );
@@ -585,6 +603,7 @@ export default function WithdrawContent() {
             symbol: currentSymbol,
             chainItem: currentChainItemRef.current,
             arriveTime: currentNetworkRef.current.multiConfirmTime,
+            receiveAmountUsd: '', // TODO
           });
           setIsSuccessModalOpen(true);
         } else {
@@ -921,7 +940,7 @@ export default function WithdrawContent() {
               styles['info-wrapper'],
               styles['balance-info-wrapper'],
             )}>
-            <div className={styles['info-label']}>{withdrawInfo.transactionUnit} Balance</div>
+            <div className={styles['info-label']}>Balance</div>
             <div className={styles['info-value']}>
               {maxBalance} {withdrawInfo.transactionUnit}
             </div>
@@ -995,6 +1014,9 @@ export default function WithdrawContent() {
             name: withdrawInfo.aelfTransactionUnit,
           },
           symbol: currentSymbol,
+          amountUsd: withdrawInfo.amountUsd,
+          receiveAmountUsd: withdrawInfo.receiveAmountUsd,
+          feeUsd: withdrawInfo.feeUsd,
         }}
         modalProps={{
           open: isDoubleCheckModalOpen,
