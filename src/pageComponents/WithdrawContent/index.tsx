@@ -168,6 +168,14 @@ export default function WithdrawContent() {
     return USDT_DECIMAL;
   }, [currentSymbol, tokenList]);
 
+  const currentTokenAddress = useMemo(() => {
+    const res = tokenList.filter((item) => item.symbol === currentSymbol);
+    if (res.length > 0 && res[0]?.contractAddress) {
+      return res[0].contractAddress;
+    }
+    return '';
+  }, [currentSymbol, tokenList]);
+
   const onSubmit = () => {
     if (!currentNetwork) return;
     setIsDoubleCheckModalOpen(true);
@@ -349,29 +357,33 @@ export default function WithdrawContent() {
     [dispatch, getAllNetworkData, handleFormValidateDataChange],
   );
 
-  const getWithdrawData = useCallback(async () => {
-    try {
-      setIsTransactionFeeLoading(true);
-      const params: GetWithdrawInfoRequest = {
-        chainId: currentChainItemRef.current.key,
-        symbol: currentSymbol,
-        version: currentVersion,
-      };
-      if (currentNetworkRef.current?.network) {
-        params.network = currentNetworkRef.current?.network;
-      }
-      const res = await getWithdrawInfo(params);
+  const getWithdrawData = useCallback(
+    async (item?: TokenItem) => {
+      const symbol = item?.symbol || currentSymbol;
+      try {
+        setIsTransactionFeeLoading(true);
+        const params: GetWithdrawInfoRequest = {
+          chainId: currentChainItemRef.current.key,
+          symbol,
+          version: currentVersion,
+        };
+        if (currentNetworkRef.current?.network) {
+          params.network = currentNetworkRef.current?.network;
+        }
+        const res = await getWithdrawInfo(params);
 
-      setWithdrawInfo(res.withdrawInfo);
-      setIsTransactionFeeLoading(false);
-    } catch (error: any) {
-      setWithdrawInfo(initialWithdrawInfo);
-      if (error.name !== CommonErrorNameType.CANCEL) {
-        singleMessage.error(handleErrorMessage(error));
+        setWithdrawInfo(res.withdrawInfo);
         setIsTransactionFeeLoading(false);
+      } catch (error: any) {
+        setWithdrawInfo(initialWithdrawInfo);
+        if (error.name !== CommonErrorNameType.CANCEL) {
+          singleMessage.error(handleErrorMessage(error));
+          setIsTransactionFeeLoading(false);
+        }
       }
-    }
-  }, [currentSymbol, currentVersion]);
+    },
+    [currentSymbol, currentVersion],
+  );
 
   useEffect(() => {
     if (
@@ -568,19 +580,17 @@ export default function WithdrawContent() {
     }
 
     const ownerAddress = accounts?.[currentChainItemRef.current.key]?.[0] || '';
-    const approveTargetAddress =
-      ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.ETRANSFER];
 
     const checkRes = await checkTokenAllowanceAndApprove({
       tokenContract,
       symbol: currentSymbol,
       address: ownerAddress,
-      approveTargetAddress,
+      approveTargetAddress: currentTokenAddress,
       amount: balance,
     });
 
     return checkRes;
-  }, [accounts, balance, currentSymbol, currentVersion, getMaxBalance]);
+  }, [accounts, balance, currentSymbol, currentTokenAddress, currentVersion, getMaxBalance]);
 
   const handleCreateWithdrawOrder = useCallback(
     async ({ address, rawTransaction }: { address: string; rawTransaction: string }) => {
@@ -647,8 +657,7 @@ export default function WithdrawContent() {
         const transaction = await createTransferTokenTransaction({
           caContractAddress:
             ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.CA],
-          eTransferContractAddress:
-            ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.ETRANSFER],
+          eTransferContractAddress: currentTokenAddress,
           caHash: portkeyWallet.caHash,
           symbol: currentSymbol,
           amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
@@ -677,7 +686,7 @@ export default function WithdrawContent() {
       setLoading(false);
       setIsDoubleCheckModalOpen(false);
     }
-  }, [balance, currentSymbol, handleApproveToken, receiveAmount, setLoading]);
+  }, [balance, currentSymbol, currentTokenAddress, handleApproveToken, receiveAmount, setLoading]);
 
   const setMaxToken = useCallback(async () => {
     setBalance(maxBalance);
@@ -752,7 +761,7 @@ export default function WithdrawContent() {
         symbol: item.symbol,
         address: form.getFieldValue(FormKeys.ADDRESS) || undefined,
       });
-      await getWithdrawData();
+      await getWithdrawData(item);
 
       setLoading(false);
     } catch (error) {
