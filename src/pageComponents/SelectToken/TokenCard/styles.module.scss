@@ -31,9 +31,6 @@
   background: $page-bg;
   cursor: pointer;
 
-  &:nth-last-child(1) {
-    border-bottom: none;
-  }
   .token-card-name {
     color: $primary-text;
     font-size: 16px;
