@@ -6,6 +6,7 @@ export interface UserActionDeposit {
   currentNetwork?: NetworkItem;
   networkList?: NetworkItem[];
   initOpenNetworkModalCount: number; // cant persist
+  initOpenTokenkModalCount: number;
 }
 
 export interface UserActionWithdraw {
@@ -19,7 +20,7 @@ export interface UserActionState {
 }
 
 export const initialUserActionState: UserActionState = {
-  deposit: { initOpenNetworkModalCount: 0 },
+  deposit: { initOpenNetworkModalCount: 0, initOpenTokenkModalCount: 0 },
   withdraw: {},
 };
 
@@ -38,6 +39,9 @@ export const UserActionSlice = createSlice({
     },
     setAddInitOpenNetworkModalCount: (state, _action: PayloadAction<void>) => {
       state.deposit.initOpenNetworkModalCount = state.deposit.initOpenNetworkModalCount++;
+    },
+    setAddInitOpenTokenModalCount: (state, _action: PayloadAction<void>) => {
+      state.deposit.initOpenTokenkModalCount = state.deposit.initOpenTokenkModalCount++;
     },
     setWithdrawAddress: (state, action: PayloadAction<string | undefined>) => {
       state.withdraw.address = action.payload;
@@ -59,6 +63,7 @@ export const {
   setDepositCurrentNetwork,
   setDepositNetworkList,
   setAddInitOpenNetworkModalCount,
+  setAddInitOpenTokenModalCount,
   setWithdrawAddress,
   setWithdrawCurrentNetwork,
   setWithdrawNetworkList,
