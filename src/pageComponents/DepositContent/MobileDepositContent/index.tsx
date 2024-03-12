@@ -77,7 +77,7 @@ export default function MobileDepositContent({
           )}
         </div>
         <SelectToken
-          type={SideMenuKey.Withdraw}
+          type={SideMenuKey.Deposit}
           selected={currentToken}
           selectCallback={onTokenChanged}
           tokenList={tokenList}

@@ -61,6 +61,7 @@ export default function Content() {
   const [currentToken, setCurrentToken] = useState<TokenItem>(
     tokenList.find((item) => item.symbol === currentSymbol) as TokenItem,
   );
+
   const tokenLogoUrl = useMemo(() => {
     const res = tokenList.filter((item) => item.symbol === currentSymbol);
     if (res.length > 0) {
