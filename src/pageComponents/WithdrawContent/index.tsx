@@ -349,29 +349,33 @@ export default function WithdrawContent() {
     [dispatch, getAllNetworkData, handleFormValidateDataChange],
   );
 
-  const getWithdrawData = useCallback(async () => {
-    try {
-      setIsTransactionFeeLoading(true);
-      const params: GetWithdrawInfoRequest = {
-        chainId: currentChainItemRef.current.key,
-        symbol: currentSymbol,
-        version: currentVersion,
-      };
-      if (currentNetworkRef.current?.network) {
-        params.network = currentNetworkRef.current?.network;
-      }
-      const res = await getWithdrawInfo(params);
+  const getWithdrawData = useCallback(
+    async (item?: TokenItem) => {
+      const symbol = item?.symbol || currentSymbol;
+      try {
+        setIsTransactionFeeLoading(true);
+        const params: GetWithdrawInfoRequest = {
+          chainId: currentChainItemRef.current.key,
+          symbol,
+          version: currentVersion,
+        };
+        if (currentNetworkRef.current?.network) {
+          params.network = currentNetworkRef.current?.network;
+        }
+        const res = await getWithdrawInfo(params);
 
-      setWithdrawInfo(res.withdrawInfo);
-      setIsTransactionFeeLoading(false);
-    } catch (error: any) {
-      setWithdrawInfo(initialWithdrawInfo);
-      if (error.name !== CommonErrorNameType.CANCEL) {
-        singleMessage.error(handleErrorMessage(error));
+        setWithdrawInfo(res.withdrawInfo);
         setIsTransactionFeeLoading(false);
+      } catch (error: any) {
+        setWithdrawInfo(initialWithdrawInfo);
+        if (error.name !== CommonErrorNameType.CANCEL) {
+          singleMessage.error(handleErrorMessage(error));
+          setIsTransactionFeeLoading(false);
+        }
       }
-    }
-  }, [currentSymbol, currentVersion]);
+    },
+    [currentSymbol, currentVersion],
+  );
 
   useEffect(() => {
     if (
@@ -752,7 +756,7 @@ export default function WithdrawContent() {
         symbol: item.symbol,
         address: form.getFieldValue(FormKeys.ADDRESS) || undefined,
       });
-      await getWithdrawData();
+      await getWithdrawData(item);
 
       setLoading(false);
     } catch (error) {

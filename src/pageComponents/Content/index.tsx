@@ -47,8 +47,8 @@ export default function Content() {
           key: activeMenuKey as unknown as BusinessType,
           data: res.tokenList.concat([
             {
-              name: 'SRG',
-              symbol: 'SRG',
+              name: 'SGR',
+              symbol: 'SGR',
               icon: '',
               contractAddress: '2AgU8BfyKyrxUrmskVCUukw63Wk96MVfVoJzDDbwKszafioCN1',
               decimals: 8,
