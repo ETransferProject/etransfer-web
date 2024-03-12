@@ -48,7 +48,7 @@ export default function NotConnectedWalletContent() {
       <div className={clsx('flex-column-center')}>
         {isMobilePX && <Logo className={styles['logo']} />}
         <CommonImage className={styles['large-logo']} src={LargeLogo} alt="logo" />
-        <div className={styles['primary-text']}>Deposit/Withdraw Token</div>
+        <div className={styles['primary-text']}>Deposit/Withdraw Tokens</div>
         <div className={styles['secondary-text']}>
           <p className={clsx('text-center', styles['secondary-text-item'])}>
             {!isMobilePX && 'ETransfer - '}Your Universal Gateway to Seamless Transfers.

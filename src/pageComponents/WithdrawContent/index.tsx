@@ -137,6 +137,8 @@ export default function WithdrawContent() {
   const getTransactionFeeTimerRef = useRef<NodeJS.Timeout | null>(null);
   const preReceiveAmountRef = useRef('');
 
+  const webLabel = useMemo(() => `Withdraw ${currentSymbol} to`, [currentSymbol]);
+
   const minAmount = useMemo(() => {
     return withdrawInfo?.minAmount || '0.2';
   }, [withdrawInfo?.minAmount]);
@@ -732,8 +734,32 @@ export default function WithdrawContent() {
     handleFormValidateDataChange,
   ]);
 
-  const handleTokenChange = (item: TokenItem) => {
+  const handleTokenChange = async (item: TokenItem) => {
     setCurrentToken(item);
+    try {
+      setLoading(true);
+      setBalance('');
+      form.setFieldValue(FormKeys.AMOUNT, '');
+      form.setFieldValue(FormKeys.ADDRESS, '');
+      handleAmountValidate();
+      dispatch(setWithdrawAddress(''));
+
+      // reset max balance
+      getMaxBalanceInterval();
+      getMaxBalance();
+
+      await getNetworkData({
+        symbol: item.symbol,
+        address: form.getFieldValue(FormKeys.ADDRESS) || undefined,
+      });
+      await getWithdrawData();
+
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onAddressChange = useCallback(
@@ -808,7 +834,7 @@ export default function WithdrawContent() {
       <SelectChainWrapper
         mobileTitle="Withdraw from"
         mobileLabel="from"
-        webLabel="Withdraw Token from"
+        webLabel={webLabel}
         chainChanged={(item: IChainNameItem) => handleChainChanged(item)}
       />
       <div>
