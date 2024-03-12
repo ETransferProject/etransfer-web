@@ -34,7 +34,6 @@ export default function WebContent({
   onTokenChanged,
 }: DepositContentProps) {
   const { currentSymbol } = useDeposit();
-  const webLabel = useMemo(() => `Deposit ${currentSymbol} to`, [currentSymbol]);
   const renderDepositDescription = useMemo(() => {
     return (
       Array.isArray(depositInfo?.extraNotes) &&
@@ -44,7 +43,7 @@ export default function WebContent({
 
   return (
     <>
-      <SelectChainWrapper webLabel={webLabel} chainChanged={chainChanged} />
+      <SelectChainWrapper webLabel={'Deposit Tokens to'} chainChanged={chainChanged} />
       <div className={styles['select-network-wrapper']}>
         <SelectToken
           type={SideMenuKey.Withdraw}
@@ -53,16 +52,17 @@ export default function WebContent({
           tokenList={tokenList}
         />
       </div>
-
-      <div className={styles['select-network-wrapper']}>
-        <SelectNetwork
-          type={SideMenuKey.Deposit}
-          networkList={networkList}
-          selectCallback={networkChanged}
-          selected={networkSelected}
-          isShowLoading={isShowLoading}
-        />
-      </div>
+      {currentSymbol !== '' && (
+        <div className={styles['select-network-wrapper']}>
+          <SelectNetwork
+            type={SideMenuKey.Deposit}
+            networkList={networkList}
+            selectCallback={networkChanged}
+            selected={networkSelected}
+            isShowLoading={isShowLoading}
+          />
+        </div>
+      )}
       {showRetry && <DepositRetryForWeb isShowImage={true} onClick={onRetry} />}
       {!showRetry && !!depositInfo.depositAddress && (
         <>

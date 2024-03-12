@@ -14,7 +14,7 @@ export interface DepositInfoProps {
   minimumDeposit: string;
   contractAddress: string;
   contractAddressLink: string;
-  minAmountUsd: string;
+  minAmountUsd?: string;
 }
 
 export default function DepositInfo({
