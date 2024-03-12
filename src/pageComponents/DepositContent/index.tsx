@@ -180,10 +180,12 @@ export default function Content() {
 
       getDepositData(currentChainItem.key, currentSymbol);
     } else {
-      getNetworkData({
-        chainId: currentChainItem.key,
-        symbol: currentSymbol,
-      });
+      if (currentSymbol && currentChainItem.key) {
+        getNetworkData({
+          chainId: currentChainItem.key,
+          symbol: currentSymbol,
+        });
+      }
     }
   });
 

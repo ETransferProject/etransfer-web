@@ -139,8 +139,6 @@ export default function WithdrawContent() {
   const getTransactionFeeTimerRef = useRef<NodeJS.Timeout | null>(null);
   const preReceiveAmountRef = useRef('');
 
-  const webLabel = useMemo(() => `Withdraw ${currentSymbol} to`, [currentSymbol]);
-
   const minAmount = useMemo(() => {
     return withdrawInfo?.minAmount || '0.2';
   }, [withdrawInfo?.minAmount]);
@@ -836,7 +834,7 @@ export default function WithdrawContent() {
       <SelectChainWrapper
         mobileTitle="Withdraw from"
         mobileLabel="from"
-        webLabel={webLabel}
+        webLabel={'Withdraw Tokens from'}
         chainChanged={(item: IChainNameItem) => handleChainChanged(item)}
       />
       <div>

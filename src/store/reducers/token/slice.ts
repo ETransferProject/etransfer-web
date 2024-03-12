@@ -9,7 +9,14 @@ export type TokenState = {
   };
 };
 
-const initTokenStateItem = {
+// init deposit empty
+const initDepositTokenState = {
+  tokenList: [],
+  currentSymbol: '',
+};
+
+// init withdraw USDT
+const initWithdrawTokenState = {
   tokenList: [
     {
       name: 'USDT',
@@ -23,8 +30,8 @@ const initTokenStateItem = {
 };
 
 export const initialTokenState: TokenState = {
-  [BusinessType.Deposit]: initTokenStateItem,
-  [BusinessType.Withdraw]: initTokenStateItem,
+  [BusinessType.Deposit]: initDepositTokenState,
+  [BusinessType.Withdraw]: initWithdrawTokenState,
 };
 
 export const TokenSlice = createSlice({
@@ -38,8 +45,8 @@ export const TokenSlice = createSlice({
       state[action.payload.key].currentSymbol = action.payload.symbol;
     },
     resetTokenState: (state) => {
-      state[BusinessType.Deposit] = initTokenStateItem;
-      state[BusinessType.Withdraw] = initTokenStateItem;
+      state[BusinessType.Deposit] = initDepositTokenState;
+      state[BusinessType.Withdraw] = initWithdrawTokenState;
     },
   },
 });
