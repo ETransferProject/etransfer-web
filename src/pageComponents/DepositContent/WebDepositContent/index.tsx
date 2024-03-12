@@ -52,17 +52,19 @@ export default function WebContent({
           tokenList={tokenList}
         />
       </div>
-      {currentSymbol !== '' && (
-        <div className={styles['select-network-wrapper']}>
-          <SelectNetwork
-            type={SideMenuKey.Deposit}
-            networkList={networkList}
-            selectCallback={networkChanged}
-            selected={networkSelected}
-            isShowLoading={isShowLoading}
-          />
-        </div>
-      )}
+      <div
+        className={clsx(
+          styles['select-network-wrapper'],
+          currentSymbol === '' && styles['select-network-hidden'],
+        )}>
+        <SelectNetwork
+          type={SideMenuKey.Deposit}
+          networkList={networkList}
+          selectCallback={networkChanged}
+          selected={networkSelected}
+          isShowLoading={isShowLoading}
+        />
+      </div>
       {showRetry && <DepositRetryForWeb isShowImage={true} onClick={onRetry} />}
       {!showRetry && !!depositInfo.depositAddress && (
         <>

@@ -23,7 +23,7 @@ export default function SuccessModal({ withdrawInfo, modalProps }: SuccessModalP
         </div>
         <div className={clsx('flex-column-center', styles['main-info-wrapper'])}>
           <div className={styles['label']}>
-            Amount to Be Received on {withdrawInfo.chainItem.label}
+            Amount to Be Received on {withdrawInfo.network.name}
           </div>
           <div className={styles['value']}>
             {withdrawInfo.receiveAmount || '--'} {withdrawInfo.symbol}

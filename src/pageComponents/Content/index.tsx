@@ -57,7 +57,7 @@ export default function Content() {
         }),
       );
 
-      if (isInitCurrentSymbol) {
+      if (isInitCurrentSymbol && activeMenuKey === SideMenuKey.Withdraw) {
         dispatch(
           setCurrentSymbol({
             key: activeMenuKey as unknown as BusinessType,
