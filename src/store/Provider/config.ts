@@ -3,13 +3,12 @@ import {
   SerializableStateInvariantMiddlewareOptions,
 } from '@reduxjs/toolkit';
 import { reduxStorageRoot } from 'constants/store';
-import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
+import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE, createMigrate } from 'redux-persist';
 import CommonSlice from 'store/reducers/common/slice';
 import PortkeyWalletSlice from 'store/reducers/portkeyWallet/slice';
 import storage from 'redux-persist/lib/storage';
-import TokenSlice from 'store/reducers/token/slice';
+import TokenSlice, { initialTokenState } from 'store/reducers/token/slice';
 import UserActionSlice from 'store/reducers/userAction/slice';
-
 interface ThunkOptions<E = any> {
   extraArgument: E;
 }
@@ -32,9 +31,22 @@ export const portkeyWalletPersistConfig = {
   storage,
 };
 
+const migrateV1toV1 = (state: any) => {
+  return {
+    ...state,
+    ...initialTokenState,
+  };
+};
+
+const migrations = {
+  1: migrateV1toV1,
+};
+
 export const tokenPersistConfig = {
   key: TokenSlice.name,
   storage,
+  version: 1,
+  migrage: createMigrate(migrations, { debug: false }),
 };
 
 export const userActionPersistConfig = {

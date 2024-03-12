@@ -109,7 +109,9 @@ export default function WithdrawContent() {
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
   const [currentNetwork, setCurrentNetwork] = useState<NetworkItem>();
-  const [currentToken, setCurrentToken] = useState<TokenItem>();
+  const [currentToken, setCurrentToken] = useState<TokenItem>(
+    tokenList.find((item) => item.symbol === currentSymbol) as TokenItem,
+  );
   const currentNetworkRef = useRef<NetworkItem>();
   const [form] = Form.useForm<FormValuesType>();
   const [withdrawInfo, setWithdrawInfo] = useState<WithdrawInfo>(initialWithdrawInfo);
