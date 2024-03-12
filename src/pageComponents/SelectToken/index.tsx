@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './styles.module.scss';
-import { useAppDispatch, useCommonState } from 'store/Provider/hooks';
+import { useAppDispatch, useCommonState, useUserActionState } from 'store/Provider/hooks';
 import TokenSelectDrawer from 'pageComponents/SelectToken/TokenSelectDrawer';
 import TokenSelectDropdown from 'pageComponents/SelectToken/TokenSelectDropdown';
 import Down from 'assets/images/down.svg';
@@ -10,6 +10,7 @@ import { SideMenuKey } from 'constants/home';
 import { BusinessType, TokenItem } from 'types/api';
 import { setCurrentSymbol } from 'store/reducers/token/slice';
 import CommonImage from 'components/CommonImage';
+import { setAddInitOpenTokenModalCount } from 'store/reducers/userAction/slice';
 
 type TokenSelectProps = {
   isFormItemStyle?: boolean;
@@ -36,6 +37,9 @@ export default function SelectToken({
 }: TokenSelectProps) {
   const { isMobilePX } = useCommonState();
   const dispatch = useAppDispatch();
+  const {
+    deposit: { initOpenTokenkModalCount },
+  } = useUserActionState();
   const [isShowTokenSelectDropdown, setIsShowTokenSelectDropdown] = useState<boolean>(false);
   const { activeMenuKey } = useCommonState();
 
@@ -50,6 +54,20 @@ export default function SelectToken({
 
     selectCallback(item);
   };
+
+  useEffect(() => {
+    if (
+      type === SideMenuKey.Deposit &&
+      isMobilePX &&
+      tokenList &&
+      tokenList.length > 0 &&
+      !selected?.symbol &&
+      initOpenTokenkModalCount === 0
+    ) {
+      dispatch(setAddInitOpenTokenModalCount());
+      setIsShowTokenSelectDropdown(true);
+    }
+  }, [dispatch, initOpenTokenkModalCount, tokenList, isMobilePX, selected?.symbol, type]);
 
   return (
     <div className={styles['select-token']}>

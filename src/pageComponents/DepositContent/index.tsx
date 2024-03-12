@@ -58,7 +58,9 @@ export default function Content() {
   const currentNetworkRef = useRef<NetworkItem>();
   const [depositInfo, setDepositInfo] = useState<DepositInfo>(initDepositInfo);
   const [showRetry, setShowRetry] = useState(false);
-  const [currentToken, setCurrentToken] = useState<TokenItem>();
+  const [currentToken, setCurrentToken] = useState<TokenItem>(
+    tokenList.find((item) => item.symbol === currentSymbol) as TokenItem,
+  );
 
   const tokenLogoUrl = useMemo(() => {
     const res = tokenList.filter((item) => item.symbol === currentSymbol);

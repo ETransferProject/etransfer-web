@@ -46,7 +46,7 @@ export default function WebContent({
       <SelectChainWrapper webLabel={'Deposit Tokens to'} chainChanged={chainChanged} />
       <div className={styles['select-network-wrapper']}>
         <SelectToken
-          type={SideMenuKey.Withdraw}
+          type={SideMenuKey.Deposit}
           selected={currentToken}
           selectCallback={onTokenChanged}
           tokenList={tokenList}
