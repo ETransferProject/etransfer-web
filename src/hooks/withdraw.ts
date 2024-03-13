@@ -1,13 +1,17 @@
+import { useMemo } from 'react';
 import { useTokenState } from 'store/Provider/hooks';
 import { BusinessType } from 'types/api';
 import { initWithdrawTokenState } from 'store/reducers/token/slice';
 
 export function useWithdraw() {
   const tokenState = useTokenState();
-  // compatible with old logic add init value
-  if (!tokenState[BusinessType.Withdraw]) {
-    tokenState[BusinessType.Withdraw] = initWithdrawTokenState;
-  }
 
-  return tokenState[BusinessType.Withdraw];
+  return useMemo(
+    () => ({
+      tokenList: tokenState[BusinessType.Withdraw]?.tokenList || initWithdrawTokenState.tokenList,
+      currentSymbol:
+        tokenState[BusinessType.Withdraw]?.currentSymbol || initWithdrawTokenState.currentSymbol,
+    }),
+    [tokenState],
+  );
 }

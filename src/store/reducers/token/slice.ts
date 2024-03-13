@@ -39,9 +39,17 @@ export const TokenSlice = createSlice({
   initialState: initialTokenState,
   reducers: {
     setTokenList: (state, action: PayloadAction<{ key: BusinessType; data: TokenItem[] }>) => {
-      state[action.payload.key].tokenList = action.payload.data;
+      if (!state[action.payload.key]) {
+        state[action.payload.key] = {
+          ...initialTokenState[action.payload.key],
+        };
+      }
+      state[action.payload.key].tokenList = [...action.payload.data];
     },
     setCurrentSymbol: (state, action: PayloadAction<{ key: BusinessType; symbol: string }>) => {
+      if (!state[action.payload.key]) {
+        state[action.payload.key] = initialTokenState[action.payload.key];
+      }
       state[action.payload.key].currentSymbol = action.payload.symbol;
     },
     resetTokenState: (state) => {
@@ -51,6 +59,6 @@ export const TokenSlice = createSlice({
   },
 });
 
-export const { setTokenList, setCurrentSymbol } = TokenSlice.actions;
+export const { resetTokenState, setTokenList, setCurrentSymbol } = TokenSlice.actions;
 
 export default TokenSlice;

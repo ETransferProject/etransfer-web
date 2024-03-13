@@ -25,7 +25,7 @@ import {
   useUserActionState,
 } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { ADDRESS_MAP, IChainNameItem, USDT_DECIMAL } from 'constants/index';
+import { ADDRESS_MAP, IChainNameItem } from 'constants/index';
 import { createWithdrawOrder, getNetworkList, getWithdrawInfo } from 'utils/api/deposit';
 import {
   CONTRACT_ADDRESS,
@@ -74,6 +74,7 @@ import { devices } from '@portkey/utils';
 import { ConnectWalletError } from 'constants/wallet';
 import { useWithdraw } from 'hooks/withdraw';
 import { QuestionMarkIcon } from 'assets/images';
+import { initWithdrawTokenState } from 'store/reducers/token/slice';
 
 enum ValidateStatus {
   Error = 'error',
@@ -157,25 +158,19 @@ export default function WithdrawContent() {
 
   const getMaxBalanceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const currentTokenDecimal = useMemo(() => {
-    const res = tokenList.filter((item) => item.symbol === currentSymbol);
-    if (res.length > 0 && res[0]?.decimals) {
-      return res[0].decimals;
-    }
-    return USDT_DECIMAL;
-  }, [currentSymbol, tokenList]);
-
   const currentToken = useMemo(() => {
-    return tokenList.find((item) => item.symbol === currentSymbol) as TokenItem;
+    if (Array.isArray(tokenList) && tokenList.length > 0) {
+      return tokenList.find((item) => item.symbol === currentSymbol) as TokenItem;
+    }
+    return initWithdrawTokenState.tokenList[0];
   }, [currentSymbol, tokenList]);
 
-  const currentTokenAddress = useMemo(() => {
-    const res = tokenList.filter((item) => item.symbol === currentSymbol);
-    if (res.length > 0 && res[0]?.contractAddress) {
-      return res[0].contractAddress;
-    }
-    return '';
-  }, [currentSymbol, tokenList]);
+  const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
+
+  const currentTokenAddress = useMemo(
+    () => currentToken.contractAddress,
+    [currentToken.contractAddress],
+  );
 
   const onSubmit = () => {
     if (!currentNetwork) return;
@@ -427,7 +422,6 @@ export default function WithdrawContent() {
   const getMaxBalance = useCallback(
     async (item?: TokenItem) => {
       try {
-        console.log('🌈 currentVersion', currentVersion);
         const symbol = item?.symbol || currentSymbol;
         const decimal = item?.decimals || currentTokenDecimal;
         const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
@@ -625,7 +619,7 @@ export default function WithdrawContent() {
   const handleCreateWithdrawOrder = useCallback(
     async ({ address, rawTransaction }: { address: string; rawTransaction: string }) => {
       try {
-        if (!currentNetworkRef.current?.network) throw new Error('please selected network');
+        if (!currentNetworkRef.current?.network) throw new Error('Please selected network');
 
         const createWithdrawOrderRes = await createWithdrawOrder({
           network: currentNetworkRef.current.network,

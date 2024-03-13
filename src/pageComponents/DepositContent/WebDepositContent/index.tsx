@@ -85,7 +85,7 @@ export default function WebContent({
               minimumDeposit={depositInfo.minAmount}
               contractAddress={contractAddress}
               contractAddressLink={contractAddressLink}
-              minAmountUsd={depositInfo.minAmountUsd}
+              minAmountUsd={depositInfo.minAmountUsd || ''}
             />
           </div>
           {renderDepositDescription}

@@ -8,7 +8,6 @@ import { formatStr2Ellipsis } from 'utils/format';
 import ViewContractAddressModal from 'pageComponents/Modal/ViewContractAddressModal';
 import { openWithBlank } from 'utils/common';
 import { useDeposit } from 'hooks/deposit';
-import { valueFixed2LessThanMin } from 'utils/calculate';
 
 export interface DepositInfoProps {
   networkName?: string;
@@ -38,9 +37,7 @@ export default function DepositInfo({
             <div className={clsx('text-right', styles['info-value'])}>
               {minimumDeposit} {currentSymbol}
             </div>
-            <div className={clsx('text-right', styles['info-exhibit'])}>
-              {'$ ' + valueFixed2LessThanMin(minAmountUsd)}
-            </div>
+            <div className={clsx('text-right', styles['info-exhibit'])}>{'$ ' + minAmountUsd}</div>
           </div>
         </div>
       )}
