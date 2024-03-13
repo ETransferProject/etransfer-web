@@ -55,6 +55,7 @@
 
 .form-label-wrapper {
   width: 100%;
+  align-items: end;
 }
 
 .form-label {
@@ -106,7 +107,8 @@
     }
   }
   @include media-web {
-    flex-direction: row-reverse;
+    flex-direction: column-reverse;
+    align-items: end;
   }
   @include media-mobile {
     flex-direction: column;
