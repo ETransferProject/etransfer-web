@@ -10,13 +10,13 @@ export type TokenState = {
 };
 
 // init deposit empty
-const initDepositTokenState = {
+export const initDepositTokenState = {
   tokenList: [],
   currentSymbol: '',
 };
 
 // init withdraw USDT
-const initWithdrawTokenState = {
+export const initWithdrawTokenState = {
   tokenList: [
     {
       name: 'Tether USD',

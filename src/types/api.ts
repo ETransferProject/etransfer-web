@@ -66,7 +66,7 @@ export type DepositInfo = {
   depositAddress: string;
   minAmount: string;
   extraNotes?: string[];
-  minAmountUsd?: string;
+  minAmountUsd: string;
 };
 
 export type GetWithdrawInfoRequest = {
