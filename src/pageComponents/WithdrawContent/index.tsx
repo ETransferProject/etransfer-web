@@ -405,32 +405,39 @@ export default function WithdrawContent() {
     }
   }, [currentNetwork?.network, handleFormValidateDataChange, withdrawInfo.transactionFee]);
 
-  const getMaxBalance = useCallback(async () => {
-    try {
-      console.log('🌈 currentVersion', currentVersion);
-      const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
-      if (!caAddress || !currentVersion) return '';
-      const maxBalance = await getBalance({
-        symbol: currentSymbol,
-        chainId: currentChainItemRef.current.key,
-        caAddress,
-        version: currentVersion,
-      });
-      const tempMaxBalance = divDecimals(maxBalance, currentTokenDecimal).toFixed();
-      setMaxBalance(tempMaxBalance);
-      return tempMaxBalance;
-    } catch (error) {
-      singleMessage.error(handleErrorMessage(error));
-      throw new Error('Failed to get balance.');
-    }
-  }, [accounts, currentSymbol, currentTokenDecimal, currentVersion]);
+  const getMaxBalance = useCallback(
+    async (item?: TokenItem) => {
+      try {
+        const symbol = item?.symbol || currentSymbol;
+        console.log('🌈 currentVersion', currentVersion);
+        const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
+        if (!caAddress || !currentVersion) return '';
+        const maxBalance = await getBalance({
+          symbol: symbol,
+          chainId: currentChainItemRef.current.key,
+          caAddress,
+          version: currentVersion,
+        });
+        const tempMaxBalance = divDecimals(maxBalance, currentTokenDecimal).toFixed();
+        setMaxBalance(tempMaxBalance);
+        return tempMaxBalance;
+      } catch (error) {
+        singleMessage.error(handleErrorMessage(error));
+        throw new Error('Failed to get balance.');
+      }
+    },
+    [accounts, currentSymbol, currentTokenDecimal, currentVersion],
+  );
 
-  const getMaxBalanceInterval = useCallback(async () => {
-    if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
-    getMaxBalanceTimerRef.current = setInterval(async () => {
-      await getMaxBalance();
-    }, 8000);
-  }, [getMaxBalance]);
+  const getMaxBalanceInterval = useCallback(
+    async (item?: TokenItem) => {
+      if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
+      getMaxBalanceTimerRef.current = setInterval(async () => {
+        await getMaxBalance(item);
+      }, 8000);
+    },
+    [getMaxBalance],
+  );
 
   const handleAmountValidate = useCallback(() => {
     const amount = form.getFieldValue(FormKeys.AMOUNT);
@@ -757,8 +764,8 @@ export default function WithdrawContent() {
       dispatch(setWithdrawCurrentNetwork(undefined));
 
       // reset max balance
-      getMaxBalanceInterval();
-      getMaxBalance();
+      getMaxBalanceInterval(item);
+      getMaxBalance(item);
 
       await getNetworkData({
         symbol: item.symbol,
