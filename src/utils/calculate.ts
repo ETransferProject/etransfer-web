@@ -38,3 +38,17 @@ export function valueToPercentage(input?: BigNumber.Value) {
 export function zeroFill(str: string | BN) {
   return isBN(str) ? str.toString(16, 64) : str.padStart(64, '0');
 }
+
+export function valueFixed2LessThanMin(strValue: string): string {
+  let X = new BigNumber(strValue);
+  if (X.isNaN()) {
+    return '--';
+  }
+
+  X = new BigNumber(X.toFixed(2));
+  if (X.isLessThan(0.01)) {
+    return 'less than 0.01';
+  }
+
+  return X.toString();
+}

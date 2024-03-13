@@ -6,6 +6,7 @@ import SimpleLoading from 'components/SimpleLoading';
 import { useCommonState } from 'store/Provider/hooks';
 import { FeeItem, NetworkItem } from 'types/api';
 import styles from './styles.module.scss';
+import { valueFixed2LessThanMin } from 'utils/calculate';
 
 export interface DoubleCheckModalProps {
   withdrawInfo: {
@@ -72,7 +73,7 @@ export default function DoubleCheckModal({
             {renderAmountToBeReceived()}
           </span>
           <div className={clsx(styles['receive-amount-usd'])}>
-            {'$ ' + (withdrawInfo.receiveAmountUsd || '--')}
+            {'$ ' + valueFixed2LessThanMin(withdrawInfo.receiveAmountUsd)}
           </div>
         </div>
         <div className={styles['divider']} />
@@ -99,7 +100,7 @@ export default function DoubleCheckModal({
             <div className={styles['value']}>
               {`${withdrawInfo.amount || '--'} ${withdrawInfo.symbol}`}
               <div className={clsx(styles['amount-usd'])}>
-                {'$ ' + (withdrawInfo.amountUsd || '--')}
+                {'$ ' + valueFixed2LessThanMin(withdrawInfo.amountUsd)}
               </div>
             </div>
           </div>
@@ -107,7 +108,9 @@ export default function DoubleCheckModal({
             <div className={styles['label']}>Transaction Fee</div>
             <div className={clsx('flex-column-center', styles['value'], styles['fee-usd-box'])}>
               {renderTransactionFeeValue()}
-              <div className={clsx(styles['fee-usd'])}>{'$ ' + (withdrawInfo.feeUsd || '--')}</div>
+              <div className={clsx(styles['fee-usd'])}>
+                {'$ ' + valueFixed2LessThanMin(withdrawInfo.feeUsd)}
+              </div>
             </div>
           </div>
         </div>
