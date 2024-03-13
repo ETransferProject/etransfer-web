@@ -92,6 +92,7 @@ export function NetworkSelectForMobile({
                 multiConfirmTime={item.multiConfirmTime}
                 multiConfirm={item.multiConfirm}
                 onClick={() => onSelect(item)}
+                status={item.status}
               />
             );
           })}
@@ -139,6 +140,7 @@ export function NetworkSelectForWeb({
                 multiConfirmTime={item.multiConfirmTime}
                 multiConfirm={item.multiConfirm}
                 onClick={() => onSelect(item)}
+                status={item.status}
               />
             );
           })}

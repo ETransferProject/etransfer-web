@@ -44,9 +44,6 @@ export default function SelectNetwork({
     if (onChange) {
       onChange(item);
     }
-    // else {
-    //   setSelected(item);
-    // }
 
     setIsShowNetworkSelectDropdown(false);
 
