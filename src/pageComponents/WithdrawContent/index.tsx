@@ -408,8 +408,9 @@ export default function WithdrawContent() {
   const getMaxBalance = useCallback(
     async (item?: TokenItem) => {
       try {
-        const symbol = item?.symbol || currentSymbol;
         console.log('🌈 currentVersion', currentVersion);
+        const symbol = item?.symbol || currentSymbol;
+        const decimal = item?.decimals || currentTokenDecimal;
         const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
         if (!caAddress || !currentVersion) return '';
         const maxBalance = await getBalance({
@@ -418,7 +419,7 @@ export default function WithdrawContent() {
           caAddress,
           version: currentVersion,
         });
-        const tempMaxBalance = divDecimals(maxBalance, currentTokenDecimal).toFixed();
+        const tempMaxBalance = divDecimals(maxBalance, decimal).toFixed();
         setMaxBalance(tempMaxBalance);
         return tempMaxBalance;
       } catch (error) {
