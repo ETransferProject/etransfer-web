@@ -109,7 +109,6 @@ export default function WithdrawContent() {
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
   const [currentNetwork, setCurrentNetwork] = useState<NetworkItem>();
-  const [currentToken, setCurrentToken] = useState<TokenItem>();
   const currentNetworkRef = useRef<NetworkItem>();
   const [form] = Form.useForm<FormValuesType>();
   const [withdrawInfo, setWithdrawInfo] = useState<WithdrawInfo>(initialWithdrawInfo);
@@ -164,6 +163,10 @@ export default function WithdrawContent() {
       return res[0].decimals;
     }
     return USDT_DECIMAL;
+  }, [currentSymbol, tokenList]);
+
+  const currentToken = useMemo(() => {
+    return tokenList.find((item) => item.symbol === currentSymbol) as TokenItem;
   }, [currentSymbol, tokenList]);
 
   const currentTokenAddress = useMemo(() => {
@@ -750,7 +753,6 @@ export default function WithdrawContent() {
   ]);
 
   const handleTokenChange = async (item: TokenItem) => {
-    setCurrentToken(item);
     try {
       setLoading(true);
       setBalance('');
@@ -848,13 +850,6 @@ export default function WithdrawContent() {
       );
     }
   };
-
-  useEffect(() => {
-    if (tokenList.length > 0) {
-      setCurrentToken(tokenList.find((item) => item.symbol === currentSymbol) as TokenItem);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tokenList]);
 
   return (
     <>
