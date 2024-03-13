@@ -19,7 +19,7 @@ const initDepositTokenState = {
 const initWithdrawTokenState = {
   tokenList: [
     {
-      name: 'USDT',
+      name: 'Tether USD',
       symbol: 'USDT',
       icon: '',
       contractAddress: '',
