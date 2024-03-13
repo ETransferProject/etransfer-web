@@ -76,12 +76,6 @@
   .remaining-limit-label {
     color: $secondary-text;
   }
-  @include media-mobile {
-    &::before {
-      left: -16px;
-      width: 100vw;
-    }
-  }
   @include media-pad {
     &::before {
       width: $content-width;
@@ -104,6 +98,18 @@
   }
   @include media-web {
     flex-direction: row-reverse;
+  }
+  @include media-mobile {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    &::before {
+      left: -16px;
+      width: 100vw;
+    }
+    .remaining-limit-value {
+      margin-left: 7px;
+    }
   }
 }
 .remaining-limit-error {

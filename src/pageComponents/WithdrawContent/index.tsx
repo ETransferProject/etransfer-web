@@ -368,6 +368,12 @@ export default function WithdrawContent() {
         if (currentNetworkRef.current?.network) {
           params.network = currentNetworkRef.current?.network;
         }
+        // params add amount to get amountUsd、receiveAmountUsd
+        const amount = form.getFieldValue(FormKeys.AMOUNT);
+        if (amount) {
+          params.amount = amount;
+        }
+
         const res = await getWithdrawInfo(params);
 
         setWithdrawInfo(res.withdrawInfo);
@@ -380,7 +386,7 @@ export default function WithdrawContent() {
         }
       }
     },
-    [currentSymbol, currentVersion],
+    [currentSymbol, currentVersion, form],
   );
 
   useEffect(() => {
@@ -451,6 +457,7 @@ export default function WithdrawContent() {
           errorMessage: `The minimum amount is ${minAmount} ${withdrawInfo.transactionUnit}. Please enter a value no less than this.`,
         },
       });
+      return;
     } else if (
       withdrawInfo.remainingLimit &&
       parserNumber > Number(parseWithCommas(withdrawInfo.remainingLimit))
@@ -461,6 +468,7 @@ export default function WithdrawContent() {
           errorMessage: AmountGreaterThanBalanceMessage,
         },
       });
+      return;
     } else if (parserNumber > Number(parseWithCommas(maxBalance))) {
       handleFormValidateDataChange({
         [FormKeys.AMOUNT]: {
@@ -469,6 +477,7 @@ export default function WithdrawContent() {
             'Insufficient balance. Please consider transferring a smaller amount or topping up before you try again.',
         },
       });
+      return;
     } else {
       handleFormValidateDataChange({
         [FormKeys.AMOUNT]: {
@@ -476,6 +485,8 @@ export default function WithdrawContent() {
           errorMessage: '',
         },
       });
+
+      return true;
     }
   }, [
     form,
@@ -632,7 +643,7 @@ export default function WithdrawContent() {
         setIsDoubleCheckModalOpen(false);
       }
     },
-    [balance, currentSymbol, receiveAmount, setLoading],
+    [balance, currentSymbol, receiveAmount, setLoading, withdrawInfo.receiveAmountUsd],
   );
 
   const sendTransferTokenTransaction = useDebounceCallback(async () => {
@@ -974,7 +985,9 @@ export default function WithdrawContent() {
                   setBalance(valueNotComma || '');
                 }}
                 onBlur={() => {
-                  handleAmountValidate();
+                  if (handleAmountValidate()) {
+                    getWithdrawData();
+                  }
                 }}
               />
             </Form.Item>
