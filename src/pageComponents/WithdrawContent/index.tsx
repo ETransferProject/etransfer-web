@@ -96,8 +96,6 @@ type FormValuesType = {
   [FormKeys.AMOUNT]: string;
 };
 
-const CheckNumberReg = /^[0-9]{1,9}((\.\d)|(\.\d{1,6}))?$/;
-
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const isAndroid = devices.isMobile().android;
@@ -952,23 +950,28 @@ export default function WithdrawContent() {
                 }}
                 autoComplete="off"
                 placeholder={`Minimum: ${minAmount}`}
-                max={999999999.999999}
                 onInput={(event: any) => {
                   const value = event.target?.value.trim();
+                  const oldValue = form.getFieldValue(FormKeys.AMOUNT);
+
+                  // CHECK1: not empty
                   if (!value) return (event.target.value = '');
 
+                  // CHECK2: comma count
+                  const commaCount = value.match(/\./gim)?.length;
+                  if (commaCount > 1) {
+                    return (event.target.value = oldValue);
+                  }
+
+                  // CHECK3: input number and decimal count
                   const lastNumber = value.charAt(value.length - 1);
                   const valueNotComma = parseWithStringCommas(value);
-                  const commaCount = value.match(/\./gim)?.length;
-
-                  if (commaCount > 1) {
-                    return (event.target.value = form.getFieldValue(FormKeys.AMOUNT));
-                  }
+                  const stringReg = `^[0-9]{1,9}((\\.\\d)|(\\.\\d{0,${currentTokenDecimal}}))?$`;
+                  const CheckNumberReg = new RegExp(stringReg);
 
                   if (!CheckNumberReg.exec(valueNotComma)) {
                     if (lastNumber !== '.') {
-                      event.target.value = form.getFieldValue(FormKeys.AMOUNT);
-                      return;
+                      return (event.target.value = oldValue);
                     }
                   } else {
                     const beforePoint = formatWithCommas({ amount: valueNotComma });
