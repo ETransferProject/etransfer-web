@@ -11,10 +11,12 @@ import clsx from 'clsx';
 import { getTokenList } from 'utils/api/deposit';
 import { BusinessType } from 'types/api';
 import { setCurrentSymbol, setTokenList } from 'store/reducers/token/slice';
+import { useWithdraw } from 'hooks/withdraw';
 
 export default function Content() {
   const dispatch = useAppDispatch();
   const { activeMenuKey, currentChainItem } = useCommonState();
+  const { currentSymbol: withdrawCurrentSymbol } = useWithdraw();
   const router = useRouter();
   const searchParams = useSearchParams(); // TODO
   // const params: EntryConfig = useParams();
@@ -49,7 +51,7 @@ export default function Content() {
         }),
       );
 
-      if (isInitCurrentSymbol && activeMenuKey === SideMenuKey.Withdraw) {
+      if (isInitCurrentSymbol && activeMenuKey === SideMenuKey.Withdraw && !withdrawCurrentSymbol) {
         dispatch(
           setCurrentSymbol({
             key: activeMenuKey as unknown as BusinessType,
@@ -59,7 +61,7 @@ export default function Content() {
         return;
       }
     },
-    [activeMenuKey, currentChainItem.key, dispatch],
+    [activeMenuKey, currentChainItem.key, dispatch, withdrawCurrentSymbol],
   );
 
   useEffect(() => {
