@@ -100,7 +100,7 @@ const CheckNumberReg = /^[0-9]{1,9}((\.\d)|(\.\d{1,6}))?$/;
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const isAndroid = devices.isMobile().android;
-  const { isMobilePX, currentChainItem, currentVersion } = useCommonState();
+  const { isMobile, isMobilePX, currentChainItem, currentVersion } = useCommonState();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
   const accounts = useAccounts();
   const { currentSymbol, tokenList } = useWithdraw();
@@ -191,6 +191,7 @@ export default function WithdrawContent() {
             withdrawInfo.remainingLimit !== undefined &&
             withdrawInfo.remainingLimit !== '' &&
             new BigNumber(withdrawInfo.remainingLimit).isEqualTo(0),
+          [styles['remaining-limit-mobile']]: isMobile,
         })}>
         <span className={styles['remaining-limit-label']}>
           {isMobilePX && '• '}Remaining Withdrawal Quota{isMobilePX && ':'}
@@ -204,10 +205,18 @@ export default function WithdrawContent() {
           )}
         </span>
         <span className={styles['remaining-limit-value']}>
-          {withdrawInfo.remainingLimit && withdrawInfo.totalLimit
-            ? `${withdrawInfo.remainingLimit} ${withdrawInfo.limitCurrency} / ${withdrawInfo.totalLimit} 
-          ${withdrawInfo.limitCurrency}`
-            : '--'}
+          {withdrawInfo.remainingLimit && withdrawInfo.totalLimit ? (
+            <>
+              {`${new BigNumber(withdrawInfo.remainingLimit).toFormat()} /
+               ${new BigNumber(withdrawInfo.totalLimit).toFormat()}`}
+
+              <span className={styles['remaining-limit-value-limitcurrency']}>
+                {withdrawInfo.limitCurrency}
+              </span>
+            </>
+          ) : (
+            '--'
+          )}
           {isMobilePX && (
             <Tooltip
               className={clsx(styles['question-mark'])}
@@ -220,9 +229,10 @@ export default function WithdrawContent() {
       </div>
     );
   }, [
-    withdrawInfo.limitCurrency,
     withdrawInfo.remainingLimit,
     withdrawInfo.totalLimit,
+    withdrawInfo.limitCurrency,
+    isMobile,
     isMobilePX,
   ]);
 

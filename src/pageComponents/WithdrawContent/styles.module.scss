@@ -67,11 +67,20 @@
   gap: 8px;
   .remaining-limit-value,
   .remaining-limit-label {
+    display: flex;
     font-size: 12px;
     line-height: 16px;
   }
   .remaining-limit-value {
     color: $primary-text;
+  }
+  .remaining-limit-value-limitcurrency {
+    margin-left: 2px;
+    display: inline-block;
+    width: 57px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .remaining-limit-label {
     color: $secondary-text;
@@ -112,6 +121,12 @@
     }
   }
 }
+.remaining-limit-mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .remaining-limit-error {
   .remaining-limit-label,
   .remaining-limit-value {
