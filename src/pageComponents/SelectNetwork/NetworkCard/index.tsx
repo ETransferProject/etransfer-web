@@ -40,7 +40,13 @@ export function NetworkCardForMobile({
         className,
       )}
       onClick={onClick}>
-      <div className={styles['network-card-name']}>{name}</div>
+      <div className={styles['network-card-name']}>
+        {name}
+        {status === NetworkStatus.Offline && (
+          <span className={styles['network-card-network-suspened']}>Suspended</span>
+        )}
+      </div>
+
       <div className={styles['network-card-arrival-time']}>
         <span>Arrival Time ≈ </span>
         <span>{multiConfirmTime}</span>
@@ -78,7 +84,12 @@ export function NetworkCardForWeb({
       )}
       onClick={onClick}>
       <div className={clsx('flex-row-center-between', styles['network-card-row'])}>
-        <span className={styles['network-card-network']}>{network}</span>
+        <span className={styles['network-card-network']}>
+          {network}
+          {status === NetworkStatus.Offline && (
+            <span className={styles['network-card-network-suspened']}>Suspended</span>
+          )}
+        </span>
         <span className={styles['network-card-arrival-time']}>≈ {multiConfirmTime}</span>
       </div>
       <div className={clsx('flex-row-center-between', styles['network-card-row'])}>
