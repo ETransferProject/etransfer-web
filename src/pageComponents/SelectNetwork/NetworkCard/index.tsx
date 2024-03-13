@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { SideMenuKey } from 'constants/home';
+import { NetworkStatus } from 'types/api';
 
 interface NetworkCardProps {
   type: SideMenuKey;
@@ -12,6 +13,7 @@ interface NetworkCardProps {
   className?: string;
   isDisabled?: boolean;
   onClick: () => void;
+  status: string;
 }
 
 interface NetworkCardForWebProps extends NetworkCardProps {
@@ -28,12 +30,13 @@ export function NetworkCardForMobile({
   multiConfirm,
   isDisabled = false,
   onClick,
+  status,
 }: NetworkCardProps) {
   return (
     <div
       className={clsx(
         styles['network-card-for-mobile'],
-        isDisabled && styles['network-card-disabled'],
+        (isDisabled || status === NetworkStatus.Offline) && styles['network-card-disabled'],
         className,
       )}
       onClick={onClick}>
@@ -62,6 +65,7 @@ export function NetworkCardForWeb({
   multiConfirm,
   isDisabled = false,
   onClick,
+  status,
 }: NetworkCardForWebProps) {
   return (
     <div
@@ -69,7 +73,7 @@ export function NetworkCardForWeb({
         'flex-column',
         styles['network-card-for-web'],
         styles['network-card-for-web-hover'],
-        isDisabled && styles['network-card-disabled'],
+        (isDisabled || status === NetworkStatus.Offline) && styles['network-card-disabled'],
         className,
       )}
       onClick={onClick}>

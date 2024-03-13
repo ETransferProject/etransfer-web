@@ -49,6 +49,7 @@ export type NetworkItem = {
 export enum NetworkStatus {
   Health = 'Health',
   Congesting = 'Congesting',
+  Offline = 'Offline',
 }
 
 export type GetDepositInfoRequest = {
