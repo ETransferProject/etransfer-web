@@ -615,7 +615,7 @@ export default function WithdrawContent() {
             symbol: currentSymbol,
             chainItem: currentChainItemRef.current,
             arriveTime: currentNetworkRef.current.multiConfirmTime,
-            receiveAmountUsd: '', // TODO
+            receiveAmountUsd: withdrawInfo.receiveAmountUsd,
           });
           setIsSuccessModalOpen(true);
         } else {
@@ -748,10 +748,15 @@ export default function WithdrawContent() {
     try {
       setLoading(true);
       setBalance('');
+
+      // change token and empty form key's value
       form.setFieldValue(FormKeys.AMOUNT, '');
       form.setFieldValue(FormKeys.ADDRESS, '');
+      form.setFieldValue(FormKeys.NETWORK, '');
       handleAmountValidate();
       dispatch(setWithdrawAddress(''));
+      currentNetworkRef.current = undefined;
+      dispatch(setWithdrawCurrentNetwork(undefined));
 
       // reset max balance
       getMaxBalanceInterval();

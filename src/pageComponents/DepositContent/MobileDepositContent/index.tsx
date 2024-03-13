@@ -102,6 +102,7 @@ export default function MobileDepositContent({
                     minimumDeposit={depositInfo.minAmount}
                     contractAddress={contractAddress}
                     contractAddressLink={contractAddressLink}
+                    minAmountUsd={depositInfo.minAmountUsd}
                   />
                 </div>
                 {renderDepositDescription}

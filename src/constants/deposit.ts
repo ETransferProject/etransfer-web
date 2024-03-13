@@ -11,6 +11,7 @@ export const CONTRACT_ADDRESS = 'Contract Address';
 export const initDepositInfo = {
   depositAddress: '',
   minAmount: '',
+  minAmountUsd: '--',
 };
 
 export const initialWithdrawInfo: WithdrawInfo = {
@@ -26,9 +27,9 @@ export const initialWithdrawInfo: WithdrawInfo = {
   aelfTransactionUnit: 'ELF',
   receiveAmount: '',
   feeList: [],
-  receiveAmountUsd: '',
-  amountUsd: '',
-  feeUsd: '',
+  receiveAmountUsd: '--',
+  amountUsd: '--',
+  feeUsd: '--',
 };
 
 export const initialNetwork = {
@@ -48,7 +49,7 @@ export const initialWithdrawSuccessCheck: WithdrawInfoSuccess = {
   chainItem: CHAIN_LIST[0],
   network: initialNetwork,
   arriveTime: '',
-  receiveAmountUsd: '',
+  receiveAmountUsd: '--',
 };
 
 export const DepositRetryText = 'The deposit service is busy. Please try again later.';
