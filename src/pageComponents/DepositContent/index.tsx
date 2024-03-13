@@ -103,6 +103,7 @@ export default function Content() {
   const getNetworkData = useCallback(
     async ({ chainId, symbol }: Omit<GetNetworkListRequest, 'type'>) => {
       try {
+        const lastSymbol = symbol || currentSymbol;
         setIsShowNetworkLoading(true);
         const { networkList } = await getNetworkList({
           type: BusinessType.Deposit,
@@ -116,7 +117,7 @@ export default function Content() {
           currentNetworkRef.current = networkList[0];
           dispatch(setDepositCurrentNetwork(networkList[0]));
 
-          await getDepositData(currentChainItem.key, currentSymbol);
+          await getDepositData(currentChainItem.key, lastSymbol);
         } else {
           const exitNetwork = networkList.filter(
             (item) => item.network === currentNetworkRef.current?.network,
@@ -168,6 +169,11 @@ export default function Content() {
 
   const handleTokenChange = async (item: TokenItem) => {
     setCurrentToken(item);
+    setCurrentNetwork(undefined);
+    currentNetworkRef.current = undefined;
+    dispatch(setDepositCurrentNetwork(undefined));
+    setDepositInfo(initDepositInfo);
+    dispatch(setDepositAddress(initDepositInfo.depositAddress));
     await getNetworkData({
       chainId: currentChainItem.key,
       symbol: item.symbol,
