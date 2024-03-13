@@ -22,7 +22,7 @@ export default function DepositInfo({
   minimumDeposit,
   contractAddress,
   contractAddressLink,
-  minAmountUsd = '--',
+  minAmountUsd,
 }: DepositInfoProps) {
   const { isMobilePX } = useCommonState();
   const { currentSymbol } = useDeposit();
