@@ -109,7 +109,6 @@ export default function WithdrawContent() {
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
   const [currentNetwork, setCurrentNetwork] = useState<NetworkItem>();
-  const [currentToken, setCurrentToken] = useState<TokenItem>();
   const currentNetworkRef = useRef<NetworkItem>();
   const [form] = Form.useForm<FormValuesType>();
   const [withdrawInfo, setWithdrawInfo] = useState<WithdrawInfo>(initialWithdrawInfo);
@@ -164,6 +163,10 @@ export default function WithdrawContent() {
       return res[0].decimals;
     }
     return USDT_DECIMAL;
+  }, [currentSymbol, tokenList]);
+
+  const currentToken = useMemo(() => {
+    return tokenList.find((item) => item.symbol === currentSymbol) as TokenItem;
   }, [currentSymbol, tokenList]);
 
   const currentTokenAddress = useMemo(() => {
@@ -411,32 +414,40 @@ export default function WithdrawContent() {
     }
   }, [currentNetwork?.network, handleFormValidateDataChange, withdrawInfo.transactionFee]);
 
-  const getMaxBalance = useCallback(async () => {
-    try {
-      console.log('🌈 currentVersion', currentVersion);
-      const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
-      if (!caAddress || !currentVersion) return '';
-      const maxBalance = await getBalance({
-        symbol: currentSymbol,
-        chainId: currentChainItemRef.current.key,
-        caAddress,
-        version: currentVersion,
-      });
-      const tempMaxBalance = divDecimals(maxBalance, currentTokenDecimal).toFixed();
-      setMaxBalance(tempMaxBalance);
-      return tempMaxBalance;
-    } catch (error) {
-      singleMessage.error(handleErrorMessage(error));
-      throw new Error('Failed to get balance.');
-    }
-  }, [accounts, currentSymbol, currentTokenDecimal, currentVersion]);
+  const getMaxBalance = useCallback(
+    async (item?: TokenItem) => {
+      try {
+        console.log('🌈 currentVersion', currentVersion);
+        const symbol = item?.symbol || currentSymbol;
+        const decimal = item?.decimals || currentTokenDecimal;
+        const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
+        if (!caAddress || !currentVersion) return '';
+        const maxBalance = await getBalance({
+          symbol: symbol,
+          chainId: currentChainItemRef.current.key,
+          caAddress,
+          version: currentVersion,
+        });
+        const tempMaxBalance = divDecimals(maxBalance, decimal).toFixed();
+        setMaxBalance(tempMaxBalance);
+        return tempMaxBalance;
+      } catch (error) {
+        singleMessage.error(handleErrorMessage(error));
+        throw new Error('Failed to get balance.');
+      }
+    },
+    [accounts, currentSymbol, currentTokenDecimal, currentVersion],
+  );
 
-  const getMaxBalanceInterval = useCallback(async () => {
-    if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
-    getMaxBalanceTimerRef.current = setInterval(async () => {
-      await getMaxBalance();
-    }, 8000);
-  }, [getMaxBalance]);
+  const getMaxBalanceInterval = useCallback(
+    async (item?: TokenItem) => {
+      if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
+      getMaxBalanceTimerRef.current = setInterval(async () => {
+        await getMaxBalance(item);
+      }, 8000);
+    },
+    [getMaxBalance],
+  );
 
   const handleAmountValidate = useCallback(() => {
     const amount = form.getFieldValue(FormKeys.AMOUNT);
@@ -753,7 +764,6 @@ export default function WithdrawContent() {
   ]);
 
   const handleTokenChange = async (item: TokenItem) => {
-    setCurrentToken(item);
     try {
       setLoading(true);
       setBalance('');
@@ -768,8 +778,8 @@ export default function WithdrawContent() {
       dispatch(setWithdrawCurrentNetwork(undefined));
 
       // reset max balance
-      getMaxBalanceInterval();
-      getMaxBalance();
+      getMaxBalanceInterval(item);
+      getMaxBalance(item);
 
       await getNetworkData({
         symbol: item.symbol,
@@ -851,13 +861,6 @@ export default function WithdrawContent() {
       );
     }
   };
-
-  useEffect(() => {
-    if (tokenList.length > 0) {
-      setCurrentToken(tokenList.find((item) => item.symbol === currentSymbol) as TokenItem);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tokenList]);
 
   return (
     <>
