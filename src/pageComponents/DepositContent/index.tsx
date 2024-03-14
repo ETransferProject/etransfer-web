@@ -174,6 +174,7 @@ export default function Content() {
     dispatch(setDepositCurrentNetwork(undefined));
     setDepositInfo(initDepositInfo);
     dispatch(setDepositAddress(initDepositInfo.depositAddress));
+    setShowRetry(false);
     await getNetworkData({
       chainId: currentChainItem.key,
       symbol: item.symbol,
