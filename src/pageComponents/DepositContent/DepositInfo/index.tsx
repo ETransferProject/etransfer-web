@@ -39,7 +39,7 @@ export default function DepositInfo({
               {minimumDeposit} {currentSymbol}
             </div>
             <div className={clsx('text-right', styles['info-exhibit'])}>
-              {'$ ' + valueFixed2LessThanMin(minAmountUsd)}
+              {valueFixed2LessThanMin(minAmountUsd, '$ ')}
             </div>
           </div>
         </div>

@@ -73,7 +73,7 @@ export default function DoubleCheckModal({
             {renderAmountToBeReceived()}
           </span>
           <div className={clsx(styles['receive-amount-usd'])}>
-            {'$ ' + valueFixed2LessThanMin(withdrawInfo.receiveAmountUsd)}
+            {valueFixed2LessThanMin(withdrawInfo.receiveAmountUsd, '$ ')}
           </div>
         </div>
         <div className={styles['divider']} />
@@ -100,7 +100,7 @@ export default function DoubleCheckModal({
             <div className={styles['value']}>
               {`${withdrawInfo.amount || '--'} ${withdrawInfo.symbol}`}
               <div className={clsx(styles['amount-usd'])}>
-                {'$ ' + valueFixed2LessThanMin(withdrawInfo.amountUsd)}
+                {valueFixed2LessThanMin(withdrawInfo.amountUsd, '$ ')}
               </div>
             </div>
           </div>
@@ -109,7 +109,7 @@ export default function DoubleCheckModal({
             <div className={clsx('flex-column-center', styles['value'], styles['fee-usd-box'])}>
               {renderTransactionFeeValue()}
               <div className={clsx(styles['fee-usd'])}>
-                {'$ ' + valueFixed2LessThanMin(withdrawInfo.feeUsd)}
+                {valueFixed2LessThanMin(withdrawInfo.feeUsd, '$ ')}
               </div>
             </div>
           </div>

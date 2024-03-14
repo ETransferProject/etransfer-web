@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 import CommonImage from 'components/CommonImage';
+import { useState } from 'react';
 
 interface TokenCardProps {
   icon: string;
@@ -20,6 +21,8 @@ export function TokenCardForMobile({
   isDisabled = false,
   onClick,
 }: TokenCardProps) {
+  const [iconState, setIconState] = useState<string>(icon);
+
   return (
     <div
       className={clsx(
@@ -29,7 +32,12 @@ export function TokenCardForMobile({
       )}
       onClick={onClick}>
       {icon ? (
-        <CommonImage src={icon} alt="token" className={styles['token-card-icon']} />
+        <CommonImage
+          src={iconState}
+          alt="token"
+          className={styles['token-card-icon']}
+          onError={() => setIconState('')}
+        />
       ) : (
         <div className={clsx(styles['token-card-defaultIcon'], styles['token-card-icon'])}>
           {symbol.charAt(0)}
@@ -49,6 +57,8 @@ export function TokenCardForWeb({
   isDisabled = false,
   onClick,
 }: TokenCardProps) {
+  const [iconState, setIconState] = useState<string>(icon);
+
   return (
     <div
       className={clsx(
@@ -60,7 +70,12 @@ export function TokenCardForWeb({
       )}
       onClick={onClick}>
       {icon ? (
-        <CommonImage src={icon} alt="token" className={styles['token-card-icon']} />
+        <CommonImage
+          src={iconState}
+          alt="token"
+          className={styles['token-card-icon']}
+          onError={() => setIconState('')}
+        />
       ) : (
         <div className={clsx(styles['token-card-defaultIcon'], styles['token-card-icon'])}>
           {symbol.charAt(0)}
