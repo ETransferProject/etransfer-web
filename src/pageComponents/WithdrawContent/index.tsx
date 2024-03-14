@@ -17,6 +17,7 @@ import {
   BusinessType,
   GetWithdrawInfoRequest,
   TokenItem,
+  NetworkStatus,
 } from 'types/api';
 import {
   useAppDispatch,
@@ -287,7 +288,7 @@ export default function WithdrawContent() {
         setNetworkList(networkList);
         dispatch(setWithdrawNetworkList(networkList));
 
-        if (networkList?.length === 1) {
+        if (networkList?.length === 1 && networkList[0].status !== NetworkStatus.Offline) {
           setCurrentNetwork(networkList[0]);
           currentNetworkRef.current = networkList[0];
           dispatch(setWithdrawCurrentNetwork(networkList[0]));
