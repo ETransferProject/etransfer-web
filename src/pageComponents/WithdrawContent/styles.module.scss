@@ -74,14 +74,10 @@
   }
   .remaining-limit-value {
     color: $primary-text;
+    white-space: nowrap;
   }
   .remaining-limit-value-limitcurrency {
     margin-left: 2px;
-    // display: inline-block;
-    // width: 57px;
-    // overflow: hidden;
-    // white-space: nowrap;
-    // text-overflow: ellipsis;
   }
   .remaining-limit-label {
     color: $secondary-text;
@@ -92,7 +88,8 @@
     }
   }
   @include media-mobile-and-pad {
-    flex-direction: row;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
     position: relative;
     margin-top: 48px;
     .remaining-limit-value {
@@ -107,12 +104,12 @@
     }
   }
   @include media-web {
-    flex-direction: row-reverse;
-    // flex-direction: column-reverse;
-    // align-items: end;
+    flex: 1;
+    justify-content:flex-end;
+    flex-wrap: wrap;
   }
   @include media-mobile {
-    flex-direction: column;
+    flex-direction: column-reverse;
     justify-content: flex-start;
     align-items: flex-start;
     &::before {
@@ -123,11 +120,6 @@
       margin-left: 7px;
     }
   }
-}
-.remaining-limit-mobile {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
 }
 
 .remaining-limit-error {
@@ -192,7 +184,6 @@
     padding-bottom: calc(10px + env(safe-area-inset-bottom));
   }
 }
-
 .footer-info-wrapper {
   min-width: 0;
   .transaction-fee-wrapper {
