@@ -13,6 +13,7 @@ import {
   GetNetworkListRequest,
   NetworkItem,
   TokenItem,
+  NetworkStatus,
 } from 'types/api';
 import { getDepositInfo, getNetworkList } from 'utils/api/deposit';
 import { IChainNameItem, SupportedELFChainId } from 'constants/index';
@@ -113,7 +114,7 @@ export default function Content() {
         });
         setNetworkList(networkList);
         dispatch(setDepositNetworkList(networkList));
-        if (networkList?.length === 1) {
+        if (networkList?.length === 1 && networkList[0].status !== NetworkStatus.Offline) {
           setCurrentNetwork(networkList[0]);
           currentNetworkRef.current = networkList[0];
           dispatch(setDepositCurrentNetwork(networkList[0]));
