@@ -99,7 +99,7 @@ type FormValuesType = {
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const isAndroid = devices.isMobile().android;
-  const { isMobile, isMobilePX, currentChainItem, currentVersion } = useCommonState();
+  const { isMobilePX, currentChainItem, currentVersion } = useCommonState();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
   const accounts = useAccounts();
   const { currentSymbol, tokenList } = useWithdraw();
@@ -184,25 +184,12 @@ export default function WithdrawContent() {
             withdrawInfo.remainingLimit !== undefined &&
             withdrawInfo.remainingLimit !== '' &&
             new BigNumber(withdrawInfo.remainingLimit).isEqualTo(0),
-          [styles['remaining-limit-mobile']]: isMobile,
         })}>
-        <span className={styles['remaining-limit-label']}>
-          {isMobilePX && '• '}Remaining Withdrawal Quota{isMobilePX && ':'}
-          {!isMobilePX && (
-            <Tooltip
-              className={clsx(styles['question-mark'])}
-              placement="top"
-              title={RemainingWithdrawalQuotaTooltip}>
-              <QuestionMarkIcon />
-            </Tooltip>
-          )}
-        </span>
         <span className={styles['remaining-limit-value']}>
           {withdrawInfo.remainingLimit && withdrawInfo.totalLimit ? (
             <>
               {`${new BigNumber(withdrawInfo.remainingLimit).toFormat()} /
                ${new BigNumber(withdrawInfo.totalLimit).toFormat()}`}
-
               <span className={styles['remaining-limit-value-limitcurrency']}>
                 {withdrawInfo.limitCurrency}
               </span>
@@ -219,13 +206,23 @@ export default function WithdrawContent() {
             </Tooltip>
           )}
         </span>
+        <span className={styles['remaining-limit-label']}>
+          {isMobilePX && '• '}Remaining Withdrawal Quota{isMobilePX && ':'}
+          {!isMobilePX && (
+            <Tooltip
+              className={clsx(styles['question-mark'])}
+              placement="top"
+              title={RemainingWithdrawalQuotaTooltip}>
+              <QuestionMarkIcon />
+            </Tooltip>
+          )}
+        </span>
       </div>
     );
   }, [
     withdrawInfo.remainingLimit,
     withdrawInfo.totalLimit,
     withdrawInfo.limitCurrency,
-    isMobile,
     isMobilePX,
   ]);
 
