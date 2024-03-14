@@ -77,11 +77,11 @@
   }
   .remaining-limit-value-limitcurrency {
     margin-left: 2px;
-    display: inline-block;
-    width: 57px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    // display: inline-block;
+    // width: 57px;
+    // overflow: hidden;
+    // white-space: nowrap;
+    // text-overflow: ellipsis;
   }
   .remaining-limit-label {
     color: $secondary-text;
@@ -107,8 +107,9 @@
     }
   }
   @include media-web {
-    flex-direction: column-reverse;
-    align-items: end;
+    flex-direction: row-reverse;
+    // flex-direction: column-reverse;
+    // align-items: end;
   }
   @include media-mobile {
     flex-direction: column;
