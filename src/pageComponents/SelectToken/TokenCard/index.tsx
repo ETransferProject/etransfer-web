@@ -31,7 +31,7 @@ export function TokenCardForMobile({
         className,
       )}
       onClick={onClick}>
-      {icon ? (
+      {iconState ? (
         <CommonImage
           src={iconState}
           alt="token"
@@ -69,7 +69,7 @@ export function TokenCardForWeb({
         className,
       )}
       onClick={onClick}>
-      {icon ? (
+      {iconState ? (
         <CommonImage
           src={iconState}
           alt="token"

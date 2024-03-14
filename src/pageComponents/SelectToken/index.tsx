@@ -42,6 +42,7 @@ export default function SelectToken({
   } = useUserActionState();
   const [isShowTokenSelectDropdown, setIsShowTokenSelectDropdown] = useState<boolean>(false);
   const { activeMenuKey } = useCommonState();
+  const [iconState, setIconState] = useState<string>(selected?.icon || '');
 
   const onSelectToken = async (item: TokenItem) => {
     if (onChange) {
@@ -83,8 +84,13 @@ export default function SelectToken({
           <div className={styles['select-token-value']}>
             {selected?.symbol ? (
               <span className={clsx('flex-row-center', styles['select-token-value-selected'])}>
-                {selected.icon ? (
-                  <CommonImage src={selected.icon} alt="token" className={styles['icon']} />
+                {iconState ? (
+                  <CommonImage
+                    src={iconState}
+                    alt="token"
+                    className={styles['icon']}
+                    onError={() => setIconState('')}
+                  />
                 ) : (
                   <div className={clsx(styles['default'], styles['icon'])}>
                     {selected.symbol.charAt(0)}
