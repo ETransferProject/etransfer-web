@@ -39,7 +39,13 @@ export function zeroFill(str: string | BN) {
   return isBN(str) ? str.toString(16, 64) : str.padStart(64, '0');
 }
 
-export function valueFixed2LessThanMin(strValue: string): string {
+/**
+ * currency show as role: fixed(2) and min is 0.01
+ * @param strValue amount value
+ * @param currency currency type
+ * @returns string
+ */
+export function valueFixed2LessThanMin(strValue: string, currency?: string): string {
   let X = new BigNumber(strValue);
   if (X.isNaN()) {
     return '--';
@@ -47,8 +53,8 @@ export function valueFixed2LessThanMin(strValue: string): string {
 
   X = new BigNumber(X.toFixed(2));
   if (X.isLessThan(0.01)) {
-    return 'less than 0.01';
+    return currency ? `<${currency}0.01` : '<$0.01';
   }
 
-  return X.toString();
+  return `${currency}${X.toString()}`;
 }

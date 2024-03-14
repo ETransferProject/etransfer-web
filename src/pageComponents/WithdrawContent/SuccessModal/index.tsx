@@ -29,7 +29,7 @@ export default function SuccessModal({ withdrawInfo, modalProps }: SuccessModalP
           <div className={styles['value']}>
             {withdrawInfo.receiveAmount || '--'} {withdrawInfo.symbol}
             <div className={clsx(styles['receive-amount-usd'])}>
-              {'$ ' + valueFixed2LessThanMin(withdrawInfo.receiveAmountUsd)}
+              {valueFixed2LessThanMin(withdrawInfo.receiveAmountUsd, '$ ')}
             </div>
           </div>
         </div>
