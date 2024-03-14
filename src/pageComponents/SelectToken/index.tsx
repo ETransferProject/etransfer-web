@@ -45,6 +45,9 @@ export default function SelectToken({
   const [iconState, setIconState] = useState<string>(selected?.icon || '');
 
   const onSelectToken = async (item: TokenItem) => {
+    if (item.icon) {
+      setIconState(item.icon);
+    }
     if (onChange) {
       onChange(item);
     }
