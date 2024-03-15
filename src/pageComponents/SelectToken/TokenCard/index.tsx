@@ -63,22 +63,35 @@ export function TokenCardForWeb({
   );
 }
 
-function SelectImage({ icon, open, symbol }: { icon: string; open: boolean; symbol: string }) {
+export function SelectImage({
+  icon,
+  open,
+  symbol,
+}: {
+  icon: string;
+  open: boolean;
+  symbol: string;
+}) {
   const [showIcon, setShowIcon] = useState<boolean>(true);
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  console.log('icon11111', icon);
 
   useEffect(() => {
-    if (open) {
+    if (open && !isSuccess) {
       setShowIcon(true);
     }
-  }, [open]);
+  }, [isSuccess, open]);
 
   return (
     <>
-      {showIcon && open ? (
+      {showIcon && icon ? (
         <CommonImage
           src={icon}
           alt="token"
           className={styles['token-card-icon']}
+          onLoad={() => {
+            setIsSuccess(true);
+          }}
           onError={() => setShowIcon(false)}
         />
       ) : (

@@ -6,10 +6,10 @@ import TokenSelectDropdown from 'pageComponents/SelectToken/TokenSelectDropdown'
 import Down from 'assets/images/down.svg';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
+import { SelectImage } from 'pageComponents/SelectToken/TokenCard';
 
 import { BusinessType, TokenItem } from 'types/api';
 import { setCurrentSymbol } from 'store/reducers/token/slice';
-import CommonImage from 'components/CommonImage';
 import { setAddInitOpenTokenModalCount } from 'store/reducers/userAction/slice';
 
 type TokenSelectProps = {
@@ -73,6 +73,8 @@ export default function SelectToken({
     }
   }, [dispatch, initOpenTokenkModalCount, tokenList, isMobilePX, selected?.symbol, type]);
 
+  console.log(selected);
+
   return (
     <div className={styles['select-token']}>
       <div
@@ -87,18 +89,7 @@ export default function SelectToken({
           <div className={styles['select-token-value']}>
             {selected?.symbol ? (
               <span className={clsx('flex-row-center', styles['select-token-value-selected'])}>
-                {iconState ? (
-                  <CommonImage
-                    src={iconState}
-                    alt="token"
-                    className={styles['icon']}
-                    onError={() => setIconState('')}
-                  />
-                ) : (
-                  <div className={clsx(styles['default'], styles['icon'])}>
-                    {selected.symbol.charAt(0)}
-                  </div>
-                )}
+                <SelectImage open={true} symbol={selected.symbol} icon={selected.icon} />
                 <span className={styles['primary']}>{selected.symbol}</span>
                 <span className={styles['secondary']}>{selected.name}</span>
               </span>
