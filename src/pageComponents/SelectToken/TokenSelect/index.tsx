@@ -11,6 +11,7 @@ export interface TokenSelectProps {
   selectedToken?: string;
   isDisabled?: boolean;
   isShowLoading?: boolean;
+  open: boolean;
   onSelect: (item: TokenItem) => Promise<void>;
 }
 
@@ -20,6 +21,7 @@ export function TokenSelectForMobile({
   tokenList,
   selectedToken,
   isDisabled,
+  open,
   onSelect,
 }: TokenSelectProps) {
   return (
@@ -35,6 +37,7 @@ export function TokenSelectForMobile({
               name={item.name}
               icon={item.icon}
               symbol={item.symbol}
+              open={open}
               onClick={() => onSelect(item)}
             />
           );
@@ -50,6 +53,7 @@ export function TokenSelectForWeb({
   selectedToken,
   isDisabled,
   onSelect,
+  open,
 }: TokenSelectProps) {
   return (
     <div className={clsx(styles['token-select'], styles['token-select-for-web'], className)}>
@@ -63,6 +67,7 @@ export function TokenSelectForWeb({
               icon={item.icon}
               name={item.name}
               symbol={item.symbol}
+              open={open}
               onClick={() => onSelect(item)}
             />
           );

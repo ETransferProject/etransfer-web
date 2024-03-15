@@ -36,6 +36,7 @@ export default function TokenSelectDropdown({
           open ? styles['token-select-dropdown-show'] : styles['token-select-dropdown-hidden'],
         )}>
         <TokenSelectForWeb
+          open={open}
           type={type}
           tokenList={tokenList}
           selectedToken={selectedToken}
