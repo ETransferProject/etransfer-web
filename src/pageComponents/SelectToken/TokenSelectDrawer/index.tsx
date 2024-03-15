@@ -30,6 +30,7 @@ export default function NetworkSelectDrawer({
         type={type}
         isDisabled={isDisabled}
         isShowLoading={isShowLoading}
+        open={props.open}
       />
     </CommonDrawer>
   );
