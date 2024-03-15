@@ -74,7 +74,6 @@ export function SelectImage({
 }) {
   const [showIcon, setShowIcon] = useState<boolean>(true);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  console.log('icon11111', icon);
 
   useEffect(() => {
     if (open && !isSuccess) {
