@@ -134,7 +134,6 @@ export default function WithdrawContent() {
   const [isTransactionFeeLoading, setIsTransactionFeeLoading] = useState(false);
 
   const getTransactionFeeTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const preReceiveAmountRef = useRef('');
 
   const minAmount = useMemo(() => {
     return withdrawInfo?.minAmount || '0.2';
@@ -151,7 +150,7 @@ export default function WithdrawContent() {
     } else {
       result = BigNumber(balance).minus(BigNumber(withdrawInfo.transactionFee)).toFixed();
     }
-    preReceiveAmountRef.current = result;
+
     return result;
   }, [balance, minAmount, withdrawInfo.transactionFee]);
 
@@ -396,7 +395,7 @@ export default function WithdrawContent() {
   useEffect(() => {
     if (
       (currentNetwork?.network === 'SETH' || currentNetwork?.network === 'ETH') &&
-      Number(withdrawInfo.transactionFee) > 60
+      Number(withdrawInfo.feeUsd) > 60
     ) {
       handleFormValidateDataChange({
         [FormKeys.NETWORK]: {
