@@ -46,15 +46,16 @@ export function zeroFill(str: string | BN) {
  * @returns string
  */
 export function valueFixed2LessThanMin(strValue: string, currency?: string): string {
-  let X = new BigNumber(strValue);
-  if (X.isNaN()) {
+  let valueBigNumber = new BigNumber(strValue);
+  if (valueBigNumber.isNaN()) {
     return '--';
   }
 
-  X = new BigNumber(X.toFixed(2));
-  if (X.isLessThan(0.01)) {
+  valueBigNumber = valueBigNumber.dp(2, BigNumber.ROUND_DOWN);
+
+  if (valueBigNumber.isLessThan(0.01)) {
     return currency ? `<${currency}0.01` : '<$0.01';
   }
 
-  return `${currency}${X.toString()}`;
+  return `${currency}${valueBigNumber.toString()}`;
 }
