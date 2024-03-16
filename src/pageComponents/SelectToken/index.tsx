@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styles from './styles.module.scss';
 import { useAppDispatch, useCommonState, useUserActionState } from 'store/Provider/hooks';
 import TokenSelectDrawer from 'pageComponents/SelectToken/TokenSelectDrawer';
@@ -42,22 +42,19 @@ export default function SelectToken({
   } = useUserActionState();
   const [isShowTokenSelectDropdown, setIsShowTokenSelectDropdown] = useState<boolean>(false);
   const { activeMenuKey } = useCommonState();
-  const [iconState, setIconState] = useState<string>(selected?.icon || '');
 
-  const onSelectToken = async (item: TokenItem) => {
-    if (item.icon) {
-      setIconState(item.icon);
-    }
-    if (onChange) {
-      onChange(item);
-    }
-    dispatch(
-      setCurrentSymbol({ key: activeMenuKey as unknown as BusinessType, symbol: item.symbol }),
-    );
-    setIsShowTokenSelectDropdown(false);
+  const onSelectToken = useCallback(
+    async (item: TokenItem) => {
+      onChange?.(item);
+      dispatch(
+        setCurrentSymbol({ key: activeMenuKey as unknown as BusinessType, symbol: item.symbol }),
+      );
+      setIsShowTokenSelectDropdown(false);
 
-    selectCallback(item);
-  };
+      selectCallback(item);
+    },
+    [activeMenuKey, dispatch, onChange, selectCallback],
+  );
 
   useEffect(() => {
     if (

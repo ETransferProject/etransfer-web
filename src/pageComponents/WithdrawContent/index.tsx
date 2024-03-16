@@ -785,10 +785,6 @@ export default function WithdrawContent() {
         address: form.getFieldValue(FormKeys.ADDRESS) || undefined,
       });
       await getWithdrawData(item);
-
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
     } finally {
       setLoading(false);
     }
