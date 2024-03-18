@@ -842,7 +842,10 @@ export default function WithdrawContent() {
           {isTransactionFeeLoading && <SimpleLoading />}
           <span className={styles['transaction-fee-value-data']}>
             {!isTransactionFeeLoading && `${withdrawInfo.transactionFee} `}
-            <span className={clsx({ [styles['transaction-fee-value-data-unit']]: isMobile })}>
+            <span
+              className={clsx('transaction-fee-value-data-default', {
+                [styles['transaction-fee-value-data-unit']]: isMobile,
+              })}>
               {withdrawInfo.transactionUnit}
             </span>{' '}
             + {withdrawInfo.aelfTransactionFee} {withdrawInfo.aelfTransactionUnit}

@@ -220,9 +220,11 @@
     display: flex;
     @extend .ellipsis;
   }
+  .transaction-fee-value-data-default {
+    margin-left: 2px;
+  }
   .transaction-fee-value-data-unit {
     max-width: 57px;
-    margin-left: 2px;
     display: inline-block;
     @extend .ellipsis;
   }
