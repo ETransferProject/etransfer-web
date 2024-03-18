@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import { useAppDispatch, useCommonState, useUserActionState } from 'store/Provider/hooks';
 import TokenSelectDrawer from 'pageComponents/SelectToken/TokenSelectDrawer';
 import TokenSelectDropdown from 'pageComponents/SelectToken/TokenSelectDropdown';
-import Down from 'assets/images/down.svg';
+import Down from 'assets/images/downBig.svg';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
 import { SelectImage } from 'pageComponents/SelectToken/TokenCard';
