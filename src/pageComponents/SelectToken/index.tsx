@@ -70,8 +70,6 @@ export default function SelectToken({
     }
   }, [dispatch, initOpenTokenkModalCount, tokenList, isMobilePX, selected?.symbol, type]);
 
-  console.log(selected);
-
   return (
     <div className={styles['select-token']}>
       <div
