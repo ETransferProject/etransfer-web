@@ -1041,7 +1041,8 @@ export default function WithdrawContent() {
                   )}>
                   {isTransactionFeeLoading && <SimpleLoading />}
                   <span>
-                    {!isTransactionFeeLoading && `${receiveAmount || '--'} `}
+                    {!isTransactionFeeLoading &&
+                      `${(!isDoubleCheckModalOpen && receiveAmount) || '--'} `}
                     {withdrawInfo.transactionUnit}
                   </span>
                 </div>
