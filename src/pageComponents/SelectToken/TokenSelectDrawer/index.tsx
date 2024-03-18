@@ -16,7 +16,7 @@ export default function NetworkSelectDrawer({
     <CommonDrawer
       destroyOnClose
       placement="bottom"
-      title={type === SideMenuKey.Withdraw ? 'Withdraw Token' : 'Deposit Token'}
+      title={type === SideMenuKey.Withdraw ? 'Withdraw Assets' : 'Deposit Assets'}
       closable={true}
       height="88%"
       {...props}

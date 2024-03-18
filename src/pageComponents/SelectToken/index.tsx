@@ -79,7 +79,7 @@ export default function SelectToken({
           [styles['select-token-result-no-border']]: noBorder,
         })}
         onClick={() => setIsShowTokenSelectDropdown(true)}>
-        {!isFormItemStyle && <div className={styles['select-token-label']}>Deposit token</div>}
+        {!isFormItemStyle && <div className={styles['select-token-label']}>Deposit Assets</div>}
         <div className={styles['select-token-value-row']}>
           <div className={styles['select-token-value']}>
             {selected?.symbol ? (
