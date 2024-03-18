@@ -155,6 +155,9 @@
 .info-unit {
   max-width: 70px;
   @include text-overflow;
+  @include media-web{
+    max-width: 106px;
+  }
 }
 
 .info-label {
@@ -227,6 +230,9 @@
     max-width: 57px;
     display: inline-block;
     @extend .ellipsis;
+    @include media-web{
+      max-width: 60px;
+    }
   }
   .receive-amount-wrapper {
     .info-value {
