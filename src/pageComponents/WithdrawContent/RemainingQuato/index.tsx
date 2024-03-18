@@ -1,13 +1,12 @@
 import { useCallback, useState } from 'react';
 import { QuestionMarkIcon } from 'assets/images';
 import clsx from 'clsx';
-import { Tooltip } from 'antd';
 import styles from '../styles.module.scss';
 import { useCommonState } from 'store/Provider/hooks';
 import CommonModalTips from 'components/CommonModalTips';
 
 export default function RemainingQuato({ title }: { title: string }) {
-  const { isMobile, isMobilePX } = useCommonState();
+  const { isMobilePX } = useCommonState();
   const [openModal, setOpenModal] = useState(false);
 
   const handleView = useCallback(() => {
@@ -20,12 +19,7 @@ export default function RemainingQuato({ title }: { title: string }) {
 
   return (
     <>
-      {isMobilePX && !isMobile && (
-        <Tooltip className={clsx(styles['question-mark'])} placement="top" title={title}>
-          <QuestionMarkIcon />
-        </Tooltip>
-      )}
-      {isMobile && (
+      {isMobilePX && (
         <QuestionMarkIcon onClick={handleView} className={clsx(styles['question-mark'])} />
       )}
 
