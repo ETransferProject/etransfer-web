@@ -10,13 +10,13 @@ export type TokenState = {
 };
 
 // init deposit empty
-export const initDepositTokenState = {
+export const InitDepositTokenState = {
   tokenList: [],
   currentSymbol: '',
 };
 
 // init withdraw USDT
-export const initWithdrawTokenState = {
+export const InitWithdrawTokenState = {
   tokenList: [
     {
       name: 'Tether USD',
@@ -29,32 +29,32 @@ export const initWithdrawTokenState = {
   currentSymbol: 'USDT',
 };
 
-export const initialTokenState: TokenState = {
-  [BusinessType.Deposit]: initDepositTokenState,
-  [BusinessType.Withdraw]: initWithdrawTokenState,
+export const InitialTokenState: TokenState = {
+  [BusinessType.Deposit]: InitDepositTokenState,
+  [BusinessType.Withdraw]: InitWithdrawTokenState,
 };
 
 export const TokenSlice = createSlice({
   name: 'token',
-  initialState: initialTokenState,
+  initialState: InitialTokenState,
   reducers: {
     setTokenList: (state, action: PayloadAction<{ key: BusinessType; data: TokenItem[] }>) => {
       if (!state[action.payload.key]) {
-        state[action.payload.key] = {
-          ...initialTokenState[action.payload.key],
-        };
+        state[action.payload.key] = JSON.parse(
+          JSON.stringify(InitialTokenState[action.payload.key]),
+        );
       }
-      state[action.payload.key].tokenList = [...action.payload.data];
+      state[action.payload.key].tokenList = JSON.parse(JSON.stringify(action.payload.data));
     },
     setCurrentSymbol: (state, action: PayloadAction<{ key: BusinessType; symbol: string }>) => {
       if (!state[action.payload.key]) {
-        state[action.payload.key] = initialTokenState[action.payload.key];
+        state[action.payload.key] = InitialTokenState[action.payload.key];
       }
       state[action.payload.key].currentSymbol = action.payload.symbol;
     },
     resetTokenState: (state) => {
-      state[BusinessType.Deposit] = initDepositTokenState;
-      state[BusinessType.Withdraw] = initWithdrawTokenState;
+      state[BusinessType.Deposit] = InitDepositTokenState;
+      state[BusinessType.Withdraw] = InitWithdrawTokenState;
     },
   },
 });

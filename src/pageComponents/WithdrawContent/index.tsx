@@ -75,7 +75,8 @@ import { devices } from '@portkey/utils';
 import { ConnectWalletError } from 'constants/wallet';
 import { useWithdraw } from 'hooks/withdraw';
 import { QuestionMarkIcon } from 'assets/images';
-import { initWithdrawTokenState } from 'store/reducers/token/slice';
+import { InitWithdrawTokenState } from 'store/reducers/token/slice';
+import RemainingQuato from './RemainingQuato';
 
 enum ValidateStatus {
   Error = 'error',
@@ -100,7 +101,7 @@ type FormValuesType = {
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const isAndroid = devices.isMobile().android;
-  const { isMobilePX, currentChainItem, currentVersion } = useCommonState();
+  const { isMobile, isMobilePX, currentChainItem, currentVersion } = useCommonState();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
   const accounts = useAccounts();
   const { currentSymbol, tokenList } = useWithdraw();
@@ -160,7 +161,7 @@ export default function WithdrawContent() {
     if (Array.isArray(tokenList) && tokenList.length > 0) {
       return tokenList.find((item) => item.symbol === currentSymbol) as TokenItem;
     }
-    return initWithdrawTokenState.tokenList[0];
+    return InitWithdrawTokenState.tokenList[0];
   }, [currentSymbol, tokenList]);
 
   const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
@@ -197,14 +198,7 @@ export default function WithdrawContent() {
           ) : (
             '--'
           )}
-          {isMobilePX && (
-            <Tooltip
-              className={clsx(styles['question-mark'])}
-              placement="top"
-              title={RemainingWithdrawalQuotaTooltip}>
-              <QuestionMarkIcon />
-            </Tooltip>
-          )}
+          <RemainingQuato title={RemainingWithdrawalQuotaTooltip}></RemainingQuato>
         </span>
         <span className={styles['remaining-limit-label']}>
           {isMobilePX && '• '}Remaining Withdrawal Quota{isMobilePX && ':'}
@@ -527,10 +521,8 @@ export default function WithdrawContent() {
           address: form.getFieldValue(FormKeys.ADDRESS) || undefined,
         });
         await getWithdrawData();
-
-        setLoading(false);
       } catch (error) {
-        setLoading(false);
+        console.log('Change chain error: ', error);
       } finally {
         setLoading(false);
       }
@@ -657,7 +649,6 @@ export default function WithdrawContent() {
   );
 
   const sendTransferTokenTransaction = useDebounceCallback(async () => {
-    console.log('🌈 🌈 🌈 🌈 🌈 🌈 sendTransferTokenTransaction');
     try {
       if (!currentVersion) throw new Error(ConnectWalletError);
       setLoading(true, { text: 'Please approve the transaction in the wallet...' });
@@ -702,7 +693,6 @@ export default function WithdrawContent() {
       console.log('sendTransferTokenTransaction error:', error);
       setIsFailModalOpen(true);
     } finally {
-      setLoading(false);
       setIsDoubleCheckModalOpen(false);
     }
   }, [balance, currentSymbol, currentTokenAddress, handleApproveToken, receiveAmount, setLoading]);
@@ -852,8 +842,10 @@ export default function WithdrawContent() {
           {isTransactionFeeLoading && <SimpleLoading />}
           <span className={styles['transaction-fee-value-data']}>
             {!isTransactionFeeLoading && `${withdrawInfo.transactionFee} `}
-            {withdrawInfo.transactionUnit} + {withdrawInfo.aelfTransactionFee}{' '}
-            {withdrawInfo.aelfTransactionUnit}
+            <span className={clsx({ [styles['transaction-fee-value-data-unit']]: isMobile })}>
+              {withdrawInfo.transactionUnit}
+            </span>{' '}
+            + {withdrawInfo.aelfTransactionFee} {withdrawInfo.aelfTransactionUnit}
           </span>
         </>
       );
@@ -1040,9 +1032,8 @@ export default function WithdrawContent() {
                     styles['info-value-big-font'],
                   )}>
                   {isTransactionFeeLoading && <SimpleLoading />}
-                  <span>
-                    {!isTransactionFeeLoading &&
-                      `${(!isDoubleCheckModalOpen && receiveAmount) || '--'} `}
+                  {!isTransactionFeeLoading && `${(!isSuccessModalOpen && receiveAmount) || '--'} `}
+                  <span className={clsx({ [styles['info-unit']]: isMobile })}>
                     {withdrawInfo.transactionUnit}
                   </span>
                 </div>

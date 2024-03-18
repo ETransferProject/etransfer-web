@@ -30,6 +30,12 @@
   }
 }
 
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .form-item-wrapper {
   margin-bottom: 24px;
 }
@@ -78,6 +84,9 @@
   }
   .remaining-limit-value-limitcurrency {
     margin-left: 2px;
+    max-width: 57px;
+    display: inline-block;
+    @extend .ellipsis;
   }
   .remaining-limit-label {
     color: $secondary-text;
@@ -105,8 +114,12 @@
   }
   @include media-web {
     flex: 1;
-    justify-content:flex-end;
+    justify-content: flex-end;
     flex-wrap: wrap;
+    gap: 0;
+    .remaining-limit-label {
+      margin-left: 8px;
+    }
   }
   @include media-mobile {
     flex-direction: column-reverse;
@@ -137,6 +150,11 @@
 .info-value {
   font-size: 14px;
   line-height: 22px;
+}
+
+.info-unit {
+  max-width: 70px;
+  @include text-overflow;
 }
 
 .info-label {
@@ -199,7 +217,14 @@
     margin-right: 8px;
   }
   .transaction-fee-value-data {
-    @include text-overflow;
+    display: flex;
+    @extend .ellipsis;
+  }
+  .transaction-fee-value-data-unit {
+    max-width: 57px;
+    margin-left: 2px;
+    display: inline-block;
+    @extend .ellipsis;
   }
   .receive-amount-wrapper {
     .info-value {

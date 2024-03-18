@@ -1,5 +1,5 @@
 import { Swap } from 'assets/images';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { NetworkItem } from 'types/api';
 import styles from './styles.module.scss';
 import { useAppDispatch, useCommonState, useUserActionState } from 'store/Provider/hooks';
@@ -40,15 +40,16 @@ export default function SelectNetwork({
   } = useUserActionState();
   const [isShowNetworkSelectDropdown, setIsShowNetworkSelectDropdown] = useState<boolean>(false);
 
-  const onSelectNetwork = async (item: NetworkItem) => {
-    if (onChange) {
-      onChange(item);
-    }
+  const onSelectNetwork = useCallback(
+    async (item: NetworkItem) => {
+      onChange?.(item);
 
-    setIsShowNetworkSelectDropdown(false);
+      setIsShowNetworkSelectDropdown(false);
 
-    await selectCallback(item);
-  };
+      await selectCallback(item);
+    },
+    [onChange, selectCallback],
+  );
 
   useEffect(() => {
     if (

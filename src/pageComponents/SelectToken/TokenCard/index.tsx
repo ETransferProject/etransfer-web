@@ -26,6 +26,7 @@ export function TokenCardForMobile({
     <div
       className={clsx(
         styles['token-card-for-mobile'],
+        styles['token-card-for-web-hover'],
         isDisabled && styles['token-card-disabled'],
         className,
       )}
@@ -83,21 +84,29 @@ export function SelectImage({
 
   return (
     <>
-      {showIcon && icon ? (
+      {showIcon && icon && (
         <CommonImage
+          loading="eager"
           src={icon}
           alt="token"
-          className={styles['token-card-icon']}
+          width={24}
+          height={24}
+          fill={false}
+          className={clsx(styles['token-card-icon'], {
+            [styles['token-card-icon-load']]: !isSuccess,
+          })}
           onLoad={() => {
             setIsSuccess(true);
           }}
           onError={() => setShowIcon(false)}
         />
-      ) : (
-        <div className={clsx(styles['token-card-defaultIcon'], styles['token-card-icon'])}>
-          {symbol.charAt(0)}
-        </div>
       )}
+      <div
+        className={clsx(styles['token-card-defaultIcon'], styles['token-card-icon'], {
+          [styles['token-card-defaultIcon-none']]: showIcon && isSuccess,
+        })}>
+        {symbol.charAt(0)}
+      </div>
     </>
   );
 }

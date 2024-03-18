@@ -100,7 +100,11 @@ export default function SelectToken({
             />
           ) : (
             <div className={clsx('flex-center', styles['select-token-swap-icon-wrapper'])}>
-              <Down className={styles['select-token-swap-icon']} />
+              <Down
+                className={clsx(styles['select-token-swap-icon'], {
+                  [styles['select-token-down-icon-rotate']]: isShowTokenSelectDropdown,
+                })}
+              />
             </div>
           )}
         </div>
