@@ -376,7 +376,8 @@ export default function WithdrawContent() {
         setWithdrawInfo(res.withdrawInfo);
         setIsTransactionFeeLoading(false);
       } catch (error: any) {
-        setWithdrawInfo(initialWithdrawInfo);
+        // when network error, transactionUnit should as the same with symbol
+        setWithdrawInfo({ ...initialWithdrawInfo, transactionUnit: symbol });
         if (error.name !== CommonErrorNameType.CANCEL) {
           singleMessage.error(handleErrorMessage(error));
           setIsTransactionFeeLoading(false);
@@ -841,14 +842,16 @@ export default function WithdrawContent() {
         <>
           {isTransactionFeeLoading && <SimpleLoading />}
           <span className={styles['transaction-fee-value-data']}>
-            {!isTransactionFeeLoading && `${withdrawInfo.transactionFee} `}
+            {!isTransactionFeeLoading &&
+              `${(!isSuccessModalOpen && withdrawInfo.transactionFee) || '--'} `}
             <span
               className={clsx(styles['transaction-fee-value-data-default'], {
                 [styles['transaction-fee-value-data-unit']]: isMobilePX,
               })}>
               {withdrawInfo.transactionUnit}
             </span>
-            + {withdrawInfo.aelfTransactionFee} {withdrawInfo.aelfTransactionUnit}
+            + {(!isSuccessModalOpen && withdrawInfo.aelfTransactionFee) || '--'}
+            {withdrawInfo.aelfTransactionUnit}
           </span>
         </>
       );
@@ -868,7 +871,7 @@ export default function WithdrawContent() {
           <div className={styles['form-item-wrapper']}>
             <Form.Item
               className={styles['form-item']}
-              label="Withdrawal Token"
+              label="Withdrawal Assets"
               name={FormKeys.TOKEN}
               validateStatus={formValidateData[FormKeys.TOKEN].validateStatus}
               help={formValidateData[FormKeys.TOKEN].errorMessage}>

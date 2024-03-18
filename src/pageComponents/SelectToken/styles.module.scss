@@ -35,6 +35,7 @@
       color: $secondary-text;
       font-size: 14px;
       line-height: 22px;
+      user-select: none;
     }
     .select-token-value-row {
       display: flex;
