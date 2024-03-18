@@ -70,8 +70,6 @@ export default function SelectToken({
     }
   }, [dispatch, initOpenTokenkModalCount, tokenList, isMobilePX, selected?.symbol, type]);
 
-  console.log(selected);
-
   return (
     <div className={styles['select-token']}>
       <div
@@ -102,7 +100,11 @@ export default function SelectToken({
             />
           ) : (
             <div className={clsx('flex-center', styles['select-token-swap-icon-wrapper'])}>
-              <Down className={styles['select-token-swap-icon']} />
+              <Down
+                className={clsx(styles['select-token-swap-icon'], {
+                  [styles['select-token-down-icon-rotate']]: isShowTokenSelectDropdown,
+                })}
+              />
             </div>
           )}
         </div>
