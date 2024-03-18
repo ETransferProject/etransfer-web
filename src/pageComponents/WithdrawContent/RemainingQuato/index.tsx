@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
 import { QuestionMarkIcon } from 'assets/images';
 import clsx from 'clsx';
-import { Tooltip } from 'antd';
 import styles from '../styles.module.scss';
 import { useCommonState } from 'store/Provider/hooks';
 import CommonModalTips from 'components/CommonModalTips';
