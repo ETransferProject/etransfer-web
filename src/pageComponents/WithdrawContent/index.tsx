@@ -845,9 +845,10 @@ export default function WithdrawContent() {
             {!isTransactionFeeLoading &&
               `${(!isSuccessModalOpen && withdrawInfo.transactionFee) || '--'} `}
             <span
-              className={clsx(styles['transaction-fee-value-data-default'], {
-                [styles['transaction-fee-value-data-unit']]: isMobilePX,
-              })}>
+              className={clsx(
+                styles['transaction-fee-value-data-default'],
+                styles['transaction-fee-value-data-unit'],
+              )}>
               {withdrawInfo.transactionUnit}
             </span>
             + {(!isSuccessModalOpen && withdrawInfo.aelfTransactionFee) || '--'}
@@ -1039,9 +1040,7 @@ export default function WithdrawContent() {
                   )}>
                   {isTransactionFeeLoading && <SimpleLoading />}
                   {!isTransactionFeeLoading && `${(!isSuccessModalOpen && receiveAmount) || '--'} `}
-                  <span className={clsx({ [styles['info-unit']]: isMobilePX })}>
-                    {withdrawInfo.transactionUnit}
-                  </span>
+                  <span className={clsx(styles['info-unit'])}>{withdrawInfo.transactionUnit}</span>
                 </div>
               </div>
             </div>
