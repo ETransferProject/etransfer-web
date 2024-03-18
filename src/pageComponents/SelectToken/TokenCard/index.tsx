@@ -26,6 +26,7 @@ export function TokenCardForMobile({
     <div
       className={clsx(
         styles['token-card-for-mobile'],
+        styles['token-card-for-web-hover'],
         isDisabled && styles['token-card-disabled'],
         className,
       )}
