@@ -43,7 +43,7 @@ export default function WebContent({
 
   return (
     <>
-      <SelectChainWrapper webLabel={'Deposit Tokens to'} chainChanged={chainChanged} />
+      <SelectChainWrapper webLabel={'Deposit Assets to'} chainChanged={chainChanged} />
       <div className={styles['select-network-wrapper']}>
         <SelectToken
           type={SideMenuKey.Deposit}

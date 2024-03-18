@@ -201,7 +201,7 @@ export default function WithdrawContent() {
           <RemainingQuato title={RemainingWithdrawalQuotaTooltip}></RemainingQuato>
         </span>
         <span className={styles['remaining-limit-label']}>
-          {isMobilePX && '• '}Remaining Withdrawal Quota{isMobilePX && ':'}
+          {isMobilePX && '• '}24-Hour Limit{isMobilePX && ':'}
           {!isMobilePX && (
             <Tooltip
               className={clsx(styles['question-mark'])}
@@ -857,7 +857,7 @@ export default function WithdrawContent() {
       <SelectChainWrapper
         mobileTitle="Withdraw from"
         mobileLabel="from"
-        webLabel={'Withdraw Tokens from'}
+        webLabel={'Withdraw Assets from'}
         chainChanged={(item: IChainNameItem) => handleChainChanged(item)}
       />
       <div>

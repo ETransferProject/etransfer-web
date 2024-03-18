@@ -31,7 +31,7 @@ export default function RemainingQuato({ title }: { title: string }) {
 
       <CommonModalTips
         getContainer="body"
-        title="Remaining Withdrawal Quota"
+        title="24-Hour Limit"
         open={openModal}
         closable={false}
         okText="OK"

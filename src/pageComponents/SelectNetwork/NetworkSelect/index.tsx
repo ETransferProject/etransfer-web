@@ -21,7 +21,7 @@ export interface NetworkSelectProps {
 }
 
 const DEPOSIT_TIP_CONTENT =
-  'Note: Please select from the supported networks listed below. Sending USDT from other networks may result in the loss of your assets.';
+  'Note: Please select from the supported networks listed below. Sending tokens from other networks may result in the loss of your assets.';
 
 const WITHDRAW_TIP_CONTENT =
   'Please ensure that your receiving platform supports the digital asset and network. If you are unsure, kindly check with the platform before proceeding.';

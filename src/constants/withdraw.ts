@@ -30,4 +30,4 @@ export const AmountGreaterThanBalanceMessage =
 export const InsufficientAllowanceMessage =
   'Insufficient allowance. Please try again, ensuring that you approve an adequate amount as the allowance.';
 
-export const RemainingWithdrawalQuotaTooltip = `Withdrawals are subject to a 24-hour limit, determined by the real-time USD value of the asset. You can withdraw assets up to the remaining quota.`;
+export const RemainingWithdrawalQuotaTooltip = `Withdrawals are subject to a 24-hour limit, determined by the real-time USD value of the asset. You can withdraw assets up to the available withdrawal limit.`;

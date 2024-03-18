@@ -18,8 +18,8 @@ export default function MobileHeader() {
     <div className={clsx('flex-center', styles['header-wrapper'])}>
       <SelectMenu />
       <span className={clsx('flex-1', 'text-center', styles['header-text'])}>
-        {activeMenuKey === SideMenuKey.Deposit && 'Deposit Tokens'}
-        {activeMenuKey === SideMenuKey.Withdraw && 'Withdraw Tokens'}
+        {activeMenuKey === SideMenuKey.Deposit && 'Deposit Assets'}
+        {activeMenuKey === SideMenuKey.Withdraw && 'Withdraw Assets'}
       </span>
       <SelectWallet />
     </div>
