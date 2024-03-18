@@ -51,9 +51,11 @@ export default function DoubleCheckModal({
       return (
         <>
           {isTransactionFeeLoading && <SimpleLoading />}
-          <div>
+          <div className={clsx('flex')}>
             {!isTransactionFeeLoading && `${withdrawInfo.transactionFee.amount} `}
-            {withdrawInfo.transactionFee.currency} + {withdrawInfo.aelfTransactionFee.amount}{' '}
+            <span className={styles['fee-currency']}>
+              {withdrawInfo.transactionFee.currency}
+            </span> + {withdrawInfo.aelfTransactionFee.amount}{' '}
             {withdrawInfo.aelfTransactionFee.currency}
           </div>
         </>
@@ -98,7 +100,11 @@ export default function DoubleCheckModal({
           <div className={styles['detail-row']}>
             <div className={styles['label']}>Withdraw Amount</div>
             <div className={styles['value']}>
-              {`${withdrawInfo.amount || '--'} ${withdrawInfo.symbol}`}
+              <div className={styles['value-content']}>
+                {`${withdrawInfo.amount || '--'}`}
+                <span className={styles['value-symbol']}>{withdrawInfo.symbol}</span>
+              </div>
+
               <div className={clsx(styles['amount-usd'])}>
                 {valueFixed2LessThanMin(withdrawInfo.amountUsd, '$ ')}
               </div>
