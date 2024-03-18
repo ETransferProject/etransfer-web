@@ -75,7 +75,7 @@ import { devices } from '@portkey/utils';
 import { ConnectWalletError } from 'constants/wallet';
 import { useWithdraw } from 'hooks/withdraw';
 import { QuestionMarkIcon } from 'assets/images';
-import { initWithdrawTokenState } from 'store/reducers/token/slice';
+import { InitWithdrawTokenState } from 'store/reducers/token/slice';
 
 enum ValidateStatus {
   Error = 'error',
@@ -160,7 +160,7 @@ export default function WithdrawContent() {
     if (Array.isArray(tokenList) && tokenList.length > 0) {
       return tokenList.find((item) => item.symbol === currentSymbol) as TokenItem;
     }
-    return initWithdrawTokenState.tokenList[0];
+    return InitWithdrawTokenState.tokenList[0];
   }, [currentSymbol, tokenList]);
 
   const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
@@ -527,10 +527,8 @@ export default function WithdrawContent() {
           address: form.getFieldValue(FormKeys.ADDRESS) || undefined,
         });
         await getWithdrawData();
-
-        setLoading(false);
       } catch (error) {
-        setLoading(false);
+        console.log('Change chain error: ', error);
       } finally {
         setLoading(false);
       }
@@ -657,7 +655,6 @@ export default function WithdrawContent() {
   );
 
   const sendTransferTokenTransaction = useDebounceCallback(async () => {
-    console.log('🌈 🌈 🌈 🌈 🌈 🌈 sendTransferTokenTransaction');
     try {
       if (!currentVersion) throw new Error(ConnectWalletError);
       setLoading(true, { text: 'Please approve the transaction in the wallet...' });
@@ -702,7 +699,6 @@ export default function WithdrawContent() {
       console.log('sendTransferTokenTransaction error:', error);
       setIsFailModalOpen(true);
     } finally {
-      setLoading(false);
       setIsDoubleCheckModalOpen(false);
     }
   }, [balance, currentSymbol, currentTokenAddress, handleApproveToken, receiveAmount, setLoading]);
