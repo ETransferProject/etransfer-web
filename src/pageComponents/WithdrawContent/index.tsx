@@ -406,7 +406,7 @@ export default function WithdrawContent() {
         },
       });
     }
-  }, [currentNetwork?.network, handleFormValidateDataChange, withdrawInfo.transactionFee]);
+  }, [currentNetwork?.network, handleFormValidateDataChange, withdrawInfo.feeUsd]);
 
   const getMaxBalance = useCallback(
     async (item?: TokenItem) => {
@@ -753,6 +753,9 @@ export default function WithdrawContent() {
   ]);
 
   const handleTokenChange = async (item: TokenItem) => {
+    // when network failed, transactionUnit should show as symbol
+    setWithdrawInfo({ ...withdrawInfo, transactionUnit: item.symbol });
+
     try {
       setLoading(true);
       setBalance('');
@@ -1029,7 +1032,7 @@ export default function WithdrawContent() {
                     styles['info-value-big-font'],
                   )}>
                   {isTransactionFeeLoading && <SimpleLoading />}
-                  {!isTransactionFeeLoading && `${receiveAmount || '--'} `}
+                  {!isTransactionFeeLoading && `${(!isSuccessModalOpen && receiveAmount) || '--'} `}
                   <span className={clsx({ [styles['info-unit']]: isMobile })}>
                     {withdrawInfo.transactionUnit}
                   </span>

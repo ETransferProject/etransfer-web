@@ -145,10 +145,12 @@ export default function Content() {
 
   const handleChainChanged = useCallback(
     async (item: IChainNameItem) => {
-      await getNetworkData({
-        chainId: item.key,
-        symbol: currentSymbol,
-      });
+      // if currentSymbol is empty, don't send request
+      currentSymbol &&
+        (await getNetworkData({
+          chainId: item.key,
+          symbol: currentSymbol,
+        }));
       if (!currentNetworkRef.current?.network) return;
       await getDepositData(item.key, currentSymbol);
     },
