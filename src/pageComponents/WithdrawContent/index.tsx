@@ -1036,7 +1036,7 @@ export default function WithdrawContent() {
                   )}>
                   {isTransactionFeeLoading && <SimpleLoading />}
                   {!isTransactionFeeLoading && `${(!isSuccessModalOpen && receiveAmount) || '--'} `}
-                  <span className={clsx({ [styles['info-unit']]: isMobile })}>
+                  <span className={clsx({ [styles['info-unit']]: isMobilePX })}>
                     {withdrawInfo.transactionUnit}
                   </span>
                 </div>
