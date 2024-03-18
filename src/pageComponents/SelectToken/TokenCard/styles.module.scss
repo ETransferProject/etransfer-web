@@ -57,6 +57,12 @@
   border: 1px solid $border;
   text-align: center;
 }
+.token-card-defaultIcon-none {
+  display: none;
+}
+.token-card-icon-load {
+  display: none;
+}
 
 .token-card-for-web-hover {
   &:hover {
