@@ -40,15 +40,16 @@ export default function SelectNetwork({
   } = useUserActionState();
   const [isShowNetworkSelectDropdown, setIsShowNetworkSelectDropdown] = useState<boolean>(false);
 
-  const onSelectNetwork = useCallback(() => {
+  const onSelectNetwork = useCallback(
     async (item: NetworkItem) => {
       onChange?.(item);
 
       setIsShowNetworkSelectDropdown(false);
 
       await selectCallback(item);
-    };
-  }, [onChange, selectCallback]);
+    },
+    [onChange, selectCallback],
+  );
 
   useEffect(() => {
     if (
