@@ -32,6 +32,20 @@ export default function MobileDepositContent({
   networkChanged,
   onTokenChanged,
 }: DepositContentProps) {
+  const renderSelectToken = ({ noBorder }: { noBorder?: boolean } = {}) => {
+    return (
+      <>
+        <SelectToken
+          type={SideMenuKey.Deposit}
+          selected={currentToken}
+          selectCallback={onTokenChanged}
+          tokenList={tokenList}
+          noBorder={noBorder}
+        />
+      </>
+    );
+  };
+
   const renderSelectNetwork = ({ noBorder }: { noBorder?: boolean } = {}) => {
     return (
       <>
@@ -76,15 +90,13 @@ export default function MobileDepositContent({
             />
           )}
         </div>
-        <SelectToken
-          type={SideMenuKey.Deposit}
-          selected={currentToken}
-          selectCallback={onTokenChanged}
-          tokenList={tokenList}
-        />
+        {!currentToken && renderSelectToken()}
+
         {networkSelected ? (
           <>
             <div className={styles['data-wrapper']}>
+              {renderSelectToken({ noBorder: true })}
+              <div className={styles['data-divider']} />
               {renderSelectNetwork({ noBorder: true })}
               <div className={styles['data-divider']} />
               <div className={styles['data-address-wrapper']}>
@@ -110,7 +122,13 @@ export default function MobileDepositContent({
             )}
           </>
         ) : (
-          renderSelectNetwork()
+          <>
+            <div className={styles['data-wrapper']}>
+              {renderSelectToken({ noBorder: true })}
+              <div className={styles['data-divider']} />
+              {renderSelectNetwork({ noBorder: true })}
+            </div>
+          </>
         )}
       </div>
     </>
