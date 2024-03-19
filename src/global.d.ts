@@ -1,7 +1,3 @@
-interface HTMLAttributes<T> {
-  scrollTop?: number;
-}
-
 declare interface ICallSendResponse {
   TransactionId: string;
 }

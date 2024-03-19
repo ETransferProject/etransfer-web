@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { SideMenuKey } from 'constants/home';
+import { NetworkStatus } from 'types/api';
 
 interface NetworkCardProps {
   type: SideMenuKey;
@@ -12,6 +13,7 @@ interface NetworkCardProps {
   className?: string;
   isDisabled?: boolean;
   onClick: () => void;
+  status: string;
 }
 
 interface NetworkCardForWebProps extends NetworkCardProps {
@@ -28,16 +30,23 @@ export function NetworkCardForMobile({
   multiConfirm,
   isDisabled = false,
   onClick,
+  status,
 }: NetworkCardProps) {
   return (
     <div
       className={clsx(
         styles['network-card-for-mobile'],
-        isDisabled && styles['network-card-disabled'],
+        (isDisabled || status === NetworkStatus.Offline) && styles['network-card-disabled'],
         className,
       )}
       onClick={onClick}>
-      <div className={styles['network-card-name']}>{name}</div>
+      <div className={styles['network-card-name']}>
+        {name}
+        {status === NetworkStatus.Offline && (
+          <span className={styles['network-card-network-suspened']}>Suspended</span>
+        )}
+      </div>
+
       <div className={styles['network-card-arrival-time']}>
         <span>Arrival Time ≈ </span>
         <span>{multiConfirmTime}</span>
@@ -62,6 +71,7 @@ export function NetworkCardForWeb({
   multiConfirm,
   isDisabled = false,
   onClick,
+  status,
 }: NetworkCardForWebProps) {
   return (
     <div
@@ -69,12 +79,17 @@ export function NetworkCardForWeb({
         'flex-column',
         styles['network-card-for-web'],
         styles['network-card-for-web-hover'],
-        isDisabled && styles['network-card-disabled'],
+        (isDisabled || status === NetworkStatus.Offline) && styles['network-card-disabled'],
         className,
       )}
       onClick={onClick}>
       <div className={clsx('flex-row-center-between', styles['network-card-row'])}>
-        <span className={styles['network-card-network']}>{network}</span>
+        <span className={styles['network-card-network']}>
+          {network}
+          {status === NetworkStatus.Offline && (
+            <span className={styles['network-card-network-suspened']}>Suspended</span>
+          )}
+        </span>
         <span className={styles['network-card-arrival-time']}>≈ {multiConfirmTime}</span>
       </div>
       <div className={clsx('flex-row-center-between', styles['network-card-row'])}>

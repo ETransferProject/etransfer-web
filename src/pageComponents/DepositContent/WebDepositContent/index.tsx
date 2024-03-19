@@ -3,17 +3,18 @@ import clsx from 'clsx';
 import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
 import CommonAddress from 'components/CommonAddress';
 import SelectNetwork from 'pageComponents/SelectNetwork';
-import DepositInfo from 'pageComponents/Deposit/DepositInfo';
-import DepositDescription from 'pageComponents/Deposit/DepositDescription';
+import DepositInfo from 'pageComponents/DepositContent/DepositInfo';
+import DepositDescription from 'pageComponents/DepositContent/DepositDescription';
 import styles from './styles.module.scss';
 import { DepositContentProps } from '..';
 import CommonQRCode from 'components/CommonQRCode';
 import { DEPOSIT_ADDRESS_LABEL } from 'constants/deposit';
-import { useTokenState } from 'store/Provider/hooks';
+import { useDeposit } from 'hooks/deposit';
 import CommonImage from 'components/CommonImage';
 import { qrCodePlaceholder } from 'assets/images';
 import { SideMenuKey } from 'constants/home';
-import { DepositRetryForWeb } from 'pageComponents/DepositRetry';
+import { DepositRetryForWeb } from 'pageComponents/DepositContent/DepositRetry';
+import SelectToken from 'pageComponents/SelectToken';
 
 export default function WebContent({
   networkList,
@@ -25,12 +26,14 @@ export default function WebContent({
   tokenLogoUrl,
   showRetry = false,
   isShowLoading = false,
+  currentToken,
+  tokenList,
   onRetry,
   chainChanged,
   networkChanged,
+  onTokenChanged,
 }: DepositContentProps) {
-  const { currentSymbol } = useTokenState();
-  const webLabel = useMemo(() => `Deposit ${currentSymbol} to`, [currentSymbol]);
+  const { currentSymbol } = useDeposit();
   const renderDepositDescription = useMemo(() => {
     return (
       Array.isArray(depositInfo?.extraNotes) &&
@@ -40,8 +43,20 @@ export default function WebContent({
 
   return (
     <>
-      <SelectChainWrapper webLabel={webLabel} chainChanged={chainChanged} />
+      <SelectChainWrapper webLabel={'Deposit Assets to'} chainChanged={chainChanged} />
       <div className={styles['select-network-wrapper']}>
+        <SelectToken
+          type={SideMenuKey.Deposit}
+          selected={currentToken}
+          selectCallback={onTokenChanged}
+          tokenList={tokenList}
+        />
+      </div>
+      <div
+        className={clsx(
+          styles['select-network-wrapper'],
+          currentSymbol === '' && styles['select-network-hidden'],
+        )}>
         <SelectNetwork
           type={SideMenuKey.Deposit}
           networkList={networkList}
@@ -70,6 +85,7 @@ export default function WebContent({
               minimumDeposit={depositInfo.minAmount}
               contractAddress={contractAddress}
               contractAddressLink={contractAddressLink}
+              minAmountUsd={depositInfo.minAmountUsd || ''}
             />
           </div>
           {renderDepositDescription}

@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { Form } from 'antd';
+import { Form, Tooltip } from 'antd';
 import clsx from 'clsx';
 import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
 import CommonButton from 'components/CommonButton';
 import FormTextarea from 'components/FormTextarea';
 import SelectNetwork from 'pageComponents/SelectNetwork';
+import SelectToken from 'pageComponents/SelectToken';
 import DoubleCheckModal from './DoubleCheckModal';
 import SuccessModal from './SuccessModal';
 import FailModal from './FailModal';
@@ -15,16 +16,17 @@ import {
   GetNetworkListRequest,
   BusinessType,
   GetWithdrawInfoRequest,
+  TokenItem,
+  NetworkStatus,
 } from 'types/api';
 import {
   useAppDispatch,
   useCommonState,
   useLoading,
-  useTokenState,
   useUserActionState,
 } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { ADDRESS_MAP, IChainNameItem, USDT_DECIMAL } from 'constants/index';
+import { ADDRESS_MAP, IChainNameItem } from 'constants/index';
 import { createWithdrawOrder, getNetworkList, getWithdrawInfo } from 'utils/api/deposit';
 import {
   CONTRACT_ADDRESS,
@@ -59,6 +61,7 @@ import {
   InsufficientAllowanceMessage,
   WithdrawAddressErrorCodeList,
   WithdrawSendTxErrorCodeList,
+  RemainingWithdrawalQuotaTooltip,
 } from 'constants/withdraw';
 import { CommonErrorNameType } from 'api/types';
 import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
@@ -70,6 +73,10 @@ import { formatWithCommas, parseWithCommas, parseWithStringCommas } from 'utils/
 import { sleep } from 'utils/common';
 import { devices } from '@portkey/utils';
 import { ConnectWalletError } from 'constants/wallet';
+import { useWithdraw } from 'hooks/withdraw';
+import { QuestionMarkIcon } from 'assets/images';
+import { InitWithdrawTokenState } from 'store/reducers/token/slice';
+import RemainingQuato from './RemainingQuato';
 
 enum ValidateStatus {
   Error = 'error',
@@ -78,18 +85,18 @@ enum ValidateStatus {
 }
 
 enum FormKeys {
+  TOKEN = 'token',
   ADDRESS = 'address',
   NETWORK = 'network',
   AMOUNT = 'amount',
 }
 
 type FormValuesType = {
+  [FormKeys.TOKEN]: string;
   [FormKeys.ADDRESS]: string;
   [FormKeys.NETWORK]: NetworkItem;
   [FormKeys.AMOUNT]: string;
 };
-
-const CheckNumberReg = /^[0-9]{1,9}((\.\d)|(\.\d{1,6}))?$/;
 
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
@@ -97,7 +104,7 @@ export default function WithdrawContent() {
   const { isMobilePX, currentChainItem, currentVersion } = useCommonState();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
   const accounts = useAccounts();
-  const { currentSymbol, tokenList } = useTokenState();
+  const { currentSymbol, tokenList } = useWithdraw();
   const { withdraw } = useUserActionState();
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
@@ -120,6 +127,7 @@ export default function WithdrawContent() {
   const [formValidateData, setFormValidateData] = useState<{
     [key in FormKeys]: { validateStatus: ValidateStatus; errorMessage: string };
   }>({
+    [FormKeys.TOKEN]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
     [FormKeys.ADDRESS]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
     [FormKeys.NETWORK]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
     [FormKeys.AMOUNT]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
@@ -127,7 +135,6 @@ export default function WithdrawContent() {
   const [isTransactionFeeLoading, setIsTransactionFeeLoading] = useState(false);
 
   const getTransactionFeeTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const preReceiveAmountRef = useRef('');
 
   const minAmount = useMemo(() => {
     return withdrawInfo?.minAmount || '0.2';
@@ -144,19 +151,25 @@ export default function WithdrawContent() {
     } else {
       result = BigNumber(balance).minus(BigNumber(withdrawInfo.transactionFee)).toFixed();
     }
-    preReceiveAmountRef.current = result;
+
     return result;
   }, [balance, minAmount, withdrawInfo.transactionFee]);
 
   const getMaxBalanceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const currentTokenDecimal = useMemo(() => {
-    const res = tokenList.filter((item) => item.symbol === currentSymbol);
-    if (res.length > 0 && res[0]?.decimals) {
-      return res[0].decimals;
+  const currentToken = useMemo(() => {
+    if (Array.isArray(tokenList) && tokenList.length > 0) {
+      return tokenList.find((item) => item.symbol === currentSymbol) as TokenItem;
     }
-    return USDT_DECIMAL;
+    return InitWithdrawTokenState.tokenList[0];
   }, [currentSymbol, tokenList]);
+
+  const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
+
+  const currentTokenAddress = useMemo(
+    () => currentToken.contractAddress,
+    [currentToken.contractAddress],
+  );
 
   const onSubmit = () => {
     if (!currentNetwork) return;
@@ -173,21 +186,37 @@ export default function WithdrawContent() {
             withdrawInfo.remainingLimit !== '' &&
             new BigNumber(withdrawInfo.remainingLimit).isEqualTo(0),
         })}>
-        <span className={styles['remaining-limit-label']}>
-          {isMobilePX && '• '}Remaining Withdrawal Quota{isMobilePX && ':'}
-        </span>
         <span className={styles['remaining-limit-value']}>
-          {withdrawInfo.remainingLimit && withdrawInfo.totalLimit
-            ? `${withdrawInfo.remainingLimit} ${withdrawInfo.limitCurrency} / ${withdrawInfo.totalLimit} 
-          ${withdrawInfo.limitCurrency}`
-            : '--'}
+          {withdrawInfo.remainingLimit && withdrawInfo.totalLimit ? (
+            <>
+              {`${new BigNumber(withdrawInfo.remainingLimit).toFormat()} /
+               ${new BigNumber(withdrawInfo.totalLimit).toFormat()}`}
+              <span className={styles['remaining-limit-value-limitcurrency']}>
+                {withdrawInfo.limitCurrency}
+              </span>
+            </>
+          ) : (
+            '--'
+          )}
+          <RemainingQuato title={RemainingWithdrawalQuotaTooltip}></RemainingQuato>
+        </span>
+        <span className={styles['remaining-limit-label']}>
+          {isMobilePX && '• 24-Hour Limit：'}
+          {!isMobilePX && (
+            <Tooltip
+              className={clsx(styles['question-label'])}
+              placement="top"
+              title={RemainingWithdrawalQuotaTooltip}>
+              24-Hour Limit <QuestionMarkIcon />
+            </Tooltip>
+          )}
         </span>
       </div>
     );
   }, [
-    withdrawInfo.limitCurrency,
     withdrawInfo.remainingLimit,
     withdrawInfo.totalLimit,
+    withdrawInfo.limitCurrency,
     isMobilePX,
   ]);
 
@@ -215,6 +244,33 @@ export default function WithdrawContent() {
       });
     },
     [judgeIsSubmitDisabled],
+  );
+
+  const handleMinimumAmountValidate = useCallback(
+    (amount: any, minAmount: string, transactionUnit: string): boolean => {
+      if (!amount) {
+        handleFormValidateDataChange({
+          [FormKeys.AMOUNT]: {
+            validateStatus: ValidateStatus.Normal,
+            errorMessage: '',
+          },
+        });
+        return false;
+      }
+      const parserNumber = Number(parseWithCommas(amount));
+      if (parserNumber < Number(parseWithCommas(minAmount))) {
+        handleFormValidateDataChange({
+          [FormKeys.AMOUNT]: {
+            validateStatus: ValidateStatus.Error,
+            errorMessage: `The minimum amount is ${minAmount} ${transactionUnit}. Please enter a value no less than this.`,
+          },
+        });
+        return false;
+      }
+
+      return true;
+    },
+    [handleFormValidateDataChange],
   );
 
   const getAllNetworkData = useCallback(async () => {
@@ -252,7 +308,7 @@ export default function WithdrawContent() {
         setNetworkList(networkList);
         dispatch(setWithdrawNetworkList(networkList));
 
-        if (networkList?.length === 1) {
+        if (networkList?.length === 1 && networkList[0].status !== NetworkStatus.Offline) {
           setCurrentNetwork(networkList[0]);
           currentNetworkRef.current = networkList[0];
           dispatch(setWithdrawCurrentNetwork(networkList[0]));
@@ -323,34 +379,51 @@ export default function WithdrawContent() {
     [dispatch, getAllNetworkData, handleFormValidateDataChange],
   );
 
-  const getWithdrawData = useCallback(async () => {
-    try {
-      setIsTransactionFeeLoading(true);
-      const params: GetWithdrawInfoRequest = {
-        chainId: currentChainItemRef.current.key,
-        symbol: currentSymbol,
-        version: currentVersion,
-      };
-      if (currentNetworkRef.current?.network) {
-        params.network = currentNetworkRef.current?.network;
-      }
-      const res = await getWithdrawInfo(params);
+  const getWithdrawData = useCallback(
+    async (item?: TokenItem) => {
+      const symbol = item?.symbol || currentSymbol;
+      try {
+        setIsTransactionFeeLoading(true);
+        const params: GetWithdrawInfoRequest = {
+          chainId: currentChainItemRef.current.key,
+          symbol,
+          version: currentVersion,
+        };
+        if (currentNetworkRef.current?.network) {
+          params.network = currentNetworkRef.current?.network;
+        }
+        // params add amount to get amountUsd、receiveAmountUsd
+        const amount = form.getFieldValue(FormKeys.AMOUNT);
+        if (amount) {
+          params.amount = amount;
+        }
 
-      setWithdrawInfo(res.withdrawInfo);
-      setIsTransactionFeeLoading(false);
-    } catch (error: any) {
-      setWithdrawInfo(initialWithdrawInfo);
-      if (error.name !== CommonErrorNameType.CANCEL) {
-        singleMessage.error(handleErrorMessage(error));
+        const res = await getWithdrawInfo(params);
+
+        setWithdrawInfo(res.withdrawInfo);
         setIsTransactionFeeLoading(false);
+
+        handleMinimumAmountValidate(
+          amount,
+          res.withdrawInfo?.minAmount || '0.2',
+          res.withdrawInfo.transactionUnit,
+        );
+      } catch (error: any) {
+        // when network error, transactionUnit should as the same with symbol
+        setWithdrawInfo({ ...initialWithdrawInfo, transactionUnit: symbol });
+        if (error.name !== CommonErrorNameType.CANCEL) {
+          singleMessage.error(handleErrorMessage(error));
+          setIsTransactionFeeLoading(false);
+        }
       }
-    }
-  }, [currentSymbol, currentVersion]);
+    },
+    [currentSymbol, currentVersion, form, handleMinimumAmountValidate],
+  );
 
   useEffect(() => {
     if (
       (currentNetwork?.network === 'SETH' || currentNetwork?.network === 'ETH') &&
-      Number(withdrawInfo.transactionFee) > 60
+      Number(withdrawInfo.feeUsd) > 60
     ) {
       handleFormValidateDataChange({
         [FormKeys.NETWORK]: {
@@ -367,55 +440,49 @@ export default function WithdrawContent() {
         },
       });
     }
-  }, [currentNetwork?.network, handleFormValidateDataChange, withdrawInfo.transactionFee]);
+  }, [currentNetwork?.network, handleFormValidateDataChange, withdrawInfo.feeUsd]);
 
-  const getMaxBalance = useCallback(async () => {
-    try {
-      console.log('🌈 currentVersion', currentVersion);
-      const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
-      if (!caAddress || !currentVersion) return '';
-      const maxBalance = await getBalance({
-        symbol: currentSymbol,
-        chainId: currentChainItemRef.current.key,
-        caAddress,
-        version: currentVersion,
-      });
-      const tempMaxBalance = divDecimals(maxBalance, currentTokenDecimal).toFixed();
-      setMaxBalance(tempMaxBalance);
-      return tempMaxBalance;
-    } catch (error) {
-      singleMessage.error(handleErrorMessage(error));
-      throw new Error('Failed to get balance.');
-    }
-  }, [accounts, currentSymbol, currentTokenDecimal, currentVersion]);
+  const getMaxBalance = useCallback(
+    async (item?: TokenItem) => {
+      try {
+        const symbol = item?.symbol || currentSymbol;
+        const decimal = item?.decimals || currentTokenDecimal;
+        const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
+        if (!caAddress || !currentVersion) return '';
+        const maxBalance = await getBalance({
+          symbol: symbol,
+          chainId: currentChainItemRef.current.key,
+          caAddress,
+          version: currentVersion,
+        });
+        const tempMaxBalance = divDecimals(maxBalance, decimal).toFixed();
+        setMaxBalance(tempMaxBalance);
+        return tempMaxBalance;
+      } catch (error) {
+        singleMessage.error(handleErrorMessage(error));
+        throw new Error('Failed to get balance.');
+      }
+    },
+    [accounts, currentSymbol, currentTokenDecimal, currentVersion],
+  );
 
-  const getMaxBalanceInterval = useCallback(async () => {
-    if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
-    getMaxBalanceTimerRef.current = setInterval(async () => {
-      await getMaxBalance();
-    }, 8000);
-  }, [getMaxBalance]);
+  const getMaxBalanceInterval = useCallback(
+    async (item?: TokenItem) => {
+      if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
+      getMaxBalanceTimerRef.current = setInterval(async () => {
+        await getMaxBalance(item);
+      }, 8000);
+    },
+    [getMaxBalance],
+  );
 
   const handleAmountValidate = useCallback(() => {
     const amount = form.getFieldValue(FormKeys.AMOUNT);
-    if (!amount) {
-      handleFormValidateDataChange({
-        [FormKeys.AMOUNT]: {
-          validateStatus: ValidateStatus.Normal,
-          errorMessage: '',
-        },
-      });
+    const parserNumber = Number(parseWithCommas(amount));
+    if (!handleMinimumAmountValidate(amount, minAmount, withdrawInfo.transactionUnit)) {
       return;
     }
-    const parserNumber = Number(parseWithCommas(amount));
-    if (parserNumber < Number(parseWithCommas(minAmount))) {
-      handleFormValidateDataChange({
-        [FormKeys.AMOUNT]: {
-          validateStatus: ValidateStatus.Error,
-          errorMessage: `The minimum amount is ${minAmount} ${withdrawInfo.transactionUnit}. Please enter a value no less than this.`,
-        },
-      });
-    } else if (
+    if (
       withdrawInfo.remainingLimit &&
       parserNumber > Number(parseWithCommas(withdrawInfo.remainingLimit))
     ) {
@@ -425,6 +492,7 @@ export default function WithdrawContent() {
           errorMessage: AmountGreaterThanBalanceMessage,
         },
       });
+      return;
     } else if (parserNumber > Number(parseWithCommas(maxBalance))) {
       handleFormValidateDataChange({
         [FormKeys.AMOUNT]: {
@@ -433,6 +501,7 @@ export default function WithdrawContent() {
             'Insufficient balance. Please consider transferring a smaller amount or topping up before you try again.',
         },
       });
+      return;
     } else {
       handleFormValidateDataChange({
         [FormKeys.AMOUNT]: {
@@ -440,10 +509,13 @@ export default function WithdrawContent() {
           errorMessage: '',
         },
       });
+
+      return true;
     }
   }, [
     form,
     handleFormValidateDataChange,
+    handleMinimumAmountValidate,
     maxBalance,
     minAmount,
     withdrawInfo.remainingLimit,
@@ -470,10 +542,8 @@ export default function WithdrawContent() {
           address: form.getFieldValue(FormKeys.ADDRESS) || undefined,
         });
         await getWithdrawData();
-
-        setLoading(false);
       } catch (error) {
-        setLoading(false);
+        console.log('Change chain error: ', error);
       } finally {
         setLoading(false);
       }
@@ -500,7 +570,6 @@ export default function WithdrawContent() {
     getTransactionFeeTimerRef.current = setInterval(async () => {
       if (new Date().getTime() > withdrawInfo.expiredTimestamp) {
         await getWithdrawData();
-        handleAmountValidate();
       }
     }, 10000);
     return () => {
@@ -542,24 +611,22 @@ export default function WithdrawContent() {
     }
 
     const ownerAddress = accounts?.[currentChainItemRef.current.key]?.[0] || '';
-    const approveTargetAddress =
-      ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.ETRANSFER];
 
     const checkRes = await checkTokenAllowanceAndApprove({
       tokenContract,
       symbol: currentSymbol,
       address: ownerAddress,
-      approveTargetAddress,
+      approveTargetAddress: currentTokenAddress,
       amount: balance,
     });
 
     return checkRes;
-  }, [accounts, balance, currentSymbol, currentVersion, getMaxBalance]);
+  }, [accounts, balance, currentSymbol, currentTokenAddress, currentVersion, getMaxBalance]);
 
   const handleCreateWithdrawOrder = useCallback(
     async ({ address, rawTransaction }: { address: string; rawTransaction: string }) => {
       try {
-        if (!currentNetworkRef.current?.network) throw new Error('please selected network');
+        if (!currentNetworkRef.current?.network) throw new Error('Please selected network');
 
         const createWithdrawOrderRes = await createWithdrawOrder({
           network: currentNetworkRef.current.network,
@@ -579,6 +646,7 @@ export default function WithdrawContent() {
             symbol: currentSymbol,
             chainItem: currentChainItemRef.current,
             arriveTime: currentNetworkRef.current.multiConfirmTime,
+            receiveAmountUsd: withdrawInfo.receiveAmountUsd,
           });
           setIsSuccessModalOpen(true);
         } else {
@@ -597,11 +665,10 @@ export default function WithdrawContent() {
         setIsDoubleCheckModalOpen(false);
       }
     },
-    [balance, currentSymbol, receiveAmount, setLoading],
+    [balance, currentSymbol, receiveAmount, setLoading, withdrawInfo.receiveAmountUsd],
   );
 
   const sendTransferTokenTransaction = useDebounceCallback(async () => {
-    console.log('🌈 🌈 🌈 🌈 🌈 🌈 sendTransferTokenTransaction');
     try {
       if (!currentVersion) throw new Error(ConnectWalletError);
       setLoading(true, { text: 'Please approve the transaction in the wallet...' });
@@ -620,8 +687,7 @@ export default function WithdrawContent() {
         const transaction = await createTransferTokenTransaction({
           caContractAddress:
             ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.CA],
-          eTransferContractAddress:
-            ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.ETRANSFER],
+          eTransferContractAddress: currentTokenAddress,
           caHash: portkeyWallet.caHash,
           symbol: currentSymbol,
           amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
@@ -647,10 +713,9 @@ export default function WithdrawContent() {
       console.log('sendTransferTokenTransaction error:', error);
       setIsFailModalOpen(true);
     } finally {
-      setLoading(false);
       setIsDoubleCheckModalOpen(false);
     }
-  }, [balance, currentSymbol, handleApproveToken, receiveAmount, setLoading]);
+  }, [balance, currentSymbol, currentTokenAddress, handleApproveToken, receiveAmount, setLoading]);
 
   const setMaxToken = useCallback(async () => {
     setBalance(maxBalance);
@@ -706,6 +771,37 @@ export default function WithdrawContent() {
     handleAmountValidate,
     handleFormValidateDataChange,
   ]);
+
+  const handleTokenChange = async (item: TokenItem) => {
+    // when network failed, transactionUnit should show as symbol
+    setWithdrawInfo({ ...withdrawInfo, transactionUnit: item.symbol });
+
+    try {
+      setLoading(true);
+      setBalance('');
+
+      // change token and empty form key's value
+      form.setFieldValue(FormKeys.AMOUNT, '');
+      form.setFieldValue(FormKeys.ADDRESS, '');
+      form.setFieldValue(FormKeys.NETWORK, '');
+      handleAmountValidate();
+      dispatch(setWithdrawAddress(''));
+      currentNetworkRef.current = undefined;
+      dispatch(setWithdrawCurrentNetwork(undefined));
+
+      // reset max balance
+      getMaxBalanceInterval(item);
+      getMaxBalance(item);
+
+      await getNetworkData({
+        symbol: item.symbol,
+        address: form.getFieldValue(FormKeys.ADDRESS) || undefined,
+      });
+      await getWithdrawData(item);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const onAddressChange = useCallback(
     (value: string | null) => {
@@ -765,8 +861,16 @@ export default function WithdrawContent() {
         <>
           {isTransactionFeeLoading && <SimpleLoading />}
           <span className={styles['transaction-fee-value-data']}>
-            {!isTransactionFeeLoading && `${withdrawInfo.transactionFee} `}
-            {withdrawInfo.transactionUnit} + {withdrawInfo.aelfTransactionFee}{' '}
+            {!isTransactionFeeLoading &&
+              `${(!isSuccessModalOpen && withdrawInfo.transactionFee) || '--'} `}
+            <span
+              className={clsx(
+                styles['transaction-fee-value-data-default'],
+                styles['transaction-fee-value-data-unit'],
+              )}>
+              {withdrawInfo.transactionUnit}
+            </span>
+            + {(!isSuccessModalOpen && withdrawInfo.aelfTransactionFee) || '--'}
             {withdrawInfo.aelfTransactionUnit}
           </span>
         </>
@@ -779,11 +883,27 @@ export default function WithdrawContent() {
       <SelectChainWrapper
         mobileTitle="Withdraw from"
         mobileLabel="from"
-        webLabel="Withdraw USDT from"
+        webLabel={'Withdraw Assets from'}
         chainChanged={(item: IChainNameItem) => handleChainChanged(item)}
       />
       <div>
         <Form className={styles['form-wrapper']} layout="vertical" requiredMark={false} form={form}>
+          <div className={styles['form-item-wrapper']}>
+            <Form.Item
+              className={styles['form-item']}
+              label="Withdrawal Assets"
+              name={FormKeys.TOKEN}
+              validateStatus={formValidateData[FormKeys.TOKEN].validateStatus}
+              help={formValidateData[FormKeys.TOKEN].errorMessage}>
+              <SelectToken
+                isFormItemStyle
+                type={SideMenuKey.Withdraw}
+                selected={currentToken}
+                selectCallback={handleTokenChange}
+                tokenList={tokenList}
+              />
+            </Form.Item>
+          </div>
           <div className={styles['form-item-wrapper']}>
             <Form.Item
               className={styles['form-item']}
@@ -844,23 +964,28 @@ export default function WithdrawContent() {
                 }}
                 autoComplete="off"
                 placeholder={`Minimum: ${minAmount}`}
-                max={999999999.999999}
                 onInput={(event: any) => {
                   const value = event.target?.value.trim();
+                  const oldValue = form.getFieldValue(FormKeys.AMOUNT);
+
+                  // CHECK1: not empty
                   if (!value) return (event.target.value = '');
 
+                  // CHECK2: comma count
+                  const commaCount = value.match(/\./gim)?.length;
+                  if (commaCount > 1) {
+                    return (event.target.value = oldValue);
+                  }
+
+                  // CHECK3: input number and decimal count
                   const lastNumber = value.charAt(value.length - 1);
                   const valueNotComma = parseWithStringCommas(value);
-                  const commaCount = value.match(/\./gim)?.length;
-
-                  if (commaCount > 1) {
-                    return (event.target.value = form.getFieldValue(FormKeys.AMOUNT));
-                  }
+                  const stringReg = `^[0-9]{1,9}((\\.\\d)|(\\.\\d{0,${currentTokenDecimal}}))?$`;
+                  const CheckNumberReg = new RegExp(stringReg);
 
                   if (!CheckNumberReg.exec(valueNotComma)) {
                     if (lastNumber !== '.') {
-                      event.target.value = form.getFieldValue(FormKeys.AMOUNT);
-                      return;
+                      return (event.target.value = oldValue);
                     }
                   } else {
                     const beforePoint = formatWithCommas({ amount: valueNotComma });
@@ -884,7 +1009,9 @@ export default function WithdrawContent() {
                   setBalance(valueNotComma || '');
                 }}
                 onBlur={() => {
-                  handleAmountValidate();
+                  if (handleAmountValidate()) {
+                    getWithdrawData();
+                  }
                 }}
               />
             </Form.Item>
@@ -895,7 +1022,7 @@ export default function WithdrawContent() {
               styles['info-wrapper'],
               styles['balance-info-wrapper'],
             )}>
-            <div className={styles['info-label']}>{withdrawInfo.transactionUnit} Balance</div>
+            <div className={styles['info-label']}>Balance</div>
             <div className={styles['info-value']}>
               {maxBalance} {withdrawInfo.transactionUnit}
             </div>
@@ -931,10 +1058,8 @@ export default function WithdrawContent() {
                     styles['info-value-big-font'],
                   )}>
                   {isTransactionFeeLoading && <SimpleLoading />}
-                  <span>
-                    {!isTransactionFeeLoading && `${receiveAmount || '--'} `}
-                    {withdrawInfo.transactionUnit}
-                  </span>
+                  {!isTransactionFeeLoading && `${(!isSuccessModalOpen && receiveAmount) || '--'} `}
+                  <span className={clsx(styles['info-unit'])}>{withdrawInfo.transactionUnit}</span>
                 </div>
               </div>
             </div>
@@ -969,6 +1094,9 @@ export default function WithdrawContent() {
             name: withdrawInfo.aelfTransactionUnit,
           },
           symbol: currentSymbol,
+          amountUsd: withdrawInfo.amountUsd,
+          receiveAmountUsd: withdrawInfo.receiveAmountUsd,
+          feeUsd: withdrawInfo.feeUsd,
         }}
         modalProps={{
           open: isDoubleCheckModalOpen,

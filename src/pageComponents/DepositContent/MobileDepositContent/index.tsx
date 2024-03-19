@@ -3,8 +3,8 @@ import clsx from 'clsx';
 import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
 import CommonAddress from 'components/CommonAddress';
 import SelectNetwork from 'pageComponents/SelectNetwork';
-import DepositInfo from 'pageComponents/Deposit/DepositInfo';
-import DepositDescription from 'pageComponents/Deposit/DepositDescription';
+import DepositInfo from 'pageComponents/DepositContent/DepositInfo';
+import DepositDescription from 'pageComponents/DepositContent/DepositDescription';
 import styles from './styles.module.scss';
 import { DepositContentProps } from '..';
 import CommonQRCode from 'components/CommonQRCode';
@@ -12,7 +12,8 @@ import { DEPOSIT_ADDRESS_LABEL } from 'constants/deposit';
 import CommonImage from 'components/CommonImage';
 import { qrCodePlaceholder } from 'assets/images';
 import { SideMenuKey } from 'constants/home';
-import { DepositRetryForMobile } from 'pageComponents/DepositRetry';
+import { DepositRetryForMobile } from 'pageComponents/DepositContent/DepositRetry';
+import SelectToken from 'pageComponents/SelectToken';
 
 export default function MobileDepositContent({
   networkList,
@@ -24,20 +25,39 @@ export default function MobileDepositContent({
   tokenLogoUrl,
   showRetry = false,
   isShowLoading = false,
+  currentToken,
+  tokenList,
   onRetry,
   chainChanged,
   networkChanged,
+  onTokenChanged,
 }: DepositContentProps) {
+  const renderSelectToken = ({ noBorder }: { noBorder?: boolean } = {}) => {
+    return (
+      <>
+        <SelectToken
+          type={SideMenuKey.Deposit}
+          selected={currentToken}
+          selectCallback={onTokenChanged}
+          tokenList={tokenList}
+          noBorder={noBorder}
+        />
+      </>
+    );
+  };
+
   const renderSelectNetwork = ({ noBorder }: { noBorder?: boolean } = {}) => {
     return (
-      <SelectNetwork
-        type={SideMenuKey.Deposit}
-        networkList={networkList}
-        selectCallback={networkChanged}
-        selected={networkSelected}
-        noBorder={noBorder}
-        isShowLoading={isShowLoading}
-      />
+      <>
+        <SelectNetwork
+          type={SideMenuKey.Deposit}
+          networkList={networkList}
+          selectCallback={networkChanged}
+          selected={networkSelected}
+          noBorder={noBorder}
+          isShowLoading={isShowLoading}
+        />
+      </>
     );
   };
 
@@ -68,9 +88,13 @@ export default function MobileDepositContent({
             />
           )}
         </div>
+        {!currentToken && renderSelectToken()}
+
         {networkSelected ? (
           <>
             <div className={styles['data-wrapper']}>
+              {renderSelectToken({ noBorder: true })}
+              <div className={styles['data-divider']} />
               {renderSelectNetwork({ noBorder: true })}
               <div className={styles['data-divider']} />
               <div className={styles['data-address-wrapper']}>
@@ -88,6 +112,7 @@ export default function MobileDepositContent({
                     minimumDeposit={depositInfo.minAmount}
                     contractAddress={contractAddress}
                     contractAddressLink={contractAddressLink}
+                    minAmountUsd={depositInfo.minAmountUsd}
                   />
                 </div>
                 {renderDepositDescription}
@@ -95,7 +120,15 @@ export default function MobileDepositContent({
             )}
           </>
         ) : (
-          renderSelectNetwork()
+          <>
+            {currentToken !== undefined && (
+              <div className={styles['data-wrapper']}>
+                {renderSelectToken({ noBorder: true })}
+                <div className={styles['data-divider']} />
+                {renderSelectNetwork({ noBorder: true })}
+              </div>
+            )}
+          </>
         )}
       </div>
     </>

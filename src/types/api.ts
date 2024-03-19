@@ -49,6 +49,7 @@ export type NetworkItem = {
 export enum NetworkStatus {
   Health = 'Health',
   Congesting = 'Congesting',
+  Offline = 'Offline',
 }
 
 export type GetDepositInfoRequest = {
@@ -65,6 +66,7 @@ export type DepositInfo = {
   depositAddress: string;
   minAmount: string;
   extraNotes?: string[];
+  minAmountUsd: string;
 };
 
 export type GetWithdrawInfoRequest = {
@@ -98,6 +100,9 @@ export type WithdrawInfo = {
   aelfTransactionUnit: string;
   receiveAmount: string;
   feeList: FeeItem[];
+  receiveAmountUsd: string;
+  amountUsd: string;
+  feeUsd: string;
 };
 
 export type FeeItem = {

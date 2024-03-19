@@ -11,10 +11,12 @@ import clsx from 'clsx';
 import { getTokenList } from 'utils/api/deposit';
 import { BusinessType } from 'types/api';
 import { setCurrentSymbol, setTokenList } from 'store/reducers/token/slice';
+import { useWithdraw } from 'hooks/withdraw';
 
 export default function Content() {
   const dispatch = useAppDispatch();
   const { activeMenuKey, currentChainItem } = useCommonState();
+  const { currentSymbol: withdrawCurrentSymbol } = useWithdraw();
   const router = useRouter();
   const searchParams = useSearchParams(); // TODO
   // const params: EntryConfig = useParams();
@@ -41,14 +43,25 @@ export default function Content() {
         type: activeMenuKey as unknown as BusinessType,
         chainId: currentChainItem.key,
       });
-      dispatch(setTokenList(res.tokenList));
 
-      if (isInitCurrentSymbol) {
-        dispatch(setCurrentSymbol(res.tokenList[0].symbol));
+      dispatch(
+        setTokenList({
+          key: activeMenuKey as unknown as BusinessType,
+          data: res.tokenList,
+        }),
+      );
+
+      if (isInitCurrentSymbol && activeMenuKey === SideMenuKey.Withdraw && !withdrawCurrentSymbol) {
+        dispatch(
+          setCurrentSymbol({
+            key: activeMenuKey as unknown as BusinessType,
+            symbol: res.tokenList[0].symbol,
+          }),
+        );
         return;
       }
     },
-    [activeMenuKey, currentChainItem.key, dispatch],
+    [activeMenuKey, currentChainItem.key, dispatch, withdrawCurrentSymbol],
   );
 
   useEffect(() => {
@@ -60,13 +73,18 @@ export default function Content() {
       dispatch(setCurrentChainItem(ChainItemKey[0]));
     }
     if (routeQuery.tokenSymbol) {
-      dispatch(setCurrentSymbol(routeQuery.tokenSymbol));
+      dispatch(
+        setCurrentSymbol({
+          key: activeMenuKey as unknown as BusinessType,
+          symbol: routeQuery.tokenSymbol,
+        }),
+      );
       getToken(false);
     } else {
       getToken(true);
     }
     router.push('/');
-  }, [dispatch, getToken, routeQuery, router]);
+  }, [activeMenuKey, dispatch, getToken, routeQuery, router]);
 
   const content = useMemo(
     () =>

@@ -92,24 +92,20 @@ export const ADDRESS_MAP = {
     [SupportedELFChainId.AELF]: {
       [ContractType.CA]: AELF_Test.CA_CONTRACT,
       [ContractType.TOKEN]: AELF_Test.TOKEN_CONTRACT,
-      [ContractType.ETRANSFER]: AELF_Test.ETRANSFER_CONTRACT,
     },
     [SupportedELFChainId.tDVW]: {
       [ContractType.CA]: tDVW_Test.CA_CONTRACT,
       [ContractType.TOKEN]: tDVW_Test.TOKEN_CONTRACT,
-      [ContractType.ETRANSFER]: tDVW_Test.ETRANSFER_CONTRACT,
     },
   },
   [PortkeyVersion.v2]: {
     [SupportedELFChainId.AELF]: {
       [ContractType.CA]: AELF_Test.CA_CONTRACT_V2,
       [ContractType.TOKEN]: AELF_Test.TOKEN_CONTRACT,
-      [ContractType.ETRANSFER]: AELF_Test.ETRANSFER_CONTRACT,
     },
     [SupportedELFChainId.tDVW]: {
       [ContractType.CA]: tDVW_Test.CA_CONTRACT_V2,
       [ContractType.TOKEN]: tDVW_Test.TOKEN_CONTRACT,
-      [ContractType.ETRANSFER]: tDVW_Test.ETRANSFER_CONTRACT,
     },
   },
 };

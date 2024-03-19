@@ -6,7 +6,8 @@
 }
 
 .info-title,
-.info-value {
+.info-value,
+.info-exhibit {
   font-size: 12px;
   line-height: 16px;
 }
@@ -22,7 +23,17 @@
   color: $primary-text;
 }
 
+.info-exhibit {
+  color: $secondary-text;
+  line-height: 16px;
+}
+
 .addressEllipsis {
   gap: 4px;
   cursor: pointer;
+}
+
+.question-mark-icon {
+  width: 12px;
+  height: 12px;
 }

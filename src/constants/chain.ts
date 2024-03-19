@@ -7,7 +7,6 @@ export enum AllSupportedELFChainId {
 export enum ContractType {
   CA = 'CA_CONTRACT',
   TOKEN = 'TOKEN_CONTRACT',
-  ETRANSFER = 'ETRANSFER_CONTRACT',
 }
 
 export const SynchronizingAddress = 'Synchronising data on the blockchain…';
