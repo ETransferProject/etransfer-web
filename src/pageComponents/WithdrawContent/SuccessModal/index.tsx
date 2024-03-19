@@ -27,7 +27,9 @@ export default function SuccessModal({ withdrawInfo, modalProps }: SuccessModalP
             Amount to Be Received on {withdrawInfo.network.name}
           </div>
           <div className={styles['value']}>
-            {withdrawInfo.receiveAmount || '--'} {withdrawInfo.symbol}
+            <span className={styles['value-center']}>
+              {withdrawInfo.receiveAmount || '--'} {withdrawInfo.symbol}
+            </span>
             <div className={clsx(styles['receive-amount-usd'])}>
               {valueFixed2LessThanMin(withdrawInfo.receiveAmountUsd, '$ ')}
             </div>
