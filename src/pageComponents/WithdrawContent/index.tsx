@@ -246,33 +246,6 @@ export default function WithdrawContent() {
     [judgeIsSubmitDisabled],
   );
 
-  const handleMinimumAmountValidate = useCallback(
-    (amount: any, minAmount: string, transactionUnit: string): boolean => {
-      if (!amount) {
-        handleFormValidateDataChange({
-          [FormKeys.AMOUNT]: {
-            validateStatus: ValidateStatus.Normal,
-            errorMessage: '',
-          },
-        });
-        return false;
-      }
-      const parserNumber = Number(parseWithCommas(amount));
-      if (parserNumber < Number(parseWithCommas(minAmount))) {
-        handleFormValidateDataChange({
-          [FormKeys.AMOUNT]: {
-            validateStatus: ValidateStatus.Error,
-            errorMessage: `The minimum amount is ${minAmount} ${transactionUnit}. Please enter a value no less than this.`,
-          },
-        });
-        return false;
-      }
-
-      return true;
-    },
-    [handleFormValidateDataChange],
-  );
-
   const getAllNetworkData = useCallback(async () => {
     // only get data and render page, don't update error
     try {
@@ -379,6 +352,70 @@ export default function WithdrawContent() {
     [dispatch, getAllNetworkData, handleFormValidateDataChange],
   );
 
+  const handleAmountValidate = useCallback(
+    (newMinAmount?: string, newTransactionUnit?: string) => {
+      const amount = form.getFieldValue(FormKeys.AMOUNT);
+      if (!amount) {
+        handleFormValidateDataChange({
+          [FormKeys.AMOUNT]: {
+            validateStatus: ValidateStatus.Normal,
+            errorMessage: '',
+          },
+        });
+        return;
+      }
+      const parserNumber = Number(parseWithCommas(amount));
+      const currentMinAmount = Number(parseWithCommas(newMinAmount || minAmount));
+      const currentTransactionUnit = newTransactionUnit || withdrawInfo.transactionUnit;
+      if (parserNumber < currentMinAmount) {
+        handleFormValidateDataChange({
+          [FormKeys.AMOUNT]: {
+            validateStatus: ValidateStatus.Error,
+            errorMessage: `The minimum amount is ${currentMinAmount} ${currentTransactionUnit}. Please enter a value no less than this.`,
+          },
+        });
+        return;
+      } else if (
+        withdrawInfo.remainingLimit &&
+        parserNumber > Number(parseWithCommas(withdrawInfo.remainingLimit))
+      ) {
+        handleFormValidateDataChange({
+          [FormKeys.AMOUNT]: {
+            validateStatus: ValidateStatus.Error,
+            errorMessage: AmountGreaterThanBalanceMessage,
+          },
+        });
+        return;
+      } else if (parserNumber > Number(parseWithCommas(maxBalance))) {
+        handleFormValidateDataChange({
+          [FormKeys.AMOUNT]: {
+            validateStatus: ValidateStatus.Error,
+            errorMessage:
+              'Insufficient balance. Please consider transferring a smaller amount or topping up before you try again.',
+          },
+        });
+        return;
+      } else {
+        handleFormValidateDataChange({
+          [FormKeys.AMOUNT]: {
+            validateStatus: ValidateStatus.Normal,
+            errorMessage: '',
+          },
+        });
+
+        return true;
+      }
+    },
+    [
+      form,
+      handleFormValidateDataChange,
+      maxBalance,
+      minAmount,
+      withdrawInfo.remainingLimit,
+      withdrawInfo.transactionUnit,
+    ],
+  );
+
   const getWithdrawData = useCallback(
     async (item?: TokenItem) => {
       const symbol = item?.symbol || currentSymbol;
@@ -403,11 +440,7 @@ export default function WithdrawContent() {
         setWithdrawInfo(res.withdrawInfo);
         setIsTransactionFeeLoading(false);
 
-        handleMinimumAmountValidate(
-          amount,
-          res.withdrawInfo?.minAmount || '0.2',
-          res.withdrawInfo.transactionUnit,
-        );
+        handleAmountValidate(res.withdrawInfo?.minAmount, res.withdrawInfo?.transactionUnit);
       } catch (error: any) {
         // when network error, transactionUnit should as the same with symbol
         setWithdrawInfo({ ...initialWithdrawInfo, transactionUnit: symbol });
@@ -417,7 +450,7 @@ export default function WithdrawContent() {
         }
       }
     },
-    [currentSymbol, currentVersion, form, handleMinimumAmountValidate],
+    [currentSymbol, currentVersion, form, handleAmountValidate],
   );
 
   useEffect(() => {
@@ -476,52 +509,6 @@ export default function WithdrawContent() {
     [getMaxBalance],
   );
 
-  const handleAmountValidate = useCallback(() => {
-    const amount = form.getFieldValue(FormKeys.AMOUNT);
-    const parserNumber = Number(parseWithCommas(amount));
-    if (!handleMinimumAmountValidate(amount, minAmount, withdrawInfo.transactionUnit)) {
-      return;
-    }
-    if (
-      withdrawInfo.remainingLimit &&
-      parserNumber > Number(parseWithCommas(withdrawInfo.remainingLimit))
-    ) {
-      handleFormValidateDataChange({
-        [FormKeys.AMOUNT]: {
-          validateStatus: ValidateStatus.Error,
-          errorMessage: AmountGreaterThanBalanceMessage,
-        },
-      });
-      return;
-    } else if (parserNumber > Number(parseWithCommas(maxBalance))) {
-      handleFormValidateDataChange({
-        [FormKeys.AMOUNT]: {
-          validateStatus: ValidateStatus.Error,
-          errorMessage:
-            'Insufficient balance. Please consider transferring a smaller amount or topping up before you try again.',
-        },
-      });
-      return;
-    } else {
-      handleFormValidateDataChange({
-        [FormKeys.AMOUNT]: {
-          validateStatus: ValidateStatus.Normal,
-          errorMessage: '',
-        },
-      });
-
-      return true;
-    }
-  }, [
-    form,
-    handleFormValidateDataChange,
-    handleMinimumAmountValidate,
-    maxBalance,
-    minAmount,
-    withdrawInfo.remainingLimit,
-    withdrawInfo.transactionUnit,
-  ]);
-
   const handleChainChanged = useCallback(
     async (item: IChainNameItem) => {
       try {
@@ -577,7 +564,7 @@ export default function WithdrawContent() {
         clearInterval(getTransactionFeeTimerRef.current);
       }
     };
-  }, [getWithdrawData, handleAmountValidate, withdrawInfo.expiredTimestamp]);
+  }, [getWithdrawData, withdrawInfo.expiredTimestamp]);
 
   const handleNetworkChanged = useCallback(
     async (item: NetworkItem) => {
@@ -739,7 +726,6 @@ export default function WithdrawContent() {
         address: address,
       });
       await getWithdrawData();
-      handleAmountValidate();
       return;
     } else if (address.length < 32 || address.length > 44) {
       handleFormValidateDataChange({
@@ -760,7 +746,6 @@ export default function WithdrawContent() {
     });
 
     await getWithdrawData();
-    handleAmountValidate();
   }, [
     currentSymbol,
     dispatch,
@@ -768,7 +753,6 @@ export default function WithdrawContent() {
     getAllNetworkData,
     getNetworkData,
     getWithdrawData,
-    handleAmountValidate,
     handleFormValidateDataChange,
   ]);
 
@@ -814,19 +798,17 @@ export default function WithdrawContent() {
     setIsSuccessModalOpen(false);
     setBalance('');
     form.setFieldValue(FormKeys.AMOUNT, '');
-    handleAmountValidate();
 
     getWithdrawData();
-  }, [form, getWithdrawData, handleAmountValidate]);
+  }, [form, getWithdrawData]);
 
   const clickFailedOk = useCallback(() => {
     setIsFailModalOpen(false);
     setBalance('');
     form.setFieldValue(FormKeys.AMOUNT, '');
-    handleAmountValidate();
 
     getWithdrawData();
-  }, [form, getWithdrawData, handleAmountValidate]);
+  }, [form, getWithdrawData]);
 
   useEffectOnce(() => {
     form.setFieldValue(FormKeys.ADDRESS, withdraw.address || '');
