@@ -36,7 +36,7 @@ export default function DoubleCheckModal({
     return (
       <>
         {isTransactionFeeLoading && <SimpleLoading />}
-        <span>
+        <span className={clsx(styles['receive-amount-center'])}>
           {!isTransactionFeeLoading && `${withdrawInfo.receiveAmount || '--'} `}
           {withdrawInfo.symbol}
         </span>
