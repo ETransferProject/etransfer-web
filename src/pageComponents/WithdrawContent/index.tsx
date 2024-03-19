@@ -247,7 +247,7 @@ export default function WithdrawContent() {
   );
 
   const handleMinimumAmountValidate = useCallback(
-    (amount: any, minAmount: string, transactionUnit: string) => {
+    (amount: any, minAmount: string, transactionUnit: string): boolean => {
       if (!amount) {
         handleFormValidateDataChange({
           [FormKeys.AMOUNT]: {
@@ -255,7 +255,7 @@ export default function WithdrawContent() {
             errorMessage: '',
           },
         });
-        return;
+        return false;
       }
       const parserNumber = Number(parseWithCommas(amount));
       if (parserNumber < Number(parseWithCommas(minAmount))) {
@@ -265,8 +265,10 @@ export default function WithdrawContent() {
             errorMessage: `The minimum amount is ${minAmount} ${transactionUnit}. Please enter a value no less than this.`,
           },
         });
-        return;
+        return false;
       }
+
+      return true;
     },
     [handleFormValidateDataChange],
   );
@@ -477,7 +479,9 @@ export default function WithdrawContent() {
   const handleAmountValidate = useCallback(() => {
     const amount = form.getFieldValue(FormKeys.AMOUNT);
     const parserNumber = Number(parseWithCommas(amount));
-    handleMinimumAmountValidate(amount, minAmount, withdrawInfo.transactionUnit);
+    if (!handleMinimumAmountValidate(amount, minAmount, withdrawInfo.transactionUnit)) {
+      return;
+    }
     if (
       withdrawInfo.remainingLimit &&
       parserNumber > Number(parseWithCommas(withdrawInfo.remainingLimit))
