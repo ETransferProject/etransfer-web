@@ -201,13 +201,13 @@ export default function WithdrawContent() {
           <RemainingQuato title={RemainingWithdrawalQuotaTooltip}></RemainingQuato>
         </span>
         <span className={styles['remaining-limit-label']}>
-          {isMobilePX && '• '}24-Hour Limit{isMobilePX && ':'}
+          {isMobilePX && '• 24-Hour Limit：'}
           {!isMobilePX && (
             <Tooltip
-              className={clsx(styles['question-mark'])}
+              className={clsx(styles['question-label'])}
               placement="top"
               title={RemainingWithdrawalQuotaTooltip}>
-              <QuestionMarkIcon />
+              24-Hour Limit <QuestionMarkIcon />
             </Tooltip>
           )}
         </span>
