@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import WebSelectChain from './WebSelectChain';
 import MobileSelectChain from './MobileSelectChain';
-import { CHAIN_LIST, CHAIN_LIST_SIDE_CHAIN } from 'constants/index';
+import { CHAIN_LIST, CHAIN_LIST_SIDE_CHAIN, IChainNameItem } from 'constants/index';
 import { useCommonState } from 'store/Provider/hooks';
 import { setCurrentChainItem } from 'store/reducers/common/slice';
 import { store } from 'store/Provider/store';
@@ -30,29 +30,34 @@ export default function SelectChain({ title, clickCallback }: SelectChainProps) 
     if (accounts?.[CHAIN_LIST[0].key]?.[0] && !currentChainItem) {
       store.dispatch(setCurrentChainItem(CHAIN_LIST[0]));
     }
+  }, [accounts, currentChainItem, currentSymbol]);
 
-    if (activeMenuKey === SideMenuKey.Deposit && currentSymbol?.includes('SGR')) {
-      store.dispatch(setCurrentChainItem(CHAIN_LIST_SIDE_CHAIN[0]));
-    }
-  }, [accounts, activeMenuKey, currentChainItem, currentSymbol]);
+  const onClickChain = useCallback(
+    async (item: IChainNameItem) => {
+      if (accounts?.[item.key]?.[0]) {
+        store.dispatch(setCurrentChainItem(item));
+        clickCallback(item);
+      } else {
+        setOpenSynchronizingModal(true);
+      }
+    },
+    [accounts, clickCallback],
+  );
 
   const dropdownProps: CommonSelectChainProps = useMemo(() => {
+    if (activeMenuKey === SideMenuKey.Deposit && currentSymbol?.includes('SGR')) {
+      onClickChain(CHAIN_LIST_SIDE_CHAIN[0]);
+    }
+
     return {
       menuItems:
         activeMenuKey === SideMenuKey.Deposit && currentSymbol?.includes('SGR')
           ? CHAIN_LIST_SIDE_CHAIN
           : CHAIN_LIST,
       selectedItem: currentChainItem,
-      onClick: async (item) => {
-        if (accounts?.[item.key]?.[0]) {
-          store.dispatch(setCurrentChainItem(item));
-          clickCallback(item);
-        } else {
-          setOpenSynchronizingModal(true);
-        }
-      },
+      onClick: onClickChain,
     };
-  }, [accounts, activeMenuKey, clickCallback, currentChainItem, currentSymbol]);
+  }, [activeMenuKey, currentChainItem, currentSymbol, onClickChain]);
 
   return (
     <>
