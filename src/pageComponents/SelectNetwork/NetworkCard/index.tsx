@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { SideMenuKey } from 'constants/home';
 import { NetworkStatus } from 'types/api';
+import { useMemo } from 'react';
 
 interface NetworkCardProps {
   type: SideMenuKey;
@@ -32,6 +33,12 @@ export function NetworkCardForMobile({
   onClick,
   status,
 }: NetworkCardProps) {
+  const getfeeContent = useMemo(() => {
+    return transactionFee
+      ? `Fee: ${transactionFee} ${transactionFeeUnit}`
+      : 'Failed to estimate the fee.';
+  }, [transactionFee, transactionFeeUnit]);
+
   return (
     <div
       className={clsx(
@@ -52,9 +59,7 @@ export function NetworkCardForMobile({
         <span>{multiConfirmTime}</span>
       </div>
       <div className={styles['network-card-confirm-time']}>
-        {type === SideMenuKey.Deposit
-          ? multiConfirm
-          : `Fee: ${transactionFee} ${transactionFeeUnit}`}
+        {type === SideMenuKey.Deposit ? multiConfirm : getfeeContent}
       </div>
     </div>
   );
@@ -73,6 +78,12 @@ export function NetworkCardForWeb({
   onClick,
   status,
 }: NetworkCardForWebProps) {
+  const getfeeContent = useMemo(() => {
+    return transactionFee
+      ? `Fee: ${transactionFee} ${transactionFeeUnit}`
+      : 'Failed to estimate the fee.';
+  }, [transactionFee, transactionFeeUnit]);
+
   return (
     <div
       className={clsx(
@@ -95,9 +106,7 @@ export function NetworkCardForWeb({
       <div className={clsx('flex-row-center-between', styles['network-card-row'])}>
         <span className={styles['network-card-name']}>{name}</span>
         <span className={styles['network-card-confirm-time']}>
-          {type === SideMenuKey.Deposit
-            ? multiConfirm
-            : `Fee: ${transactionFee || '-'} ${transactionFeeUnit || 'USDT'}`}
+          {type === SideMenuKey.Deposit ? multiConfirm : getfeeContent}
         </span>
       </div>
     </div>
