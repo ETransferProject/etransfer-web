@@ -50,7 +50,7 @@ export function NetworkCardForMobile({
       <div className={styles['network-card-name']}>
         {name}
         {status === NetworkStatus.Offline && (
-          <span className={styles['network-card-network-suspened']}>Suspended</span>
+          <span className={styles['network-card-network-suspend']}>Suspended</span>
         )}
       </div>
 
@@ -98,7 +98,7 @@ export function NetworkCardForWeb({
         <span className={styles['network-card-network']}>
           {network}
           {status === NetworkStatus.Offline && (
-            <span className={styles['network-card-network-suspened']}>Suspended</span>
+            <span className={styles['network-card-network-suspend']}>Suspended</span>
           )}
         </span>
         <span className={styles['network-card-arrival-time']}>≈ {multiConfirmTime}</span>
