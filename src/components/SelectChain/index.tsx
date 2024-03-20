@@ -36,7 +36,7 @@ export default function SelectChain({ title, clickCallback }: SelectChainProps) 
     async (item: IChainNameItem) => {
       if (accounts?.[item.key]?.[0]) {
         store.dispatch(setCurrentChainItem(item));
-        clickCallback(item);
+        await clickCallback(item);
       } else {
         setOpenSynchronizingModal(true);
       }
