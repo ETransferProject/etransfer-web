@@ -33,10 +33,10 @@ export function NetworkCardForMobile({
   onClick,
   status,
 }: NetworkCardProps) {
-  const getfeeContent = useMemo(() => {
+  const getFeeContent = useMemo(() => {
     return transactionFee
       ? `Fee: ${transactionFee} ${transactionFeeUnit}`
-      : 'Failed to estimate the fee.';
+      : 'Fee: Failed to estimate the fee.';
   }, [transactionFee, transactionFeeUnit]);
 
   return (
@@ -59,7 +59,7 @@ export function NetworkCardForMobile({
         <span>{multiConfirmTime}</span>
       </div>
       <div className={styles['network-card-confirm-time']}>
-        {type === SideMenuKey.Deposit ? multiConfirm : getfeeContent}
+        {type === SideMenuKey.Deposit ? multiConfirm : getFeeContent}
       </div>
     </div>
   );
@@ -78,10 +78,10 @@ export function NetworkCardForWeb({
   onClick,
   status,
 }: NetworkCardForWebProps) {
-  const getfeeContent = useMemo(() => {
+  const getFeeContent = useMemo(() => {
     return transactionFee
       ? `Fee: ${transactionFee} ${transactionFeeUnit}`
-      : 'Failed to estimate the fee.';
+      : 'Fee: Failed to estimate the fee.';
   }, [transactionFee, transactionFeeUnit]);
 
   return (
@@ -106,7 +106,7 @@ export function NetworkCardForWeb({
       <div className={clsx('flex-row-center-between', styles['network-card-row'])}>
         <span className={styles['network-card-name']}>{name}</span>
         <span className={styles['network-card-confirm-time']}>
-          {type === SideMenuKey.Deposit ? multiConfirm : getfeeContent}
+          {type === SideMenuKey.Deposit ? multiConfirm : getFeeContent}
         </span>
       </div>
     </div>
