@@ -46,6 +46,13 @@ export const CHAIN_LIST: IChainNameItem[] = [
   },
 ];
 
+export const CHAIN_LIST_SIDE_CHAIN: IChainNameItem[] = [
+  {
+    key: SupportedELFChainId.tDVV,
+    label: CHAIN_NAME_ENUM.SideChain,
+  },
+];
+
 export type ChainConstantsType = typeof AELF | typeof tDVV;
 
 export const SupportedELFChain: { [k: string | number]: ChainConstantsType } = {
