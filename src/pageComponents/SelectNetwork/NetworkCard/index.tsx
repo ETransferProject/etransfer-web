@@ -80,7 +80,7 @@ export function NetworkCardForWeb({
 }: NetworkCardForWebProps) {
   const getfeeContent = useMemo(() => {
     return transactionFee
-      ? `Fee: ${transactionFee || '-'} ${transactionFeeUnit || 'USDT'}`
+      ? `Fee: ${transactionFee} ${transactionFeeUnit}`
       : 'Failed to estimate the fee.';
   }, [transactionFee, transactionFeeUnit]);
 
