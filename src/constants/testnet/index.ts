@@ -48,6 +48,10 @@ export const CHAIN_LIST: IChainNameItem[] = [
 
 export const CHAIN_LIST_SIDE_CHAIN: IChainNameItem[] = [
   {
+    key: SupportedELFChainId.AELF,
+    label: CHAIN_NAME_ENUM.SideChain,
+  },
+  {
     key: SupportedELFChainId.tDVW,
     label: CHAIN_NAME_ENUM.SideChain,
   },
