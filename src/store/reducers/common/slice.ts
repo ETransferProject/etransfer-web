@@ -9,6 +9,8 @@ export interface CommonState {
   activeMenuKey: SideMenuKey;
   currentChainItem: IChainNameItem;
   currentVersion?: PortkeyVersion;
+  recordCreateTime?: string;
+  isShowRedDot?: boolean;
 }
 
 export const initialState: CommonState = {
@@ -17,6 +19,8 @@ export const initialState: CommonState = {
   activeMenuKey: SideMenuKey.Deposit,
   currentChainItem: CHAIN_LIST[0],
   currentVersion: undefined,
+  recordCreateTime: '1712562663735', // A expired timestamp
+  isShowRedDot: false,
 };
 
 //it automatically uses the immer library to let you write simpler immutable updates with normal mutative code
@@ -43,6 +47,12 @@ export const CommonSlice = createSlice({
     setSwitchVersionAction: (state, action) => {
       state.currentVersion = action.payload;
     },
+    setRecordCreateTime: (state, action) => {
+      state.recordCreateTime = action.payload;
+    },
+    setIsShowRedDot: (state, action) => {
+      state.isShowRedDot = action.payload;
+    },
   },
 });
 
@@ -53,6 +63,8 @@ export const {
   setCurrentChainItem,
   initCommon,
   setSwitchVersionAction,
+  setRecordCreateTime,
+  setIsShowRedDot,
 } = CommonSlice.actions;
 
 export default CommonSlice;

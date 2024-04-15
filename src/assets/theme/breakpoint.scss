@@ -1,5 +1,6 @@
 $breakpoint-md: 640px;
 $breakpoint-xl: 1024px;
+$breakpoint-3xl: 1920px;
 
 @mixin media-mobile {
   @media screen and (max-width: $breakpoint-md) {
@@ -21,6 +22,19 @@ $breakpoint-xl: 1024px;
 
 @mixin media-web {
   @media screen and (min-width: #{$breakpoint-xl + 1}) {
+    @content;
+  }
+}
+
+// breakpoint: mobile < 1024px (huge-web) < 1920px(huge-screen)
+@mixin media-huge-web {
+  @media screen and (min-width: #{$breakpoint-xl + 1}) and (max-width: #{$breakpoint-3xl}) {
+    @content;
+  }
+}
+
+@mixin media-huge-screen {
+  @media screen and (min-width: #{$breakpoint-3xl + 1}) {
     @content;
   }
 }

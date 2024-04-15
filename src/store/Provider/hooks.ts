@@ -15,6 +15,7 @@ export const useCommonState = () => useAppSelector((state) => state.common);
 export const usePortkeyWalletState = () => useAppSelector((state) => state.portkeyWallet);
 export const useTokenState = () => useAppSelector((state) => state.token);
 export const useUserActionState = () => useAppSelector((state) => state.userAction);
+export const useRecordsState = () => useAppSelector((state) => state.records);
 
 export const useLoading = () => {
   const _setLoading = useCallback(

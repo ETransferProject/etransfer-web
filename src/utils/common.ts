@@ -1,6 +1,6 @@
-import { AelfInstancesKey, ChainId } from 'types';
-import { isELFChain } from './aelfUtils';
-import { ELFChainConstants } from 'constants/ChainConstants';
+import { ChainId } from 'types';
+import { EXPLORE_URL } from 'constants/exploreUrl';
+import { SupportedELFChainId } from 'constants/testnet';
 import AElf from 'aelf-sdk';
 
 export const sleep = (time: number) => {
@@ -16,10 +16,9 @@ export function getExploreLink(
   type: 'transaction' | 'token' | 'address' | 'block',
   chainId?: ChainId,
 ): string {
-  let prefix = '';
-  if (isELFChain(chainId)) {
-    prefix = ELFChainConstants.constants[chainId as AelfInstancesKey]?.CHAIN_INFO?.exploreUrl;
-  }
+  const target =
+    (chainId && (chainId.toUpperCase() as 'AELF' | 'TDVV' | 'TDVW')) || SupportedELFChainId.AELF;
+  const prefix = EXPLORE_URL[target];
   switch (type) {
     case 'transaction': {
       return `${prefix}tx/${data}`;

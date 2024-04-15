@@ -14,6 +14,7 @@ export type CommonModalProps = Omit<
   hideCancelButton?: boolean;
   hideOkButton?: boolean;
   isOkButtonDisabled?: boolean;
+  linkToExplore?: React.ReactNode;
 };
 
 export default function CommonModal({
@@ -28,7 +29,7 @@ export default function CommonModal({
 }: CommonModalProps) {
   return (
     <Modal
-      width={480}
+      width={props.width || 480}
       centered
       {...props}
       className={clsx(styles['common-modal'], className)}
@@ -56,6 +57,9 @@ export default function CommonModal({
             </CommonButton>
           )}
         </div>
+      )}
+      {props.linkToExplore && (
+        <div className={clsx(styles['linkToExplore'])}>{props.linkToExplore}</div>
       )}
     </Modal>
   );

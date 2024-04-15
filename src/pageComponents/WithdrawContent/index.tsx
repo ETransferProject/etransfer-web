@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
 import CommonButton from 'components/CommonButton';
 import FormTextarea from 'components/FormTextarea';
+import CommonLink from 'components/CommonLink';
 import SelectNetwork from 'pageComponents/SelectNetwork';
 import SelectToken from 'pageComponents/SelectToken';
 import DoubleCheckModal from './DoubleCheckModal';
@@ -70,13 +71,14 @@ import { useAccounts } from 'hooks/portkeyWallet';
 import getPortkeyWallet from 'wallet/portkeyWallet';
 import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
 import { formatWithCommas, parseWithCommas, parseWithStringCommas } from 'utils/format';
-import { sleep } from 'utils/common';
+import { sleep, getExploreLink } from 'utils/common';
 import { devices } from '@portkey/utils';
 import { ConnectWalletError } from 'constants/wallet';
 import { useWithdraw } from 'hooks/withdraw';
-import { QuestionMarkIcon } from 'assets/images';
+import { QuestionMarkIcon, Fingerprint } from 'assets/images';
 import { InitWithdrawTokenState } from 'store/reducers/token/slice';
 import RemainingQuato from './RemainingQuato';
+import AElf from 'aelf-sdk';
 
 enum ValidateStatus {
   Error = 'error',
@@ -634,6 +636,7 @@ export default function WithdrawContent() {
             chainItem: currentChainItemRef.current,
             arriveTime: currentNetworkRef.current.multiConfirmTime,
             receiveAmountUsd: withdrawInfo.receiveAmountUsd,
+            transactionId: AElf.utils.getTransactionId(rawTransaction),
           });
           setIsSuccessModalOpen(true);
         } else {
@@ -1096,6 +1099,20 @@ export default function WithdrawContent() {
           open: isSuccessModalOpen,
           onClose: clickSuccessOk,
           onOk: clickSuccessOk,
+          linkToExplore: CommonLink({
+            href: getExploreLink(
+              withdrawInfoSuccess.transactionId,
+              'transaction',
+              currentChainItemRef.current.key,
+            ),
+            isTagA: true,
+            children: (
+              <div className={styles['link-wrap']}>
+                <span className={styles['link-word']}>View the transaction on explorer</span>
+                <Fingerprint className={styles['link-explore-icon']} />
+              </div>
+            ),
+          }),
         }}
       />
       <FailModal

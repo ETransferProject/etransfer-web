@@ -1,0 +1,11 @@
+@import 'src/assets/theme/color.scss';
+
+.web-records-table-wrapper {
+  :global {
+    .ant-table-thead {
+      .ant-table-cell {
+        color: $secondary-text;
+      }
+    }
+  }
+}

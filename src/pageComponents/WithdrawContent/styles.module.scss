@@ -186,7 +186,7 @@
     background-color: $page-bg;
     width: 100vw;
     margin-left: -16px;
-    padding: 10px 16px;
+    padding: 20px 16px;
   }
   @include media-pad {
     width: 100%;
@@ -281,9 +281,27 @@
   margin-left: 4px;
   cursor: pointer;
 }
+
 .question-label{
   display: flex;
   align-items: center;
   gap: 4px;
   cursor: pointer;
+}
+
+.link-wrap {
+  margin-top: 16px;
+}
+
+.link-word {
+  vertical-align: middle;
+  margin-right: 8px;
+  color: $normal;
+  font-size: 14px;
+  font-weight: $font-family-medium-weight;
+}
+
+.link-explore-icon {
+  position: relative;
+  top: 5px;
 }

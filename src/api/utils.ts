@@ -33,6 +33,7 @@ type QueryAuthApiBaseConfig = {
   grant_type: string;
   scope: string;
   client_id: string;
+  source: string;
 };
 type QueryAuthApiExtraRequest = {
   pubkey: string;
@@ -47,6 +48,7 @@ const queryAuthApiBaseConfig: QueryAuthApiBaseConfig = {
   grant_type: 'signature',
   scope: 'ETransferServer',
   client_id: 'ETransferServer_App',
+  source: 'portkey',
 };
 
 export type JWTData = {

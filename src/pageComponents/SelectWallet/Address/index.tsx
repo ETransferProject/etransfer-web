@@ -1,15 +1,17 @@
 import React, { useMemo } from 'react';
 import CommonAddress from 'components/CommonAddress';
-import LogoutButton from 'pageComponents/LogoutButton';
-import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { CHAIN_LIST } from 'constants/index';
 import { CopySize } from 'components/Copy';
 import { SynchronizingAddress } from 'constants/chain';
 import { useAccounts } from 'hooks/portkeyWallet';
+import clsx from 'clsx';
 
-export default function Address() {
-  const { isMobilePX } = useCommonState();
+interface AddressProps {
+  hideBorder?: boolean;
+}
+
+export default function Address({ hideBorder }: AddressProps) {
   const accounts = useAccounts();
 
   const accountsList = useMemo(
@@ -30,7 +32,12 @@ export default function Address() {
     <>
       <div>
         {accountsList.map((item) => (
-          <div key={item.label} className={styles['address-wrapper']}>
+          <div
+            key={item.label}
+            className={clsx(
+              styles['address-wrapper'],
+              hideBorder ? styles['address-hideBorder'] : '',
+            )}>
             <CommonAddress
               labelClassName={styles['label']}
               valueClassName={styles['value']}
@@ -43,11 +50,6 @@ export default function Address() {
           </div>
         ))}
       </div>
-      {!isMobilePX && (
-        <div className={styles['button-wrapper']}>
-          <LogoutButton />
-        </div>
-      )}
     </>
   );
 }
