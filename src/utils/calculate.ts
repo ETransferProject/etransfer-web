@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import BN, { isBN } from 'bn.js';
 import { isEffectiveNumber, ZERO } from 'constants/misc';
-
+import { TokenType } from 'types';
 export function timesDecimals(a?: BigNumber.Value, decimals: string | number = 18) {
   if (!a) return ZERO;
   const bigA = ZERO.plus(a);
@@ -38,3 +38,95 @@ export function valueToPercentage(input?: BigNumber.Value) {
 export function zeroFill(str: string | BN) {
   return isBN(str) ? str.toString(16, 64) : str.padStart(64, '0');
 }
+
+/**
+ * currency show as role: fixed(2) and min is 0.01
+ * @param strValue amount value
+ * @param currency currency type
+ * @returns string
+ */
+export function valueFixed2LessThanMin(strValue: string, currency?: string): string {
+  let valueBigNumber = new BigNumber(strValue);
+  if (valueBigNumber.isNaN()) {
+    return '--';
+  }
+
+  valueBigNumber = valueBigNumber.dp(2, BigNumber.ROUND_DOWN);
+
+  if (valueBigNumber.isLessThan(0.01)) {
+    return currency ? `<${currency}0.01` : '<$0.01';
+  }
+
+  return `${currency}${valueBigNumber.toString()}`;
+}
+
+/**
+ * amount display as role: fixed(6) and toFormat 3
+ * @param strNumber amount value
+ * @param token token type
+ * @returns amount value
+ */
+export function LargeNumberDisplay(strNumber: string, token: string) {
+  let valueBigNumber = new BigNumber(strNumber);
+  if (valueBigNumber.isNaN()) {
+    return '--';
+  }
+
+  // decimal number usdt 6  sgr 8
+  let decimal = 6;
+
+  switch (token) {
+    case TokenType.SGR:
+      decimal = 8;
+      break;
+    case TokenType.USDT:
+      decimal = 6;
+      break;
+    default:
+      decimal = 6;
+      break;
+  }
+
+  valueBigNumber = valueBigNumber.dp(decimal, BigNumber.ROUND_DOWN);
+  return valueBigNumber.toFormat();
+}
+
+/**
+ * amount display as role: preLen...endLen
+ * @param str amount value
+ * @param preLen preLen
+ * @param endLen endLen
+ * @returns amount value string
+ */
+export const getOmittedStr = (str: string, preLen?: number, endLen?: number) => {
+  if (!str || typeof str !== 'string') {
+    return str;
+  }
+  if (typeof preLen !== 'number' || typeof endLen !== 'number') {
+    return str;
+  }
+  if (str.length <= preLen + endLen) {
+    return str;
+  }
+  if (preLen === 0 || endLen === 0) {
+    return str;
+  }
+  return `${str.slice(0, preLen)}...${str.slice(-endLen)}`;
+};
+
+/**
+ * Compare the sizes of two numerical values
+ * @param sNumberA number a
+ * @param sNumberB number b
+ * @returns boolean
+ */
+export const compareTwoStringNumbers = (sNumberA?: string, sNumberB?: string) => {
+  if (!sNumberA || !sNumberB) {
+    return false;
+  }
+
+  const bigNumberA = new BigNumber(sNumberA);
+  const bigNumberB = new BigNumber(sNumberB);
+
+  return bigNumberA.isGreaterThan(bigNumberB);
+};

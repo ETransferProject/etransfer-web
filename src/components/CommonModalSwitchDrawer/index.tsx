@@ -18,6 +18,7 @@ export interface CommonModalSwitchDrawerProps {
   open?: boolean;
   onClose?: () => void;
   onOk?: () => void;
+  linkToExplore?: React.ReactNode;
 }
 
 export default function CommonModalSwitchDrawer({
@@ -30,28 +31,31 @@ export default function CommonModalSwitchDrawer({
   return isMobilePX ? (
     <CommonDrawer
       {...props}
-      className={clsx(styles['drawer-wrapper'], drawerClassName)}
+      className={styles['drawer-wrapper']}
       footer={
-        !props.hideCancelButton || !props.hideOkButton ? (
-          <>
-            {!props.hideCancelButton && (
-              <CommonButton
-                className={styles['cancel-button']}
-                type={CommonButtonType.Secondary}
-                onClick={onClose}>
-                {props.cancelText || 'Cancel'}
-              </CommonButton>
-            )}
-            {!props.hideOkButton && (
-              <CommonButton
-                className={styles['ok-button']}
-                disabled={props.isOkButtonDisabled}
-                onClick={props.onOk}>
-                {props.okText || 'Confirm'}
-              </CommonButton>
-            )}
-          </>
-        ) : null
+        <>
+          {!props.hideCancelButton || !props.hideOkButton ? (
+            <div className={clsx(styles['drawer-button-wrapper'], drawerClassName)}>
+              {!props.hideCancelButton && (
+                <CommonButton
+                  className={styles['cancel-button']}
+                  type={CommonButtonType.Secondary}
+                  onClick={onClose}>
+                  {props.cancelText || 'Cancel'}
+                </CommonButton>
+              )}
+              {!props.hideOkButton && (
+                <CommonButton
+                  className={styles['ok-button']}
+                  disabled={props.isOkButtonDisabled}
+                  onClick={props.onOk}>
+                  {props.okText || 'Confirm'}
+                </CommonButton>
+              )}
+            </div>
+          ) : null}
+          {props.linkToExplore}
+        </>
       }
       onClose={onClose}
     />

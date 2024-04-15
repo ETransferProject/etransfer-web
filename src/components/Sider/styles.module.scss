@@ -1,6 +1,7 @@
 @import '/src/assets/theme/color.scss';
 @import 'src/assets/theme/font.scss';
 @import 'src/styles/variable.scss';
+@import 'src/assets/theme/breakpoint.scss';
 
 .menu-container {
   position: fixed;
@@ -8,6 +9,11 @@
   height: calc(100% - 80px);
   padding-top: 40px;
   background-color: $page-bg;
+  @include media-huge-screen {
+    height: calc(100vh - 80px);
+    position: relative;
+    margin-left: calc((100vw - $max-width) / 2);
+  }
 }
 .menu-items-wrapper {
   width: 100%;
@@ -43,4 +49,9 @@
 .supportEntry {
   margin-bottom: 64px; // 80-16
   margin-right: 62px;
+}
+
+.menu-item-red-dot {
+  position: relative;
+  top: -7px;
 }

@@ -1,0 +1,17 @@
+@import 'assets/theme/color.scss';
+
+.status-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  color: $primary-text;
+  white-space: nowrap;
+}
+
+.processing, .failed {
+  margin: 0 6px 0 4px;
+}
+
+.tip-message-box {
+  min-height: 60px;
+}

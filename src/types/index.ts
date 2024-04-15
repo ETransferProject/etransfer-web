@@ -41,3 +41,8 @@ export type EntryConfig = {
   withDrawNetwork: string; // eg: "ETH"
   withDrawAmount: string; // not decimal
 };
+
+export enum TokenType {
+  USDT = 'USDT',
+  SGR = 'SGR-1',
+}

@@ -35,11 +35,16 @@ const DepositApiList = {
   },
 };
 
+const RecordsApiList = {
+  getRecordsList: '/api/etransfer/record/list',
+  getRecordStatus: '/api/etransfer/record/status',
+};
+
 /**
  * api request extension configuration directory
  * @description object.key // The type of this object key comes from from @type {UrlObj}
  */
-export const EXPAND_APIS = { deposit: DepositApiList, auth: AuthList };
+export const EXPAND_APIS = { deposit: DepositApiList, auth: AuthList, records: RecordsApiList };
 
 export type EXPAND_REQ_TYPES = {
   [X in keyof typeof EXPAND_APIS]: {

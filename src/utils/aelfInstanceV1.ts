@@ -26,7 +26,8 @@ class AelfInstanceV1 implements IAelfInstanceV1 {
   public rpcUrl?: string;
   public aelfSDK?: any;
 
-  constructor(_options?: AelfInstanceOptionsV1) {
+  // _options?: AelfInstanceOptionsV1
+  constructor() {
     this.instances = {
       [AllSupportedELFChainId.AELF]: undefined,
       [AllSupportedELFChainId.tDVV]: undefined,
@@ -40,7 +41,6 @@ class AelfInstanceV1 implements IAelfInstanceV1 {
     } else {
       const rpcUrl = getNodeByChainId(chainId).rpcUrl;
       const instance = aelf.getAelfInstance(rpcUrl);
-      console.log('🌈 🌈 🌈 🌈 🌈 🌈 instance v1', instance);
       this.instances[chainId] = instance;
       return instance;
     }

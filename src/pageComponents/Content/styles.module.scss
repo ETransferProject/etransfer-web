@@ -36,3 +36,24 @@ $web-content-padding-bottom: 80px;
     }
   }
 }
+
+.wide-screen-content-container {
+  padding: 40px 40px 64px 32px;
+  overflow: auto;
+  
+  @include media-mobile-and-pad {
+    min-width: $page-min-width;
+    padding: 0;
+  }
+  @include media-huge-web {
+    width: calc(100vw - $sider-width);
+    height: calc(100vh - $web-header-height);
+    max-width: calc($max-width - $sider-width);
+    margin-left: $sider-width;
+  }
+  @include media-huge-screen {
+    width: calc($max-width + 1px - $sider-width);
+    height: calc(100vh - $web-header-height);
+    margin: none;
+  }
+}

@@ -3,6 +3,12 @@
 @import 'src/assets/theme/breakpoint.scss';
 @import 'src/styles/common.scss';
 
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .label,
 .value {
   font-size: 14px;
@@ -16,6 +22,17 @@
 .value {
   @extend .font-family-medium;
   color: $primary-text;
+}
+.value-content {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.value-symbol {
+  max-width: 60px;
+  margin-left: 4px;
+  display: inline-block;
+  @extend .ellipsis;
 }
 
 .secondary-value {
@@ -33,6 +50,9 @@
     font-size: 24px;
     line-height: 32px;
   }
+}
+.receive-amount-center {
+  text-align: center;
 }
 
 .detail-wrapper {
@@ -52,7 +72,7 @@
 .detail-row {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: 10px;
 }
 
 .divider {
@@ -71,4 +91,29 @@
     justify-content: flex-end;
     gap: 8px;
   }
+}
+
+.fee-usd,
+.amount-usd {
+  font-size: 12px;
+  text-align: right;
+  color: $secondary-text;
+}
+
+.fee-currency {
+  max-width: 60px;
+  margin: 0 4px;
+  display: inline-block;
+  @extend .ellipsis;
+}
+
+.fee-usd-box {
+  align-items: end;
+  gap: 0px;
+}
+
+.receive-amount-usd {
+  font-size: 14px;
+  text-align: center;
+  color: $secondary-text;
 }

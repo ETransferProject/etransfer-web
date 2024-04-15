@@ -41,7 +41,7 @@ function setDefaultArgs(originalArgs: ArgsProps, defaultArgs: Partial<ArgsProps>
   return _originalArgs;
 }
 
-typeList.forEach((type) => {
+typeList?.forEach((type) => {
   singleMessage[type] = (...params) => {
     const _content = params[0];
     const content = isArgsProps(_content)

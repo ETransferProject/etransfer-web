@@ -10,6 +10,7 @@ import {
 import PortkeyWalletSlice from 'store/reducers/portkeyWallet/slice';
 import TokenSlice from 'store/reducers/token/slice';
 import UserActionSlice from 'store/reducers/userAction/slice';
+import RecordsSlice from 'store/reducers/records/slice';
 
 export const commonReducer = persistReducer(commonPersistConfig, CommonSlice.reducer);
 export const portkeyWalletReducer = persistReducer(
@@ -24,6 +25,7 @@ const rootReducer = customCombineReducers({
   [PortkeyWalletSlice.name]: PortkeyWalletSlice.reducer,
   [TokenSlice.name]: TokenSlice.reducer,
   [UserActionSlice.name]: UserActionSlice.reducer,
+  [RecordsSlice.name]: RecordsSlice.reducer,
 });
 
 export default rootReducer;

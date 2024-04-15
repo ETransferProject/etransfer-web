@@ -1,0 +1,15 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+
+.AmountBox {
+  font-weight: $font-family-medium-weight;
+  color: $primary-text;
+}
+
+.web-amount-box {
+  text-align: left;
+}
+
+.mobile-amount-box {
+  text-align: right;
+}

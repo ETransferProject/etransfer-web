@@ -9,7 +9,6 @@ import PortkeyWalletSlice from 'store/reducers/portkeyWallet/slice';
 import storage from 'redux-persist/lib/storage';
 import TokenSlice from 'store/reducers/token/slice';
 import UserActionSlice from 'store/reducers/userAction/slice';
-
 interface ThunkOptions<E = any> {
   extraArgument: E;
 }

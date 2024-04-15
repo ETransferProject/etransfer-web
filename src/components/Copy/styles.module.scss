@@ -16,6 +16,14 @@
 .copy-icon-wrapper-normal {
   width: 32px;
   height: 32px;
+  @include media-mobile-and-pad {
+    width: 20px;
+    height: 20px;
+  }
+  @include media-mobile-and-pad {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .copy-icon-wrapper-background-color {

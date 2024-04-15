@@ -38,3 +38,11 @@ input[type='number'] {
 // * {
 //   transition: background 0.3s, fill 0.3s, stork 0.3s, color 0.3s, box-shadow 0.3s;
 // }
+
+// selected option
+.ant-select-dropdown.drop-wrap {
+  .ant-select-item-option-selected {
+    color: $normal !important;
+    background: none !important;
+  }
+}

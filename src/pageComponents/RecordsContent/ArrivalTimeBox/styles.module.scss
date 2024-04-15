@@ -1,0 +1,23 @@
+@import 'src/assets/theme/color.scss';
+
+.arrivalTimeBox {
+  color: $primary-text;
+}
+
+.web-arrivalTimeBox {
+  text-align: left;
+}
+
+.mobile-arrivalTimeBox {
+  text-align: right;
+}
+
+.year-hour-wrapper {
+  .year {
+    white-space: nowrap;
+  }
+  .hour {
+    margin-left: 6px;
+    white-space: nowrap;
+  }
+}
