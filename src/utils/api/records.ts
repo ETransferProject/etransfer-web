@@ -7,7 +7,7 @@ export const getRecordsList = async (
   params: GetRecordsListRequest,
 ): Promise<GetRecordsListResult> => {
   try {
-    const res = await request.records.getRecordsList({ data: params });
+    const res = await request.records.getRecordsList({ params });
     return res.data;
   } catch (error: any) {
     const newError: any = new Error(handleErrorMessage(error, 'getRecordsList error'));

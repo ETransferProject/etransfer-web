@@ -550,7 +550,7 @@ export default function WithdrawContent() {
   );
 
   useEffect(() => {
-    if (!withdrawInfo.expiredTimestamp) {
+    if (!withdrawInfo.expiredTimestamp || currentNetworkRef.current?.network) {
       return;
     }
     if (getTransactionFeeTimerRef.current) {
@@ -566,7 +566,7 @@ export default function WithdrawContent() {
         clearInterval(getTransactionFeeTimerRef.current);
       }
     };
-  }, [getWithdrawData, withdrawInfo.expiredTimestamp]);
+  }, [getWithdrawData, withdrawInfo.expiredTimestamp, currentNetworkRef.current?.network]);
 
   const handleNetworkChanged = useCallback(
     async (item: NetworkItem) => {

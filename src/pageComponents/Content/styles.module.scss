@@ -23,6 +23,11 @@ $web-content-padding-bottom: 80px;
       margin-left: calc($web-content-min-margin-left + $sider-width);
     }
   }
+  @include media-huge-screen {
+    width: $content-width;
+    margin-left: calc(($max-width - $content-width) / 2 - $sider-width);
+    padding: 40px 0 $web-content-padding-bottom;
+  }
 }
 
 // A separate class name is used here to avoid invalidation of the padding style by incorporating the padding property in the production css.
