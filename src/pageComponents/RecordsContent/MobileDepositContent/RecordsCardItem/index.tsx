@@ -12,12 +12,12 @@ import AmountBox from 'pageComponents/RecordsContent/AmountBox';
 import AddressBox from 'pageComponents/RecordsContent/AddressBox';
 import { RecordsContentParams } from 'types/api';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useCallback } from 'react';
+import { useDebounceCallback } from 'hooks';
 import { setSkipCount, setHasMore } from 'store/reducers/records/slice';
 
 export default function RecordsCardItem({ requestRecordsList }: RecordsContentParams) {
   const dispatch = useAppDispatch();
-  const { recordsList, totalCount, hasMore, skipCount } = useRecordsState();
+  const { recordsList, hasMore, maxResultCount, totalCount, skipCount } = useRecordsState();
 
   const handleRecordListData = (recordsList: RecordsListItem[]) => {
     if (recordsList.length === 0) {
@@ -49,80 +49,87 @@ export default function RecordsCardItem({ requestRecordsList }: RecordsContentPa
     return recordsTableList;
   };
 
-  const handleNextPage = useCallback(() => {
-    if (totalCount > handleRecordListData(recordsList).length && hasMore) {
+  const handleNextPage = useDebounceCallback(() => {
+    if (hasMore && skipCount <= Math.ceil(totalCount / maxResultCount)) {
       dispatch(setSkipCount(skipCount + 1));
       requestRecordsList();
     } else {
       dispatch(setHasMore(false));
     }
-  }, [dispatch, requestRecordsList, totalCount, recordsList, skipCount, hasMore]);
+  }, []);
 
   return (
-    <InfiniteScroll
-      dataLength={totalCount}
-      next={handleNextPage}
-      hasMore={hasMore}
-      loader={<h4>Loading more...</h4>}
-      endMessage={
-        <p className={clsx(styles['records-end-message'])}>
-          <b>Yay! You have seen all records</b>
-        </p>
-      }>
-      {handleRecordListData(recordsList).map((recordItem: recordsTableListType) => {
-        return (
-          <div className={clsx(styles['records-card-item-wrapper'])} key={recordItem.key}>
-            <div className={clsx(styles['records-card-item-header'])}>
-              <StatusBox status={recordItem.status} />
-              <span className={clsx(styles['records-card-item-order-type'])}>
-                {recordItem.orderType}
-              </span>
+    <div className={clsx(styles['records-scroll-container'])} id={'scrollableDiv'}>
+      <InfiniteScroll
+        dataLength={recordsList.length}
+        next={handleNextPage}
+        hasMore={skipCount <= Math.ceil(totalCount / maxResultCount)}
+        scrollableTarget="scrollableDiv"
+        loader={
+          <h4 className={clsx(styles['records-loader-message'])}>
+            {hasMore ? '-- Loading more records --' : '-- loading completed --'}
+          </h4>
+        }
+        endMessage={
+          <p className={clsx(styles['records-end-message'])}>
+            <b>-- loading completed --</b>
+          </p>
+        }>
+        {handleRecordListData(recordsList).map((recordItem: recordsTableListType) => {
+          return (
+            <div className={clsx(styles['records-card-item-wrapper'])} key={recordItem.key}>
+              <div className={clsx(styles['records-card-item-header'])}>
+                <StatusBox status={recordItem.status} />
+                <span className={clsx(styles['records-card-item-order-type'])}>
+                  {recordItem.orderType}
+                </span>
+              </div>
+              <Divider />
+              <div className={styles['records-card-item-line']}>
+                <span className={styles['records-card-item-label']}>Arrival Time</span>
+                <ArrivalTimeBox arrivalTime={recordItem.arrivalTime} status={recordItem.status} />
+              </div>
+              <div className={styles['records-card-item-line']}>
+                <span className={styles['records-card-item-label']}>Token</span>
+                <TokenBox symbol={recordItem.symbol} />
+              </div>
+              <div className={styles['records-card-item-line']}>
+                <span className={styles['records-card-item-label']}>Sending Amount</span>
+                <AmountBox amount={recordItem.sendingAmount} token={recordItem.symbol} />
+              </div>
+              <div className={styles['records-card-item-line']}>
+                <span className={styles['records-card-item-label']}>Receiving Amount</span>
+                <AmountBox amount={recordItem.receivingAmount} token={recordItem.symbol} />
+              </div>
+              <div className={styles['records-card-item-line']}>
+                <span className={styles['records-card-item-label']}>From</span>
+                <AddressBox
+                  address={recordItem.fromAddress}
+                  network={recordItem.fromNetwork}
+                  fromChanId={recordItem.fromChanId}
+                  toChanId={recordItem.toChanId}
+                  orderType={recordItem.orderType}
+                />
+              </div>
+              <div className={styles['records-card-item-line']}>
+                <span className={styles['records-card-item-label']}>To</span>
+                <AddressBox
+                  address={recordItem.toAddress}
+                  network={recordItem.toNetwork}
+                  fromChanId={recordItem.fromChanId}
+                  toChanId={recordItem.toChanId}
+                  orderType={recordItem.orderType}
+                />
+              </div>
+              <div className={styles['records-card-item-Fee']}>
+                <span className={styles['records-card-item-label']}>Transaction Fee</span>
+                <FeeInfo feeInfo={recordItem.feeInfo} status={recordItem.status} />
+              </div>
+              <Divider className={styles['divider-style']} />
             </div>
-            <Divider />
-            <div className={styles['records-card-item-line']}>
-              <span className={styles['records-card-item-label']}>Arrival Time</span>
-              <ArrivalTimeBox arrivalTime={recordItem.arrivalTime} status={recordItem.status} />
-            </div>
-            <div className={styles['records-card-item-line']}>
-              <span className={styles['records-card-item-label']}>Token</span>
-              <TokenBox symbol={recordItem.symbol} />
-            </div>
-            <div className={styles['records-card-item-line']}>
-              <span className={styles['records-card-item-label']}>Sending Amount</span>
-              <AmountBox amount={recordItem.sendingAmount} token={recordItem.symbol} />
-            </div>
-            <div className={styles['records-card-item-line']}>
-              <span className={styles['records-card-item-label']}>Receiving Amount</span>
-              <AmountBox amount={recordItem.receivingAmount} token={recordItem.symbol} />
-            </div>
-            <div className={styles['records-card-item-line']}>
-              <span className={styles['records-card-item-label']}>From</span>
-              <AddressBox
-                address={recordItem.fromAddress}
-                network={recordItem.fromNetwork}
-                fromChanId={recordItem.fromChanId}
-                toChanId={recordItem.toChanId}
-                orderType={recordItem.orderType}
-              />
-            </div>
-            <div className={styles['records-card-item-line']}>
-              <span className={styles['records-card-item-label']}>To</span>
-              <AddressBox
-                address={recordItem.toAddress}
-                network={recordItem.toNetwork}
-                fromChanId={recordItem.fromChanId}
-                toChanId={recordItem.toChanId}
-                orderType={recordItem.orderType}
-              />
-            </div>
-            <div className={styles['records-card-item-Fee']}>
-              <span className={styles['records-card-item-label']}>Transaction Fee</span>
-              <FeeInfo feeInfo={recordItem.feeInfo} status={recordItem.status} />
-            </div>
-            <Divider className={styles['divider-style']} />
-          </div>
-        );
-      })}
-    </InfiniteScroll>
+          );
+        })}
+      </InfiniteScroll>
+    </div>
   );
 }
