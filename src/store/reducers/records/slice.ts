@@ -28,16 +28,6 @@ export const RecordsSlice = createSlice({
     setRecordsList: (state, action) => {
       state.recordsList = action.payload;
     },
-    setAddRecordsList: (state, action) => {
-      const tempRecordsList = [...state.recordsList, ...action.payload];
-      // combine recordsList and remove duplicates
-      state.recordsList = tempRecordsList.reduce((result, item) => {
-        if (!result.some((it: RecordsListItem) => it.id === item.id)) {
-          result.push(item);
-        }
-        return result;
-      }, []);
-    },
     setTotalCount: (state, action) => {
       state.totalCount = action.payload;
     },
@@ -72,7 +62,6 @@ export const RecordsSlice = createSlice({
 
 export const {
   setRecordsList,
-  setAddRecordsList,
   setTotalCount,
   setType,
   setStatus,
