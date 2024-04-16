@@ -70,22 +70,22 @@ export const AELF_NODES = {
 };
 
 // testnet-jenkins
-export const ETransferHost = 'https://test.etransfer.exchange';
-export const ETransferAuthHost = 'https://test.etransfer.exchange';
-export const WebLoginGraphqlUrlV1 =
-  'https://dapp-portkey-test.portkey.finance/Portkey_DID/PortKeyIndexerCASchema/graphql';
-export const WebLoginGraphqlUrlV2 =
-  'https://dapp-aa-portkey-test.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql';
-export const WebLoginRequestDefaultsUrlV1 = 'https://did-portkey-test.portkey.finance';
-export const WebLoginRequestDefaultsUrlV2 = 'https://aa-portkey-test.portkey.finance';
-
-// testnet-dev
 // export const ETransferHost = 'https://test.etransfer.exchange';
-// export const ETransferAuthHost = '';
-// export const WebLoginGraphqlUrlV1 = '/v1/graphql';
-// export const WebLoginGraphqlUrlV2 = '/v2/graphql';
+// export const ETransferAuthHost = 'https://test.etransfer.exchange';
+// export const WebLoginGraphqlUrlV1 =
+//   'https://dapp-portkey-test.portkey.finance/Portkey_DID/PortKeyIndexerCASchema/graphql';
+// export const WebLoginGraphqlUrlV2 =
+//   'https://dapp-aa-portkey-test.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql';
 // export const WebLoginRequestDefaultsUrlV1 = 'https://did-portkey-test.portkey.finance';
 // export const WebLoginRequestDefaultsUrlV2 = 'https://aa-portkey-test.portkey.finance';
+
+// testnet-dev
+export const ETransferHost = 'https://test.etransfer.exchange';
+export const ETransferAuthHost = '';
+export const WebLoginGraphqlUrlV1 = '/v1/graphql';
+export const WebLoginGraphqlUrlV2 = '/v2/graphql';
+export const WebLoginRequestDefaultsUrlV1 = 'https://did-portkey-test.portkey.finance';
+export const WebLoginRequestDefaultsUrlV2 = 'https://aa-portkey-test.portkey.finance';
 
 export const ADDRESS_MAP = {
   [PortkeyVersion.v1]: {
