@@ -9,8 +9,8 @@
 // testnet
 const ETransferHost = 'https://test.etransfer.exchange';
 const AuthHost = 'https://test.etransfer.exchange';
-// const ApiHostV1 = 'https://did-portkey-test.portkey.finance';
-// const ApiHostV2 = 'https://aa-portkey-test.portkey.finance';
+const ApiHostV1 = 'https://did-portkey-test.portkey.finance';
+const ApiHostV2 = 'https://aa-portkey-test.portkey.finance';
 const GraphqlHostV1 =
   'https://dapp-portkey-test.portkey.finance/Portkey_DID/PortKeyIndexerCASchema';
 const GraphqlHostV2 =
@@ -26,14 +26,14 @@ module.exports = [
     source: '/connect/:path*',
     destination: `${AuthHost}/connect/:path*`,
   },
-  // {
-  //   source: '/v1/api/:path*',
-  //   destination: `${ApiHostV1}/api/:path*`,
-  // },
-  // {
-  //   source: '/v2/api/:path*',
-  //   destination: `${ApiHostV2}/api/:path*`,
-  // },
+  {
+    source: '/portkeyV1/api/:path*',
+    destination: `${ApiHostV1}/api/:path*`,
+  },
+  {
+    source: '/portkeyV2/api/:path*',
+    destination: `${ApiHostV2}/api/:path*`,
+  },
   {
     source: '/v1/graphql/:path*',
     destination: `${GraphqlHostV1}/graphql/:path*`,

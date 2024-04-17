@@ -13,6 +13,7 @@ import {
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
 import { logoIcon } from 'constants/wallet';
+// import { PortkeyVersion } from 'constants/wallet';
 
 const WebLoginProviderDynamic = dynamic(
   async () => {
@@ -21,22 +22,23 @@ const WebLoginProviderDynamic = dynamic(
     webLogin.setGlobalConfig({
       appName: AppName,
       chainId: SupportedELFChainId.AELF,
-      networkType: 'MAIN',
+      networkType: 'TESTNET',
       portkey: {
         graphQLUrl: WebLoginGraphqlUrlV1,
         requestDefaults: {
-          baseURL: WebLoginRequestDefaultsUrlV1,
+          baseURL: 'portkeyV1',
         },
       },
       onlyShowV2: true,
       portkeyV2: {
         useLocalStorage: true,
         graphQLUrl: WebLoginGraphqlUrlV2,
-        networkType: 'MAINNET',
+        networkType: 'TESTNET',
         connectUrl: connectUrl,
         requestDefaults: {
-          baseURL: WebLoginRequestDefaultsUrlV2,
+          baseURL: 'portkeyV2',
         },
+        serviceUrl: WebLoginRequestDefaultsUrlV2,
       },
       aelfReact: {
         appName: AppName,

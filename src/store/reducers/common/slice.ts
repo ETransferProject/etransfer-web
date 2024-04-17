@@ -18,7 +18,7 @@ export const initialState: CommonState = {
   isMobilePX: false,
   activeMenuKey: SideMenuKey.Deposit,
   currentChainItem: CHAIN_LIST[0],
-  currentVersion: undefined,
+  currentVersion: PortkeyVersion.v2,
   recordCreateTime: '1712562663735', // A expired timestamp
   isShowRedDot: false,
 };
