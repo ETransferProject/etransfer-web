@@ -67,12 +67,12 @@ export default function RecordsCardItem({ requestRecordsList }: RecordsContentPa
         scrollableTarget="scrollableDiv"
         loader={
           <h4 className={clsx(styles['records-loader-message'])}>
-            {hasMore ? '-- Loading more records --' : '-- loading completed --'}
+            {hasMore ? ' Loading... ' : 'No Data'}
           </h4>
         }
         endMessage={
           <p className={clsx(styles['records-end-message'])}>
-            <b>-- loading completed --</b>
+            <b>No Data</b>
           </p>
         }>
         {handleRecordListData(recordsList).map((recordItem: recordsTableListType) => {

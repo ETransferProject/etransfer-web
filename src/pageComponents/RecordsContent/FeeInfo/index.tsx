@@ -7,13 +7,14 @@ import clsx from 'clsx';
 interface FeeInfoProps {
   feeInfo: feeInfoType[];
   status: string;
+  orderType: string;
 }
 
-export default function FeeInfo({ feeInfo, status }: FeeInfoProps) {
+export default function FeeInfo({ feeInfo, status, orderType }: FeeInfoProps) {
   const { isMobilePX } = useCommonState();
 
-  if (status === RecordsStatus.Failed) {
-    return <div className={styles['feeInfo-wrapper']}>0 ELF</div>;
+  if (status === RecordsStatus.Failed || orderType === 'Deposit') {
+    return <div className={styles['feeInfo-wrapper']}>--</div>;
   }
 
   return (
