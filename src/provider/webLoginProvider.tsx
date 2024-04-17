@@ -1,17 +1,18 @@
 'use client';
-import { PortkeyProvider as PortkeyProviderV2 } from '@portkey/did-ui-react';
+import { PortkeyProvider } from 'aelf-web-login';
 import {
   AelfReact,
   AppName,
-  NETWORK_TYPE_V2,
   SupportedELFChainId,
   WebLoginGraphqlUrlV1,
   WebLoginGraphqlUrlV2,
   WebLoginRequestDefaultsUrlV1,
   WebLoginRequestDefaultsUrlV2,
+  connectUrl,
 } from 'constants/index';
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
+import { logoIcon } from 'constants/wallet';
 
 const WebLoginProviderDynamic = dynamic(
   async () => {
@@ -27,9 +28,12 @@ const WebLoginProviderDynamic = dynamic(
           baseURL: WebLoginRequestDefaultsUrlV1,
         },
       },
+      onlyShowV2: true,
       portkeyV2: {
+        useLocalStorage: true,
         graphQLUrl: WebLoginGraphqlUrlV2,
         networkType: 'MAINNET',
+        connectUrl: connectUrl,
         requestDefaults: {
           baseURL: WebLoginRequestDefaultsUrlV2,
         },
@@ -47,15 +51,22 @@ const WebLoginProviderDynamic = dynamic(
 
 export default function Providers({ children }: { children: ReactNode }) {
   return (
-    <PortkeyProviderV2 networkType={NETWORK_TYPE_V2}>
+    <PortkeyProvider networkType="TESTNET" networkTypeV2="TESTNET" theme="dark">
       <WebLoginProviderDynamic
         nightElf={{
-          connectEagerly: false,
+          useMultiChain: true,
+          connectEagerly: true,
         }}
         portkey={{
+          design: 'SocialDesign',
           autoShowUnlock: true,
           checkAccountInfoSync: true,
         }}
+        commonConfig={{
+          showClose: true,
+          iconSrc: logoIcon,
+        }}
+        extraWallets={['discover', 'elf']}
         discover={{
           autoRequestAccount: true,
           autoLogoutOnDisconnected: true,
@@ -65,10 +76,9 @@ export default function Providers({ children }: { children: ReactNode }) {
           onPluginNotFound: (openStore) => {
             console.log('openStore:', openStore);
           },
-        }}
-        extraWallets={['discover']}>
+        }}>
         {children}
       </WebLoginProviderDynamic>
-    </PortkeyProviderV2>
+    </PortkeyProvider>
   );
 }

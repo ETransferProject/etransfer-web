@@ -1,15 +1,8 @@
 import React from 'react';
 import CommonButton, { CommonButtonProps } from 'components/CommonButton';
-import { useAppDispatch, useCommonState } from 'store/Provider/hooks';
-import { useCallback, useState } from 'react';
-import {
-  WebLoginProvider,
-  WebLoginState,
-  useWebLogin,
-  useLoginState,
-  useWebLoginEvent,
-  WebLoginEvents,
-} from 'aelf-web-login';
+import { useAppDispatch } from 'store/Provider/hooks';
+import { useCallback } from 'react';
+import { WebLoginState, useWebLogin, useWebLoginEvent, WebLoginEvents } from 'aelf-web-login';
 import { PortkeyVersion } from 'constants/wallet';
 import { setSwitchVersionAction } from 'store/reducers/common/slice';
 
@@ -20,6 +13,10 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
   const handleLogin = useCallback(() => {
     login();
   }, [login]);
+
+  useWebLoginEvent(WebLoginEvents.ERROR, (error) => {
+    console.log('WebLoginEvents', error);
+  });
 
   useWebLoginEvent(WebLoginEvents.LOGINED, () => {
     console.log(loginState);
