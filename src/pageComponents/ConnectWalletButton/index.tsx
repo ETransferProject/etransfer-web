@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import CommonButton, { CommonButtonProps } from 'components/CommonButton';
-import { useAppDispatch, useLoading } from 'store/Provider/hooks';
+import { useAppDispatch } from 'store/Provider/hooks';
 import { useCallback } from 'react';
 import { WebLoginState, useWebLogin, useWebLoginEvent, WebLoginEvents } from 'aelf-web-login';
 import { PortkeyVersion } from 'constants/wallet';
-import { setSwitchVersionAction } from 'store/reducers/common/slice';
 import { setV2ConnectedInfoAction } from 'store/reducers/portkeyWallet/actions';
 import { SupportedELFChainId } from 'constants/index';
 import { Accounts } from '@portkey/provider-types';
@@ -12,15 +11,9 @@ import { queryAuthToken } from 'api/utils';
 
 export default function ConnectWalletButton(props: CommonButtonProps) {
   const dispatch = useAppDispatch();
-  const [isQueryToken, setIsQueryToken] = useState(false);
   const { login, loginState, wallet } = useWebLogin();
-  const { setLoading } = useLoading();
 
   const handleLogin = useCallback(async () => {
-    // await queryAuthToken({
-    //   chainId: SupportedELFChainId.AELF,
-    //   version: PortkeyVersion.v2,
-    // });
     login();
   }, [login]);
 
@@ -28,12 +21,16 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
     console.log('WebLoginEvents', error);
   });
 
-  useEffect(() => {
-    if (WebLoginState.logined === loginState) {
+  const myQueryAuthToken = useCallback(async () => {
+    if (loginState === WebLoginState.logined) {
+      await queryAuthToken({
+        chainId: SupportedELFChainId.AELF,
+        version: PortkeyVersion.v2,
+      });
       console.log('login success');
       console.log(loginState, wallet);
-      console.log('queryAuthToken');
       const { name = '', discoverInfo } = wallet;
+
       const chainIdList: Accounts = {};
       if (discoverInfo?.accounts.AELF) {
         chainIdList[SupportedELFChainId.AELF] = discoverInfo?.accounts.AELF;
@@ -50,6 +47,10 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
       );
     }
   }, [dispatch, loginState, wallet]);
+
+  useEffect(() => {
+    myQueryAuthToken();
+  }, [myQueryAuthToken, loginState, wallet]);
 
   return (
     <CommonButton {...props} onClick={handleLogin}>

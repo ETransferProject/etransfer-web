@@ -6,7 +6,6 @@ import {
   SupportedELFChainId,
   WebLoginGraphqlUrlV1,
   WebLoginGraphqlUrlV2,
-  WebLoginRequestDefaultsUrlV1,
   WebLoginRequestDefaultsUrlV2,
   connectUrl,
 } from 'constants/index';
