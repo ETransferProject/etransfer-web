@@ -19,6 +19,7 @@ import { openWithBlank, getExploreLink } from 'utils/common';
 import { SupportedELFChainId } from 'constants/index';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
+import { useAccounts } from 'hooks/portkeyWallet';
 
 type AddressBoxProps = {
   address: string;
@@ -36,6 +37,7 @@ export default function AddressBox({
   orderType,
 }: AddressBoxProps) {
   const { isMobilePX } = useCommonState();
+  const accounts = useAccounts();
 
   const addressIcon = useCallback(() => {
     switch (network) {
@@ -63,12 +65,24 @@ export default function AddressBox({
     }
   }, [network]);
 
+  const calcAddress = useCallback(() => {
+    if (network === BitNetworkType.AELF && !address) {
+      let chanId: SupportedELFChainId = orderType === 'Deposit' ? toChanId : fromChanId;
+      chanId = chanId ?? SupportedELFChainId.AELF;
+      if (accounts && accounts[chanId] && accounts[chanId]?.[0]) {
+        return accounts[chanId]?.[0] || '--';
+      }
+      return '--';
+    }
+    return address;
+  }, [network, address, accounts, orderType, toChanId, fromChanId]);
+
   const handleAddressClick = useCallback(() => {
     // link to Deposit: toTransfer.chainId and Withdraw: fromTransfer.chainId
     openWithBlank(
-      getExploreLink(address, 'address', orderType === 'Deposit' ? toChanId : fromChanId),
+      getExploreLink(calcAddress(), 'address', orderType === 'Deposit' ? toChanId : fromChanId),
     );
-  }, [address, orderType, fromChanId, toChanId]);
+  }, [orderType, fromChanId, toChanId, calcAddress]);
 
   return (
     <div
@@ -77,12 +91,12 @@ export default function AddressBox({
         isMobilePX ? styles['mobil-addressBox'] : styles['web-addressBox'],
       )}>
       {addressIcon()}
-      <CommonTooltip title={address} trigger={'hover'}>
+      <CommonTooltip title={calcAddress()} trigger={'hover'}>
         <span className={clsx(styles['address-word'])} onClick={handleAddressClick}>
-          {getOmittedStr(address, 8, 9)}
+          {getOmittedStr(calcAddress(), 8, 9)}
         </span>
       </CommonTooltip>
-      <Copy toCopy={address} size={CopySize.Small} />
+      <Copy toCopy={calcAddress()} size={CopySize.Small} />
     </div>
   );
 }
