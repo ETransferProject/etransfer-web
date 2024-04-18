@@ -14,43 +14,33 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
   const { login, loginState, wallet } = useWebLogin();
 
   const handleLogin = useCallback(async () => {
-    login();
+    await login();
   }, [login]);
 
   useWebLoginEvent(WebLoginEvents.ERROR, (error) => {
     console.log('WebLoginEvents', error);
   });
 
-  const myQueryAuthToken = useCallback(async () => {
+  useEffect(() => {
     if (loginState === WebLoginState.logined) {
-      await queryAuthToken({
-        chainId: SupportedELFChainId.AELF,
-        version: PortkeyVersion.v2,
-      });
+      // target: replace queryAuthToken logic
+      // await queryAuthToken({
+      //   chainId: SupportedELFChainId.AELF,
+      //   version: PortkeyVersion.v2,
+      // });
       console.log('login success');
       console.log(loginState, wallet);
       const { name = '', discoverInfo } = wallet;
 
-      const chainIdList: Accounts = {};
-      if (discoverInfo?.accounts.AELF) {
-        chainIdList[SupportedELFChainId.AELF] = discoverInfo?.accounts.AELF;
-      }
-      if (discoverInfo?.accounts.tDVW) {
-        chainIdList[SupportedELFChainId.tDVW] = discoverInfo?.accounts.tDVW;
-      }
       dispatch(
         setV2ConnectedInfoAction({
-          accounts: chainIdList,
+          accounts: discoverInfo?.accounts,
           name,
           isActive: true,
         }),
       );
     }
-  }, [dispatch, loginState, wallet]);
-
-  useEffect(() => {
-    myQueryAuthToken();
-  }, [myQueryAuthToken, loginState, wallet]);
+  }, [loginState]);
 
   return (
     <CommonButton {...props} onClick={handleLogin}>
