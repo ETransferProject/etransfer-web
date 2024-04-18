@@ -25,6 +25,9 @@ export default function Content() {
   const requestRecordsList = useDebounceCallback(async () => {
     try {
       setLoading(true);
+      // const startTimestamp = timestamp && timestamp[0];
+      // const endTimestamp = timestamp && timestamp[1];
+      // console.log(startTimestamp, endTimestamp);
       const { items: recordsListRes, totalCount } = await getRecordsList({
         type,
         status,

@@ -1,3 +1,5 @@
+@import 'src/assets/theme/color.scss';
+
 .tokenBox {
   min-width: 100px;
   white-space: nowrap;
@@ -12,7 +14,18 @@
 }
 
 .token-icon {
+  display: inline-block;
   vertical-align: middle;
+}
+
+.word-symbol {
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+  border-radius: 8px;
+  border: 1px solid $border;
+  background: $hover-bg;
 }
 
 .token {

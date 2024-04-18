@@ -15,12 +15,21 @@ import AddressBox from 'pageComponents/RecordsContent/AddressBox';
 
 const columns = [
   {
-    title: 'Status',
+    title: 'Transaction',
     dataIndex: 'status',
     key: 'status',
     minWidth: '112px',
-    render: (status: string) => {
-      return <StatusBox status={status} />;
+    render: (status: string, record: recordsTableListType) => {
+      return (
+        <StatusBox
+          status={status}
+          address={record.fromAddress}
+          network={record.fromNetwork}
+          fromChanId={record.fromChanId}
+          toChanId={record.toChanId}
+          orderType={record.orderType}
+        />
+      );
     },
   },
   {
@@ -62,7 +71,7 @@ const columns = [
     key: 'receivingAmount',
     minWidth: '140px',
     render: (receivingAmount: string, record: recordsTableListType) => {
-      return <AmountBox amount={receivingAmount} token={record.symbol} />;
+      return <AmountBox amount={receivingAmount} token={record.symbol} status={record.status} />;
     },
   },
   {
@@ -73,11 +82,15 @@ const columns = [
     render: (fromAddress: string, record: recordsTableListType) => {
       return (
         <AddressBox
-          address={fromAddress}
+          type={'From'}
+          fromAddress={fromAddress}
+          toAddress={record.toAddress}
           network={record.fromNetwork}
           fromChanId={record.fromChanId}
           toChanId={record.toChanId}
           orderType={record.orderType}
+          fromToAddress={record.fromToAddress}
+          toFromAddress={record.toFromAddress}
         />
       );
     },
@@ -90,11 +103,15 @@ const columns = [
     render: (toAddress: string, record: recordsTableListType) => {
       return (
         <AddressBox
-          address={toAddress}
+          type={'To'}
+          fromAddress={record.fromAddress}
+          toAddress={toAddress}
           network={record.toNetwork}
           fromChanId={record.fromChanId}
           toChanId={record.toChanId}
           orderType={record.orderType}
+          fromToAddress={record.fromToAddress}
+          toFromAddress={record.toFromAddress}
         />
       );
     },
@@ -133,8 +150,10 @@ export default function WebRecordsTable({ requestRecordsList }: RecordsContentPa
         receivingAmount: toTransfer.amount,
         fromNetwork: fromTransfer.network,
         fromAddress: fromTransfer.fromAddress,
+        fromToAddress: fromTransfer.toAddress,
         fromChanId: fromTransfer.chainId,
         toNetwork: toTransfer.network,
+        toFromAddress: toTransfer.fromAddress,
         toAddress: toTransfer.toAddress,
         toChanId: toTransfer.chainId,
         feeInfo: toTransfer.feeInfo,
@@ -159,7 +178,7 @@ export default function WebRecordsTable({ requestRecordsList }: RecordsContentPa
         columns={columns}
         scroll={{ x: 1020 }}
         locale={{
-          emptyText: <EmptyDataBox emptyText={'No record found'} />,
+          emptyText: <EmptyDataBox emptyText={'No records found'} />,
         }}
         pagination={{
           current: skipCount,

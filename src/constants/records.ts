@@ -1,3 +1,3 @@
-export const ProcessingTipMessage = 'need Processing international wording';
+export const ProcessingTipMessage = 'Pending confirmation on';
 
-export const FailedTipMessage = 'need Failed international wording';
+export const FailedTipMessage = 'Assets returned to the from address';
