@@ -92,7 +92,7 @@ export default function StatusBox({
       default:
         return null;
     }
-  }, [status, handleClick]);
+  }, [status, handleClick, calcAddress]);
 
   return (
     <div className={styles['status-wrapper']}>

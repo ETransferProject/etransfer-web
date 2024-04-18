@@ -18,7 +18,6 @@ const columns = [
     title: 'Transaction',
     dataIndex: 'status',
     key: 'status',
-    minWidth: '112px',
     render: (status: string, record: recordsTableListType) => {
       return (
         <StatusBox
@@ -36,7 +35,6 @@ const columns = [
     title: 'Arrival Time',
     dataIndex: 'arrivalTime',
     key: 'arrivalTime',
-    minWidth: '90px',
     render: (arrivalTime: number, record: recordsTableListType) => {
       return <ArrivalTimeBox arrivalTime={arrivalTime} status={record.status} />;
     },
@@ -45,13 +43,14 @@ const columns = [
     title: 'Method',
     dataIndex: 'orderType',
     key: 'orderType',
-    minWidth: '72px',
+    render: (orderType: string) => {
+      return <div className={styles['orderType']}>{orderType}</div>;
+    },
   },
   {
     title: 'Token',
     dataIndex: 'symbol',
     key: 'symbol',
-    minWidth: '90px',
     render: (symbol: string) => {
       return <TokenBox symbol={symbol} />;
     },
@@ -60,7 +59,6 @@ const columns = [
     title: 'Sending Amount',
     dataIndex: 'sendingAmount',
     key: 'sendingAmount',
-    minWidth: '140px',
     render: (sendingAmount: string, record: recordsTableListType) => {
       return <AmountBox amount={sendingAmount} token={record.symbol} />;
     },
@@ -69,7 +67,6 @@ const columns = [
     title: 'Receiving Amount',
     dataIndex: 'receivingAmount',
     key: 'receivingAmount',
-    minWidth: '140px',
     render: (receivingAmount: string, record: recordsTableListType) => {
       return <AmountBox amount={receivingAmount} token={record.symbol} status={record.status} />;
     },
@@ -78,7 +75,6 @@ const columns = [
     title: 'From',
     dataIndex: 'fromAddress',
     key: 'fromAddress',
-    minWidth: '190px',
     render: (fromAddress: string, record: recordsTableListType) => {
       return (
         <AddressBox
@@ -99,7 +95,6 @@ const columns = [
     title: 'To',
     dataIndex: 'toAddress',
     key: 'toAddress',
-    minWidth: '190px',
     render: (toAddress: string, record: recordsTableListType) => {
       return (
         <AddressBox
@@ -120,7 +115,6 @@ const columns = [
     title: 'Transaction Fee',
     dataIndex: 'feeInfo',
     key: 'feeInfo',
-    minWidth: '120px',
     render: (feeInfo: feeInfoType[], record: recordsTableListType) => {
       return <FeeInfo feeInfo={feeInfo} status={record.status} orderType={record.orderType} />;
     },
