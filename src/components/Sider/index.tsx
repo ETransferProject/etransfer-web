@@ -33,7 +33,9 @@ export default function Sider() {
               }}>
               <MenuIcon className={clsx('flex-none', styles['menu-item-icon'])} />
               <span className={styles['menu-item-label']}>{item.label}</span>
-              {isShowRedDot && <RedDot className={styles['menu-item-red-dot']} />}
+              {isShowRedDot && item.key === SideMenuKey.Records && (
+                <RedDot className={styles['menu-item-red-dot']} />
+              )}
             </div>
           );
         })}

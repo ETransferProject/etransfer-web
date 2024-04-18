@@ -16,3 +16,16 @@ export enum BitNetworkType {
   Binance = 'BSC',
   Avax = 'AVAXC',
 }
+
+export enum OtherEXPLORE_URL {
+  AELF = 'https://explorer.aelf.io',
+  SETH = 'https://sepolia.etherscan.io',
+  ETH = 'https://etherscan.io',
+  MATIC = 'https://polygonscan.com',
+  ARBITRUM = 'https://arbiscan.io',
+  OPTIMISM = 'https://optimistic.etherscan.io',
+  Solana = 'https://explorer.solana.com',
+  TRX = 'https://tronscan.io',
+  BSC = 'https://bscscan.com',
+  AVAXC = 'https://subnets.avax.network/c-chain',
+}

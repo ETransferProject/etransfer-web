@@ -1,5 +1,9 @@
 @import 'assets/theme/color.scss';
 
+.status-wrapper {
+  min-width: 112px;
+}
+
 .status-box {
   display: flex;
   justify-content: flex-start;

@@ -78,7 +78,9 @@ import { useWithdraw } from 'hooks/withdraw';
 import { QuestionMarkIcon, Fingerprint } from 'assets/images';
 import { InitWithdrawTokenState } from 'store/reducers/token/slice';
 import RemainingQuato from './RemainingQuato';
-import AElf from 'aelf-sdk';
+import { getRecordStatus } from 'utils/api/records';
+import { compareTwoStringNumbers } from 'utils/calculate';
+import { setIsShowRedDot, setRecordCreateTime } from 'store/reducers/common/slice';
 
 enum ValidateStatus {
   Error = 'error',
@@ -103,7 +105,8 @@ type FormValuesType = {
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const isAndroid = devices.isMobile().android;
-  const { isMobilePX, currentChainItem, currentVersion } = useCommonState();
+  const { isMobilePX, currentChainItem, currentVersion, activeMenuKey, recordCreateTime } =
+    useCommonState();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
   const accounts = useAccounts();
   const { currentSymbol, tokenList } = useWithdraw();
@@ -612,6 +615,19 @@ export default function WithdrawContent() {
     return checkRes;
   }, [accounts, balance, currentSymbol, currentTokenAddress, currentVersion, getMaxBalance]);
 
+  const fetchRecordStatus = useCallback(async () => {
+    const res = await getRecordStatus();
+    if (!res.status || activeMenuKey === SideMenuKey.Records) {
+      dispatch(setIsShowRedDot(false));
+      return;
+    }
+
+    if (compareTwoStringNumbers(res.createTime, recordCreateTime)) {
+      dispatch(setIsShowRedDot(true));
+      dispatch(setRecordCreateTime(res.createTime));
+    }
+  }, [activeMenuKey, dispatch, recordCreateTime]);
+
   const handleCreateWithdrawOrder = useCallback(
     async ({ address, rawTransaction }: { address: string; rawTransaction: string }) => {
       try {
@@ -626,7 +642,6 @@ export default function WithdrawContent() {
           rawTransaction: rawTransaction,
         });
         console.log('🌈 🌈 🌈 🌈 🌈 🌈 createWithdrawOrderRes', createWithdrawOrderRes);
-
         if (createWithdrawOrderRes.orderId) {
           setWithdrawInfoSuccessCheck({
             receiveAmount: receiveAmount,
@@ -636,7 +651,7 @@ export default function WithdrawContent() {
             chainItem: currentChainItemRef.current,
             arriveTime: currentNetworkRef.current.multiConfirmTime,
             receiveAmountUsd: withdrawInfo.receiveAmountUsd,
-            transactionId: AElf.utils.getTransactionId(rawTransaction),
+            transactionId: createWithdrawOrderRes.transactionId,
           });
           setIsSuccessModalOpen(true);
         } else {
@@ -651,11 +666,20 @@ export default function WithdrawContent() {
         }
         setIsFailModalOpen(true);
       } finally {
+        // update records status
+        fetchRecordStatus();
         setLoading(false);
         setIsDoubleCheckModalOpen(false);
       }
     },
-    [balance, currentSymbol, receiveAmount, setLoading, withdrawInfo.receiveAmountUsd],
+    [
+      balance,
+      currentSymbol,
+      receiveAmount,
+      setLoading,
+      withdrawInfo.receiveAmountUsd,
+      fetchRecordStatus,
+    ],
   );
 
   const sendTransferTokenTransaction = useDebounceCallback(async () => {
@@ -1108,7 +1132,7 @@ export default function WithdrawContent() {
             isTagA: true,
             children: (
               <div className={styles['link-wrap']}>
-                <span className={styles['link-word']}>View the transaction on explorer</span>
+                <span className={styles['link-word']}>View on aelf Explorer</span>
                 <Fingerprint className={styles['link-explore-icon']} />
               </div>
             ),

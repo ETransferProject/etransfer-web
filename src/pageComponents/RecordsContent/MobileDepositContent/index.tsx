@@ -13,7 +13,7 @@ export default function MobileRecordsContent({ requestRecordsList }: RecordsCont
       <Filter requestRecordsList={requestRecordsList} />
       <Divider className={styles['divider-style']} />
       {recordsList?.length !== 0 && <RecordsCardItem requestRecordsList={requestRecordsList} />}
-      {recordsList?.length === 0 && <EmytyDataBox emptyText={'No record found'} />}
+      {recordsList?.length === 0 && <EmytyDataBox emptyText={'No records found'} />}
     </div>
   );
 }

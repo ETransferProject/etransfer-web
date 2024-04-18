@@ -57,8 +57,10 @@ export interface recordsTableListType {
   receivingAmount: string;
   fromNetwork: string;
   fromAddress: string;
+  fromToAddress: string;
   fromChanId: SupportedELFChainId;
   toNetwork: string;
+  toFromAddress: string;
   toAddress: string;
   toChanId: SupportedELFChainId;
   feeInfo: feeInfoType[];

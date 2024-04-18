@@ -1,5 +1,6 @@
 import { ChainId } from 'types';
 import { EXPLORE_URL } from 'constants/exploreUrl';
+import { OtherEXPLORE_URL } from 'constants/network';
 import { SupportedELFChainId } from 'constants/testnet';
 import AElf from 'aelf-sdk';
 
@@ -32,6 +33,29 @@ export function getExploreLink(
     case 'address':
     default: {
       return `${prefix}address/${data}`;
+    }
+  }
+}
+
+export function getOtherExploreLink(
+  data: string,
+  network: keyof typeof OtherEXPLORE_URL,
+  type: 'transaction' | 'address',
+): string {
+  const prefix = OtherEXPLORE_URL[network];
+  switch (type) {
+    case 'transaction': {
+      if (network === 'TRX') {
+        return `${prefix}/#/transaction/${data}`;
+      }
+      return `${prefix}/tx/${data}`;
+    }
+    case 'address':
+    default: {
+      if (network === 'TRX') {
+        return `${prefix}/#/address/${data}`;
+      }
+      return `${prefix}/address/${data}`;
     }
   }
 }

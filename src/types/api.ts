@@ -129,6 +129,7 @@ export type CreateWithdrawOrderRequest = {
 
 export type CreateWithdrawOrderResult = {
   orderId: string;
+  transactionId: string;
 };
 
 export type RangeValue = [Moment | null, Moment | null] | null;

@@ -72,7 +72,7 @@ export default function WebRecordsHeader({ requestRecordsList }: RecordsContentP
           onChange={handleTypeChange}
           popupClassName={'drop-wrap'}
           options={[
-            { value: RecordsRequestType.ALL, label: 'ALL Transfers' },
+            { value: RecordsRequestType.ALL, label: 'ALL' },
             { value: RecordsRequestType.Deposits, label: 'Deposits' },
             { value: RecordsRequestType.Withdraws, label: 'Withdraws' },
           ]}
@@ -84,9 +84,9 @@ export default function WebRecordsHeader({ requestRecordsList }: RecordsContentP
           onChange={handleStatusChange}
           popupClassName={'drop-wrap'}
           options={[
-            { value: RecordsRequestStatus.ALL, label: 'ALL Status' },
-            { value: RecordsRequestStatus.Processing, label: 'Processing' },
-            { value: RecordsRequestStatus.Succeed, label: 'Succeed' },
+            { value: RecordsRequestStatus.ALL, label: 'ALL' },
+            { value: RecordsRequestStatus.Processing, label: 'Pending' },
+            { value: RecordsRequestStatus.Succeed, label: 'Completed' },
             { value: RecordsRequestStatus.Failed, label: 'Failed' },
           ]}
         />
