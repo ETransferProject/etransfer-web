@@ -7,6 +7,7 @@ import { useDebounceCallback } from 'hooks';
 import { useEffect } from 'react';
 import { RecordsRequestType, RecordsRequestStatus } from 'types/records';
 import { RecordsListItem } from 'types/api';
+import moment from 'moment';
 
 export default function Content() {
   const { isMobilePX } = useCommonState();
@@ -25,14 +26,15 @@ export default function Content() {
   const requestRecordsList = useDebounceCallback(async () => {
     try {
       setLoading(true);
-      // const startTimestamp = timestamp && timestamp[0];
-      // const endTimestamp = timestamp && timestamp[1];
-      // console.log(startTimestamp, endTimestamp);
+      const startTimestamp = timestamp && timestamp[0];
+      const startTimestampFromat = moment(startTimestamp).format('YYYY-MM-DD 00:00:00');
+      const endTimestamp = timestamp && timestamp[1];
+      const endTimestampFromat = moment(endTimestamp).format('YYYY-MM-DD 23:59:59');
       const { items: recordsListRes, totalCount } = await getRecordsList({
         type,
         status,
-        startTimestamp: (timestamp && timestamp[0] && timestamp[0].valueOf()) || null,
-        endTimestamp: (timestamp && timestamp[1] && timestamp[1].valueOf()) || null,
+        startTimestamp: moment(startTimestampFromat).valueOf() || null,
+        endTimestamp: moment(endTimestampFromat).valueOf() || null,
         skipCount: (skipCount - 1) * maxResultCount,
         maxResultCount,
       });
