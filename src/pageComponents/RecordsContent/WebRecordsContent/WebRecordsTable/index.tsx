@@ -15,58 +15,15 @@ import AddressBox from 'pageComponents/RecordsContent/AddressBox';
 
 const columns = [
   {
-    title: 'Status',
+    title: 'Transaction',
     dataIndex: 'status',
     key: 'status',
-    render: (status: string) => {
-      return <StatusBox status={status} />;
-    },
-  },
-  {
-    title: 'Arrival Time',
-    dataIndex: 'arrivalTime',
-    key: 'arrivalTime',
-    render: (arrivalTime: number, record: recordsTableListType) => {
-      return <ArrivalTimeBox arrivalTime={arrivalTime} status={record.status} />;
-    },
-  },
-  {
-    title: 'Method',
-    dataIndex: 'orderType',
-    key: 'orderType',
-  },
-  {
-    title: 'Token',
-    dataIndex: 'symbol',
-    key: 'symbol',
-    render: (symbol: string) => {
-      return <TokenBox symbol={symbol} />;
-    },
-  },
-  {
-    title: 'Sending Amount',
-    dataIndex: 'sendingAmount',
-    key: 'sendingAmount',
-    render: (sendingAmount: string, record: recordsTableListType) => {
-      return <AmountBox amount={sendingAmount} token={record.symbol} />;
-    },
-  },
-  {
-    title: 'Receiving Amount',
-    dataIndex: 'receivingAmount',
-    key: 'receivingAmount',
-    render: (receivingAmount: string, record: recordsTableListType) => {
-      return <AmountBox amount={receivingAmount} token={record.symbol} />;
-    },
-  },
-  {
-    title: 'From',
-    dataIndex: 'fromAddress',
-    key: 'fromAddress',
-    render: (fromAddress: string, record: recordsTableListType) => {
+    minWidth: '112px',
+    render: (status: string, record: recordsTableListType) => {
       return (
-        <AddressBox
-          address={fromAddress}
+        <StatusBox
+          status={status}
+          address={record.fromAddress}
           network={record.fromNetwork}
           fromChanId={record.fromChanId}
           toChanId={record.toChanId}
@@ -76,17 +33,85 @@ const columns = [
     },
   },
   {
+    title: 'Arrival Time',
+    dataIndex: 'arrivalTime',
+    key: 'arrivalTime',
+    minWidth: '90px',
+    render: (arrivalTime: number, record: recordsTableListType) => {
+      return <ArrivalTimeBox arrivalTime={arrivalTime} status={record.status} />;
+    },
+  },
+  {
+    title: 'Method',
+    dataIndex: 'orderType',
+    key: 'orderType',
+    minWidth: '72px',
+  },
+  {
+    title: 'Token',
+    dataIndex: 'symbol',
+    key: 'symbol',
+    minWidth: '90px',
+    render: (symbol: string) => {
+      return <TokenBox symbol={symbol} />;
+    },
+  },
+  {
+    title: 'Sending Amount',
+    dataIndex: 'sendingAmount',
+    key: 'sendingAmount',
+    minWidth: '140px',
+    render: (sendingAmount: string, record: recordsTableListType) => {
+      return <AmountBox amount={sendingAmount} token={record.symbol} />;
+    },
+  },
+  {
+    title: 'Receiving Amount',
+    dataIndex: 'receivingAmount',
+    key: 'receivingAmount',
+    minWidth: '140px',
+    render: (receivingAmount: string, record: recordsTableListType) => {
+      return <AmountBox amount={receivingAmount} token={record.symbol} status={record.status} />;
+    },
+  },
+  {
+    title: 'From',
+    dataIndex: 'fromAddress',
+    key: 'fromAddress',
+    minWidth: '190px',
+    render: (fromAddress: string, record: recordsTableListType) => {
+      return (
+        <AddressBox
+          type={'From'}
+          fromAddress={fromAddress}
+          toAddress={record.toAddress}
+          network={record.fromNetwork}
+          fromChanId={record.fromChanId}
+          toChanId={record.toChanId}
+          orderType={record.orderType}
+          fromToAddress={record.fromToAddress}
+          toFromAddress={record.toFromAddress}
+        />
+      );
+    },
+  },
+  {
     title: 'To',
     dataIndex: 'toAddress',
     key: 'toAddress',
+    minWidth: '190px',
     render: (toAddress: string, record: recordsTableListType) => {
       return (
         <AddressBox
-          address={toAddress}
+          type={'To'}
+          fromAddress={record.fromAddress}
+          toAddress={toAddress}
           network={record.toNetwork}
           fromChanId={record.fromChanId}
           toChanId={record.toChanId}
           orderType={record.orderType}
+          fromToAddress={record.fromToAddress}
+          toFromAddress={record.toFromAddress}
         />
       );
     },
@@ -95,8 +120,9 @@ const columns = [
     title: 'Transaction Fee',
     dataIndex: 'feeInfo',
     key: 'feeInfo',
+    minWidth: '120px',
     render: (feeInfo: feeInfoType[], record: recordsTableListType) => {
-      return <FeeInfo feeInfo={feeInfo} status={record.status} />;
+      return <FeeInfo feeInfo={feeInfo} status={record.status} orderType={record.orderType} />;
     },
   },
 ];
@@ -124,8 +150,10 @@ export default function WebRecordsTable({ requestRecordsList }: RecordsContentPa
         receivingAmount: toTransfer.amount,
         fromNetwork: fromTransfer.network,
         fromAddress: fromTransfer.fromAddress,
+        fromToAddress: fromTransfer.toAddress,
         fromChanId: fromTransfer.chainId,
         toNetwork: toTransfer.network,
+        toFromAddress: toTransfer.fromAddress,
         toAddress: toTransfer.toAddress,
         toChanId: toTransfer.chainId,
         feeInfo: toTransfer.feeInfo,
@@ -150,7 +178,7 @@ export default function WebRecordsTable({ requestRecordsList }: RecordsContentPa
         columns={columns}
         scroll={{ x: 1020 }}
         locale={{
-          emptyText: <EmptyDataBox emptyText={'No record found'} />,
+          emptyText: <EmptyDataBox emptyText={'No records found'} />,
         }}
         pagination={{
           current: skipCount,

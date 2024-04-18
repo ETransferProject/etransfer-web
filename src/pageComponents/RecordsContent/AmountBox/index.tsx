@@ -2,13 +2,15 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { LargeNumberDisplay } from 'utils/calculate';
 import { useCommonState } from 'store/Provider/hooks';
+import { RecordsStatus } from 'types/records';
 
 type AmountBoxProps = {
   amount: string;
   token: string;
+  status?: string;
 };
 
-export default function AmountBox({ amount, token }: AmountBoxProps) {
+export default function AmountBox({ amount, token, status }: AmountBoxProps) {
   const { isMobilePX } = useCommonState();
 
   return (
@@ -17,7 +19,7 @@ export default function AmountBox({ amount, token }: AmountBoxProps) {
         styles['AmountBox'],
         isMobilePX ? styles['mobile-amount-box'] : styles['web-amount-box'],
       )}>
-      {LargeNumberDisplay(amount, token)}
+      {status === RecordsStatus.Failed ? '--' : LargeNumberDisplay(amount, token)}
     </div>
   );
 }

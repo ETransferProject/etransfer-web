@@ -67,19 +67,26 @@ export default function RecordsCardItem({ requestRecordsList }: RecordsContentPa
         scrollableTarget="scrollableDiv"
         loader={
           <h4 className={clsx(styles['records-loader-message'])}>
-            {hasMore ? '-- Loading more records --' : '-- loading completed --'}
+            {hasMore ? ' Loading... ' : 'No Data'}
           </h4>
         }
         endMessage={
           <p className={clsx(styles['records-end-message'])}>
-            <b>-- loading completed --</b>
+            <b>No Data</b>
           </p>
         }>
         {handleRecordListData(recordsList).map((recordItem: recordsTableListType) => {
           return (
             <div className={clsx(styles['records-card-item-wrapper'])} key={recordItem.key}>
               <div className={clsx(styles['records-card-item-header'])}>
-                <StatusBox status={recordItem.status} />
+                <StatusBox
+                  status={recordItem.status}
+                  address={recordItem.fromAddress}
+                  network={recordItem.fromNetwork}
+                  fromChanId={recordItem.fromChanId}
+                  toChanId={recordItem.toChanId}
+                  orderType={recordItem.orderType}
+                />
                 <span className={clsx(styles['records-card-item-order-type'])}>
                   {recordItem.orderType}
                 </span>
@@ -104,26 +111,38 @@ export default function RecordsCardItem({ requestRecordsList }: RecordsContentPa
               <div className={styles['records-card-item-line']}>
                 <span className={styles['records-card-item-label']}>From</span>
                 <AddressBox
-                  address={recordItem.fromAddress}
+                  type={'From'}
+                  fromAddress={recordItem.fromAddress}
+                  toAddress={recordItem.toAddress}
                   network={recordItem.fromNetwork}
                   fromChanId={recordItem.fromChanId}
                   toChanId={recordItem.toChanId}
                   orderType={recordItem.orderType}
+                  fromToAddress={recordItem.fromToAddress}
+                  toFromAddress={recordItem.toFromAddress}
                 />
               </div>
               <div className={styles['records-card-item-line']}>
                 <span className={styles['records-card-item-label']}>To</span>
                 <AddressBox
-                  address={recordItem.toAddress}
+                  type={'To'}
+                  fromAddress={recordItem.fromAddress}
+                  toAddress={recordItem.toAddress}
                   network={recordItem.toNetwork}
                   fromChanId={recordItem.fromChanId}
                   toChanId={recordItem.toChanId}
                   orderType={recordItem.orderType}
+                  fromToAddress={recordItem.fromToAddress}
+                  toFromAddress={recordItem.toFromAddress}
                 />
               </div>
               <div className={styles['records-card-item-Fee']}>
                 <span className={styles['records-card-item-label']}>Transaction Fee</span>
-                <FeeInfo feeInfo={recordItem.feeInfo} status={recordItem.status} />
+                <FeeInfo
+                  feeInfo={recordItem.feeInfo}
+                  status={recordItem.status}
+                  orderType={recordItem.orderType}
+                />
               </div>
               <Divider className={styles['divider-style']} />
             </div>

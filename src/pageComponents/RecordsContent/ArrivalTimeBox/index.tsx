@@ -18,8 +18,7 @@ export default function ArrivalTimeBox({ arrivalTime, status }: ArrivalTimeBoxPr
     const hourMinuteSecond = moment(arrivalTime).format('HH:mm:ss');
     const now = moment();
     const targetTime = moment(arrivalTime);
-    const minutes = now.diff(targetTime, 'minutes');
-
+    const minutes = targetTime.diff(now, 'minutes');
     switch (status) {
       case RecordsStatus.Processing:
         return <div>{minutes > 0 ? <span>~ in {minutes} mins</span> : 'Arriving soon'}</div>;

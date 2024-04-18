@@ -22,15 +22,21 @@ import { useCommonState } from 'store/Provider/hooks';
 import { useAccounts } from 'hooks/portkeyWallet';
 
 type AddressBoxProps = {
-  address: string;
+  type: string;
+  fromAddress: string;
+  toAddress: string;
   network: string;
   fromChanId: SupportedELFChainId;
   toChanId: SupportedELFChainId;
   orderType: string;
+  fromToAddress: string;
+  toFromAddress: string;
 };
 
 export default function AddressBox({
-  address,
+  type,
+  fromAddress,
+  toAddress,
   network,
   fromChanId,
   toChanId,
@@ -66,7 +72,7 @@ export default function AddressBox({
   }, [network]);
 
   const calcAddress = useCallback(() => {
-    if (network === BitNetworkType.AELF && !address) {
+    if (network === BitNetworkType.AELF) {
       let chanId: SupportedELFChainId = orderType === 'Deposit' ? toChanId : fromChanId;
       chanId = chanId ?? SupportedELFChainId.AELF;
       if (accounts && accounts[chanId] && accounts[chanId]?.[0]) {
@@ -74,15 +80,30 @@ export default function AddressBox({
       }
       return '--';
     }
-    return address;
-  }, [network, address, accounts, orderType, toChanId, fromChanId]);
+
+    switch (orderType + type) {
+      case 'DepositFrom':
+        return fromAddress;
+      case 'DepositTo':
+        return toAddress;
+      case 'WithdrawFrom':
+        return fromAddress;
+      case 'WithdrawTo':
+        return toAddress;
+      default:
+        return '--';
+    }
+  }, [type, network, accounts, orderType, toChanId, fromChanId, fromAddress, toAddress]);
 
   const handleAddressClick = useCallback(() => {
     // link to Deposit: toTransfer.chainId and Withdraw: fromTransfer.chainId
-    openWithBlank(
-      getExploreLink(calcAddress(), 'address', orderType === 'Deposit' ? toChanId : fromChanId),
-    );
-  }, [orderType, fromChanId, toChanId, calcAddress]);
+    // only suport AELF tDVW now
+    if (network === BitNetworkType.AELF) {
+      openWithBlank(
+        getExploreLink(calcAddress(), 'address', orderType === 'Deposit' ? toChanId : fromChanId),
+      );
+    }
+  }, [orderType, fromChanId, toChanId, calcAddress, network]);
 
   return (
     <div
