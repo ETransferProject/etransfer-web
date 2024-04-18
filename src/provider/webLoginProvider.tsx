@@ -55,8 +55,8 @@ export default function Providers({ children }: { children: ReactNode }) {
     <PortkeyProvider networkType="TESTNET" networkTypeV2="TESTNET" theme="dark">
       <WebLoginProviderDynamic
         nightElf={{
-          useMultiChain: true,
-          connectEagerly: true,
+          useMultiChain: false,
+          connectEagerly: false,
         }}
         portkey={{
           design: 'SocialDesign',
@@ -67,7 +67,7 @@ export default function Providers({ children }: { children: ReactNode }) {
           showClose: true,
           iconSrc: logoIcon,
         }}
-        extraWallets={['discover', 'elf']}
+        extraWallets={['discover']}
         discover={{
           autoRequestAccount: true,
           autoLogoutOnDisconnected: true,
