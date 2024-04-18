@@ -12,10 +12,10 @@ import {
   Avax,
 } from 'assets/images';
 import { useCallback } from 'react';
-import { BitNetworkType } from 'constants/network';
+import { BitNetworkType, OtherEXPLORE_URL } from 'constants/network';
 import Copy, { CopySize } from 'components/Copy';
 import { getOmittedStr } from 'utils/calculate';
-import { openWithBlank, getExploreLink } from 'utils/common';
+import { openWithBlank, getExploreLink, getOtherExploreLink } from 'utils/common';
 import { SupportedELFChainId } from 'constants/index';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
@@ -97,12 +97,15 @@ export default function AddressBox({
 
   const handleAddressClick = useCallback(() => {
     // link to Deposit: toTransfer.chainId and Withdraw: fromTransfer.chainId
-    // only suport AELF tDVW now
     if (network === BitNetworkType.AELF) {
       openWithBlank(
         getExploreLink(calcAddress(), 'address', orderType === 'Deposit' ? toChanId : fromChanId),
       );
+      return;
     }
+    openWithBlank(
+      getOtherExploreLink(calcAddress(), network as keyof typeof OtherEXPLORE_URL, 'address'),
+    );
   }, [orderType, fromChanId, toChanId, calcAddress, network]);
 
   return (

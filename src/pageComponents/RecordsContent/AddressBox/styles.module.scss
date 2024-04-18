@@ -1,6 +1,7 @@
 @import 'src/assets/theme/color.scss';
 
 .addressBox {
+  min-width: 190px;
   display: flex;
   align-items: center;
 }
