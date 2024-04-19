@@ -12,8 +12,8 @@ import {
 } from 'aelf-web-login';
 import { PortkeyVersion } from 'constants/wallet';
 import { setV2ConnectedInfoAction } from 'store/reducers/portkeyWallet/actions';
-import { setQueryAuthApiParams } from 'store/reducers/common/slice';
-// import { Accounts } from '@portkey/provider-types';
+import { setQueryAuthApiParams, setSwitchVersionAction } from 'store/reducers/common/slice';
+import { Accounts } from '@portkey/provider-types';
 import { NETWORK_CONFIG } from 'constants/loginNetwork';
 import { GetCAHolderByManagerParams } from '@portkey/services';
 import AElf from 'aelf-sdk';
@@ -22,6 +22,7 @@ import { recoverPubKey } from 'utils/loginUtils';
 import { queryAuthApi } from 'api/utils';
 import { useDebounceCallback } from 'hooks';
 // import { useEffectOnce } from 'react-use';
+import { SupportedELFChainId } from 'constants/index';
 
 const pubKeyToAddress = (pubKey: string) => {
   const onceSHAResult = Buffer.from(AElf.utils.sha256(Buffer.from(pubKey, 'hex')), 'hex');
@@ -108,9 +109,18 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
       const { name = '', discoverInfo } = wallet;
       setLoading(false);
       // todo accounts depend on walletType
-      let accounts = discoverInfo?.accounts;
+      // string or string[] -> string[]
+      let accounts: Accounts = {};
+      if (walletType === WalletType.discover) {
+        accounts = discoverInfo?.accounts || {};
+      }
       if (walletType === WalletType.portkey) {
-        accounts = wallet.portkeyInfo?.accounts;
+        if (accounts && wallet.portkeyInfo?.accounts?.[SupportedELFChainId.AELF]) {
+          accounts[SupportedELFChainId.AELF] = [wallet.portkeyInfo?.accounts?.AELF];
+        }
+        if (wallet.portkeyInfo?.accounts?.[SupportedELFChainId.tDVW]) {
+          accounts[SupportedELFChainId.tDVW] = [wallet.portkeyInfo?.accounts?.tDVW];
+        }
       }
       dispatch(
         setV2ConnectedInfoAction({
@@ -119,6 +129,7 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
           isActive: true,
         }),
       );
+      dispatch(setSwitchVersionAction(PortkeyVersion.v2));
     } catch (error) {
       console.log('queryAuthApi error', error);
       return;

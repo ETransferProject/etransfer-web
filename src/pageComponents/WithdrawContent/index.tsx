@@ -558,14 +558,17 @@ export default function WithdrawContent() {
   );
 
   useEffect(() => {
-    if (!withdrawInfo.expiredTimestamp || currentNetworkRef.current?.network) {
+    if (!withdrawInfo.expiredTimestamp) {
       return;
     }
     if (getTransactionFeeTimerRef.current) {
       clearInterval(getTransactionFeeTimerRef.current);
     }
     getTransactionFeeTimerRef.current = setInterval(async () => {
-      if (new Date().getTime() > withdrawInfo.expiredTimestamp) {
+      if (
+        new Date().getTime() > withdrawInfo.expiredTimestamp &&
+        currentNetworkRef.current?.network
+      ) {
         await getWithdrawData();
       }
     }, 10000);

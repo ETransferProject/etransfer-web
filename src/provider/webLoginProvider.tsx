@@ -43,6 +43,7 @@ const WebLoginProviderDynamic = dynamic(
         connectUrl: connectUrl,
         requestDefaults: {
           baseURL: 'portkeyV2',
+          timeout: 300000,
         },
         serviceUrl: WebLoginRequestDefaultsUrlV2,
       },

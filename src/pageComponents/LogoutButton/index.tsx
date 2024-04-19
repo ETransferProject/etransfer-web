@@ -5,6 +5,7 @@ import { useWebLogin } from 'aelf-web-login';
 import { useAppDispatch } from 'store/Provider/hooks';
 import { setV2DisconnectedAction } from 'store/reducers/portkeyWallet/actions';
 import { setSwitchVersionAction } from 'store/reducers/common/slice';
+import { setHandleReset } from 'store/reducers/records/slice';
 
 export default function LogoutButton() {
   const resetStore = useResetStore();
@@ -12,9 +13,10 @@ export default function LogoutButton() {
   const dispatch = useAppDispatch();
 
   const handleLogoutWallet = useCallback(async () => {
-    logout();
+    await logout();
     dispatch(setV2DisconnectedAction());
     dispatch(setSwitchVersionAction(undefined));
+    dispatch(setHandleReset());
     resetStore();
   }, [dispatch, resetStore, logout]);
 
