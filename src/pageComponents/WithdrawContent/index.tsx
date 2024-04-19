@@ -105,8 +105,14 @@ type FormValuesType = {
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const isAndroid = devices.isMobile().android;
-  const { isMobilePX, currentChainItem, currentVersion, activeMenuKey, recordCreateTime } =
-    useCommonState();
+  const {
+    isMobilePX,
+    currentChainItem,
+    currentVersion,
+    activeMenuKey,
+    recordCreateTime,
+    authApiParams,
+  } = useCommonState();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
   const accounts = useAccounts();
   const { currentSymbol, tokenList } = useWithdraw();
@@ -694,15 +700,15 @@ export default function WithdrawContent() {
       console.log('🌈 🌈 🌈 🌈 🌈 🌈 approveRes', approveRes);
 
       if (approveRes) {
-        const portkeyWallet = getPortkeyWallet(currentVersion);
-        if (!portkeyWallet?.manager?.caAddress) throw new Error('no caContractAddress');
-        if (!portkeyWallet?.caHash) throw new Error('no caHash');
+        // const portkeyWallet = getPortkeyWallet(currentVersion);
+        // if (!portkeyWallet?.manager?.caAddress) throw new Error('no caContractAddress');
+        // if (!portkeyWallet?.caHash) throw new Error('no caHash');
 
         const transaction = await createTransferTokenTransaction({
           caContractAddress:
             ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.CA],
           eTransferContractAddress: currentTokenAddress,
-          caHash: portkeyWallet.caHash,
+          caHash: authApiParams?.ca_hash || '',
           symbol: currentSymbol,
           amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
           chainId: currentChainItemRef.current.key,

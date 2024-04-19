@@ -35,7 +35,7 @@ type QueryAuthApiBaseConfig = {
   client_id: string;
   source: string;
 };
-type QueryAuthApiExtraRequest = {
+export type QueryAuthApiExtraRequest = {
   pubkey: string;
   signature: string;
   plain_text: string;

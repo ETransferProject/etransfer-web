@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IChainNameItem, CHAIN_LIST } from 'constants/index';
 import { PortkeyVersion } from 'constants/wallet';
 import { SideMenuKey } from 'constants/home';
+import { QueryAuthApiExtraRequest } from 'api/utils';
 
 export interface CommonState {
   isMobile: boolean;
@@ -11,6 +12,7 @@ export interface CommonState {
   currentVersion?: PortkeyVersion;
   recordCreateTime?: string;
   isShowRedDot?: boolean;
+  authApiParams?: QueryAuthApiExtraRequest;
 }
 
 export const initialState: CommonState = {
@@ -21,6 +23,7 @@ export const initialState: CommonState = {
   currentVersion: PortkeyVersion.v2,
   recordCreateTime: '1712562663735', // A expired timestamp
   isShowRedDot: false,
+  authApiParams: undefined,
 };
 
 //it automatically uses the immer library to let you write simpler immutable updates with normal mutative code
@@ -53,6 +56,9 @@ export const CommonSlice = createSlice({
     setIsShowRedDot: (state, action) => {
       state.isShowRedDot = action.payload;
     },
+    setQueryAuthApiParams: (state, action) => {
+      state.authApiParams = action.payload;
+    },
   },
 });
 
@@ -65,6 +71,7 @@ export const {
   setSwitchVersionAction,
   setRecordCreateTime,
   setIsShowRedDot,
+  setQueryAuthApiParams,
 } = CommonSlice.actions;
 
 export default CommonSlice;
