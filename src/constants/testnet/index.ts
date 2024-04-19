@@ -110,3 +110,9 @@ export const ADDRESS_MAP = {
     },
   },
 };
+
+export const EXPLORE_CONFIG = {
+  AELF: 'https://explorer-test.aelf.io/',
+  TDVV: 'https://explorer-test-side02.aelf.io/',
+  TDVW: 'https://explorer-test-side02.aelf.io/',
+};

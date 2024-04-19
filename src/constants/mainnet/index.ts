@@ -100,3 +100,9 @@ export const ADDRESS_MAP = {
     },
   },
 };
+
+export const EXPLORE_CONFIG = {
+  AELF: 'https://explorer.aelf.io/',
+  TDVV: 'https://tdvv-explorer.aelf.io/',
+  TDVW: 'https://tdvv-explorer.aelf.io/',
+};
