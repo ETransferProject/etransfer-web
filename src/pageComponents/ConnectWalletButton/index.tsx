@@ -44,10 +44,10 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
 
   const onAccept = useThrottleCallback(
     async () => {
-      let caHash = '';
       if (!wallet) return;
       if (loginState !== WebLoginState.logined) return;
 
+      let caHash = '';
       const address = wallet.address;
       let originChainId: string = NETWORK_CONFIG.sideChainId;
 

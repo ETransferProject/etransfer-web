@@ -3,13 +3,9 @@ import { useMemo } from 'react';
 import { useCommonState, usePortkeyWalletState } from 'store/Provider/hooks';
 
 export function useIsActive() {
-  const { currentVersion } = useCommonState();
-  const { v1, v2 } = usePortkeyWalletState();
-
-  const isActive = useMemo(() => {
-    if (!currentVersion) return false;
-    return currentVersion === PortkeyVersion.v1 ? v1.isActive : v2.isActive;
-  }, [currentVersion, v1.isActive, v2.isActive]);
+  const { v2 } = usePortkeyWalletState();
+  // only suport v2
+  const isActive = v2.isActive;
   return isActive;
 }
 
