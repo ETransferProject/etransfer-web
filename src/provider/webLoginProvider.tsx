@@ -13,7 +13,7 @@ import { ReactNode } from 'react';
 import { logoIcon } from 'constants/wallet';
 // import { PortkeyVersion } from 'constants/wallet';
 
-const WebLoginProvider = dynamic(
+const WebLoginPortkeyProvider = dynamic(
   async () => {
     const { PortkeyProvider } = await import('aelf-web-login').then((module) => module);
     return PortkeyProvider;
@@ -59,7 +59,7 @@ const WebLoginProviderDynamic = dynamic(
 
 export default function Providers({ children }: { children: ReactNode }) {
   return (
-    <WebLoginProvider networkType="TESTNET" networkTypeV2="TESTNET" theme="dark">
+    <WebLoginPortkeyProvider networkType="TESTNET" networkTypeV2="TESTNET" theme="dark">
       <WebLoginProviderDynamic
         nightElf={{
           useMultiChain: false,
@@ -76,7 +76,7 @@ export default function Providers({ children }: { children: ReactNode }) {
         }}
         extraWallets={['discover']}
         discover={{
-          autoRequestAccount: false,
+          autoRequestAccount: true,
           autoLogoutOnDisconnected: true,
           autoLogoutOnNetworkMismatch: true,
           autoLogoutOnAccountMismatch: true,
@@ -87,6 +87,6 @@ export default function Providers({ children }: { children: ReactNode }) {
         }}>
         {children}
       </WebLoginProviderDynamic>
-    </WebLoginProvider>
+    </WebLoginPortkeyProvider>
   );
 }

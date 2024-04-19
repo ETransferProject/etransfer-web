@@ -1,6 +1,5 @@
-import { PortkeyVersion } from 'constants/wallet';
 import { useMemo } from 'react';
-import { useCommonState, usePortkeyWalletState } from 'store/Provider/hooks';
+import { usePortkeyWalletState } from 'store/Provider/hooks';
 
 export function useIsActive() {
   const { v2 } = usePortkeyWalletState();
@@ -10,12 +9,10 @@ export function useIsActive() {
 }
 
 export function useAccounts() {
-  const { currentVersion } = useCommonState();
-  const { v1, v2 } = usePortkeyWalletState();
+  const { v2 } = usePortkeyWalletState();
 
   const accounts = useMemo(() => {
-    if (!currentVersion) return {};
-    return currentVersion === PortkeyVersion.v1 ? v1.accounts : v2.accounts;
-  }, [currentVersion, v1.accounts, v2.accounts]);
+    return v2.accounts;
+  }, [v2.accounts]);
   return accounts;
 }

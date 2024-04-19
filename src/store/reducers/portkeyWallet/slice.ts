@@ -64,7 +64,6 @@ export const PortkeyWalletSlice = createSlice({
         state.v2.chainIds = action.payload;
       })
       .addCase(setV2ConnectedInfoAction, (state, action) => {
-        console.log(action.payload);
         state.v2.accounts = action.payload.accounts;
         state.v2.isActive = action.payload.isActive;
         state.v2.name = action.payload.name;

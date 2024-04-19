@@ -20,7 +20,7 @@ import AElf from 'aelf-sdk';
 import { AppName } from 'constants/index';
 import { recoverPubKey } from 'utils/loginUtils';
 import { queryAuthApi } from 'api/utils';
-import { useThrottleCallback } from 'hooks';
+import { useDebounceCallback } from 'hooks';
 // import { useEffectOnce } from 'react-use';
 
 const pubKeyToAddress = (pubKey: string) => {
@@ -42,88 +42,88 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
     console.log('WebLoginEvents', error);
   });
 
-  const onAccept = useThrottleCallback(
-    async () => {
-      if (!wallet) return;
-      if (loginState !== WebLoginState.logined) return;
+  const onAccept = useDebounceCallback(async () => {
+    if (!wallet) return;
+    if (loginState !== WebLoginState.logined) return;
 
-      let caHash = '';
-      const address = wallet.address;
-      let originChainId: string = NETWORK_CONFIG.sideChainId;
+    let caHash = '';
+    const address = wallet.address;
+    let originChainId: string = NETWORK_CONFIG.sideChainId;
 
-      if (walletType === WalletType.discover) {
-        try {
-          setLoading(true);
-          const res = await PortkeyDid.did.services.getHolderInfoByManager({
-            caAddresses: [address],
-          } as unknown as GetCAHolderByManagerParams);
-          const caInfo = res[0];
-          caHash = caInfo?.caHash || '';
-          originChainId = caInfo?.chainId || NETWORK_CONFIG.sideChainId;
-        } catch (error) {
-          console.log('getHolderInfoByManager error', error);
-          return;
-        }
-      }
-
-      if (walletType === WalletType.portkey) {
-        caHash = wallet.portkeyInfo?.caInfo?.caHash || '';
-        originChainId = wallet.portkeyInfo?.chainId || NETWORK_CONFIG.sideChainId;
-      }
-
+    if (walletType === WalletType.discover) {
       try {
-        const plainTextOrigin = `Nonce:${Date.now()}`;
-        const plainText: any = Buffer.from(plainTextOrigin).toString('hex').replace('0x', '');
-        let signInfo: string;
-        if (walletType !== WalletType.portkey) {
-          // nightElf or discover
-          signInfo = AElf.utils.sha256(plainText);
-        } else {
-          // portkey sdk
-          signInfo = Buffer.from(plainText).toString('hex');
-        }
-
-        const result = await getSignature({
-          appName: AppName,
-          address: wallet.address,
-          signInfo,
-        });
-        if (result.error) throw result.errorMessage;
-        const signature = result?.signature || '';
-        const pubkey = recoverPubKey(plainText, signature) + '';
-        const managerAddress = pubKeyToAddress(pubkey);
-        const apiParams = {
-          pubkey,
-          signature,
-          plain_text: plainText,
-          ca_hash: caHash,
-          chain_id: originChainId,
-          managerAddress: managerAddress,
-          version: PortkeyVersion.v2,
-        };
-        const queryAuthApiRes = await queryAuthApi(apiParams);
-        dispatch(setQueryAuthApiParams(apiParams));
-        console.log('queryAuthApiRes', queryAuthApiRes);
-        console.log('login success');
-        console.log(loginState, wallet);
-        const { name = '', discoverInfo } = wallet;
-        setLoading(false);
-        // todo accounts depend on walletType
-        dispatch(
-          setV2ConnectedInfoAction({
-            accounts: discoverInfo?.accounts,
-            name,
-            isActive: true,
-          }),
-        );
+        setLoading(true);
+        const res = await PortkeyDid.did.services.getHolderInfoByManager({
+          caAddresses: [address],
+        } as unknown as GetCAHolderByManagerParams);
+        const caInfo = res[0];
+        caHash = caInfo?.caHash || '';
+        originChainId = caInfo?.chainId || NETWORK_CONFIG.sideChainId;
       } catch (error) {
-        console.log('queryAuthApi error', error);
+        console.log('getHolderInfoByManager error', error);
         return;
       }
-    },
-    [loginState],
-    1000,
-  );
+    }
+
+    if (walletType === WalletType.portkey) {
+      caHash = wallet.portkeyInfo?.caInfo?.caHash || '';
+      originChainId = wallet.portkeyInfo?.chainId || NETWORK_CONFIG.sideChainId;
+    }
+
+    try {
+      const plainTextOrigin = `Nonce:${Date.now()}`;
+      const plainText: any = Buffer.from(plainTextOrigin).toString('hex').replace('0x', '');
+      let signInfo: string;
+      if (walletType !== WalletType.portkey) {
+        // nightElf or discover
+        signInfo = AElf.utils.sha256(plainText);
+      } else {
+        // portkey sdk
+        signInfo = Buffer.from(plainText).toString('hex');
+      }
+
+      const result = await getSignature({
+        appName: AppName,
+        address: wallet.address,
+        signInfo,
+      });
+      if (result.error) throw result.errorMessage;
+      const signature = result?.signature || '';
+      const pubkey = recoverPubKey(plainText, signature) + '';
+      const managerAddress = pubKeyToAddress(pubkey);
+      const apiParams = {
+        pubkey,
+        signature,
+        plain_text: plainText,
+        ca_hash: caHash,
+        chain_id: originChainId,
+        managerAddress: managerAddress,
+        version: PortkeyVersion.v2,
+      };
+      const queryAuthApiRes = await queryAuthApi(apiParams);
+      dispatch(setQueryAuthApiParams(apiParams));
+      console.log('queryAuthApiRes', queryAuthApiRes);
+      console.log('login success');
+      console.log(loginState, wallet);
+      const { name = '', discoverInfo } = wallet;
+      setLoading(false);
+      // todo accounts depend on walletType
+      let accounts = discoverInfo?.accounts;
+      if (walletType === WalletType.portkey) {
+        accounts = wallet.portkeyInfo?.accounts;
+      }
+      dispatch(
+        setV2ConnectedInfoAction({
+          accounts,
+          name,
+          isActive: true,
+        }),
+      );
+    } catch (error) {
+      console.log('queryAuthApi error', error);
+      return;
+    }
+  }, [loginState]);
 
   useEffect(() => {
     console.log('loginState', loginState);
