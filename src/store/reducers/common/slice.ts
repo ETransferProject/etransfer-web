@@ -54,7 +54,10 @@ export const CommonSlice = createSlice({
       state.recordCreateTime = action.payload;
     },
     setIsShowRedDot: (state, action) => {
-      state.isShowRedDot = action.payload;
+      // state.isShowRedDot = action.payload;
+      console.log(action);
+      // todo: next version, now defaule is false
+      state.isShowRedDot = false;
     },
     setQueryAuthApiParams: (state, action) => {
       state.authApiParams = action.payload;

@@ -4,7 +4,7 @@ enum ENVIRONMENT {
   DEVELOPMENT4 = 'development4',
   PRODUCTION = 'production',
 }
-const env = process.env.NEXT_PUBLIC_NODE_ENV as unknown as ENVIRONMENT;
+const env = process.env.NEXTWORKkEY as unknown as ENVIRONMENT;
 
 const explorerUrls = {
   [ENVIRONMENT.TEST]: {

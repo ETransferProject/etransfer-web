@@ -44,7 +44,6 @@ export const RecordsSlice = createSlice({
       state.skipCount = action.payload;
       // reset recordsList [] and hasMore true when setSkipCount value init 1
       if (action.payload === 1) {
-        state.recordsList = [];
         state.hasMore = true;
       }
     },

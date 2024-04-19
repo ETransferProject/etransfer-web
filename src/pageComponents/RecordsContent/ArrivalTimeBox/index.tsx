@@ -21,7 +21,17 @@ export default function ArrivalTimeBox({ arrivalTime, status }: ArrivalTimeBoxPr
     const minutes = targetTime.diff(now, 'minutes');
     switch (status) {
       case RecordsStatus.Processing:
-        return <div>{minutes > 0 ? <span>~ in {minutes} mins</span> : 'Arriving soon'}</div>;
+        return (
+          <>
+            {minutes > 0 ? (
+              <span>
+                ~ in {minutes} {minutes === 1 ? 'min' : 'mins'}
+              </span>
+            ) : (
+              'Arriving soon'
+            )}
+          </>
+        );
       case RecordsStatus.Failed:
         return '--';
       case RecordsStatus.Succeed:
