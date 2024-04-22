@@ -2,10 +2,8 @@
 import { Asset, PortkeyAssetProvider } from '@portkey/did-ui-react';
 import { WalletType, useWebLogin, WebLoginState } from 'aelf-web-login';
 import { Chain } from 'constants/index';
-
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-
 import { LeftOutlined } from '@ant-design/icons';
 import styles from './styles.module.scss';
 
@@ -25,7 +23,6 @@ export default function MyAsset() {
     return <></>;
   }
 
-  console.log(wallet?.portkeyInfo?.chainId, wallet?.portkeyInfo?.pin);
   return (
     <div className={styles['my-asset-wrapper']}>
       <PortkeyAssetProvider
