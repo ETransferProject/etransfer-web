@@ -68,8 +68,19 @@
 .value {
   @extend .font-family-medium;
   color: $primary-text;
+  .value-center {
+    text-align: center;
+    display: flex;
+  }
 }
 
 .divider {
   @extend .divider;
 }
+
+.receive-amount-usd {
+  font-size: 14px;
+  text-align: center;
+  color: $secondary-text;
+}
+

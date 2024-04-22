@@ -1,6 +1,9 @@
 import { DrawerProps } from 'antd';
 import CommonDrawer from 'components/CommonDrawer';
-import { NetworkSelectForMobile, NetworkSelectProps } from 'pageComponents/NetworkSelect';
+import {
+  NetworkSelectForMobile,
+  NetworkSelectProps,
+} from 'pageComponents/SelectNetwork/NetworkSelect';
 
 export default function NetworkSelectDrawer({
   type,

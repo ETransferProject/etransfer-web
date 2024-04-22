@@ -5,10 +5,16 @@ import {
   useAppDispatch,
   useCommonState,
   useLoading,
-  useTokenState,
   useUserActionState,
 } from 'store/Provider/hooks';
-import { BusinessType, DepositInfo, GetNetworkListRequest, NetworkItem } from 'types/api';
+import {
+  BusinessType,
+  DepositInfo,
+  GetNetworkListRequest,
+  NetworkItem,
+  TokenItem,
+  NetworkStatus,
+} from 'types/api';
 import { getDepositInfo, getNetworkList } from 'utils/api/deposit';
 import { IChainNameItem, SupportedELFChainId } from 'constants/index';
 import {
@@ -21,6 +27,7 @@ import singleMessage from 'components/SingleMessage';
 import { initDepositInfo } from 'constants/deposit';
 import { CommonErrorNameType } from 'api/types';
 import { handleErrorMessage } from '@portkey/did-ui-react';
+import { useDeposit } from 'hooks/deposit';
 
 export type DepositContentProps = {
   networkList: NetworkItem[];
@@ -32,16 +39,19 @@ export type DepositContentProps = {
   tokenLogoUrl?: string;
   showRetry?: boolean;
   isShowLoading?: boolean;
+  currentToken?: TokenItem;
+  tokenList: TokenItem[];
   onRetry?: () => void;
   chainChanged: (item: IChainNameItem) => void;
   networkChanged: (item: NetworkItem) => Promise<void>;
+  onTokenChanged: (item: TokenItem) => void;
 };
 
 export default function Content() {
   const dispatch = useAppDispatch();
   const { isMobilePX, currentChainItem } = useCommonState();
   const { deposit } = useUserActionState();
-  const { currentSymbol, tokenList } = useTokenState();
+  const { currentSymbol, tokenList } = useDeposit();
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
@@ -49,6 +59,10 @@ export default function Content() {
   const currentNetworkRef = useRef<NetworkItem>();
   const [depositInfo, setDepositInfo] = useState<DepositInfo>(initDepositInfo);
   const [showRetry, setShowRetry] = useState(false);
+
+  const currentToken = useMemo(() => {
+    return tokenList.find((item) => item.symbol === currentSymbol) as TokenItem;
+  }, [currentSymbol, tokenList]);
 
   const tokenLogoUrl = useMemo(() => {
     const res = tokenList.filter((item) => item.symbol === currentSymbol);
@@ -91,6 +105,7 @@ export default function Content() {
   const getNetworkData = useCallback(
     async ({ chainId, symbol }: Omit<GetNetworkListRequest, 'type'>) => {
       try {
+        const lastSymbol = symbol || currentSymbol;
         setIsShowNetworkLoading(true);
         const { networkList } = await getNetworkList({
           type: BusinessType.Deposit,
@@ -99,12 +114,12 @@ export default function Content() {
         });
         setNetworkList(networkList);
         dispatch(setDepositNetworkList(networkList));
-        if (networkList?.length === 1) {
+        if (networkList?.length === 1 && networkList[0].status !== NetworkStatus.Offline) {
           setCurrentNetwork(networkList[0]);
           currentNetworkRef.current = networkList[0];
           dispatch(setDepositCurrentNetwork(networkList[0]));
 
-          await getDepositData(currentChainItem.key, currentSymbol);
+          await getDepositData(currentChainItem.key, lastSymbol);
         } else {
           const exitNetwork = networkList.filter(
             (item) => item.network === currentNetworkRef.current?.network,
@@ -130,10 +145,12 @@ export default function Content() {
 
   const handleChainChanged = useCallback(
     async (item: IChainNameItem) => {
-      await getNetworkData({
-        chainId: item.key,
-        symbol: currentSymbol,
-      });
+      // if currentSymbol is empty, don't send request
+      currentSymbol &&
+        (await getNetworkData({
+          chainId: item.key,
+          symbol: currentSymbol,
+        }));
       if (!currentNetworkRef.current?.network) return;
       await getDepositData(item.key, currentSymbol);
     },
@@ -154,6 +171,19 @@ export default function Content() {
     await getDepositData(currentChainItem.key, currentSymbol);
   }, [currentChainItem.key, currentSymbol, getDepositData]);
 
+  const handleTokenChange = async (item: TokenItem) => {
+    setCurrentNetwork(undefined);
+    currentNetworkRef.current = undefined;
+    dispatch(setDepositCurrentNetwork(undefined));
+    setDepositInfo(initDepositInfo);
+    dispatch(setDepositAddress(initDepositInfo.depositAddress));
+    setShowRetry(false);
+    await getNetworkData({
+      chainId: currentChainItem.key,
+      symbol: item.symbol,
+    });
+  };
+
   useEffectOnce(() => {
     if (
       deposit?.currentNetwork?.network &&
@@ -166,10 +196,12 @@ export default function Content() {
 
       getDepositData(currentChainItem.key, currentSymbol);
     } else {
-      getNetworkData({
-        chainId: currentChainItem.key,
-        symbol: currentSymbol,
-      });
+      if (currentSymbol && currentChainItem.key) {
+        getNetworkData({
+          chainId: currentChainItem.key,
+          symbol: currentSymbol,
+        });
+      }
     }
   });
 
@@ -187,6 +219,9 @@ export default function Content() {
       onRetry={handleRetry}
       chainChanged={handleChainChanged}
       networkChanged={handleNetworkChanged}
+      currentToken={currentToken}
+      tokenList={tokenList}
+      onTokenChanged={handleTokenChange}
     />
   ) : (
     <WebDepositContent
@@ -202,6 +237,9 @@ export default function Content() {
       onRetry={handleRetry}
       chainChanged={handleChainChanged}
       networkChanged={handleNetworkChanged}
+      currentToken={currentToken}
+      tokenList={tokenList}
+      onTokenChanged={handleTokenChange}
     />
   );
 }

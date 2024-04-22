@@ -26,7 +26,10 @@ export function ContractAddressForMobile({
     <div className={clsx('flex-row-start', styles['contract-address-for-mobile'])}>
       <div className={clsx('flex-none', styles['info-label'])}>{`• ${label}:`}</div>
       <div className={clsx('flex-row-start', styles['info-value'])} onClick={handleView}>
-        {formatStr2Ellipsis(address, [6, 6])} <QuestionMarkIcon />
+        {formatStr2Ellipsis(address, [6, 6])}
+        <span className={clsx(styles['question-mark-icon-box'])}>
+          <QuestionMarkIcon />
+        </span>
       </div>
 
       <ViewContractAddressModal

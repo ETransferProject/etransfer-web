@@ -4,7 +4,7 @@
 @import 'src/styles/common.scss';
 
 .input-amount-wrapper {
-  gap: 16px;
+  gap: 12px;
   @extend .form-item-wrapper;
   input {
     height: 24px;
@@ -32,6 +32,10 @@
   line-height: 1.5;
 }
 
+.unit-mobile, .max-mobile {
+  font-size: 14px;
+}
+
 .unit {
   color: $primary-text;
 }
@@ -47,4 +51,9 @@
   &:focus {
     color: $click;
   }
+}
+
+.dividing-line {
+  height: 16px;
+  border-left: 1px solid $border;
 }

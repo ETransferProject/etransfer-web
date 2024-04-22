@@ -1,11 +1,11 @@
 import { Swap } from 'assets/images';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { NetworkItem } from 'types/api';
 import styles from './styles.module.scss';
 import { useAppDispatch, useCommonState, useUserActionState } from 'store/Provider/hooks';
-import NetworkSelectDrawer from 'pageComponents/NetworkSelectDrawer';
-import NetworkSelectDropdown from 'pageComponents/NetworkSelectDropdown';
-import Down from 'assets/images/down.svg';
+import NetworkSelectDrawer from 'pageComponents/SelectNetwork/NetworkSelectDrawer';
+import NetworkSelectDropdown from 'pageComponents/SelectNetwork/NetworkSelectDropdown';
+import Down from 'assets/images/downBig.svg';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
 import { setAddInitOpenNetworkModalCount } from 'store/reducers/userAction/slice';
@@ -40,18 +40,16 @@ export default function SelectNetwork({
   } = useUserActionState();
   const [isShowNetworkSelectDropdown, setIsShowNetworkSelectDropdown] = useState<boolean>(false);
 
-  const onSelectNetwork = async (item: NetworkItem) => {
-    if (onChange) {
-      onChange(item);
-    }
-    // else {
-    //   setSelected(item);
-    // }
+  const onSelectNetwork = useCallback(
+    async (item: NetworkItem) => {
+      onChange?.(item);
 
-    setIsShowNetworkSelectDropdown(false);
+      setIsShowNetworkSelectDropdown(false);
 
-    await selectCallback(item);
-  };
+      await selectCallback(item);
+    },
+    [onChange, selectCallback],
+  );
 
   useEffect(() => {
     if (

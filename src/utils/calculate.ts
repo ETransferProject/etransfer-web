@@ -38,3 +38,24 @@ export function valueToPercentage(input?: BigNumber.Value) {
 export function zeroFill(str: string | BN) {
   return isBN(str) ? str.toString(16, 64) : str.padStart(64, '0');
 }
+
+/**
+ * currency show as role: fixed(2) and min is 0.01
+ * @param strValue amount value
+ * @param currency currency type
+ * @returns string
+ */
+export function valueFixed2LessThanMin(strValue: string, currency?: string): string {
+  let valueBigNumber = new BigNumber(strValue);
+  if (valueBigNumber.isNaN()) {
+    return '--';
+  }
+
+  valueBigNumber = valueBigNumber.dp(2, BigNumber.ROUND_DOWN);
+
+  if (valueBigNumber.isLessThan(0.01)) {
+    return currency ? `<${currency}0.01` : '<$0.01';
+  }
+
+  return `${currency}${valueBigNumber.toString()}`;
+}

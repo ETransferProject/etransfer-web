@@ -46,6 +46,13 @@ export const CHAIN_LIST: IChainNameItem[] = [
   },
 ];
 
+export const CHAIN_LIST_SIDE_CHAIN: IChainNameItem[] = [
+  {
+    key: SupportedELFChainId.tDVV,
+    label: CHAIN_NAME_ENUM.SideChain,
+  },
+];
+
 export type ChainConstantsType = typeof AELF | typeof tDVV;
 
 export const SupportedELFChain: { [k: string | number]: ChainConstantsType } = {
@@ -88,24 +95,20 @@ export const ADDRESS_MAP = {
     [SupportedELFChainId.AELF]: {
       [ContractType.CA]: AELF.CA_CONTRACT,
       [ContractType.TOKEN]: AELF.TOKEN_CONTRACT,
-      [ContractType.ETRANSFER]: AELF.ETRANSFER_CONTRACT,
     },
     [SupportedELFChainId.tDVV]: {
       [ContractType.CA]: tDVV.CA_CONTRACT,
       [ContractType.TOKEN]: tDVV.TOKEN_CONTRACT,
-      [ContractType.ETRANSFER]: tDVV.ETRANSFER_CONTRACT,
     },
   },
   [PortkeyVersion.v2]: {
     [SupportedELFChainId.AELF]: {
       [ContractType.CA]: AELF.CA_CONTRACT_V2,
       [ContractType.TOKEN]: AELF.TOKEN_CONTRACT,
-      [ContractType.ETRANSFER]: AELF.ETRANSFER_CONTRACT,
     },
     [SupportedELFChainId.tDVV]: {
       [ContractType.CA]: tDVV.CA_CONTRACT_V2,
       [ContractType.TOKEN]: tDVV.TOKEN_CONTRACT,
-      [ContractType.ETRANSFER]: tDVV.ETRANSFER_CONTRACT,
     },
   },
 };

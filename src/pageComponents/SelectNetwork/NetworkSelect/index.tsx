@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import { NetworkItem } from 'types/api';
 import { SideMenuKey } from 'constants/home';
 import Info from 'assets/images/info.svg';
-import { NetworkCardForMobile, NetworkCardForWeb } from 'pageComponents/NetworkCard';
+import { NetworkCardForMobile, NetworkCardForWeb } from 'pageComponents/SelectNetwork/NetworkCard';
 import { useCommonState } from 'store/Provider/hooks';
 import {
   NetworkListSkeletonForMobile,
@@ -21,10 +21,10 @@ export interface NetworkSelectProps {
 }
 
 const DEPOSIT_TIP_CONTENT =
-  'Note: Please select from the supported networks listed below. Sending USDT from other networks may result in the loss of your assets.';
+  'Note: Please select from the supported networks listed below. Sending tokens from other networks may result in the loss of your assets.';
 
 const WITHDRAW_TIP_CONTENT =
-  'Please ensure that your receiving platform supports the token and network. If you are unsure, kindly check with the platform before proceeding.';
+  'Please ensure that your receiving platform supports the digital asset and network. If you are unsure, kindly check with the platform before proceeding.';
 
 function NetworkSelectTip({
   menuType = SideMenuKey.Deposit,
@@ -92,6 +92,7 @@ export function NetworkSelectForMobile({
                 multiConfirmTime={item.multiConfirmTime}
                 multiConfirm={item.multiConfirm}
                 onClick={() => onSelect(item)}
+                status={item.status}
               />
             );
           })}
@@ -139,6 +140,7 @@ export function NetworkSelectForWeb({
                 multiConfirmTime={item.multiConfirmTime}
                 multiConfirm={item.multiConfirm}
                 onClick={() => onSelect(item)}
+                status={item.status}
               />
             );
           })}

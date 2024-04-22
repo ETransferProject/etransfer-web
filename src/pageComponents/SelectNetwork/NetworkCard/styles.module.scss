@@ -48,12 +48,24 @@
     line-height: 24px;
     @extend .font-family-medium;
   }
+
   .network-card-name,
   .network-card-confirm-time {
     color: $secondary-text;
     font-size: 14px;
     line-height: 22px;
   }
+}
+
+.network-card-network-suspended {
+  background-color: $border;
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  height: 22px;
+  line-height: 22px;
+  margin-left: 8px;
 }
 
 .network-card-for-web-hover {
