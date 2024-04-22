@@ -9,9 +9,6 @@ export const NETWORK_NAME = NetworkName.mainnet;
 
 export const NETWORK_TYPE_V1: TNetworkTypeV1 = 'MAIN';
 export const NETWORK_TYPE_V2: TNetworkTypeV2 = 'MAINNET';
-export const connectUrl = 'https://auth-aa-portkey.portkey.finance';
-export const mainChainId = 'AELF';
-export const sideChainId = 'tDVV';
 
 export enum SupportedELFChainId {
   AELF = 'AELF',
@@ -80,6 +77,9 @@ export const WebLoginGraphqlUrlV2 =
   'https://dapp-aa-portkey.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql';
 export const WebLoginRequestDefaultsUrlV1 = 'https://did-portkey.portkey.finance';
 export const WebLoginRequestDefaultsUrlV2 = 'https://aa-portkey.portkey.finance';
+export const WebLoginServiceUrlV1 = 'https://did-portkey.portkey.finance';
+export const WebLoginServiceUrlV2 = 'https://aa-portkey.portkey.finance';
+export const WebLoginConnectUrlV2 = 'https://auth-aa-portkey.portkey.finance';
 
 export const ADDRESS_MAP = {
   [PortkeyVersion.v1]: {
@@ -105,7 +105,6 @@ export const ADDRESS_MAP = {
 };
 
 export const EXPLORE_CONFIG = {
-  AELF: 'https://explorer.aelf.io/',
-  TDVV: 'https://tdvv-explorer.aelf.io/',
-  TDVW: 'https://tdvv-explorer.aelf.io/',
+  [NETWORK_CHAIN.MAIN]: AELF_NODES.AELF.exploreUrl,
+  [NETWORK_CHAIN.TEST]: AELF_NODES.tDVV.exploreUrl,
 };

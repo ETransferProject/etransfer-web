@@ -3,13 +3,15 @@ import {
   AelfReact,
   AppName,
   NETWORK_TYPE_V1,
+  WebLoginConnectUrlV2,
   WebLoginGraphqlUrlV1,
   WebLoginGraphqlUrlV2,
   WebLoginRequestDefaultsUrlV2,
-  connectUrl,
   NETWORK_NAME,
   NETWORK_TYPE_V2,
-  sideChainId,
+  NETWORK_CHAIN,
+  WebLoginServiceUrlV1,
+  WebLoginServiceUrlV2,
 } from 'constants/index';
 import { NetworkName } from 'constants/network';
 import dynamic from 'next/dynamic';
@@ -30,12 +32,12 @@ const WebLoginProviderDynamic = dynamic(
 
     webLogin.setGlobalConfig({
       appName: AppName,
-      chainId: sideChainId,
+      chainId: NETWORK_CHAIN.TEST,
       networkType: NETWORK_TYPE_V1,
       portkey: {
         graphQLUrl: WebLoginGraphqlUrlV1,
         requestDefaults: {
-          baseURL: 'portkeyV1',
+          baseURL: WebLoginServiceUrlV1,
         },
       },
       onlyShowV2: true,
@@ -43,9 +45,9 @@ const WebLoginProviderDynamic = dynamic(
         useLocalStorage: true,
         graphQLUrl: WebLoginGraphqlUrlV2,
         networkType: NETWORK_TYPE_V2,
-        connectUrl: connectUrl,
+        connectUrl: WebLoginConnectUrlV2,
         requestDefaults: {
-          baseURL: 'portkeyV2',
+          baseURL: WebLoginServiceUrlV2,
           timeout: NETWORK_NAME === NetworkName.testnet ? 300000 : 80000,
         },
         serviceUrl: WebLoginRequestDefaultsUrlV2,
@@ -54,7 +56,7 @@ const WebLoginProviderDynamic = dynamic(
         appName: AppName,
         nodes: AelfReact,
       },
-      defaultRpcUrl: sideChainId === 'tDVW' ? AelfReact.tDVW.rpcUrl : AelfReact.AELF.rpcUrl,
+      defaultRpcUrl: AelfReact[NETWORK_CHAIN.TEST].rpcUrl,
     });
     return webLogin.WebLoginProvider;
   },

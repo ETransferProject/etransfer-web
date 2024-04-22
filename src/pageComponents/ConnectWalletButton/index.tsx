@@ -15,7 +15,7 @@ import { setV2ConnectedInfoAction } from 'store/reducers/portkeyWallet/actions';
 import { setSwitchVersionAction } from 'store/reducers/common/slice';
 import { setQueryAuthApiParams } from 'store/reducers/userAction/slice';
 import { Accounts } from '@portkey/provider-types';
-import { sideChainId, AppName, SupportedELFChainId } from 'constants/index';
+import { AppName, NETWORK_CHAIN, SupportedELFChainId } from 'constants/index';
 import { GetCAHolderByManagerParams } from '@portkey/services';
 import AElf from 'aelf-sdk';
 import { recoverPubKey } from 'utils/loginUtils';
@@ -48,7 +48,7 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
 
     let caHash = '';
     const address = wallet.address;
-    let originChainId: string = sideChainId;
+    let originChainId: string = NETWORK_CHAIN.TEST;
 
     if (walletType === WalletType.discover) {
       try {
@@ -58,7 +58,7 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
         } as unknown as GetCAHolderByManagerParams);
         const caInfo = res[0];
         caHash = caInfo?.caHash || '';
-        originChainId = caInfo?.chainId || sideChainId;
+        originChainId = caInfo?.chainId || NETWORK_CHAIN.TEST;
       } catch (error) {
         console.log('getHolderInfoByManager error', error);
         return;
@@ -67,7 +67,7 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
 
     if (walletType === WalletType.portkey) {
       caHash = wallet.portkeyInfo?.caInfo?.caHash || '';
-      originChainId = wallet.portkeyInfo?.chainId || sideChainId;
+      originChainId = wallet.portkeyInfo?.chainId || NETWORK_CHAIN.TEST;
     }
 
     try {
