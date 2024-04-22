@@ -3,13 +3,13 @@ import {
   AelfReact,
   AppName,
   NETWORK_TYPE_V1,
-  SupportedELFChainId,
   WebLoginGraphqlUrlV1,
   WebLoginGraphqlUrlV2,
   WebLoginRequestDefaultsUrlV2,
   connectUrl,
   NETWORK_NAME,
   NETWORK_TYPE_V2,
+  sideChainId,
 } from 'constants/index';
 import { NetworkName } from 'constants/network';
 import dynamic from 'next/dynamic';
@@ -30,7 +30,7 @@ const WebLoginProviderDynamic = dynamic(
 
     webLogin.setGlobalConfig({
       appName: AppName,
-      chainId: SupportedELFChainId.AELF, // cms ??
+      chainId: sideChainId,
       networkType: NETWORK_TYPE_V1,
       portkey: {
         graphQLUrl: WebLoginGraphqlUrlV1,
