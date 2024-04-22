@@ -54,7 +54,7 @@ const WebLoginProviderDynamic = dynamic(
         appName: AppName,
         nodes: AelfReact,
       },
-      defaultRpcUrl: AelfReact.AELF.rpcUrl,
+      defaultRpcUrl: sideChainId === 'tDVW' ? AelfReact.tDVW.rpcUrl : AelfReact.AELF.rpcUrl,
     });
     return webLogin.WebLoginProvider;
   },
