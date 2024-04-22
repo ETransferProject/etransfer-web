@@ -15,7 +15,6 @@ export default function Address({ hideBorder }: AddressProps) {
   const accounts = useAccounts();
 
   const accountsList = useMemo(() => {
-    console.log(accounts);
     const temp = [];
     if (accounts?.AELF) {
       temp.push({

@@ -7,12 +7,16 @@ import Address from '../Address';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { useRouter } from 'next/navigation';
+import { useIsActive } from 'hooks/portkeyWallet';
+import { useWebLogin, WalletType } from 'aelf-web-login';
 
 export default function SelectWallet() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [isShowAddress, setIsShowAddress] = useState<boolean>(false);
   const { isMobilePX } = useCommonState();
   const router = useRouter();
+  const isActive = useIsActive();
+  const { walletType } = useWebLogin();
 
   const handleChangeAddress = () => {
     setIsShowAddress(!isShowAddress);
@@ -48,10 +52,12 @@ export default function SelectWallet() {
         onClose={() => setIsDrawerOpen(false)}>
         <div className={styles['user-wrapper']}>
           <div className={styles['top-wrapper']}>
-            <div className={styles['assets-wrapper']} onClick={() => handleAssets()}>
-              <span className={styles['assets']}>Assets</span>
-              <ArrowRight />
-            </div>
+            {isActive && walletType === WalletType.portkey && (
+              <div className={styles['assets-wrapper']} onClick={() => handleAssets()}>
+                <span className={styles['assets']}>Assets</span>
+                <ArrowRight />
+              </div>
+            )}
             <div
               className={clsx(
                 styles['address-wrapper'],

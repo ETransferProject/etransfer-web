@@ -3,7 +3,13 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { FilterIcon, CloseSmall } from 'assets/images';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
-import { setType, setStatus, setTimestamp, setSkipCount } from 'store/reducers/records/slice';
+import {
+  setType,
+  setStatus,
+  setTimestamp,
+  setSkipCount,
+  setRecordsList,
+} from 'store/reducers/records/slice';
 import { RecordsRequestType, RecordsRequestStatus } from 'types/records';
 import CommonDrawer from 'components/CommonDrawer';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
@@ -17,14 +23,24 @@ export default function Filter({ requestRecordsList }: RecordsContentParams) {
   const dispatch = useAppDispatch();
   const { type, status, timestamp } = useRecordsState();
   const [isShowFilterDrawer, setIsShowFilterDrawer] = useState(false);
-  const [filterType, setFilterType] = useState<RecordsRequestType>(RecordsRequestType.ALL);
-  const [filterStatus, setFilterStatus] = useState<RecordsRequestStatus>(RecordsRequestStatus.ALL);
-  const [filterTimestampStart, setFilterTimestampStart] = useState<Moment | null>(null);
-  const [filterTimestampEnd, setFilterTimestampEnd] = useState<Moment | null>(null);
+  const [filterType, setFilterType] = useState<RecordsRequestType>(type);
+  const [filterStatus, setFilterStatus] = useState<RecordsRequestStatus>(status);
+  const [filterTimestampStart, setFilterTimestampStart] = useState<Moment | null>(
+    (timestamp && timestamp[0]) || null,
+  );
+  const [filterTimestampEnd, setFilterTimestampEnd] = useState<Moment | null>(
+    (timestamp && timestamp[1]) || null,
+  );
 
   const isShowReset = useCallback(() => {
     let isShow = false;
-    if (type !== 0 || status !== 0 || timestamp) {
+    if (type !== 0 || status !== 0) {
+      isShow = true;
+    }
+    if (timestamp && timestamp[0] && timestamp[0].valueOf()) {
+      isShow = true;
+    }
+    if (timestamp && timestamp[1] && timestamp[1].valueOf()) {
       isShow = true;
     }
     return isShow;
@@ -57,6 +73,7 @@ export default function Filter({ requestRecordsList }: RecordsContentParams) {
           break;
       }
       dispatch(setSkipCount(1));
+      dispatch(setRecordsList([]));
       requestRecordsList();
     },
     [dispatch, requestRecordsList],
@@ -83,6 +100,7 @@ export default function Filter({ requestRecordsList }: RecordsContentParams) {
     dispatch(setStatus(filterStatus));
     dispatch(setTimestamp([filterTimestampStart, filterTimestampEnd]));
     dispatch(setSkipCount(1));
+    dispatch(setRecordsList([]));
     setIsShowFilterDrawer(false);
     requestRecordsList();
   }, [
@@ -95,9 +113,13 @@ export default function Filter({ requestRecordsList }: RecordsContentParams) {
   ]);
 
   const handleOpenFilterDrawer = useCallback(() => {
-    handleResetFilter();
+    setFilterType(type);
+    setFilterStatus(status);
+    setFilterTimestampStart((timestamp && timestamp[0]) || null);
+    setFilterTimestampEnd((timestamp && timestamp[1]) || null);
+
     setIsShowFilterDrawer(true);
-  }, [handleResetFilter]);
+  }, [type, status, timestamp]);
 
   return (
     <div className={clsx(styles['filter-wrapper'])}>
@@ -177,8 +199,8 @@ export default function Filter({ requestRecordsList }: RecordsContentParams) {
             popupClassName={'drop-wrap'}
             options={[
               { value: RecordsRequestType.ALL, label: 'ALL' },
-              { value: RecordsRequestType.Deposits, label: 'Deposits' },
-              { value: RecordsRequestType.Withdraws, label: 'Withdraws' },
+              { value: RecordsRequestType.Deposits, label: 'Deposit' },
+              { value: RecordsRequestType.Withdraws, label: 'Withdraw' },
             ]}
           />
           <div className={styles['filter-drawer-label']}>Status</div>

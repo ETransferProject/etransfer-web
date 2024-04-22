@@ -56,7 +56,7 @@ const columns = [
     },
   },
   {
-    title: 'Sending Amount',
+    title: 'Amount Sent',
     dataIndex: 'sendingAmount',
     key: 'sendingAmount',
     render: (sendingAmount: string, record: recordsTableListType) => {
@@ -64,7 +64,7 @@ const columns = [
     },
   },
   {
-    title: 'Receiving Amount',
+    title: 'Amount Received',
     dataIndex: 'receivingAmount',
     key: 'receivingAmount',
     render: (receivingAmount: string, record: recordsTableListType) => {
