@@ -103,7 +103,7 @@ type FormValuesType = {
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const isAndroid = devices.isMobile().android;
-  const { isMobilePX, currentChainItem, currentVersion, activeMenuKey } = useCommonState();
+  const { isMobilePX, currentChainItem, currentVersion } = useCommonState();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
   const accounts = useAccounts();
   const { currentSymbol, tokenList } = useWithdraw();
