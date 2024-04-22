@@ -73,10 +73,12 @@ export default function AddressBox({
 
   const calcAddress = useCallback(() => {
     if (network === BitNetworkType.AELF) {
+      // when fromAddress and toAddress all null, need accounts default address
       let chanId: SupportedELFChainId = orderType === 'Deposit' ? toChanId : fromChanId;
-      chanId = chanId ?? SupportedELFChainId.AELF;
+      chanId = chanId ?? SupportedELFChainId.tDVW;
       if (accounts && accounts[chanId] && accounts[chanId]?.[0]) {
-        return accounts[chanId]?.[0] || '--';
+        // default accounts[chanId]?.[0] , if not exist, use AELF
+        return accounts[chanId]?.[0] || accounts[SupportedELFChainId.AELF]?.[0] || '--';
       }
       return '--';
     }

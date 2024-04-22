@@ -111,11 +111,25 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
         accounts = discoverInfo?.accounts || {};
       }
       if (walletType === WalletType.portkey) {
-        if (accounts && wallet.portkeyInfo?.accounts?.[SupportedELFChainId.AELF]) {
-          accounts[SupportedELFChainId.AELF] = [wallet.portkeyInfo?.accounts?.AELF];
+        // portkey address need manual setup: 'ELF_' + address + '_' + chainId
+        const isAELFAddress = wallet.portkeyInfo?.accounts?.AELF;
+        const istDVWAddress = wallet.portkeyInfo?.accounts?.tDVW;
+        if (accounts && isAELFAddress && !istDVWAddress) {
+          const baseAddress = 'ELF_' + wallet.portkeyInfo?.accounts?.AELF + '_';
+          accounts[SupportedELFChainId.AELF] = [baseAddress + SupportedELFChainId.AELF];
+          accounts[SupportedELFChainId.tDVW] = [baseAddress + SupportedELFChainId.tDVW];
+        } else if (accounts && !isAELFAddress && istDVWAddress) {
+          const baseAddress = 'ELF_' + wallet.portkeyInfo?.accounts?.tDVW + '_';
+          accounts[SupportedELFChainId.AELF] = [baseAddress + SupportedELFChainId.AELF];
+          accounts[SupportedELFChainId.tDVW] = [baseAddress + SupportedELFChainId.tDVW];
         }
-        if (wallet.portkeyInfo?.accounts?.[SupportedELFChainId.tDVW]) {
-          accounts[SupportedELFChainId.tDVW] = [wallet.portkeyInfo?.accounts?.tDVW];
+        if (isAELFAddress && istDVWAddress) {
+          accounts[SupportedELFChainId.AELF] = [
+            'ELF_' + isAELFAddress + '_' + SupportedELFChainId.AELF,
+          ];
+          accounts[SupportedELFChainId.tDVW] = [
+            'ELF_' + istDVWAddress + '_' + SupportedELFChainId.tDVW,
+          ];
         }
       }
       dispatch(

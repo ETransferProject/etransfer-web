@@ -15,7 +15,7 @@ import { NetworkName } from 'constants/network';
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
 import { logoIcon } from 'constants/wallet';
-// import { PortkeyVersion } from 'constants/wallet';
+
 const WebLoginPortkeyProvider = dynamic(
   async () => {
     const { PortkeyProvider } = await import('aelf-web-login').then((module) => module);
