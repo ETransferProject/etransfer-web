@@ -18,13 +18,13 @@ export interface UserActionWithdraw {
 export interface UserActionState {
   deposit: UserActionDeposit;
   withdraw: UserActionWithdraw;
-  authApiParams?: QueryAuthApiExtraRequest;
+  caHash: string;
 }
 
 export const initialUserActionState: UserActionState = {
   deposit: { initOpenNetworkModalCount: 0, initOpenTokenkModalCount: 0 },
   withdraw: {},
-  authApiParams: undefined,
+  caHash: '',
 };
 
 export const UserActionSlice = createSlice({
@@ -58,8 +58,8 @@ export const UserActionSlice = createSlice({
     initUserAction: () => {
       return initialUserActionState;
     },
-    setQueryAuthApiParams: (state, action) => {
-      state.authApiParams = action.payload;
+    setCaHash: (state, action) => {
+      state.caHash = action.payload;
     },
   },
 });
@@ -74,7 +74,7 @@ export const {
   setWithdrawCurrentNetwork,
   setWithdrawNetworkList,
   initUserAction,
-  setQueryAuthApiParams,
+  setCaHash,
 } = UserActionSlice.actions;
 
 export default UserActionSlice;

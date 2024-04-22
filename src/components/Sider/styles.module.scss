@@ -52,6 +52,11 @@
 }
 
 .menu-item-red-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background-color: $red-dot;
   position: relative;
   top: -7px;
+  left: 2px;
 }

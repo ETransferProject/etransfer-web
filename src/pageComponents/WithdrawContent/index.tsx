@@ -107,7 +107,7 @@ export default function WithdrawContent() {
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
   const accounts = useAccounts();
   const { currentSymbol, tokenList } = useWithdraw();
-  const { withdraw, authApiParams } = useUserActionState();
+  const { withdraw, caHash } = useUserActionState();
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
@@ -686,15 +686,11 @@ export default function WithdrawContent() {
       console.log('🌈 🌈 🌈 🌈 🌈 🌈 approveRes', approveRes);
 
       if (approveRes) {
-        // const portkeyWallet = getPortkeyWallet(currentVersion);
-        // if (!portkeyWallet?.manager?.caAddress) throw new Error('no caContractAddress');
-        // if (!portkeyWallet?.caHash) throw new Error('no caHash');
-
         const transaction = await createTransferTokenTransaction({
           caContractAddress:
             ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.CA],
           eTransferContractAddress: currentTokenAddress,
-          caHash: authApiParams?.ca_hash || '',
+          caHash: caHash || '',
           symbol: currentSymbol,
           amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
           chainId: currentChainItemRef.current.key,
@@ -1115,7 +1111,7 @@ export default function WithdrawContent() {
           open: isSuccessModalOpen,
           onClose: clickSuccessOk,
           onOk: clickSuccessOk,
-          linkToExplore: CommonLink({
+          footerSlot: CommonLink({
             href: getExploreLink(
               withdrawInfoSuccess.transactionId,
               'transaction',
@@ -1123,7 +1119,7 @@ export default function WithdrawContent() {
             ),
             isTagA: true,
             children: (
-              <div className={styles['link-wrap']}>
+              <div className={clsx(styles['link-wrap'], !isMobilePX && styles['linkToExplore'])}>
                 <span className={styles['link-word']}>View on aelf Explorer</span>
                 <Fingerprint className={styles['link-explore-icon']} />
               </div>

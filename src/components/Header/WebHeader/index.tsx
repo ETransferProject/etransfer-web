@@ -24,7 +24,7 @@ export default function WebHeader() {
       className={clsx(
         'flex-row-between',
         styles['header-container'],
-        activeMenuKey === SideMenuKey.Records && styles['wide-header'],
+        activeMenuKey === SideMenuKey.History && styles['wide-header'],
       )}>
       <Logo />
       <div className={styles['right-wrapper']}>
