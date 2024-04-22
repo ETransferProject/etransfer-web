@@ -9,9 +9,9 @@ import {
   WebLoginRequestDefaultsUrlV2,
   NETWORK_NAME,
   NETWORK_TYPE_V2,
-  NETWORK_CHAIN,
   WebLoginServiceUrlV1,
   WebLoginServiceUrlV2,
+  SupportedChainId,
 } from 'constants/index';
 import { NetworkName } from 'constants/network';
 import dynamic from 'next/dynamic';
@@ -32,7 +32,7 @@ const WebLoginProviderDynamic = dynamic(
 
     webLogin.setGlobalConfig({
       appName: AppName,
-      chainId: NETWORK_CHAIN.TEST,
+      chainId: SupportedChainId.sideChain,
       networkType: NETWORK_TYPE_V1,
       portkey: {
         graphQLUrl: WebLoginGraphqlUrlV1,
@@ -56,7 +56,7 @@ const WebLoginProviderDynamic = dynamic(
         appName: AppName,
         nodes: AelfReact,
       },
-      defaultRpcUrl: AelfReact[NETWORK_CHAIN.TEST].rpcUrl,
+      defaultRpcUrl: AelfReact[SupportedChainId.sideChain].rpcUrl,
     });
     return webLogin.WebLoginProvider;
   },

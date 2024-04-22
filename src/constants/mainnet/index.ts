@@ -15,10 +15,10 @@ export enum SupportedELFChainId {
   tDVV = 'tDVV',
 }
 
-export enum NETWORK_CHAIN {
-  'MAIN' = SupportedELFChainId.AELF,
-  'TEST' = SupportedELFChainId.tDVV,
-}
+export const SupportedChainId = {
+  mainChain: SupportedELFChainId.AELF,
+  sideChain: SupportedELFChainId.tDVV,
+};
 
 export const CHAIN_NAME: { [chainId in SupportedELFChainId]: string } = {
   [SupportedELFChainId.AELF]: 'MainChain AELF',
@@ -45,13 +45,6 @@ export const CHAIN_LIST: IChainNameItem[] = [
     label: CHAIN_NAME_ENUM.SideChain,
   },
 ];
-
-export type ChainConstantsType = typeof AELF | typeof tDVV;
-
-export const SupportedELFChain: { [k: string | number]: ChainConstantsType } = {
-  [SupportedELFChainId.AELF]: AELF,
-  [SupportedELFChainId.tDVV]: tDVV,
-};
 
 export const AelfReact = {
   [SupportedELFChainId.AELF]: {
@@ -105,6 +98,6 @@ export const ADDRESS_MAP = {
 };
 
 export const EXPLORE_CONFIG = {
-  [NETWORK_CHAIN.MAIN]: AELF_NODES.AELF.exploreUrl,
-  [NETWORK_CHAIN.TEST]: AELF_NODES.tDVV.exploreUrl,
+  [SupportedChainId.mainChain]: AELF_NODES.AELF.exploreUrl,
+  [SupportedChainId.sideChain]: AELF_NODES.tDVV.exploreUrl,
 };
