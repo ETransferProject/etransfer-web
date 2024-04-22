@@ -68,7 +68,6 @@ import { CommonErrorNameType } from 'api/types';
 import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
 import { handleErrorMessage } from '@portkey/did-ui-react';
 import { useAccounts } from 'hooks/portkeyWallet';
-import getPortkeyWallet from 'wallet/portkeyWallet';
 import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
 import { formatWithCommas, parseWithCommas, parseWithStringCommas } from 'utils/format';
 import { sleep, getExploreLink } from 'utils/common';
@@ -79,8 +78,7 @@ import { QuestionMarkIcon, Fingerprint } from 'assets/images';
 import { InitWithdrawTokenState } from 'store/reducers/token/slice';
 import RemainingQuato from './RemainingQuato';
 import { getRecordStatus } from 'utils/api/records';
-import { compareTwoStringNumbers } from 'utils/calculate';
-import { setIsShowRedDot, setRecordCreateTime } from 'store/reducers/common/slice';
+import { setIsShowRedDot } from 'store/reducers/common/slice';
 
 enum ValidateStatus {
   Error = 'error',
@@ -105,12 +103,11 @@ type FormValuesType = {
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const isAndroid = devices.isMobile().android;
-  const { isMobilePX, currentChainItem, currentVersion, activeMenuKey, recordCreateTime } =
-    useCommonState();
+  const { isMobilePX, currentChainItem, currentVersion } = useCommonState();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
   const accounts = useAccounts();
   const { currentSymbol, tokenList } = useWithdraw();
-  const { withdraw } = useUserActionState();
+  const { withdraw, authApiParams } = useUserActionState();
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
@@ -553,14 +550,17 @@ export default function WithdrawContent() {
   );
 
   useEffect(() => {
-    if (!withdrawInfo.expiredTimestamp || currentNetworkRef.current?.network) {
+    if (!withdrawInfo.expiredTimestamp) {
       return;
     }
     if (getTransactionFeeTimerRef.current) {
       clearInterval(getTransactionFeeTimerRef.current);
     }
     getTransactionFeeTimerRef.current = setInterval(async () => {
-      if (new Date().getTime() > withdrawInfo.expiredTimestamp) {
+      if (
+        new Date().getTime() > withdrawInfo.expiredTimestamp &&
+        currentNetworkRef.current?.network
+      ) {
         await getWithdrawData();
       }
     }, 10000);
@@ -617,16 +617,8 @@ export default function WithdrawContent() {
 
   const fetchRecordStatus = useCallback(async () => {
     const res = await getRecordStatus();
-    if (!res.status || activeMenuKey === SideMenuKey.Records) {
-      dispatch(setIsShowRedDot(false));
-      return;
-    }
-
-    if (compareTwoStringNumbers(res.createTime, recordCreateTime)) {
-      dispatch(setIsShowRedDot(true));
-      dispatch(setRecordCreateTime(res.createTime));
-    }
-  }, [activeMenuKey, dispatch, recordCreateTime]);
+    dispatch(setIsShowRedDot(res.status));
+  }, [dispatch]);
 
   const handleCreateWithdrawOrder = useCallback(
     async ({ address, rawTransaction }: { address: string; rawTransaction: string }) => {
@@ -694,15 +686,15 @@ export default function WithdrawContent() {
       console.log('🌈 🌈 🌈 🌈 🌈 🌈 approveRes', approveRes);
 
       if (approveRes) {
-        const portkeyWallet = getPortkeyWallet(currentVersion);
-        if (!portkeyWallet?.manager?.caAddress) throw new Error('no caContractAddress');
-        if (!portkeyWallet?.caHash) throw new Error('no caHash');
+        // const portkeyWallet = getPortkeyWallet(currentVersion);
+        // if (!portkeyWallet?.manager?.caAddress) throw new Error('no caContractAddress');
+        // if (!portkeyWallet?.caHash) throw new Error('no caHash');
 
         const transaction = await createTransferTokenTransaction({
           caContractAddress:
             ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.CA],
           eTransferContractAddress: currentTokenAddress,
-          caHash: portkeyWallet.caHash,
+          caHash: authApiParams?.ca_hash || '',
           symbol: currentSymbol,
           amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
           chainId: currentChainItemRef.current.key,

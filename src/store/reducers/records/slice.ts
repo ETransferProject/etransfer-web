@@ -44,7 +44,6 @@ export const RecordsSlice = createSlice({
       state.skipCount = action.payload;
       // reset recordsList [] and hasMore true when setSkipCount value init 1
       if (action.payload === 1) {
-        state.recordsList = [];
         state.hasMore = true;
       }
     },
@@ -56,6 +55,9 @@ export const RecordsSlice = createSlice({
     },
     setHasMore: (state, action) => {
       state.hasMore = action.payload;
+    },
+    setHandleReset: () => {
+      return initialRecordState;
     },
   },
 });
@@ -70,6 +72,7 @@ export const {
   setMaxResultCount,
   setSearch,
   setHasMore,
+  setHandleReset,
 } = RecordsSlice.actions;
 
 export default RecordsSlice;

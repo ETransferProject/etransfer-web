@@ -38,7 +38,6 @@ export type toTransfer = {
 };
 
 export type currentRecordsStatus = {
-  createTime: string;
   status: boolean;
 };
 

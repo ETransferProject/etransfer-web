@@ -9,7 +9,6 @@ export interface CommonState {
   activeMenuKey: SideMenuKey;
   currentChainItem: IChainNameItem;
   currentVersion?: PortkeyVersion;
-  recordCreateTime?: string;
   isShowRedDot?: boolean;
 }
 
@@ -18,8 +17,7 @@ export const initialState: CommonState = {
   isMobilePX: false,
   activeMenuKey: SideMenuKey.Deposit,
   currentChainItem: CHAIN_LIST[0],
-  currentVersion: undefined,
-  recordCreateTime: '1712562663735', // A expired timestamp
+  currentVersion: PortkeyVersion.v2,
   isShowRedDot: false,
 };
 
@@ -47,11 +45,11 @@ export const CommonSlice = createSlice({
     setSwitchVersionAction: (state, action) => {
       state.currentVersion = action.payload;
     },
-    setRecordCreateTime: (state, action) => {
-      state.recordCreateTime = action.payload;
-    },
     setIsShowRedDot: (state, action) => {
-      state.isShowRedDot = action.payload;
+      // state.isShowRedDot = action.payload;
+      console.log(action);
+      // todo: next version, now defaule is false
+      state.isShowRedDot = false;
     },
   },
 });
@@ -63,7 +61,6 @@ export const {
   setCurrentChainItem,
   initCommon,
   setSwitchVersionAction,
-  setRecordCreateTime,
   setIsShowRedDot,
 } = CommonSlice.actions;
 

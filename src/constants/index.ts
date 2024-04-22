@@ -34,5 +34,7 @@ export const USDT_DECIMAL = 6;
 export const SECONDS_60 = 60000;
 
 export const prefixCls = 'etransfer-web';
-export const AppName = 'ETransfer Web';
+export const AppName = 'ETransfer-Web';
 export const BrandName = 'ETransfer';
+
+export type Chain = 'AELF' | 'tDVV' | 'tDVW';

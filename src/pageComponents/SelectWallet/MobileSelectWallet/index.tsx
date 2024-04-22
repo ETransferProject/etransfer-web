@@ -6,19 +6,20 @@ import LogoutButton from 'pageComponents/LogoutButton';
 import Address from '../Address';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
+import { useRouter } from 'next/navigation';
 
 export default function SelectWallet() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [isShowAddress, setIsShowAddress] = useState<boolean>(false);
   const { isMobilePX } = useCommonState();
+  const router = useRouter();
 
   const handleChangeAddress = () => {
     setIsShowAddress(!isShowAddress);
   };
 
-  // TODO: link to assets
   const handleAssets = () => {
-    console.log('handleAssets');
+    router.push('/assets');
   };
 
   return (

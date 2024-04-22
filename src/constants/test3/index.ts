@@ -9,6 +9,9 @@ export const NETWORK_NAME = NetworkName.test3 as NetworkName;
 
 export const NETWORK_TYPE_V1: TNetworkTypeV1 = 'MAIN';
 export const NETWORK_TYPE_V2: TNetworkTypeV2 = 'MAINNET';
+export const connectUrl = 'https://auth-portkey-test.portkey.finance';
+export const mainChainId = 'AELF';
+export const sideChainId = 'tDVW';
 
 export enum SupportedELFChainId {
   AELF = 'AELF',
@@ -104,4 +107,10 @@ export const ADDRESS_MAP = {
       [ContractType.TOKEN]: tDVV.TOKEN_CONTRACT,
     },
   },
+};
+
+export const EXPLORE_CONFIG = {
+  AELF: 'https://explorer-test.aelf.io/',
+  TDVV: 'https://explorer-test-side02.aelf.io/',
+  TDVW: 'https://explorer-test-side02.aelf.io/',
 };

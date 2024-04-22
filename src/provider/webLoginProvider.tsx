@@ -1,23 +1,28 @@
 'use client';
-import { PortkeyProvider as PortkeyProviderV1 } from '@portkey-v1/did-ui-react';
-import { PortkeyProvider as PortkeyProviderV2 } from '@portkey/did-ui-react';
 import {
   AelfReact,
   AppName,
   NETWORK_TYPE_V1,
-  NETWORK_TYPE_V2,
-  SupportedELFChainId,
   WebLoginGraphqlUrlV1,
   WebLoginGraphqlUrlV2,
-  WebLoginRequestDefaultsUrlV1,
   WebLoginRequestDefaultsUrlV2,
+  connectUrl,
+  NETWORK_NAME,
+  NETWORK_TYPE_V2,
+  sideChainId,
 } from 'constants/index';
-import { PortkeyVersion } from 'constants/wallet';
+import { NetworkName } from 'constants/network';
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
-import { useCommonState } from 'store/Provider/hooks';
-const InitProviderV1 = dynamic(() => import('./initProviderV1'), { ssr: false });
-const InitProviderV2 = dynamic(() => import('./initProviderV2'), { ssr: false });
+import { logoIcon } from 'constants/wallet';
+// import { PortkeyVersion } from 'constants/wallet';
+const WebLoginPortkeyProvider = dynamic(
+  async () => {
+    const { PortkeyProvider } = await import('aelf-web-login').then((module) => module);
+    return PortkeyProvider;
+  },
+  { ssr: false },
+);
 
 const WebLoginProviderDynamic = dynamic(
   async () => {
@@ -25,20 +30,25 @@ const WebLoginProviderDynamic = dynamic(
 
     webLogin.setGlobalConfig({
       appName: AppName,
-      chainId: SupportedELFChainId.AELF,
-      networkType: 'MAIN',
+      chainId: sideChainId,
+      networkType: NETWORK_TYPE_V1,
       portkey: {
         graphQLUrl: WebLoginGraphqlUrlV1,
         requestDefaults: {
-          baseURL: WebLoginRequestDefaultsUrlV1,
+          baseURL: 'portkeyV1',
         },
       },
+      onlyShowV2: true,
       portkeyV2: {
+        useLocalStorage: true,
         graphQLUrl: WebLoginGraphqlUrlV2,
-        networkType: 'MAINNET',
+        networkType: NETWORK_TYPE_V2,
+        connectUrl: connectUrl,
         requestDefaults: {
-          baseURL: WebLoginRequestDefaultsUrlV2,
+          baseURL: 'portkeyV2',
+          timeout: NETWORK_NAME === NetworkName.testnet ? 300000 : 80000,
         },
+        serviceUrl: WebLoginRequestDefaultsUrlV2,
       },
       aelfReact: {
         appName: AppName,
@@ -52,46 +62,26 @@ const WebLoginProviderDynamic = dynamic(
 );
 
 export default function Providers({ children }: { children: ReactNode }) {
-  const { currentVersion } = useCommonState();
-
-  if (currentVersion === PortkeyVersion.v1) {
-    return (
-      <PortkeyProviderV1 networkType={NETWORK_TYPE_V1}>
-        <WebLoginProviderDynamic
-          nightElf={{
-            connectEagerly: false,
-          }}
-          portkey={{
-            autoShowUnlock: true,
-            checkAccountInfoSync: true,
-          }}
-          discover={{
-            autoRequestAccount: true,
-            autoLogoutOnDisconnected: true,
-            autoLogoutOnNetworkMismatch: true,
-            autoLogoutOnAccountMismatch: true,
-            autoLogoutOnChainMismatch: true,
-            onPluginNotFound: (openStore) => {
-              console.log('openStore:', openStore);
-            },
-          }}
-          extraWallets={['discover']}>
-          <InitProviderV1 />
-          {children}
-        </WebLoginProviderDynamic>
-      </PortkeyProviderV1>
-    );
-  }
   return (
-    <PortkeyProviderV2 networkType={NETWORK_TYPE_V2}>
+    <WebLoginPortkeyProvider
+      networkType={NETWORK_TYPE_V1}
+      networkTypeV2={NETWORK_TYPE_V2}
+      theme="dark">
       <WebLoginProviderDynamic
         nightElf={{
+          useMultiChain: false,
           connectEagerly: false,
         }}
         portkey={{
+          design: 'SocialDesign',
           autoShowUnlock: true,
           checkAccountInfoSync: true,
         }}
+        commonConfig={{
+          showClose: true,
+          iconSrc: logoIcon,
+        }}
+        extraWallets={['discover']}
         discover={{
           autoRequestAccount: true,
           autoLogoutOnDisconnected: true,
@@ -101,11 +91,9 @@ export default function Providers({ children }: { children: ReactNode }) {
           onPluginNotFound: (openStore) => {
             console.log('openStore:', openStore);
           },
-        }}
-        extraWallets={['discover']}>
-        <InitProviderV2 />
+        }}>
         {children}
       </WebLoginProviderDynamic>
-    </PortkeyProviderV2>
+    </WebLoginPortkeyProvider>
   );
 }

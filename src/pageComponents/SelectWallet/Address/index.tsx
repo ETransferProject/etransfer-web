@@ -14,19 +14,23 @@ interface AddressProps {
 export default function Address({ hideBorder }: AddressProps) {
   const accounts = useAccounts();
 
-  const accountsList = useMemo(
-    () => [
-      {
+  const accountsList = useMemo(() => {
+    console.log(accounts);
+    const temp = [];
+    if (accounts?.AELF) {
+      temp.push({
         label: CHAIN_LIST[0].label,
-        value: accounts?.[CHAIN_LIST[0].key]?.[0] || '',
-      },
-      {
+        value: typeof accounts?.AELF === 'string' ? accounts?.AELF : accounts?.AELF[0] || '',
+      });
+    }
+    if (accounts?.tDVW) {
+      temp.push({
         label: CHAIN_LIST[1].label,
-        value: accounts?.[CHAIN_LIST[1].key]?.[0] || '',
-      },
-    ],
-    [accounts],
-  );
+        value: typeof accounts?.tDVW === 'string' ? accounts?.tDVW : accounts?.tDVW[0] || '',
+      });
+    }
+    return temp;
+  }, [accounts]);
 
   return (
     <>

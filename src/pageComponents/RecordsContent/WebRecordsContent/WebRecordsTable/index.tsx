@@ -158,8 +158,14 @@ export default function WebRecordsTable({ requestRecordsList }: RecordsContentPa
   };
 
   const tableOnChange = (page: number, pageSize: number) => {
-    dispatch(setSkipCount(page));
-    dispatch(setMaxResultCount(pageSize));
+    if (page !== skipCount) {
+      dispatch(setSkipCount(page));
+    }
+    if (maxResultCount !== pageSize) {
+      // pageSize change and skipCount need init 1
+      dispatch(setSkipCount(1));
+      dispatch(setMaxResultCount(pageSize));
+    }
     requestRecordsList();
   };
 

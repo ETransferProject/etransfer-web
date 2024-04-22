@@ -7,8 +7,6 @@ import CommonModal from 'components/CommonModal';
 import { Tooltip } from 'antd';
 import { ProcessingTipMessage, FailedTipMessage } from 'constants/records';
 import { SupportedELFChainId } from 'constants/index';
-import { BitNetworkType } from 'constants/network';
-import { useAccounts } from 'hooks/portkeyWallet';
 
 type StatusBoxProps = {
   status: string;
@@ -19,31 +17,11 @@ type StatusBoxProps = {
   orderType: string;
 };
 
-export default function StatusBox({
-  status,
-  address,
-  network,
-  fromChanId,
-  toChanId,
-  orderType,
-}: StatusBoxProps) {
+export default function StatusBox({ status, network }: StatusBoxProps) {
   const [isMobildOpenModal, setIsMobildOpenModal] = useState(false);
   const [tipMessage, setTipMessage] = useState('');
   const [title, setTitle] = useState('');
   const { isMobilePX } = useCommonState();
-  const accounts = useAccounts();
-
-  const calcAddress = useCallback(() => {
-    if (network === BitNetworkType.AELF && !address) {
-      let chanId: SupportedELFChainId = orderType === 'Deposit' ? toChanId : fromChanId;
-      chanId = chanId ?? SupportedELFChainId.AELF;
-      if (accounts && accounts[chanId] && accounts[chanId]?.[0]) {
-        return accounts[chanId]?.[0] || '--';
-      }
-      return '--';
-    }
-    return address;
-  }, [network, address, accounts, orderType, toChanId, fromChanId]);
 
   const handleClick = useCallback(() => {
     if (!isMobilePX) {
@@ -52,7 +30,7 @@ export default function StatusBox({
     // set tip message: Processing  Failed
     switch (status) {
       case RecordsStatus.Processing:
-        setTipMessage(`${ProcessingTipMessage + ' : ' + calcAddress()}`);
+        setTipMessage(`${ProcessingTipMessage + ' : ' + network}`);
         break;
       case RecordsStatus.Failed:
         setTipMessage(FailedTipMessage);
@@ -63,13 +41,13 @@ export default function StatusBox({
     }
     setTitle(status);
     setIsMobildOpenModal(true);
-  }, [isMobilePX, status, calcAddress]);
+  }, [isMobilePX, status, network]);
 
   const content = useMemo(() => {
     switch (status) {
       case RecordsStatus.Processing:
         return (
-          <Tooltip title={`${ProcessingTipMessage + ' : ' + calcAddress()}`}>
+          <Tooltip title={`${ProcessingTipMessage + ' : ' + network}`}>
             <div className={styles['status-box']} onClick={() => handleClick()}>
               <TimeFilled />
               <span className={styles.processing}>{RecordsStatus.Processing}</span>
@@ -92,7 +70,7 @@ export default function StatusBox({
       default:
         return null;
     }
-  }, [status, handleClick, calcAddress]);
+  }, [status, handleClick, network]);
 
   return (
     <div className={styles['status-wrapper']}>

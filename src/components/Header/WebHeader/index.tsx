@@ -6,13 +6,17 @@ import { Logo } from 'assets/images';
 import styles from './styles.module.scss';
 import { useIsActive } from 'hooks/portkeyWallet';
 import { SideMenuKey } from 'constants/home';
+import { useWebLogin, WalletType } from 'aelf-web-login';
+import { useRouter } from 'next/navigation';
 
 export default function WebHeader() {
   const isActive = useIsActive();
   const { activeMenuKey } = useCommonState();
-  // TODO: open assets
+  const { walletType } = useWebLogin();
+  const router = useRouter();
+
   const handleOpenAssets = () => {
-    console.log('handleOpenAssets');
+    router.push('/assets');
   };
 
   return (
@@ -24,7 +28,7 @@ export default function WebHeader() {
       )}>
       <Logo />
       <div className={styles['right-wrapper']}>
-        {isActive && (
+        {isActive && walletType === WalletType.portkey && (
           <span className={styles['assets-wrapper']} onClick={() => handleOpenAssets()}>
             Assets
           </span>
