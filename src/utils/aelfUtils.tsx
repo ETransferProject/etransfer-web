@@ -385,7 +385,7 @@ export const checkTokenAllowanceAndApprove = async ({
   const allowanceResult = allowance.data;
   const tokenInfoResult = tokenInfo.data;
   console.log('first check allowance and tokenInfo:', allowanceResult, tokenInfoResult);
-  const bigA = timesDecimals(amount, tokenInfoResult?.decimals ?? 8);
+  const bigA = timesDecimals(amount, tokenInfoResult?.decimals || 8);
   const allowanceBN = new BigNumber(allowanceResult?.allowance);
 
   if (allowanceBN.lt(bigA)) {
