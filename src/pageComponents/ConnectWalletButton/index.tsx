@@ -12,17 +12,16 @@ import {
 } from 'aelf-web-login';
 import { PortkeyVersion } from 'constants/wallet';
 import { setV2ConnectedInfoAction } from 'store/reducers/portkeyWallet/actions';
-import { setQueryAuthApiParams, setSwitchVersionAction } from 'store/reducers/common/slice';
+import { setSwitchVersionAction } from 'store/reducers/common/slice';
+import { setQueryAuthApiParams } from 'store/reducers/userAction/slice';
 import { Accounts } from '@portkey/provider-types';
-import { NETWORK_CONFIG } from 'constants/loginNetwork';
+import { sideChainId, AppName, SupportedELFChainId } from 'constants/index';
 import { GetCAHolderByManagerParams } from '@portkey/services';
 import AElf from 'aelf-sdk';
-import { AppName } from 'constants/index';
 import { recoverPubKey } from 'utils/loginUtils';
 import { queryAuthApi } from 'api/utils';
 import { useDebounceCallback } from 'hooks';
 // import { useEffectOnce } from 'react-use';
-import { SupportedELFChainId } from 'constants/index';
 
 const pubKeyToAddress = (pubKey: string) => {
   const onceSHAResult = Buffer.from(AElf.utils.sha256(Buffer.from(pubKey, 'hex')), 'hex');
@@ -49,7 +48,7 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
 
     let caHash = '';
     const address = wallet.address;
-    let originChainId: string = NETWORK_CONFIG.sideChainId;
+    let originChainId: string = sideChainId;
 
     if (walletType === WalletType.discover) {
       try {
@@ -59,7 +58,7 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
         } as unknown as GetCAHolderByManagerParams);
         const caInfo = res[0];
         caHash = caInfo?.caHash || '';
-        originChainId = caInfo?.chainId || NETWORK_CONFIG.sideChainId;
+        originChainId = caInfo?.chainId || sideChainId;
       } catch (error) {
         console.log('getHolderInfoByManager error', error);
         return;
@@ -68,7 +67,7 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
 
     if (walletType === WalletType.portkey) {
       caHash = wallet.portkeyInfo?.caInfo?.caHash || '';
-      originChainId = wallet.portkeyInfo?.chainId || NETWORK_CONFIG.sideChainId;
+      originChainId = wallet.portkeyInfo?.chainId || sideChainId;
     }
 
     try {
@@ -101,15 +100,12 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
         managerAddress: managerAddress,
         version: PortkeyVersion.v2,
       };
-      const queryAuthApiRes = await queryAuthApi(apiParams);
+      await queryAuthApi(apiParams);
       dispatch(setQueryAuthApiParams(apiParams));
-      console.log('queryAuthApiRes', queryAuthApiRes);
       console.log('login success');
       console.log(loginState, wallet);
       const { name = '', discoverInfo } = wallet;
-      setLoading(false);
-      // todo accounts depend on walletType
-      // string or string[] -> string[]
+      // portkey is string or discover is string[] -> string[]
       let accounts: Accounts = {};
       if (walletType === WalletType.discover) {
         accounts = discoverInfo?.accounts || {};
@@ -133,6 +129,8 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
     } catch (error) {
       console.log('queryAuthApi error', error);
       return;
+    } finally {
+      setLoading(false);
     }
   }, [loginState]);
 

@@ -56,16 +56,8 @@ export const RecordsSlice = createSlice({
     setHasMore: (state, action) => {
       state.hasMore = action.payload;
     },
-    setHandleReset: (state) => {
-      state.status = RecordsRequestStatus.ALL;
-      state.type = RecordsRequestType.ALL;
-      state.timestamp = null;
-      state.skipCount = 1;
-      state.maxResultCount = 10;
-      state.hasMore = true;
-      state.search = '';
-      state.totalCount = 0;
-      state.recordsList = [];
+    setHandleReset: () => {
+      return initialRecordState;
     },
   },
 });

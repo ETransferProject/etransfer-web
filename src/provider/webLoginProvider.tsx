@@ -2,17 +2,20 @@
 import {
   AelfReact,
   AppName,
+  NETWORK_TYPE_V1,
   SupportedELFChainId,
   WebLoginGraphqlUrlV1,
   WebLoginGraphqlUrlV2,
   WebLoginRequestDefaultsUrlV2,
   connectUrl,
+  NETWORK_NAME,
+  NETWORK_TYPE_V2,
 } from 'constants/index';
+import { NetworkName } from 'constants/network';
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
 import { logoIcon } from 'constants/wallet';
 // import { PortkeyVersion } from 'constants/wallet';
-
 const WebLoginPortkeyProvider = dynamic(
   async () => {
     const { PortkeyProvider } = await import('aelf-web-login').then((module) => module);
@@ -27,8 +30,8 @@ const WebLoginProviderDynamic = dynamic(
 
     webLogin.setGlobalConfig({
       appName: AppName,
-      chainId: SupportedELFChainId.AELF,
-      networkType: 'TESTNET',
+      chainId: SupportedELFChainId.AELF, // cms ??
+      networkType: NETWORK_TYPE_V1,
       portkey: {
         graphQLUrl: WebLoginGraphqlUrlV1,
         requestDefaults: {
@@ -39,11 +42,11 @@ const WebLoginProviderDynamic = dynamic(
       portkeyV2: {
         useLocalStorage: true,
         graphQLUrl: WebLoginGraphqlUrlV2,
-        networkType: 'TESTNET',
+        networkType: NETWORK_TYPE_V2,
         connectUrl: connectUrl,
         requestDefaults: {
           baseURL: 'portkeyV2',
-          timeout: 300000,
+          timeout: NETWORK_NAME === NetworkName.testnet ? 300000 : 80000,
         },
         serviceUrl: WebLoginRequestDefaultsUrlV2,
       },
@@ -60,7 +63,10 @@ const WebLoginProviderDynamic = dynamic(
 
 export default function Providers({ children }: { children: ReactNode }) {
   return (
-    <WebLoginPortkeyProvider networkType="TESTNET" networkTypeV2="TESTNET" theme="dark">
+    <WebLoginPortkeyProvider
+      networkType={NETWORK_TYPE_V1}
+      networkTypeV2={NETWORK_TYPE_V2}
+      theme="dark">
       <WebLoginProviderDynamic
         nightElf={{
           useMultiChain: false,

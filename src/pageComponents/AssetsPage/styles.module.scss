@@ -1,0 +1,10 @@
+@import '/src/assets/theme/color.scss';
+
+.my-asset-wrapper {
+  width: 100vw;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  background-color: $page-bg;
+}

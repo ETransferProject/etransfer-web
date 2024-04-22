@@ -113,20 +113,3 @@ export const getOmittedStr = (str: string, preLen?: number, endLen?: number) => 
   }
   return `${str.slice(0, preLen)}...${str.slice(-endLen)}`;
 };
-
-/**
- * Compare the sizes of two numerical values
- * @param sNumberA number a
- * @param sNumberB number b
- * @returns boolean
- */
-export const compareTwoStringNumbers = (sNumberA?: string, sNumberB?: string) => {
-  if (!sNumberA || !sNumberB) {
-    return false;
-  }
-
-  const bigNumberA = new BigNumber(sNumberA);
-  const bigNumberB = new BigNumber(sNumberB);
-
-  return bigNumberA.isGreaterThan(bigNumberB);
-};

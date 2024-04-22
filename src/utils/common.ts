@@ -1,5 +1,5 @@
 import { ChainId } from 'types';
-import { EXPLORE_URL } from 'constants/exploreUrl';
+import { EXPLORE_CONFIG } from 'constants/index';
 import { OtherEXPLORE_URL } from 'constants/network';
 import { SupportedELFChainId } from 'constants/testnet';
 import AElf from 'aelf-sdk';
@@ -19,7 +19,7 @@ export function getExploreLink(
 ): string {
   const target =
     (chainId && (chainId.toUpperCase() as 'AELF' | 'TDVV' | 'TDVW')) || SupportedELFChainId.AELF;
-  const prefix = EXPLORE_URL[target];
+  const prefix = EXPLORE_CONFIG[target];
   switch (type) {
     case 'transaction': {
       return `${prefix}tx/${data}`;

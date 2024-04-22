@@ -10,20 +10,18 @@ import {
   setActiveMenuKey,
   setCurrentChainItem,
   setIsShowRedDot,
-  setRecordCreateTime,
 } from 'store/reducers/common/slice';
 import { CHAIN_LIST } from 'constants/index';
 import clsx from 'clsx';
 import { getTokenList } from 'utils/api/deposit';
-import { getRecordStatus } from 'utils/api/records';
+import { getRecordStatus, postRecordRead } from 'utils/api/records';
 import { BusinessType } from 'types/api';
 import { setCurrentSymbol, setTokenList } from 'store/reducers/token/slice';
 import { useWithdraw } from 'hooks/withdraw';
-import { compareTwoStringNumbers } from 'utils/calculate';
 
 export default function Content() {
   const dispatch = useAppDispatch();
-  const { activeMenuKey, currentChainItem, recordCreateTime } = useCommonState();
+  const { activeMenuKey, currentChainItem } = useCommonState();
   const { currentSymbol: withdrawCurrentSymbol } = useWithdraw();
   const router = useRouter();
   const searchParams = useSearchParams(); // TODO
@@ -101,20 +99,18 @@ export default function Content() {
 
   useEffect(() => {
     const fetchRecordStatus = async () => {
-      const res = await getRecordStatus();
-      if (!res.status || currentActiveMenuKey === SideMenuKey.Records) {
+      if (currentActiveMenuKey === SideMenuKey.Records) {
         dispatch(setIsShowRedDot(false));
+        // update red dot status: had reded
+        await postRecordRead();
         return;
       }
-
-      if (compareTwoStringNumbers(res.createTime, recordCreateTime)) {
-        dispatch(setIsShowRedDot(true));
-        dispatch(setRecordCreateTime(res.createTime));
-      }
+      const res = await getRecordStatus();
+      dispatch(setIsShowRedDot(res.status));
     };
 
     fetchRecordStatus();
-  }, [dispatch, recordCreateTime, currentActiveMenuKey]);
+  }, [dispatch, currentActiveMenuKey]);
 
   const content = useMemo(() => {
     switch (currentActiveMenuKey) {

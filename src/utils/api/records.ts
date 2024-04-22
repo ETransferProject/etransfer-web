@@ -28,3 +28,15 @@ export const getRecordStatus = async (): Promise<currentRecordsStatus> => {
     throw newError;
   }
 };
+
+export const postRecordRead = async (): Promise<null> => {
+  try {
+    const res = await request.records.postRecordRead();
+    return res.data;
+  } catch (error: any) {
+    const newError: any = new Error(handleErrorMessage(error, 'postRecordRead error'));
+
+    newError.code = error?.code;
+    throw newError;
+  }
+};

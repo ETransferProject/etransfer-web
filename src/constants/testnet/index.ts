@@ -10,6 +10,8 @@ export const NETWORK_NAME: NetworkName = NetworkName.testnet;
 export const NETWORK_TYPE_V1: TNetworkTypeV1 = 'TESTNET';
 export const NETWORK_TYPE_V2: TNetworkTypeV2 = 'TESTNET';
 export const connectUrl = 'https://auth-portkey-test.portkey.finance';
+export const mainChainId = 'AELF';
+export const sideChainId = 'tDVW';
 
 export enum SupportedELFChainId {
   AELF = 'AELF',
