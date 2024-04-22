@@ -9,9 +9,6 @@ export const NETWORK_NAME = NetworkName.test3 as NetworkName;
 
 export const NETWORK_TYPE_V1: TNetworkTypeV1 = 'MAIN';
 export const NETWORK_TYPE_V2: TNetworkTypeV2 = 'MAINNET';
-export const connectUrl = 'https://auth-portkey-test.portkey.finance';
-export const mainChainId = 'AELF';
-export const sideChainId = 'tDVW';
 
 export enum SupportedELFChainId {
   AELF = 'AELF',
@@ -79,6 +76,9 @@ export const WebLoginGraphqlUrlV1 = '/v1/graphql';
 export const WebLoginGraphqlUrlV2 = '/v2/graphql';
 export const WebLoginRequestDefaultsUrlV1 = 'http://192.168.66.203:5001';
 export const WebLoginRequestDefaultsUrlV2 = 'http://192.168.67.127:5001';
+export const WebLoginServiceUrlV1 = 'http://192.168.66.203:5001';
+export const WebLoginServiceUrlV2 = 'http://192.168.67.127:5001';
+export const WebLoginConnectUrlV2 = 'http://192.168.67.127:8080';
 
 // test3-dev
 // export const ETransferHost = 'http://192.168.64.151:5011';
@@ -110,7 +110,6 @@ export const ADDRESS_MAP = {
 };
 
 export const EXPLORE_CONFIG = {
-  AELF: 'https://explorer-test.aelf.io/',
-  TDVV: 'https://explorer-test-side02.aelf.io/',
-  TDVW: 'https://explorer-test-side02.aelf.io/',
+  [NETWORK_CHAIN.MAIN]: AELF_NODES.AELF.exploreUrl,
+  [NETWORK_CHAIN.TEST]: AELF_NODES.tDVV.exploreUrl,
 };

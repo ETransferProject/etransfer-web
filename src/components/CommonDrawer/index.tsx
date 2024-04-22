@@ -10,8 +10,8 @@ export default function CommonDrawer({ className, width, height, ...props }: Dra
       closeIcon={<Close />}
       destroyOnClose
       placement="bottom"
-      width={width ?? '100%'}
-      height={height ?? '88%'}
+      width={width || '100%'}
+      height={height || '88%'}
       {...props}
       className={clsx(styles['common-drawer'], className)}
     />
