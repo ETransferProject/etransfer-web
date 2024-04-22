@@ -30,7 +30,7 @@ export default function StatusBox({ status, network }: StatusBoxProps) {
     // set tip message: Processing  Failed
     switch (status) {
       case RecordsStatus.Processing:
-        setTipMessage(`${ProcessingTipMessage + ' : ' + network}`);
+        setTipMessage(`${ProcessingTipMessage + ' ' + network}`);
         break;
       case RecordsStatus.Failed:
         setTipMessage(FailedTipMessage);
@@ -47,7 +47,7 @@ export default function StatusBox({ status, network }: StatusBoxProps) {
     switch (status) {
       case RecordsStatus.Processing:
         return (
-          <Tooltip title={`${ProcessingTipMessage + ' : ' + network}`}>
+          <Tooltip title={`${ProcessingTipMessage + ' ' + network}`}>
             <div className={styles['status-box']} onClick={() => handleClick()}>
               <TimeFilled />
               <span className={styles.processing}>{RecordsStatus.Processing}</span>

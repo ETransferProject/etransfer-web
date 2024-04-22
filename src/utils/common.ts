@@ -1,7 +1,6 @@
 import { ChainId } from 'types';
-import { EXPLORE_CONFIG } from 'constants/index';
+import { EXPLORE_CONFIG, SupportedELFChainId } from 'constants/index';
 import { OtherEXPLORE_URL } from 'constants/network';
-import { SupportedELFChainId } from 'constants/testnet';
 import AElf from 'aelf-sdk';
 
 export const sleep = (time: number) => {

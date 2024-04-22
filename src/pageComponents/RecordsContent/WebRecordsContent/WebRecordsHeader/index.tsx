@@ -63,7 +63,7 @@ export default function WebRecordsHeader({ requestRecordsList }: RecordsContentP
 
   return (
     <div className={clsx(styles['web-records-header-wrapper'])}>
-      <div className={clsx(styles['web-records-title'])}>Records</div>
+      <div className={clsx(styles['web-records-title'])}>History</div>
       <div className={clsx(styles['web-records-search-wrapper'])}>
         <Select
           size={'large'}
@@ -73,8 +73,8 @@ export default function WebRecordsHeader({ requestRecordsList }: RecordsContentP
           popupClassName={'drop-wrap'}
           options={[
             { value: RecordsRequestType.ALL, label: 'ALL' },
-            { value: RecordsRequestType.Deposits, label: 'Deposits' },
-            { value: RecordsRequestType.Withdraws, label: 'Withdraws' },
+            { value: RecordsRequestType.Deposits, label: 'Deposit' },
+            { value: RecordsRequestType.Withdraws, label: 'Withdraw' },
           ]}
         />
         <Select
