@@ -3,9 +3,9 @@ import clsx from 'clsx';
 import { Select, DatePicker, Button } from 'antd';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import { setType, setStatus, setTimestamp, setSkipCount } from 'store/reducers/records/slice';
-import { RecordsRequestType, RecordsRequestStatus } from 'types/records';
+import { RecordsRequestType, RecordsRequestStatus, RecordsStatus } from 'types/records';
 import { useCallback } from 'react';
-import { RangeValue, RecordsContentParams } from 'types/api';
+import { RangeValue, RecordsContentParams, BusinessType } from 'types/api';
 import { Reset } from 'assets/images';
 import { SwapRightDefault, SwapRightSelected } from 'assets/images';
 
@@ -73,8 +73,8 @@ export default function WebRecordsHeader({ requestRecordsList }: RecordsContentP
           popupClassName={'drop-wrap'}
           options={[
             { value: RecordsRequestType.ALL, label: 'ALL' },
-            { value: RecordsRequestType.Deposits, label: 'Deposit' },
-            { value: RecordsRequestType.Withdraws, label: 'Withdraw' },
+            { value: RecordsRequestType.Deposits, label: BusinessType.Deposit },
+            { value: RecordsRequestType.Withdraws, label: BusinessType.Withdraw },
           ]}
         />
         <Select
@@ -85,9 +85,9 @@ export default function WebRecordsHeader({ requestRecordsList }: RecordsContentP
           popupClassName={'drop-wrap'}
           options={[
             { value: RecordsRequestStatus.ALL, label: 'ALL' },
-            { value: RecordsRequestStatus.Processing, label: 'Pending' },
-            { value: RecordsRequestStatus.Succeed, label: 'Completed' },
-            { value: RecordsRequestStatus.Failed, label: 'Failed' },
+            { value: RecordsRequestStatus.Processing, label: RecordsStatus.Processing },
+            { value: RecordsRequestStatus.Succeed, label: RecordsStatus.Succeed },
+            { value: RecordsRequestStatus.Failed, label: RecordsStatus.Failed },
           ]}
         />
         <RangePicker

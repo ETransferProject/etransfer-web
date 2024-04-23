@@ -10,12 +10,12 @@ import {
   setSkipCount,
   setRecordsList,
 } from 'store/reducers/records/slice';
-import { RecordsRequestType, RecordsRequestStatus } from 'types/records';
+import { RecordsRequestType, RecordsRequestStatus, RecordsStatus } from 'types/records';
 import CommonDrawer from 'components/CommonDrawer';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import { Select, DatePicker } from 'antd';
 import type { Moment } from 'moment';
-import { RecordsContentParams } from 'types/api';
+import { RecordsContentParams, BusinessType } from 'types/api';
 
 const dateFormat = 'YYYY-MM-DD';
 
@@ -128,16 +128,16 @@ export default function Filter({ requestRecordsList }: RecordsContentParams) {
         <FilterIcon className={styles['filter-icon']} onClick={handleOpenFilterDrawer} />
         {type !== RecordsRequestType.ALL && (
           <div className={styles['filter-item']}>
-            {type === RecordsRequestType.Deposits && 'Deposit'}
-            {type === RecordsRequestType.Withdraws && 'Withdraw'}
+            {type === RecordsRequestType.Deposits && BusinessType.Deposit}
+            {type === RecordsRequestType.Withdraws && BusinessType.Withdraw}
             <CloseSmall className={styles['filter-close-icon']} onClick={() => closeItem('type')} />
           </div>
         )}
         {status !== RecordsRequestStatus.ALL && (
           <div className={styles['filter-item']}>
-            {status === RecordsRequestStatus.Processing && 'Pending'}
-            {status === RecordsRequestStatus.Succeed && 'Completed'}
-            {status === RecordsRequestStatus.Failed && 'Failed'}
+            {status === RecordsRequestStatus.Processing && RecordsStatus.Processing}
+            {status === RecordsRequestStatus.Succeed && RecordsStatus.Succeed}
+            {status === RecordsRequestStatus.Failed && RecordsStatus.Failed}
             <CloseSmall
               className={styles['filter-close-icon']}
               onClick={() => closeItem('status')}
@@ -200,8 +200,8 @@ export default function Filter({ requestRecordsList }: RecordsContentParams) {
             popupClassName={'drop-wrap'}
             options={[
               { value: RecordsRequestType.ALL, label: 'ALL' },
-              { value: RecordsRequestType.Deposits, label: 'Deposit' },
-              { value: RecordsRequestType.Withdraws, label: 'Withdraw' },
+              { value: RecordsRequestType.Deposits, label: BusinessType.Deposit },
+              { value: RecordsRequestType.Withdraws, label: BusinessType.Withdraw },
             ]}
           />
           <div className={styles['filter-drawer-label']}>Status</div>
@@ -213,9 +213,9 @@ export default function Filter({ requestRecordsList }: RecordsContentParams) {
             popupClassName={'drop-wrap'}
             options={[
               { value: RecordsRequestStatus.ALL, label: 'ALL' },
-              { value: RecordsRequestStatus.Processing, label: 'Pending' },
-              { value: RecordsRequestStatus.Succeed, label: 'Completed' },
-              { value: RecordsRequestStatus.Failed, label: 'Failed' },
+              { value: RecordsRequestStatus.Processing, label: RecordsStatus.Processing },
+              { value: RecordsRequestStatus.Succeed, label: RecordsStatus.Succeed },
+              { value: RecordsRequestStatus.Failed, label: RecordsStatus.Failed },
             ]}
           />
           <div className={styles['filter-drawer-label']}>Start time</div>
