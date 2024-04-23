@@ -3423,10 +3423,10 @@ aelf-sdk@^3.3.0:
     scryptsy "^2.1.0"
     xmlhttprequest "^1.8.0"
 
-aelf-web-login@2.0.1-beta.7:
-  version "2.0.1-beta.7"
-  resolved "https://registry.yarnpkg.com/aelf-web-login/-/aelf-web-login-2.0.1-beta.7.tgz#1366d1995f22b3332953cb8f2125ce7ef12cde6d"
-  integrity sha512-POZbha+opMUiYOy1RTFxOWD/gajZIgtfVn4A4/zUCSb42iaZRdxWO+nU7PDg+1t5j20g/r+vge+05+wUurDLpA==
+aelf-web-login@2.0.1-beta.9:
+  version "2.0.1-beta.9"
+  resolved "https://registry.yarnpkg.com/aelf-web-login/-/aelf-web-login-2.0.1-beta.9.tgz#37b006c89b0e460e9d1173eebd6b82e8a4e2ebcb"
+  integrity sha512-GQ7fECjoRkKlwNKg+ve1KhiSNzwx3PyKE6Swnbm0TUtexAPI3yjmiqt/M8iG+DjZjJStH49GRw2bvF5IC4ojgA==
   dependencies:
     "@aelf-react/core" "^0.1.19"
     "@portkey/detect-provider" "2.0.0-alpha.5"

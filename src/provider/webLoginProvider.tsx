@@ -82,6 +82,7 @@ export default function Providers({ children }: { children: ReactNode }) {
         commonConfig={{
           showClose: true,
           iconSrc: logoIcon,
+          title: 'Log In to ETransfer',
         }}
         extraWallets={['discover']}
         discover={{
