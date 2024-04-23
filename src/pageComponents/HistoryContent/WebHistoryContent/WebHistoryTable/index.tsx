@@ -2,7 +2,7 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import { Table } from 'antd';
-import { RecordsListItem, RecordsContentParams } from 'types/api';
+import { RecordsListItem, TRecordsContentParams } from 'types/api';
 import { feeInfoType, recordsTableListType } from 'types/records';
 import { setSkipCount, setMaxResultCount } from 'store/reducers/records/slice';
 import FeeInfo from 'pageComponents/HistoryContent/FeeInfo';
@@ -24,8 +24,8 @@ const columns = [
           status={status}
           address={record.fromAddress}
           network={record.fromNetwork}
-          fromChanId={record.fromChanId}
-          toChanId={record.toChanId}
+          fromChainId={record.fromChainId}
+          toChainId={record.toChainId}
           orderType={record.orderType}
         />
       );
@@ -44,7 +44,7 @@ const columns = [
     dataIndex: 'orderType',
     key: 'orderType',
     render: (orderType: string) => {
-      return <div className={styles['orderType']}>{orderType}</div>;
+      return <div className={styles['order-type']}>{orderType}</div>;
     },
   },
   {
@@ -82,8 +82,8 @@ const columns = [
           fromAddress={fromAddress}
           toAddress={record.toAddress}
           network={record.fromNetwork}
-          fromChanId={record.fromChanId}
-          toChanId={record.toChanId}
+          fromChainId={record.fromChainId}
+          toChainId={record.toChainId}
           orderType={record.orderType}
           fromToAddress={record.fromToAddress}
           toFromAddress={record.toFromAddress}
@@ -102,8 +102,8 @@ const columns = [
           fromAddress={record.fromAddress}
           toAddress={toAddress}
           network={record.toNetwork}
-          fromChanId={record.fromChanId}
-          toChanId={record.toChanId}
+          fromChainId={record.fromChainId}
+          toChainId={record.toChainId}
           orderType={record.orderType}
           fromToAddress={record.fromToAddress}
           toFromAddress={record.toFromAddress}
@@ -121,7 +121,7 @@ const columns = [
   },
 ];
 
-export default function WebRecordsTable({ requestRecordsList }: RecordsContentParams) {
+export default function WebRecordsTable({ requestRecordsList }: TRecordsContentParams) {
   const { recordsList, totalCount, skipCount, maxResultCount } = useRecordsState();
   const dispatch = useAppDispatch();
 
@@ -145,11 +145,11 @@ export default function WebRecordsTable({ requestRecordsList }: RecordsContentPa
         fromNetwork: fromTransfer.network,
         fromAddress: fromTransfer.fromAddress,
         fromToAddress: fromTransfer.toAddress,
-        fromChanId: fromTransfer.chainId,
+        fromChainId: fromTransfer.chainId,
         toNetwork: toTransfer.network,
         toFromAddress: toTransfer.fromAddress,
         toAddress: toTransfer.toAddress,
-        toChanId: toTransfer.chainId,
+        toChainId: toTransfer.chainId,
         feeInfo: toTransfer.feeInfo,
       });
     });
@@ -180,16 +180,20 @@ export default function WebRecordsTable({ requestRecordsList }: RecordsContentPa
         locale={{
           emptyText: <EmptyDataBox emptyText={'No records found'} />,
         }}
-        pagination={{
-          current: skipCount,
-          pageSize: maxResultCount,
-          total: totalCount,
-          onChange: tableOnChange,
-          showQuickJumper: true,
-          showSizeChanger: true,
-          showTitle: true,
-          pageSizeOptions: ['10', '20', '50'],
-        }}
+        pagination={
+          totalCount > maxResultCount
+            ? {
+                current: skipCount,
+                pageSize: maxResultCount,
+                total: totalCount,
+                onChange: tableOnChange,
+                showQuickJumper: true,
+                showSizeChanger: true,
+                showTitle: true,
+                pageSizeOptions: ['10', '20', '50'],
+              }
+            : false
+        }
       />
     </div>
   );

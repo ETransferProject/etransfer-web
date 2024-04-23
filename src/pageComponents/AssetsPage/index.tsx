@@ -1,7 +1,7 @@
 'use client';
 import { Asset, PortkeyAssetProvider } from '@portkey/did-ui-react';
 import { WalletType, useWebLogin } from 'aelf-web-login';
-import { Chain } from 'constants/index';
+import { ChainId } from '@portkey/types';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { LeftOutlined } from '@ant-design/icons';
@@ -24,7 +24,7 @@ export default function MyAsset() {
   return (
     <div className={styles['my-asset-wrapper']}>
       <PortkeyAssetProvider
-        originChainId={wallet?.portkeyInfo?.chainId as Chain}
+        originChainId={wallet?.portkeyInfo?.chainId as ChainId}
         pin={wallet?.portkeyInfo?.pin}>
         <Asset
           // faucet={{

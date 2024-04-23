@@ -1,6 +1,6 @@
 import { ChainId } from 'types';
 import { EXPLORE_CONFIG, SupportedELFChainId } from 'constants/index';
-import { OtherEXPLORE_URL } from 'constants/network';
+import { ExploreUrlType } from 'constants/network';
 import AElf from 'aelf-sdk';
 
 export const sleep = (time: number) => {
@@ -38,10 +38,10 @@ export function getExploreLink(
 
 export function getOtherExploreLink(
   data: string,
-  network: keyof typeof OtherEXPLORE_URL,
+  network: keyof typeof ExploreUrlType,
   type: 'transaction' | 'address',
 ): string {
-  const prefix = OtherEXPLORE_URL[network];
+  const prefix = ExploreUrlType[network];
   switch (type) {
     case 'transaction': {
       if (network === 'TRX') {

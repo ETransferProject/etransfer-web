@@ -3,13 +3,18 @@
 .web-records-table-wrapper {
   :global {
     .ant-table-thead {
+      height: 48px;
       .ant-table-cell {
         color: $secondary-text;
+        background-color: $page-bg;
       }
+    }
+    .ant-table-thead > tr > th::before {
+      display: none;
     }
   }
 }
 
-.orderType {
+.order-type {
   min-width: 72px;
 }

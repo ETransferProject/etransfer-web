@@ -1,21 +1,21 @@
 @import 'src/assets/theme/font.scss';
 @import 'src/assets/theme/color.scss';
 
-.web-feeInfo-wrapper {
-  min-width: 120px;
+.web-fee-info-wrapper {
+  min-width: 140px;
   text-align: left;
 }
 
-.mobile-feeInfo-wrapper {
+.mobile-fee-info-wrapper {
   text-align: right;
 }
 
-.feeInfo-item-wrapper {
+.fee-info-item-wrapper {
   display: inline-block;
   color: $primary-text;
   white-space: nowrap;
 }
 
-.feeInfo-item-add {
+.fee-info-item-add {
   margin: 4px 0 0 2px;
 }

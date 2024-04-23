@@ -16,7 +16,7 @@ import {
 import { NetworkName } from 'constants/network';
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
-import { logoIcon } from 'constants/wallet';
+import { LogoIconBase64 } from 'constants/wallet';
 
 const WebLoginPortkeyProvider = dynamic(
   async () => {
@@ -81,7 +81,7 @@ export default function Providers({ children }: { children: ReactNode }) {
         }}
         commonConfig={{
           showClose: true,
-          iconSrc: logoIcon,
+          iconSrc: LogoIconBase64,
           title: 'Log In to ETransfer',
         }}
         extraWallets={['discover']}

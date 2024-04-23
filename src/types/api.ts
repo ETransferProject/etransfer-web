@@ -158,6 +158,6 @@ export type GetRecordsListResult = {
   items: RecordsListItem[];
 };
 
-export type RecordsContentParams = {
+export type TRecordsContentParams = {
   requestRecordsList: () => void;
 };

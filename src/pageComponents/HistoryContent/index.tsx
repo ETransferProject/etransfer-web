@@ -27,27 +27,27 @@ export default function Content() {
     try {
       setLoading(true);
       const startTimestamp = timestamp && timestamp[0];
-      const startTimestampFromat = moment(startTimestamp).format('YYYY-MM-DD 00:00:00');
+      const startTimestampFormat = moment(startTimestamp).format('YYYY-MM-DD 00:00:00');
       const endTimestamp = timestamp && timestamp[1];
-      const endTimestampFromat = moment(endTimestamp).format('YYYY-MM-DD 23:59:59');
+      const endTimestampFormat = moment(endTimestamp).format('YYYY-MM-DD 23:59:59');
       const { items: recordsListRes, totalCount } = await getRecordsList({
         type,
         status,
-        startTimestamp: moment(startTimestampFromat).valueOf() || null,
-        endTimestamp: moment(endTimestampFromat).valueOf() || null,
+        startTimestamp: moment(startTimestampFormat).valueOf() || null,
+        endTimestamp: moment(endTimestampFormat).valueOf() || null,
         skipCount: (skipCount - 1) * maxResultCount,
         maxResultCount,
       });
       setLoading(false);
       if (isMobilePX) {
-        let mobilRecordsList = [...recordsList, ...recordsListRes];
-        mobilRecordsList = mobilRecordsList.reduce((result: RecordsListItem[], item) => {
+        let mobileRecordsList = [...recordsList, ...recordsListRes];
+        mobileRecordsList = mobileRecordsList.reduce((result: RecordsListItem[], item) => {
           if (!result.some((it: RecordsListItem) => it.id === item.id)) {
             result.push(item);
           }
           return result;
         }, []);
-        dispatch(setRecordsList(mobilRecordsList));
+        dispatch(setRecordsList(mobileRecordsList));
       } else {
         dispatch(setRecordsList(recordsListRes));
       }

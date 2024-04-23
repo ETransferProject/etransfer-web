@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import CommonDropdown from 'components/CommonDropdown';
 import LogoutButton from 'pageComponents/LogoutButton';
@@ -7,20 +7,27 @@ import Address from '../Address';
 import styles from './styles.module.scss';
 
 export default function SelectWallet() {
+  const [isOpen, setIsOpen] = useState<boolean>(true);
   return (
-    <CommonDropdown
-      menu={{ items: [] }}
-      dropdownRender={() => (
-        <div className={styles['dropdown']}>
-          <Address hideBorder={false} />
-          <div className={styles['button-wrapper']}>
-            <LogoutButton />
-          </div>
-        </div>
-      )}
-      hideDownArrow={true}>
-      <UserProfile className={clsx('flex-none', styles['wallet-icon'])} />
-      <span className={styles['wallet-text']}>My</span>
-    </CommonDropdown>
+    <div onClick={() => setIsOpen(true)}>
+      <CommonDropdown
+        menu={{ items: [] }}
+        dropdownRender={() =>
+          isOpen ? (
+            <div className={styles['dropdown']}>
+              <Address hideBorder={false} />
+              <div className={styles['button-wrapper']}>
+                <LogoutButton setIsOpen={setIsOpen} />
+              </div>
+            </div>
+          ) : (
+            <></>
+          )
+        }
+        hideDownArrow={true}>
+        <UserProfile className={clsx('flex-none', styles['wallet-icon'])} />
+        <span className={styles['wallet-text']}>My</span>
+      </CommonDropdown>
+    </div>
   );
 }

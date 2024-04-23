@@ -6,7 +6,7 @@
   padding: 16px 24px;
   border-bottom: 1px solid $dividers;
   @include media-mobile-and-pad {
-    padding: 16px;
+    padding: 16px 16px 16px 0px;
   }
   @include media-web {
     &:last-child {

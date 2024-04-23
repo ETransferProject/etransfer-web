@@ -2,6 +2,8 @@ import BigNumber from 'bignumber.js';
 import BN, { isBN } from 'bn.js';
 import { isEffectiveNumber, ZERO } from 'constants/misc';
 import { TokenType } from 'types';
+import { defaultNullValue } from 'constants/index';
+
 export function timesDecimals(a?: BigNumber.Value, decimals: string | number = 18) {
   if (!a) return ZERO;
   const bigA = ZERO.plus(a);
@@ -21,7 +23,7 @@ export function divDecimals(a?: BigNumber.Value, decimals: string | number = 18)
 export function divDecimalsStr(
   a?: BigNumber.Value,
   decimals: string | number = 8,
-  defaultVal = '--',
+  defaultVal = defaultNullValue,
 ) {
   const n = divDecimals(a, decimals);
   return isEffectiveNumber(n) ? n.toFormat() : defaultVal;
@@ -48,7 +50,7 @@ export function zeroFill(str: string | BN) {
 export function valueFixed2LessThanMin(strValue: string, currency?: string): string {
   let valueBigNumber = new BigNumber(strValue);
   if (valueBigNumber.isNaN()) {
-    return '--';
+    return defaultNullValue;
   }
 
   valueBigNumber = valueBigNumber.dp(2, BigNumber.ROUND_DOWN);
@@ -69,7 +71,7 @@ export function valueFixed2LessThanMin(strValue: string, currency?: string): str
 export function LargeNumberDisplay(strNumber: string, token: string) {
   let valueBigNumber = new BigNumber(strNumber);
   if (valueBigNumber.isNaN()) {
-    return '--';
+    return defaultNullValue;
   }
 
   // decimal number usdt 6  sgr 8

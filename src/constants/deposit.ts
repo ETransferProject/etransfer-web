@@ -1,4 +1,4 @@
-import { CHAIN_LIST } from 'constants/index';
+import { CHAIN_LIST, defaultNullValue } from 'constants/index';
 import { NetworkStatus, WithdrawInfo } from 'types/api';
 import { WithdrawInfoSuccess } from 'types/deposit';
 
@@ -11,7 +11,7 @@ export const CONTRACT_ADDRESS = 'Contract Address';
 export const initDepositInfo = {
   depositAddress: '',
   minAmount: '',
-  minAmountUsd: '--',
+  minAmountUsd: defaultNullValue,
 };
 
 export const initialWithdrawInfo: WithdrawInfo = {
@@ -27,9 +27,9 @@ export const initialWithdrawInfo: WithdrawInfo = {
   aelfTransactionUnit: 'ELF',
   receiveAmount: '',
   feeList: [],
-  receiveAmountUsd: '--',
-  amountUsd: '--',
-  feeUsd: '--',
+  receiveAmountUsd: defaultNullValue,
+  amountUsd: defaultNullValue,
+  feeUsd: defaultNullValue,
 };
 
 export const initialNetwork = {
@@ -49,7 +49,7 @@ export const initialWithdrawSuccessCheck: WithdrawInfoSuccess = {
   chainItem: CHAIN_LIST[0],
   network: initialNetwork,
   arriveTime: '',
-  receiveAmountUsd: '--',
+  receiveAmountUsd: defaultNullValue,
   transactionId: '',
 };
 

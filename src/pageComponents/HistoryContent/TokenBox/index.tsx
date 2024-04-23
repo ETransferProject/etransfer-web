@@ -30,8 +30,8 @@ export default function TokenBox({ symbol }: TokenBoxProps) {
   return (
     <div
       className={clsx(
-        styles['tokenBox'],
-        isMobilePX ? styles['mobil-tokenBox'] : styles['web-tokenBox'],
+        styles['token-box'],
+        isMobilePX ? styles['mobil-token-box'] : styles['web-token-box'],
       )}>
       {tokenIcon()}
       <span className={clsx(styles['token'])}>{symbol}</span>
