@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { NetworkItem } from 'types/api';
-import { QueryAuthApiExtraRequest } from 'api/utils';
 
 export interface UserActionDeposit {
   address?: string;
