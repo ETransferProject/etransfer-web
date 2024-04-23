@@ -103,11 +103,11 @@ export default function HistoryCardItem({ requestRecordsList }: RecordsContentPa
                 <TokenBox symbol={recordItem.symbol} />
               </div>
               <div className={styles['records-card-item-line']}>
-                <span className={styles['records-card-item-label']}>Sending Amount</span>
+                <span className={styles['records-card-item-label']}>Amount Send</span>
                 <AmountBox amount={recordItem.sendingAmount} token={recordItem.symbol} />
               </div>
               <div className={styles['records-card-item-line']}>
-                <span className={styles['records-card-item-label']}>Receiving Amount</span>
+                <span className={styles['records-card-item-label']}>Amount Received</span>
                 <AmountBox amount={recordItem.receivingAmount} token={recordItem.symbol} />
               </div>
               <div className={styles['records-card-item-line']}>

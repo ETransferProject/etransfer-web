@@ -23,7 +23,8 @@ export default function SelectWallet() {
   };
 
   const handleAssets = () => {
-    router.push('/assets', { shallow: true });
+    router.push('/assets');
+    setIsDrawerOpen(false);
   };
 
   return (
