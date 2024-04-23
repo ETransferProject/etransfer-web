@@ -1,6 +1,6 @@
 'use client';
 import { Asset, PortkeyAssetProvider } from '@portkey/did-ui-react';
-import { WalletType, useWebLogin, WebLoginState } from 'aelf-web-login';
+import { WalletType, useWebLogin } from 'aelf-web-login';
 import { Chain } from 'constants/index';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -9,18 +9,16 @@ import styles from './styles.module.scss';
 
 export default function MyAsset() {
   const router = useRouter();
-  const { wallet, walletType, login, loginState } = useWebLogin();
+  const { wallet, walletType } = useWebLogin();
 
   useEffect(() => {
-    if (loginState !== WebLoginState.logined) {
-      login();
-    } else if (walletType !== WalletType.portkey) {
+    if (walletType !== WalletType.portkey) {
       router.push('/');
     }
-  }, [loginState, walletType]);
+  }, [walletType, router]);
 
   if (walletType !== WalletType.portkey) {
-    return <></>;
+    return null;
   }
 
   return (

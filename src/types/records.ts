@@ -66,8 +66,8 @@ export interface recordsTableListType {
 }
 
 export enum RecordsStatus {
-  Processing = 'Processing',
-  Succeed = 'Succeed',
+  Processing = 'Pending',
+  Succeed = 'Completed',
   Failed = 'Failed',
 }
 

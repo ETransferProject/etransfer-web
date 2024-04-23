@@ -16,7 +16,7 @@ export default function WebHeader() {
   const router = useRouter();
 
   const handleOpenAssets = () => {
-    router.push('/assets', { shallow: true });
+    router.push('/assets');
   };
 
   return (

@@ -135,8 +135,8 @@ export default function Filter({ requestRecordsList }: RecordsContentParams) {
         )}
         {status !== RecordsRequestStatus.ALL && (
           <div className={styles['filter-item']}>
-            {status === RecordsRequestStatus.Processing && 'Processing'}
-            {status === RecordsRequestStatus.Succeed && 'Succeed'}
+            {status === RecordsRequestStatus.Processing && 'Pending'}
+            {status === RecordsRequestStatus.Succeed && 'Completed'}
             {status === RecordsRequestStatus.Failed && 'Failed'}
             <CloseSmall
               className={styles['filter-close-icon']}
