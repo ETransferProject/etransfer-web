@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import DepositContent from 'pageComponents/DepositContent';
 import WithdrawContent from 'pageComponents/WithdrawContent';
-import RecordsContent from 'pageComponents/RecordsContent';
+import HistoryContent from 'pageComponents/HistoryContent';
 import { useAppDispatch, useCommonState } from 'store/Provider/hooks';
 import { SideMenuKey } from 'constants/home';
 import styles from './styles.module.scss';
@@ -46,7 +46,7 @@ export default function Content() {
   const getToken = useCallback(
     async (isInitCurrentSymbol?: boolean) => {
       // Records page not need token
-      if (currentActiveMenuKey === SideMenuKey.Records) {
+      if (currentActiveMenuKey === SideMenuKey.History) {
         return;
       }
 
@@ -99,7 +99,7 @@ export default function Content() {
 
   useEffect(() => {
     const fetchRecordStatus = async () => {
-      if (currentActiveMenuKey === SideMenuKey.Records) {
+      if (currentActiveMenuKey === SideMenuKey.History) {
         dispatch(setIsShowRedDot(false));
         // update red dot status: had reded
         await postRecordRead();
@@ -118,15 +118,15 @@ export default function Content() {
         return <DepositContent />;
       case SideMenuKey.Withdraw:
         return <WithdrawContent />;
-      case SideMenuKey.Records:
-        return <RecordsContent />;
+      case SideMenuKey.History:
+        return <HistoryContent />;
       default:
         return null;
     }
   }, [currentActiveMenuKey]);
 
   // wide-screen content
-  if (currentActiveMenuKey === SideMenuKey.Records) {
+  if (currentActiveMenuKey === SideMenuKey.History) {
     return <div className={clsx(styles['wide-screen-content-container'])}>{content}</div>;
   }
 

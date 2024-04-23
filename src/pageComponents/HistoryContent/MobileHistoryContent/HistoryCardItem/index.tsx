@@ -4,18 +4,18 @@ import { Divider } from 'antd';
 import { RecordsListItem } from 'types/api';
 import { recordsTableListType } from 'types/records';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
-import FeeInfo from 'pageComponents/RecordsContent/FeeInfo';
-import StatusBox from 'pageComponents/RecordsContent/StatusBox';
-import ArrivalTimeBox from 'pageComponents/RecordsContent/ArrivalTimeBox';
-import TokenBox from 'pageComponents/RecordsContent/TokenBox';
-import AmountBox from 'pageComponents/RecordsContent/AmountBox';
-import AddressBox from 'pageComponents/RecordsContent/AddressBox';
+import FeeInfo from 'pageComponents/HistoryContent/FeeInfo';
+import StatusBox from 'pageComponents/HistoryContent/StatusBox';
+import ArrivalTimeBox from 'pageComponents/HistoryContent/ArrivalTimeBox';
+import TokenBox from 'pageComponents/HistoryContent/TokenBox';
+import AmountBox from 'pageComponents/HistoryContent/AmountBox';
+import AddressBox from 'pageComponents/HistoryContent/AddressBox';
 import { RecordsContentParams } from 'types/api';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebounceCallback } from 'hooks';
 import { setSkipCount, setHasMore } from 'store/reducers/records/slice';
 
-export default function RecordsCardItem({ requestRecordsList }: RecordsContentParams) {
+export default function HistoryCardItem({ requestRecordsList }: RecordsContentParams) {
   const dispatch = useAppDispatch();
   const { recordsList, hasMore, maxResultCount, totalCount, skipCount } = useRecordsState();
 

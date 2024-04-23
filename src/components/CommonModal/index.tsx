@@ -14,7 +14,7 @@ export type CommonModalProps = Omit<
   hideCancelButton?: boolean;
   hideOkButton?: boolean;
   isOkButtonDisabled?: boolean;
-  linkToExplore?: React.ReactNode;
+  footerSlot?: React.ReactNode;
 };
 
 export default function CommonModal({
@@ -58,9 +58,7 @@ export default function CommonModal({
           )}
         </div>
       )}
-      {props.linkToExplore && (
-        <div className={clsx(styles['linkToExplore'])}>{props.linkToExplore}</div>
-      )}
+      {props.footerSlot}
     </Modal>
   );
 }

@@ -84,6 +84,7 @@ export default function Filter({ requestRecordsList }: RecordsContentParams) {
     dispatch(setStatus(RecordsRequestStatus.ALL));
     dispatch(setTimestamp(null));
     dispatch(setSkipCount(1));
+    dispatch(setRecordsList([]));
     requestRecordsList();
   }, [dispatch, requestRecordsList]);
 

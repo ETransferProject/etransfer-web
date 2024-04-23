@@ -18,7 +18,7 @@ export interface CommonModalSwitchDrawerProps {
   open?: boolean;
   onClose?: () => void;
   onOk?: () => void;
-  linkToExplore?: React.ReactNode;
+  footerSlot?: React.ReactNode;
 }
 
 export default function CommonModalSwitchDrawer({
@@ -54,7 +54,7 @@ export default function CommonModalSwitchDrawer({
               )}
             </div>
           ) : null}
-          {props.linkToExplore}
+          {props.footerSlot}
         </>
       }
       onClose={onClose}

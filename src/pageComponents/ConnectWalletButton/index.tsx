@@ -13,7 +13,7 @@ import {
 import { PortkeyVersion } from 'constants/wallet';
 import { setV2ConnectedInfoAction } from 'store/reducers/portkeyWallet/actions';
 import { setSwitchVersionAction } from 'store/reducers/common/slice';
-import { setQueryAuthApiParams } from 'store/reducers/userAction/slice';
+import { setCaHash } from 'store/reducers/userAction/slice';
 import { Accounts } from '@portkey/provider-types';
 import { AppName, SupportedChainId, SupportedELFChainId } from 'constants/index';
 import { GetCAHolderByManagerParams } from '@portkey/services';
@@ -102,7 +102,7 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
         version: PortkeyVersion.v2,
       };
       await queryAuthApi(apiParams);
-      dispatch(setQueryAuthApiParams(apiParams));
+      dispatch(setCaHash(caHash));
       console.log('login success');
       console.log(loginState, wallet);
       const { name = '', discoverInfo } = wallet;
@@ -152,6 +152,8 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
   useEffect(() => {
     console.log('loginState', loginState);
     onAccept();
+    // Ignore the impact of the change in onAccept, just watch loginState change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loginState]);
 
   return (

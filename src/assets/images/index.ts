@@ -30,7 +30,6 @@ import FilterIcon from './filterIcon.svg';
 import Fingerprint from './fingerprint.svg';
 import Optimism from './optimism.svg';
 import Polygon from './polygon.svg';
-import RedDot from './redDot.svg';
 import Solana from './solana.svg';
 import Tron from './tron.svg';
 import Vector from './vector.svg';
@@ -79,7 +78,6 @@ export {
   Fingerprint,
   Optimism,
   Polygon,
-  RedDot,
   Solana,
   Tron,
   Vector,

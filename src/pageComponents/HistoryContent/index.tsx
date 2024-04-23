@@ -1,6 +1,6 @@
 import { useCommonState, useAppDispatch, useRecordsState, useLoading } from 'store/Provider/hooks';
-import WebRecordsContent from './WebRecordsContent';
-import MobileRecordsContent from './MobileDepositContent';
+import WebHistoryContent from './WebHistoryContent';
+import MobileHistoryContent from './MobileHistoryContent';
 import { getRecordsList } from 'utils/api/records';
 import { setRecordsList, setTotalCount, setHasMore } from 'store/reducers/records/slice';
 import { useDebounceCallback } from 'hooks';
@@ -68,8 +68,8 @@ export default function Content() {
   }, [requestRecordsList]);
 
   return isMobilePX ? (
-    <MobileRecordsContent requestRecordsList={requestRecordsList} />
+    <MobileHistoryContent requestRecordsList={requestRecordsList} />
   ) : (
-    <WebRecordsContent requestRecordsList={requestRecordsList} />
+    <WebHistoryContent requestRecordsList={requestRecordsList} />
   );
 }

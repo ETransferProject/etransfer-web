@@ -5,13 +5,13 @@ import { Table } from 'antd';
 import { RecordsListItem, RecordsContentParams } from 'types/api';
 import { feeInfoType, recordsTableListType } from 'types/records';
 import { setSkipCount, setMaxResultCount } from 'store/reducers/records/slice';
-import FeeInfo from 'pageComponents/RecordsContent/FeeInfo';
-import EmptyDataBox from 'pageComponents/RecordsContent/EmptyDataBox';
-import StatusBox from 'pageComponents/RecordsContent/StatusBox';
-import ArrivalTimeBox from 'pageComponents/RecordsContent/ArrivalTimeBox';
-import TokenBox from 'pageComponents/RecordsContent/TokenBox';
-import AmountBox from 'pageComponents/RecordsContent/AmountBox';
-import AddressBox from 'pageComponents/RecordsContent/AddressBox';
+import FeeInfo from 'pageComponents/HistoryContent/FeeInfo';
+import EmptyDataBox from 'pageComponents/HistoryContent/EmptyDataBox';
+import StatusBox from 'pageComponents/HistoryContent/StatusBox';
+import ArrivalTimeBox from 'pageComponents/HistoryContent/ArrivalTimeBox';
+import TokenBox from 'pageComponents/HistoryContent/TokenBox';
+import AmountBox from 'pageComponents/HistoryContent/AmountBox';
+import AddressBox from 'pageComponents/HistoryContent/AddressBox';
 
 const columns = [
   {

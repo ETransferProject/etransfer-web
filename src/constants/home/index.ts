@@ -4,7 +4,7 @@ import { Deposit, Withdraw, Records } from 'assets/images';
 export enum SideMenuKey {
   Deposit = 'Deposit',
   Withdraw = 'Withdraw',
-  Records = 'History',
+  History = 'History',
 }
 
 export const MENU_ITEMS = [
@@ -20,7 +20,7 @@ export const MENU_ITEMS = [
   },
   {
     icon: Records,
-    key: SideMenuKey.Records,
-    label: SideMenuKey.Records,
+    key: SideMenuKey.History,
+    label: SideMenuKey.History,
   },
 ];
