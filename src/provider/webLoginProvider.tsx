@@ -15,8 +15,132 @@ import {
 } from 'constants/index';
 import { NetworkName } from 'constants/network';
 import dynamic from 'next/dynamic';
-import { ReactNode } from 'react';
+import {
+  ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useReducer,
+  useRef,
+} from 'react';
 import { logoIcon } from 'constants/wallet';
+import {
+  WebLoginEvents,
+  WebLoginInterface,
+  WebLoginState,
+  useCallContract,
+  useWebLogin,
+  useWebLoginEvent,
+} from 'aelf-web-login';
+import Wallet from 'contract/webLogin';
+import { useLocation } from 'react-use';
+import { singleMessage } from '@portkey/did-ui-react';
+import { IWallet } from 'contract/types';
+
+export const DESTROY = 'DESTROY';
+const SET_WALLET = 'SET_WALLET';
+
+const INITIAL_STATE = {};
+const WalletContext = createContext<any>(INITIAL_STATE);
+
+export type TWalletContextState = {
+  wallet?: IWallet;
+};
+
+export function useWalletContext(): [TWalletContextState, React.Dispatch<any>] {
+  return useContext(WalletContext);
+}
+
+//reducer
+function reducer(state: any, { type, payload }: any) {
+  switch (type) {
+    case SET_WALLET: {
+      return {
+        ...state,
+        wallet: payload,
+      };
+    }
+    case DESTROY: {
+      return {};
+    }
+    default: {
+      return Object.assign({}, state, payload);
+    }
+  }
+}
+
+export function WalletProvider({ children }: { children: React.ReactNode }) {
+  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+  const webLoginContext = useWebLogin();
+  const webLoginContextRef = useRef<WebLoginInterface>(webLoginContext);
+  webLoginContextRef.current = webLoginContext;
+
+  const { pathname } = useLocation();
+  const pathnameRef = useRef(pathname);
+  pathnameRef.current = pathname;
+
+  const { wallet } = state;
+  if (
+    webLoginContext.loginState === WebLoginState.logined &&
+    wallet &&
+    webLoginContext.callContract
+  ) {
+    webLoginContext.callContract && wallet.setCallContract(webLoginContext.callContract);
+    webLoginContext.getSignature && wallet.setGetSignature(webLoginContext.getSignature);
+  }
+
+  const { callSendMethod: callMainChainSendMethod, callViewMethod: callMainChainViewMethod } =
+    useCallContract({
+      chainId: SupportedChainId.mainChain,
+      rpcUrl: AelfReact[SupportedChainId.mainChain].rpcUrl,
+    });
+  const { callSendMethod: callSideChainSendMethod, callViewMethod: callSideChaiViewMethod } =
+    useCallContract({
+      chainId: SupportedChainId.sideChain,
+      rpcUrl: AelfReact[SupportedChainId.mainChain].rpcUrl,
+    });
+
+  useWebLoginEvent(WebLoginEvents.LOGINED, () => {
+    const wallet = new Wallet({
+      walletInfo: webLoginContext.wallet,
+      walletType: webLoginContext.walletType,
+      callContract: webLoginContext.callContract,
+      getSignature: webLoginContext.getSignature,
+    });
+    dispatch({
+      type: SET_WALLET,
+      payload: wallet,
+    });
+    wallet.setWebLoginContext(webLoginContext);
+    wallet.setContractMethod([
+      {
+        chain: SupportedChainId.mainChain,
+        sendMethod: callMainChainSendMethod,
+        viewMethod: callMainChainViewMethod,
+      },
+      {
+        chain: SupportedChainId.sideChain,
+        sendMethod: callSideChainSendMethod,
+        viewMethod: callSideChaiViewMethod,
+      },
+    ]);
+  });
+
+  const onLoginError = useCallback((error: any) => {
+    console.log('onLoginError', error);
+    if (error?.message) {
+      singleMessage.error(error.message);
+    }
+  }, []);
+  useWebLoginEvent(WebLoginEvents.LOGIN_ERROR, onLoginError);
+
+  return (
+    <WalletContext.Provider value={useMemo(() => [state, dispatch], [state, dispatch])}>
+      {children}
+    </WalletContext.Provider>
+  );
+}
 
 const WebLoginPortkeyProvider = dynamic(
   async () => {
@@ -95,7 +219,7 @@ export default function Providers({ children }: { children: ReactNode }) {
             console.log('openStore:', openStore);
           },
         }}>
-        {children}
+        <WalletProvider>{children}</WalletProvider>
       </WebLoginProviderDynamic>
     </WebLoginPortkeyProvider>
   );

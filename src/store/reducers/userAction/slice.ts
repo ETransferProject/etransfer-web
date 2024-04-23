@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { SupportedChainId, SupportedELFChainId } from 'constants/index';
 import { NetworkItem } from 'types/api';
 
 export interface UserActionDeposit {
@@ -6,7 +7,7 @@ export interface UserActionDeposit {
   currentNetwork?: NetworkItem;
   networkList?: NetworkItem[];
   initOpenNetworkModalCount: number; // cant persist
-  initOpenTokenkModalCount: number;
+  initOpenTokenModalCount: number;
 }
 
 export interface UserActionWithdraw {
@@ -17,13 +18,23 @@ export interface UserActionWithdraw {
 export interface UserActionState {
   deposit: UserActionDeposit;
   withdraw: UserActionWithdraw;
+  userInfo: UserInfo;
+}
+
+export interface UserInfo {
   caHash: string;
+  managerAddress: string;
+  originChainId: SupportedELFChainId;
 }
 
 export const initialUserActionState: UserActionState = {
-  deposit: { initOpenNetworkModalCount: 0, initOpenTokenkModalCount: 0 },
+  deposit: { initOpenNetworkModalCount: 0, initOpenTokenModalCount: 0 },
   withdraw: {},
-  caHash: '',
+  userInfo: {
+    caHash: '',
+    managerAddress: '',
+    originChainId: SupportedChainId.sideChain,
+  },
 };
 
 export const UserActionSlice = createSlice({
@@ -43,7 +54,7 @@ export const UserActionSlice = createSlice({
       state.deposit.initOpenNetworkModalCount = state.deposit.initOpenNetworkModalCount++;
     },
     setAddInitOpenTokenModalCount: (state, _action: PayloadAction<void>) => {
-      state.deposit.initOpenTokenkModalCount = state.deposit.initOpenTokenkModalCount++;
+      state.deposit.initOpenTokenModalCount = state.deposit.initOpenTokenModalCount++;
     },
     setWithdrawAddress: (state, action: PayloadAction<string | undefined>) => {
       state.withdraw.address = action.payload;
@@ -57,8 +68,11 @@ export const UserActionSlice = createSlice({
     initUserAction: () => {
       return initialUserActionState;
     },
-    setCaHash: (state, action) => {
-      state.caHash = action.payload;
+    setUserInfo: (state, action: PayloadAction<Partial<UserInfo>>) => {
+      if (action.payload.caHash) state.userInfo.caHash = action.payload.caHash;
+      if (action.payload.managerAddress)
+        state.userInfo.managerAddress = action.payload.managerAddress;
+      if (action.payload.originChainId) state.userInfo.originChainId = action.payload.originChainId;
     },
   },
 });
@@ -73,7 +87,7 @@ export const {
   setWithdrawCurrentNetwork,
   setWithdrawNetworkList,
   initUserAction,
-  setCaHash,
+  setUserInfo,
 } = UserActionSlice.actions;
 
 export default UserActionSlice;

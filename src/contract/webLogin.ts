@@ -1,67 +1,118 @@
-import { CallContractParams } from 'aelf-web-login';
-import { WebLoginInterface } from 'aelf-web-login/dist/types/context';
-import { ChainId } from '@portkey/types';
+import {
+  WalletInfo,
+  WalletType,
+  CallContractParams,
+  SignatureData,
+  WebLoginInterface,
+} from 'aelf-web-login';
+import {
+  CallContractFunc,
+  GetSignatureFunc,
+  IWallet,
+  IWalletProps,
+  TCallSendMethod,
+  TCallViewMethod,
+  TSignatureParams,
+} from './types';
+import { getTxResult } from 'utils/aelfUtils';
+import { ChainId, SendOptions } from '@portkey/types';
+import { SendOptions as SendOptionsV1 } from '@portkey-v1/types';
+import { sleep } from '@portkey/utils';
 import { AllSupportedELFChainId } from 'constants/chain';
+import { APP_NAME } from 'constants/misc';
+import { SupportedELFChainId } from 'constants/index';
 
-export interface IWebLoginArgs {
-  address: string;
-  chainId: string;
-}
+class Wallet implements IWallet {
+  walletInfo: WalletInfo;
+  walletType: WalletType;
 
-type MethodType = <T, R>(params: CallContractParams<T>) => Promise<R>;
+  _getSignature: GetSignatureFunc;
+  _callContract: CallContractFunc;
 
-export default class WebLoginInstance {
-  public contract: any;
-  public address: string | undefined;
-  public chainId: string | undefined;
-
-  private static instance: WebLoginInstance | null = null;
   private context: WebLoginInterface | null = null;
-  private aelfSendMethod?: MethodType = undefined;
-  private aelfViewMethod?: MethodType = undefined;
-  private tdvvSendMethod?: MethodType = undefined;
-  private tdvvViewMethod?: MethodType = undefined;
-  private tdvwSendMethod?: MethodType = undefined;
-  private tdvwViewMethod?: MethodType = undefined;
+  private AELFSendMethod?: TCallSendMethod;
+  private AELFViewMethod?: TCallViewMethod;
+  private tDVVSendMethod?: TCallSendMethod;
+  private tDVVViewMethod?: TCallViewMethod;
+  private tDVWSendMethod?: TCallSendMethod;
+  private tDVWViewMethod?: TCallViewMethod;
 
-  constructor(options?: IWebLoginArgs) {
-    this.address = options?.address;
-    this.chainId = options?.chainId;
+  constructor(props: IWalletProps) {
+    this.walletInfo = props.walletInfo;
+    this.walletType = props.walletType;
+    this._callContract = props.callContract;
+    this._getSignature = props.getSignature;
   }
-  static get() {
-    if (!WebLoginInstance.instance) {
-      WebLoginInstance.instance = new WebLoginInstance();
+
+  setCallContract(callContract: CallContractFunc) {
+    this._callContract = callContract;
+  }
+  setGetSignature(getSignature: GetSignatureFunc) {
+    this._getSignature = getSignature;
+  }
+
+  public async callContract<T, R>(chainId: ChainId, params: CallContractParams<T>): Promise<R> {
+    const req: any = await this._callContract(params);
+
+    console.log('callContract req', req);
+    if (req.error) {
+      console.log(req.error, '===req.error');
+      throw {
+        code: req.error.message?.Code || req.error,
+        message: req.errorMessage?.message || req.error.message?.Message,
+      };
     }
-    return WebLoginInstance.instance;
+
+    const transactionId =
+      req.result?.TransactionId ||
+      req.result?.transactionId ||
+      req.TransactionId ||
+      req.transactionId;
+
+    await sleep(1000);
+    // TODO login
+    return getTxResult(transactionId, chainId as SupportedELFChainId);
+  }
+
+  getSignature(params: TSignatureParams): Promise<SignatureData> {
+    console.log('walletInfo', this.walletInfo);
+    return this._getSignature({
+      appName: APP_NAME || '',
+      address: this.walletInfo.address,
+      ...params,
+    });
+  }
+
+  getWebLoginContext() {
+    return this.context; // wallet, login, loginState
   }
 
   setWebLoginContext(context: WebLoginInterface) {
     this.context = context;
   }
-
   setMethod({
     chain,
     sendMethod,
     viewMethod,
   }: {
     chain: ChainId;
-    sendMethod: MethodType;
-    viewMethod: MethodType;
+    sendMethod: TCallSendMethod;
+    viewMethod: TCallViewMethod;
   }) {
     switch (chain) {
       case AllSupportedELFChainId.AELF: {
-        this.aelfSendMethod = sendMethod;
-        this.aelfViewMethod = viewMethod;
+        this.AELFSendMethod = sendMethod;
+        this.AELFViewMethod = viewMethod;
         break;
       }
       case AllSupportedELFChainId.tDVV: {
-        this.tdvvSendMethod = sendMethod;
-        this.tdvvViewMethod = viewMethod;
+        this.tDVVSendMethod = sendMethod;
+        this.tDVVViewMethod = viewMethod;
         break;
       }
       case AllSupportedELFChainId.tDVW: {
-        this.tdvwSendMethod = sendMethod;
-        this.tdvwViewMethod = viewMethod;
+        this.tDVWSendMethod = sendMethod;
+        this.tDVWViewMethod = viewMethod;
         break;
       }
     }
@@ -70,8 +121,8 @@ export default class WebLoginInstance {
   setContractMethod(
     contractMethod: {
       chain: ChainId;
-      sendMethod: MethodType;
-      viewMethod: MethodType;
+      sendMethod: TCallSendMethod;
+      viewMethod: TCallViewMethod;
     }[],
   ) {
     contractMethod.forEach((item) => {
@@ -79,37 +130,33 @@ export default class WebLoginInstance {
     });
   }
 
-  getWebLoginContext() {
-    return this.context; // wallet, login, loginState
-  }
-
-  callSendMethod<T, R>(chain: ChainId, params: CallContractParams<T>): Promise<R> {
+  callSendMethod<T, R>(
+    chain: ChainId,
+    params: CallContractParams<T>,
+    sendOptions?: SendOptions | SendOptionsV1,
+  ): Promise<R> | undefined {
     switch (chain) {
       case AllSupportedELFChainId.AELF:
-        return this.aelfSendMethod!(params);
+        return this.AELFSendMethod?.(params, sendOptions);
       case AllSupportedELFChainId.tDVV:
-        return this.tdvvSendMethod!(params);
+        return this.tDVVSendMethod?.(params, sendOptions);
       case AllSupportedELFChainId.tDVW:
-        return this.tdvwSendMethod!(params);
+        return this.tDVWSendMethod?.(params, sendOptions);
     }
     throw new Error('Error: Invalid chainId');
   }
 
-  callViewMethod<T, R>(chain: ChainId, params: CallContractParams<T>): Promise<R> {
+  callViewMethod<T, R>(chain: ChainId, params: CallContractParams<T>): Promise<R> | undefined {
     switch (chain) {
       case AllSupportedELFChainId.AELF:
-        return this.aelfViewMethod!(params);
+        return this.AELFViewMethod?.(params);
       case AllSupportedELFChainId.tDVV:
-        return this.tdvvViewMethod!(params);
+        return this.tDVVViewMethod?.(params);
       case AllSupportedELFChainId.tDVW:
-        return this.tdvwViewMethod!(params);
+        return this.tDVWViewMethod?.(params);
     }
     throw new Error('Error: Invalid chainId');
-  }
-
-  callContract<T>(params: CallContractParams<T>) {
-    return this.context?.callContract(params);
   }
 }
 
-export const webLoginInstance = WebLoginInstance.get();
+export default Wallet;
