@@ -1,7 +1,7 @@
 import styles from './styles.module.scss';
 import { CloseFilled, TimeFilled, QuestionMarkIcon } from 'assets/images';
 import { useCallback, useMemo, useState } from 'react';
-import { RecordsStatus } from 'types/records';
+import { RecordsStatus, RecordsStatusI18n } from 'types/records';
 import { useCommonState } from 'store/Provider/hooks';
 import CommonModal from 'components/CommonModal';
 import { Tooltip } from 'antd';
@@ -50,19 +50,19 @@ export default function StatusBox({ status, network }: StatusBoxProps) {
           <Tooltip title={ProcessingTipMessage + network}>
             <div className={styles['status-box']} onClick={() => handleClick()}>
               <TimeFilled />
-              <span className={styles.processing}>{RecordsStatus.Processing}</span>
+              <span className={styles.processing}>{RecordsStatusI18n.Processing}</span>
               <QuestionMarkIcon />
             </div>
           </Tooltip>
         );
       case RecordsStatus.Succeed:
-        return <div className={styles['status-box']}>{RecordsStatus.Succeed}</div>;
+        return <div className={styles['status-box']}>{RecordsStatusI18n.Succeed}</div>;
       case RecordsStatus.Failed:
         return (
           <Tooltip title={FailedTipMessage} placement="top">
             <div className={styles['status-box']} onClick={() => handleClick()}>
               <CloseFilled />
-              <span className={styles.failed}>{RecordsStatus.Failed}</span>
+              <span className={styles.failed}>{RecordsStatusI18n.Failed}</span>
               <QuestionMarkIcon />
             </div>
           </Tooltip>
