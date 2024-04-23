@@ -10,7 +10,7 @@ import {
   setSkipCount,
   setRecordsList,
 } from 'store/reducers/records/slice';
-import { RecordsRequestType, RecordsRequestStatus, RecordsStatus } from 'types/records';
+import { RecordsRequestType, RecordsRequestStatus, RecordsStatusI18n } from 'types/records';
 import CommonDrawer from 'components/CommonDrawer';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import { Select, DatePicker } from 'antd';
@@ -135,9 +135,9 @@ export default function Filter({ requestRecordsList }: RecordsContentParams) {
         )}
         {status !== RecordsRequestStatus.ALL && (
           <div className={styles['filter-item']}>
-            {status === RecordsRequestStatus.Processing && RecordsStatus.Processing}
-            {status === RecordsRequestStatus.Succeed && RecordsStatus.Succeed}
-            {status === RecordsRequestStatus.Failed && RecordsStatus.Failed}
+            {status === RecordsRequestStatus.Processing && RecordsStatusI18n.Processing}
+            {status === RecordsRequestStatus.Succeed && RecordsStatusI18n.Succeed}
+            {status === RecordsRequestStatus.Failed && RecordsStatusI18n.Failed}
             <CloseSmall
               className={styles['filter-close-icon']}
               onClick={() => closeItem('status')}
@@ -213,9 +213,9 @@ export default function Filter({ requestRecordsList }: RecordsContentParams) {
             popupClassName={'drop-wrap'}
             options={[
               { value: RecordsRequestStatus.ALL, label: 'ALL' },
-              { value: RecordsRequestStatus.Processing, label: RecordsStatus.Processing },
-              { value: RecordsRequestStatus.Succeed, label: RecordsStatus.Succeed },
-              { value: RecordsRequestStatus.Failed, label: RecordsStatus.Failed },
+              { value: RecordsRequestStatus.Processing, label: RecordsStatusI18n.Processing },
+              { value: RecordsRequestStatus.Succeed, label: RecordsStatusI18n.Succeed },
+              { value: RecordsRequestStatus.Failed, label: RecordsStatusI18n.Failed },
             ]}
           />
           <div className={styles['filter-drawer-label']}>Start time</div>
