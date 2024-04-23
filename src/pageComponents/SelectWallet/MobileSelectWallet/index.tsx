@@ -23,7 +23,7 @@ export default function SelectWallet() {
   };
 
   const handleAssets = () => {
-    router.push('/assets');
+    router.push('/assets', { shallow: true });
   };
 
   return (
