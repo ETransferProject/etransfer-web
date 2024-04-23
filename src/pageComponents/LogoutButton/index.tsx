@@ -13,7 +13,7 @@ export default function LogoutButton() {
   const dispatch = useAppDispatch();
 
   const handleLogoutWallet = useCallback(async () => {
-    await logout();
+    await logout({ noModal: true });
     dispatch(setV2DisconnectedAction());
     dispatch(setSwitchVersionAction(undefined));
     dispatch(setHandleReset());
