@@ -94,6 +94,7 @@
     "*.{css,less}": "stylelint --fix"
   },
   "resolutions": {
-    "@types/react": "^16 || ^17"
+    "@types/react": "^16 || ^17",
+    "aelf-sdk": "3.4.8"
   }
 }

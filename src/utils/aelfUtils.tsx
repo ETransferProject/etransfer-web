@@ -233,6 +233,8 @@ export const getRawTx = ({
   contractAddress,
   functionName,
 }: GetRawTx) => {
+  console.log(blockHashInput, '=====blockHashInput');
+
   const rawTx = AElf.pbUtils.getTransaction(address, contractAddress, functionName, packedInput);
   rawTx.refBlockNumber = blockHeightInput;
   const blockHash = blockHashInput.match(/^0x/) ? blockHashInput.substring(2) : blockHashInput;
@@ -252,6 +254,20 @@ export const handleTransaction = async ({
 }: GetRawTx & {
   wallet: IWallet;
 }) => {
+  console.log(
+    {
+      wallet,
+      blockHeightInput,
+      blockHashInput,
+      packedInput,
+      address,
+      contractAddress,
+      functionName,
+      version,
+    },
+    '=====1',
+  );
+
   // Create transaction
   const rawTx = getRawTx({
     blockHeightInput,
@@ -482,6 +498,21 @@ export const createTransferTokenTransaction = async ({
 
   const aelf = getAElf(chainId as unknown as AllSupportedELFChainId);
   const { BestChainHeight, BestChainHash } = await aelf.chain.getChainStatus();
+
+  console.log(
+    { BestChainHeight, BestChainHash },
+    {
+      wallet,
+      blockHeightInput: BestChainHeight,
+      blockHashInput: BestChainHash,
+      packedInput: transactionParams,
+      address: fromManagerAddress,
+      contractAddress: caContractAddress,
+      functionName: ManagerForwardCall,
+      version,
+    },
+    '=====handleTransaction',
+  );
 
   const transaction = await handleTransaction({
     wallet,
