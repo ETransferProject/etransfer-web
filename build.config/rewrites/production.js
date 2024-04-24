@@ -19,8 +19,8 @@
 // mainnet
 const ETransferHost = 'https://etransfer.exchange';
 const AuthHost = 'https://etransfer.exchange';
-const ApiHostV1 = 'https://dapp-portkey.portkey.finance';
-const ApiHostV2 = 'https://aa-portkey.portkey.finance';
+// const ApiHostV1 = 'https://dapp-portkey.portkey.finance';
+// const ApiHostV2 = 'https://aa-portkey.portkey.finance';
 const GraphqlHostV1 = 'https://dapp-portkey.portkey.finance/Portkey_DID/PortKeyIndexerCASchema';
 const GraphqlHostV2 =
   'https://dapp-aa-portkey.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema';
@@ -34,14 +34,14 @@ module.exports = [
     source: '/connect/:path*',
     destination: `${AuthHost}/connect/:path*`,
   },
-  {
-    source: '/portkeyV1/api/:path*',
-    destination: `${ApiHostV1}/api/:path*`,
-  },
-  {
-    source: '/portkeyV2/api/:path*',
-    destination: `${ApiHostV2}/api/:path*`,
-  },
+  // {
+  //   source: '/portkeyV1/api/:path*',
+  //   destination: `${ApiHostV1}/api/:path*`,
+  // },
+  // {
+  //   source: '/portkeyV2/api/:path*',
+  //   destination: `${ApiHostV2}/api/:path*`,
+  // },
   {
     source: '/v1/graphql/:path*',
     destination: `${GraphqlHostV1}/graphql/:path*`,

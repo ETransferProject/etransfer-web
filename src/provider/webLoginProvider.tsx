@@ -43,6 +43,7 @@ const WebLoginProviderDynamic = dynamic(
       chainId: SupportedChainId.sideChain,
       networkType: NETWORK_TYPE_V1,
       portkey: {
+        useLocalStorage: true,
         graphQLUrl: WebLoginGraphqlUrlV1,
         requestDefaults: {
           baseURL: WebLoginServiceUrlV1,
