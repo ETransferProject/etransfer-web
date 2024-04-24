@@ -1,8 +1,8 @@
 import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { Divider } from 'antd';
-import { RecordsListItem } from 'types/api';
-import { recordsTableListType } from 'types/records';
+import { TRecordsListItem } from 'types/api';
+import { TRecordsTableListType } from 'types/records';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import FeeInfo from 'pageComponents/HistoryContent/FeeInfo';
 import StatusBox from 'pageComponents/HistoryContent/StatusBox';
@@ -19,12 +19,12 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsContentP
   const dispatch = useAppDispatch();
   const { recordsList, hasMore, maxResultCount, totalCount, skipCount } = useRecordsState();
 
-  const handleRecordListData = (recordsList: RecordsListItem[]) => {
+  const handleRecordListData = (recordsList: TRecordsListItem[]) => {
     if (recordsList.length === 0) {
       return [];
     }
 
-    const recordsTableList: recordsTableListType[] = [];
+    const recordsTableList: TRecordsTableListType[] = [];
 
     recordsList.map((item) => {
       const { id, orderType, status, arrivalTime, fromTransfer, toTransfer } = item;
@@ -77,7 +77,7 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsContentP
             <b>-- No Data --</b>
           </p>
         }>
-        {handleRecordListData(recordsList).map((recordItem: recordsTableListType) => {
+        {handleRecordListData(recordsList).map((recordItem: TRecordsTableListType) => {
           return (
             <div className={clsx(styles['records-card-item-wrapper'])} key={recordItem.key}>
               <div className={clsx(styles['records-card-item-header'])}>

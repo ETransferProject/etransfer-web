@@ -10,7 +10,7 @@ import {
   setSkipCount,
   setRecordsList,
 } from 'store/reducers/records/slice';
-import { RecordsRequestType, RecordsRequestStatus, RecordsStatusI18n } from 'types/records';
+import { TRecordsRequestType, TRecordsRequestStatus, TRecordsStatusI18n } from 'types/records';
 import CommonDrawer from 'components/CommonDrawer';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import { Select, DatePicker } from 'antd';
@@ -24,8 +24,8 @@ export default function Filter({ requestRecordsList }: TRecordsContentParams) {
   const dispatch = useAppDispatch();
   const { type, status, timestamp } = useRecordsState();
   const [isShowFilterDrawer, setIsShowFilterDrawer] = useState(false);
-  const [filterType, setFilterType] = useState<RecordsRequestType>(type);
-  const [filterStatus, setFilterStatus] = useState<RecordsRequestStatus>(status);
+  const [filterType, setFilterType] = useState<TRecordsRequestType>(type);
+  const [filterStatus, setFilterStatus] = useState<TRecordsRequestStatus>(status);
   const [filterTimestampStart, setFilterTimestampStart] = useState<Moment | null>(
     (timestamp && timestamp[0]) || null,
   );
@@ -62,10 +62,10 @@ export default function Filter({ requestRecordsList }: TRecordsContentParams) {
     (clickType: string) => {
       switch (clickType) {
         case 'type':
-          dispatch(setType(RecordsRequestType.ALL));
+          dispatch(setType(TRecordsRequestType.ALL));
           break;
         case 'status':
-          dispatch(setStatus(RecordsRequestStatus.ALL));
+          dispatch(setStatus(TRecordsRequestStatus.ALL));
           break;
         case 'timestamp':
           dispatch(setTimestamp(null));
@@ -81,8 +81,8 @@ export default function Filter({ requestRecordsList }: TRecordsContentParams) {
   );
 
   const handleReset = useCallback(() => {
-    dispatch(setType(RecordsRequestType.ALL));
-    dispatch(setStatus(RecordsRequestStatus.ALL));
+    dispatch(setType(TRecordsRequestType.ALL));
+    dispatch(setStatus(TRecordsRequestStatus.ALL));
     dispatch(setTimestamp(null));
     dispatch(setSkipCount(1));
     dispatch(setRecordsList([]));
@@ -90,8 +90,8 @@ export default function Filter({ requestRecordsList }: TRecordsContentParams) {
   }, [dispatch, requestRecordsList]);
 
   const handleResetFilter = useCallback(() => {
-    setFilterType(RecordsRequestType.ALL);
-    setFilterStatus(RecordsRequestStatus.ALL);
+    setFilterType(TRecordsRequestType.ALL);
+    setFilterStatus(TRecordsRequestStatus.ALL);
     setFilterTimestampStart(null);
     setFilterTimestampEnd(null);
     dispatch(setSkipCount(1));
@@ -127,18 +127,18 @@ export default function Filter({ requestRecordsList }: TRecordsContentParams) {
     <div className={clsx(styles['filter-wrapper'])}>
       <div className={styles['filter-item-wrapper']}>
         <FilterIcon className={styles['filter-icon']} onClick={handleOpenFilterDrawer} />
-        {type !== RecordsRequestType.ALL && (
+        {type !== TRecordsRequestType.ALL && (
           <div className={styles['filter-item']}>
-            {type === RecordsRequestType.Deposits && BusinessType.Deposit}
-            {type === RecordsRequestType.Withdraws && BusinessType.Withdraw}
+            {type === TRecordsRequestType.Deposits && BusinessType.Deposit}
+            {type === TRecordsRequestType.Withdraws && BusinessType.Withdraw}
             <CloseSmall className={styles['filter-close-icon']} onClick={() => closeItem('type')} />
           </div>
         )}
-        {status !== RecordsRequestStatus.ALL && (
+        {status !== TRecordsRequestStatus.ALL && (
           <div className={styles['filter-item']}>
-            {status === RecordsRequestStatus.Processing && RecordsStatusI18n.Processing}
-            {status === RecordsRequestStatus.Succeed && RecordsStatusI18n.Succeed}
-            {status === RecordsRequestStatus.Failed && RecordsStatusI18n.Failed}
+            {status === TRecordsRequestStatus.Processing && TRecordsStatusI18n.Processing}
+            {status === TRecordsRequestStatus.Succeed && TRecordsStatusI18n.Succeed}
+            {status === TRecordsRequestStatus.Failed && TRecordsStatusI18n.Failed}
             <CloseSmall
               className={styles['filter-close-icon']}
               onClick={() => closeItem('status')}
@@ -200,9 +200,9 @@ export default function Filter({ requestRecordsList }: TRecordsContentParams) {
             onChange={setFilterType}
             popupClassName={'drop-wrap'}
             options={[
-              { value: RecordsRequestType.ALL, label: 'All' },
-              { value: RecordsRequestType.Deposits, label: BusinessType.Deposit },
-              { value: RecordsRequestType.Withdraws, label: BusinessType.Withdraw },
+              { value: TRecordsRequestType.ALL, label: 'All' },
+              { value: TRecordsRequestType.Deposits, label: BusinessType.Deposit },
+              { value: TRecordsRequestType.Withdraws, label: BusinessType.Withdraw },
             ]}
           />
           <div className={styles['filter-drawer-label']}>Status</div>
@@ -213,10 +213,10 @@ export default function Filter({ requestRecordsList }: TRecordsContentParams) {
             onChange={setFilterStatus}
             popupClassName={'drop-wrap'}
             options={[
-              { value: RecordsRequestStatus.ALL, label: 'All' },
-              { value: RecordsRequestStatus.Processing, label: RecordsStatusI18n.Processing },
-              { value: RecordsRequestStatus.Succeed, label: RecordsStatusI18n.Succeed },
-              { value: RecordsRequestStatus.Failed, label: RecordsStatusI18n.Failed },
+              { value: TRecordsRequestStatus.ALL, label: 'All' },
+              { value: TRecordsRequestStatus.Processing, label: TRecordsStatusI18n.Processing },
+              { value: TRecordsRequestStatus.Succeed, label: TRecordsStatusI18n.Succeed },
+              { value: TRecordsRequestStatus.Failed, label: TRecordsStatusI18n.Failed },
             ]}
           />
           <div className={styles['filter-drawer-label']}>Start time</div>

@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import BN, { isBN } from 'bn.js';
 import { isEffectiveNumber, ZERO } from 'constants/misc';
-import { TokenType } from 'types';
+import { TTokenType } from 'types';
 import { defaultNullValue } from 'constants/index';
 
 export function timesDecimals(a?: BigNumber.Value, decimals: string | number = 18) {
@@ -78,10 +78,10 @@ export function LargeNumberDisplay(strNumber: string, token: string) {
   let decimal = 6;
 
   switch (token) {
-    case TokenType.SGR:
+    case TTokenType.SGR:
       decimal = 8;
       break;
-    case TokenType.USDT:
+    case TTokenType.USDT:
       decimal = 6;
       break;
     default:

@@ -2,8 +2,8 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import { Table } from 'antd';
-import { RecordsListItem, TRecordsContentParams } from 'types/api';
-import { feeInfoType, recordsTableListType } from 'types/records';
+import { TRecordsListItem, TRecordsContentParams } from 'types/api';
+import { TFeeInfoType, TRecordsTableListType } from 'types/records';
 import { setSkipCount, setMaxResultCount } from 'store/reducers/records/slice';
 import FeeInfo from 'pageComponents/HistoryContent/FeeInfo';
 import EmptyDataBox from 'pageComponents/HistoryContent/EmptyDataBox';
@@ -18,7 +18,7 @@ const columns = [
     title: 'Transaction',
     dataIndex: 'status',
     key: 'status',
-    render: (status: string, record: recordsTableListType) => {
+    render: (status: string, record: TRecordsTableListType) => {
       return (
         <StatusBox
           status={status}
@@ -35,7 +35,7 @@ const columns = [
     title: 'Arrival Time',
     dataIndex: 'arrivalTime',
     key: 'arrivalTime',
-    render: (arrivalTime: number, record: recordsTableListType) => {
+    render: (arrivalTime: number, record: TRecordsTableListType) => {
       return <ArrivalTimeBox arrivalTime={arrivalTime} status={record.status} />;
     },
   },
@@ -59,7 +59,7 @@ const columns = [
     title: 'Amount Sent',
     dataIndex: 'sendingAmount',
     key: 'sendingAmount',
-    render: (sendingAmount: string, record: recordsTableListType) => {
+    render: (sendingAmount: string, record: TRecordsTableListType) => {
       return <AmountBox amount={sendingAmount} token={record.symbol} />;
     },
   },
@@ -67,7 +67,7 @@ const columns = [
     title: 'Amount Received',
     dataIndex: 'receivingAmount',
     key: 'receivingAmount',
-    render: (receivingAmount: string, record: recordsTableListType) => {
+    render: (receivingAmount: string, record: TRecordsTableListType) => {
       return <AmountBox amount={receivingAmount} token={record.symbol} status={record.status} />;
     },
   },
@@ -75,7 +75,7 @@ const columns = [
     title: 'From',
     dataIndex: 'fromAddress',
     key: 'fromAddress',
-    render: (fromAddress: string, record: recordsTableListType) => {
+    render: (fromAddress: string, record: TRecordsTableListType) => {
       return (
         <AddressBox
           type={'From'}
@@ -95,7 +95,7 @@ const columns = [
     title: 'To',
     dataIndex: 'toAddress',
     key: 'toAddress',
-    render: (toAddress: string, record: recordsTableListType) => {
+    render: (toAddress: string, record: TRecordsTableListType) => {
       return (
         <AddressBox
           type={'To'}
@@ -115,7 +115,7 @@ const columns = [
     title: 'Transaction Fee',
     dataIndex: 'feeInfo',
     key: 'feeInfo',
-    render: (feeInfo: feeInfoType[], record: recordsTableListType) => {
+    render: (feeInfo: TFeeInfoType[], record: TRecordsTableListType) => {
       return <FeeInfo feeInfo={feeInfo} status={record.status} orderType={record.orderType} />;
     },
   },
@@ -125,12 +125,12 @@ export default function WebRecordsTable({ requestRecordsList }: TRecordsContentP
   const { recordsList, totalCount, skipCount, maxResultCount } = useRecordsState();
   const dispatch = useAppDispatch();
 
-  const handleRecordListData = (recordsList: RecordsListItem[]) => {
+  const handleRecordListData = (recordsList: TRecordsListItem[]) => {
     if (recordsList.length === 0) {
       return;
     }
 
-    const recordsTableList: recordsTableListType[] = [];
+    const recordsTableList: TRecordsTableListType[] = [];
 
     recordsList.map((item) => {
       const { id, orderType, status, arrivalTime, fromTransfer, toTransfer } = item;

@@ -1,11 +1,11 @@
-import { GetRecordsListRequest, GetRecordsListResult } from 'types/api';
-import { currentRecordsStatus } from 'types/records';
+import { TGetRecordsListRequest, TGetRecordsListResult } from 'types/api';
+import { TCurrentRecordsStatus } from 'types/records';
 import { handleErrorMessage } from '@portkey/did-ui-react';
 import { request } from 'api';
 
 export const getRecordsList = async (
-  params: GetRecordsListRequest,
-): Promise<GetRecordsListResult> => {
+  params: TGetRecordsListRequest,
+): Promise<TGetRecordsListResult> => {
   try {
     const res = await request.records.getRecordsList({ params });
     return res.data;
@@ -17,7 +17,7 @@ export const getRecordsList = async (
   }
 };
 
-export const getRecordStatus = async (): Promise<currentRecordsStatus> => {
+export const getRecordStatus = async (): Promise<TCurrentRecordsStatus> => {
   try {
     const res = await request.records.getRecordStatus();
     return res.data;

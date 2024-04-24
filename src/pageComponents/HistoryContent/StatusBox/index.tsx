@@ -1,7 +1,7 @@
 import styles from './styles.module.scss';
 import { CloseFilled, TimeFilled, QuestionMarkIcon } from 'assets/images';
 import { useCallback, useMemo, useState } from 'react';
-import { RecordsStatus, RecordsStatusI18n } from 'types/records';
+import { TRecordsStatus, TRecordsStatusI18n } from 'types/records';
 import { useCommonState } from 'store/Provider/hooks';
 import CommonModal from 'components/CommonModal';
 import { Tooltip } from 'antd';
@@ -29,13 +29,13 @@ export default function StatusBox({ status, network }: StatusBoxProps) {
     }
     // set tip message: Processing  Failed
     switch (status) {
-      case RecordsStatus.Processing:
+      case TRecordsStatus.Processing:
         setTipMessage(ProcessingTipMessage + network);
-        setTitle(RecordsStatusI18n.Processing);
+        setTitle(TRecordsStatusI18n.Processing);
         break;
-      case RecordsStatus.Failed:
+      case TRecordsStatus.Failed:
         setTipMessage(FailedTipMessage);
-        setTitle(RecordsStatusI18n.Failed);
+        setTitle(TRecordsStatusI18n.Failed);
         break;
       default:
         setTipMessage('');
@@ -47,24 +47,24 @@ export default function StatusBox({ status, network }: StatusBoxProps) {
 
   const content = useMemo(() => {
     switch (status) {
-      case RecordsStatus.Processing:
+      case TRecordsStatus.Processing:
         return (
           <Tooltip title={!isMobilePX && ProcessingTipMessage + network}>
             <div className={styles['status-box']} onClick={() => handleClick()}>
               <TimeFilled />
-              <span className={styles.processing}>{RecordsStatusI18n.Processing}</span>
+              <span className={styles.processing}>{TRecordsStatusI18n.Processing}</span>
               <QuestionMarkIcon />
             </div>
           </Tooltip>
         );
-      case RecordsStatus.Succeed:
-        return <div className={styles['status-box']}>{RecordsStatusI18n.Succeed}</div>;
-      case RecordsStatus.Failed:
+      case TRecordsStatus.Succeed:
+        return <div className={styles['status-box']}>{TRecordsStatusI18n.Succeed}</div>;
+      case TRecordsStatus.Failed:
         return (
           <Tooltip title={!isMobilePX && FailedTipMessage} placement="top">
             <div className={styles['status-box']} onClick={() => handleClick()}>
               <CloseFilled />
-              <span className={styles.failed}>{RecordsStatusI18n.Failed}</span>
+              <span className={styles.failed}>{TRecordsStatusI18n.Failed}</span>
               <QuestionMarkIcon />
             </div>
           </Tooltip>

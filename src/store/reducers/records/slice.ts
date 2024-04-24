@@ -1,19 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RecordsListItem, GetRecordsListRequest, RangeValue } from 'types/api';
-import { RecordsRequestType, RecordsRequestStatus } from 'types/records';
+import { TRecordsListItem, TGetRecordsListRequest, TRangeValue } from 'types/api';
+import { TRecordsRequestType, TRecordsRequestStatus } from 'types/records';
 
-export type RecordsState = GetRecordsListRequest & {
-  recordsList: RecordsListItem[];
+export type TRecordsState = TGetRecordsListRequest & {
+  recordsList: TRecordsListItem[];
   totalCount: number;
-  timestamp: RangeValue;
+  timestamp: TRangeValue;
   hasMore: boolean;
 };
 
-export const initialRecordState: RecordsState = {
+export const initialRecordState: TRecordsState = {
   recordsList: [],
   totalCount: 0,
-  type: RecordsRequestType.ALL,
-  status: RecordsRequestStatus.ALL,
+  type: TRecordsRequestType.ALL,
+  status: TRecordsRequestStatus.ALL,
   timestamp: null,
   skipCount: 1,
   maxResultCount: 10,
@@ -37,7 +37,7 @@ export const RecordsSlice = createSlice({
     setStatus: (state, action) => {
       state.status = action.payload;
     },
-    setTimestamp: (state, action: PayloadAction<RangeValue>) => {
+    setTimestamp: (state, action: PayloadAction<TRangeValue>) => {
       state.timestamp = action.payload;
     },
     setSkipCount: (state, action) => {
