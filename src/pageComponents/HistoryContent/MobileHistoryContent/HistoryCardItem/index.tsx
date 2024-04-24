@@ -108,7 +108,11 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsContentP
               </div>
               <div className={styles['records-card-item-line']}>
                 <span className={styles['records-card-item-label']}>Amount Received</span>
-                <AmountBox amount={recordItem.receivingAmount} token={recordItem.symbol} />
+                <AmountBox
+                  amount={recordItem.receivingAmount}
+                  token={recordItem.symbol}
+                  status={recordItem.status}
+                />
               </div>
               <div className={styles['records-card-item-line']}>
                 <span className={styles['records-card-item-label']}>From</span>
