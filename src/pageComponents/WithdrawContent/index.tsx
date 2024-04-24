@@ -74,7 +74,7 @@ import { useWithdraw } from 'hooks/withdraw';
 import { QuestionMarkIcon, Fingerprint } from 'assets/images';
 import { InitWithdrawTokenState } from 'store/reducers/token/slice';
 import RemainingQuato from './RemainingQuato';
-import { getRecordStatus } from 'utils/api/records';
+// import { getRecordStatus } from 'utils/api/records';
 import { setIsShowRedDot } from 'store/reducers/common/slice';
 import { useWalletContext } from 'provider/walletProvider';
 
@@ -621,8 +621,9 @@ export default function WithdrawContent() {
   ]);
 
   const fetchRecordStatus = useCallback(async () => {
-    const res = await getRecordStatus();
-    dispatch(setIsShowRedDot(res.status));
+    // const res = await getRecordStatus();
+    // dispatch(setIsShowRedDot(res.status));
+    dispatch(setIsShowRedDot(false));
   }, [dispatch]);
 
   const handleCreateWithdrawOrder = useCallback(
