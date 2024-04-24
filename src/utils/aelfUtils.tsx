@@ -19,8 +19,8 @@ import { ContractMethodName, ManagerForwardCall } from 'constants/contract';
 import BigNumber from 'bignumber.js';
 import { timesDecimals } from './calculate';
 import { AllSupportedELFChainId, ContractType } from 'constants/chain';
-import { SignatureData } from 'aelf-web-login';
-import { IWallet, TSignatureParams } from 'contract/types';
+import { WalletType } from 'aelf-web-login';
+import { IWallet } from 'contract/types';
 import { sleep } from '@portkey/utils';
 
 export function getNodeByChainId(chainId: AllSupportedELFChainId) {
@@ -241,7 +241,7 @@ export const getRawTx = ({
 };
 
 export const handleTransaction = async ({
-  getSignature,
+  wallet,
   blockHeightInput,
   blockHashInput,
   packedInput,
@@ -250,7 +250,7 @@ export const handleTransaction = async ({
   functionName,
   version,
 }: GetRawTx & {
-  getSignature: (params: TSignatureParams) => Promise<SignatureData>;
+  wallet: IWallet;
 }) => {
   // Create transaction
   const rawTx = getRawTx({
@@ -266,10 +266,20 @@ export const handleTransaction = async ({
 
   const ser = AElf.pbUtils.Transaction.encode(rawTx).finish();
 
-  const m = AElf.utils.sha256(ser);
+  let signInfo: string;
+  if (wallet.walletType !== WalletType.portkey) {
+    // nightElf or discover
+    signInfo = AElf.utils.sha256(ser);
+  } else {
+    // portkey sdk
+    signInfo = Buffer.from(ser).toString('hex');
+  }
+
   // signature
   let signatureStr = '';
-  const signatureRes = await getSignature({ signInfo: m });
+  const signatureRes = await wallet.getSignature({ signInfo });
+  console.log(signatureRes, '=====signatureRes');
+
   signatureStr = signatureRes.signature || '';
   if (!signatureStr) return;
 
@@ -436,7 +446,7 @@ export const checkTokenAllowanceAndApprove = async ({
 };
 
 export interface CreateTransferTokenTransactionParams {
-  getSignature: (params: TSignatureParams) => Promise<SignatureData>;
+  wallet: IWallet;
   caContractAddress: string;
   eTransferContractAddress: string;
   caHash: string;
@@ -448,7 +458,7 @@ export interface CreateTransferTokenTransactionParams {
 }
 
 export const createTransferTokenTransaction = async ({
-  getSignature,
+  wallet,
   caContractAddress,
   eTransferContractAddress,
   caHash,
@@ -474,7 +484,7 @@ export const createTransferTokenTransaction = async ({
   const { BestChainHeight, BestChainHash } = await aelf.chain.getChainStatus();
 
   const transaction = await handleTransaction({
-    getSignature,
+    wallet,
     blockHeightInput: BestChainHeight,
     blockHashInput: BestChainHash,
     packedInput: transactionParams,
