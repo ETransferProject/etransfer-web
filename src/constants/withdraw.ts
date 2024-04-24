@@ -1,4 +1,4 @@
-import { CHAIN_LIST } from 'constants/index';
+import { CHAIN_LIST, defaultNullValue } from 'constants/index';
 import { NetworkStatus, WithdrawInfo } from 'types/api';
 import { WithdrawInfoSuccess } from 'types/deposit';
 
@@ -49,9 +49,9 @@ export const InitialWithdrawInfo: WithdrawInfo = {
   aelfTransactionUnit: 'ELF',
   receiveAmount: '',
   feeList: [],
-  receiveAmountUsd: '--',
-  amountUsd: '--',
-  feeUsd: '--',
+  receiveAmountUsd: defaultNullValue,
+  amountUsd: defaultNullValue,
+  feeUsd: defaultNullValue,
 };
 
 export const InitialNetwork = {
@@ -71,6 +71,6 @@ export const InitialWithdrawSuccessCheck: WithdrawInfoSuccess = {
   chainItem: CHAIN_LIST[0],
   network: InitialNetwork,
   arriveTime: '',
-  receiveAmountUsd: '--',
+  receiveAmountUsd: defaultNullValue,
   transactionId: '',
 };
