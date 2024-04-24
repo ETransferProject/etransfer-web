@@ -73,10 +73,7 @@ const WebLoginProviderDynamic = dynamic(
 
 export default function Providers({ children }: { children: ReactNode }) {
   return (
-    <WebLoginPortkeyProvider
-      networkType={NETWORK_TYPE_V1}
-      networkTypeV2={NETWORK_TYPE_V2}
-      theme="dark">
+    <WebLoginPortkeyProvider networkType={NETWORK_TYPE_V1} networkTypeV2={NETWORK_TYPE_V2}>
       <WebLoginProviderDynamic
         nightElf={{
           useMultiChain: false,
