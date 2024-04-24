@@ -161,7 +161,7 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
 
   return (
     <CommonButton {...props} onClick={handleLogin}>
-      Login In
+      Log In
     </CommonButton>
   );
 }

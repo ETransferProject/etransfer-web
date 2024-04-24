@@ -76,7 +76,7 @@ export default function Providers({ children }: { children: ReactNode }) {
         }}
         portkey={{
           design: 'SocialDesign',
-          autoShowUnlock: true,
+          autoShowUnlock: false,
           checkAccountInfoSync: true,
         }}
         commonConfig={{
