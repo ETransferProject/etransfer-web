@@ -29,11 +29,7 @@ import {
 import styles from './styles.module.scss';
 import { ADDRESS_MAP, IChainNameItem, defaultNullValue } from 'constants/index';
 import { createWithdrawOrder, getNetworkList, getWithdrawInfo } from 'utils/api/deposit';
-import {
-  CONTRACT_ADDRESS,
-  initialWithdrawInfo,
-  initialWithdrawSuccessCheck,
-} from 'constants/deposit';
+import { CONTRACT_ADDRESS } from 'constants/deposit';
 import { WithdrawInfoSuccess } from 'types/deposit';
 import {
   checkTokenAllowanceAndApprove,
@@ -43,7 +39,6 @@ import {
 import singleMessage from 'components/SingleMessage';
 import { divDecimals, timesDecimals } from 'utils/calculate';
 import { ZERO } from 'constants/misc';
-import portkeyContractUnity from 'contract/portkey';
 import { ContractType } from 'constants/chain';
 import BigNumber from 'bignumber.js';
 import { SideMenuKey } from 'constants/home';
@@ -59,6 +54,8 @@ import {
   AmountGreaterThanBalanceMessage,
   DefaultWithdrawErrorMessage,
   ErrorNameType,
+  InitialWithdrawInfo,
+  InitialWithdrawSuccessCheck,
   InsufficientAllowanceMessage,
   WithdrawAddressErrorCodeList,
   WithdrawSendTxErrorCodeList,
@@ -79,6 +76,7 @@ import { InitWithdrawTokenState } from 'store/reducers/token/slice';
 import RemainingQuato from './RemainingQuato';
 import { getRecordStatus } from 'utils/api/records';
 import { setIsShowRedDot } from 'store/reducers/common/slice';
+import { useWalletContext } from 'provider/walletProvider';
 
 enum ValidateStatus {
   Error = 'error',
@@ -107,14 +105,14 @@ export default function WithdrawContent() {
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
   const accounts = useAccounts();
   const { currentSymbol, tokenList } = useWithdraw();
-  const { withdraw, caHash } = useUserActionState();
+  const { withdraw, userInfo } = useUserActionState();
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
   const [currentNetwork, setCurrentNetwork] = useState<NetworkItem>();
   const currentNetworkRef = useRef<NetworkItem>();
   const [form] = Form.useForm<FormValuesType>();
-  const [withdrawInfo, setWithdrawInfo] = useState<WithdrawInfo>(initialWithdrawInfo);
+  const [withdrawInfo, setWithdrawInfo] = useState<WithdrawInfo>(InitialWithdrawInfo);
   const [balance, setBalance] = useState('0');
   const [maxBalance, setMaxBalance] = useState('0');
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
@@ -123,7 +121,7 @@ export default function WithdrawContent() {
   const [isFailModalOpen, setIsFailModalOpen] = useState(false);
   const [failModalReason, setFailModalReason] = useState('');
   const [withdrawInfoSuccess, setWithdrawInfoSuccessCheck] = useState<WithdrawInfoSuccess>(
-    initialWithdrawSuccessCheck,
+    InitialWithdrawSuccessCheck,
   );
   const [isNetworkDisable, setIsNetworkDisable] = useState(false);
   const [formValidateData, setFormValidateData] = useState<{
@@ -445,7 +443,7 @@ export default function WithdrawContent() {
         handleAmountValidate(res.withdrawInfo?.minAmount, res.withdrawInfo?.transactionUnit);
       } catch (error: any) {
         // when network error, transactionUnit should as the same with symbol
-        setWithdrawInfo({ ...initialWithdrawInfo, transactionUnit: symbol });
+        setWithdrawInfo({ ...InitialWithdrawInfo, transactionUnit: symbol });
         if (error.name !== CommonErrorNameType.CANCEL) {
           singleMessage.error(handleErrorMessage(error));
           setIsTransactionFeeLoading(false);
@@ -477,14 +475,16 @@ export default function WithdrawContent() {
     }
   }, [currentNetwork?.network, handleFormValidateDataChange, withdrawInfo.feeUsd]);
 
+  const [{ wallet }] = useWalletContext();
   const getMaxBalance = useCallback(
     async (item?: TokenItem) => {
       try {
         const symbol = item?.symbol || currentSymbol;
         const decimal = item?.decimals || currentTokenDecimal;
         const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
-        if (!caAddress || !currentVersion) return '';
+        if (!caAddress || !currentVersion || !wallet) return '';
         const maxBalance = await getBalance({
+          wallet,
           symbol: symbol,
           chainId: currentChainItemRef.current.key,
           caAddress,
@@ -498,7 +498,7 @@ export default function WithdrawContent() {
         throw new Error('Failed to get balance.');
       }
     },
-    [accounts, currentSymbol, currentTokenDecimal, currentVersion],
+    [accounts, currentSymbol, currentTokenDecimal, currentVersion, wallet],
   );
 
   const getMaxBalanceInterval = useCallback(
@@ -586,11 +586,6 @@ export default function WithdrawContent() {
 
   const handleApproveToken = useCallback(async () => {
     if (!currentVersion) throw new Error(ConnectWalletError);
-    const tokenContract = await portkeyContractUnity.getContract({
-      chainId: currentChainItemRef.current.key,
-      contractType: ContractType.TOKEN,
-      version: currentVersion,
-    });
 
     const newMaxBalance = await getMaxBalance();
     console.log('🌈 🌈 🌈 🌈 🌈 🌈 newMaxBalance ', newMaxBalance);
@@ -603,17 +598,27 @@ export default function WithdrawContent() {
     }
 
     const ownerAddress = accounts?.[currentChainItemRef.current.key]?.[0] || '';
-
+    if (!wallet) return;
     const checkRes = await checkTokenAllowanceAndApprove({
-      tokenContract,
+      wallet,
+      chainId: currentChainItemRef.current.key,
       symbol: currentSymbol,
       address: ownerAddress,
       approveTargetAddress: currentTokenAddress,
       amount: balance,
+      version: currentVersion,
     });
 
     return checkRes;
-  }, [accounts, balance, currentSymbol, currentTokenAddress, currentVersion, getMaxBalance]);
+  }, [
+    accounts,
+    balance,
+    currentSymbol,
+    currentTokenAddress,
+    currentVersion,
+    getMaxBalance,
+    wallet,
+  ]);
 
   const fetchRecordStatus = useCallback(async () => {
     const res = await getRecordStatus();
@@ -685,16 +690,18 @@ export default function WithdrawContent() {
       if (!approveRes) throw new Error(InsufficientAllowanceMessage);
       console.log('🌈 🌈 🌈 🌈 🌈 🌈 approveRes', approveRes);
 
-      if (approveRes) {
+      if (approveRes && wallet?.getSignature) {
         const transaction = await createTransferTokenTransaction({
+          getSignature: (params) => wallet?.getSignature(params),
           caContractAddress:
             ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.CA],
           eTransferContractAddress: currentTokenAddress,
-          caHash: caHash || '',
+          caHash: userInfo.caHash || '',
           symbol: currentSymbol,
           amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
           chainId: currentChainItemRef.current.key,
           version: currentVersion,
+          fromManagerAddress: userInfo.managerAddress,
         });
         console.log(transaction, '=====transaction');
 

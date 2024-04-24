@@ -2,27 +2,19 @@ import React, { useEffect } from 'react';
 import CommonButton, { CommonButtonProps } from 'components/CommonButton';
 import { useAppDispatch, useLoading } from 'store/Provider/hooks';
 import { useCallback } from 'react';
-import {
-  WebLoginState,
-  useWebLogin,
-  useWebLoginEvent,
-  WebLoginEvents,
-  WalletType,
-  PortkeyDid,
-} from 'aelf-web-login';
+import { WebLoginState, useWebLogin, WalletType, PortkeyDid } from 'aelf-web-login';
 import { PortkeyVersion } from 'constants/wallet';
 import { setV2ConnectedInfoAction } from 'store/reducers/portkeyWallet/actions';
 import { setSwitchVersionAction } from 'store/reducers/common/slice';
-import { setCaHash } from 'store/reducers/userAction/slice';
+import { setUserInfo } from 'store/reducers/userAction/slice';
 import { Accounts } from '@portkey/provider-types';
-import { AppName, SupportedChainId } from 'constants/index';
+import { AppName, SupportedChainId, SupportedELFChainId } from 'constants/index';
 import { GetCAHolderByManagerParams } from '@portkey/services';
 import AElf from 'aelf-sdk';
 import { recoverPubKey } from 'utils/loginUtils';
 import { queryAuthApi } from 'api/utils';
 import { useDebounceCallback } from 'hooks';
 import { ChainId } from '@portkey/types';
-// import { useEffectOnce } from 'react-use';
 
 const pubKeyToAddress = (pubKey: string) => {
   const onceSHAResult = Buffer.from(AElf.utils.sha256(Buffer.from(pubKey, 'hex')), 'hex');
@@ -38,10 +30,6 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
   const handleLogin = useCallback(async () => {
     login();
   }, [login]);
-
-  useWebLoginEvent(WebLoginEvents.ERROR, (error) => {
-    console.log('WebLoginEvents', error);
-  });
 
   const onAccept = useDebounceCallback(async () => {
     if (!wallet) return;
@@ -102,7 +90,13 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
         version: PortkeyVersion.v2,
       };
       await queryAuthApi(apiParams);
-      dispatch(setCaHash(caHash));
+      dispatch(
+        setUserInfo({
+          caHash,
+          managerAddress,
+          originChainId: originChainId as SupportedELFChainId,
+        }),
+      );
       console.log('login success');
       console.log(loginState, wallet);
       const { name = '', discoverInfo } = wallet;

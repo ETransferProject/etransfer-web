@@ -18,6 +18,14 @@ import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
 import { EtransferLogoIconBase64 } from 'constants/wallet';
 
+const WalletProviderDynamic = dynamic(
+  async () => {
+    const WalletProvider = await import('./walletProvider').then((module) => module);
+    return WalletProvider;
+  },
+  { ssr: false },
+);
+
 const WebLoginPortkeyProvider = dynamic(
   async () => {
     const { PortkeyProvider } = await import('aelf-web-login').then((module) => module);
@@ -95,7 +103,7 @@ export default function Providers({ children }: { children: ReactNode }) {
           //   console.log('openStore:', openStore);
           // },
         }}>
-        {children}
+        <WalletProviderDynamic>{children}</WalletProviderDynamic>
       </WebLoginProviderDynamic>
     </WebLoginPortkeyProvider>
   );
