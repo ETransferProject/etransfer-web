@@ -19,8 +19,7 @@ import { ChainId, SendOptions } from '@portkey/types';
 import { SendOptions as SendOptionsV1 } from '@portkey-v1/types';
 import { sleep } from '@portkey/utils';
 import { AllSupportedELFChainId } from 'constants/chain';
-import { APP_NAME } from 'constants/misc';
-import { SupportedELFChainId } from 'constants/index';
+import { SupportedELFChainId, AppName } from 'constants/index';
 
 class Wallet implements IWallet {
   walletInfo: WalletInfo;
@@ -76,7 +75,7 @@ class Wallet implements IWallet {
 
   getSignature(params: TSignatureParams): Promise<SignatureData> {
     return this._getSignature({
-      appName: APP_NAME || '',
+      appName: AppName || '',
       address: this.walletInfo.address,
       ...params,
     });
