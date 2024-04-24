@@ -1,7 +1,7 @@
 import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { USDTToken, SGRToken } from 'assets/images';
-import { TokenType } from 'types';
+import { TTokenType } from 'types';
 import { useCommonState } from 'store/Provider/hooks';
 import { useCallback } from 'react';
 
@@ -14,9 +14,9 @@ export default function TokenBox({ symbol }: TokenBoxProps) {
 
   const tokenIcon = useCallback(() => {
     switch (symbol) {
-      case TokenType.USDT:
+      case TTokenType.USDT:
         return <USDTToken className={styles['token-icon']} />;
-      case TokenType.SGR:
+      case TTokenType.SGR:
         return <SGRToken className={styles['token-icon']} />;
       default:
         return (

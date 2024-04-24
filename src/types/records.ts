@@ -1,19 +1,19 @@
 import { SupportedELFChainId } from 'constants/index';
 
-export enum RecordsRequestType {
+export enum TRecordsRequestType {
   ALL = 0,
   Deposits = 1,
   Withdraws = 2,
 }
 
-export enum RecordsRequestStatus {
+export enum TRecordsRequestStatus {
   ALL = 0,
   Processing = 1,
   Succeed = 2,
   Failed = 3,
 }
 
-export type fromTransfer = {
+export type TFromTransfer = {
   network: string;
   chainId: SupportedELFChainId;
   fromAddress: string;
@@ -22,31 +22,31 @@ export type fromTransfer = {
   symbol: string;
 };
 
-export type feeInfo = {
+export type TFeeInfo = {
   symbol: string;
   amount: string;
 };
 
-export type toTransfer = {
+export type TToTransfer = {
   network: string;
   chainId: SupportedELFChainId;
   fromAddress: string;
   toAddress: string;
   amount: string;
   symbol: string;
-  feeInfo: feeInfo[];
+  feeInfo: TFeeInfo[];
 };
 
-export type currentRecordsStatus = {
+export type TCurrentRecordsStatus = {
   status: boolean;
 };
 
-export type feeInfoType = {
+export type TFeeInfoType = {
   symbol: string;
   amount: string;
 };
 
-export interface recordsTableListType {
+export interface TRecordsTableListType {
   key: string;
   orderType: string;
   status: string;
@@ -62,22 +62,22 @@ export interface recordsTableListType {
   toFromAddress: string;
   toAddress: string;
   toChainId: SupportedELFChainId;
-  feeInfo: feeInfoType[];
+  feeInfo: TFeeInfoType[];
 }
 
-export enum RecordsStatus {
+export enum TRecordsStatus {
   Processing = 'Processing',
   Succeed = 'Succeed',
   Failed = 'Failed',
 }
 
-export enum RecordsStatusI18n {
+export enum TRecordsStatusI18n {
   Processing = 'Pending',
   Succeed = 'Completed',
   Failed = 'Failed',
 }
 
-export enum AddressType {
+export enum TAddressType {
   Sender = 'Sender',
   Receiver = 'Receiver',
 }

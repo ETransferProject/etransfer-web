@@ -3,9 +3,9 @@ import clsx from 'clsx';
 import { Select, DatePicker, Button } from 'antd';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import { setType, setStatus, setTimestamp, setSkipCount } from 'store/reducers/records/slice';
-import { RecordsRequestType, RecordsRequestStatus, RecordsStatusI18n } from 'types/records';
+import { TRecordsRequestType, TRecordsRequestStatus, TRecordsStatusI18n } from 'types/records';
 import { useCallback } from 'react';
-import { RangeValue, TRecordsContentParams, BusinessType } from 'types/api';
+import { TRangeValue, TRecordsContentParams, BusinessType } from 'types/api';
 import { Reset } from 'assets/images';
 import { SwapRightDefault, SwapRightSelected } from 'assets/images';
 
@@ -17,7 +17,7 @@ export default function WebRecordsHeader({ requestRecordsList }: TRecordsContent
   const { type, status, timestamp } = useRecordsState();
 
   const handleTypeChange = useCallback(
-    (type: RecordsRequestType) => {
+    (type: TRecordsRequestType) => {
       dispatch(setType(type));
       dispatch(setSkipCount(1));
       requestRecordsList();
@@ -26,7 +26,7 @@ export default function WebRecordsHeader({ requestRecordsList }: TRecordsContent
   );
 
   const handleStatusChange = useCallback(
-    (status: RecordsRequestStatus) => {
+    (status: TRecordsRequestStatus) => {
       dispatch(setStatus(status));
       dispatch(setSkipCount(1));
       requestRecordsList();
@@ -35,7 +35,7 @@ export default function WebRecordsHeader({ requestRecordsList }: TRecordsContent
   );
 
   const handleDateRangeChange = useCallback(
-    (timestamp: RangeValue) => {
+    (timestamp: TRangeValue) => {
       if (timestamp && timestamp[0] && timestamp[1]) {
         dispatch(setTimestamp(timestamp));
         dispatch(setSkipCount(1));
@@ -54,8 +54,8 @@ export default function WebRecordsHeader({ requestRecordsList }: TRecordsContent
   }, [type, status, timestamp]);
 
   const handleReset = useCallback(() => {
-    dispatch(setType(RecordsRequestType.ALL));
-    dispatch(setStatus(RecordsRequestStatus.ALL));
+    dispatch(setType(TRecordsRequestType.ALL));
+    dispatch(setStatus(TRecordsRequestStatus.ALL));
     dispatch(setTimestamp(null));
     dispatch(setSkipCount(1));
     requestRecordsList();
@@ -72,9 +72,9 @@ export default function WebRecordsHeader({ requestRecordsList }: TRecordsContent
           onChange={handleTypeChange}
           popupClassName={'drop-wrap'}
           options={[
-            { value: RecordsRequestType.ALL, label: 'All' },
-            { value: RecordsRequestType.Deposits, label: BusinessType.Deposit },
-            { value: RecordsRequestType.Withdraws, label: BusinessType.Withdraw },
+            { value: TRecordsRequestType.ALL, label: 'All' },
+            { value: TRecordsRequestType.Deposits, label: BusinessType.Deposit },
+            { value: TRecordsRequestType.Withdraws, label: BusinessType.Withdraw },
           ]}
         />
         <Select
@@ -84,10 +84,10 @@ export default function WebRecordsHeader({ requestRecordsList }: TRecordsContent
           onChange={handleStatusChange}
           popupClassName={'drop-wrap'}
           options={[
-            { value: RecordsRequestStatus.ALL, label: 'All' },
-            { value: RecordsRequestStatus.Processing, label: RecordsStatusI18n.Processing },
-            { value: RecordsRequestStatus.Succeed, label: RecordsStatusI18n.Succeed },
-            { value: RecordsRequestStatus.Failed, label: RecordsStatusI18n.Failed },
+            { value: TRecordsRequestStatus.ALL, label: 'All' },
+            { value: TRecordsRequestStatus.Processing, label: TRecordsStatusI18n.Processing },
+            { value: TRecordsRequestStatus.Succeed, label: TRecordsStatusI18n.Succeed },
+            { value: TRecordsRequestStatus.Failed, label: TRecordsStatusI18n.Failed },
           ]}
         />
         <RangePicker

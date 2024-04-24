@@ -1,13 +1,13 @@
-import { feeInfoType } from 'types/records';
+import { TFeeInfoType } from 'types/records';
 import styles from './styles.module.scss';
-import { RecordsStatus } from 'types/records';
+import { TRecordsStatus } from 'types/records';
 import { useCommonState } from 'store/Provider/hooks';
 import clsx from 'clsx';
 import { BusinessType } from 'types/api';
 import { defaultNullValue } from 'constants/index';
 
 type TFeeInfoProps = {
-  feeInfo: feeInfoType[];
+  feeInfo: TFeeInfoType[];
   status: string;
   orderType: string;
 };
@@ -15,7 +15,7 @@ type TFeeInfoProps = {
 export default function FeeInfo({ feeInfo, status, orderType }: TFeeInfoProps) {
   const { isMobilePX } = useCommonState();
 
-  if (status === RecordsStatus.Failed || orderType === BusinessType.Deposit) {
+  if (status === TRecordsStatus.Failed || orderType === BusinessType.Deposit) {
     return <div className={styles['fee-info-wrapper']}>{defaultNullValue}</div>;
   }
 

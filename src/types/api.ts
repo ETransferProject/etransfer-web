@@ -1,6 +1,6 @@
 import { ChainId } from '@portkey/provider-types';
 import { PortkeyVersion } from 'constants/wallet';
-import { fromTransfer, toTransfer } from './records';
+import { TFromTransfer, TToTransfer } from './records';
 import type { Moment } from 'moment';
 
 export enum BusinessType {
@@ -132,9 +132,9 @@ export type CreateWithdrawOrderResult = {
   transactionId: string;
 };
 
-export type RangeValue = [Moment | null, Moment | null] | null;
+export type TRangeValue = [Moment | null, Moment | null] | null;
 
-export interface GetRecordsListRequest {
+export interface TGetRecordsListRequest {
   type: number;
   status: number;
   startTimestamp?: number | null;
@@ -144,18 +144,18 @@ export interface GetRecordsListRequest {
   search?: string | undefined;
 }
 
-export type RecordsListItem = {
+export type TRecordsListItem = {
   id: string;
   orderType: string;
   status: string;
   arrivalTime: number;
-  fromTransfer: fromTransfer;
-  toTransfer: toTransfer;
+  fromTransfer: TFromTransfer;
+  toTransfer: TToTransfer;
 };
 
-export type GetRecordsListResult = {
+export type TGetRecordsListResult = {
   totalCount: number;
-  items: RecordsListItem[];
+  items: TRecordsListItem[];
 };
 
 export type TRecordsContentParams = {

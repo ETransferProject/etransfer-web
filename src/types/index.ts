@@ -42,7 +42,7 @@ export type EntryConfig = {
   withDrawAmount: string; // not decimal
 };
 
-export enum TokenType {
+export enum TTokenType {
   USDT = 'USDT',
   SGR = 'SGR-1',
 }

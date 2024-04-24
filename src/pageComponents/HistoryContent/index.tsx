@@ -5,8 +5,8 @@ import { getRecordsList } from 'utils/api/records';
 import { setRecordsList, setTotalCount, setHasMore } from 'store/reducers/records/slice';
 import { useDebounceCallback } from 'hooks';
 import { useEffect } from 'react';
-import { RecordsRequestType, RecordsRequestStatus } from 'types/records';
-import { RecordsListItem } from 'types/api';
+import { TRecordsRequestType, TRecordsRequestStatus } from 'types/records';
+import { TRecordsListItem } from 'types/api';
 import moment from 'moment';
 
 export default function Content() {
@@ -15,8 +15,8 @@ export default function Content() {
   const { setLoading } = useLoading();
 
   const {
-    type = RecordsRequestType.ALL,
-    status = RecordsRequestStatus.ALL,
+    type = TRecordsRequestType.ALL,
+    status = TRecordsRequestStatus.ALL,
     timestamp,
     skipCount,
     maxResultCount,
@@ -41,8 +41,8 @@ export default function Content() {
       setLoading(false);
       if (isMobilePX) {
         let mobileRecordsList = [...recordsList, ...recordsListRes];
-        mobileRecordsList = mobileRecordsList.reduce((result: RecordsListItem[], item) => {
-          if (!result.some((it: RecordsListItem) => it.id === item.id)) {
+        mobileRecordsList = mobileRecordsList.reduce((result: TRecordsListItem[], item) => {
+          if (!result.some((it: TRecordsListItem) => it.id === item.id)) {
             result.push(item);
           }
           return result;
