@@ -2,13 +2,13 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { EmptyBox } from 'assets/images';
 
-type EmptyDataBoxProps = {
+type TEmptyDataBoxProps = {
   emptyText?: string;
 };
 
-export default function EmptyDataBox({ emptyText = 'No found' }: EmptyDataBoxProps) {
+export default function EmptyDataBox({ emptyText = 'No found' }: TEmptyDataBoxProps) {
   return (
-    <div className={clsx(styles['emptyDataBox'])}>
+    <div className={clsx(styles['empty-data-box'])}>
       <EmptyBox />
       {emptyText}
     </div>

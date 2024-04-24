@@ -1,16 +1,16 @@
 @import 'src/assets/theme/color.scss';
 
-.addressBox {
+.address-box {
   min-width: 190px;
   display: flex;
   align-items: center;
 }
 
-.web-addressBox {
+.web-address-box {
   justify-content: flex-start;
 }
 
-.mobil-addressBox {
+.mobile-address-box {
   position: relative;
   left: 2px;
   justify-content: flex-end;

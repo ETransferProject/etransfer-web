@@ -12,8 +12,8 @@ type StatusBoxProps = {
   status: string;
   address: string;
   network: string;
-  fromChanId: SupportedELFChainId;
-  toChanId: SupportedELFChainId;
+  fromChainId: SupportedELFChainId;
+  toChainId: SupportedELFChainId;
   orderType: string;
 };
 

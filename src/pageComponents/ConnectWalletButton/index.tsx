@@ -15,7 +15,7 @@ import { setV2ConnectedInfoAction } from 'store/reducers/portkeyWallet/actions';
 import { setSwitchVersionAction } from 'store/reducers/common/slice';
 import { setCaHash } from 'store/reducers/userAction/slice';
 import { Accounts } from '@portkey/provider-types';
-import { AppName, SupportedChainId, SupportedELFChainId } from 'constants/index';
+import { AppName, SupportedChainId } from 'constants/index';
 import { GetCAHolderByManagerParams } from '@portkey/services';
 import AElf from 'aelf-sdk';
 import { recoverPubKey } from 'utils/loginUtils';
@@ -113,23 +113,26 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
       }
       if (walletType === WalletType.portkey) {
         // portkey address need manual setup: 'ELF_' + address + '_' + chainId
-        const isAELFAddress = wallet.portkeyInfo?.accounts?.AELF;
-        const istDVWAddress = wallet.portkeyInfo?.accounts?.tDVW;
-        if (accounts && isAELFAddress && !istDVWAddress) {
-          const baseAddress = 'ELF_' + wallet.portkeyInfo?.accounts?.AELF + '_';
-          accounts[SupportedELFChainId.AELF] = [baseAddress + SupportedELFChainId.AELF];
-          accounts[SupportedELFChainId.tDVW] = [baseAddress + SupportedELFChainId.tDVW];
-        } else if (accounts && !isAELFAddress && istDVWAddress) {
-          const baseAddress = 'ELF_' + wallet.portkeyInfo?.accounts?.tDVW + '_';
-          accounts[SupportedELFChainId.AELF] = [baseAddress + SupportedELFChainId.AELF];
-          accounts[SupportedELFChainId.tDVW] = [baseAddress + SupportedELFChainId.tDVW];
+        const isMainChainAddress = wallet.portkeyInfo?.accounts?.[SupportedChainId.mainChain];
+        const istSideChainAddress = wallet.portkeyInfo?.accounts?.[SupportedChainId.sideChain];
+
+        if (accounts && isMainChainAddress && !istSideChainAddress) {
+          const baseAddress =
+            'ELF_' + wallet.portkeyInfo?.accounts?.[SupportedChainId.mainChain] + '_';
+          accounts[SupportedChainId.mainChain] = [baseAddress + SupportedChainId.mainChain];
+          accounts[SupportedChainId.sideChain] = [baseAddress + SupportedChainId.sideChain];
+        } else if (accounts && !isMainChainAddress && istSideChainAddress) {
+          const baseAddress =
+            'ELF_' + wallet.portkeyInfo?.accounts?.[SupportedChainId.sideChain] + '_';
+          accounts[SupportedChainId.mainChain] = [baseAddress + SupportedChainId.mainChain];
+          accounts[SupportedChainId.sideChain] = [baseAddress + SupportedChainId.sideChain];
         }
-        if (isAELFAddress && istDVWAddress) {
-          accounts[SupportedELFChainId.AELF] = [
-            'ELF_' + isAELFAddress + '_' + SupportedELFChainId.AELF,
+        if (isMainChainAddress && istSideChainAddress) {
+          accounts[SupportedChainId.mainChain] = [
+            'ELF_' + isMainChainAddress + '_' + SupportedChainId.mainChain,
           ];
-          accounts[SupportedELFChainId.tDVW] = [
-            'ELF_' + istDVWAddress + '_' + SupportedELFChainId.tDVW,
+          accounts[SupportedChainId.sideChain] = [
+            'ELF_' + istSideChainAddress + '_' + SupportedChainId.sideChain,
           ];
         }
       }
@@ -158,7 +161,7 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
 
   return (
     <CommonButton {...props} onClick={handleLogin}>
-      Login In
+      Log In
     </CommonButton>
   );
 }

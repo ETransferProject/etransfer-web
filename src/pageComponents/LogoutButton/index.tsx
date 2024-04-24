@@ -1,27 +1,18 @@
 import { useCallback } from 'react';
 import CommonButton, { CommonButtonSize, CommonButtonType } from 'components/CommonButton';
-import { useResetStore } from 'store/Provider/hooks';
-import { useWebLogin, useWebLoginEvent, WebLoginEvents } from 'aelf-web-login';
-import { useAppDispatch } from 'store/Provider/hooks';
-import { setV2DisconnectedAction } from 'store/reducers/portkeyWallet/actions';
-import { setSwitchVersionAction } from 'store/reducers/common/slice';
-import { setHandleReset } from 'store/reducers/records/slice';
+import { useWebLogin } from 'aelf-web-login';
 
-export default function LogoutButton() {
-  const resetStore = useResetStore();
+type TLogoutButtonType = {
+  setIsOpen?: (value: boolean) => void;
+};
+
+export default function LogoutButton({ setIsOpen }: TLogoutButtonType) {
   const { logout } = useWebLogin();
-  const dispatch = useAppDispatch();
 
   const handleLogoutWallet = useCallback(async () => {
     await logout();
-  }, [logout]);
-
-  useWebLoginEvent(WebLoginEvents.LOGOUT, () => {
-    dispatch(setV2DisconnectedAction());
-    dispatch(setSwitchVersionAction(undefined));
-    dispatch(setHandleReset());
-    resetStore();
-  });
+    setIsOpen && setIsOpen(false);
+  }, [logout, setIsOpen]);
 
   return (
     <CommonButton

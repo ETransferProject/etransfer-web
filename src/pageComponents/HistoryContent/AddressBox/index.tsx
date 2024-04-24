@@ -12,7 +12,8 @@ import {
   Avax,
 } from 'assets/images';
 import { useCallback } from 'react';
-import { BitNetworkType, OtherEXPLORE_URL } from 'constants/network';
+import { BlockchainNetworkType, ExploreUrlType } from 'constants/network';
+import { SupportedChainId, defaultNullValue } from 'constants/index';
 import Copy, { CopySize } from 'components/Copy';
 import { getOmittedStr } from 'utils/calculate';
 import { openWithBlank, getExploreLink, getOtherExploreLink } from 'utils/common';
@@ -20,14 +21,15 @@ import { SupportedELFChainId } from 'constants/index';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
 import { useAccounts } from 'hooks/portkeyWallet';
+import { BusinessType } from 'types/api';
 
-type AddressBoxProps = {
+type TAddressBoxProps = {
   type: string;
   fromAddress: string;
   toAddress: string;
   network: string;
-  fromChanId: SupportedELFChainId;
-  toChanId: SupportedELFChainId;
+  fromChainId: SupportedELFChainId;
+  toChainId: SupportedELFChainId;
   orderType: string;
   fromToAddress: string;
   toFromAddress: string;
@@ -38,32 +40,32 @@ export default function AddressBox({
   fromAddress,
   toAddress,
   network,
-  fromChanId,
-  toChanId,
+  fromChainId,
+  toChainId,
   orderType,
-}: AddressBoxProps) {
+}: TAddressBoxProps) {
   const { isMobilePX } = useCommonState();
   const accounts = useAccounts();
 
   const addressIcon = useCallback(() => {
     switch (network) {
-      case BitNetworkType.AELF:
+      case BlockchainNetworkType.AELF:
         return <Aelf />;
-      case BitNetworkType.Ethereum:
+      case BlockchainNetworkType.Ethereum:
         return <Ethereum />;
-      case BitNetworkType.Polygon:
+      case BlockchainNetworkType.Polygon:
         return <Polygon />;
-      case BitNetworkType.Arbitrum:
+      case BlockchainNetworkType.Arbitrum:
         return <Arbitrum />;
-      case BitNetworkType.Optimism:
+      case BlockchainNetworkType.Optimism:
         return <Optimism />;
-      case BitNetworkType.Solana:
+      case BlockchainNetworkType.Solana:
         return <Solana />;
-      case BitNetworkType.Tron:
+      case BlockchainNetworkType.Tron:
         return <Tron />;
-      case BitNetworkType.Binance:
+      case BlockchainNetworkType.Binance:
         return <Binance />;
-      case BitNetworkType.Avax:
+      case BlockchainNetworkType.Avax:
         return <Avax />;
       default:
         // when not match network's type, display first character and uppercase
@@ -72,15 +74,18 @@ export default function AddressBox({
   }, [network]);
 
   const calcAddress = useCallback(() => {
-    if (network === BitNetworkType.AELF) {
+    if (network === BlockchainNetworkType.AELF) {
       // when fromAddress and toAddress all null, need accounts default address
-      let chanId: SupportedELFChainId = orderType === 'Deposit' ? toChanId : fromChanId;
-      chanId = chanId || SupportedELFChainId.tDVW;
-      if (accounts && accounts[chanId] && accounts[chanId]?.[0]) {
-        // default accounts[chanId]?.[0] , if not exist, use AELF
-        return accounts[chanId]?.[0] || accounts[SupportedELFChainId.AELF]?.[0] || '--';
+      let chainId: SupportedELFChainId =
+        orderType === BusinessType.Deposit ? toChainId : fromChainId;
+      chainId = chainId || SupportedChainId.sideChain;
+      if (accounts && accounts[chainId] && accounts[chainId]?.[0]) {
+        // default accounts[chainId]?.[0] , if not exist, use AELF
+        return (
+          accounts[chainId]?.[0] || accounts[SupportedELFChainId.AELF]?.[0] || defaultNullValue
+        );
       }
-      return '--';
+      return defaultNullValue;
     }
 
     switch (orderType + type) {
@@ -93,28 +98,32 @@ export default function AddressBox({
       case 'WithdrawTo':
         return toAddress;
       default:
-        return '--';
+        return defaultNullValue;
     }
-  }, [type, network, accounts, orderType, toChanId, fromChanId, fromAddress, toAddress]);
+  }, [type, network, accounts, orderType, toChainId, fromChainId, fromAddress, toAddress]);
 
   const handleAddressClick = useCallback(() => {
     // link to Deposit: toTransfer.chainId and Withdraw: fromTransfer.chainId
-    if (network === BitNetworkType.AELF) {
+    if (network === BlockchainNetworkType.AELF) {
       openWithBlank(
-        getExploreLink(calcAddress(), 'address', orderType === 'Deposit' ? toChanId : fromChanId),
+        getExploreLink(
+          calcAddress(),
+          'address',
+          orderType === BusinessType.Deposit ? toChainId : fromChainId,
+        ),
       );
       return;
     }
     openWithBlank(
-      getOtherExploreLink(calcAddress(), network as keyof typeof OtherEXPLORE_URL, 'address'),
+      getOtherExploreLink(calcAddress(), network as keyof typeof ExploreUrlType, 'address'),
     );
-  }, [orderType, fromChanId, toChanId, calcAddress, network]);
+  }, [orderType, fromChainId, toChainId, calcAddress, network]);
 
   return (
     <div
       className={clsx(
-        styles['addressBox'],
-        isMobilePX ? styles['mobil-addressBox'] : styles['web-addressBox'],
+        styles['address-box'],
+        isMobilePX ? styles['mobile-address-box'] : styles['web-address-box'],
       )}>
       {addressIcon()}
       <CommonTooltip title={calcAddress()} trigger={'hover'}>

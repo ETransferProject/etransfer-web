@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import CommonAddress from 'components/CommonAddress';
 import styles from './styles.module.scss';
-import { CHAIN_LIST } from 'constants/index';
+import { SupportedChainId } from 'constants/index';
 import { CopySize } from 'components/Copy';
 import { SynchronizingAddress } from 'constants/chain';
 import { useAccounts } from 'hooks/portkeyWallet';
@@ -16,16 +16,20 @@ export default function Address({ hideBorder }: AddressProps) {
 
   const accountsList = useMemo(() => {
     const temp = [];
-    if (accounts?.AELF) {
+    if (accounts?.[SupportedChainId.mainChain]) {
+      const defaultAddress = accounts?.[SupportedChainId.mainChain];
+      const arrayAddress = accounts?.[SupportedChainId.mainChain]?.[0];
       temp.push({
-        label: CHAIN_LIST[0].label,
-        value: typeof accounts?.AELF === 'string' ? accounts?.AELF : accounts?.AELF[0] || '',
+        label: SupportedChainId.mainChain,
+        value: typeof defaultAddress === 'string' ? defaultAddress : arrayAddress || '',
       });
     }
-    if (accounts?.tDVW) {
+    if (accounts?.[SupportedChainId.sideChain]) {
+      const defaultAddress = accounts?.[SupportedChainId.sideChain];
+      const arrayAddress = accounts?.[SupportedChainId.sideChain]?.[0];
       temp.push({
-        label: CHAIN_LIST[1].label,
-        value: typeof accounts?.tDVW === 'string' ? accounts?.tDVW : accounts?.tDVW[0] || '',
+        label: SupportedChainId.sideChain,
+        value: typeof defaultAddress === 'string' ? defaultAddress : arrayAddress || '',
       });
     }
     return temp;

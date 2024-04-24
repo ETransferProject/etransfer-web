@@ -16,7 +16,7 @@ import {
 import { NetworkName } from 'constants/network';
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
-import { logoIcon } from 'constants/wallet';
+import { LogoIconBase64 } from 'constants/wallet';
 
 const WebLoginPortkeyProvider = dynamic(
   async () => {
@@ -76,12 +76,12 @@ export default function Providers({ children }: { children: ReactNode }) {
         }}
         portkey={{
           design: 'SocialDesign',
-          autoShowUnlock: true,
+          autoShowUnlock: false,
           checkAccountInfoSync: true,
         }}
         commonConfig={{
           showClose: true,
-          iconSrc: logoIcon,
+          iconSrc: LogoIconBase64,
           title: 'Log In to ETransfer',
         }}
         extraWallets={['discover']}
@@ -91,9 +91,9 @@ export default function Providers({ children }: { children: ReactNode }) {
           autoLogoutOnNetworkMismatch: true,
           autoLogoutOnAccountMismatch: true,
           autoLogoutOnChainMismatch: true,
-          onPluginNotFound: (openStore) => {
-            console.log('openStore:', openStore);
-          },
+          // onPluginNotFound: (openStore) => {
+          //   console.log('openStore:', openStore);
+          // },
         }}>
         {children}
       </WebLoginProviderDynamic>

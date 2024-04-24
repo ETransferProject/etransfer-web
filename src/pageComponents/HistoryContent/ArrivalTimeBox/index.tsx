@@ -4,13 +4,14 @@ import clsx from 'clsx';
 import { RecordsStatus } from 'types/records';
 import moment from 'moment';
 import { useCommonState } from 'store/Provider/hooks';
+import { defaultNullValue } from 'constants/index';
 
-type ArrivalTimeBoxProps = {
+type TArrivalTimeBoxProps = {
   arrivalTime: number;
   status: string;
 };
 
-export default function ArrivalTimeBox({ arrivalTime, status }: ArrivalTimeBoxProps) {
+export default function ArrivalTimeBox({ arrivalTime, status }: TArrivalTimeBoxProps) {
   const { isMobilePX } = useCommonState();
 
   const content = useMemo(() => {
@@ -24,16 +25,14 @@ export default function ArrivalTimeBox({ arrivalTime, status }: ArrivalTimeBoxPr
         return (
           <>
             {minutes > 0 ? (
-              <span>
-                ~ in {minutes} {minutes === 1 ? 'min' : 'mins'}
-              </span>
+              <span>{`~ in ${minutes} ${minutes === 1 ? 'min' : 'mins'}`}</span>
             ) : (
               'Arriving soon'
             )}
           </>
         );
       case RecordsStatus.Failed:
-        return '--';
+        return defaultNullValue;
       case RecordsStatus.Succeed:
         return (
           <div className={clsx(styles['year-hour-wrapper'])}>
@@ -49,8 +48,8 @@ export default function ArrivalTimeBox({ arrivalTime, status }: ArrivalTimeBoxPr
   return (
     <div
       className={clsx(
-        styles['arrivalTimeBox'],
-        isMobilePX ? styles['mobile-arrivalTimeBox'] : styles['web-arrivalTimeBox'],
+        styles['arrival-time-box'],
+        isMobilePX ? styles['mobile-arrival-time-box'] : styles['web-arrival-time-box'],
       )}>
       {content}
     </div>

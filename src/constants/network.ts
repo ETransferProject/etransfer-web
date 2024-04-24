@@ -4,7 +4,7 @@ export enum NetworkName {
   test3 = 'test3',
 }
 
-export enum BitNetworkType {
+export enum BlockchainNetworkType {
   AELF = 'AELF',
   SETH = 'SETH',
   Ethereum = 'ETH',
@@ -17,7 +17,7 @@ export enum BitNetworkType {
   Avax = 'AVAXC',
 }
 
-export enum OtherEXPLORE_URL {
+export enum ExploreUrlType {
   AELF = 'https://explorer.aelf.io',
   SETH = 'https://sepolia.etherscan.io',
   ETH = 'https://etherscan.io',

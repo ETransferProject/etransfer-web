@@ -6,6 +6,7 @@ import CommonModalSwitchDrawer, {
 import styles from './styles.module.scss';
 import { WithdrawInfoSuccess } from 'types/deposit';
 import { valueFixed2LessThanMin } from 'utils/calculate';
+import { defaultNullValue } from 'constants/index';
 
 interface SuccessModalProps {
   withdrawInfo: WithdrawInfoSuccess;
@@ -28,7 +29,7 @@ export default function SuccessModal({ withdrawInfo, modalProps }: SuccessModalP
           </div>
           <div className={styles['value']}>
             <span className={styles['value-center']}>
-              {withdrawInfo.receiveAmount || '--'} {withdrawInfo.symbol}
+              {withdrawInfo.receiveAmount || defaultNullValue} {withdrawInfo.symbol}
             </span>
             <div className={clsx(styles['receive-amount-usd'])}>
               {valueFixed2LessThanMin(withdrawInfo.receiveAmountUsd, '$ ')}

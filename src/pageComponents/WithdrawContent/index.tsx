@@ -27,7 +27,7 @@ import {
   useUserActionState,
 } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { ADDRESS_MAP, IChainNameItem } from 'constants/index';
+import { ADDRESS_MAP, IChainNameItem, defaultNullValue } from 'constants/index';
 import { createWithdrawOrder, getNetworkList, getWithdrawInfo } from 'utils/api/deposit';
 import {
   CONTRACT_ADDRESS,
@@ -198,7 +198,7 @@ export default function WithdrawContent() {
               </span>
             </>
           ) : (
-            '--'
+            defaultNullValue
           )}
           <RemainingQuato title={RemainingWithdrawalQuotaTooltip}></RemainingQuato>
         </span>
@@ -852,14 +852,14 @@ export default function WithdrawContent() {
 
   const renderTransactionFeeValue = () => {
     if (!withdrawInfo.transactionFee || !withdrawInfo.aelfTransactionFee) {
-      return isTransactionFeeLoading ? <SimpleLoading /> : '--';
+      return isTransactionFeeLoading ? <SimpleLoading /> : defaultNullValue;
     } else {
       return (
         <>
           {isTransactionFeeLoading && <SimpleLoading />}
           <span className={styles['transaction-fee-value-data']}>
             {!isTransactionFeeLoading &&
-              `${(!isSuccessModalOpen && withdrawInfo.transactionFee) || '--'} `}
+              `${(!isSuccessModalOpen && withdrawInfo.transactionFee) || defaultNullValue} `}
             <span
               className={clsx(
                 styles['transaction-fee-value-data-default'],
@@ -867,7 +867,7 @@ export default function WithdrawContent() {
               )}>
               {withdrawInfo.transactionUnit}
             </span>
-            + {(!isSuccessModalOpen && withdrawInfo.aelfTransactionFee) || '--'}
+            + {(!isSuccessModalOpen && withdrawInfo.aelfTransactionFee) || defaultNullValue}
             {withdrawInfo.aelfTransactionUnit}
           </span>
         </>
@@ -1055,7 +1055,8 @@ export default function WithdrawContent() {
                     styles['info-value-big-font'],
                   )}>
                   {isTransactionFeeLoading && <SimpleLoading />}
-                  {!isTransactionFeeLoading && `${(!isSuccessModalOpen && receiveAmount) || '--'} `}
+                  {!isTransactionFeeLoading &&
+                    `${(!isSuccessModalOpen && receiveAmount) || defaultNullValue} `}
                   <span className={clsx(styles['info-unit'])}>{withdrawInfo.transactionUnit}</span>
                 </div>
               </div>
