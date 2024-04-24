@@ -16,8 +16,7 @@ import {
 import { NetworkName } from 'constants/network';
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
-
-import { LogoIconBase64 } from 'constants/wallet';
+import { EtransferLogoIconBase64 } from 'constants/wallet';
 
 const WalletProviderDynamic = dynamic(
   async () => {
@@ -90,7 +89,7 @@ export default function Providers({ children }: { children: ReactNode }) {
         }}
         commonConfig={{
           showClose: true,
-          iconSrc: LogoIconBase64,
+          iconSrc: EtransferLogoIconBase64,
           title: 'Log In to ETransfer',
         }}
         extraWallets={['discover']}
