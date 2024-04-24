@@ -15,7 +15,7 @@ import {
 import { CHAIN_LIST } from 'constants/index';
 import clsx from 'clsx';
 import { getTokenList } from 'utils/api/deposit';
-import { getRecordStatus, postRecordRead } from 'utils/api/records';
+// import { getRecordStatus, postRecordRead } from 'utils/api/records';
 import { BusinessType } from 'types/api';
 import { setCurrentSymbol, setTokenList } from 'store/reducers/token/slice';
 import { useWithdraw } from 'hooks/withdraw';
@@ -106,11 +106,11 @@ export default function Content() {
     if (currentActiveMenuKey === SideMenuKey.History) {
       dispatch(setIsShowRedDot(false));
       // update red dot status: had reded
-      await postRecordRead();
+      // await postRecordRead();
       return;
     }
-    const res = await getRecordStatus();
-    dispatch(setIsShowRedDot(res.status));
+    // const res = await getRecordStatus();
+    // dispatch(setIsShowRedDot(res.status));
   }, [dispatch, currentActiveMenuKey]);
 
   useEffect(() => {
