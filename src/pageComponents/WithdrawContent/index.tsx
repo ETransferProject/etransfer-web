@@ -76,7 +76,7 @@ import { InitWithdrawTokenState } from 'store/reducers/token/slice';
 import RemainingQuato from './RemainingQuato';
 import { getRecordStatus } from 'utils/api/records';
 import { setIsShowRedDot } from 'store/reducers/common/slice';
-import { useWalletContext } from 'provider/webLoginProvider';
+import { useWalletContext } from 'provider/walletProvider';
 
 enum ValidateStatus {
   Error = 'error',
