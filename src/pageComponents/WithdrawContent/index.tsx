@@ -692,7 +692,7 @@ export default function WithdrawContent() {
 
       if (approveRes && wallet?.getSignature) {
         const transaction = await createTransferTokenTransaction({
-          getSignature: wallet?.getSignature,
+          getSignature: (params) => wallet?.getSignature(params),
           caContractAddress:
             ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.CA],
           eTransferContractAddress: currentTokenAddress,

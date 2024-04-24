@@ -20,6 +20,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useReducer,
   useRef,
@@ -95,24 +96,25 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       chainId: SupportedChainId.mainChain,
       rpcUrl: AelfReact[SupportedChainId.mainChain].rpcUrl,
     });
-  const { callSendMethod: callSideChainSendMethod, callViewMethod: callSideChaiViewMethod } =
+  const { callSendMethod: callSideChainSendMethod, callViewMethod: callSideChainViewMethod } =
     useCallContract({
       chainId: SupportedChainId.sideChain,
-      rpcUrl: AelfReact[SupportedChainId.mainChain].rpcUrl,
+      rpcUrl: AelfReact[SupportedChainId.sideChain].rpcUrl,
     });
 
-  useWebLoginEvent(WebLoginEvents.LOGINED, () => {
+  const onInitWallet = useCallback(() => {
+    const _webLoginContext = webLoginContextRef.current;
     const wallet = new Wallet({
-      walletInfo: webLoginContext.wallet,
-      walletType: webLoginContext.walletType,
-      callContract: webLoginContext.callContract,
-      getSignature: webLoginContext.getSignature,
+      walletInfo: _webLoginContext.wallet,
+      walletType: _webLoginContext.walletType,
+      callContract: _webLoginContext.callContract,
+      getSignature: _webLoginContext.getSignature,
     });
     dispatch({
       type: SET_WALLET,
       payload: wallet,
     });
-    wallet.setWebLoginContext(webLoginContext);
+    wallet.setWebLoginContext(_webLoginContext);
     wallet.setContractMethod([
       {
         chain: SupportedChainId.mainChain,
@@ -122,10 +124,23 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       {
         chain: SupportedChainId.sideChain,
         sendMethod: callSideChainSendMethod,
-        viewMethod: callSideChaiViewMethod,
+        viewMethod: callSideChainViewMethod,
       },
     ]);
-  });
+  }, [
+    callMainChainSendMethod,
+    callMainChainViewMethod,
+    callSideChainSendMethod,
+    callSideChainViewMethod,
+  ]);
+
+  // WebLoginEvents.LOGINED - can not get wallet info.
+  // Please use webLoginContext.loginState===WebLoginState.logined
+  // useWebLoginEvent(WebLoginEvents.LOGINED, onInitWallet);
+  useEffect(() => {
+    if (webLoginContext.loginState !== WebLoginState.logined) return;
+    onInitWallet();
+  }, [onInitWallet, webLoginContext.loginState]);
 
   const onLoginError = useCallback((error: any) => {
     console.log('onLoginError', error);

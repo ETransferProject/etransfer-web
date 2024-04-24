@@ -75,7 +75,6 @@ class Wallet implements IWallet {
   }
 
   getSignature(params: TSignatureParams): Promise<SignatureData> {
-    console.log('walletInfo', this.walletInfo);
     return this._getSignature({
       appName: APP_NAME || '',
       address: this.walletInfo.address,
