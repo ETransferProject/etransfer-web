@@ -46,10 +46,7 @@ export const CommonSlice = createSlice({
       state.currentVersion = action.payload;
     },
     setIsShowRedDot: (state, action) => {
-      // state.isShowRedDot = action.payload;
-      console.log(action);
-      // todo: next version, now defaule is false
-      state.isShowRedDot = false;
+      state.isShowRedDot = action.payload;
     },
   },
 });
