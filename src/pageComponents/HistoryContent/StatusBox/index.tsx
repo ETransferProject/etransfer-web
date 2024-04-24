@@ -47,7 +47,7 @@ export default function StatusBox({ status, network }: StatusBoxProps) {
     switch (status) {
       case RecordsStatus.Processing:
         return (
-          <Tooltip title={ProcessingTipMessage + network}>
+          <Tooltip title={!isMobilePX && ProcessingTipMessage + network}>
             <div className={styles['status-box']} onClick={() => handleClick()}>
               <TimeFilled />
               <span className={styles.processing}>{RecordsStatusI18n.Processing}</span>
@@ -59,7 +59,7 @@ export default function StatusBox({ status, network }: StatusBoxProps) {
         return <div className={styles['status-box']}>{RecordsStatusI18n.Succeed}</div>;
       case RecordsStatus.Failed:
         return (
-          <Tooltip title={FailedTipMessage} placement="top">
+          <Tooltip title={!isMobilePX && FailedTipMessage} placement="top">
             <div className={styles['status-box']} onClick={() => handleClick()}>
               <CloseFilled />
               <span className={styles.failed}>{RecordsStatusI18n.Failed}</span>
@@ -70,7 +70,7 @@ export default function StatusBox({ status, network }: StatusBoxProps) {
       default:
         return null;
     }
-  }, [status, handleClick, network]);
+  }, [status, handleClick, network, isMobilePX]);
 
   return (
     <div className={styles['status-wrapper']}>
@@ -83,7 +83,7 @@ export default function StatusBox({ status, network }: StatusBoxProps) {
         title={title}
         open={isMobildOpenModal}
         onCancel={() => setIsMobildOpenModal(false)}>
-        <div className={styles['tip-message-box']}>{tipMessage}</div>
+        <div>{tipMessage}</div>
       </CommonModal>
     </div>
   );
