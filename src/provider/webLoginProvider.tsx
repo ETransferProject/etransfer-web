@@ -25,7 +25,6 @@ import {
   useReducer,
   useRef,
 } from 'react';
-import { logoIcon } from 'constants/wallet';
 import {
   WebLoginEvents,
   WebLoginInterface,
@@ -38,6 +37,7 @@ import Wallet from 'contract/webLogin';
 import { useLocation } from 'react-use';
 import { singleMessage } from '@portkey/did-ui-react';
 import { IWallet } from 'contract/types';
+import { LogoIconBase64 } from 'constants/wallet';
 
 export const DESTROY = 'DESTROY';
 const SET_WALLET = 'SET_WALLET';
@@ -215,12 +215,12 @@ export default function Providers({ children }: { children: ReactNode }) {
         }}
         portkey={{
           design: 'SocialDesign',
-          autoShowUnlock: true,
+          autoShowUnlock: false,
           checkAccountInfoSync: true,
         }}
         commonConfig={{
           showClose: true,
-          iconSrc: logoIcon,
+          iconSrc: LogoIconBase64,
           title: 'Log In to ETransfer',
         }}
         extraWallets={['discover']}
@@ -230,9 +230,9 @@ export default function Providers({ children }: { children: ReactNode }) {
           autoLogoutOnNetworkMismatch: true,
           autoLogoutOnAccountMismatch: true,
           autoLogoutOnChainMismatch: true,
-          onPluginNotFound: (openStore) => {
-            console.log('openStore:', openStore);
-          },
+          // onPluginNotFound: (openStore) => {
+          //   console.log('openStore:', openStore);
+          // },
         }}>
         <WalletProvider>{children}</WalletProvider>
       </WebLoginProviderDynamic>

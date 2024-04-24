@@ -15,11 +15,12 @@ import CommonDrawer from 'components/CommonDrawer';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import { Select, DatePicker } from 'antd';
 import type { Moment } from 'moment';
-import { RecordsContentParams, BusinessType } from 'types/api';
+import { TRecordsContentParams, BusinessType } from 'types/api';
+import { defaultNullValue } from 'constants/index';
 
 const dateFormat = 'YYYY-MM-DD';
 
-export default function Filter({ requestRecordsList }: RecordsContentParams) {
+export default function Filter({ requestRecordsList }: TRecordsContentParams) {
   const dispatch = useAppDispatch();
   const { type, status, timestamp } = useRecordsState();
   const [isShowFilterDrawer, setIsShowFilterDrawer] = useState(false);
@@ -150,13 +151,13 @@ export default function Filter({ requestRecordsList }: RecordsContentParams) {
               timestamp[0] &&
               timestamp[0].format &&
               timestamp[0].format(dateFormat)) ||
-              '-- '}
+              `${defaultNullValue} `}
             {' - '}
             {(timestamp &&
               timestamp[1] &&
               timestamp[1].format &&
               timestamp[1].format(dateFormat)) ||
-              ' --'}
+              ` ${defaultNullValue}`}
             <CloseSmall
               className={styles['filter-close-icon']}
               onClick={() => closeItem('timestamp')}

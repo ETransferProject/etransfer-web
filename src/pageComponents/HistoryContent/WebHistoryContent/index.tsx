@@ -1,8 +1,8 @@
 import WebHistoryHeader from './WebHistoryHeader';
 import WebHistoryTable from './WebHistoryTable';
-import { RecordsContentParams } from 'types/api';
+import { TRecordsContentParams } from 'types/api';
 
-export default function WebHistoryContent({ requestRecordsList }: RecordsContentParams) {
+export default function WebHistoryContent({ requestRecordsList }: TRecordsContentParams) {
   return (
     <div>
       <WebHistoryHeader requestRecordsList={requestRecordsList} />

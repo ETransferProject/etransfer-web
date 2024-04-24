@@ -10,12 +10,12 @@ import ArrivalTimeBox from 'pageComponents/HistoryContent/ArrivalTimeBox';
 import TokenBox from 'pageComponents/HistoryContent/TokenBox';
 import AmountBox from 'pageComponents/HistoryContent/AmountBox';
 import AddressBox from 'pageComponents/HistoryContent/AddressBox';
-import { RecordsContentParams } from 'types/api';
+import { TRecordsContentParams } from 'types/api';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebounceCallback } from 'hooks';
 import { setSkipCount, setHasMore } from 'store/reducers/records/slice';
 
-export default function HistoryCardItem({ requestRecordsList }: RecordsContentParams) {
+export default function HistoryCardItem({ requestRecordsList }: TRecordsContentParams) {
   const dispatch = useAppDispatch();
   const { recordsList, hasMore, maxResultCount, totalCount, skipCount } = useRecordsState();
 
@@ -39,11 +39,11 @@ export default function HistoryCardItem({ requestRecordsList }: RecordsContentPa
         fromNetwork: fromTransfer.network,
         fromAddress: fromTransfer.fromAddress,
         fromToAddress: fromTransfer.toAddress,
-        fromChanId: fromTransfer.chainId,
+        fromChainId: fromTransfer.chainId,
         toNetwork: toTransfer.network,
         toFromAddress: toTransfer.fromAddress,
         toAddress: toTransfer.toAddress,
-        toChanId: toTransfer.chainId,
+        toChainId: toTransfer.chainId,
         feeInfo: toTransfer.feeInfo,
       });
     });
@@ -85,8 +85,8 @@ export default function HistoryCardItem({ requestRecordsList }: RecordsContentPa
                   status={recordItem.status}
                   address={recordItem.fromAddress}
                   network={recordItem.fromNetwork}
-                  fromChanId={recordItem.fromChanId}
-                  toChanId={recordItem.toChanId}
+                  fromChainId={recordItem.fromChainId}
+                  toChainId={recordItem.toChainId}
                   orderType={recordItem.orderType}
                 />
                 <span className={clsx(styles['records-card-item-order-type'])}>
@@ -103,7 +103,7 @@ export default function HistoryCardItem({ requestRecordsList }: RecordsContentPa
                 <TokenBox symbol={recordItem.symbol} />
               </div>
               <div className={styles['records-card-item-line']}>
-                <span className={styles['records-card-item-label']}>Amount Send</span>
+                <span className={styles['records-card-item-label']}>Amount Sent</span>
                 <AmountBox amount={recordItem.sendingAmount} token={recordItem.symbol} />
               </div>
               <div className={styles['records-card-item-line']}>
@@ -117,8 +117,8 @@ export default function HistoryCardItem({ requestRecordsList }: RecordsContentPa
                   fromAddress={recordItem.fromAddress}
                   toAddress={recordItem.toAddress}
                   network={recordItem.fromNetwork}
-                  fromChanId={recordItem.fromChanId}
-                  toChanId={recordItem.toChanId}
+                  fromChainId={recordItem.fromChainId}
+                  toChainId={recordItem.toChainId}
                   orderType={recordItem.orderType}
                   fromToAddress={recordItem.fromToAddress}
                   toFromAddress={recordItem.toFromAddress}
@@ -131,8 +131,8 @@ export default function HistoryCardItem({ requestRecordsList }: RecordsContentPa
                   fromAddress={recordItem.fromAddress}
                   toAddress={recordItem.toAddress}
                   network={recordItem.toNetwork}
-                  fromChanId={recordItem.fromChanId}
-                  toChanId={recordItem.toChanId}
+                  fromChainId={recordItem.fromChainId}
+                  toChainId={recordItem.toChainId}
                   orderType={recordItem.orderType}
                   fromToAddress={recordItem.fromToAddress}
                   toFromAddress={recordItem.toFromAddress}

@@ -1,3 +1,5 @@
+import { defaultNullValue } from 'constants/index';
+
 export const DEPOSIT_ADDRESS_LABEL = 'Deposit Address';
 
 export const MINIMUM_DEPOSIT = 'Minimum Deposit';
@@ -11,5 +13,5 @@ export const DepositRetryBtnText = 'Retry';
 export const InitDepositInfo = {
   depositAddress: '',
   minAmount: '',
-  minAmountUsd: '--',
+  minAmountUsd: defaultNullValue,
 };

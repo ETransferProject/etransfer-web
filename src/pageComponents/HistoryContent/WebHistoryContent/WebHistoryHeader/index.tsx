@@ -5,14 +5,14 @@ import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import { setType, setStatus, setTimestamp, setSkipCount } from 'store/reducers/records/slice';
 import { RecordsRequestType, RecordsRequestStatus, RecordsStatusI18n } from 'types/records';
 import { useCallback } from 'react';
-import { RangeValue, RecordsContentParams, BusinessType } from 'types/api';
+import { RangeValue, TRecordsContentParams, BusinessType } from 'types/api';
 import { Reset } from 'assets/images';
 import { SwapRightDefault, SwapRightSelected } from 'assets/images';
 
 const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY-MM-DD';
 
-export default function WebRecordsHeader({ requestRecordsList }: RecordsContentParams) {
+export default function WebRecordsHeader({ requestRecordsList }: TRecordsContentParams) {
   const dispatch = useAppDispatch();
   const { type, status, timestamp } = useRecordsState();
 
