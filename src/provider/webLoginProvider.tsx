@@ -91,9 +91,9 @@ export default function Providers({ children }: { children: ReactNode }) {
           autoLogoutOnNetworkMismatch: true,
           autoLogoutOnAccountMismatch: true,
           autoLogoutOnChainMismatch: true,
-          onPluginNotFound: (openStore) => {
-            console.log('openStore:', openStore);
-          },
+          // onPluginNotFound: (openStore) => {
+          //   console.log('openStore:', openStore);
+          // },
         }}>
         {children}
       </WebLoginProviderDynamic>

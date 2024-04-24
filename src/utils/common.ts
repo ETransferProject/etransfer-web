@@ -1,5 +1,5 @@
 import { ChainId } from 'types';
-import { EXPLORE_CONFIG, SupportedELFChainId } from 'constants/index';
+import { EXPLORE_CONFIG } from 'constants/index';
 import { ExploreUrlType } from 'constants/network';
 import AElf from 'aelf-sdk';
 
