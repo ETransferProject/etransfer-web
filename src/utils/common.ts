@@ -14,11 +14,9 @@ export const sleep = (time: number) => {
 export function getExploreLink(
   data: string,
   type: 'transaction' | 'token' | 'address' | 'block',
-  chainId?: ChainId,
+  chainId: ChainId,
 ): string {
-  const target =
-    (chainId && (chainId.toUpperCase() as 'AELF' | 'TDVV' | 'TDVW')) || SupportedELFChainId.AELF;
-  const prefix = EXPLORE_CONFIG[target];
+  const prefix = EXPLORE_CONFIG[chainId];
   switch (type) {
     case 'transaction': {
       return `${prefix}tx/${data}`;
