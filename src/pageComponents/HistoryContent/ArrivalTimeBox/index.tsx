@@ -37,6 +37,7 @@ export default function ArrivalTimeBox({ arrivalTime, status }: TArrivalTimeBoxP
         return (
           <div className={clsx(styles['year-hour-wrapper'])}>
             <span className={styles['year']}>{yearMonthDay}</span>
+            &nbsp;
             <span className={styles['hour']}>{hourMinuteSecond}</span>
           </div>
         );

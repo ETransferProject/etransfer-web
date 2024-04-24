@@ -12,7 +12,7 @@ import { useWebLogin, WalletType } from 'aelf-web-login';
 
 export default function SelectWallet() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-  const [isShowAddress, setIsShowAddress] = useState<boolean>(false);
+  const [isShowAddress, setIsShowAddress] = useState<boolean>(true);
   const { isMobilePX } = useCommonState();
   const router = useRouter();
   const isActive = useIsActive();

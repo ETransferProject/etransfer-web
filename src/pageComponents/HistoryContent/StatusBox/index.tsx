@@ -18,7 +18,7 @@ type StatusBoxProps = {
 };
 
 export default function StatusBox({ status, network }: StatusBoxProps) {
-  const [isMobildOpenModal, setIsMobildOpenModal] = useState(false);
+  const [isMobileOpenModal, setIsMobileOpenModal] = useState(false);
   const [tipMessage, setTipMessage] = useState('');
   const [title, setTitle] = useState('');
   const { isMobilePX } = useCommonState();
@@ -31,16 +31,18 @@ export default function StatusBox({ status, network }: StatusBoxProps) {
     switch (status) {
       case RecordsStatus.Processing:
         setTipMessage(ProcessingTipMessage + network);
+        setTitle(RecordsStatusI18n.Processing);
         break;
       case RecordsStatus.Failed:
         setTipMessage(FailedTipMessage);
+        setTitle(RecordsStatusI18n.Failed);
         break;
       default:
         setTipMessage('');
+        setTitle('');
         break;
     }
-    setTitle(status);
-    setIsMobildOpenModal(true);
+    setIsMobileOpenModal(true);
   }, [isMobilePX, status, network]);
 
   const content = useMemo(() => {
@@ -79,10 +81,10 @@ export default function StatusBox({ status, network }: StatusBoxProps) {
         width={'300px'}
         hideCancelButton={true}
         okText={'OK'}
-        onOk={() => setIsMobildOpenModal(false)}
+        onOk={() => setIsMobileOpenModal(false)}
         title={title}
-        open={isMobildOpenModal}
-        onCancel={() => setIsMobildOpenModal(false)}>
+        open={isMobileOpenModal}
+        onCancel={() => setIsMobileOpenModal(false)}>
         <div>{tipMessage}</div>
       </CommonModal>
     </div>

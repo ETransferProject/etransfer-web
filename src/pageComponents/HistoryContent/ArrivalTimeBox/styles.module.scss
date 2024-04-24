@@ -15,10 +15,11 @@
 
 .year-hour-wrapper {
   .year {
+    display: inline-block;
     white-space: nowrap;
   }
   .hour {
-    margin-left: 6px;
+    display: inline-block;
     white-space: nowrap;
   }
 }
