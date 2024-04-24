@@ -200,7 +200,7 @@ export default function Filter({ requestRecordsList }: TRecordsContentParams) {
             onChange={setFilterType}
             popupClassName={'drop-wrap'}
             options={[
-              { value: RecordsRequestType.ALL, label: 'ALL' },
+              { value: RecordsRequestType.ALL, label: 'All' },
               { value: RecordsRequestType.Deposits, label: BusinessType.Deposit },
               { value: RecordsRequestType.Withdraws, label: BusinessType.Withdraw },
             ]}
@@ -213,7 +213,7 @@ export default function Filter({ requestRecordsList }: TRecordsContentParams) {
             onChange={setFilterStatus}
             popupClassName={'drop-wrap'}
             options={[
-              { value: RecordsRequestStatus.ALL, label: 'ALL' },
+              { value: RecordsRequestStatus.ALL, label: 'All' },
               { value: RecordsRequestStatus.Processing, label: RecordsStatusI18n.Processing },
               { value: RecordsRequestStatus.Succeed, label: RecordsStatusI18n.Succeed },
               { value: RecordsRequestStatus.Failed, label: RecordsStatusI18n.Failed },

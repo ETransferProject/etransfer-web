@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import CommonButton, { CommonButtonProps } from 'components/CommonButton';
-import { useAppDispatch, useLoading } from 'store/Provider/hooks';
+import { useAppDispatch, useLoading, useUserActionState } from 'store/Provider/hooks';
 import { useCallback } from 'react';
 import { WebLoginState, useWebLogin, WalletType, PortkeyDid } from 'aelf-web-login';
 import { PortkeyVersion } from 'constants/wallet';
@@ -12,9 +12,10 @@ import { AppName, SupportedChainId, SupportedELFChainId } from 'constants/index'
 import { GetCAHolderByManagerParams } from '@portkey/services';
 import AElf from 'aelf-sdk';
 import { recoverPubKey } from 'utils/loginUtils';
-import { queryAuthApi } from 'api/utils';
+import { queryAuthApi, getLocalJWT } from 'api/utils';
 import { useDebounceCallback } from 'hooks';
 import { ChainId } from '@portkey/types';
+import service from 'api/axios';
 
 const pubKeyToAddress = (pubKey: string) => {
   const onceSHAResult = Buffer.from(AElf.utils.sha256(Buffer.from(pubKey, 'hex')), 'hex');
@@ -26,22 +27,59 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
   const dispatch = useAppDispatch();
   const { login, loginState, wallet, getSignature, walletType } = useWebLogin();
   const { setLoading } = useLoading();
+  const { userInfo } = useUserActionState();
 
-  const handleLogin = useCallback(async () => {
-    login();
-  }, [login]);
+  const loginSuccessActive = useCallback(() => {
+    const { name = '', discoverInfo } = wallet;
+    // portkey is string or discover is string[] -> string[]
+    let accounts: Accounts = {};
+    if (walletType === WalletType.discover) {
+      accounts = discoverInfo?.accounts || {};
+    }
+    if (walletType === WalletType.portkey) {
+      // portkey address need manual setup: 'ELF_' + address + '_' + chainId
+      const isMainChainAddress = wallet.portkeyInfo?.accounts?.[SupportedChainId.mainChain];
+      const istSideChainAddress = wallet.portkeyInfo?.accounts?.[SupportedChainId.sideChain];
 
-  const onAccept = useDebounceCallback(async () => {
+      if (accounts && isMainChainAddress && !istSideChainAddress) {
+        const baseAddress =
+          'ELF_' + wallet.portkeyInfo?.accounts?.[SupportedChainId.mainChain] + '_';
+        accounts[SupportedChainId.mainChain] = [baseAddress + SupportedChainId.mainChain];
+        accounts[SupportedChainId.sideChain] = [baseAddress + SupportedChainId.sideChain];
+      } else if (accounts && !isMainChainAddress && istSideChainAddress) {
+        const baseAddress =
+          'ELF_' + wallet.portkeyInfo?.accounts?.[SupportedChainId.sideChain] + '_';
+        accounts[SupportedChainId.mainChain] = [baseAddress + SupportedChainId.mainChain];
+        accounts[SupportedChainId.sideChain] = [baseAddress + SupportedChainId.sideChain];
+      }
+      if (isMainChainAddress && istSideChainAddress) {
+        accounts[SupportedChainId.mainChain] = [
+          'ELF_' + isMainChainAddress + '_' + SupportedChainId.mainChain,
+        ];
+        accounts[SupportedChainId.sideChain] = [
+          'ELF_' + istSideChainAddress + '_' + SupportedChainId.sideChain,
+        ];
+      }
+    }
+    dispatch(
+      setV2ConnectedInfoAction({
+        accounts,
+        name,
+        isActive: true,
+      }),
+    );
+    dispatch(setSwitchVersionAction(PortkeyVersion.v2));
+  }, [dispatch, wallet, walletType]);
+
+  const queryAuth = useCallback(async () => {
     if (!wallet) return;
     if (loginState !== WebLoginState.logined) return;
-
     let caHash = '';
     const address = wallet.address;
     let originChainId: ChainId = SupportedChainId.sideChain;
-
+    setLoading(true);
     if (walletType === WalletType.discover) {
       try {
-        setLoading(true);
         const res = await PortkeyDid.did.services.getHolderInfoByManager({
           caAddresses: [address],
         } as unknown as GetCAHolderByManagerParams);
@@ -53,12 +91,10 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
         return;
       }
     }
-
     if (walletType === WalletType.portkey) {
       caHash = wallet.portkeyInfo?.caInfo?.caHash || '';
       originChainId = wallet.portkeyInfo?.chainId || SupportedChainId.sideChain;
     }
-
     try {
       const plainTextOrigin = `Nonce:${Date.now()}`;
       const plainText: any = Buffer.from(plainTextOrigin).toString('hex').replace('0x', '');
@@ -70,7 +106,7 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
         // portkey sdk
         signInfo = Buffer.from(plainText).toString('hex');
       }
-
+      console.log('getSignature');
       const result = await getSignature({
         appName: AppName,
         address: wallet.address,
@@ -99,51 +135,32 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
       );
       console.log('login success');
       console.log(loginState, wallet);
-      const { name = '', discoverInfo } = wallet;
-      // portkey is string or discover is string[] -> string[]
-      let accounts: Accounts = {};
-      if (walletType === WalletType.discover) {
-        accounts = discoverInfo?.accounts || {};
-      }
-      if (walletType === WalletType.portkey) {
-        // portkey address need manual setup: 'ELF_' + address + '_' + chainId
-        const isMainChainAddress = wallet.portkeyInfo?.accounts?.[SupportedChainId.mainChain];
-        const istSideChainAddress = wallet.portkeyInfo?.accounts?.[SupportedChainId.sideChain];
-
-        if (accounts && isMainChainAddress && !istSideChainAddress) {
-          const baseAddress =
-            'ELF_' + wallet.portkeyInfo?.accounts?.[SupportedChainId.mainChain] + '_';
-          accounts[SupportedChainId.mainChain] = [baseAddress + SupportedChainId.mainChain];
-          accounts[SupportedChainId.sideChain] = [baseAddress + SupportedChainId.sideChain];
-        } else if (accounts && !isMainChainAddress && istSideChainAddress) {
-          const baseAddress =
-            'ELF_' + wallet.portkeyInfo?.accounts?.[SupportedChainId.sideChain] + '_';
-          accounts[SupportedChainId.mainChain] = [baseAddress + SupportedChainId.mainChain];
-          accounts[SupportedChainId.sideChain] = [baseAddress + SupportedChainId.sideChain];
-        }
-        if (isMainChainAddress && istSideChainAddress) {
-          accounts[SupportedChainId.mainChain] = [
-            'ELF_' + isMainChainAddress + '_' + SupportedChainId.mainChain,
-          ];
-          accounts[SupportedChainId.sideChain] = [
-            'ELF_' + istSideChainAddress + '_' + SupportedChainId.sideChain,
-          ];
-        }
-      }
-      dispatch(
-        setV2ConnectedInfoAction({
-          accounts,
-          name,
-          isActive: true,
-        }),
-      );
-      dispatch(setSwitchVersionAction(PortkeyVersion.v2));
+      loginSuccessActive();
+      setLoading(false);
     } catch (error) {
       console.log('queryAuthApi error', error);
       return;
     } finally {
       setLoading(false);
     }
+  }, [dispatch, getSignature, loginState, loginSuccessActive, setLoading, wallet, walletType]);
+
+  const onAccept = useDebounceCallback(async () => {
+    if (!wallet) return;
+    if (loginState !== WebLoginState.logined) return;
+    // 1 if has logined, get token from local storage
+    const { caHash, managerAddress } = userInfo;
+    const key = caHash + managerAddress;
+    const data = getLocalJWT(key);
+    if (data) {
+      const token_type = data.token_type;
+      const access_token = data.access_token;
+      service.defaults.headers.common['Authorization'] = `${token_type} ${access_token}`;
+      loginSuccessActive();
+      return;
+    }
+    // 2 if no data -> default queryAuth
+    queryAuth();
   }, [loginState]);
 
   useEffect(() => {
@@ -152,6 +169,16 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
     // Ignore the impact of the change in onAccept, just watch loginState change
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loginState]);
+
+  const handleLogin = useCallback(async () => {
+    if (loginState === WebLoginState.logining) return;
+    if (loginState === WebLoginState.logined) {
+      onAccept();
+    }
+    if (loginState === WebLoginState.initial || loginState === WebLoginState.lock) {
+      login();
+    }
+  }, [login, loginState, onAccept]);
 
   return (
     <CommonButton {...props} onClick={handleLogin}>

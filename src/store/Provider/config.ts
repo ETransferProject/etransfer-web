@@ -50,7 +50,7 @@ const reduxPersistConfig = {
 
   // Optionally, just specify the keys you DO want stored to persistence.
   // An empty array means 'don't store any reducers' -> infinite-red/ignite#409
-  whitelist: [CommonSlice.name, TokenSlice.name],
+  whitelist: [CommonSlice.name, TokenSlice.name, UserActionSlice.name],
   // More info here:  https://shift.infinite.red/shipping-persistant-reducers-7341691232b1
   // transforms: [SetTokenTransform],
 };

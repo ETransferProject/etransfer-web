@@ -9,6 +9,14 @@
         background-color: $page-bg;
       }
     }
+    .ant-table-thead > tr > th {
+      padding: 12px 0 12px 12px;
+    }
+    .ant-table-tbody > tr > td {
+      box-sizing: border-box;
+      height: 72px;
+      padding: 12px 0 12px 12px;
+    }
     .ant-table-thead > tr > th::before {
       display: none;
     }

@@ -26,7 +26,7 @@ import { useWebLoginEvent, WebLoginEvents } from 'aelf-web-login';
 export default function Content() {
   const dispatch = useAppDispatch();
   const resetStore = useResetStore();
-  const { activeMenuKey, currentChainItem } = useCommonState();
+  const { activeMenuKey, currentChainItem, isMobilePX } = useCommonState();
   const { currentSymbol: withdrawCurrentSymbol } = useWithdraw();
   const router = useRouter();
   const searchParams = useSearchParams(); // TODO
@@ -115,6 +115,7 @@ export default function Content() {
 
   useEffect(() => {
     fetchRecordStatus();
+    isMobilePX && dispatch(setHandleReset());
     // Ignore the impact of the change in fetchRecordStatus, just watch currentActiveMenuKey change
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentActiveMenuKey]);
