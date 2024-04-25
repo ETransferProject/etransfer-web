@@ -7,13 +7,11 @@ import {
   WebLoginGraphqlUrlV1,
   WebLoginGraphqlUrlV2,
   WebLoginRequestDefaultsUrlV2,
-  NETWORK_NAME,
   NETWORK_TYPE_V2,
   WebLoginServiceUrlV1,
   WebLoginServiceUrlV2,
   SupportedChainId,
 } from 'constants/index';
-import { NetworkName } from 'constants/network';
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
 import { EtransferLogoIconBase64 } from 'constants/wallet';
@@ -57,7 +55,7 @@ const WebLoginProviderDynamic = dynamic(
         connectUrl: WebLoginConnectUrlV2,
         requestDefaults: {
           baseURL: WebLoginServiceUrlV2,
-          timeout: NETWORK_NAME === NetworkName.testnet ? 300000 : 80000,
+          timeout: 20000, // NETWORK_NAME === NetworkName.testnet ? 300000 : 80000
         },
         serviceUrl: WebLoginRequestDefaultsUrlV2,
       },
