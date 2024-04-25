@@ -24,7 +24,7 @@ import {
 } from 'store/reducers/userAction/slice';
 import { useEffectOnce } from 'react-use';
 import singleMessage from 'components/SingleMessage';
-import { initDepositInfo } from 'constants/deposit';
+import { InitDepositInfo } from 'constants/deposit';
 import { CommonErrorNameType } from 'api/types';
 import { handleErrorMessage } from '@portkey/did-ui-react';
 import { useDeposit } from 'hooks/deposit';
@@ -57,7 +57,7 @@ export default function Content() {
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
   const [currentNetwork, setCurrentNetwork] = useState<NetworkItem>();
   const currentNetworkRef = useRef<NetworkItem>();
-  const [depositInfo, setDepositInfo] = useState<DepositInfo>(initDepositInfo);
+  const [depositInfo, setDepositInfo] = useState<DepositInfo>(InitDepositInfo);
   const [showRetry, setShowRetry] = useState(false);
 
   const currentToken = useMemo(() => {
@@ -88,8 +88,8 @@ export default function Content() {
         dispatch(setDepositAddress(res.depositInfo.depositAddress));
       } catch (error: any) {
         setLoading(false);
-        setDepositInfo(initDepositInfo);
-        dispatch(setDepositAddress(initDepositInfo.depositAddress));
+        setDepositInfo(InitDepositInfo);
+        dispatch(setDepositAddress(InitDepositInfo.depositAddress));
         if (error.name !== CommonErrorNameType.CANCEL && error.code === '50000') {
           setShowRetry(true);
         } else {
@@ -175,8 +175,8 @@ export default function Content() {
     setCurrentNetwork(undefined);
     currentNetworkRef.current = undefined;
     dispatch(setDepositCurrentNetwork(undefined));
-    setDepositInfo(initDepositInfo);
-    dispatch(setDepositAddress(initDepositInfo.depositAddress));
+    setDepositInfo(InitDepositInfo);
+    dispatch(setDepositAddress(InitDepositInfo.depositAddress));
     setShowRetry(false);
     await getNetworkData({
       chainId: currentChainItem.key,

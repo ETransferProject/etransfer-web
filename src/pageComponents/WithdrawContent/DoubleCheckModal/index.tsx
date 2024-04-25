@@ -7,6 +7,7 @@ import { useCommonState } from 'store/Provider/hooks';
 import { FeeItem, NetworkItem } from 'types/api';
 import styles from './styles.module.scss';
 import { valueFixed2LessThanMin } from 'utils/calculate';
+import { defaultNullValue } from 'constants/index';
 
 export interface DoubleCheckModalProps {
   withdrawInfo: {
@@ -37,7 +38,7 @@ export default function DoubleCheckModal({
       <>
         {isTransactionFeeLoading && <SimpleLoading />}
         <span className={clsx(styles['receive-amount-center'])}>
-          {!isTransactionFeeLoading && `${withdrawInfo.receiveAmount || '--'} `}
+          {!isTransactionFeeLoading && `${withdrawInfo.receiveAmount || defaultNullValue} `}
           {withdrawInfo.symbol}
         </span>
       </>
@@ -46,7 +47,7 @@ export default function DoubleCheckModal({
 
   const renderTransactionFeeValue = () => {
     if (!withdrawInfo.transactionFee?.amount || !withdrawInfo.aelfTransactionFee?.amount) {
-      return isTransactionFeeLoading ? <SimpleLoading /> : '--';
+      return isTransactionFeeLoading ? <SimpleLoading /> : defaultNullValue;
     } else {
       return (
         <>
@@ -82,7 +83,7 @@ export default function DoubleCheckModal({
         <div className={clsx('flex-column', styles['detail-wrapper'])}>
           <div className={styles['detail-row']}>
             <div className={styles['label']}>Withdrawal Address</div>
-            <div className={styles['value']}>{withdrawInfo.address || '--'}</div>
+            <div className={styles['value']}>{withdrawInfo.address || defaultNullValue}</div>
           </div>
           <div className={clsx(styles['detail-row'], styles['withdrawal-network-wrapper'])}>
             <div className={styles['label']}>Withdrawal Network</div>
@@ -101,7 +102,7 @@ export default function DoubleCheckModal({
             <div className={styles['label']}>Withdraw Amount</div>
             <div className={styles['value']}>
               <div className={styles['value-content']}>
-                {`${withdrawInfo.amount || '--'}`}
+                {`${withdrawInfo.amount || defaultNullValue}`}
                 <span className={styles['value-symbol']}>{withdrawInfo.symbol}</span>
               </div>
 

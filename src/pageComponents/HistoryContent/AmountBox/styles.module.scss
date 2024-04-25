@@ -1,0 +1,16 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+
+.amount-box {
+  min-width: 140px;
+  font-weight: $font-family-medium-weight;
+  color: $primary-text;
+}
+
+.web-amount-box {
+  text-align: left;
+}
+
+.mobile-amount-box {
+  text-align: right;
+}

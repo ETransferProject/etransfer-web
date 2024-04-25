@@ -14,6 +14,7 @@ export type CommonModalProps = Omit<
   hideCancelButton?: boolean;
   hideOkButton?: boolean;
   isOkButtonDisabled?: boolean;
+  footerSlot?: React.ReactNode;
 };
 
 export default function CommonModal({
@@ -28,7 +29,7 @@ export default function CommonModal({
 }: CommonModalProps) {
   return (
     <Modal
-      width={480}
+      width={props.width || 480}
       centered
       {...props}
       className={clsx(styles['common-modal'], className)}
@@ -57,6 +58,7 @@ export default function CommonModal({
           )}
         </div>
       )}
+      {props.footerSlot}
     </Modal>
   );
 }

@@ -1,9 +1,10 @@
-import { Deposit, Withdraw } from 'assets/images';
+import { Deposit, Withdraw, Records } from 'assets/images';
 
 // SideMenuKey must bind BusinessType
 export enum SideMenuKey {
   Deposit = 'Deposit',
   Withdraw = 'Withdraw',
+  History = 'History',
 }
 
 export const MENU_ITEMS = [
@@ -16,5 +17,10 @@ export const MENU_ITEMS = [
     icon: Withdraw,
     key: SideMenuKey.Withdraw,
     label: SideMenuKey.Withdraw,
+  },
+  {
+    icon: Records,
+    key: SideMenuKey.History,
+    label: SideMenuKey.History,
   },
 ];

@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
 import CommonButton from 'components/CommonButton';
 import FormTextarea from 'components/FormTextarea';
+import CommonLink from 'components/CommonLink';
 import SelectNetwork from 'pageComponents/SelectNetwork';
 import SelectToken from 'pageComponents/SelectToken';
 import DoubleCheckModal from './DoubleCheckModal';
@@ -26,13 +27,9 @@ import {
   useUserActionState,
 } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { ADDRESS_MAP, IChainNameItem } from 'constants/index';
+import { ADDRESS_MAP, IChainNameItem, defaultNullValue } from 'constants/index';
 import { createWithdrawOrder, getNetworkList, getWithdrawInfo } from 'utils/api/deposit';
-import {
-  CONTRACT_ADDRESS,
-  initialWithdrawInfo,
-  initialWithdrawSuccessCheck,
-} from 'constants/deposit';
+import { CONTRACT_ADDRESS } from 'constants/deposit';
 import { WithdrawInfoSuccess } from 'types/deposit';
 import {
   checkTokenAllowanceAndApprove,
@@ -42,7 +39,6 @@ import {
 import singleMessage from 'components/SingleMessage';
 import { divDecimals, timesDecimals } from 'utils/calculate';
 import { ZERO } from 'constants/misc';
-import portkeyContractUnity from 'contract/portkey';
 import { ContractType } from 'constants/chain';
 import BigNumber from 'bignumber.js';
 import { SideMenuKey } from 'constants/home';
@@ -58,6 +54,8 @@ import {
   AmountGreaterThanBalanceMessage,
   DefaultWithdrawErrorMessage,
   ErrorNameType,
+  InitialWithdrawInfo,
+  InitialWithdrawSuccessCheck,
   InsufficientAllowanceMessage,
   WithdrawAddressErrorCodeList,
   WithdrawSendTxErrorCodeList,
@@ -67,16 +65,18 @@ import { CommonErrorNameType } from 'api/types';
 import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
 import { handleErrorMessage } from '@portkey/did-ui-react';
 import { useAccounts } from 'hooks/portkeyWallet';
-import getPortkeyWallet from 'wallet/portkeyWallet';
 import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
 import { formatWithCommas, parseWithCommas, parseWithStringCommas } from 'utils/format';
-import { sleep } from 'utils/common';
+import { sleep, getExploreLink } from 'utils/common';
 import { devices } from '@portkey/utils';
 import { ConnectWalletError } from 'constants/wallet';
 import { useWithdraw } from 'hooks/withdraw';
-import { QuestionMarkIcon } from 'assets/images';
+import { QuestionMarkIcon, Fingerprint } from 'assets/images';
 import { InitWithdrawTokenState } from 'store/reducers/token/slice';
 import RemainingQuato from './RemainingQuato';
+// import { getRecordStatus } from 'utils/api/records';
+import { setIsShowRedDot } from 'store/reducers/common/slice';
+import { useWalletContext } from 'provider/walletProvider';
 
 enum ValidateStatus {
   Error = 'error',
@@ -105,14 +105,14 @@ export default function WithdrawContent() {
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
   const accounts = useAccounts();
   const { currentSymbol, tokenList } = useWithdraw();
-  const { withdraw } = useUserActionState();
+  const { withdraw, userInfo } = useUserActionState();
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
   const [currentNetwork, setCurrentNetwork] = useState<NetworkItem>();
   const currentNetworkRef = useRef<NetworkItem>();
   const [form] = Form.useForm<FormValuesType>();
-  const [withdrawInfo, setWithdrawInfo] = useState<WithdrawInfo>(initialWithdrawInfo);
+  const [withdrawInfo, setWithdrawInfo] = useState<WithdrawInfo>(InitialWithdrawInfo);
   const [balance, setBalance] = useState('0');
   const [maxBalance, setMaxBalance] = useState('0');
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
@@ -121,7 +121,7 @@ export default function WithdrawContent() {
   const [isFailModalOpen, setIsFailModalOpen] = useState(false);
   const [failModalReason, setFailModalReason] = useState('');
   const [withdrawInfoSuccess, setWithdrawInfoSuccessCheck] = useState<WithdrawInfoSuccess>(
-    initialWithdrawSuccessCheck,
+    InitialWithdrawSuccessCheck,
   );
   const [isNetworkDisable, setIsNetworkDisable] = useState(false);
   const [formValidateData, setFormValidateData] = useState<{
@@ -196,7 +196,7 @@ export default function WithdrawContent() {
               </span>
             </>
           ) : (
-            '--'
+            defaultNullValue
           )}
           <RemainingQuato title={RemainingWithdrawalQuotaTooltip}></RemainingQuato>
         </span>
@@ -244,33 +244,6 @@ export default function WithdrawContent() {
       });
     },
     [judgeIsSubmitDisabled],
-  );
-
-  const handleMinimumAmountValidate = useCallback(
-    (amount: any, minAmount: string, transactionUnit: string): boolean => {
-      if (!amount) {
-        handleFormValidateDataChange({
-          [FormKeys.AMOUNT]: {
-            validateStatus: ValidateStatus.Normal,
-            errorMessage: '',
-          },
-        });
-        return false;
-      }
-      const parserNumber = Number(parseWithCommas(amount));
-      if (parserNumber < Number(parseWithCommas(minAmount))) {
-        handleFormValidateDataChange({
-          [FormKeys.AMOUNT]: {
-            validateStatus: ValidateStatus.Error,
-            errorMessage: `The minimum amount is ${minAmount} ${transactionUnit}. Please enter a value no less than this.`,
-          },
-        });
-        return false;
-      }
-
-      return true;
-    },
-    [handleFormValidateDataChange],
   );
 
   const getAllNetworkData = useCallback(async () => {
@@ -379,6 +352,70 @@ export default function WithdrawContent() {
     [dispatch, getAllNetworkData, handleFormValidateDataChange],
   );
 
+  const handleAmountValidate = useCallback(
+    (newMinAmount?: string, newTransactionUnit?: string) => {
+      const amount = form.getFieldValue(FormKeys.AMOUNT);
+      if (!amount) {
+        handleFormValidateDataChange({
+          [FormKeys.AMOUNT]: {
+            validateStatus: ValidateStatus.Normal,
+            errorMessage: '',
+          },
+        });
+        return;
+      }
+      const parserNumber = Number(parseWithCommas(amount));
+      const currentMinAmount = Number(parseWithCommas(newMinAmount || minAmount));
+      const currentTransactionUnit = newTransactionUnit || withdrawInfo.transactionUnit;
+      if (parserNumber < currentMinAmount) {
+        handleFormValidateDataChange({
+          [FormKeys.AMOUNT]: {
+            validateStatus: ValidateStatus.Error,
+            errorMessage: `The minimum amount is ${currentMinAmount} ${currentTransactionUnit}. Please enter a value no less than this.`,
+          },
+        });
+        return;
+      } else if (
+        withdrawInfo.remainingLimit &&
+        parserNumber > Number(parseWithCommas(withdrawInfo.remainingLimit))
+      ) {
+        handleFormValidateDataChange({
+          [FormKeys.AMOUNT]: {
+            validateStatus: ValidateStatus.Error,
+            errorMessage: AmountGreaterThanBalanceMessage,
+          },
+        });
+        return;
+      } else if (parserNumber > Number(parseWithCommas(maxBalance))) {
+        handleFormValidateDataChange({
+          [FormKeys.AMOUNT]: {
+            validateStatus: ValidateStatus.Error,
+            errorMessage:
+              'Insufficient balance. Please consider transferring a smaller amount or topping up before you try again.',
+          },
+        });
+        return;
+      } else {
+        handleFormValidateDataChange({
+          [FormKeys.AMOUNT]: {
+            validateStatus: ValidateStatus.Normal,
+            errorMessage: '',
+          },
+        });
+
+        return true;
+      }
+    },
+    [
+      form,
+      handleFormValidateDataChange,
+      maxBalance,
+      minAmount,
+      withdrawInfo.remainingLimit,
+      withdrawInfo.transactionUnit,
+    ],
+  );
+
   const getWithdrawData = useCallback(
     async (item?: TokenItem) => {
       const symbol = item?.symbol || currentSymbol;
@@ -403,21 +440,17 @@ export default function WithdrawContent() {
         setWithdrawInfo(res.withdrawInfo);
         setIsTransactionFeeLoading(false);
 
-        handleMinimumAmountValidate(
-          amount,
-          res.withdrawInfo?.minAmount || '0.2',
-          res.withdrawInfo.transactionUnit,
-        );
+        handleAmountValidate(res.withdrawInfo?.minAmount, res.withdrawInfo?.transactionUnit);
       } catch (error: any) {
         // when network error, transactionUnit should as the same with symbol
-        setWithdrawInfo({ ...initialWithdrawInfo, transactionUnit: symbol });
+        setWithdrawInfo({ ...InitialWithdrawInfo, transactionUnit: symbol });
         if (error.name !== CommonErrorNameType.CANCEL) {
           singleMessage.error(handleErrorMessage(error));
           setIsTransactionFeeLoading(false);
         }
       }
     },
-    [currentSymbol, currentVersion, form, handleMinimumAmountValidate],
+    [currentSymbol, currentVersion, form, handleAmountValidate],
   );
 
   useEffect(() => {
@@ -442,14 +475,16 @@ export default function WithdrawContent() {
     }
   }, [currentNetwork?.network, handleFormValidateDataChange, withdrawInfo.feeUsd]);
 
+  const [{ wallet }] = useWalletContext();
   const getMaxBalance = useCallback(
     async (item?: TokenItem) => {
       try {
         const symbol = item?.symbol || currentSymbol;
         const decimal = item?.decimals || currentTokenDecimal;
         const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
-        if (!caAddress || !currentVersion) return '';
+        if (!caAddress || !currentVersion || !wallet) return '';
         const maxBalance = await getBalance({
+          wallet,
           symbol: symbol,
           chainId: currentChainItemRef.current.key,
           caAddress,
@@ -463,7 +498,7 @@ export default function WithdrawContent() {
         throw new Error('Failed to get balance.');
       }
     },
-    [accounts, currentSymbol, currentTokenDecimal, currentVersion],
+    [accounts, currentSymbol, currentTokenDecimal, currentVersion, wallet],
   );
 
   const getMaxBalanceInterval = useCallback(
@@ -475,52 +510,6 @@ export default function WithdrawContent() {
     },
     [getMaxBalance],
   );
-
-  const handleAmountValidate = useCallback(() => {
-    const amount = form.getFieldValue(FormKeys.AMOUNT);
-    const parserNumber = Number(parseWithCommas(amount));
-    if (!handleMinimumAmountValidate(amount, minAmount, withdrawInfo.transactionUnit)) {
-      return;
-    }
-    if (
-      withdrawInfo.remainingLimit &&
-      parserNumber > Number(parseWithCommas(withdrawInfo.remainingLimit))
-    ) {
-      handleFormValidateDataChange({
-        [FormKeys.AMOUNT]: {
-          validateStatus: ValidateStatus.Error,
-          errorMessage: AmountGreaterThanBalanceMessage,
-        },
-      });
-      return;
-    } else if (parserNumber > Number(parseWithCommas(maxBalance))) {
-      handleFormValidateDataChange({
-        [FormKeys.AMOUNT]: {
-          validateStatus: ValidateStatus.Error,
-          errorMessage:
-            'Insufficient balance. Please consider transferring a smaller amount or topping up before you try again.',
-        },
-      });
-      return;
-    } else {
-      handleFormValidateDataChange({
-        [FormKeys.AMOUNT]: {
-          validateStatus: ValidateStatus.Normal,
-          errorMessage: '',
-        },
-      });
-
-      return true;
-    }
-  }, [
-    form,
-    handleFormValidateDataChange,
-    handleMinimumAmountValidate,
-    maxBalance,
-    minAmount,
-    withdrawInfo.remainingLimit,
-    withdrawInfo.transactionUnit,
-  ]);
 
   const handleChainChanged = useCallback(
     async (item: IChainNameItem) => {
@@ -568,7 +557,10 @@ export default function WithdrawContent() {
       clearInterval(getTransactionFeeTimerRef.current);
     }
     getTransactionFeeTimerRef.current = setInterval(async () => {
-      if (new Date().getTime() > withdrawInfo.expiredTimestamp) {
+      if (
+        new Date().getTime() > withdrawInfo.expiredTimestamp &&
+        currentNetworkRef.current?.network
+      ) {
         await getWithdrawData();
       }
     }, 10000);
@@ -577,7 +569,7 @@ export default function WithdrawContent() {
         clearInterval(getTransactionFeeTimerRef.current);
       }
     };
-  }, [getWithdrawData, handleAmountValidate, withdrawInfo.expiredTimestamp]);
+  }, [getWithdrawData, withdrawInfo.expiredTimestamp, currentNetworkRef.current?.network]);
 
   const handleNetworkChanged = useCallback(
     async (item: NetworkItem) => {
@@ -594,11 +586,6 @@ export default function WithdrawContent() {
 
   const handleApproveToken = useCallback(async () => {
     if (!currentVersion) throw new Error(ConnectWalletError);
-    const tokenContract = await portkeyContractUnity.getContract({
-      chainId: currentChainItemRef.current.key,
-      contractType: ContractType.TOKEN,
-      version: currentVersion,
-    });
 
     const newMaxBalance = await getMaxBalance();
     console.log('🌈 🌈 🌈 🌈 🌈 🌈 newMaxBalance ', newMaxBalance);
@@ -611,17 +598,33 @@ export default function WithdrawContent() {
     }
 
     const ownerAddress = accounts?.[currentChainItemRef.current.key]?.[0] || '';
-
+    if (!wallet) return;
     const checkRes = await checkTokenAllowanceAndApprove({
-      tokenContract,
+      wallet,
+      chainId: currentChainItemRef.current.key,
       symbol: currentSymbol,
       address: ownerAddress,
       approveTargetAddress: currentTokenAddress,
       amount: balance,
+      version: currentVersion,
     });
 
     return checkRes;
-  }, [accounts, balance, currentSymbol, currentTokenAddress, currentVersion, getMaxBalance]);
+  }, [
+    accounts,
+    balance,
+    currentSymbol,
+    currentTokenAddress,
+    currentVersion,
+    getMaxBalance,
+    wallet,
+  ]);
+
+  const fetchRecordStatus = useCallback(async () => {
+    // const res = await getRecordStatus();
+    // dispatch(setIsShowRedDot(res.status));
+    dispatch(setIsShowRedDot(false));
+  }, [dispatch]);
 
   const handleCreateWithdrawOrder = useCallback(
     async ({ address, rawTransaction }: { address: string; rawTransaction: string }) => {
@@ -637,7 +640,6 @@ export default function WithdrawContent() {
           rawTransaction: rawTransaction,
         });
         console.log('🌈 🌈 🌈 🌈 🌈 🌈 createWithdrawOrderRes', createWithdrawOrderRes);
-
         if (createWithdrawOrderRes.orderId) {
           setWithdrawInfoSuccessCheck({
             receiveAmount: receiveAmount,
@@ -647,6 +649,7 @@ export default function WithdrawContent() {
             chainItem: currentChainItemRef.current,
             arriveTime: currentNetworkRef.current.multiConfirmTime,
             receiveAmountUsd: withdrawInfo.receiveAmountUsd,
+            transactionId: createWithdrawOrderRes.transactionId,
           });
           setIsSuccessModalOpen(true);
         } else {
@@ -661,11 +664,20 @@ export default function WithdrawContent() {
         }
         setIsFailModalOpen(true);
       } finally {
+        // update records status
+        fetchRecordStatus();
         setLoading(false);
         setIsDoubleCheckModalOpen(false);
       }
     },
-    [balance, currentSymbol, receiveAmount, setLoading, withdrawInfo.receiveAmountUsd],
+    [
+      balance,
+      currentSymbol,
+      receiveAmount,
+      setLoading,
+      withdrawInfo.receiveAmountUsd,
+      fetchRecordStatus,
+    ],
   );
 
   const sendTransferTokenTransaction = useDebounceCallback(async () => {
@@ -679,20 +691,18 @@ export default function WithdrawContent() {
       if (!approveRes) throw new Error(InsufficientAllowanceMessage);
       console.log('🌈 🌈 🌈 🌈 🌈 🌈 approveRes', approveRes);
 
-      if (approveRes) {
-        const portkeyWallet = getPortkeyWallet(currentVersion);
-        if (!portkeyWallet?.manager?.caAddress) throw new Error('no caContractAddress');
-        if (!portkeyWallet?.caHash) throw new Error('no caHash');
-
+      if (approveRes && wallet?.getSignature) {
         const transaction = await createTransferTokenTransaction({
+          wallet,
           caContractAddress:
             ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.CA],
           eTransferContractAddress: currentTokenAddress,
-          caHash: portkeyWallet.caHash,
+          caHash: userInfo.caHash || '',
           symbol: currentSymbol,
           amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
           chainId: currentChainItemRef.current.key,
           version: currentVersion,
+          fromManagerAddress: userInfo.managerAddress,
         });
         console.log(transaction, '=====transaction');
 
@@ -739,7 +749,6 @@ export default function WithdrawContent() {
         address: address,
       });
       await getWithdrawData();
-      handleAmountValidate();
       return;
     } else if (address.length < 32 || address.length > 44) {
       handleFormValidateDataChange({
@@ -760,7 +769,6 @@ export default function WithdrawContent() {
     });
 
     await getWithdrawData();
-    handleAmountValidate();
   }, [
     currentSymbol,
     dispatch,
@@ -768,7 +776,6 @@ export default function WithdrawContent() {
     getAllNetworkData,
     getNetworkData,
     getWithdrawData,
-    handleAmountValidate,
     handleFormValidateDataChange,
   ]);
 
@@ -814,19 +821,17 @@ export default function WithdrawContent() {
     setIsSuccessModalOpen(false);
     setBalance('');
     form.setFieldValue(FormKeys.AMOUNT, '');
-    handleAmountValidate();
 
     getWithdrawData();
-  }, [form, getWithdrawData, handleAmountValidate]);
+  }, [form, getWithdrawData]);
 
   const clickFailedOk = useCallback(() => {
     setIsFailModalOpen(false);
     setBalance('');
     form.setFieldValue(FormKeys.AMOUNT, '');
-    handleAmountValidate();
 
     getWithdrawData();
-  }, [form, getWithdrawData, handleAmountValidate]);
+  }, [form, getWithdrawData]);
 
   useEffectOnce(() => {
     form.setFieldValue(FormKeys.ADDRESS, withdraw.address || '');
@@ -855,14 +860,14 @@ export default function WithdrawContent() {
 
   const renderTransactionFeeValue = () => {
     if (!withdrawInfo.transactionFee || !withdrawInfo.aelfTransactionFee) {
-      return isTransactionFeeLoading ? <SimpleLoading /> : '--';
+      return isTransactionFeeLoading ? <SimpleLoading /> : defaultNullValue;
     } else {
       return (
         <>
           {isTransactionFeeLoading && <SimpleLoading />}
           <span className={styles['transaction-fee-value-data']}>
             {!isTransactionFeeLoading &&
-              `${(!isSuccessModalOpen && withdrawInfo.transactionFee) || '--'} `}
+              `${(!isSuccessModalOpen && withdrawInfo.transactionFee) || defaultNullValue} `}
             <span
               className={clsx(
                 styles['transaction-fee-value-data-default'],
@@ -870,7 +875,7 @@ export default function WithdrawContent() {
               )}>
               {withdrawInfo.transactionUnit}
             </span>
-            + {(!isSuccessModalOpen && withdrawInfo.aelfTransactionFee) || '--'}
+            + {(!isSuccessModalOpen && withdrawInfo.aelfTransactionFee) || defaultNullValue}
             {withdrawInfo.aelfTransactionUnit}
           </span>
         </>
@@ -1058,7 +1063,8 @@ export default function WithdrawContent() {
                     styles['info-value-big-font'],
                   )}>
                   {isTransactionFeeLoading && <SimpleLoading />}
-                  {!isTransactionFeeLoading && `${(!isSuccessModalOpen && receiveAmount) || '--'} `}
+                  {!isTransactionFeeLoading &&
+                    `${(!isSuccessModalOpen && receiveAmount) || defaultNullValue} `}
                   <span className={clsx(styles['info-unit'])}>{withdrawInfo.transactionUnit}</span>
                 </div>
               </div>
@@ -1114,6 +1120,20 @@ export default function WithdrawContent() {
           open: isSuccessModalOpen,
           onClose: clickSuccessOk,
           onOk: clickSuccessOk,
+          footerSlot: CommonLink({
+            href: getExploreLink(
+              withdrawInfoSuccess.transactionId,
+              'transaction',
+              currentChainItemRef.current.key,
+            ),
+            isTagA: true,
+            children: (
+              <div className={clsx(styles['link-wrap'], !isMobilePX && styles['linkToExplore'])}>
+                <span className={styles['link-word']}>View on aelf Explorer</span>
+                <Fingerprint className={styles['link-explore-icon']} />
+              </div>
+            ),
+          }),
         }}
       />
       <FailModal

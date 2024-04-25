@@ -14,4 +14,5 @@ export type WithdrawInfoSuccess = {
   chainItem: IChainNameItem;
   arriveTime: string;
   receiveAmountUsd: string;
+  transactionId: string;
 };

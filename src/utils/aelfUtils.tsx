@@ -1,39 +1,98 @@
 import AElf from 'aelf-sdk';
 import { AElfNodes } from 'constants/aelf';
 import { isSymbol } from './reg';
-import { SupportedELFChainId } from 'constants/index';
+import { ADDRESS_MAP, SupportedELFChainId } from 'constants/index';
 import { PortkeyVersion } from 'constants/wallet';
 import { AelfInstancesKey, ChainId } from 'types';
 import { isELFAddress } from './common';
 import {
   handleManagerForwardCall as handleManagerForwardCallV1,
   getContractMethods as getContractMethodsV1,
-  getTxResult as getTxResultV1,
 } from '@portkey-v1/contracts';
 import {
   handleManagerForwardCall as handleManagerForwardCallV2,
   getContractMethods as getContractMethodsV2,
-  getTxResult as getTxResultV2,
 } from '@portkey/contracts';
 import aelfInstanceV1 from './aelfInstanceV1';
 import aelfInstanceV2 from './aelfInstanceV2';
 import { ContractMethodName, ManagerForwardCall } from 'constants/contract';
 import BigNumber from 'bignumber.js';
 import { timesDecimals } from './calculate';
-import { IContract } from '@portkey/types';
 import { AllSupportedELFChainId, ContractType } from 'constants/chain';
-import getPortkeyWallet from 'wallet/portkeyWallet';
-import portkeyContractUnity from 'contract/portkey';
+import { WalletType } from 'aelf-web-login';
+import { IWallet } from 'contract/types';
+import { sleep } from '@portkey/utils';
 
 export function getNodeByChainId(chainId: AllSupportedELFChainId) {
   return AElfNodes[chainId as AelfInstancesKey];
 }
 
-// const httpProviders: any = {};
+const httpProviders: any = {};
 export function getAElf(chainId: AllSupportedELFChainId) {
   const rpc = getNodeByChainId(chainId).rpcUrl;
-  // if (!httpProviders[rpc]) httpProviders[rpc] = new AElf(new AElf.providers.HttpProvider(rpc));
+  if (!httpProviders[rpc]) httpProviders[rpc] = new AElf(new AElf.providers.HttpProvider(rpc));
   return new AElf(new AElf.providers.HttpProvider(rpc));
+}
+
+class TXError extends Error {
+  public TransactionId?: string;
+  public transactionId?: string;
+  constructor(message: string, id?: string) {
+    super(message);
+    this.TransactionId = id;
+    this.transactionId = id;
+  }
+}
+
+export function handleContractErrorMessage(error?: any) {
+  if (typeof error === 'string') return error;
+  if (error?.message) return error.message;
+  if (error.Error) {
+    return error.Error.Details || error.Error.Message || error.Error || error.Status;
+  }
+  return `Transaction: ${error.Status}`;
+}
+
+export async function getTxResult(
+  TransactionId: string,
+  chainId: ChainId,
+  reGetCount = 0,
+  notExistedReGetCount = 0,
+): Promise<any> {
+  const txFun = getAElf(chainId as unknown as AllSupportedELFChainId).chain.getTxResult;
+  let txResult;
+  try {
+    txResult = await txFun(TransactionId);
+    console.log(txResult, TransactionId, 'compBalanceMetadata====txResult');
+  } catch (error) {
+    console.log('getTxResult:error', error);
+    throw new TXError(handleContractErrorMessage(error), TransactionId);
+  }
+
+  const result = txResult?.result || txResult;
+  if (!result) {
+    throw new TXError('Can not get transaction result.', TransactionId);
+  }
+
+  const lowerCaseStatus = result.Status.toLowerCase();
+  if (lowerCaseStatus === 'notexisted') {
+    if (notExistedReGetCount > 5)
+      throw new TXError(result.Error || `Transaction: ${result.Status}`, TransactionId);
+    await sleep(1000);
+    notExistedReGetCount++;
+    reGetCount++;
+    return getTxResult(TransactionId, chainId, reGetCount, notExistedReGetCount);
+  }
+  if (lowerCaseStatus === 'pending' || lowerCaseStatus === 'pending_validation') {
+    if (reGetCount > 20)
+      throw new TXError(result.Error || `Transaction: ${result.Status}`, TransactionId);
+    await sleep(1000);
+    reGetCount++;
+    return getTxResult(TransactionId, chainId, reGetCount, notExistedReGetCount);
+  }
+
+  if (lowerCaseStatus === 'mined') return result;
+  throw new TXError(result.Error || `Transaction: ${result.Status}`, TransactionId);
 }
 
 export type EncodedTransfer = {
@@ -174,6 +233,8 @@ export const getRawTx = ({
   contractAddress,
   functionName,
 }: GetRawTx) => {
+  console.log(blockHashInput, '=====blockHashInput');
+
   const rawTx = AElf.pbUtils.getTransaction(address, contractAddress, functionName, packedInput);
   rawTx.refBlockNumber = blockHeightInput;
   const blockHash = blockHashInput.match(/^0x/) ? blockHashInput.substring(2) : blockHashInput;
@@ -182,6 +243,7 @@ export const getRawTx = ({
 };
 
 export const handleTransaction = async ({
+  wallet,
   blockHeightInput,
   blockHashInput,
   packedInput,
@@ -189,7 +251,23 @@ export const handleTransaction = async ({
   contractAddress,
   functionName,
   version,
-}: GetRawTx) => {
+}: GetRawTx & {
+  wallet: IWallet;
+}) => {
+  console.log(
+    {
+      wallet,
+      blockHeightInput,
+      blockHashInput,
+      packedInput,
+      address,
+      contractAddress,
+      functionName,
+      version,
+    },
+    '=====1',
+  );
+
   // Create transaction
   const rawTx = getRawTx({
     blockHeightInput,
@@ -204,12 +282,21 @@ export const handleTransaction = async ({
 
   const ser = AElf.pbUtils.Transaction.encode(rawTx).finish();
 
-  const m = AElf.utils.sha256(ser);
+  let signInfo: string;
+  if (wallet.walletType !== WalletType.portkey) {
+    // nightElf or discover
+    signInfo = AElf.utils.sha256(ser);
+  } else {
+    // portkey sdk
+    signInfo = Buffer.from(ser).toString('hex');
+  }
+
   // signature
   let signatureStr = '';
-  const portkeyWallet = getPortkeyWallet(version);
-  const signatureRes = await portkeyWallet.getSignature(m);
-  signatureStr = signatureRes.signatureStr || '';
+  const signatureRes = await wallet.getSignature({ signInfo });
+  console.log(signatureRes, '=====signatureRes');
+
+  signatureStr = signatureRes.signature || '';
   if (!signatureStr) return;
 
   let tx = {
@@ -222,66 +309,6 @@ export const handleTransaction = async ({
     return tx.toString('hex');
   }
   return AElf.utils.uint8ArrayToHex(tx); // hex params
-};
-
-export interface CreateTransferTransactionParams {
-  caContractAddress: string;
-  tokenContractAddress: string;
-  caHash: string;
-  symbol: string;
-  toAddress: string; // owner account address
-  amount: string; // with decimal
-  memo?: string;
-  chainId: SupportedELFChainId;
-  version: PortkeyVersion;
-}
-export const createTransferTransaction = async ({
-  caContractAddress,
-  tokenContractAddress,
-  caHash,
-  symbol,
-  toAddress,
-  amount,
-  memo,
-  chainId,
-  version,
-}: CreateTransferTransactionParams) => {
-  // await activate();
-  const managerForwardCall = await createManagerForwardCall({
-    caContractAddress,
-    contractAddress: tokenContractAddress,
-    caHash,
-    methodName: ContractMethodName.Transfer, // ContractMethodName.TransferToken,
-    args: { symbol, to: toAddress, amount, memo },
-    chainId,
-    version,
-  });
-
-  const transactionParams = AElf.utils.uint8ArrayToHex(managerForwardCall);
-
-  const aelf = getAElf(chainId as unknown as AllSupportedELFChainId);
-  const { BestChainHeight, BestChainHash } = await aelf.chain.getChainStatus();
-
-  const portkeyWallet = getPortkeyWallet(version);
-  const fromManagerAddress = await portkeyWallet.getManagerAddress();
-  const transaction = await handleTransaction({
-    blockHeightInput: BestChainHeight,
-    blockHashInput: BestChainHash,
-    packedInput: transactionParams,
-    address: fromManagerAddress,
-    contractAddress: caContractAddress,
-    functionName: ManagerForwardCall,
-    version,
-  });
-
-  const rpcUrl = getNodeByChainId(chainId as unknown as AllSupportedELFChainId).rpcUrl;
-  const aelfI = aelf.getAelfInstance(rpcUrl);
-  const send = await aelfI.chain.sendTransaction(transaction);
-  const req =
-    version === PortkeyVersion.v1
-      ? await getTxResultV1(aelfI, send.TransactionId)
-      : await getTxResultV2(aelfI, send.TransactionId);
-  console.log('TxResult:', req);
 };
 
 const isWrappedBytes = (resolvedType: any, name: string) => {
@@ -340,75 +367,102 @@ export const getELFAddress = (address?: string): void | undefined | string => {
 };
 
 export const approveELF = async ({
+  wallet,
+  chainId,
   address,
-  tokenContract,
   symbol,
   amount,
+  version,
 }: {
+  wallet: IWallet;
+  chainId: ChainId;
   address: string;
-  tokenContract: IContract;
   symbol: string;
   amount: BigNumber | number | string;
+  version: PortkeyVersion;
 }) => {
-  const approveResult = await tokenContract.callSendMethod(ContractMethodName.Approve, '', {
-    spender: address,
-    symbol,
-    amount: amount.toString(),
+  const approveResult: any = await wallet.callSendMethod(chainId, {
+    contractAddress: ADDRESS_MAP[version][chainId][ContractType.TOKEN],
+    methodName: ContractMethodName.Approve,
+    args: {
+      spender: address,
+      symbol,
+      amount: amount.toString(),
+    },
   });
-  console.log('approveResult: ', approveResult);
+  const txRes = await getTxResult(approveResult.transactionId, chainId);
+  console.log('approveResult: ', approveResult, txRes);
   return true;
 };
 
 export const checkTokenAllowanceAndApprove = async ({
-  tokenContract,
+  wallet,
+  chainId,
   symbol,
   address,
   approveTargetAddress,
   amount,
+  version,
 }: {
-  tokenContract: IContract;
+  wallet: IWallet;
+  chainId: ChainId;
   symbol: string;
   address: string;
   approveTargetAddress: string;
   amount: string | number;
+  version: PortkeyVersion;
 }): Promise<boolean> => {
-  const [allowance, tokenInfo] = await Promise.all([
-    tokenContract.callViewMethod(ContractMethodName.GetAllowance, {
-      symbol,
-      owner: address, // owner caAddress
-      spender: approveTargetAddress,
+  const [allowanceResult, tokenInfoResult] = await Promise.all([
+    wallet.callViewMethod<any, any>(chainId, {
+      contractAddress: ADDRESS_MAP[version][chainId][ContractType.TOKEN],
+      methodName: ContractMethodName.GetAllowance,
+      args: {
+        symbol,
+        owner: address, // owner caAddress
+        spender: approveTargetAddress,
+      },
     }),
-    tokenContract.callViewMethod(ContractMethodName.GetTokenInfo, {
-      symbol,
+    wallet.callViewMethod<any, any>(chainId, {
+      contractAddress: ADDRESS_MAP[version][chainId][ContractType.TOKEN],
+      methodName: ContractMethodName.GetTokenInfo,
+      args: {
+        symbol,
+      },
     }),
   ]);
-  const allowanceResult = allowance.data;
-  const tokenInfoResult = tokenInfo.data;
+
   console.log('first check allowance and tokenInfo:', allowanceResult, tokenInfoResult);
-  const bigA = timesDecimals(amount, tokenInfoResult?.decimals ?? 8);
+  const bigA = timesDecimals(amount, tokenInfoResult?.decimals || 8);
   const allowanceBN = new BigNumber(allowanceResult?.allowance);
 
   if (allowanceBN.lt(bigA)) {
     await approveELF({
+      wallet,
+      chainId,
       address: approveTargetAddress,
-      tokenContract,
       symbol,
       amount: bigA.toFixed(0),
+      version,
     });
 
-    const allowance = await tokenContract.callViewMethod(ContractMethodName.GetAllowance, {
-      symbol,
-      owner: address, // owner caAddress
-      spender: approveTargetAddress,
+    const allowanceNew = await wallet.callViewMethod<any, any>(chainId, {
+      contractAddress: ADDRESS_MAP[version][chainId][ContractType.TOKEN],
+      methodName: ContractMethodName.GetAllowance,
+      args: {
+        symbol,
+        owner: address, // owner caAddress
+        spender: approveTargetAddress,
+      },
     });
-    console.log('second check allowance:', allowance.data);
+    console.log('second check allowance:', allowanceNew);
 
-    return bigA.lte(allowance.data?.allowance);
+    return bigA.lte(allowanceNew?.allowance);
   }
   return true;
 };
 
 export interface CreateTransferTokenTransactionParams {
+  wallet: IWallet;
   caContractAddress: string;
   eTransferContractAddress: string;
   caHash: string;
@@ -416,9 +470,11 @@ export interface CreateTransferTokenTransactionParams {
   amount: string;
   chainId: SupportedELFChainId;
   version: PortkeyVersion;
+  fromManagerAddress: string;
 }
 
 export const createTransferTokenTransaction = async ({
+  wallet,
   caContractAddress,
   eTransferContractAddress,
   caHash,
@@ -426,6 +482,7 @@ export const createTransferTokenTransaction = async ({
   amount,
   chainId,
   version,
+  fromManagerAddress,
 }: CreateTransferTokenTransactionParams) => {
   const managerForwardCall = await createManagerForwardCall({
     caContractAddress,
@@ -442,9 +499,23 @@ export const createTransferTokenTransaction = async ({
   const aelf = getAElf(chainId as unknown as AllSupportedELFChainId);
   const { BestChainHeight, BestChainHash } = await aelf.chain.getChainStatus();
 
-  const portkeyWallet = getPortkeyWallet(version);
-  const fromManagerAddress = await portkeyWallet.getManagerAddress();
+  console.log(
+    { BestChainHeight, BestChainHash },
+    {
+      wallet,
+      blockHeightInput: BestChainHeight,
+      blockHashInput: BestChainHash,
+      packedInput: transactionParams,
+      address: fromManagerAddress,
+      contractAddress: caContractAddress,
+      functionName: ManagerForwardCall,
+      version,
+    },
+    '=====handleTransaction',
+  );
+
   const transaction = await handleTransaction({
+    wallet,
     blockHeightInput: BestChainHeight,
     blockHashInput: BestChainHash,
     packedInput: transactionParams,
@@ -458,23 +529,28 @@ export const createTransferTokenTransaction = async ({
 };
 
 export type GetBalancesProps = {
+  wallet: IWallet;
   caAddress: string;
   symbol: string;
   chainId: SupportedELFChainId;
   version: PortkeyVersion;
 };
-export const getBalance = async ({ symbol, chainId, caAddress, version }: GetBalancesProps) => {
-  const tokenContract = await portkeyContractUnity.getContract({
-    chainId,
-    contractType: ContractType.TOKEN,
-    version,
-  });
+export const getBalance = async ({
+  wallet,
+  symbol,
+  chainId,
+  caAddress,
+  version,
+}: GetBalancesProps) => {
+  if (!wallet.callViewMethod) return;
 
-  const {
-    data: { balance },
-  } = await tokenContract.callViewMethod(ContractMethodName.GetBalance, {
-    symbol,
-    owner: caAddress, // caAddress
+  const res: { balance: string } | undefined = await wallet.callViewMethod(chainId, {
+    contractAddress: ADDRESS_MAP[version][chainId][ContractType.TOKEN],
+    methodName: ContractMethodName.GetBalance,
+    args: {
+      symbol,
+      owner: caAddress, // caAddress
+    },
   });
-  return balance;
+  return res?.balance;
 };

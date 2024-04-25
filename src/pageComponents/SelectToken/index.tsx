@@ -38,7 +38,7 @@ export default function SelectToken({
   const { isMobilePX } = useCommonState();
   const dispatch = useAppDispatch();
   const {
-    deposit: { initOpenTokenkModalCount },
+    deposit: { initOpenTokenModalCount },
   } = useUserActionState();
   const [isShowTokenSelectDropdown, setIsShowTokenSelectDropdown] = useState<boolean>(false);
   const { activeMenuKey } = useCommonState();
@@ -63,12 +63,12 @@ export default function SelectToken({
       tokenList &&
       tokenList.length > 0 &&
       !selected?.symbol &&
-      initOpenTokenkModalCount === 0
+      initOpenTokenModalCount === 0
     ) {
       dispatch(setAddInitOpenTokenModalCount());
       setIsShowTokenSelectDropdown(true);
     }
-  }, [dispatch, initOpenTokenkModalCount, tokenList, isMobilePX, selected?.symbol, type]);
+  }, [dispatch, initOpenTokenModalCount, tokenList, isMobilePX, selected?.symbol, type]);
 
   return (
     <div className={styles['select-token']}>

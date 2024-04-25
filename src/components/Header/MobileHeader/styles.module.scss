@@ -7,7 +7,7 @@
   width: 100%;
   height: $mobile-header-height;
   @include media-mobile {
-    padding: 12px 16px;
+    padding: 12px 10px 12px 16px;
   }
   @include media-pad {
     padding: 16px 40px 8px;

@@ -1,6 +1,6 @@
-import { AelfInstancesKey, ChainId } from 'types';
-import { isELFChain } from './aelfUtils';
-import { ELFChainConstants } from 'constants/ChainConstants';
+import { ChainId } from 'types';
+import { EXPLORE_CONFIG } from 'constants/index';
+import { ExploreUrlType } from 'constants/network';
 import AElf from 'aelf-sdk';
 
 export const sleep = (time: number) => {
@@ -14,12 +14,9 @@ export const sleep = (time: number) => {
 export function getExploreLink(
   data: string,
   type: 'transaction' | 'token' | 'address' | 'block',
-  chainId?: ChainId,
+  chainId: ChainId,
 ): string {
-  let prefix = '';
-  if (isELFChain(chainId)) {
-    prefix = ELFChainConstants.constants[chainId as AelfInstancesKey]?.CHAIN_INFO?.exploreUrl;
-  }
+  const prefix = EXPLORE_CONFIG[chainId];
   switch (type) {
     case 'transaction': {
       return `${prefix}tx/${data}`;
@@ -33,6 +30,29 @@ export function getExploreLink(
     case 'address':
     default: {
       return `${prefix}address/${data}`;
+    }
+  }
+}
+
+export function getOtherExploreLink(
+  data: string,
+  network: keyof typeof ExploreUrlType,
+  type: 'transaction' | 'address',
+): string {
+  const prefix = ExploreUrlType[network];
+  switch (type) {
+    case 'transaction': {
+      if (network === 'TRX') {
+        return `${prefix}/#/transaction/${data}`;
+      }
+      return `${prefix}/tx/${data}`;
+    }
+    case 'address':
+    default: {
+      if (network === 'TRX') {
+        return `${prefix}/#/address/${data}`;
+      }
+      return `${prefix}/address/${data}`;
     }
   }
 }

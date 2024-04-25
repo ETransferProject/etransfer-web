@@ -15,6 +15,3 @@ export const isEffectiveNumber = (v: any) => {
   const val = new BigNumber(v);
   return !val.isNaN() && !val.lte(0);
 };
-
-export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || 'AppName';
-export const prefixCls = process.env.NEXT_PUBLIC_PREFIX;

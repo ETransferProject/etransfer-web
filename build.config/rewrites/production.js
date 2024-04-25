@@ -35,11 +35,11 @@ module.exports = [
     destination: `${AuthHost}/connect/:path*`,
   },
   // {
-  //   source: '/v1/api/:path*',
+  //   source: '/portkeyV1/api/:path*',
   //   destination: `${ApiHostV1}/api/:path*`,
   // },
   // {
-  //   source: '/v2/api/:path*',
+  //   source: '/portkeyV2/api/:path*',
   //   destination: `${ApiHostV2}/api/:path*`,
   // },
   {

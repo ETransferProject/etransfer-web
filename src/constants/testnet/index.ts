@@ -15,10 +15,10 @@ export enum SupportedELFChainId {
   tDVW = 'tDVW',
 }
 
-export enum NETWORK_CHAIN {
-  'MAIN' = SupportedELFChainId.AELF,
-  'TEST' = SupportedELFChainId.tDVW,
-}
+export const SupportedChainId = {
+  mainChain: SupportedELFChainId.AELF,
+  sideChain: SupportedELFChainId.tDVW,
+};
 
 export const CHAIN_NAME: { [chainId in SupportedELFChainId]: string } = {
   [SupportedELFChainId.AELF]: 'MainChain AELF Testnet',
@@ -53,13 +53,6 @@ export const CHAIN_LIST_SIDE_CHAIN: IChainNameItem[] = [
   },
 ];
 
-export type ChainConstantsType = typeof AELF_Test | typeof tDVW_Test;
-
-export const SupportedELFChain: { [k: string | number]: ChainConstantsType } = {
-  [SupportedELFChainId.AELF]: AELF_Test,
-  [SupportedELFChainId.tDVW]: tDVW_Test,
-};
-
 export const AelfReact = {
   [SupportedELFChainId.AELF]: {
     chainId: AELF_Test.CHAIN_INFO.chainId,
@@ -85,6 +78,9 @@ export const WebLoginGraphqlUrlV2 =
   'https://dapp-aa-portkey-test.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql';
 export const WebLoginRequestDefaultsUrlV1 = 'https://did-portkey-test.portkey.finance';
 export const WebLoginRequestDefaultsUrlV2 = 'https://aa-portkey-test.portkey.finance';
+export const WebLoginServiceUrlV1 = 'https://did-portkey-test.portkey.finance';
+export const WebLoginServiceUrlV2 = 'https://aa-portkey-test.portkey.finance';
+export const WebLoginConnectUrlV2 = 'https://auth-aa-portkey-test.portkey.finance';
 
 // testnet-dev
 // export const ETransferHost = 'https://test.etransfer.exchange';
@@ -93,6 +89,9 @@ export const WebLoginRequestDefaultsUrlV2 = 'https://aa-portkey-test.portkey.fin
 // export const WebLoginGraphqlUrlV2 = '/v2/graphql';
 // export const WebLoginRequestDefaultsUrlV1 = 'https://did-portkey-test.portkey.finance';
 // export const WebLoginRequestDefaultsUrlV2 = 'https://aa-portkey-test.portkey.finance';
+// export const WebLoginServiceUrlV1 = '/v1/service';
+// export const WebLoginServiceUrlV2 = '/v2/service';
+// export const WebLoginConnectUrlV2 = '/v2/portkeyConnect';
 
 export const ADDRESS_MAP = {
   [PortkeyVersion.v1]: {
@@ -115,4 +114,9 @@ export const ADDRESS_MAP = {
       [ContractType.TOKEN]: tDVW_Test.TOKEN_CONTRACT,
     },
   },
+};
+
+export const EXPLORE_CONFIG = {
+  [SupportedChainId.mainChain]: AELF_NODES.AELF.exploreUrl,
+  [SupportedChainId.sideChain]: AELF_NODES.tDVW.exploreUrl,
 };

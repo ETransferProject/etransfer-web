@@ -23,6 +23,11 @@ $web-content-padding-bottom: 80px;
       margin-left: calc($web-content-min-margin-left + $sider-width);
     }
   }
+  @include media-huge-screen {
+    width: $content-width;
+    margin-left: calc(($max-width - $content-width) / 2 - $sider-width);
+    padding: 40px 0 $web-content-padding-bottom;
+  }
 }
 
 // A separate class name is used here to avoid invalidation of the padding style by incorporating the padding property in the production css.
@@ -34,5 +39,26 @@ $web-content-padding-bottom: 80px;
       padding-bottom: calc(($mobile-form-footer-max-height + $content-padding-bottom) + constant(safe-area-inset-bottom));
       padding-bottom: calc(($mobile-form-footer-max-height + $content-padding-bottom) + env(safe-area-inset-bottom));
     }
+  }
+}
+
+.wide-screen-content-container {
+  padding: 40px 40px 64px 32px;
+  overflow: auto;
+  
+  @include media-mobile-and-pad {
+    min-width: $page-min-width;
+    padding: 0;
+  }
+  @include media-huge-web {
+    width: calc(100vw - $sider-width);
+    height: calc(100vh - $web-header-height);
+    max-width: calc($max-width - $sider-width);
+    margin-left: $sider-width;
+  }
+  @include media-huge-screen {
+    width: calc($max-width + 1px - $sider-width);
+    height: calc(100vh - $web-header-height);
+    margin: none;
   }
 }
