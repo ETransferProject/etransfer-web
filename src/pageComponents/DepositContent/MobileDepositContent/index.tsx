@@ -49,16 +49,14 @@ export default function MobileDepositContent({
   const renderSelectNetwork = ({ noBorder }: { noBorder?: boolean } = {}) => {
     return (
       <>
-        {currentToken !== undefined && (
-          <SelectNetwork
-            type={SideMenuKey.Deposit}
-            networkList={networkList}
-            selectCallback={networkChanged}
-            selected={networkSelected}
-            noBorder={noBorder}
-            isShowLoading={isShowLoading}
-          />
-        )}
+        <SelectNetwork
+          type={SideMenuKey.Deposit}
+          networkList={networkList}
+          selectCallback={networkChanged}
+          selected={networkSelected}
+          noBorder={noBorder}
+          isShowLoading={isShowLoading}
+        />
       </>
     );
   };

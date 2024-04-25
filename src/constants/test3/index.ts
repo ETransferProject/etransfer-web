@@ -46,6 +46,13 @@ export const CHAIN_LIST: IChainNameItem[] = [
   },
 ];
 
+export const CHAIN_LIST_SIDE_CHAIN: IChainNameItem[] = [
+  {
+    key: SupportedELFChainId.tDVV,
+    label: CHAIN_NAME_ENUM.SideChain,
+  },
+];
+
 export const AelfReact = {
   [SupportedELFChainId.AELF]: {
     chainId: AELF.CHAIN_INFO.chainId,
