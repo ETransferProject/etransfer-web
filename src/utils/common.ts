@@ -66,6 +66,14 @@ export const isELFAddress = (value: string) => {
   }
 };
 
+export const removeELFAddressSuffix = (address: string) => {
+  if (isELFAddress(address)) {
+    const arr = address.split('_');
+    if (arr.length === 3) return arr[1];
+  }
+  return address;
+};
+
 export function shortenAddress(address: string | null, chars = 4, end = 42): string {
   const parsed = address;
   if (!parsed) throw Error(`Invalid 'address' parameter '${address}'.`);

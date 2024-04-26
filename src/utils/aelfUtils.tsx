@@ -499,21 +499,6 @@ export const createTransferTokenTransaction = async ({
   const aelf = getAElf(chainId as unknown as AllSupportedELFChainId);
   const { BestChainHeight, BestChainHash } = await aelf.chain.getChainStatus();
 
-  console.log(
-    { BestChainHeight, BestChainHash },
-    {
-      wallet,
-      blockHeightInput: BestChainHeight,
-      blockHashInput: BestChainHash,
-      packedInput: transactionParams,
-      address: fromManagerAddress,
-      contractAddress: caContractAddress,
-      functionName: ManagerForwardCall,
-      version,
-    },
-    '=====handleTransaction',
-  );
-
   const transaction = await handleTransaction({
     wallet,
     blockHeightInput: BestChainHeight,
@@ -524,7 +509,7 @@ export const createTransferTokenTransaction = async ({
     functionName: ManagerForwardCall,
     version,
   });
-  console.log('🌈 🌈 🌈 🌈 🌈 🌈 transaction', transaction);
+  console.log('>>>>>> createTransferTokenTransaction transaction', transaction);
   return transaction;
 };
 

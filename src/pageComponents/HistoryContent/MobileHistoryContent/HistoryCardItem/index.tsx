@@ -15,6 +15,8 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebounceCallback } from 'hooks';
 import { setSkipCount, setHasMore } from 'store/reducers/records/slice';
 
+const NoDataText = '-- No Data --';
+
 export default function HistoryCardItem({ requestRecordsList }: TRecordsContentParams) {
   const dispatch = useAppDispatch();
   const { recordsList, hasMore, maxResultCount, totalCount, skipCount } = useRecordsState();
@@ -69,12 +71,12 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsContentP
         scrollableTarget="scrollableDiv"
         loader={
           <h4 className={clsx(styles['records-loader-message'])}>
-            {hasMore ? ' Loading... ' : '-- No Data --'}
+            {hasMore ? ' Loading... ' : NoDataText}
           </h4>
         }
         endMessage={
           <p className={clsx(styles['records-end-message'])}>
-            <b>-- No Data --</b>
+            <b>{NoDataText}</b>
           </p>
         }>
         {handleRecordListData(recordsList).map((recordItem: TRecordsTableListType) => {
@@ -123,7 +125,6 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsContentP
                   network={recordItem.fromNetwork}
                   fromChainId={recordItem.fromChainId}
                   toChainId={recordItem.toChainId}
-                  orderType={recordItem.orderType}
                   fromToAddress={recordItem.fromToAddress}
                   toFromAddress={recordItem.toFromAddress}
                 />
@@ -137,7 +138,6 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsContentP
                   network={recordItem.toNetwork}
                   fromChainId={recordItem.fromChainId}
                   toChainId={recordItem.toChainId}
-                  orderType={recordItem.orderType}
                   fromToAddress={recordItem.fromToAddress}
                   toFromAddress={recordItem.toFromAddress}
                 />

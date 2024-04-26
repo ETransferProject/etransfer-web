@@ -23,9 +23,9 @@ export default function Content() {
     recordsList,
   } = useRecordsState();
 
-  const requestRecordsList = useDebounceCallback(async () => {
+  const requestRecordsList = useDebounceCallback(async (isLoading = false) => {
     try {
-      setLoading(true);
+      isLoading && setLoading(true);
       const startTimestamp = timestamp && timestamp[0];
       const startTimestampFormat = moment(startTimestamp).format('YYYY-MM-DD 00:00:00');
       const endTimestamp = timestamp && timestamp[1];
@@ -64,12 +64,12 @@ export default function Content() {
   }, []);
 
   useEffect(() => {
-    requestRecordsList();
+    requestRecordsList(true);
   }, [requestRecordsList]);
 
   return isMobilePX ? (
     <MobileHistoryContent requestRecordsList={requestRecordsList} />
   ) : (
-    <WebHistoryContent requestRecordsList={requestRecordsList} />
+    <WebHistoryContent requestRecordsList={() => requestRecordsList(true)} />
   );
 }

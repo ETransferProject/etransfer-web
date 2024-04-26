@@ -21,16 +21,14 @@ import { SupportedELFChainId } from 'constants/index';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
 import { useAccounts } from 'hooks/portkeyWallet';
-import { BusinessType } from 'types/api';
 
 type TAddressBoxProps = {
-  type: string;
+  type: 'To' | 'From';
   fromAddress: string;
   toAddress: string;
   network: string;
   fromChainId: SupportedELFChainId;
   toChainId: SupportedELFChainId;
-  orderType: string;
   fromToAddress: string;
   toFromAddress: string;
 };
@@ -42,7 +40,6 @@ export default function AddressBox({
   network,
   fromChainId,
   toChainId,
-  orderType,
 }: TAddressBoxProps) {
   const { isMobilePX } = useCommonState();
   const accounts = useAccounts();
@@ -76,8 +73,7 @@ export default function AddressBox({
   const calcAddress = useCallback(() => {
     if (network === BlockchainNetworkType.AELF) {
       // when fromAddress and toAddress all null, need accounts default address
-      let chainId: SupportedELFChainId =
-        orderType === BusinessType.Deposit ? toChainId : fromChainId;
+      let chainId: SupportedELFChainId = type === 'To' ? toChainId : fromChainId;
       chainId = chainId || SupportedChainId.sideChain;
       if (accounts && accounts[chainId] && accounts[chainId]?.[0]) {
         // default accounts[chainId]?.[0] , if not exist, use AELF
@@ -88,36 +84,28 @@ export default function AddressBox({
       return defaultNullValue;
     }
 
-    switch (orderType + type) {
-      case 'DepositFrom':
+    switch (type) {
+      case 'From':
         return fromAddress;
-      case 'DepositTo':
-        return toAddress;
-      case 'WithdrawFrom':
-        return fromAddress;
-      case 'WithdrawTo':
+      case 'To':
         return toAddress;
       default:
         return defaultNullValue;
     }
-  }, [type, network, accounts, orderType, toChainId, fromChainId, fromAddress, toAddress]);
+  }, [type, network, accounts, toChainId, fromChainId, fromAddress, toAddress]);
 
   const handleAddressClick = useCallback(() => {
     // link to Deposit: toTransfer.chainId and Withdraw: fromTransfer.chainId
     if (network === BlockchainNetworkType.AELF) {
       openWithBlank(
-        getExploreLink(
-          calcAddress(),
-          'address',
-          orderType === BusinessType.Deposit ? toChainId : fromChainId,
-        ),
+        getExploreLink(calcAddress(), 'address', type === 'To' ? toChainId : fromChainId),
       );
       return;
     }
     openWithBlank(
       getOtherExploreLink(calcAddress(), network as keyof typeof ExploreUrlType, 'address'),
     );
-  }, [orderType, fromChainId, toChainId, calcAddress, network]);
+  }, [network, calcAddress, type, toChainId, fromChainId]);
 
   return (
     <div

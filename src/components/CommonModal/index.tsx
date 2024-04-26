@@ -31,6 +31,7 @@ export default function CommonModal({
     <Modal
       width={props.width || 480}
       centered
+      zIndex={299}
       {...props}
       className={clsx(styles['common-modal'], className)}
       // To keep the title height by default
