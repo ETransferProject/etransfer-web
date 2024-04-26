@@ -446,7 +446,7 @@ export default function WithdrawContent() {
         // when network error, transactionUnit should as the same with symbol
         setWithdrawInfo({ ...InitialWithdrawInfo, transactionUnit: symbol });
         if (
-          error.name !== CommonErrorNameType.CANCEL ||
+          error.name !== CommonErrorNameType.CANCEL &&
           !isHtmlError(error?.code, handleErrorMessage(error))
         ) {
           singleMessage.error(handleErrorMessage(error));
@@ -661,7 +661,6 @@ export default function WithdrawContent() {
           setIsFailModalOpen(true);
         }
       } catch (error: any) {
-        if (isHtmlError(error?.code, error?.message)) return;
         if (WithdrawSendTxErrorCodeList.includes(error?.code)) {
           setFailModalReason(error?.message);
         } else {
