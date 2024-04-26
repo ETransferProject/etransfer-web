@@ -1,0 +1,37 @@
+@import 'src/assets/theme/color.scss';
+
+.address-box {
+  min-width: 190px;
+  display: flex;
+  align-items: center;
+}
+
+.web-address-box {
+  justify-content: flex-start;
+}
+
+.mobile-address-box {
+  position: relative;
+  left: 2px;
+  justify-content: flex-end;
+}
+
+.address-word {
+  color: $normal;
+  margin: 0 6px;
+  cursor: pointer;
+  &:hover {
+    border-bottom: 1px solid $hover;
+  }
+}
+
+.network {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  border: 1px solid $border;
+  background: $hover-bg;
+}

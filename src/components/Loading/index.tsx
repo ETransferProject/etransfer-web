@@ -44,7 +44,7 @@ export default function Loading() {
   return (
     <Modal
       className={clsx(styles['loading-modal'], loadingInfo?.className)}
-      width={loadingInfo?.width ?? defaultWidth}
+      width={loadingInfo?.width || defaultWidth}
       closable={false}
       keyboard={false}
       maskClosable={false}

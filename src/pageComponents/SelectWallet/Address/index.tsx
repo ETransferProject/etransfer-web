@@ -1,36 +1,50 @@
 import React, { useMemo } from 'react';
 import CommonAddress from 'components/CommonAddress';
-import LogoutButton from 'pageComponents/LogoutButton';
-import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { CHAIN_LIST } from 'constants/index';
+import { SupportedChainId } from 'constants/index';
 import { CopySize } from 'components/Copy';
 import { SynchronizingAddress } from 'constants/chain';
 import { useAccounts } from 'hooks/portkeyWallet';
+import clsx from 'clsx';
 
-export default function Address() {
-  const { isMobilePX } = useCommonState();
+interface AddressProps {
+  hideBorder?: boolean;
+}
+
+export default function Address({ hideBorder }: AddressProps) {
   const accounts = useAccounts();
 
-  const accountsList = useMemo(
-    () => [
-      {
-        label: CHAIN_LIST[0].label,
-        value: accounts?.[CHAIN_LIST[0].key]?.[0] || '',
-      },
-      {
-        label: CHAIN_LIST[1].label,
-        value: accounts?.[CHAIN_LIST[1].key]?.[0] || '',
-      },
-    ],
-    [accounts],
-  );
+  const accountsList = useMemo(() => {
+    const temp = [];
+    if (accounts?.[SupportedChainId.mainChain]) {
+      const defaultAddress = accounts?.[SupportedChainId.mainChain];
+      const arrayAddress = accounts?.[SupportedChainId.mainChain]?.[0];
+      temp.push({
+        label: SupportedChainId.mainChain,
+        value: typeof defaultAddress === 'string' ? defaultAddress : arrayAddress || '',
+      });
+    }
+    if (accounts?.[SupportedChainId.sideChain]) {
+      const defaultAddress = accounts?.[SupportedChainId.sideChain];
+      const arrayAddress = accounts?.[SupportedChainId.sideChain]?.[0];
+      temp.push({
+        label: SupportedChainId.sideChain,
+        value: typeof defaultAddress === 'string' ? defaultAddress : arrayAddress || '',
+      });
+    }
+    return temp;
+  }, [accounts]);
 
   return (
     <>
       <div>
         {accountsList.map((item) => (
-          <div key={item.label} className={styles['address-wrapper']}>
+          <div
+            key={item.label}
+            className={clsx(
+              styles['address-wrapper'],
+              hideBorder ? styles['address-hideBorder'] : '',
+            )}>
             <CommonAddress
               labelClassName={styles['label']}
               valueClassName={styles['value']}
@@ -43,11 +57,6 @@ export default function Address() {
           </div>
         ))}
       </div>
-      {!isMobilePX && (
-        <div className={styles['button-wrapper']}>
-          <LogoutButton />
-        </div>
-      )}
     </>
   );
 }

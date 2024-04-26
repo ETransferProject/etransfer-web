@@ -1,5 +1,7 @@
 import { ChainId } from '@portkey/provider-types';
 import { PortkeyVersion } from 'constants/wallet';
+import { TFromTransfer, TToTransfer } from './records';
+import type { Moment } from 'moment';
 
 export enum BusinessType {
   Deposit = 'Deposit',
@@ -127,4 +129,35 @@ export type CreateWithdrawOrderRequest = {
 
 export type CreateWithdrawOrderResult = {
   orderId: string;
+  transactionId: string;
+};
+
+export type TRangeValue = [Moment | null, Moment | null] | null;
+
+export interface TGetRecordsListRequest {
+  type: number;
+  status: number;
+  startTimestamp?: number | null;
+  endTimestamp?: number | null;
+  skipCount: number;
+  maxResultCount: number;
+  search?: string | undefined;
+}
+
+export type TRecordsListItem = {
+  id: string;
+  orderType: string;
+  status: string;
+  arrivalTime: number;
+  fromTransfer: TFromTransfer;
+  toTransfer: TToTransfer;
+};
+
+export type TGetRecordsListResult = {
+  totalCount: number;
+  items: TRecordsListItem[];
+};
+
+export type TRecordsContentParams = {
+  requestRecordsList: () => void;
 };

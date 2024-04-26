@@ -1,16 +1,18 @@
 import { useCallback } from 'react';
 import CommonButton, { CommonButtonSize, CommonButtonType } from 'components/CommonButton';
-import { usePortkeyProvider } from 'hooks/usePortkeyProvider';
-import { useResetStore } from 'store/Provider/hooks';
+import { useWebLogin } from 'aelf-web-login';
 
-export default function LogoutButton() {
-  const { deactivate } = usePortkeyProvider();
-  const resetStore = useResetStore();
+type TLogoutButtonType = {
+  setIsOpen?: (value: boolean) => void;
+};
+
+export default function LogoutButton({ setIsOpen }: TLogoutButtonType) {
+  const { logout } = useWebLogin();
 
   const handleLogoutWallet = useCallback(async () => {
-    deactivate();
-    resetStore();
-  }, [deactivate, resetStore]);
+    await logout();
+    setIsOpen && setIsOpen(false);
+  }, [logout, setIsOpen]);
 
   return (
     <CommonButton

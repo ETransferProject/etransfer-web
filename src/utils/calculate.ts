@@ -1,6 +1,8 @@
 import BigNumber from 'bignumber.js';
 import BN, { isBN } from 'bn.js';
 import { isEffectiveNumber, ZERO } from 'constants/misc';
+import { TTokenType } from 'types';
+import { defaultNullValue } from 'constants/index';
 
 export function timesDecimals(a?: BigNumber.Value, decimals: string | number = 18) {
   if (!a) return ZERO;
@@ -21,7 +23,7 @@ export function divDecimals(a?: BigNumber.Value, decimals: string | number = 18)
 export function divDecimalsStr(
   a?: BigNumber.Value,
   decimals: string | number = 8,
-  defaultVal = '--',
+  defaultVal = defaultNullValue,
 ) {
   const n = divDecimals(a, decimals);
   return isEffectiveNumber(n) ? n.toFormat() : defaultVal;
@@ -48,7 +50,7 @@ export function zeroFill(str: string | BN) {
 export function valueFixed2LessThanMin(strValue: string, currency?: string): string {
   let valueBigNumber = new BigNumber(strValue);
   if (valueBigNumber.isNaN()) {
-    return '--';
+    return defaultNullValue;
   }
 
   valueBigNumber = valueBigNumber.dp(2, BigNumber.ROUND_DOWN);
@@ -59,3 +61,57 @@ export function valueFixed2LessThanMin(strValue: string, currency?: string): str
 
   return `${currency}${valueBigNumber.toString()}`;
 }
+
+/**
+ * amount display as role: fixed(6) and toFormat 3
+ * @param strNumber amount value
+ * @param token token type
+ * @returns amount value
+ */
+export function LargeNumberDisplay(strNumber: string, token: string) {
+  let valueBigNumber = new BigNumber(strNumber);
+  if (valueBigNumber.isNaN()) {
+    return defaultNullValue;
+  }
+
+  // decimal number usdt 6  sgr 8
+  let decimal = 6;
+
+  switch (token) {
+    case TTokenType.SGR:
+      decimal = 8;
+      break;
+    case TTokenType.USDT:
+      decimal = 6;
+      break;
+    default:
+      decimal = 6;
+      break;
+  }
+
+  valueBigNumber = valueBigNumber.dp(decimal, BigNumber.ROUND_DOWN);
+  return valueBigNumber.toFormat();
+}
+
+/**
+ * amount display as role: preLen...endLen
+ * @param str amount value
+ * @param preLen preLen
+ * @param endLen endLen
+ * @returns amount value string
+ */
+export const getOmittedStr = (str: string, preLen?: number, endLen?: number) => {
+  if (!str || typeof str !== 'string') {
+    return str;
+  }
+  if (typeof preLen !== 'number' || typeof endLen !== 'number') {
+    return str;
+  }
+  if (str.length <= preLen + endLen) {
+    return str;
+  }
+  if (preLen === 0 || endLen === 0) {
+    return str;
+  }
+  return `${str.slice(0, preLen)}...${str.slice(-endLen)}`;
+};

@@ -90,46 +90,48 @@ export default function MobileDepositContent({
         </div>
         {!currentToken && renderSelectToken()}
 
-        {networkSelected ? (
-          <>
-            <div className={styles['data-wrapper']}>
-              {renderSelectToken({ noBorder: true })}
-              <div className={styles['data-divider']} />
-              {renderSelectNetwork({ noBorder: true })}
-              <div className={styles['data-divider']} />
-              <div className={styles['data-address-wrapper']}>
-                {showRetry && <DepositRetryForMobile onClick={onRetry} />}
-                {!showRetry && depositInfo?.depositAddress && (
-                  <CommonAddress label={DEPOSIT_ADDRESS_LABEL} value={depositInfo.depositAddress} />
-                )}
-              </div>
-            </div>
-            {depositInfo?.depositAddress && (
-              <>
-                <div className={styles['info-wrapper']}>
-                  <DepositInfo
-                    networkName={networkSelected.name}
-                    minimumDeposit={depositInfo.minAmount}
-                    contractAddress={contractAddress}
-                    contractAddressLink={contractAddressLink}
-                    minAmountUsd={depositInfo.minAmountUsd}
-                  />
+        {currentToken &&
+          (networkSelected ? (
+            <>
+              <div className={styles['data-wrapper']}>
+                {renderSelectToken({ noBorder: true })}
+                <div className={styles['data-divider']} />
+                {renderSelectNetwork({ noBorder: true })}
+                <div className={styles['data-divider']} />
+                <div className={styles['data-address-wrapper']}>
+                  {showRetry && <DepositRetryForMobile onClick={onRetry} />}
+                  {!showRetry && depositInfo?.depositAddress && (
+                    <CommonAddress
+                      label={DEPOSIT_ADDRESS_LABEL}
+                      value={depositInfo.depositAddress}
+                    />
+                  )}
                 </div>
-                {renderDepositDescription}
-              </>
-            )}
-          </>
-        ) : (
-          <>
-            {currentToken !== undefined && (
+              </div>
+              {depositInfo?.depositAddress && (
+                <>
+                  <div className={styles['info-wrapper']}>
+                    <DepositInfo
+                      networkName={networkSelected.name}
+                      minimumDeposit={depositInfo.minAmount}
+                      contractAddress={contractAddress}
+                      contractAddressLink={contractAddressLink}
+                      minAmountUsd={depositInfo.minAmountUsd}
+                    />
+                  </div>
+                  {renderDepositDescription}
+                </>
+              )}
+            </>
+          ) : (
+            <>
               <div className={styles['data-wrapper']}>
                 {renderSelectToken({ noBorder: true })}
                 <div className={styles['data-divider']} />
                 {renderSelectNetwork({ noBorder: true })}
               </div>
-            )}
-          </>
-        )}
+            </>
+          ))}
       </div>
     </>
   );

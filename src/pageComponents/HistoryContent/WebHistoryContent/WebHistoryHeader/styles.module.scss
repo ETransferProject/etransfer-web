@@ -1,0 +1,59 @@
+@import '/src/assets/theme/font.scss';
+@import '/src/assets/theme/color.scss';
+
+.web-records-title {
+  font-size: 24px;
+  font-weight: $font-family-medium-weight;
+  height: 32px;
+  line-height: 32px;
+}
+
+.web-records-search-wrapper {
+  padding: 16px 0;
+  :global {
+    .ant-select-selector {
+      border-radius: 6px !important;
+    }
+  }
+}
+
+.web-records-select-type, .web-records-select-status {
+  width: 156px;
+  border-radius: 6px;
+}
+
+.web-records-select-status {
+  margin: 0 12px;
+}
+
+.web-records-range-picker {
+  border-radius: 6px;
+  margin-right: 12px;
+}
+
+.web-records-reset-button {
+  width: 92px;
+  margin-right: 12px;
+  border: none;
+  background: none;
+  color: $normal;
+  border-radius: 6px;
+  &:hover {
+    color: $normal;
+    background: $hover-bg;
+  }
+  &:active {
+    color: $normal;
+    background: $click-bg;
+  }
+}
+
+.web-records-reset-icon {
+  color: $normal;
+  vertical-align: middle;
+}
+
+.web-records-reset-word {
+  font-size: 14px;
+  margin-left: 8px;
+}

@@ -15,10 +15,10 @@ export enum SupportedELFChainId {
   tDVV = 'tDVV',
 }
 
-export enum NETWORK_CHAIN {
-  'MAIN' = SupportedELFChainId.AELF,
-  'TEST' = SupportedELFChainId.tDVV,
-}
+export const SupportedChainId = {
+  mainChain: SupportedELFChainId.AELF,
+  sideChain: SupportedELFChainId.tDVV,
+};
 
 export const CHAIN_NAME: { [chainId in SupportedELFChainId]: string } = {
   [SupportedELFChainId.AELF]: 'MainChain AELF',
@@ -53,13 +53,6 @@ export const CHAIN_LIST_SIDE_CHAIN: IChainNameItem[] = [
   },
 ];
 
-export type ChainConstantsType = typeof AELF | typeof tDVV;
-
-export const SupportedELFChain: { [k: string | number]: ChainConstantsType } = {
-  [SupportedELFChainId.AELF]: AELF,
-  [SupportedELFChainId.tDVV]: tDVV,
-};
-
 export const AelfReact = {
   [SupportedELFChainId.AELF]: {
     chainId: AELF.CHAIN_INFO.chainId,
@@ -84,6 +77,9 @@ export const WebLoginGraphqlUrlV2 =
   'https://dapp-aa-portkey.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql';
 export const WebLoginRequestDefaultsUrlV1 = 'https://did-portkey.portkey.finance';
 export const WebLoginRequestDefaultsUrlV2 = 'https://aa-portkey.portkey.finance';
+export const WebLoginServiceUrlV1 = 'https://did-portkey.portkey.finance';
+export const WebLoginServiceUrlV2 = 'https://aa-portkey.portkey.finance';
+export const WebLoginConnectUrlV2 = 'https://auth-aa-portkey.portkey.finance';
 
 export const ADDRESS_MAP = {
   [PortkeyVersion.v1]: {
@@ -106,4 +102,9 @@ export const ADDRESS_MAP = {
       [ContractType.TOKEN]: tDVV.TOKEN_CONTRACT,
     },
   },
+};
+
+export const EXPLORE_CONFIG = {
+  [SupportedChainId.mainChain]: AELF_NODES.AELF.exploreUrl,
+  [SupportedChainId.sideChain]: AELF_NODES.tDVV.exploreUrl,
 };

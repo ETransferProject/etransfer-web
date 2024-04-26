@@ -6,7 +6,6 @@ import { useIsActive } from 'hooks/portkeyWallet';
 
 export default function Home() {
   const isActive = useIsActive();
-
   return (
     <div className={styles['content-wrapper']}>
       {isActive ? <Content /> : <NotConnectedWalletContent />}

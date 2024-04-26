@@ -15,10 +15,10 @@ export enum SupportedELFChainId {
   tDVV = 'tDVV',
 }
 
-export enum NETWORK_CHAIN {
-  'MAIN' = SupportedELFChainId.AELF,
-  'TEST' = SupportedELFChainId.tDVV,
-}
+export const SupportedChainId: Record<string, SupportedELFChainId> = {
+  mainChain: SupportedELFChainId.AELF,
+  sideChain: SupportedELFChainId.tDVV,
+};
 
 export const CHAIN_NAME: { [chainId in SupportedELFChainId]: string } = {
   [SupportedELFChainId.AELF]: 'MainChain AELF',
@@ -53,13 +53,6 @@ export const CHAIN_LIST_SIDE_CHAIN: IChainNameItem[] = [
   },
 ];
 
-export type ChainConstantsType = typeof AELF | typeof tDVV;
-
-export const SupportedELFChain: { [k: string | number]: ChainConstantsType } = {
-  [SupportedELFChainId.AELF]: AELF,
-  [SupportedELFChainId.tDVV]: tDVV,
-};
-
 export const AelfReact = {
   [SupportedELFChainId.AELF]: {
     chainId: AELF.CHAIN_INFO.chainId,
@@ -83,6 +76,9 @@ export const WebLoginGraphqlUrlV1 = '/v1/graphql';
 export const WebLoginGraphqlUrlV2 = '/v2/graphql';
 export const WebLoginRequestDefaultsUrlV1 = 'http://192.168.66.203:5001';
 export const WebLoginRequestDefaultsUrlV2 = 'http://192.168.67.127:5001';
+export const WebLoginServiceUrlV1 = 'http://192.168.66.203:5001';
+export const WebLoginServiceUrlV2 = 'http://192.168.67.127:5001';
+export const WebLoginConnectUrlV2 = 'http://192.168.67.127:8080';
 
 // test3-dev
 // export const ETransferHost = 'http://192.168.64.151:5011';
@@ -111,4 +107,9 @@ export const ADDRESS_MAP = {
       [ContractType.TOKEN]: tDVV.TOKEN_CONTRACT,
     },
   },
+};
+
+export const EXPLORE_CONFIG = {
+  [SupportedChainId.mainChain]: AELF_NODES.AELF.exploreUrl,
+  [SupportedChainId.sideChain]: AELF_NODES.tDVV.exploreUrl,
 };

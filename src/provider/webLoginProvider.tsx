@@ -1,23 +1,36 @@
 'use client';
-import { PortkeyProvider as PortkeyProviderV1 } from '@portkey-v1/did-ui-react';
-import { PortkeyProvider as PortkeyProviderV2 } from '@portkey/did-ui-react';
 import {
   AelfReact,
   AppName,
   NETWORK_TYPE_V1,
-  NETWORK_TYPE_V2,
-  SupportedELFChainId,
+  WebLoginConnectUrlV2,
   WebLoginGraphqlUrlV1,
   WebLoginGraphqlUrlV2,
-  WebLoginRequestDefaultsUrlV1,
   WebLoginRequestDefaultsUrlV2,
+  NETWORK_TYPE_V2,
+  WebLoginServiceUrlV1,
+  WebLoginServiceUrlV2,
+  SupportedChainId,
 } from 'constants/index';
-import { PortkeyVersion } from 'constants/wallet';
 import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
-import { useCommonState } from 'store/Provider/hooks';
-const InitProviderV1 = dynamic(() => import('./initProviderV1'), { ssr: false });
-const InitProviderV2 = dynamic(() => import('./initProviderV2'), { ssr: false });
+import { EtransferLogoIconBase64 } from 'constants/wallet';
+
+const WalletProviderDynamic = dynamic(
+  async () => {
+    const WalletProvider = await import('./walletProvider').then((module) => module);
+    return WalletProvider;
+  },
+  { ssr: false },
+);
+
+const WebLoginPortkeyProvider = dynamic(
+  async () => {
+    const { PortkeyProvider } = await import('aelf-web-login').then((module) => module);
+    return PortkeyProvider;
+  },
+  { ssr: false },
+);
 
 const WebLoginProviderDynamic = dynamic(
   async () => {
@@ -25,26 +38,32 @@ const WebLoginProviderDynamic = dynamic(
 
     webLogin.setGlobalConfig({
       appName: AppName,
-      chainId: SupportedELFChainId.AELF,
-      networkType: 'MAIN',
+      chainId: SupportedChainId.sideChain,
+      networkType: NETWORK_TYPE_V1,
       portkey: {
+        useLocalStorage: true,
         graphQLUrl: WebLoginGraphqlUrlV1,
         requestDefaults: {
-          baseURL: WebLoginRequestDefaultsUrlV1,
+          baseURL: WebLoginServiceUrlV1,
         },
       },
+      onlyShowV2: true,
       portkeyV2: {
+        useLocalStorage: true,
         graphQLUrl: WebLoginGraphqlUrlV2,
-        networkType: 'MAINNET',
+        networkType: NETWORK_TYPE_V2,
+        connectUrl: WebLoginConnectUrlV2,
         requestDefaults: {
-          baseURL: WebLoginRequestDefaultsUrlV2,
+          baseURL: WebLoginServiceUrlV2,
+          timeout: 20000, // NETWORK_NAME === NetworkName.testnet ? 300000 : 80000
         },
+        serviceUrl: WebLoginRequestDefaultsUrlV2,
       },
       aelfReact: {
         appName: AppName,
         nodes: AelfReact,
       },
-      defaultRpcUrl: AelfReact.AELF.rpcUrl,
+      defaultRpcUrl: AelfReact[SupportedChainId.sideChain].rpcUrl,
     });
     return webLogin.WebLoginProvider;
   },
@@ -52,60 +71,36 @@ const WebLoginProviderDynamic = dynamic(
 );
 
 export default function Providers({ children }: { children: ReactNode }) {
-  const { currentVersion } = useCommonState();
-
-  if (currentVersion === PortkeyVersion.v1) {
-    return (
-      <PortkeyProviderV1 networkType={NETWORK_TYPE_V1}>
-        <WebLoginProviderDynamic
-          nightElf={{
-            connectEagerly: false,
-          }}
-          portkey={{
-            autoShowUnlock: true,
-            checkAccountInfoSync: true,
-          }}
-          discover={{
-            autoRequestAccount: true,
-            autoLogoutOnDisconnected: true,
-            autoLogoutOnNetworkMismatch: true,
-            autoLogoutOnAccountMismatch: true,
-            autoLogoutOnChainMismatch: true,
-            onPluginNotFound: (openStore) => {
-              console.log('openStore:', openStore);
-            },
-          }}
-          extraWallets={['discover']}>
-          <InitProviderV1 />
-          {children}
-        </WebLoginProviderDynamic>
-      </PortkeyProviderV1>
-    );
-  }
   return (
-    <PortkeyProviderV2 networkType={NETWORK_TYPE_V2}>
+    <WebLoginPortkeyProvider networkType={NETWORK_TYPE_V1} networkTypeV2={NETWORK_TYPE_V2}>
       <WebLoginProviderDynamic
         nightElf={{
+          useMultiChain: false,
           connectEagerly: false,
         }}
         portkey={{
-          autoShowUnlock: true,
+          design: 'SocialDesign',
+          autoShowUnlock: false,
           checkAccountInfoSync: true,
         }}
+        commonConfig={{
+          showClose: true,
+          iconSrc: EtransferLogoIconBase64,
+          title: 'Log In to ETransfer',
+        }}
+        extraWallets={['discover']}
         discover={{
           autoRequestAccount: true,
           autoLogoutOnDisconnected: true,
           autoLogoutOnNetworkMismatch: true,
           autoLogoutOnAccountMismatch: true,
           autoLogoutOnChainMismatch: true,
-          onPluginNotFound: (openStore) => {
-            console.log('openStore:', openStore);
-          },
-        }}
-        extraWallets={['discover']}>
-        <InitProviderV2 />
-        {children}
+          // onPluginNotFound: (openStore) => {
+          //   console.log('openStore:', openStore);
+          // },
+        }}>
+        <WalletProviderDynamic>{children}</WalletProviderDynamic>
       </WebLoginProviderDynamic>
-    </PortkeyProviderV2>
+    </WebLoginPortkeyProvider>
   );
 }

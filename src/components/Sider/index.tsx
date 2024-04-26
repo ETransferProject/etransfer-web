@@ -9,7 +9,7 @@ import styles from './styles.module.scss';
 import SupportEntry from 'pageComponents/SupportEntry';
 
 export default function Sider() {
-  const { activeMenuKey } = useCommonState();
+  const { activeMenuKey, isShowRedDot } = useCommonState();
   useEffect(() => {
     // init activeMenuKey
     if (!activeMenuKey) {
@@ -32,6 +32,9 @@ export default function Sider() {
               }}>
               <MenuIcon className={clsx('flex-none', styles['menu-item-icon'])} />
               <span className={styles['menu-item-label']}>{item.label}</span>
+              {isShowRedDot && item.key === SideMenuKey.History && (
+                <span className={styles['menu-item-red-dot']} />
+              )}
             </div>
           );
         })}

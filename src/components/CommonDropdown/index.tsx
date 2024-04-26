@@ -8,6 +8,7 @@ interface CommonDropdownProps extends DropdownProps {
   handleMenuClick?: (...args: Parameters<Required<MenuProps>['onClick']>) => void;
   /** use 'handleMenuClick' instead of 'onClick' */
   menu?: Omit<MenuProps, 'onClick'>;
+  hideDownArrow?: boolean;
 }
 
 export default function CommonDropdown({
@@ -32,11 +33,13 @@ export default function CommonDropdown({
       }}>
       <div className={clsx('cursor-pointer', 'flex-row-center', styles['children-container'])}>
         {children}
-        <DownIcon
-          className={clsx('flex-none', styles['children-icon'], {
-            [styles['children-icon-rotate']]: isOpen,
-          })}
-        />
+        {!props.hideDownArrow && (
+          <DownIcon
+            className={clsx('flex-none', styles['children-icon'], {
+              [styles['children-icon-rotate']]: isOpen,
+            })}
+          />
+        )}
       </div>
     </Dropdown>
   );
