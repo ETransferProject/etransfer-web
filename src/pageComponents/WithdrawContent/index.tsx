@@ -447,7 +447,7 @@ export default function WithdrawContent() {
         setWithdrawInfo({ ...InitialWithdrawInfo, transactionUnit: symbol });
         if (
           error.name !== CommonErrorNameType.CANCEL ||
-          !isHtmlError(error?.code, error?.message)
+          !isHtmlError(error?.code, handleErrorMessage(error))
         ) {
           singleMessage.error(handleErrorMessage(error));
           setIsTransactionFeeLoading(false);
