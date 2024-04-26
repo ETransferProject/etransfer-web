@@ -77,6 +77,7 @@ import RemainingQuato from './RemainingQuato';
 // import { getRecordStatus } from 'utils/api/records';
 import { setIsShowRedDot } from 'store/reducers/common/slice';
 import { useWalletContext } from 'provider/walletProvider';
+import { isHtmlError } from 'utils/api/error';
 
 enum ValidateStatus {
   Error = 'error',
@@ -444,7 +445,10 @@ export default function WithdrawContent() {
       } catch (error: any) {
         // when network error, transactionUnit should as the same with symbol
         setWithdrawInfo({ ...InitialWithdrawInfo, transactionUnit: symbol });
-        if (error.name !== CommonErrorNameType.CANCEL) {
+        if (
+          error.name !== CommonErrorNameType.CANCEL ||
+          !isHtmlError(error?.code, error?.message)
+        ) {
           singleMessage.error(handleErrorMessage(error));
           setIsTransactionFeeLoading(false);
         }
@@ -657,6 +661,7 @@ export default function WithdrawContent() {
           setIsFailModalOpen(true);
         }
       } catch (error: any) {
+        if (isHtmlError(error?.code, error?.message)) return;
         if (WithdrawSendTxErrorCodeList.includes(error?.code)) {
           setFailModalReason(error?.message);
         } else {
