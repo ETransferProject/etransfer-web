@@ -13,7 +13,7 @@ import { useEffectOnce } from 'react-use';
 import { useThrottleCallback } from 'hooks';
 import { usePortkeyProvider } from 'hooks/usePortkeyProvider';
 import myEvents from 'utils/myEvent';
-import { resetJWT } from 'api/utils';
+import { resetLocalJWT } from 'api/utils';
 import singleMessage from 'components/SingleMessage';
 import 'utils/firebase';
 import { LoginExpiredTip, NetworkNotMatchTipPrefix } from 'constants/wallet';
@@ -91,7 +91,7 @@ export default function InitProvider() {
   useEffectOnce(() => {
     const listener = myEvents.DeniedRequest.addListener(() => {
       singleMessage.error(LoginExpiredTip);
-      resetJWT();
+      resetLocalJWT();
       store.dispatch(setV2DisconnectedAction());
       portkeyWallet.clearData();
       resetStore();

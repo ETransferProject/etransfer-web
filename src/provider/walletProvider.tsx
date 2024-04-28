@@ -21,6 +21,10 @@ import Wallet from 'contract/webLogin';
 import { useLocation } from 'react-use';
 import { singleMessage } from '@portkey/did-ui-react';
 import { IWallet } from 'contract/types';
+import myEvents from 'utils/myEvent';
+import { resetLocalJWT } from 'api/utils';
+import { useQueryAuthToken } from 'hooks/authToken';
+import { eTransferInstance } from 'utils/etransferInstance';
 
 export const DESTROY = 'DESTROY';
 const SET_WALLET = 'SET_WALLET';
@@ -120,10 +124,35 @@ function WalletProvider({ children }: { children: React.ReactNode }) {
   // WebLoginEvents.LOGINED - can not get wallet info.
   // Please use webLoginContext.loginState===WebLoginState.logined
   // useWebLoginEvent(WebLoginEvents.LOGINED, onInitWallet);
+  WebLoginEvents.LOGOUT;
   useEffect(() => {
     if (webLoginContext.loginState !== WebLoginState.logined) return;
     onInitWallet();
   }, [onInitWallet, webLoginContext.loginState]);
+
+  const { queryAuth } = useQueryAuthToken();
+  const onAuthorizationExpired = useCallback(() => {
+    if (webLoginContext.loginState !== WebLoginState.logined) {
+      console.log('AuthorizationExpired: Not Logined');
+      return;
+    }
+    resetLocalJWT();
+    console.log('AuthorizationExpired');
+    eTransferInstance.setObtainingToken(true);
+    queryAuth();
+  }, [queryAuth, webLoginContext.loginState]);
+  const onAuthorizationExpiredRef = useRef(onAuthorizationExpired);
+  onAuthorizationExpiredRef.current = onAuthorizationExpired;
+
+  useEffect(() => {
+    const { remove } = myEvents.DeniedRequest.addListener(() => {
+      if (eTransferInstance.obtainingToken) return;
+      onAuthorizationExpiredRef.current?.();
+    });
+    return () => {
+      remove();
+    };
+  }, [wallet]);
 
   const onLoginError = useCallback((error: any) => {
     console.log('onLoginError', error);
