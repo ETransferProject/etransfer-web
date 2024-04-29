@@ -67,7 +67,13 @@ import { handleErrorMessage } from '@portkey/did-ui-react';
 import { useAccounts } from 'hooks/portkeyWallet';
 import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
 import { formatWithCommas, parseWithCommas, parseWithStringCommas } from 'utils/format';
-import { sleep, getExploreLink, removeELFAddressSuffix } from 'utils/common';
+import {
+  sleep,
+  getExploreLink,
+  removeELFAddressSuffix,
+  isELFAddress,
+  removeAddressSuffix,
+} from 'utils/common';
 import { devices } from '@portkey/utils';
 import { ConnectWalletError } from 'constants/wallet';
 import { useWithdraw } from 'hooks/withdraw';
@@ -795,6 +801,11 @@ export default function WithdrawContent() {
       setCurrentNetwork(undefined);
       await getAllNetworkData();
       return;
+    }
+
+    if (isELFAddress(address)) {
+      form.setFieldValue(FormKeys.ADDRESS, removeELFAddressSuffix(address));
+      dispatch(setWithdrawAddress(removeAddressSuffix(address)));
     }
 
     await getNetworkData({

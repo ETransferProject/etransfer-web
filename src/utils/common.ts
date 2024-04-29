@@ -67,11 +67,16 @@ export const isELFAddress = (value: string) => {
   }
 };
 
+export const removeAddressSuffix = (address: string) => {
+  const arr = address.split('_');
+  if (arr.length === 3) return arr[1];
+
+  return address;
+};
+
 export const removeELFAddressSuffix = (address: string) => {
-  if (isELFAddress(address)) {
-    const arr = address.split('_');
-    if (arr.length === 3) return arr[1];
-  }
+  if (isELFAddress(address)) return removeAddressSuffix(address);
+
   return address;
 };
 
