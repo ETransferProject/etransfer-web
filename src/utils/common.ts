@@ -1,7 +1,8 @@
 import { ChainId } from 'types';
-import { EXPLORE_CONFIG } from 'constants/index';
+import { EXPLORE_CONFIG, SupportedELFChainId } from 'constants/index';
 import { ExploreUrlType } from 'constants/network';
 import AElf from 'aelf-sdk';
+import { ChainType } from '@portkey/types';
 
 export const sleep = (time: number) => {
   return new Promise<void>((resolve) => {
@@ -72,6 +73,25 @@ export const removeELFAddressSuffix = (address: string) => {
     if (arr.length === 3) return arr[1];
   }
   return address;
+};
+
+/**
+ * format address like "aaa...bbb" to "ELF_aaa...bbb_AELF"
+ * @param address
+ * @param chainId
+ * @param chainType
+ * @returns
+ */
+export const addressFormat = (
+  address: string,
+  chainId: SupportedELFChainId = SupportedELFChainId.AELF,
+  chainType: ChainType = 'aelf',
+): string => {
+  if (chainType !== 'aelf') return address;
+  const arr = address.split('_');
+  if (address.includes('_') && arr.length < 3) return address;
+  if (address.includes('_')) return `ELF_${arr[1]}_${chainId}`;
+  return `ELF_${address}_${chainId}`;
 };
 
 export function shortenAddress(address: string | null, chars = 4, end = 42): string {

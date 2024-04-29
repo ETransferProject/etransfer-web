@@ -1,8 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SupportedChainId, SupportedELFChainId } from 'constants/index';
+import { SideMenuKey } from 'constants/home';
+import { CHAIN_LIST, IChainNameItem, SupportedChainId, SupportedELFChainId } from 'constants/index';
 import { NetworkItem } from 'types/api';
 
 export interface UserActionDeposit {
+  currentChainItem: IChainNameItem;
   address?: string;
   currentNetwork?: NetworkItem;
   networkList?: NetworkItem[];
@@ -11,6 +13,7 @@ export interface UserActionDeposit {
 }
 
 export interface UserActionWithdraw {
+  currentChainItem?: IChainNameItem;
   address?: string;
   currentNetwork?: NetworkItem;
   networkList?: NetworkItem[];
@@ -28,8 +31,12 @@ export interface UserInfo {
 }
 
 export const initialUserActionState: UserActionState = {
-  deposit: { initOpenNetworkModalCount: 0, initOpenTokenModalCount: 0 },
-  withdraw: {},
+  deposit: {
+    currentChainItem: CHAIN_LIST[0],
+    initOpenNetworkModalCount: 0,
+    initOpenTokenModalCount: 0,
+  },
+  withdraw: { currentChainItem: CHAIN_LIST[0] },
   userInfo: {
     caHash: '',
     managerAddress: '',
@@ -41,6 +48,27 @@ export const UserActionSlice = createSlice({
   name: 'userAction',
   initialState: initialUserActionState,
   reducers: {
+    setCurrentChainItem: (
+      state,
+      action: PayloadAction<{ chainItem: IChainNameItem; activeMenuKey?: SideMenuKey }>,
+    ) => {
+      const key = action.payload?.activeMenuKey;
+      switch (key) {
+        case SideMenuKey.Deposit:
+          state.deposit.currentChainItem = action.payload.chainItem;
+          break;
+        case SideMenuKey.Withdraw:
+          state.withdraw.currentChainItem = action.payload.chainItem;
+          break;
+        default:
+          state.deposit.currentChainItem = action.payload.chainItem;
+          state.withdraw.currentChainItem = action.payload.chainItem;
+          break;
+      }
+    },
+    setDepositChainItem: (state, action: PayloadAction<IChainNameItem>) => {
+      state.deposit.currentChainItem = action.payload;
+    },
     setDepositAddress: (state, action: PayloadAction<string | undefined>) => {
       state.deposit.address = action.payload;
     },
@@ -55,6 +83,9 @@ export const UserActionSlice = createSlice({
     },
     setAddInitOpenTokenModalCount: (state, _action: PayloadAction<void>) => {
       state.deposit.initOpenTokenModalCount = state.deposit.initOpenTokenModalCount++;
+    },
+    setWithdrawChainItem: (state, action: PayloadAction<IChainNameItem>) => {
+      state.withdraw.currentChainItem = action.payload;
     },
     setWithdrawAddress: (state, action: PayloadAction<string | undefined>) => {
       state.withdraw.address = action.payload;
@@ -78,11 +109,14 @@ export const UserActionSlice = createSlice({
 });
 
 export const {
+  setCurrentChainItem,
+  setDepositChainItem,
   setDepositAddress,
   setDepositCurrentNetwork,
   setDepositNetworkList,
   setAddInitOpenNetworkModalCount,
   setAddInitOpenTokenModalCount,
+  setWithdrawChainItem,
   setWithdrawAddress,
   setWithdrawCurrentNetwork,
   setWithdrawNetworkList,

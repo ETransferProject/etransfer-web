@@ -27,7 +27,7 @@ import {
   useUserActionState,
 } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { ADDRESS_MAP, IChainNameItem, defaultNullValue } from 'constants/index';
+import { ADDRESS_MAP, CHAIN_LIST, IChainNameItem, defaultNullValue } from 'constants/index';
 import { createWithdrawOrder, getNetworkList, getWithdrawInfo } from 'utils/api/deposit';
 import { CONTRACT_ADDRESS } from 'constants/deposit';
 import { WithdrawInfoSuccess } from 'types/deposit';
@@ -103,11 +103,12 @@ type FormValuesType = {
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const isAndroid = devices.isMobile().android;
-  const { isMobilePX, currentChainItem, currentVersion } = useCommonState();
-  const currentChainItemRef = useRef<IChainNameItem>(currentChainItem);
+  const { isMobilePX, currentVersion } = useCommonState();
+  const { withdraw, userInfo } = useUserActionState();
+  const currentChainItem = useMemo(() => withdraw.currentChainItem, [withdraw.currentChainItem]);
+  const currentChainItemRef = useRef<IChainNameItem>(currentChainItem || CHAIN_LIST[0]);
   const accounts = useAccounts();
   const { currentSymbol, tokenList } = useWithdraw();
-  const { withdraw, userInfo } = useUserActionState();
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
@@ -666,7 +667,7 @@ export default function WithdrawContent() {
           symbol: currentSymbol,
           amount: balance,
           fromChainId: currentChainItemRef.current.key,
-          toAddress: address,
+          toAddress: removeELFAddressSuffix(address),
           rawTransaction: rawTransaction,
         });
         console.log(

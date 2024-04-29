@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IChainNameItem, CHAIN_LIST } from 'constants/index';
 import { PortkeyVersion } from 'constants/wallet';
 import { SideMenuKey } from 'constants/home';
 
@@ -7,7 +6,6 @@ export interface CommonState {
   isMobile: boolean;
   isMobilePX: boolean;
   activeMenuKey: SideMenuKey;
-  currentChainItem: IChainNameItem;
   currentVersion?: PortkeyVersion;
   isShowRedDot?: boolean;
 }
@@ -16,7 +14,6 @@ export const initialState: CommonState = {
   isMobile: false,
   isMobilePX: false,
   activeMenuKey: SideMenuKey.Deposit,
-  currentChainItem: CHAIN_LIST[0],
   currentVersion: PortkeyVersion.v2,
   isShowRedDot: false,
 };
@@ -35,12 +32,8 @@ export const CommonSlice = createSlice({
     setActiveMenuKey: (state, action: PayloadAction<SideMenuKey>) => {
       state.activeMenuKey = action.payload;
     },
-    setCurrentChainItem: (state, action: PayloadAction<IChainNameItem>) => {
-      state.currentChainItem = action.payload;
-    },
     initCommon: (state) => {
       state.activeMenuKey = initialState.activeMenuKey;
-      state.currentChainItem = initialState.currentChainItem;
     },
     setSwitchVersionAction: (state, action) => {
       state.currentVersion = action.payload;
@@ -55,7 +48,6 @@ export const {
   setIsMobile,
   setIsMobilePX,
   setActiveMenuKey,
-  setCurrentChainItem,
   initCommon,
   setSwitchVersionAction,
   setIsShowRedDot,

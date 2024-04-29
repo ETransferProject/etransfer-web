@@ -16,7 +16,7 @@ import { BlockchainNetworkType, ExploreUrlType } from 'constants/network';
 import { SupportedChainId, defaultNullValue } from 'constants/index';
 import Copy, { CopySize } from 'components/Copy';
 import { getOmittedStr } from 'utils/calculate';
-import { openWithBlank, getExploreLink, getOtherExploreLink } from 'utils/common';
+import { openWithBlank, getExploreLink, getOtherExploreLink, addressFormat } from 'utils/common';
 import { SupportedELFChainId } from 'constants/index';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
@@ -71,7 +71,13 @@ export default function AddressBox({
   }, [network]);
 
   const calcAddress = useCallback(() => {
-    if (network === BlockchainNetworkType.AELF) {
+    const address = type === 'To' ? toAddress : fromAddress;
+    if (address && network === BlockchainNetworkType.AELF) {
+      // format address: add suffix
+      const chainId: SupportedELFChainId = type === 'To' ? toChainId : fromChainId;
+      return addressFormat(address, chainId || SupportedChainId.sideChain);
+    }
+    if (!address && network === BlockchainNetworkType.AELF) {
       // when fromAddress and toAddress all null, need accounts default address
       let chainId: SupportedELFChainId = type === 'To' ? toChainId : fromChainId;
       chainId = chainId || SupportedChainId.sideChain;
@@ -83,15 +89,7 @@ export default function AddressBox({
       }
       return defaultNullValue;
     }
-
-    switch (type) {
-      case 'From':
-        return fromAddress;
-      case 'To':
-        return toAddress;
-      default:
-        return defaultNullValue;
-    }
+    return address || defaultNullValue;
   }, [type, network, accounts, toChainId, fromChainId, fromAddress, toAddress]);
 
   const handleAddressClick = useCallback(() => {
