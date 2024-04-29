@@ -7,6 +7,7 @@ import getPortkeyWallet from 'wallet/portkeyWallet';
 import AElf from 'aelf-sdk';
 import service from './axios';
 import { PortkeyVersion } from 'constants/wallet';
+import myEvents from 'utils/myEvent';
 
 export function spliceUrl(baseUrl: string, extendArg?: string) {
   return extendArg ? baseUrl + '/' + extendArg : baseUrl;
@@ -74,7 +75,7 @@ export const getLocalJWT = (key: string) => {
   }
 };
 
-export const resetJWT = () => {
+export const resetLocalJWT = () => {
   return localStorage.removeItem(LocalStorageKey.ACCESS_TOKEN);
 };
 
@@ -95,6 +96,7 @@ export const queryAuthApi = async (config: QueryAuthApiExtraRequest) => {
   const access_token = res.data.access_token;
 
   service.defaults.headers.common['Authorization'] = `${token_type} ${access_token}`;
+  myEvents.AuthTokenSuccess.emit();
 
   if (localStorage) {
     setLocalJWT(config.ca_hash + config.managerAddress, res.data);
