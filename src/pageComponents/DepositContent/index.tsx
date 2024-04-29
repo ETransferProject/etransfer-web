@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState, useMemo } from 'react';
+import React, { useCallback, useRef, useState, useMemo, useEffect } from 'react';
 import WebDepositContent from './WebDepositContent';
 import MobileDepositContent from './MobileDepositContent';
 import {
@@ -28,6 +28,8 @@ import { InitDepositInfo } from 'constants/deposit';
 import { CommonErrorNameType } from 'api/types';
 import { handleErrorMessage } from '@portkey/did-ui-react';
 import { useDeposit } from 'hooks/deposit';
+import myEvents from 'utils/myEvent';
+import { isAuthTokenError } from 'utils/api/error';
 
 export type DepositContentProps = {
   networkList: NetworkItem[];
@@ -133,7 +135,7 @@ export default function Content() {
         setIsShowNetworkLoading(false);
       } catch (error: any) {
         setIsShowNetworkLoading(false);
-        if (error.name !== CommonErrorNameType.CANCEL) {
+        if (error.name !== CommonErrorNameType.CANCEL && !isAuthTokenError(error)) {
           singleMessage.error(handleErrorMessage(error));
         }
       } finally {
@@ -184,7 +186,7 @@ export default function Content() {
     });
   };
 
-  useEffectOnce(() => {
+  const init = useCallback(() => {
     if (
       deposit?.currentNetwork?.network &&
       deposit?.networkList &&
@@ -203,7 +205,28 @@ export default function Content() {
         });
       }
     }
+  }, [
+    currentChainItem.key,
+    currentSymbol,
+    deposit.currentNetwork,
+    deposit.networkList,
+    getDepositData,
+    getNetworkData,
+  ]);
+
+  useEffectOnce(() => {
+    init();
   });
+
+  useEffect(() => {
+    const { remove } = myEvents.AuthTokenSuccess.addListener(() => {
+      console.log('login success');
+      init();
+    });
+    return () => {
+      remove();
+    };
+  }, [init]);
 
   return isMobilePX ? (
     <MobileDepositContent

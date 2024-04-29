@@ -77,7 +77,8 @@ import RemainingQuota from './RemainingQuota';
 // import { getRecordStatus } from 'utils/api/records';
 import { setIsShowRedDot } from 'store/reducers/common/slice';
 import { useWalletContext } from 'provider/walletProvider';
-import { isHtmlError } from 'utils/api/error';
+import { isAuthTokenError, isHtmlError } from 'utils/api/error';
+import myEvents from 'utils/myEvent';
 
 enum ValidateStatus {
   Error = 'error',
@@ -338,7 +339,7 @@ export default function WithdrawContent() {
               errorMessage: '',
             },
           });
-          if (error.name !== CommonErrorNameType.CANCEL) {
+          if (error.name !== CommonErrorNameType.CANCEL && !isAuthTokenError(error)) {
             singleMessage.error(handleErrorMessage(error));
           }
           setNetworkList([]);
@@ -452,7 +453,8 @@ export default function WithdrawContent() {
         setWithdrawInfo({ ...InitialWithdrawInfo, transactionUnit: symbol });
         if (
           error.name !== CommonErrorNameType.CANCEL &&
-          !isHtmlError(error?.code, handleErrorMessage(error))
+          !isHtmlError(error?.code, handleErrorMessage(error)) &&
+          !isAuthTokenError(error)
         ) {
           singleMessage.error(handleErrorMessage(error));
           setIsTransactionFeeLoading(false);
@@ -864,7 +866,7 @@ export default function WithdrawContent() {
     getWithdrawData();
   }, [form, getWithdrawData]);
 
-  useEffectOnce(() => {
+  const init = useCallback(() => {
     form.setFieldValue(FormKeys.ADDRESS, withdraw.address || '');
 
     if (
@@ -881,6 +883,17 @@ export default function WithdrawContent() {
     } else {
       handleChainChanged(currentChainItemRef.current);
     }
+  }, [
+    form,
+    getWithdrawData,
+    handleChainChanged,
+    withdraw.address,
+    withdraw.currentNetwork,
+    withdraw.networkList,
+  ]);
+
+  useEffectOnce(() => {
+    init();
 
     // interval fetch balance
     getMaxBalanceInterval();
@@ -888,6 +901,16 @@ export default function WithdrawContent() {
       if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
     };
   });
+
+  useEffect(() => {
+    const { remove } = myEvents.AuthTokenSuccess.addListener(() => {
+      console.log('login success');
+      init();
+    });
+    return () => {
+      remove();
+    };
+  }, [init]);
 
   const renderTransactionFeeValue = () => {
     if (!withdrawInfo.transactionFee || !withdrawInfo.aelfTransactionFee) {
