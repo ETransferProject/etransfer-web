@@ -42,13 +42,14 @@ export default function SelectWallet() {
         <UserProfile className={'flex-none'} />
       </div>
       <CommonDrawer
-        className={clsx(styles['drawer'], styles['drawer-weight'])}
+        className={clsx(styles['wallet-drawer'], styles['wallet-drawer-weight'])}
         title={
           <div className={styles['drawer-my-wrapper']}>
             <span className={styles['drawer-title-my']}>My</span>
           </div>
         }
         height="100%"
+        zIndex={301}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}>
         <div className={styles['user-wrapper']}>

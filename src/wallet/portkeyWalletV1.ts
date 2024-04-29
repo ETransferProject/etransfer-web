@@ -163,7 +163,7 @@ class PortkeyWallet implements IPortkeyWalletV1 {
       this.provider.request({ method: MethodsWallet.GET_WALLET_NAME }),
       this.provider.request({ method: MethodsBase.NETWORK }),
     ]);
-    console.log('🌈 🌈 🌈 🌈 🌈 🌈 networkType', networkType);
+    console.log('>>>>>> connected networkType', networkType);
     return { accounts, name, networkType };
   }
 

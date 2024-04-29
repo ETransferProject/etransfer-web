@@ -5,7 +5,7 @@ import styles from '../styles.module.scss';
 import { useCommonState } from 'store/Provider/hooks';
 import CommonModalTips from 'components/CommonModalTips';
 
-export default function RemainingQuato({ title }: { title: string }) {
+export default function RemainingQuota({ title }: { title: string }) {
   const { isMobilePX } = useCommonState();
   const [openModal, setOpenModal] = useState(false);
 

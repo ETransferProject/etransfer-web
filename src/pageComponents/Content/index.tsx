@@ -2,16 +2,21 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import DepositContent from 'pageComponents/DepositContent';
 import WithdrawContent from 'pageComponents/WithdrawContent';
 import HistoryContent from 'pageComponents/HistoryContent';
-import { useAppDispatch, useCommonState, useResetStore } from 'store/Provider/hooks';
+import {
+  useAppDispatch,
+  useCommonState,
+  useResetStore,
+  useUserActionState,
+} from 'store/Provider/hooks';
 import { SideMenuKey } from 'constants/home';
 import styles from './styles.module.scss';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   setActiveMenuKey,
-  setCurrentChainItem,
   setIsShowRedDot,
   setSwitchVersionAction,
 } from 'store/reducers/common/slice';
+import { setCurrentChainItem } from 'store/reducers/userAction/slice';
 import { CHAIN_LIST } from 'constants/index';
 import clsx from 'clsx';
 import { getTokenList } from 'utils/api/deposit';
@@ -26,7 +31,8 @@ import { useWebLoginEvent, WebLoginEvents } from 'aelf-web-login';
 export default function Content() {
   const dispatch = useAppDispatch();
   const resetStore = useResetStore();
-  const { activeMenuKey, currentChainItem, isMobilePX } = useCommonState();
+  const { activeMenuKey, isMobilePX } = useCommonState();
+  const { deposit, withdraw } = useUserActionState();
   const { currentSymbol: withdrawCurrentSymbol } = useWithdraw();
   const router = useRouter();
   const searchParams = useSearchParams(); // TODO
@@ -57,7 +63,10 @@ export default function Content() {
 
       const res = await getTokenList({
         type: activeMenuKey as unknown as BusinessType,
-        chainId: currentChainItem.key,
+        chainId:
+          activeMenuKey === SideMenuKey.Deposit
+            ? deposit?.currentChainItem?.key || CHAIN_LIST[0].key
+            : withdraw?.currentChainItem?.key || CHAIN_LIST[0].key,
       });
 
       dispatch(
@@ -77,7 +86,14 @@ export default function Content() {
         return;
       }
     },
-    [activeMenuKey, currentChainItem.key, dispatch, withdrawCurrentSymbol, currentActiveMenuKey],
+    [
+      currentActiveMenuKey,
+      activeMenuKey,
+      deposit?.currentChainItem?.key,
+      withdraw?.currentChainItem?.key,
+      dispatch,
+      withdrawCurrentSymbol,
+    ],
   );
 
   useEffect(() => {
@@ -86,7 +102,12 @@ export default function Content() {
     }
     if (routeQuery.chainId) {
       const ChainItemKey = CHAIN_LIST.filter((item) => item.key === routeQuery.chainId);
-      dispatch(setCurrentChainItem(ChainItemKey[0]));
+      dispatch(
+        setCurrentChainItem({
+          activeMenuKey: routeQuery?.type,
+          chainItem: ChainItemKey[0],
+        }),
+      );
     }
     if (routeQuery.tokenSymbol) {
       dispatch(
@@ -100,7 +121,15 @@ export default function Content() {
       getToken(true);
     }
     router.push('/');
-  }, [activeMenuKey, dispatch, getToken, routeQuery, router]);
+  }, [
+    activeMenuKey,
+    deposit.currentChainItem,
+    dispatch,
+    getToken,
+    routeQuery,
+    router,
+    withdraw.currentChainItem,
+  ]);
 
   const fetchRecordStatus = useCallback(async () => {
     if (currentActiveMenuKey === SideMenuKey.History) {
