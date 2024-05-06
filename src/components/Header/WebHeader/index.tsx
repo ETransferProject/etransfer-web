@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import SelectWallet from 'pageComponents/SelectWallet';
+import LoginAndProfileEntry from 'pageComponents/LoginAndProfile';
 import { useCommonState } from 'store/Provider/hooks';
 import { Logo } from 'assets/images';
 import styles from './styles.module.scss';
@@ -33,7 +33,7 @@ export default function WebHeader() {
             Assets
           </span>
         )}
-        <SelectWallet />
+        <LoginAndProfileEntry />
       </div>
     </div>
   );

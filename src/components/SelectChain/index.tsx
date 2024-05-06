@@ -10,11 +10,13 @@ import SynchronizingChainModal from 'pageComponents/Modal/SynchronizingChainModa
 import { useAccounts } from 'hooks/portkeyWallet';
 import { useDeposit } from 'hooks/deposit';
 import { SideMenuKey } from 'constants/home';
+import { useWithdraw } from 'hooks/withdraw';
 
 export default function SelectChain({ title, clickCallback }: SelectChainProps) {
   const { activeMenuKey, isMobilePX } = useCommonState();
   const { deposit, withdraw } = useUserActionState();
-  const { currentSymbol } = useDeposit();
+  const { currentSymbol, currentChainItem: depositCurrentChainItem } = useDeposit();
+  const { currentChainItem: withdrawCurrentChainItem } = useWithdraw();
   const accounts = useAccounts();
   const [openSynchronizingModal, setOpenSynchronizingModal] = useState(false);
 
@@ -38,7 +40,7 @@ export default function SelectChain({ title, clickCallback }: SelectChainProps) 
         setCurrentChainItem({ activeMenuKey: SideMenuKey.Withdraw, chainItem: CHAIN_LIST[0] }),
       );
     }
-  }, [accounts, currentSymbol, deposit.currentChainItem, withdraw.currentChainItem]);
+  }, [accounts, deposit.currentChainItem, withdraw.currentChainItem]);
 
   const onClickChain = useCallback(
     async (item: IChainNameItem) => {
@@ -63,17 +65,15 @@ export default function SelectChain({ title, clickCallback }: SelectChainProps) 
           ? CHAIN_LIST_SIDE_CHAIN
           : CHAIN_LIST,
       selectedItem:
-        activeMenuKey === SideMenuKey.Deposit
-          ? deposit.currentChainItem || CHAIN_LIST[0]
-          : withdraw.currentChainItem || CHAIN_LIST[0],
+        activeMenuKey === SideMenuKey.Deposit ? depositCurrentChainItem : withdrawCurrentChainItem,
       onClick: onClickChain,
     };
   }, [
     activeMenuKey,
     currentSymbol,
-    deposit.currentChainItem,
+    depositCurrentChainItem,
     onClickChain,
-    withdraw.currentChainItem,
+    withdrawCurrentChainItem,
   ]);
 
   return (

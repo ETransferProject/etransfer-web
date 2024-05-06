@@ -53,8 +53,7 @@ export default function Content() {
   const dispatch = useAppDispatch();
   const { isMobilePX } = useCommonState();
   const { deposit } = useUserActionState();
-  const currentChainItem = useMemo(() => deposit.currentChainItem, [deposit.currentChainItem]);
-  const { currentSymbol, tokenList } = useDeposit();
+  const { currentSymbol, tokenList, currentChainItem } = useDeposit();
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
@@ -122,7 +121,7 @@ export default function Content() {
           currentNetworkRef.current = networkList[0];
           dispatch(setDepositCurrentNetwork(networkList[0]));
 
-          await getDepositData(currentChainItem?.key, lastSymbol);
+          await getDepositData(currentChainItem.key, lastSymbol);
         } else {
           const exitNetwork = networkList.filter(
             (item) => item.network === currentNetworkRef.current?.network,
@@ -143,7 +142,7 @@ export default function Content() {
         setIsShowNetworkLoading(false);
       }
     },
-    [currentChainItem?.key, currentSymbol, dispatch, getDepositData],
+    [currentChainItem.key, currentSymbol, dispatch, getDepositData],
   );
 
   const handleChainChanged = useCallback(
@@ -165,14 +164,14 @@ export default function Content() {
       setCurrentNetwork(item);
       currentNetworkRef.current = item;
       dispatch(setDepositCurrentNetwork(item));
-      await getDepositData(currentChainItem?.key, currentSymbol);
+      await getDepositData(currentChainItem.key, currentSymbol);
     },
-    [currentChainItem?.key, currentSymbol, dispatch, getDepositData],
+    [currentChainItem.key, currentSymbol, dispatch, getDepositData],
   );
 
   const handleRetry = useCallback(async () => {
-    await getDepositData(currentChainItem?.key, currentSymbol);
-  }, [currentChainItem?.key, currentSymbol, getDepositData]);
+    await getDepositData(currentChainItem.key, currentSymbol);
+  }, [currentChainItem.key, currentSymbol, getDepositData]);
 
   const handleTokenChange = async (item: TokenItem) => {
     setCurrentNetwork(undefined);
@@ -182,7 +181,7 @@ export default function Content() {
     dispatch(setDepositAddress(InitDepositInfo.depositAddress));
     setShowRetry(false);
     await getNetworkData({
-      chainId: currentChainItem?.key,
+      chainId: currentChainItem.key,
       symbol: item.symbol,
     });
   };
@@ -197,17 +196,17 @@ export default function Content() {
       currentNetworkRef.current = deposit.currentNetwork;
       setNetworkList(deposit?.networkList);
 
-      getDepositData(currentChainItem?.key, currentSymbol);
+      getDepositData(currentChainItem.key, currentSymbol);
     } else {
-      if (currentSymbol && currentChainItem?.key) {
+      if (currentSymbol) {
         getNetworkData({
-          chainId: currentChainItem?.key,
+          chainId: currentChainItem.key,
           symbol: currentSymbol,
         });
       }
     }
   }, [
-    currentChainItem?.key,
+    currentChainItem.key,
     currentSymbol,
     deposit.currentNetwork,
     deposit.networkList,

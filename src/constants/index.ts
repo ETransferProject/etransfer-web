@@ -1,11 +1,5 @@
 export * from './testnet';
 
-export enum WalletType {
-  unknown = 'unknown',
-  discover = 'discover',
-  portkey = 'portkey',
-}
-
 export enum NetworkTypeV1 {
   MAIN = 'MAIN',
   TESTNET = 'TESTNET',
@@ -15,12 +9,7 @@ export enum NetworkTypeV2 {
   TESTNET = 'TESTNET',
 }
 
-export enum NetworkTypeTextV1 {
-  MAIN = 'Mainnet',
-  TESTNET = 'Testnet',
-}
-
-export enum NetworkTypeTextV2 {
+export enum NetworkTypeText {
   MAINNET = 'Mainnet',
   TESTNET = 'Testnet',
 }
@@ -38,3 +27,8 @@ export const AppName = 'ETransfer-Web';
 export const BrandName = 'ETransfer';
 
 export const defaultNullValue = '--';
+
+export enum TokenType {
+  USDT = 'USDT',
+  SGR = 'SGR-1',
+}

@@ -14,7 +14,7 @@ import {
   TCallViewMethod,
   TSignatureParams,
 } from './types';
-import { getTxResult } from 'utils/aelfUtils';
+import { getTxResult } from 'utils/contract';
 import { ChainId, SendOptions } from '@portkey/types';
 import { SendOptions as SendOptionsV1 } from '@portkey-v1/types';
 import { sleep } from '@portkey/utils';

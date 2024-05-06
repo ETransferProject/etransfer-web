@@ -27,13 +27,16 @@ import { useWithdraw } from 'hooks/withdraw';
 import { setV2DisconnectedAction } from 'store/reducers/portkeyWallet/actions';
 import { setHandleReset } from 'store/reducers/records/slice';
 import { useWebLoginEvent, WebLoginEvents } from 'aelf-web-login';
+import { useDeposit } from 'hooks/deposit';
 
 export default function Content() {
   const dispatch = useAppDispatch();
   const resetStore = useResetStore();
   const { activeMenuKey, isMobilePX } = useCommonState();
   const { deposit, withdraw } = useUserActionState();
-  const { currentSymbol: withdrawCurrentSymbol } = useWithdraw();
+  const { currentChainItem: depositCurrentChainItem } = useDeposit();
+  const { currentSymbol: withdrawCurrentSymbol, currentChainItem: withdrawCurrentChainItem } =
+    useWithdraw();
   const router = useRouter();
   const searchParams = useSearchParams(); // TODO
   // const params: EntryConfig = useParams();
@@ -65,8 +68,8 @@ export default function Content() {
         type: activeMenuKey as unknown as BusinessType,
         chainId:
           activeMenuKey === SideMenuKey.Deposit
-            ? deposit?.currentChainItem?.key || CHAIN_LIST[0].key
-            : withdraw?.currentChainItem?.key || CHAIN_LIST[0].key,
+            ? depositCurrentChainItem.key
+            : withdrawCurrentChainItem.key,
       });
 
       dispatch(
@@ -89,8 +92,8 @@ export default function Content() {
     [
       currentActiveMenuKey,
       activeMenuKey,
-      deposit?.currentChainItem?.key,
-      withdraw?.currentChainItem?.key,
+      depositCurrentChainItem.key,
+      withdrawCurrentChainItem.key,
       dispatch,
       withdrawCurrentSymbol,
     ],

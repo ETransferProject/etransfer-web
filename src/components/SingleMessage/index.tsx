@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import { MessageApi, ArgsProps, typeList, MessageInstance } from 'antd/lib/message';
 import { renderToString } from 'react-dom/server';
-import { SmallExclamationFilled } from 'assets/images';
+import { ExclamationFilledSmall } from 'assets/images';
 import styles from './styles.module.scss';
 import { randomId } from '@portkey/utils';
 
@@ -54,7 +54,7 @@ typeList?.forEach((type) => {
     return message[type](
       setDefaultArgs(content, {
         ...defaultMessageArgs,
-        icon: type === 'error' ? <SmallExclamationFilled /> : null,
+        icon: type === 'error' ? <ExclamationFilledSmall /> : null,
       }),
       params[1],
       params[2],
