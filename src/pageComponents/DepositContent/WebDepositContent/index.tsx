@@ -6,7 +6,7 @@ import SelectNetwork from 'pageComponents/SelectNetwork';
 import DepositInfo from 'pageComponents/DepositContent/DepositInfo';
 import DepositDescription from 'pageComponents/DepositContent/DepositDescription';
 import styles from './styles.module.scss';
-import { DepositContentProps } from '..';
+import { TDepositContentProps } from '..';
 import CommonQRCode from 'components/CommonQRCode';
 import { DEPOSIT_ADDRESS_LABEL } from 'constants/deposit';
 import { useDeposit } from 'hooks/deposit';
@@ -32,7 +32,7 @@ export default function WebContent({
   chainChanged,
   networkChanged,
   onTokenChanged,
-}: DepositContentProps) {
+}: TDepositContentProps) {
   const { currentSymbol } = useDeposit();
   const renderDepositDescription = useMemo(() => {
     return (

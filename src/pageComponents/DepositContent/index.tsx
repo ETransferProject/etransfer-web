@@ -9,10 +9,10 @@ import {
 } from 'store/Provider/hooks';
 import {
   BusinessType,
-  DepositInfo,
-  GetNetworkListRequest,
-  NetworkItem,
-  TokenItem,
+  TDepositInfo,
+  TGetNetworkListRequest,
+  TNetworkItem,
+  TTokenItem,
   NetworkStatus,
 } from 'types/api';
 import { getDepositInfo, getNetworkList } from 'utils/api/deposit';
@@ -31,22 +31,22 @@ import { useDeposit } from 'hooks/deposit';
 import myEvents from 'utils/myEvent';
 import { isAuthTokenError } from 'utils/api/error';
 
-export type DepositContentProps = {
-  networkList: NetworkItem[];
-  depositInfo: DepositInfo;
+export type TDepositContentProps = {
+  networkList: TNetworkItem[];
+  depositInfo: TDepositInfo;
   contractAddress: string;
   contractAddressLink: string;
   qrCodeValue: string;
-  networkSelected?: NetworkItem;
+  networkSelected?: TNetworkItem;
   tokenLogoUrl?: string;
   showRetry?: boolean;
   isShowLoading?: boolean;
-  currentToken?: TokenItem;
-  tokenList: TokenItem[];
+  currentToken?: TTokenItem;
+  tokenList: TTokenItem[];
   onRetry?: () => void;
   chainChanged: (item: IChainNameItem) => void;
-  networkChanged: (item: NetworkItem) => Promise<void>;
-  onTokenChanged: (item: TokenItem) => void;
+  networkChanged: (item: TNetworkItem) => Promise<void>;
+  onTokenChanged: (item: TTokenItem) => void;
 };
 
 export default function Content() {
@@ -56,14 +56,14 @@ export default function Content() {
   const { currentSymbol, tokenList, currentChainItem } = useDeposit();
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
-  const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
-  const [currentNetwork, setCurrentNetwork] = useState<NetworkItem>();
-  const currentNetworkRef = useRef<NetworkItem>();
-  const [depositInfo, setDepositInfo] = useState<DepositInfo>(InitDepositInfo);
+  const [networkList, setNetworkList] = useState<TNetworkItem[]>([]);
+  const [currentNetwork, setCurrentNetwork] = useState<TNetworkItem>();
+  const currentNetworkRef = useRef<TNetworkItem>();
+  const [depositInfo, setDepositInfo] = useState<TDepositInfo>(InitDepositInfo);
   const [showRetry, setShowRetry] = useState(false);
 
   const currentToken = useMemo(() => {
-    return tokenList.find((item) => item.symbol === currentSymbol) as TokenItem;
+    return tokenList.find((item) => item.symbol === currentSymbol) as TTokenItem;
   }, [currentSymbol, tokenList]);
 
   const tokenLogoUrl = useMemo(() => {
@@ -105,7 +105,7 @@ export default function Content() {
   );
 
   const getNetworkData = useCallback(
-    async ({ chainId, symbol }: Omit<GetNetworkListRequest, 'type'>) => {
+    async ({ chainId, symbol }: Omit<TGetNetworkListRequest, 'type'>) => {
       try {
         const lastSymbol = symbol || currentSymbol;
         setIsShowNetworkLoading(true);
@@ -160,7 +160,7 @@ export default function Content() {
   );
 
   const handleNetworkChanged = useCallback(
-    async (item: NetworkItem) => {
+    async (item: TNetworkItem) => {
       setCurrentNetwork(item);
       currentNetworkRef.current = item;
       dispatch(setDepositCurrentNetwork(item));
@@ -173,7 +173,7 @@ export default function Content() {
     await getDepositData(currentChainItem.key, currentSymbol);
   }, [currentChainItem.key, currentSymbol, getDepositData]);
 
-  const handleTokenChange = async (item: TokenItem) => {
+  const handleTokenChange = async (item: TTokenItem) => {
     setCurrentNetwork(undefined);
     currentNetworkRef.current = undefined;
     dispatch(setDepositCurrentNetwork(undefined));

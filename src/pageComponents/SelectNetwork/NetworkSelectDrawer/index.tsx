@@ -2,7 +2,7 @@ import { DrawerProps } from 'antd';
 import CommonDrawer from 'components/CommonDrawer';
 import {
   NetworkSelectForMobile,
-  NetworkSelectProps,
+  TNetworkSelectProps,
 } from 'pageComponents/SelectNetwork/NetworkSelect';
 
 export default function NetworkSelectDrawer({
@@ -13,7 +13,7 @@ export default function NetworkSelectDrawer({
   isShowLoading,
   onSelect,
   ...props
-}: NetworkSelectProps & DrawerProps) {
+}: TNetworkSelectProps & DrawerProps) {
   return (
     <CommonDrawer
       destroyOnClose

@@ -8,7 +8,7 @@ import { Tooltip } from 'antd';
 import { ProcessingTipMessage, FailedTipMessage } from 'constants/records';
 import { SupportedELFChainId } from 'constants/index';
 
-type StatusBoxProps = {
+type TStatusBoxProps = {
   status: string;
   address: string;
   network: string;
@@ -17,7 +17,7 @@ type StatusBoxProps = {
   orderType: string;
 };
 
-export default function StatusBox({ status, network }: StatusBoxProps) {
+export default function StatusBox({ status, network }: TStatusBoxProps) {
   const [isMobileOpenModal, setIsMobileOpenModal] = useState(false);
   const [tipMessage, setTipMessage] = useState('');
   const [title, setTitle] = useState('');

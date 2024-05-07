@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SideMenuKey } from 'constants/home';
 import { CHAIN_LIST, IChainNameItem, SupportedChainId, SupportedELFChainId } from 'constants/index';
-import { NetworkItem } from 'types/api';
+import { TNetworkItem } from 'types/api';
 
 export interface UserActionDeposit {
   currentChainItem: IChainNameItem;
   address?: string;
-  currentNetwork?: NetworkItem;
-  networkList?: NetworkItem[];
+  currentNetwork?: TNetworkItem;
+  networkList?: TNetworkItem[];
   initOpenNetworkModalCount: number; // cant persist
   initOpenTokenModalCount: number;
 }
@@ -15,8 +15,8 @@ export interface UserActionDeposit {
 export interface UserActionWithdraw {
   currentChainItem?: IChainNameItem;
   address?: string;
-  currentNetwork?: NetworkItem;
-  networkList?: NetworkItem[];
+  currentNetwork?: TNetworkItem;
+  networkList?: TNetworkItem[];
 }
 export interface UserActionState {
   deposit: UserActionDeposit;
@@ -72,10 +72,10 @@ export const UserActionSlice = createSlice({
     setDepositAddress: (state, action: PayloadAction<string | undefined>) => {
       state.deposit.address = action.payload;
     },
-    setDepositCurrentNetwork: (state, action: PayloadAction<NetworkItem | undefined>) => {
+    setDepositCurrentNetwork: (state, action: PayloadAction<TNetworkItem | undefined>) => {
       state.deposit.currentNetwork = action.payload;
     },
-    setDepositNetworkList: (state, action: PayloadAction<NetworkItem[]>) => {
+    setDepositNetworkList: (state, action: PayloadAction<TNetworkItem[]>) => {
       state.deposit.networkList = action.payload;
     },
     setAddInitOpenNetworkModalCount: (state) => {
@@ -90,10 +90,10 @@ export const UserActionSlice = createSlice({
     setWithdrawAddress: (state, action: PayloadAction<string | undefined>) => {
       state.withdraw.address = action.payload;
     },
-    setWithdrawCurrentNetwork: (state, action: PayloadAction<NetworkItem | undefined>) => {
+    setWithdrawCurrentNetwork: (state, action: PayloadAction<TNetworkItem | undefined>) => {
       state.withdraw.currentNetwork = action.payload;
     },
-    setWithdrawNetworkList: (state, action: PayloadAction<NetworkItem[]>) => {
+    setWithdrawNetworkList: (state, action: PayloadAction<TNetworkItem[]>) => {
       state.withdraw.networkList = action.payload;
     },
     initUserAction: () => {

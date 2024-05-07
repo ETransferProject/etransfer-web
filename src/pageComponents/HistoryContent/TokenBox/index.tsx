@@ -5,11 +5,11 @@ import { TokenType } from 'constants/index';
 import { useCommonState } from 'store/Provider/hooks';
 import { useCallback } from 'react';
 
-type TokenBoxProps = {
+type TTokenBoxProps = {
   symbol: string;
 };
 
-export default function TokenBox({ symbol }: TokenBoxProps) {
+export default function TokenBox({ symbol }: TTokenBoxProps) {
   const { isMobilePX } = useCommonState();
 
   const tokenIcon = useCallback(() => {

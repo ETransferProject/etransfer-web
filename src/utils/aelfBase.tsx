@@ -37,14 +37,14 @@ export const pubKeyToAddress = (pubKey: string) => {
   return AElf.utils.encodeAddressRep(hash);
 };
 
-export type EncodedTransfer = {
+export type TEncodedTransfer = {
   contractAddress: string;
-  params: EncodedTransferParams;
+  params: TEncodedTransferParams;
   methodName: string;
   chainId: SupportedELFChainId;
 };
 
-export type EncodedTransferParams = {
+export type TEncodedTransferParams = {
   symbol: string;
   to: string;
   amount: string;
@@ -56,7 +56,7 @@ export const encodedTransfer = async ({
   params,
   methodName, // 'Transfer'
   chainId,
-}: EncodedTransfer) => {
+}: TEncodedTransfer) => {
   // Get the protobuf definitions related to a contract
   const fileDescriptors = await getFileDescriptorsSet({ contractAddress, chainId });
   const inputType = fileDescriptors[2].methods[methodName].resolve().resolvedRequestType;

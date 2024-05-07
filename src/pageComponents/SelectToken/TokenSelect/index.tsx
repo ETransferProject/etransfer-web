@@ -2,17 +2,17 @@ import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { SideMenuKey } from 'constants/home';
 import { TokenCardForMobile, TokenCardForWeb } from 'pageComponents/SelectToken/TokenCard';
-import { TokenItem } from 'types/api';
+import { TTokenItem } from 'types/api';
 
 export interface TokenSelectProps {
   className?: string;
   type: SideMenuKey;
-  tokenList: TokenItem[];
+  tokenList: TTokenItem[];
   selectedToken?: string;
   isDisabled?: boolean;
   isShowLoading?: boolean;
   open: boolean;
-  onSelect: (item: TokenItem) => Promise<void>;
+  onSelect: (item: TTokenItem) => Promise<void>;
 }
 
 export function TokenSelectForMobile({

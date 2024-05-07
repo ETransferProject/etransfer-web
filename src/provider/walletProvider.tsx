@@ -20,7 +20,7 @@ import {
 import Wallet from 'contract/webLogin';
 import { useLocation } from 'react-use';
 import { singleMessage } from '@portkey/did-ui-react';
-import { IWallet } from 'contract/types';
+import { TWallet } from 'contract/types';
 import myEvents from 'utils/myEvent';
 import { resetLocalJWT } from 'api/utils';
 import { useQueryAuthToken } from 'hooks/authToken';
@@ -33,7 +33,7 @@ const INITIAL_STATE = {};
 const WalletContext = createContext<any>(INITIAL_STATE);
 
 export type TWalletContextState = {
-  wallet?: IWallet;
+  wallet?: TWallet;
 };
 
 export function useWalletContext(): [TWalletContextState, React.Dispatch<any>] {

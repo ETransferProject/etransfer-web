@@ -2,11 +2,11 @@ import clsx from 'clsx';
 import styles from './styles.module.scss';
 import {
   NetworkSelectForWeb,
-  NetworkSelectProps,
+  TNetworkSelectProps,
 } from 'pageComponents/SelectNetwork/NetworkSelect';
 import { SideMenuKey } from 'constants/home';
 
-interface NetworkSelectDropdownProps extends NetworkSelectProps {
+interface NetworkSelectDropdownProps extends TNetworkSelectProps {
   isFormItemStyle?: boolean;
   type: SideMenuKey;
   open: boolean;

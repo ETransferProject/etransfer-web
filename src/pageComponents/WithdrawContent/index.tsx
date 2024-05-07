@@ -12,12 +12,12 @@ import DoubleCheckModal from './DoubleCheckModal';
 import SuccessModal from './SuccessModal';
 import FailModal from './FailModal';
 import {
-  NetworkItem,
-  WithdrawInfo,
-  GetNetworkListRequest,
+  TNetworkItem,
+  TWithdrawInfo,
+  TGetNetworkListRequest,
   BusinessType,
-  GetWithdrawInfoRequest,
-  TokenItem,
+  TGetWithdrawInfoRequest,
+  TTokenItem,
   NetworkStatus,
 } from 'types/api';
 import {
@@ -30,7 +30,7 @@ import styles from './styles.module.scss';
 import { ADDRESS_MAP, CHAIN_LIST, IChainNameItem, defaultNullValue } from 'constants/index';
 import { createWithdrawOrder, getNetworkList, getWithdrawInfo } from 'utils/api/deposit';
 import { CONTRACT_ADDRESS } from 'constants/deposit';
-import { WithdrawInfoSuccess } from 'types/deposit';
+import { TWithdrawInfoSuccess } from 'types/deposit';
 import {
   checkTokenAllowanceAndApprove,
   createTransferTokenTransaction,
@@ -95,10 +95,10 @@ enum FormKeys {
   AMOUNT = 'amount',
 }
 
-type FormValuesType = {
+type TFormValues = {
   [FormKeys.TOKEN]: string;
   [FormKeys.ADDRESS]: string;
-  [FormKeys.NETWORK]: NetworkItem;
+  [FormKeys.NETWORK]: TNetworkItem;
   [FormKeys.AMOUNT]: string;
 };
 
@@ -113,11 +113,11 @@ export default function WithdrawContent() {
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem || CHAIN_LIST[0]);
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
-  const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
-  const [currentNetwork, setCurrentNetwork] = useState<NetworkItem>();
-  const currentNetworkRef = useRef<NetworkItem>();
-  const [form] = Form.useForm<FormValuesType>();
-  const [withdrawInfo, setWithdrawInfo] = useState<WithdrawInfo>(InitialWithdrawInfo);
+  const [networkList, setNetworkList] = useState<TNetworkItem[]>([]);
+  const [currentNetwork, setCurrentNetwork] = useState<TNetworkItem>();
+  const currentNetworkRef = useRef<TNetworkItem>();
+  const [form] = Form.useForm<TFormValues>();
+  const [withdrawInfo, setWithdrawInfo] = useState<TWithdrawInfo>(InitialWithdrawInfo);
   const [balance, setBalance] = useState('0');
   const [maxBalance, setMaxBalance] = useState('');
   const [isMaxBalanceLoading, setIsMaxBalanceLoading] = useState(false);
@@ -126,7 +126,7 @@ export default function WithdrawContent() {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isFailModalOpen, setIsFailModalOpen] = useState(false);
   const [failModalReason, setFailModalReason] = useState('');
-  const [withdrawInfoSuccess, setWithdrawInfoSuccessCheck] = useState<WithdrawInfoSuccess>(
+  const [withdrawInfoSuccess, setWithdrawInfoSuccessCheck] = useState<TWithdrawInfoSuccess>(
     InitialWithdrawSuccessCheck,
   );
   const [isNetworkDisable, setIsNetworkDisable] = useState(false);
@@ -165,7 +165,7 @@ export default function WithdrawContent() {
 
   const currentToken = useMemo(() => {
     if (Array.isArray(tokenList) && tokenList.length > 0) {
-      return tokenList.find((item) => item.symbol === currentSymbol) as TokenItem;
+      return tokenList.find((item) => item.symbol === currentSymbol) as TTokenItem;
     }
     return InitWithdrawTokenState.tokenList[0];
   }, [currentSymbol, tokenList]);
@@ -271,10 +271,10 @@ export default function WithdrawContent() {
   }, [currentSymbol, dispatch]);
 
   const getNetworkData = useCallback(
-    async ({ symbol, address }: Omit<GetNetworkListRequest, 'type' | 'chainId'>) => {
+    async ({ symbol, address }: Omit<TGetNetworkListRequest, 'type' | 'chainId'>) => {
       try {
         setIsShowNetworkLoading(true);
-        const params: GetNetworkListRequest = {
+        const params: TGetNetworkListRequest = {
           type: BusinessType.Withdraw,
           chainId: currentChainItemRef.current.key,
           symbol: symbol,
@@ -423,11 +423,11 @@ export default function WithdrawContent() {
   );
 
   const getWithdrawData = useCallback(
-    async (item?: TokenItem, newMaxBalance?: string) => {
+    async (item?: TTokenItem, newMaxBalance?: string) => {
       const symbol = item?.symbol || currentSymbol;
       try {
         setIsTransactionFeeLoading(true);
-        const params: GetWithdrawInfoRequest = {
+        const params: TGetWithdrawInfoRequest = {
           chainId: currentChainItemRef.current.key,
           symbol,
           version: currentVersion,
@@ -491,7 +491,7 @@ export default function WithdrawContent() {
 
   const [{ wallet }] = useWalletContext();
   const getMaxBalance = useCallback(
-    async (isLoading: boolean, item?: TokenItem) => {
+    async (isLoading: boolean, item?: TTokenItem) => {
       try {
         const symbol = item?.symbol || currentSymbol;
         const decimal = item?.decimals || currentTokenDecimal;
@@ -527,7 +527,7 @@ export default function WithdrawContent() {
   );
 
   const getMaxBalanceInterval = useCallback(
-    async (item?: TokenItem) => {
+    async (item?: TTokenItem) => {
       if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
       getMaxBalanceTimerRef.current = setInterval(async () => {
         await getMaxBalance(false, item);
@@ -597,7 +597,7 @@ export default function WithdrawContent() {
   }, [getWithdrawData, withdrawInfo.expiredTimestamp, currentNetworkRef.current?.network]);
 
   const handleNetworkChanged = useCallback(
-    async (item: NetworkItem) => {
+    async (item: TNetworkItem) => {
       setCurrentNetwork(item);
       currentNetworkRef.current = item;
       dispatch(setWithdrawCurrentNetwork(item));
@@ -798,7 +798,7 @@ export default function WithdrawContent() {
     handleFormValidateDataChange,
   ]);
 
-  const handleTokenChange = async (item: TokenItem) => {
+  const handleTokenChange = async (item: TTokenItem) => {
     // when network failed, transactionUnit should show as symbol
     setWithdrawInfo({ ...withdrawInfo, transactionUnit: item.symbol });
 

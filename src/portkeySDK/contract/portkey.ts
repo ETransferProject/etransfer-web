@@ -8,10 +8,10 @@ export type TPortkeyContract = { [key: string]: IContract };
 
 export interface IPortkeyContractUnity {
   contract: TPortkeyContract;
-  getContract: (params: GetContractProps) => Promise<IContract>;
+  getContract: (params: TGetContractProps) => Promise<IContract>;
 }
 
-export type GetContractProps = {
+export type TGetContractProps = {
   chainId: SupportedELFChainId;
   contractType: ContractType;
   version: PortkeyVersion;
@@ -29,7 +29,7 @@ class PortkeyContractUnity implements IPortkeyContractUnity {
     chainId,
     contractType,
     contract,
-  }: GetContractProps & { contract: IContract }) {
+  }: TGetContractProps & { contract: IContract }) {
     const key = version + chainId + contractType;
     this.contract[key] = contract;
   }
@@ -38,7 +38,7 @@ class PortkeyContractUnity implements IPortkeyContractUnity {
     chainId,
     contractType,
     version,
-  }: GetContractProps): Promise<IContract> {
+  }: TGetContractProps): Promise<IContract> {
     const key = version + chainId + contractType;
     if (this.contract[key]) {
       return this.contract[key] as IContract;
@@ -46,7 +46,7 @@ class PortkeyContractUnity implements IPortkeyContractUnity {
     return await this.fetchContract({ chainId, contractType, version });
   }
 
-  async fetchContract({ chainId, contractType, version }: GetContractProps): Promise<IContract> {
+  async fetchContract({ chainId, contractType, version }: TGetContractProps): Promise<IContract> {
     try {
       const portkeyWallet = getPortkeyWallet(version);
       const provider = await portkeyWallet?.getProvider();

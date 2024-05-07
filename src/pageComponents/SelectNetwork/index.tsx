@@ -1,6 +1,6 @@
 import { Swap } from 'assets/images';
 import { useCallback, useEffect, useState } from 'react';
-import { NetworkItem } from 'types/api';
+import { TNetworkItem } from 'types/api';
 import styles from './styles.module.scss';
 import { useAppDispatch, useCommonState, useUserActionState } from 'store/Provider/hooks';
 import NetworkSelectDrawer from 'pageComponents/SelectNetwork/NetworkSelectDrawer';
@@ -10,16 +10,16 @@ import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
 import { setAddInitOpenNetworkModalCount } from 'store/reducers/userAction/slice';
 
-type NetworkSelectProps = {
+type TNetworkSelectProps = {
   isFormItemStyle?: boolean;
   type: SideMenuKey;
-  networkList: NetworkItem[];
-  selected?: NetworkItem;
+  networkList: TNetworkItem[];
+  selected?: TNetworkItem;
   noBorder?: boolean;
   isDisabled?: boolean;
   isShowLoading?: boolean;
-  onChange?: (item: NetworkItem) => void;
-  selectCallback: (item: NetworkItem) => Promise<void>;
+  onChange?: (item: TNetworkItem) => void;
+  selectCallback: (item: TNetworkItem) => Promise<void>;
 };
 
 export default function SelectNetwork({
@@ -32,7 +32,7 @@ export default function SelectNetwork({
   isShowLoading,
   onChange,
   selectCallback,
-}: NetworkSelectProps) {
+}: TNetworkSelectProps) {
   const { isMobilePX } = useCommonState();
   const dispatch = useAppDispatch();
   const {
@@ -41,7 +41,7 @@ export default function SelectNetwork({
   const [isShowNetworkSelectDropdown, setIsShowNetworkSelectDropdown] = useState<boolean>(false);
 
   const onSelectNetwork = useCallback(
-    async (item: NetworkItem) => {
+    async (item: TNetworkItem) => {
       onChange?.(item);
 
       setIsShowNetworkSelectDropdown(false);

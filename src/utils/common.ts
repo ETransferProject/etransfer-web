@@ -1,8 +1,11 @@
-import { ChainId } from 'types';
-import { EXPLORE_CONFIG } from 'constants/index';
+import { EXPLORE_CONFIG, SupportedELFChainId } from 'constants/index';
 import { AelfExploreType, ExploreUrlType, OtherExploreType } from 'constants/network';
 
-export function getAelfExploreLink(data: string, type: AelfExploreType, chainId: ChainId): string {
+export function getAelfExploreLink(
+  data: string,
+  type: AelfExploreType,
+  chainId: SupportedELFChainId,
+): string {
   const prefix = EXPLORE_CONFIG[chainId];
   switch (type) {
     case AelfExploreType.transaction: {

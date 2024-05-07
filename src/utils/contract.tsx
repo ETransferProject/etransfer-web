@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 import { timesDecimals } from './calculate';
 import { AllSupportedELFChainId, ContractType } from 'constants/chain';
 import { WalletType } from 'aelf-web-login';
-import { IWallet } from 'contract/types';
+import { TWallet } from 'contract/types';
 import { sleep } from '@portkey/utils';
 import { GetRawTx, getAElf, getRawTx } from 'utils/aelfBase';
 import { createManagerForwardCall } from 'portkeySDK/utils/contract';
@@ -81,7 +81,7 @@ export const handleTransaction = async ({
   contractAddress,
   functionName,
 }: GetRawTx & {
-  wallet: IWallet;
+  wallet: TWallet;
 }) => {
   // Create transaction
   const rawTx = getRawTx({
@@ -131,7 +131,7 @@ export const approveELF = async ({
   symbol,
   amount,
 }: {
-  wallet: IWallet;
+  wallet: TWallet;
   chainId: SupportedELFChainId;
   address: string;
   symbol: string;
@@ -159,7 +159,7 @@ export const checkTokenAllowanceAndApprove = async ({
   approveTargetAddress,
   amount,
 }: {
-  wallet: IWallet;
+  wallet: TWallet;
   chainId: SupportedELFChainId;
   symbol: string;
   address: string;
@@ -215,7 +215,7 @@ export const checkTokenAllowanceAndApprove = async ({
 };
 
 export interface CreateTransferTokenTransactionParams {
-  wallet: IWallet;
+  wallet: TWallet;
   caContractAddress: string;
   eTransferContractAddress: string;
   caHash: string;
@@ -262,13 +262,13 @@ export const createTransferTokenTransaction = async ({
   return transaction;
 };
 
-export type GetBalancesProps = {
-  wallet: IWallet;
+export type TGetBalancesProps = {
+  wallet: TWallet;
   caAddress: string;
   symbol: string;
   chainId: SupportedELFChainId;
 };
-export const getBalance = async ({ wallet, symbol, chainId, caAddress }: GetBalancesProps) => {
+export const getBalance = async ({ wallet, symbol, chainId, caAddress }: TGetBalancesProps) => {
   if (!wallet.callViewMethod) return;
 
   const res: { balance: string } | undefined = await wallet.callViewMethod(chainId, {

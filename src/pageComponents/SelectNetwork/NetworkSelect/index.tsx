@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import styles from './styles.module.scss';
-import { NetworkItem } from 'types/api';
+import { TNetworkItem } from 'types/api';
 import { SideMenuKey } from 'constants/home';
 import Info from 'assets/images/info.svg';
 import { NetworkCardForMobile, NetworkCardForWeb } from 'pageComponents/SelectNetwork/NetworkCard';
@@ -10,14 +10,14 @@ import {
   NetworkListSkeletonForWeb,
 } from 'pageComponents/Skeleton/NetworkListSkeleton';
 
-export interface NetworkSelectProps {
+export interface TNetworkSelectProps {
   className?: string;
   type: SideMenuKey;
-  networkList: NetworkItem[];
+  networkList: TNetworkItem[];
   selectedNetwork?: string;
   isDisabled?: boolean;
   isShowLoading?: boolean;
-  onSelect: (item: NetworkItem) => Promise<void>;
+  onSelect: (item: TNetworkItem) => Promise<void>;
 }
 
 const DEPOSIT_TIP_CONTENT =
@@ -62,7 +62,7 @@ export function NetworkSelectForMobile({
   isDisabled,
   isShowLoading = false,
   onSelect,
-}: NetworkSelectProps) {
+}: TNetworkSelectProps) {
   const { activeMenuKey } = useCommonState();
   return (
     <div className={clsx(styles['network-select'], styles['network-select-for-mobile'], className)}>
@@ -109,7 +109,7 @@ export function NetworkSelectForWeb({
   isDisabled,
   isShowLoading = false,
   onSelect,
-}: NetworkSelectProps) {
+}: TNetworkSelectProps) {
   const { activeMenuKey } = useCommonState();
   return (
     <div className={clsx(styles['network-select'], styles['network-select-for-web'], className)}>

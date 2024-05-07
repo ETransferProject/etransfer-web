@@ -1,20 +1,20 @@
 import { request } from 'api';
 import { CancelTokenSourceKey } from 'api/types';
 import {
-  CreateWithdrawOrderRequest,
-  CreateWithdrawOrderResult,
-  GetDepositInfoRequest,
-  GetDepositInfoResult,
-  GetNetworkListRequest,
-  GetNetworkListResult,
-  GetTokenListRequest,
-  GetTokenListResult,
-  GetWithdrawInfoRequest,
-  GetWithdrawInfoResult,
+  TCreateWithdrawOrderRequest,
+  TCreateWithdrawOrderResult,
+  TGetDepositInfoRequest,
+  TGetDepositInfoResult,
+  TGetNetworkListRequest,
+  TGetNetworkListResult,
+  TGetTokenListRequest,
+  TGetTokenListResult,
+  TGetWithdrawInfoRequest,
+  TGetWithdrawInfoResult,
 } from 'types/api';
 import { formatApiError } from './error';
 
-export const getTokenList = async (params: GetTokenListRequest): Promise<GetTokenListResult> => {
+export const getTokenList = async (params: TGetTokenListRequest): Promise<TGetTokenListResult> => {
   try {
     const res = await request.deposit.getTokenList({ params });
     return res.data;
@@ -24,8 +24,8 @@ export const getTokenList = async (params: GetTokenListRequest): Promise<GetToke
 };
 
 export const getNetworkList = async (
-  params: GetNetworkListRequest,
-): Promise<GetNetworkListResult> => {
+  params: TGetNetworkListRequest,
+): Promise<TGetNetworkListResult> => {
   try {
     const res = await request.deposit.getNetworkList({
       params,
@@ -38,8 +38,8 @@ export const getNetworkList = async (
 };
 
 export const getDepositInfo = async (
-  params: GetDepositInfoRequest,
-): Promise<GetDepositInfoResult> => {
+  params: TGetDepositInfoRequest,
+): Promise<TGetDepositInfoResult> => {
   try {
     const res = await request.deposit.getDepositInfo({
       params,
@@ -52,8 +52,8 @@ export const getDepositInfo = async (
 };
 
 export const getWithdrawInfo = async (
-  params: GetWithdrawInfoRequest,
-): Promise<GetWithdrawInfoResult> => {
+  params: TGetWithdrawInfoRequest,
+): Promise<TGetWithdrawInfoResult> => {
   try {
     const res = await request.deposit.getWithdrawInfo({
       params,
@@ -66,8 +66,8 @@ export const getWithdrawInfo = async (
 };
 
 export const createWithdrawOrder = async (
-  params: CreateWithdrawOrderRequest,
-): Promise<CreateWithdrawOrderResult> => {
+  params: TCreateWithdrawOrderRequest,
+): Promise<TCreateWithdrawOrderResult> => {
   try {
     const res = await request.deposit.createWithdrawOrder({ data: params });
     return res.data;

@@ -8,20 +8,20 @@ import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
 import { SelectImage } from 'pageComponents/SelectToken/TokenCard';
 
-import { BusinessType, TokenItem } from 'types/api';
+import { BusinessType, TTokenItem } from 'types/api';
 import { setCurrentSymbol } from 'store/reducers/token/slice';
 import { setAddInitOpenTokenModalCount } from 'store/reducers/userAction/slice';
 
-type TokenSelectProps = {
+type TTokenSelectProps = {
   isFormItemStyle?: boolean;
   type: SideMenuKey;
-  tokenList: TokenItem[];
-  selected?: TokenItem;
+  tokenList: TTokenItem[];
+  selected?: TTokenItem;
   noBorder?: boolean;
   isDisabled?: boolean;
   isShowLoading?: boolean;
-  onChange?: (item: TokenItem) => void;
-  selectCallback: (item: TokenItem) => void;
+  onChange?: (item: TTokenItem) => void;
+  selectCallback: (item: TTokenItem) => void;
 };
 
 export default function SelectToken({
@@ -34,7 +34,7 @@ export default function SelectToken({
   isShowLoading,
   onChange,
   selectCallback,
-}: TokenSelectProps) {
+}: TTokenSelectProps) {
   const { isMobilePX } = useCommonState();
   const dispatch = useAppDispatch();
   const {
@@ -44,7 +44,7 @@ export default function SelectToken({
   const { activeMenuKey } = useCommonState();
 
   const onSelectToken = useCallback(
-    async (item: TokenItem) => {
+    async (item: TTokenItem) => {
       onChange?.(item);
       dispatch(
         setCurrentSymbol({ key: activeMenuKey as unknown as BusinessType, symbol: item.symbol }),

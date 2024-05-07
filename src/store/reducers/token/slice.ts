@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BusinessType, TokenItem } from 'types/api';
+import { BusinessType, TTokenItem } from 'types/api';
 import { USDT_DECIMAL } from 'constants/index';
 
 export type TokenState = {
   [key in BusinessType]: {
-    tokenList: TokenItem[];
+    tokenList: TTokenItem[];
     currentSymbol: string;
   };
 };
@@ -38,7 +38,7 @@ export const TokenSlice = createSlice({
   name: 'token',
   initialState: InitialTokenState,
   reducers: {
-    setTokenList: (state, action: PayloadAction<{ key: BusinessType; data: TokenItem[] }>) => {
+    setTokenList: (state, action: PayloadAction<{ key: BusinessType; data: TTokenItem[] }>) => {
       if (!state[action.payload.key]) {
         state[action.payload.key] = JSON.parse(
           JSON.stringify(InitialTokenState[action.payload.key]),

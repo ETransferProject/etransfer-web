@@ -6,10 +6,10 @@ import {
   WebLoginInterface,
 } from 'aelf-web-login';
 import {
-  CallContractFunc,
-  GetSignatureFunc,
-  IWallet,
-  IWalletProps,
+  TCallContractFunc,
+  TGetSignatureFunc,
+  TWallet,
+  TWalletProps,
   TCallSendMethod,
   TCallViewMethod,
   TSignatureParams,
@@ -21,12 +21,12 @@ import { sleep } from '@portkey/utils';
 import { AllSupportedELFChainId } from 'constants/chain';
 import { SupportedELFChainId, AppName } from 'constants/index';
 
-class Wallet implements IWallet {
+class Wallet implements TWallet {
   walletInfo: WalletInfo;
   walletType: WalletType;
 
-  _getSignature: GetSignatureFunc;
-  _callContract: CallContractFunc;
+  _getSignature: TGetSignatureFunc;
+  _callContract: TCallContractFunc;
 
   private context: WebLoginInterface | null = null;
   private AELFSendMethod?: TCallSendMethod;
@@ -36,17 +36,17 @@ class Wallet implements IWallet {
   private tDVWSendMethod?: TCallSendMethod;
   private tDVWViewMethod?: TCallViewMethod;
 
-  constructor(props: IWalletProps) {
+  constructor(props: TWalletProps) {
     this.walletInfo = props.walletInfo;
     this.walletType = props.walletType;
     this._callContract = props.callContract;
     this._getSignature = props.getSignature;
   }
 
-  setCallContract(callContract: CallContractFunc) {
+  setCallContract(callContract: TCallContractFunc) {
     this._callContract = callContract;
   }
-  setGetSignature(getSignature: GetSignatureFunc) {
+  setGetSignature(getSignature: TGetSignatureFunc) {
     this._getSignature = getSignature;
   }
 

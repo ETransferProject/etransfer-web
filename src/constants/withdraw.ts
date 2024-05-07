@@ -1,6 +1,6 @@
 import { CHAIN_LIST, defaultNullValue } from 'constants/index';
-import { NetworkStatus, WithdrawInfo } from 'types/api';
-import { WithdrawInfoSuccess } from 'types/deposit';
+import { NetworkStatus, TWithdrawInfo } from 'types/api';
+import { TWithdrawInfoSuccess } from 'types/deposit';
 
 export const WithdrawAddressErrorCodeList = ['40100', '40101'];
 
@@ -36,7 +36,7 @@ export const InsufficientAllowanceMessage =
 
 export const RemainingWithdrawalQuotaTooltip = `Withdrawals are subject to a 24-hour limit, determined by the real-time USD value of the asset. You can withdraw assets up to the available withdrawal limit.`;
 
-export const InitialWithdrawInfo: WithdrawInfo = {
+export const InitialWithdrawInfo: TWithdrawInfo = {
   maxAmount: '',
   minAmount: '',
   limitCurrency: 'USDT',
@@ -64,7 +64,7 @@ export const InitialNetwork = {
   status: NetworkStatus.Health,
 };
 
-export const InitialWithdrawSuccessCheck: WithdrawInfoSuccess = {
+export const InitialWithdrawSuccessCheck: TWithdrawInfoSuccess = {
   symbol: '',
   amount: '',
   receiveAmount: '',

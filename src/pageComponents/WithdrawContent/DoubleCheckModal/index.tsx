@@ -4,7 +4,7 @@ import CommonModalSwitchDrawer, {
 } from 'components/CommonModalSwitchDrawer';
 import PartialLoading from 'components/PartialLoading';
 import { useCommonState } from 'store/Provider/hooks';
-import { FeeItem, NetworkItem } from 'types/api';
+import { TFeeItem, TNetworkItem } from 'types/api';
 import styles from './styles.module.scss';
 import { valueFixed2LessThanMin } from 'utils/calculate';
 import { defaultNullValue } from 'constants/index';
@@ -13,10 +13,10 @@ export interface DoubleCheckModalProps {
   withdrawInfo: {
     receiveAmount: string;
     address?: string;
-    network?: NetworkItem;
+    network?: TNetworkItem;
     amount: string;
-    transactionFee: FeeItem;
-    aelfTransactionFee: FeeItem;
+    transactionFee: TFeeItem;
+    aelfTransactionFee: TFeeItem;
     symbol: string;
     amountUsd: string;
     receiveAmountUsd: string;
