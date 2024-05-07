@@ -84,7 +84,6 @@ const columns = [
           network={record.fromNetwork}
           fromChainId={record.fromChainId}
           toChainId={record.toChainId}
-          orderType={record.orderType}
           fromToAddress={record.fromToAddress}
           toFromAddress={record.toFromAddress}
         />
@@ -104,7 +103,6 @@ const columns = [
           network={record.toNetwork}
           fromChainId={record.fromChainId}
           toChainId={record.toChainId}
-          orderType={record.orderType}
           fromToAddress={record.fromToAddress}
           toFromAddress={record.toFromAddress}
         />

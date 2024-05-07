@@ -31,6 +31,7 @@ export default function SelectMenu() {
         <MenuOutlined className={styles['header-icon']} rev={undefined} />
       </div>
       <CommonDrawer
+        zIndex={301}
         className={clsx(styles['menu-drawer'], styles['menu-drawer-weight'])}
         height="100%"
         open={isDrawerOpen}
