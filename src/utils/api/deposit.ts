@@ -1,7 +1,5 @@
-import axios from 'axios';
-import { handleErrorMessage } from '@portkey/did-ui-react';
 import { request } from 'api';
-import { CancelTokenSourceKey, CommonErrorNameType } from 'api/types';
+import { CancelTokenSourceKey } from 'api/types';
 import {
   CreateWithdrawOrderRequest,
   CreateWithdrawOrderResult,
@@ -14,13 +12,14 @@ import {
   GetWithdrawInfoRequest,
   GetWithdrawInfoResult,
 } from 'types/api';
+import { formatApiError } from './error';
 
 export const getTokenList = async (params: GetTokenListRequest): Promise<GetTokenListResult> => {
   try {
     const res = await request.deposit.getTokenList({ params });
     return res.data;
   } catch (error) {
-    throw new Error(handleErrorMessage(error, 'getTokenList error'));
+    throw formatApiError(error, 'getTokenList error', false);
   }
 };
 
@@ -34,13 +33,7 @@ export const getNetworkList = async (
     });
     return res.data;
   } catch (error: any) {
-    const newError: any = new Error(handleErrorMessage(error, 'getNetworkList error'));
-    if (axios.isCancel(error)) {
-      newError.name = CommonErrorNameType.CANCEL;
-    }
-    newError.code = error?.code;
-
-    throw newError;
+    throw formatApiError(error, 'getNetworkList error', true);
   }
 };
 
@@ -54,13 +47,7 @@ export const getDepositInfo = async (
     });
     return res.data;
   } catch (error: any) {
-    const newError: any = new Error(handleErrorMessage(error, 'getDepositInfo error'));
-    if (axios.isCancel(error)) {
-      newError.name = CommonErrorNameType.CANCEL;
-    }
-    newError.code = error?.code;
-
-    throw newError;
+    throw formatApiError(error, 'getDepositInfo error', true);
   }
 };
 
@@ -74,13 +61,7 @@ export const getWithdrawInfo = async (
     });
     return res.data;
   } catch (error: any) {
-    const newError: any = new Error(handleErrorMessage(error, 'getWithdrawInfo error'));
-    if (axios.isCancel(error)) {
-      newError.name = CommonErrorNameType.CANCEL;
-    }
-    newError.code = error?.code;
-
-    throw newError;
+    throw formatApiError(error, 'getWithdrawInfo error', true);
   }
 };
 
@@ -91,9 +72,6 @@ export const createWithdrawOrder = async (
     const res = await request.deposit.createWithdrawOrder({ data: params });
     return res.data;
   } catch (error: any) {
-    const newError: any = new Error(handleErrorMessage(error, 'createWithdrawOrder error'));
-
-    newError.code = error?.code;
-    throw newError;
+    throw formatApiError(error, 'createWithdrawOrder error', false);
   }
 };

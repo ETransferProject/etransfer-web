@@ -6,21 +6,19 @@ import Logo from './logo.svg';
 import Deposit from './deposit.svg';
 import Withdraw from './withdraw.svg';
 import Check from './check.svg';
-import SmallCheck from './smallCheck.svg';
+import CheckSmall from './checkSmall.svg';
 import Copy from './copy.svg';
-import SmallCopy from './smallCopy.svg';
-import SmallWallet from './smallWallet.svg';
-import Wallet from './wallet.svg';
-import WalletIcon24 from './walletIcon24.svg';
-import PortkeyV2 from './portkeyV2.svg';
-import LargeWallet from './largeWallet.svg';
+import CopySmall from './copySmall.svg';
+import Portkey from './wallet/portkey.svg';
+import Portkey24 from './wallet/portkey24.svg';
+import PortkeyV2 from './wallet/portkeyV2.svg';
 import LargeLogo from './largeLogo.png';
 import qrCodePlaceholder from './qrCodePlaceholder.png';
-import SmallExclamationFilled from './smallExclamationFilled.svg';
+import ExclamationFilledSmall from './exclamationFilledSmall.svg';
 import OpenLinkIcon from './openLink.svg';
 import QuestionMarkIcon from './questionMark.svg';
 import SupportIcon from './supportIcon.svg';
-import Records from './Records.svg';
+import Records from './records.svg';
 import Aelf from './chain/aelf.svg';
 import Arbitrum from './chain/arbitrum.svg';
 import Binance from './chain/binance.svg';
@@ -33,7 +31,7 @@ import Polygon from './chain/polygon.svg';
 import Solana from './chain/solana.svg';
 import Tron from './chain/tron.svg';
 import Vector from './chain/vector.svg';
-import UserProfile from './userProfile.svg';
+import User from './user.svg';
 import ArrowUp from './arrowUp.svg';
 import ArrowRight from './arrowRight.svg';
 import Reset from './reset.svg';
@@ -54,17 +52,15 @@ export {
   Deposit,
   Withdraw,
   Check,
-  SmallCheck,
-  SmallWallet,
-  Wallet,
-  WalletIcon24,
+  CheckSmall,
+  Portkey,
+  Portkey24,
   PortkeyV2,
-  LargeWallet,
   Copy,
-  SmallCopy,
+  CopySmall,
   LargeLogo,
   qrCodePlaceholder,
-  SmallExclamationFilled,
+  ExclamationFilledSmall,
   OpenLinkIcon,
   QuestionMarkIcon,
   SupportIcon,
@@ -81,7 +77,7 @@ export {
   Solana,
   Tron,
   Vector,
-  UserProfile,
+  User,
   ArrowUp,
   ArrowRight,
   Reset,

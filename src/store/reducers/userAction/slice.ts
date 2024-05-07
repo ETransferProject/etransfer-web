@@ -78,10 +78,10 @@ export const UserActionSlice = createSlice({
     setDepositNetworkList: (state, action: PayloadAction<NetworkItem[]>) => {
       state.deposit.networkList = action.payload;
     },
-    setAddInitOpenNetworkModalCount: (state, _action: PayloadAction<void>) => {
+    setAddInitOpenNetworkModalCount: (state) => {
       state.deposit.initOpenNetworkModalCount = state.deposit.initOpenNetworkModalCount++;
     },
-    setAddInitOpenTokenModalCount: (state, _action: PayloadAction<void>) => {
+    setAddInitOpenTokenModalCount: (state) => {
       state.deposit.initOpenTokenModalCount = state.deposit.initOpenTokenModalCount++;
     },
     setWithdrawChainItem: (state, action: PayloadAction<IChainNameItem>) => {

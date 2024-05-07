@@ -155,7 +155,7 @@
 .info-unit {
   max-width: 70px;
   @include text-overflow;
-  @include media-web{
+  @include media-web {
     max-width: 106px;
   }
 }
@@ -230,7 +230,7 @@
     max-width: 57px;
     display: inline-block;
     @extend .ellipsis;
-    @include media-web{
+    @include media-web {
       max-width: 60px;
     }
   }
@@ -282,7 +282,7 @@
   cursor: pointer;
 }
 
-.question-label{
+.question-label {
   display: flex;
   align-items: center;
   gap: 4px;

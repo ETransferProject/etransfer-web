@@ -1,7 +1,7 @@
 import { TGetRecordsListRequest, TGetRecordsListResult } from 'types/api';
 import { TCurrentRecordsStatus } from 'types/records';
-import { handleErrorMessage } from '@portkey/did-ui-react';
 import { request } from 'api';
+import { formatApiError } from './error';
 
 export const getRecordsList = async (
   params: TGetRecordsListRequest,
@@ -10,10 +10,7 @@ export const getRecordsList = async (
     const res = await request.records.getRecordsList({ params });
     return res.data;
   } catch (error: any) {
-    const newError: any = new Error(handleErrorMessage(error, 'getRecordsList error'));
-
-    newError.code = error?.code;
-    throw newError;
+    throw formatApiError(error, 'getRecordsList error', false);
   }
 };
 
@@ -22,10 +19,7 @@ export const getRecordStatus = async (): Promise<TCurrentRecordsStatus> => {
     const res = await request.records.getRecordStatus();
     return res.data;
   } catch (error: any) {
-    const newError: any = new Error(handleErrorMessage(error, 'getRecordStatus error'));
-
-    newError.code = error?.code;
-    throw newError;
+    throw formatApiError(error, 'getRecordStatus error', false);
   }
 };
 
@@ -34,9 +28,6 @@ export const postRecordRead = async (): Promise<null> => {
     const res = await request.records.postRecordRead();
     return res.data;
   } catch (error: any) {
-    const newError: any = new Error(handleErrorMessage(error, 'postRecordRead error'));
-
-    newError.code = error?.code;
-    throw newError;
+    throw formatApiError(error, 'postRecordRead error', false);
   }
 };

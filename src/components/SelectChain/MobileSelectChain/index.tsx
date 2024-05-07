@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
 import CommonDrawer from 'components/CommonDrawer';
-import SmallDownIcon from 'assets/images/smallDown.svg';
+import DownSmallIcon from 'assets/images/downSmall.svg';
 import { CommonSelectChainProps } from '../types';
 import styles from './styles.module.scss';
 
@@ -18,7 +18,7 @@ export default function MobileSelectChain({
         className={clsx('flex-row-center', styles['trigger-container'])}
         onClick={() => setIsDrawerOpen(true)}>
         <div className={styles['trigger-text']}>{selectedItem?.label}</div>
-        <SmallDownIcon className={clsx('flex-none', styles['children-icon'])} />
+        <DownSmallIcon className={clsx('flex-none', styles['children-icon'])} />
       </div>
       <CommonDrawer title={title} open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
         <div className={clsx('flex-column', styles['drawer-content'])}>

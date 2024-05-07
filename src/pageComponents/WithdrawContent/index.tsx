@@ -35,7 +35,7 @@ import {
   checkTokenAllowanceAndApprove,
   createTransferTokenTransaction,
   getBalance,
-} from 'utils/aelfUtils';
+} from 'utils/contract';
 import singleMessage from 'components/SingleMessage';
 import { divDecimals, timesDecimals } from 'utils/calculate';
 import { ZERO } from 'constants/misc';
@@ -49,7 +49,7 @@ import {
 } from 'store/reducers/userAction/slice';
 import { useDebounceCallback } from 'hooks';
 import { useEffectOnce } from 'react-use';
-import SimpleLoading from 'components/SimpleLoading';
+import PartialLoading from 'components/PartialLoading';
 import {
   AmountGreaterThanBalanceMessage,
   DefaultWithdrawErrorMessage,
@@ -67,15 +67,8 @@ import { handleErrorMessage } from '@portkey/did-ui-react';
 import { useAccounts } from 'hooks/portkeyWallet';
 import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
 import { formatWithCommas, parseWithCommas, parseWithStringCommas } from 'utils/format';
-import {
-  sleep,
-  getExploreLink,
-  removeELFAddressSuffix,
-  isELFAddress,
-  removeAddressSuffix,
-} from 'utils/common';
-import { devices } from '@portkey/utils';
-import { ConnectWalletError } from 'constants/wallet';
+import { getAelfExploreLink } from 'utils/common';
+import { devices, sleep } from '@portkey/utils';
 import { useWithdraw } from 'hooks/withdraw';
 import { QuestionMarkIcon, Fingerprint } from 'assets/images';
 import { InitWithdrawTokenState } from 'store/reducers/token/slice';
@@ -85,6 +78,9 @@ import { setIsShowRedDot } from 'store/reducers/common/slice';
 import { useWalletContext } from 'provider/walletProvider';
 import { isAuthTokenError, isHtmlError } from 'utils/api/error';
 import myEvents from 'utils/myEvent';
+import { useCurrentVersion } from 'hooks/common';
+import { AelfExploreType } from 'constants/network';
+import { isELFAddress, removeAddressSuffix, removeELFAddressSuffix } from 'utils/aelfBase';
 
 enum ValidateStatus {
   Error = 'error',
@@ -109,12 +105,12 @@ type FormValuesType = {
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const isAndroid = devices.isMobile().android;
-  const { isMobilePX, currentVersion } = useCommonState();
+  const { isMobilePX } = useCommonState();
+  const currentVersion = useCurrentVersion();
   const { withdraw, userInfo } = useUserActionState();
-  const currentChainItem = useMemo(() => withdraw.currentChainItem, [withdraw.currentChainItem]);
-  const currentChainItemRef = useRef<IChainNameItem>(currentChainItem || CHAIN_LIST[0]);
   const accounts = useAccounts();
-  const { currentSymbol, tokenList } = useWithdraw();
+  const { currentSymbol, tokenList, currentChainItem } = useWithdraw();
+  const currentChainItemRef = useRef<IChainNameItem>(currentChainItem || CHAIN_LIST[0]);
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
@@ -500,14 +496,13 @@ export default function WithdrawContent() {
         const symbol = item?.symbol || currentSymbol;
         const decimal = item?.decimals || currentTokenDecimal;
         const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
-        if (!caAddress || !currentVersion || !wallet) return '';
+        if (!caAddress || !wallet) return '';
         isLoading && setIsMaxBalanceLoading(true);
         const maxBalance = await getBalance({
           wallet,
           symbol: symbol,
           chainId: currentChainItemRef.current.key,
           caAddress,
-          version: currentVersion,
         });
         const tempMaxBalance = divDecimals(maxBalance, decimal).toFixed();
         // setMaxBalance(tempMaxBalance);
@@ -528,15 +523,7 @@ export default function WithdrawContent() {
         isLoading && setIsMaxBalanceLoading(false);
       }
     },
-    [
-      accounts,
-      currentSymbol,
-      currentTokenDecimal,
-      currentVersion,
-      getWithdrawData,
-      handleAmountValidate,
-      wallet,
-    ],
+    [accounts, currentSymbol, currentTokenDecimal, getWithdrawData, handleAmountValidate, wallet],
   );
 
   const getMaxBalanceInterval = useCallback(
@@ -623,8 +610,6 @@ export default function WithdrawContent() {
   );
 
   const handleApproveToken = useCallback(async () => {
-    if (!currentVersion) throw new Error(ConnectWalletError);
-
     const newMaxBalance = await getMaxBalance(false);
     if (ZERO.plus(newMaxBalance).isLessThan(ZERO.plus(balance))) {
       const error = new Error(
@@ -643,19 +628,10 @@ export default function WithdrawContent() {
       address: ownerAddress,
       approveTargetAddress: currentTokenAddress,
       amount: balance,
-      version: currentVersion,
     });
 
     return checkRes;
-  }, [
-    accounts,
-    balance,
-    currentSymbol,
-    currentTokenAddress,
-    currentVersion,
-    getMaxBalance,
-    wallet,
-  ]);
+  }, [accounts, balance, currentSymbol, currentTokenAddress, getMaxBalance, wallet]);
 
   const fetchRecordStatus = useCallback(async () => {
     // const res = await getRecordStatus();
@@ -722,7 +698,6 @@ export default function WithdrawContent() {
 
   const sendTransferTokenTransaction = useDebounceCallback(async () => {
     try {
-      if (!currentVersion) throw new Error(ConnectWalletError);
       setLoading(true, { text: 'Please approve the transaction in the wallet...' });
       const address = form.getFieldValue(FormKeys.ADDRESS);
       if (!address) throw new Error('Please enter a correct address.');
@@ -741,7 +716,6 @@ export default function WithdrawContent() {
           symbol: currentSymbol,
           amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
           chainId: currentChainItemRef.current.key,
-          version: currentVersion,
           fromManagerAddress: userInfo.managerAddress,
         });
         console.log(transaction, '=====transaction');
@@ -926,11 +900,11 @@ export default function WithdrawContent() {
 
   const renderTransactionFeeValue = () => {
     if (!withdrawInfo.transactionFee || !withdrawInfo.aelfTransactionFee) {
-      return isTransactionFeeLoading ? <SimpleLoading /> : defaultNullValue;
+      return isTransactionFeeLoading ? <PartialLoading /> : defaultNullValue;
     } else {
       return (
         <>
-          {isTransactionFeeLoading && <SimpleLoading />}
+          {isTransactionFeeLoading && <PartialLoading />}
           <span className={styles['transaction-fee-value-data']}>
             {!isTransactionFeeLoading &&
               `${(!isSuccessModalOpen && withdrawInfo.transactionFee) || defaultNullValue} `}
@@ -1096,7 +1070,7 @@ export default function WithdrawContent() {
             <div className={styles['info-label']}>Balance</div>
             <div className={styles['info-value']}>
               {!maxBalance || isMaxBalanceLoading ? (
-                <SimpleLoading />
+                <PartialLoading />
               ) : (
                 `${maxBalance} ${withdrawInfo.transactionUnit}`
               )}
@@ -1132,7 +1106,7 @@ export default function WithdrawContent() {
                     styles['info-value'],
                     styles['info-value-big-font'],
                   )}>
-                  {isTransactionFeeLoading && <SimpleLoading />}
+                  {isTransactionFeeLoading && <PartialLoading />}
                   {!isTransactionFeeLoading &&
                     `${(!isSuccessModalOpen && receiveAmount) || defaultNullValue} `}
                   <span className={clsx(styles['info-unit'])}>{withdrawInfo.transactionUnit}</span>
@@ -1191,9 +1165,9 @@ export default function WithdrawContent() {
           onClose: clickSuccessOk,
           onOk: clickSuccessOk,
           footerSlot: CommonLink({
-            href: getExploreLink(
+            href: getAelfExploreLink(
               withdrawInfoSuccess.transactionId,
-              'transaction',
+              AelfExploreType.transaction,
               currentChainItemRef.current.key,
             ),
             isTagA: true,

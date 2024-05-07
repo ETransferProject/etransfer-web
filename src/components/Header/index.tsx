@@ -1,4 +1,3 @@
-// import GoogleAnalytics from 'components/GoogleAnalytics';
 import Head from 'next/head';
 import React from 'react';
 import MobileHeader from './MobileHeader';
@@ -13,7 +12,6 @@ export default function Header(props: DefaultHeadProps) {
   const { isMobilePX } = useCommonState();
   return (
     <div className={styles['header-wrapper']}>
-      {/* <GoogleAnalytics id={process.env.NEXT_PUBLIC_ANALYTICS_ID} /> */}
       <DefaultHead {...props} />
       {isMobilePX ? <MobileHeader /> : <WebHeader />}
     </div>

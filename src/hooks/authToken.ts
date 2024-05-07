@@ -1,4 +1,4 @@
-import { GetCAHolderByManagerParams } from '@portkey-v1/services';
+import { GetCAHolderByManagerParams } from '@portkey/services';
 import { Accounts, ChainId } from '@portkey/provider-types';
 import { useWebLogin, WebLoginState, WalletType, PortkeyDid } from 'aelf-web-login';
 import { getLocalJWT, queryAuthApi } from 'api/utils';
@@ -7,9 +7,8 @@ import { PortkeyVersion } from 'constants/wallet';
 import { useCallback } from 'react';
 import { useAppDispatch, useLoading, useUserActionState } from 'store/Provider/hooks';
 import { setUserInfo } from 'store/reducers/userAction/slice';
-import { recoverPubKey } from 'utils/loginUtils';
 import AElf from 'aelf-sdk';
-import { pubKeyToAddress } from 'utils/aelfUtils';
+import { pubKeyToAddress, recoverPubKey } from 'utils/aelfBase';
 import { setSwitchVersionAction } from 'store/reducers/common/slice';
 import { setV2ConnectedInfoAction } from 'store/reducers/portkeyWallet/actions';
 import { useDebounceCallback } from 'hooks';

@@ -12,11 +12,17 @@ import {
   Avax,
 } from 'assets/images';
 import { useCallback } from 'react';
-import { BlockchainNetworkType, ExploreUrlType } from 'constants/network';
+import {
+  AelfExploreType,
+  BlockchainNetworkType,
+  ExploreUrlType,
+  OtherExploreType,
+} from 'constants/network';
 import { SupportedChainId, defaultNullValue } from 'constants/index';
 import Copy, { CopySize } from 'components/Copy';
 import { getOmittedStr } from 'utils/calculate';
-import { openWithBlank, getExploreLink, getOtherExploreLink, addressFormat } from 'utils/common';
+import { openWithBlank, getAelfExploreLink, getOtherExploreLink } from 'utils/common';
+import { addressFormat } from 'utils/aelfBase';
 import { SupportedELFChainId } from 'constants/index';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
@@ -96,12 +102,20 @@ export default function AddressBox({
     // link to Deposit: toTransfer.chainId and Withdraw: fromTransfer.chainId
     if (network === BlockchainNetworkType.AELF) {
       openWithBlank(
-        getExploreLink(calcAddress(), 'address', type === 'To' ? toChainId : fromChainId),
+        getAelfExploreLink(
+          calcAddress(),
+          AelfExploreType.address,
+          type === 'To' ? toChainId : fromChainId,
+        ),
       );
       return;
     }
     openWithBlank(
-      getOtherExploreLink(calcAddress(), network as keyof typeof ExploreUrlType, 'address'),
+      getOtherExploreLink(
+        calcAddress(),
+        OtherExploreType.address,
+        network as keyof typeof ExploreUrlType,
+      ),
     );
   }, [network, calcAddress, type, toChainId, fromChainId]);
 
