@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import { User, ArrowUp, ArrowRight } from 'assets/images';
 import CommonDrawer from 'components/CommonDrawer';
-import LogoutButton from 'pageComponents/LoginAndProfile/LogoutButton';
+import LogoutButton from 'components/Header/LoginAndProfile/LogoutButton';
 import Address from '../Address';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';

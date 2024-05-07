@@ -1,6 +1,6 @@
 'use client';
-import Content from 'pageComponents/Content';
-import NotConnectedWalletContent from 'pageComponents/NotConnectedWalletContent';
+import Content from 'pageComponents/Home/Content';
+import NotConnectedWalletContent from 'pageComponents/Home/NotConnectedWalletContent';
 import styles from './styles.module.scss';
 import { useIsActive } from 'hooks/portkeyWallet';
 

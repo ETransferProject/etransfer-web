@@ -2,7 +2,7 @@
 import clsx from 'clsx';
 import { useCommonState } from 'store/Provider/hooks';
 import { CommonButtonSize } from 'components/CommonButton';
-import ConnectWalletButton from 'pageComponents/LoginAndProfile/ConnectWalletButton';
+import ConnectWalletButton from 'components/Header/LoginAndProfile/ConnectWalletButton';
 import styles from './styles.module.scss';
 import CommonImage from 'components/CommonImage';
 import { LargeLogo, Logo } from 'assets/images';

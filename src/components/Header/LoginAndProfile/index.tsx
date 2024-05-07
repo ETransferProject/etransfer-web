@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCommonState } from 'store/Provider/hooks';
-import ConnectWalletButton from 'pageComponents/LoginAndProfile/ConnectWalletButton';
+import ConnectWalletButton from 'components/Header/LoginAndProfile/ConnectWalletButton';
 import MobileUserProfile from './MobileUserProfile';
 import WebUserProfile from './WebUserProfile';
 import { CommonButtonSize } from 'components/CommonButton';

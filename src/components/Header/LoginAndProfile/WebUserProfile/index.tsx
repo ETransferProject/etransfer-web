@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
 import CommonDropdown from 'components/CommonDropdown';
-import LogoutButton from 'pageComponents/LoginAndProfile/LogoutButton';
+import LogoutButton from 'components/Header/LoginAndProfile/LogoutButton';
 import { User } from 'assets/images';
 import Address from '../Address';
 import styles from './styles.module.scss';

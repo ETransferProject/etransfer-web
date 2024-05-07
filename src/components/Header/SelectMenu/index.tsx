@@ -7,7 +7,7 @@ import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { store } from 'store/Provider/store';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import SupportEntry from 'pageComponents/SupportEntry';
+import SupportEntry from 'components/Sider/SupportEntry';
 
 export default function SelectMenu() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);

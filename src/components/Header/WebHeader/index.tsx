@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import LoginAndProfileEntry from 'pageComponents/LoginAndProfile';
+import LoginAndProfileEntry from 'components/Header/LoginAndProfile';
 import { useCommonState } from 'store/Provider/hooks';
 import { Logo } from 'assets/images';
 import styles from './styles.module.scss';
