@@ -2,12 +2,12 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { Form, Tooltip } from 'antd';
 import clsx from 'clsx';
-import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
+import SelectChainWrapper from 'pageComponents/WithdrawContent/SelectChainWrapper';
 import CommonButton from 'components/CommonButton';
 import FormTextarea from 'components/FormTextarea';
 import CommonLink from 'components/CommonLink';
-import SelectNetwork from 'pageComponents/SelectNetwork';
-import SelectToken from 'pageComponents/SelectToken';
+import SelectToken from './SelectToken';
+import SelectNetwork from './SelectNetwork';
 import DoubleCheckModal from './DoubleCheckModal';
 import SuccessModal from './SuccessModal';
 import FailModal from './FailModal';
@@ -41,7 +41,6 @@ import { divDecimals, timesDecimals } from 'utils/calculate';
 import { ZERO } from 'constants/misc';
 import { ContractType } from 'constants/chain';
 import BigNumber from 'bignumber.js';
-import { SideMenuKey } from 'constants/home';
 import {
   setWithdrawAddress,
   setWithdrawCurrentNetwork,
@@ -941,8 +940,6 @@ export default function WithdrawContent() {
               validateStatus={formValidateData[FormKeys.TOKEN].validateStatus}
               help={formValidateData[FormKeys.TOKEN].errorMessage}>
               <SelectToken
-                isFormItemStyle
-                type={SideMenuKey.Withdraw}
                 selected={currentToken}
                 selectCallback={handleTokenChange}
                 tokenList={tokenList}
@@ -973,8 +970,6 @@ export default function WithdrawContent() {
               validateStatus={formValidateData[FormKeys.NETWORK].validateStatus}
               help={formValidateData[FormKeys.NETWORK].errorMessage}>
               <SelectNetwork
-                isFormItemStyle
-                type={SideMenuKey.Withdraw}
                 networkList={networkList}
                 selected={currentNetwork}
                 isDisabled={isNetworkDisable}

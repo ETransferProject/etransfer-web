@@ -2,22 +2,30 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import CommonDrawer from 'components/CommonDrawer';
 import DownSmallIcon from 'assets/images/downSmall.svg';
-import { CommonSelectChainProps } from '../types';
+import { DeviceSelectChainProps } from '../types';
 import styles from './styles.module.scss';
 
 export default function MobileSelectChain({
   title,
+  className,
+  childrenClassName,
   menuItems,
   selectedItem,
+  isBorder,
   onClick,
-}: CommonSelectChainProps & { title: string }) {
+}: DeviceSelectChainProps & { title: string }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   return (
     <>
       <div
-        className={clsx('flex-row-center', styles['trigger-container'])}
+        className={clsx(
+          'flex-row-center',
+          styles['trigger-container'],
+          isBorder && styles['trigger-container-border'],
+          className,
+        )}
         onClick={() => setIsDrawerOpen(true)}>
-        <div className={styles['trigger-text']}>{selectedItem?.label}</div>
+        <div className={clsx(styles['trigger-text'], childrenClassName)}>{selectedItem?.label}</div>
         <DownSmallIcon className={clsx('flex-none', styles['children-icon'])} />
       </div>
       <CommonDrawer title={title} open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>

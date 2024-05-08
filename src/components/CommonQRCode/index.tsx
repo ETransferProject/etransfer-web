@@ -1,12 +1,20 @@
 import { QRCode } from 'react-qrcode-logo';
 import { useCommonState } from 'store/Provider/hooks';
 
-export default function CommonQRCode({ value, logoUrl }: { value: string; logoUrl?: string }) {
+export default function CommonQRCode({
+  value,
+  logoUrl,
+  size = 120,
+}: {
+  value: string;
+  logoUrl?: string;
+  size?: number;
+}) {
   const { isMobilePX } = useCommonState();
   return (
     <QRCode
       value={value}
-      size={isMobilePX ? 164 : 120}
+      size={size}
       quietZone={0}
       logoImage={logoUrl}
       logoWidth={isMobilePX ? 28 : 20}

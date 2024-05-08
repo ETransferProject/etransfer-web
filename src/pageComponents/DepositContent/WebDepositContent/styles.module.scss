@@ -1,10 +1,11 @@
 @import 'src/assets/theme/font.scss';
 @import 'src/assets/theme/color.scss';
 
-.select-network-wrapper,
-.deposit-address-wrapper,
-.info-wrapper {
+.deposit-title {
+  font-size: 24px;
+  line-height: 32px;
   margin-bottom: 24px;
+  @extend .font-family-medium;
 }
 
 .deposit-address-wrapper {
@@ -13,10 +14,6 @@
   padding: 24px;
   border: 1px solid $dividers;
   border-radius: 6px;
-}
-
-.select-network-hidden {
-  visibility: hidden;
 }
 
 .network-select {

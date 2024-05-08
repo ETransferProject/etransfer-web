@@ -3,7 +3,7 @@
 @import '/src/assets/theme/breakpoint.scss';
 @import '/src/styles/common.scss';
 
-.select-network {
+.withdraw-select-network {
   position: relative;
   .select-network-result {
     display: flex;
@@ -27,16 +27,6 @@
       }
     }
 
-    &.select-network-result-no-border {
-      border: none;
-    }
-
-    .select-network-label {
-      color: $secondary-text;
-      font-size: 14px;
-      line-height: 22px;
-      user-select: none;
-    }
     .select-network-value-row {
       display: flex;
       justify-content: space-between;
@@ -65,27 +55,7 @@
           user-select: none;
         }
       }
-      .select-network-swap-icon-wrapper {
-        @include media-web {
-          width: 32px;
-          height: 32px;
-          border-radius: 4px;
-          &:hover {
-            background-color: $blue-bg;
-            .select-network-swap-icon {
-              path {
-                fill: $brand;
-              }
-            }
-          }
-        }
-      }
-      .select-network-swap-icon {
-        width: 20px;
-        height: 20px;
-        min-width: 20px;
-        min-height: 20px;
-      }
+
       .select-network-down-icon-rotate {
         transform: rotate(180deg);
       }

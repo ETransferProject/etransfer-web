@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import styles from './styles.module.scss';
-import { TokenSelectForWeb, TokenSelectProps } from 'pageComponents/SelectToken/TokenSelect';
+import { TokenSelectForWeb, TokenSelectProps } from 'components/SelectToken/TokenSelect';
 import { SideMenuKey } from 'constants/home';
 
 interface TokenSelectDropdownProps extends TokenSelectProps {
@@ -11,6 +11,7 @@ interface TokenSelectDropdownProps extends TokenSelectProps {
 }
 
 export default function TokenSelectDropdown({
+  className,
   isFormItemStyle,
   type,
   open = false,
@@ -34,6 +35,7 @@ export default function TokenSelectDropdown({
           styles['token-select-dropdown'],
           { [styles['token-select-dropdown-form-item']]: isFormItemStyle },
           open ? styles['token-select-dropdown-show'] : styles['token-select-dropdown-hidden'],
+          className,
         )}>
         <TokenSelectForWeb
           open={open}

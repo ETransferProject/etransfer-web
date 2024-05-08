@@ -1,9 +1,6 @@
 import clsx from 'clsx';
 import styles from './styles.module.scss';
-import {
-  NetworkSelectForWeb,
-  TNetworkSelectProps,
-} from 'pageComponents/SelectNetwork/NetworkSelect';
+import { NetworkSelectForWeb, TNetworkSelectProps } from 'components/SelectNetwork/NetworkSelect';
 import { SideMenuKey } from 'constants/home';
 
 interface NetworkSelectDropdownProps extends TNetworkSelectProps {
@@ -14,6 +11,7 @@ interface NetworkSelectDropdownProps extends TNetworkSelectProps {
 }
 
 export default function NetworkSelectDropdown({
+  className,
   isFormItemStyle,
   type,
   open = false,
@@ -25,7 +23,7 @@ export default function NetworkSelectDropdown({
   onClose,
 }: NetworkSelectDropdownProps) {
   return (
-    <div className={styles['network-select-dropdown']}>
+    <div className={clsx(styles['network-select-dropdown'])}>
       <div
         className={clsx(
           styles['network-select-dropdown-mask'],
@@ -37,6 +35,7 @@ export default function NetworkSelectDropdown({
           styles['network-select-dropdown'],
           { [styles['network-select-dropdown-form-item']]: isFormItemStyle },
           open ? styles['network-select-dropdown-show'] : styles['network-select-dropdown-hidden'],
+          className,
         )}>
         <NetworkSelectForWeb
           type={type}

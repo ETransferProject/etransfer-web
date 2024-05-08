@@ -42,6 +42,11 @@ import USDTToken from './token/usdtToken.svg';
 import SGRToken from './token/SGRToken.svg';
 import SwapRightDefault from './swap-right-default.svg';
 import SwapRightSelected from './swap-right-selected.svg';
+import Add from './add.svg';
+import AddBig from './addBig.svg';
+import Down from './down.svg';
+import DownBig from './downBig.svg';
+import DownSmall from './downSmall.svg';
 
 export {
   Info,
@@ -88,4 +93,9 @@ export {
   SGRToken,
   SwapRightDefault,
   SwapRightSelected,
+  Add,
+  AddBig,
+  Down,
+  DownBig,
+  DownSmall,
 };

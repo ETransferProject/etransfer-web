@@ -1,21 +1,16 @@
-import { Swap } from 'assets/images';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { TNetworkItem } from 'types/api';
 import styles from './styles.module.scss';
-import { useAppDispatch, useCommonState, useUserActionState } from 'store/Provider/hooks';
-import NetworkSelectDrawer from 'pageComponents/SelectNetwork/NetworkSelectDrawer';
-import NetworkSelectDropdown from 'pageComponents/SelectNetwork/NetworkSelectDropdown';
+import { useCommonState } from 'store/Provider/hooks';
+import NetworkSelectDrawer from 'components/SelectNetwork/NetworkSelectDrawer';
+import NetworkSelectDropdown from 'components/SelectNetwork/NetworkSelectDropdown';
 import Down from 'assets/images/downBig.svg';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
-import { setAddInitOpenNetworkModalCount } from 'store/reducers/userAction/slice';
 
-type TNetworkSelectProps = {
-  isFormItemStyle?: boolean;
-  type: SideMenuKey;
+type TSelectNetworkProps = {
   networkList: TNetworkItem[];
   selected?: TNetworkItem;
-  noBorder?: boolean;
   isDisabled?: boolean;
   isShowLoading?: boolean;
   onChange?: (item: TNetworkItem) => void;
@@ -23,21 +18,14 @@ type TNetworkSelectProps = {
 };
 
 export default function SelectNetwork({
-  isFormItemStyle,
-  type,
   networkList,
   selected,
-  noBorder,
   isDisabled,
   isShowLoading,
   onChange,
   selectCallback,
-}: TNetworkSelectProps) {
+}: TSelectNetworkProps) {
   const { isMobilePX } = useCommonState();
-  const dispatch = useAppDispatch();
-  const {
-    deposit: { initOpenNetworkModalCount },
-  } = useUserActionState();
   const [isShowNetworkSelectDropdown, setIsShowNetworkSelectDropdown] = useState<boolean>(false);
 
   const onSelectNetwork = useCallback(
@@ -51,30 +39,12 @@ export default function SelectNetwork({
     [onChange, selectCallback],
   );
 
-  useEffect(() => {
-    if (
-      type === SideMenuKey.Deposit &&
-      isMobilePX &&
-      networkList &&
-      networkList.length > 0 &&
-      !selected?.network &&
-      initOpenNetworkModalCount === 0
-    ) {
-      dispatch(setAddInitOpenNetworkModalCount());
-      setIsShowNetworkSelectDropdown(true);
-    }
-  }, [dispatch, initOpenNetworkModalCount, isMobilePX, networkList, selected?.network, type]);
-
   return (
-    <div className={styles['select-network']}>
+    <div className={styles['withdraw-select-network']}>
       <div
         id="select-network-result"
-        className={clsx(styles['select-network-result'], {
-          [styles['select-network-result-form-item']]: isFormItemStyle,
-          [styles['select-network-result-no-border']]: noBorder,
-        })}
+        className={clsx(styles['select-network-result'], styles['select-network-result-form-item'])}
         onClick={() => setIsShowNetworkSelectDropdown(true)}>
-        {!isFormItemStyle && <div className={styles['select-network-label']}>Deposit Network</div>}
         <div className={styles['select-network-value-row']}>
           <div className={styles['select-network-value']}>
             {selected?.network ? (
@@ -92,17 +62,12 @@ export default function SelectNetwork({
               <span className={styles['select-network-value-placeholder']}>Select network</span>
             )}
           </div>
-          {isFormItemStyle ? (
-            <Down
-              className={clsx({
-                [styles['select-network-down-icon-rotate']]: isShowNetworkSelectDropdown,
-              })}
-            />
-          ) : (
-            <div className={clsx('flex-center', styles['select-network-swap-icon-wrapper'])}>
-              <Swap className={styles['select-network-swap-icon']} />
-            </div>
-          )}
+
+          <Down
+            className={clsx({
+              [styles['select-network-down-icon-rotate']]: isShowNetworkSelectDropdown,
+            })}
+          />
         </div>
       </div>
 
@@ -110,7 +75,7 @@ export default function SelectNetwork({
         <NetworkSelectDrawer
           open={isShowNetworkSelectDropdown}
           onClose={() => setIsShowNetworkSelectDropdown(false)}
-          type={type}
+          type={SideMenuKey.Withdraw}
           networkList={networkList}
           selectedNetwork={selected?.network}
           isDisabled={isDisabled}
@@ -119,9 +84,9 @@ export default function SelectNetwork({
         />
       ) : (
         <NetworkSelectDropdown
-          isFormItemStyle={isFormItemStyle}
+          isFormItemStyle
           open={isShowNetworkSelectDropdown}
-          type={type}
+          type={SideMenuKey.Withdraw}
           networkList={networkList}
           selectedNetwork={selected?.network}
           isDisabled={isDisabled}

@@ -5,14 +5,22 @@ import { CHAIN_LIST, CHAIN_LIST_SIDE_CHAIN, IChainNameItem } from 'constants/ind
 import { useCommonState, useUserActionState } from 'store/Provider/hooks';
 import { setCurrentChainItem } from 'store/reducers/userAction/slice';
 import { store } from 'store/Provider/store';
-import { CommonSelectChainProps, SelectChainProps } from './types';
+import { DeviceSelectChainProps, SelectChainProps } from './types';
 import SynchronizingChainModal from 'pageComponents/Modal/SynchronizingChainModal';
 import { useAccounts } from 'hooks/portkeyWallet';
 import { useDeposit } from 'hooks/deposit';
 import { SideMenuKey } from 'constants/home';
 import { useWithdraw } from 'hooks/withdraw';
 
-export default function SelectChain({ title, clickCallback }: SelectChainProps) {
+export default function SelectChain({
+  title,
+  className,
+  childrenClassName,
+  isBorder,
+  suffix,
+  hideDownArrow,
+  clickCallback,
+}: SelectChainProps) {
   const { activeMenuKey, isMobilePX } = useCommonState();
   const { deposit, withdraw } = useUserActionState();
   const { currentSymbol, currentChainItem: depositCurrentChainItem } = useDeposit();
@@ -54,7 +62,7 @@ export default function SelectChain({ title, clickCallback }: SelectChainProps) 
     [accounts, activeMenuKey, clickCallback],
   );
 
-  const dropdownProps: CommonSelectChainProps = useMemo(() => {
+  const dropdownProps: DeviceSelectChainProps = useMemo(() => {
     if (activeMenuKey === SideMenuKey.Deposit && currentSymbol?.includes('SGR')) {
       onClickChain(CHAIN_LIST_SIDE_CHAIN[0]);
     }
@@ -79,9 +87,22 @@ export default function SelectChain({ title, clickCallback }: SelectChainProps) 
   return (
     <>
       {isMobilePX ? (
-        <MobileSelectChain {...dropdownProps} title={title} />
+        <MobileSelectChain
+          {...dropdownProps}
+          title={title}
+          className={className}
+          childrenClassName={childrenClassName}
+          isBorder={isBorder}
+        />
       ) : (
-        <WebSelectChain {...dropdownProps} />
+        <WebSelectChain
+          {...dropdownProps}
+          className={className}
+          childrenClassName={childrenClassName}
+          isBorder={isBorder}
+          suffix={suffix}
+          hideDownArrow={hideDownArrow}
+        />
       )}
       <SynchronizingChainModal
         open={openSynchronizingModal}

@@ -1,6 +1,6 @@
 import { DrawerProps } from 'antd';
 import CommonDrawer from 'components/CommonDrawer';
-import { TokenSelectForMobile, TokenSelectProps } from 'pageComponents/SelectToken/TokenSelect';
+import { TokenSelectForMobile, TokenSelectProps } from 'components/SelectToken/TokenSelect';
 import { SideMenuKey } from 'constants/home';
 
 export default function NetworkSelectDrawer({

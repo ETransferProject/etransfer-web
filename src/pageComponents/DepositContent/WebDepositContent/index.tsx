@@ -1,20 +1,18 @@
 import React, { useMemo } from 'react';
 import clsx from 'clsx';
-import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
 import CommonAddress from 'components/CommonAddress';
-import SelectNetwork from 'pageComponents/SelectNetwork';
 import DepositInfo from 'pageComponents/DepositContent/DepositInfo';
 import DepositDescription from 'pageComponents/DepositContent/DepositDescription';
 import styles from './styles.module.scss';
 import { TDepositContentProps } from '..';
 import CommonQRCode from 'components/CommonQRCode';
 import { DEPOSIT_ADDRESS_LABEL } from 'constants/deposit';
-import { useDeposit } from 'hooks/deposit';
 import CommonImage from 'components/CommonImage';
 import { qrCodePlaceholder } from 'assets/images';
-import { SideMenuKey } from 'constants/home';
 import { DepositRetryForWeb } from 'pageComponents/DepositContent/DepositRetry';
-import SelectToken from 'pageComponents/SelectToken';
+import SelectTokenNetwork from '../SelectTokenNetwork';
+import SelectTokenChain from '../SelectTokenChain';
+import Space from 'components/Space';
 
 export default function WebContent({
   networkList,
@@ -33,7 +31,6 @@ export default function WebContent({
   networkChanged,
   onTokenChanged,
 }: TDepositContentProps) {
-  const { currentSymbol } = useDeposit();
   const renderDepositDescription = useMemo(() => {
     return (
       Array.isArray(depositInfo?.extraNotes) &&
@@ -43,28 +40,27 @@ export default function WebContent({
 
   return (
     <>
-      <SelectChainWrapper webLabel={'Deposit Assets to'} chainChanged={chainChanged} />
-      <div className={styles['select-network-wrapper']}>
-        <SelectToken
-          type={SideMenuKey.Deposit}
-          selected={currentToken}
-          selectCallback={onTokenChanged}
-          tokenList={tokenList}
-        />
-      </div>
-      <div
-        className={clsx(
-          styles['select-network-wrapper'],
-          currentSymbol === '' && styles['select-network-hidden'],
-        )}>
-        <SelectNetwork
-          type={SideMenuKey.Deposit}
-          networkList={networkList}
-          selectCallback={networkChanged}
-          selected={networkSelected}
-          isShowLoading={isShowLoading}
-        />
-      </div>
+      <div className={styles['deposit-title']}>Deposit Assets</div>
+      <SelectTokenNetwork
+        label={'From'}
+        tokenList={tokenList}
+        tokenSelected={currentToken}
+        tokenSelectCallback={onTokenChanged}
+        networkList={networkList}
+        networkSelected={networkSelected}
+        isShowNetworkLoading={isShowLoading}
+        networkSelectCallback={networkChanged}
+      />
+      <Space direction="vertical" size={12} />
+      <SelectTokenChain
+        label={'To'}
+        tokenList={[]}
+        tokenSelectCallback={function (): void {
+          throw new Error('Function not implemented.');
+        }}
+        chainChanged={chainChanged}
+      />
+      <Space direction="vertical" size={12} />
       {showRetry && <DepositRetryForWeb isShowImage={true} onClick={onRetry} />}
       {!showRetry && !!depositInfo.depositAddress && (
         <>
@@ -80,14 +76,14 @@ export default function WebContent({
             )}
             <CommonAddress label={DEPOSIT_ADDRESS_LABEL} value={depositInfo.depositAddress} />
           </div>
-          <div className={styles['info-wrapper']}>
-            <DepositInfo
-              minimumDeposit={depositInfo.minAmount}
-              contractAddress={contractAddress}
-              contractAddressLink={contractAddressLink}
-              minAmountUsd={depositInfo.minAmountUsd || ''}
-            />
-          </div>
+          <Space direction="vertical" size={12} />
+          <DepositInfo
+            minimumDeposit={depositInfo.minAmount}
+            contractAddress={contractAddress}
+            contractAddressLink={contractAddressLink}
+            minAmountUsd={depositInfo.minAmountUsd || ''}
+          />
+          <Space direction="vertical" size={12} />
           {renderDepositDescription}
         </>
       )}

@@ -3,7 +3,7 @@ import CommonDrawer from 'components/CommonDrawer';
 import {
   NetworkSelectForMobile,
   TNetworkSelectProps,
-} from 'pageComponents/SelectNetwork/NetworkSelect';
+} from 'components/SelectNetwork/NetworkSelect';
 
 export default function NetworkSelectDrawer({
   type,

@@ -1,23 +1,18 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import styles from './styles.module.scss';
-import { useAppDispatch, useCommonState, useUserActionState } from 'store/Provider/hooks';
-import TokenSelectDrawer from 'pageComponents/SelectToken/TokenSelectDrawer';
-import TokenSelectDropdown from 'pageComponents/SelectToken/TokenSelectDropdown';
+import { useAppDispatch, useCommonState } from 'store/Provider/hooks';
+import TokenSelectDrawer from 'components/SelectToken/TokenSelectDrawer';
+import TokenSelectDropdown from 'components/SelectToken/TokenSelectDropdown';
 import Down from 'assets/images/downBig.svg';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
-import { SelectImage } from 'pageComponents/SelectToken/TokenCard';
-
+import { SelectImage } from 'components/SelectToken/TokenCard';
 import { BusinessType, TTokenItem } from 'types/api';
 import { setCurrentSymbol } from 'store/reducers/token/slice';
-import { setAddInitOpenTokenModalCount } from 'store/reducers/userAction/slice';
 
-type TTokenSelectProps = {
-  isFormItemStyle?: boolean;
-  type: SideMenuKey;
+type TSelectTokenProps = {
   tokenList: TTokenItem[];
   selected?: TTokenItem;
-  noBorder?: boolean;
   isDisabled?: boolean;
   isShowLoading?: boolean;
   onChange?: (item: TTokenItem) => void;
@@ -25,61 +20,34 @@ type TTokenSelectProps = {
 };
 
 export default function SelectToken({
-  isFormItemStyle,
-  type,
   tokenList,
   selected,
-  noBorder,
   isDisabled,
   isShowLoading,
   onChange,
   selectCallback,
-}: TTokenSelectProps) {
+}: TSelectTokenProps) {
   const { isMobilePX } = useCommonState();
   const dispatch = useAppDispatch();
-  const {
-    deposit: { initOpenTokenModalCount },
-  } = useUserActionState();
   const [isShowTokenSelectDropdown, setIsShowTokenSelectDropdown] = useState<boolean>(false);
-  const { activeMenuKey } = useCommonState();
 
   const onSelectToken = useCallback(
     async (item: TTokenItem) => {
       onChange?.(item);
-      dispatch(
-        setCurrentSymbol({ key: activeMenuKey as unknown as BusinessType, symbol: item.symbol }),
-      );
+      dispatch(setCurrentSymbol({ key: BusinessType.Withdraw, symbol: item.symbol }));
       setIsShowTokenSelectDropdown(false);
 
       selectCallback(item);
     },
-    [activeMenuKey, dispatch, onChange, selectCallback],
+    [dispatch, onChange, selectCallback],
   );
 
-  useEffect(() => {
-    if (
-      type === SideMenuKey.Deposit &&
-      isMobilePX &&
-      tokenList &&
-      tokenList.length > 0 &&
-      !selected?.symbol &&
-      initOpenTokenModalCount === 0
-    ) {
-      dispatch(setAddInitOpenTokenModalCount());
-      setIsShowTokenSelectDropdown(true);
-    }
-  }, [dispatch, initOpenTokenModalCount, tokenList, isMobilePX, selected?.symbol, type]);
-
   return (
-    <div className={styles['select-token']}>
+    <div className={styles['withdraw-select-token']}>
       <div
         id="select-token-result"
-        className={clsx(styles['select-token-result'], {
-          [styles['select-token-result-form-item']]: isFormItemStyle,
-          [styles['select-token-result-no-border']]: noBorder,
-        })}
+        className={clsx(styles['select-token-result'], styles['select-token-result-form-item'])}
         onClick={() => setIsShowTokenSelectDropdown(true)}>
-        {!isFormItemStyle && <div className={styles['select-token-label']}>Deposit Assets</div>}
         <div className={styles['select-token-value-row']}>
           <div className={styles['select-token-value']}>
             {selected?.symbol ? (
@@ -92,21 +60,12 @@ export default function SelectToken({
               <span className={styles['select-token-value-placeholder']}>Select a token</span>
             )}
           </div>
-          {isFormItemStyle ? (
-            <Down
-              className={clsx({
-                [styles['select-token-down-icon-rotate']]: isShowTokenSelectDropdown,
-              })}
-            />
-          ) : (
-            <div className={clsx('flex-center', styles['select-token-swap-icon-wrapper'])}>
-              <Down
-                className={clsx(styles['select-token-swap-icon'], {
-                  [styles['select-token-down-icon-rotate']]: isShowTokenSelectDropdown,
-                })}
-              />
-            </div>
-          )}
+
+          <Down
+            className={clsx({
+              [styles['select-token-down-icon-rotate']]: isShowTokenSelectDropdown,
+            })}
+          />
         </div>
       </div>
 
@@ -114,7 +73,7 @@ export default function SelectToken({
         <TokenSelectDrawer
           open={isShowTokenSelectDropdown}
           onClose={() => setIsShowTokenSelectDropdown(false)}
-          type={type}
+          type={SideMenuKey.Withdraw}
           tokenList={tokenList}
           selectedToken={selected?.symbol}
           isDisabled={isDisabled}
@@ -123,9 +82,9 @@ export default function SelectToken({
         />
       ) : (
         <TokenSelectDropdown
-          isFormItemStyle={isFormItemStyle}
+          isFormItemStyle
           open={isShowTokenSelectDropdown}
-          type={type}
+          type={SideMenuKey.Withdraw}
           tokenList={tokenList}
           selectedToken={selected?.symbol}
           isDisabled={isDisabled}
