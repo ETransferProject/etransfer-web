@@ -13,6 +13,8 @@ import { DepositRetryForWeb } from 'pageComponents/DepositContent/DepositRetry';
 import SelectTokenNetwork from '../SelectTokenNetwork';
 import SelectTokenChain from '../SelectTokenChain';
 import Space from 'components/Space';
+import ExchangeRate from '../ExchangeRate';
+import Calculator from '../Calculator';
 
 export default function WebContent({
   networkList,
@@ -61,6 +63,10 @@ export default function WebContent({
         chainChanged={chainChanged}
       />
       <Space direction="vertical" size={12} />
+      <ExchangeRate payUnit={''} receiveUnit={''} slippage={''} />
+      <Space direction="vertical" size={24} />
+      <Calculator payToken={'USDT'} receiveToken={'SGR'} />
+      <Space direction="vertical" size={24} />
       {showRetry && <DepositRetryForWeb isShowImage={true} onClick={onRetry} />}
       {!showRetry && !!depositInfo.depositAddress && (
         <>

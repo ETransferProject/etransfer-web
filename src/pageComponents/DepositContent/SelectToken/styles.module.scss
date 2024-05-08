@@ -59,8 +59,6 @@
 
     .select-token-down-icon-wrapper {
       @include media-web {
-        width: 32px;
-        height: 32px;
         border-radius: 4px;
         &:hover {
           background-color: $blue-bg;

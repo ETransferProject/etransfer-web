@@ -37,16 +37,18 @@ import ArrowRight from './arrowRight.svg';
 import Reset from './reset.svg';
 import EmptyBox from './emptyBox.svg';
 import CloseFilled from './closeFilled.svg';
+import TimeIcon from './time.svg';
 import TimeFilled from './timeFilled.svg';
 import USDTToken from './token/usdtToken.svg';
 import SGRToken from './token/SGRToken.svg';
 import SwapRightDefault from './swap-right-default.svg';
 import SwapRightSelected from './swap-right-selected.svg';
-import Add from './add.svg';
-import AddBig from './addBig.svg';
-import Down from './down.svg';
-import DownBig from './downBig.svg';
-import DownSmall from './downSmall.svg';
+import AddIcon from './add.svg';
+import AddBigIcon from './addBig.svg';
+import DownIcon from './down.svg';
+import DownBigIcon from './downBig.svg';
+import DownSmallIcon from './downSmall.svg';
+import CalculatorIcon from './Calculator.svg';
 
 export {
   Info,
@@ -88,14 +90,16 @@ export {
   Reset,
   EmptyBox,
   CloseFilled,
+  TimeIcon,
   TimeFilled,
   USDTToken,
   SGRToken,
   SwapRightDefault,
   SwapRightSelected,
-  Add,
-  AddBig,
-  Down,
-  DownBig,
-  DownSmall,
+  AddIcon,
+  AddBigIcon,
+  DownIcon,
+  DownBigIcon,
+  DownSmallIcon,
+  CalculatorIcon,
 };

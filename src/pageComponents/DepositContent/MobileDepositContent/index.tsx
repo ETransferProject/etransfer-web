@@ -13,6 +13,8 @@ import { DepositRetryForMobile } from 'pageComponents/DepositContent/DepositRetr
 import SelectTokenNetwork from '../SelectTokenNetwork';
 import SelectTokenChain from '../SelectTokenChain';
 import Space from 'components/Space';
+import Calculator from '../Calculator';
+import ExchangeRate from '../ExchangeRate';
 
 export default function MobileDepositContent({
   networkList,
@@ -73,7 +75,9 @@ export default function MobileDepositContent({
         isShowNetworkLoading={isShowLoading}
         networkSelectCallback={networkChanged}
       />
+
       <Space direction="vertical" size={8} />
+
       <SelectTokenChain
         label={'To'}
         tokenList={[]}
@@ -82,6 +86,15 @@ export default function MobileDepositContent({
         }}
         chainChanged={chainChanged}
       />
+
+      <Space direction="vertical" size={12} />
+
+      <ExchangeRate payUnit={''} receiveUnit={''} slippage={''} />
+
+      <Space direction="vertical" size={24} />
+
+      <Calculator payToken={'USDT'} receiveToken={'SGR'} />
+
       <Space direction="vertical" size={24} />
 
       {currentToken && networkSelected && renderDepositAddress}

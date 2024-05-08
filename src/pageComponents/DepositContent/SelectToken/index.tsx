@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import { useAppDispatch, useCommonState, useUserActionState } from 'store/Provider/hooks';
 import TokenSelectDrawer from 'components/SelectToken/TokenSelectDrawer';
 import TokenSelectDropdown from 'components/SelectToken/TokenSelectDropdown';
-import { AddBig, Down } from 'assets/images';
+import { AddBigIcon, DownIcon } from 'assets/images';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
 import { SelectImage } from 'components/SelectToken/TokenCard';
@@ -62,7 +62,7 @@ export default function SelectToken({
   const renderNotSelected = useMemo(() => {
     return (
       <div className={clsx('flex-row-center', styles['select-token-not-selected'])}>
-        <AddBig />
+        <AddBigIcon />
         <span className={styles['select-token-value-placeholder']}>Select Token</span>
       </div>
     );
@@ -86,7 +86,7 @@ export default function SelectToken({
           )}
 
           <div className={clsx('flex-center', styles['select-token-down-icon-wrapper'])}>
-            <Down
+            <DownIcon
               className={clsx(styles['select-token-down-icon'], {
                 [styles['select-token-down-icon-rotate']]: isShowTokenSelectDropdown,
               })}

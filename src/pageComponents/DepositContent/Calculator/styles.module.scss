@@ -1,0 +1,72 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+@import '/src/assets/theme/breakpoint.scss';
+@import '/src/styles/common.scss';
+
+.calculator {
+  border-radius: 6px;
+  background-color: rgba(40, 94, 255, 0.05);
+  padding: 16px 24px;
+
+  @include media-mobile-and-pad {
+    padding: 16px 12px;
+  }
+}
+.calculator-header {
+  height: 24px;
+  font-size: 16px;
+  line-height: 24px;
+  cursor: pointer;
+  @extend .font-family-medium;
+}
+
+.calculator-content {
+  gap: 16px;
+  .you-pay-main {
+    background-color: #fff;
+    border: 1px solid $border;
+    border-radius: 6px;
+    padding: 12px;
+  }
+  .pay-input {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+
+    @extend .form-item-value;
+  }
+  .dividing-line {
+    height: 24px;
+    width: 1px;
+    background-color: $border;
+    margin: 0 12px 0 16px;
+  }
+  .unit {
+    font-size: 16px;
+    line-height: 24px;
+    @extend .form-item-value;
+  }
+}
+
+.calculator-header-right {
+  gap: 8px;
+}
+
+.label {
+  color: $secondary-text;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.receive-amount {
+  font-size: 16px;
+  line-height: 24px;
+  @extend .font-family-medium;
+}
+
+.min-receive-amount {
+  font-size: 12px;
+  color: $primary-text;
+  margin-left: 4px;
+}

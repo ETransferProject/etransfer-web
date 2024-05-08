@@ -1,0 +1,36 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/breakpoint.scss';
+@import '/src/styles/common.scss';
+
+.dynamic-arrow {
+  border-radius: 4px;
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  @include media-web {
+    &:hover {
+      background-color: $blue-bg;
+      .dynamic-arrow-icon {
+        path {
+          fill: $brand;
+        }
+      }
+    }
+  }
+}
+
+.dynamic-arrow-big {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+}
+
+.dynamic-arrow-small {
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+}
+
+.dynamic-arrow-icon-rotate {
+  transform: rotate(180deg);
+}

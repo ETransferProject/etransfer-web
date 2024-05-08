@@ -1,4 +1,4 @@
-import { Add, DownSmall } from 'assets/images';
+import { AddIcon, DownSmallIcon } from 'assets/images';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TNetworkItem } from 'types/api';
 import styles from './styles.module.scss';
@@ -62,7 +62,7 @@ export default function SelectNetwork({
   const renderNotSelected = useMemo(() => {
     return (
       <div className={clsx('flex-row-center', styles['select-network-not-selected'])}>
-        <Add />
+        <AddIcon />
         <span className={styles['select-network-value-placeholder']}>Select Network</span>
       </div>
     );
@@ -110,7 +110,7 @@ export default function SelectNetwork({
         <div className={styles['select-network-label']}>{label}</div>
         {selected?.network ? renderSelected : renderNotSelected}
         <div className={clsx('flex-center', styles['select-network-down-icon-wrapper'])}>
-          <DownSmall
+          <DownSmallIcon
             className={clsx(styles['select-network-down-icon'], {
               [styles['select-network-down-icon-rotate']]: isShowNetworkSelectDropdown,
             })}
