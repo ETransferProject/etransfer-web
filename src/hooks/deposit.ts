@@ -1,18 +1,40 @@
-import { CHAIN_LIST } from 'constants/index';
 import { useMemo } from 'react';
-import { useTokenState, useUserActionState } from 'store/Provider/hooks';
-import { BusinessType } from 'types/api';
+import { useDepositState } from 'store/Provider/hooks';
 
 export function useDeposit() {
-  const tokenState = useTokenState();
-  const { deposit } = useUserActionState();
+  const {
+    fromTokenSymbol,
+    toTokenSymbol,
+    fromTokenList,
+    fromNetwork,
+    fromNetworkList,
+    toTokenList,
+    toChainItem,
+    toChainList,
+  } = useDepositState();
 
   return useMemo(
     () => ({
-      tokenList: tokenState[BusinessType.Deposit]?.tokenList || [],
-      currentSymbol: tokenState[BusinessType.Deposit]?.currentSymbol || '',
-      currentChainItem: deposit.currentChainItem || CHAIN_LIST[0],
+      // from
+      fromTokenSymbol: fromTokenSymbol || 'USDT',
+      fromTokenList: fromTokenList || [],
+      fromNetwork: fromNetwork,
+      fromNetworkList: fromNetworkList || [],
+      // to
+      toTokenSymbol: toTokenSymbol || 'USDT',
+      toTokenList: toTokenList || [],
+      toChainItem: toChainItem,
+      toChainList: toChainList || [],
     }),
-    [deposit.currentChainItem, tokenState],
+    [
+      fromNetwork,
+      fromNetworkList,
+      fromTokenList,
+      fromTokenSymbol,
+      toChainItem,
+      toChainList,
+      toTokenList,
+      toTokenSymbol,
+    ],
   );
 }

@@ -1,87 +1,87 @@
 import React, { useCallback, useRef, useState, useMemo, useEffect } from 'react';
 import WebDepositContent from './WebDepositContent';
 import MobileDepositContent from './MobileDepositContent';
-import {
-  useAppDispatch,
-  useCommonState,
-  useLoading,
-  useUserActionState,
-} from 'store/Provider/hooks';
+import { useAppDispatch, useCommonState, useDepositState, useLoading } from 'store/Provider/hooks';
 import {
   BusinessType,
   TDepositInfo,
   TGetNetworkListRequest,
   TNetworkItem,
-  TTokenItem,
+  TDepositTokenItem,
   NetworkStatus,
+  TToTokenItem,
 } from 'types/api';
 import { getDepositInfo, getNetworkList } from 'utils/api/deposit';
-import { IChainNameItem, SupportedELFChainId } from 'constants/index';
+import { CHAIN_LIST, IChainNameItem, SupportedELFChainId } from 'constants/index';
 import {
   setDepositAddress,
-  setDepositCurrentNetwork,
-  setDepositNetworkList,
-} from 'store/reducers/userAction/slice';
+  setFromNetwork,
+  setFromNetworkList,
+} from 'store/reducers/deposit/slice';
 import { useEffectOnce } from 'react-use';
 import singleMessage from 'components/SingleMessage';
 import { InitDepositInfo } from 'constants/deposit';
 import { CommonErrorNameType } from 'api/types';
 import { handleErrorMessage } from '@portkey/did-ui-react';
-import { useDeposit } from 'hooks/deposit';
 import myEvents from 'utils/myEvent';
 import { isAuthTokenError } from 'utils/api/error';
+import { useSetCurrentChainItem } from 'hooks/common';
+import { SideMenuKey } from 'constants/home';
 
 export type TDepositContentProps = {
-  networkList: TNetworkItem[];
+  fromNetworkSelected?: TNetworkItem;
+  fromTokenSelected?: TDepositTokenItem;
   depositInfo: TDepositInfo;
   contractAddress: string;
   contractAddressLink: string;
   qrCodeValue: string;
-  networkSelected?: TNetworkItem;
   tokenLogoUrl?: string;
   showRetry?: boolean;
-  isShowLoading?: boolean;
-  currentToken?: TTokenItem;
-  tokenList: TTokenItem[];
+  isShowNetworkLoading?: boolean;
+  toTokenSelected?: TToTokenItem;
   onRetry?: () => void;
-  chainChanged: (item: IChainNameItem) => void;
-  networkChanged: (item: TNetworkItem) => Promise<void>;
-  onTokenChanged: (item: TTokenItem) => void;
+  fromNetworkChanged: (item: TNetworkItem) => Promise<void>;
+  fromTokenChanged: (item: TDepositTokenItem) => void;
+  toChainChanged: (item: IChainNameItem) => void;
+  toTokenSelectCallback: (item: TDepositTokenItem | TToTokenItem) => void;
 };
 
 export default function Content() {
   const dispatch = useAppDispatch();
   const { isMobilePX } = useCommonState();
-  const { deposit } = useUserActionState();
-  const { currentSymbol, tokenList, currentChainItem } = useDeposit();
+  // const deposit = useDepositState();
+  const {
+    fromNetwork,
+    fromNetworkList,
+    fromTokenList,
+    fromTokenSymbol,
+    toChainItem,
+    toTokenList,
+    toTokenSymbol,
+  } = useDepositState();
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
-  const [networkList, setNetworkList] = useState<TNetworkItem[]>([]);
-  const [currentNetwork, setCurrentNetwork] = useState<TNetworkItem>();
-  const currentNetworkRef = useRef<TNetworkItem>();
+  // const [fromNetwork, setFromNetwork] = useState<TNetworkItem>();
+  const fromNetworkRef = useRef<TNetworkItem>();
   const [depositInfo, setDepositInfo] = useState<TDepositInfo>(InitDepositInfo);
   const [showRetry, setShowRetry] = useState(false);
 
-  const currentToken = useMemo(() => {
-    return tokenList.find((item) => item.symbol === currentSymbol) as TTokenItem;
-  }, [currentSymbol, tokenList]);
+  const fromTokenSelected = useMemo(() => {
+    return fromTokenList?.find((item) => item.symbol === fromTokenSymbol);
+  }, [fromTokenList, fromTokenSymbol]);
 
-  const tokenLogoUrl = useMemo(() => {
-    const res = tokenList.filter((item) => item.symbol === currentSymbol);
-    if (res.length > 0) {
-      return res[0].icon;
-    }
-    return '';
-  }, [currentSymbol, tokenList]);
+  const toTokenSelected = useMemo(() => {
+    return toTokenList?.find((item) => item.symbol === toTokenSymbol);
+  }, [toTokenList, toTokenSymbol]);
 
   const getDepositData = useCallback(
     async (chainId: SupportedELFChainId, symbol: string) => {
       try {
         setLoading(true);
-        if (!currentNetworkRef.current?.network) return;
+        if (!fromNetworkRef.current?.network) return;
         const res = await getDepositInfo({
           chainId,
-          network: currentNetworkRef.current?.network || '',
+          network: fromNetworkRef.current?.network || '',
           symbol,
         });
         setShowRetry(false);
@@ -107,29 +107,26 @@ export default function Content() {
   const getNetworkData = useCallback(
     async ({ chainId, symbol }: Omit<TGetNetworkListRequest, 'type'>) => {
       try {
-        const lastSymbol = symbol || currentSymbol;
+        const lastSymbol = symbol || fromTokenSymbol;
         setIsShowNetworkLoading(true);
         const { networkList } = await getNetworkList({
           type: BusinessType.Deposit,
           chainId: chainId,
           symbol: symbol,
         });
-        setNetworkList(networkList);
-        dispatch(setDepositNetworkList(networkList));
+        dispatch(setFromNetworkList(networkList));
         if (networkList?.length === 1 && networkList[0].status !== NetworkStatus.Offline) {
-          setCurrentNetwork(networkList[0]);
-          currentNetworkRef.current = networkList[0];
-          dispatch(setDepositCurrentNetwork(networkList[0]));
+          fromNetworkRef.current = networkList[0];
+          dispatch(setFromNetwork(networkList[0]));
 
-          await getDepositData(currentChainItem.key, lastSymbol);
+          await getDepositData(toChainItem.key, lastSymbol);
         } else {
           const exitNetwork = networkList.filter(
-            (item) => item.network === currentNetworkRef.current?.network,
+            (item) => item.network === fromNetworkRef.current?.network,
           );
           if (exitNetwork?.length === 0) {
-            setCurrentNetwork(undefined);
-            currentNetworkRef.current = undefined;
-            dispatch(setDepositCurrentNetwork(undefined));
+            fromNetworkRef.current = undefined;
+            dispatch(setFromNetwork(undefined));
           }
         }
         setIsShowNetworkLoading(false);
@@ -142,76 +139,74 @@ export default function Content() {
         setIsShowNetworkLoading(false);
       }
     },
-    [currentChainItem.key, currentSymbol, dispatch, getDepositData],
+    [dispatch, fromTokenSymbol, getDepositData, toChainItem.key],
   );
 
-  const handleChainChanged = useCallback(
+  const setCurrentChainItem = useSetCurrentChainItem();
+  const handleToChainChanged = useCallback(
     async (item: IChainNameItem) => {
       // if currentSymbol is empty, don't send request
-      currentSymbol &&
+      setCurrentChainItem(CHAIN_LIST[1], SideMenuKey.Deposit);
+      fromTokenSymbol &&
         (await getNetworkData({
           chainId: item.key,
-          symbol: currentSymbol,
+          symbol: fromTokenSymbol,
         }));
-      if (!currentNetworkRef.current?.network) return;
-      await getDepositData(item.key, currentSymbol);
+      if (!fromNetworkRef.current?.network) return;
+      await getDepositData(item.key, fromTokenSymbol);
     },
-    [currentSymbol, getDepositData, getNetworkData],
+    [fromTokenSymbol, getDepositData, getNetworkData, setCurrentChainItem],
   );
 
-  const handleNetworkChanged = useCallback(
+  const handleFromNetworkChanged = useCallback(
     async (item: TNetworkItem) => {
-      setCurrentNetwork(item);
-      currentNetworkRef.current = item;
-      dispatch(setDepositCurrentNetwork(item));
-      await getDepositData(currentChainItem.key, currentSymbol);
+      fromNetworkRef.current = item;
+      dispatch(setFromNetwork(item));
+      await getDepositData(toChainItem.key, fromTokenSymbol);
     },
-    [currentChainItem.key, currentSymbol, dispatch, getDepositData],
+    [dispatch, fromTokenSymbol, getDepositData, toChainItem.key],
   );
 
   const handleRetry = useCallback(async () => {
-    await getDepositData(currentChainItem.key, currentSymbol);
-  }, [currentChainItem.key, currentSymbol, getDepositData]);
+    await getDepositData(toChainItem.key, fromTokenSymbol);
+  }, [fromTokenSymbol, getDepositData, toChainItem.key]);
 
-  const handleTokenChange = async (item: TTokenItem) => {
-    setCurrentNetwork(undefined);
-    currentNetworkRef.current = undefined;
-    dispatch(setDepositCurrentNetwork(undefined));
+  const handleFromTokenChange = async (item: TDepositTokenItem) => {
+    fromNetworkRef.current = undefined;
+    dispatch(setFromNetwork(undefined));
     setDepositInfo(InitDepositInfo);
     dispatch(setDepositAddress(InitDepositInfo.depositAddress));
     setShowRetry(false);
     await getNetworkData({
-      chainId: currentChainItem.key,
+      chainId: toChainItem.key,
       symbol: item.symbol,
     });
   };
 
-  const init = useCallback(() => {
-    if (
-      deposit?.currentNetwork?.network &&
-      deposit?.networkList &&
-      deposit.networkList?.length > 0
-    ) {
-      setCurrentNetwork(deposit.currentNetwork);
-      currentNetworkRef.current = deposit.currentNetwork;
-      setNetworkList(deposit?.networkList);
+  const handleToTokenSelectCallback = useCallback((val: any) => {
+    console.log('🌈 🌈 🌈 🌈 🌈 🌈 handleToTokenSelectCallback', val);
+  }, []);
 
-      getDepositData(currentChainItem.key, currentSymbol);
+  const init = useCallback(() => {
+    if (fromNetwork?.network && fromNetworkList && fromNetworkList?.length > 0) {
+      fromNetworkRef.current = fromNetwork;
+
+      getDepositData(toChainItem.key, fromTokenSymbol);
     } else {
-      if (currentSymbol) {
+      if (fromTokenSymbol) {
         getNetworkData({
-          chainId: currentChainItem.key,
-          symbol: currentSymbol,
+          chainId: toChainItem.key,
+          symbol: fromTokenSymbol,
         });
       }
     }
   }, [
-    currentChainItem.key,
-    currentSymbol,
-    deposit.currentNetwork,
-    deposit.networkList,
+    fromNetwork,
+    fromNetworkList,
+    fromTokenSymbol,
     getDepositData,
     getNetworkData,
+    toChainItem.key,
   ]);
 
   useEffectOnce(() => {
@@ -230,39 +225,39 @@ export default function Content() {
 
   return isMobilePX ? (
     <MobileDepositContent
-      networkList={networkList}
+      fromNetworkSelected={fromNetwork}
+      fromTokenSelected={fromTokenSelected}
+      tokenLogoUrl={fromTokenSelected?.icon}
+      contractAddress={fromNetwork?.contractAddress || ''}
+      contractAddressLink={fromNetwork?.explorerUrl || ''}
+      toTokenSelected={toTokenSelected}
       depositInfo={depositInfo}
-      contractAddress={currentNetwork?.contractAddress || ''}
-      contractAddressLink={currentNetwork?.explorerUrl || ''}
       qrCodeValue={depositInfo.depositAddress}
-      networkSelected={currentNetwork}
-      tokenLogoUrl={tokenLogoUrl}
       showRetry={showRetry}
-      isShowLoading={isShowNetworkLoading}
+      isShowNetworkLoading={isShowNetworkLoading}
       onRetry={handleRetry}
-      chainChanged={handleChainChanged}
-      networkChanged={handleNetworkChanged}
-      currentToken={currentToken}
-      tokenList={tokenList}
-      onTokenChanged={handleTokenChange}
+      fromNetworkChanged={handleFromNetworkChanged}
+      fromTokenChanged={handleFromTokenChange}
+      toTokenSelectCallback={handleToTokenSelectCallback}
+      toChainChanged={handleToChainChanged}
     />
   ) : (
     <WebDepositContent
-      networkList={networkList}
+      fromTokenSelected={fromTokenSelected}
+      tokenLogoUrl={fromTokenSelected?.icon}
+      fromNetworkSelected={fromNetwork}
+      contractAddress={fromNetwork?.contractAddress || ''}
+      contractAddressLink={fromNetwork?.explorerUrl || ''}
+      toTokenSelected={toTokenSelected}
       depositInfo={depositInfo}
-      contractAddress={currentNetwork?.contractAddress || ''}
-      contractAddressLink={currentNetwork?.explorerUrl || ''}
       qrCodeValue={depositInfo.depositAddress}
-      networkSelected={currentNetwork}
-      tokenLogoUrl={tokenLogoUrl}
       showRetry={showRetry}
-      isShowLoading={isShowNetworkLoading}
+      isShowNetworkLoading={isShowNetworkLoading}
       onRetry={handleRetry}
-      chainChanged={handleChainChanged}
-      networkChanged={handleNetworkChanged}
-      currentToken={currentToken}
-      tokenList={tokenList}
-      onTokenChanged={handleTokenChange}
+      fromNetworkChanged={handleFromNetworkChanged}
+      fromTokenChanged={handleFromTokenChange}
+      toTokenSelectCallback={handleToTokenSelectCallback}
+      toChainChanged={handleToChainChanged}
     />
   );
 }

@@ -2,38 +2,59 @@ import { TimeIcon } from 'assets/images';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
+import { defaultNullValue } from 'constants/index';
+import { getDepositCalculate } from 'utils/api/deposit';
+import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
+import { ChainId } from '@portkey/provider-types';
 
 type TExchangeRate = {
-  payUnit: string;
-  receiveUnit: string;
-  slippage: string;
+  fromSymbol: string;
+  toSymbol: string;
+  toChainId: ChainId;
+  slippage?: string;
 };
 
 const MAX_UPDATE_TIME = 15;
+const EXCHANGE_FROM_AMOUNT = '1';
 
-export default function ExchangeRate({ payUnit, receiveUnit, slippage }: TExchangeRate) {
-  const [exchange, setExchange] = useState('');
+export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage }: TExchangeRate) {
+  // const { fromTokenSymbol, toChainItem, toTokenSymbol } = useDepositState();
+  const [exchange, setExchange] = useState(defaultNullValue);
   const [updateTime, setUpdateTime] = useState(MAX_UPDATE_TIME);
   const updateTimeRef = useRef(MAX_UPDATE_TIME);
   const updateTimerRef = useRef<NodeJS.Timer | number>();
 
-  const handleSetTimer = useCallback(() => {
+  const getCalculate = useCallback(async () => {
+    try {
+      const { conversionRate } = await getDepositCalculate({
+        toChainId,
+        fromSymbol,
+        toSymbol,
+        fromAmount: EXCHANGE_FROM_AMOUNT,
+      });
+      setExchange(conversionRate?.toAmount || defaultNullValue);
+    } catch (error) {
+      singleMessage.error(handleErrorMessage(error));
+    }
+  }, [fromSymbol, toChainId, toSymbol]);
+
+  const handleSetTimer = useCallback(async () => {
     updateTimerRef.current = setInterval(() => {
       --updateTimeRef.current;
 
       if (updateTimeRef.current === 0) {
-        // TODO api
+        getCalculate();
         updateTimeRef.current = MAX_UPDATE_TIME;
       }
 
       setUpdateTime(updateTimeRef.current);
     }, 1000);
-  }, []);
+  }, [getCalculate]);
 
   const stopInterval = useCallback(() => {
     clearInterval(updateTimerRef.current);
     updateTimerRef.current = undefined;
-    setExchange('');
+    setExchange(defaultNullValue);
   }, []);
 
   const resetTimer = useCallback(() => {
@@ -54,11 +75,11 @@ export default function ExchangeRate({ payUnit, receiveUnit, slippage }: TExchan
   return (
     <div className={clsx('flex-row-between', 'exchange-rate')}>
       <div className="flex-row-center">
-        <span className={styles['value']}>{`1 ${payUnit} ≈ ${exchange} ${receiveUnit}`}</span>
+        <span className={styles['value']}>{`1 ${fromSymbol} ≈ ${exchange} ${toSymbol}`}</span>
         <TimeIcon />
         <span className={styles['count-time']}>{`${updateTime}s`}</span>
       </div>
-      <div>{`Slippage: ${slippage}`}</div>
+      {slippage && <div>{`Slippage: ${slippage}`}</div>}
     </div>
   );
 }

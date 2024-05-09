@@ -1,24 +1,24 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './styles.module.scss';
-import { useAppDispatch, useCommonState, useUserActionState } from 'store/Provider/hooks';
+import { useAppDispatch, useCommonState, useDepositState } from 'store/Provider/hooks';
 import TokenSelectDrawer from 'components/SelectToken/TokenSelectDrawer';
 import TokenSelectDropdown from 'components/SelectToken/TokenSelectDropdown';
 import { AddBigIcon } from 'assets/images';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
 import { SelectImage } from 'components/SelectToken/TokenCard';
-import { BusinessType, TTokenItem } from 'types/api';
+import { BusinessType, TDepositTokenItem } from 'types/api';
 import { setCurrentSymbol } from 'store/reducers/token/slice';
-import { setAddInitOpenTokenModalCount } from 'store/reducers/userAction/slice';
+import { setAddInitOpenTokenModalCount } from 'store/reducers/deposit/slice';
 import DynamicArrow from 'components/DynamicArrow';
 
 type TSelectTokenProps = {
-  tokenList: TTokenItem[];
-  selected?: TTokenItem;
+  tokenList?: TDepositTokenItem[];
+  selected?: TDepositTokenItem;
   isDisabled?: boolean;
   isShowLoading?: boolean;
-  onChange?: (item: TTokenItem) => void;
-  selectCallback: (item: TTokenItem) => void;
+  onChange?: (item: TDepositTokenItem) => void;
+  selectCallback: (item: TDepositTokenItem) => void;
 };
 
 export default function SelectToken({
@@ -31,13 +31,11 @@ export default function SelectToken({
 }: TSelectTokenProps) {
   const { isMobilePX } = useCommonState();
   const dispatch = useAppDispatch();
-  const {
-    deposit: { initOpenTokenModalCount },
-  } = useUserActionState();
+  const { initOpenTokenModalCount } = useDepositState();
   const [isShowTokenSelectDropdown, setIsShowTokenSelectDropdown] = useState<boolean>(false);
 
   const onSelectToken = useCallback(
-    async (item: TTokenItem) => {
+    async (item: TDepositTokenItem) => {
       onChange?.(item);
       dispatch(setCurrentSymbol({ key: BusinessType.Deposit, symbol: item.symbol }));
       setIsShowTokenSelectDropdown(false);

@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { CONTRACT_ADDRESS, MINIMUM_DEPOSIT } from 'constants/deposit';
-import { useCommonState } from 'store/Provider/hooks';
+import { useCommonState, useDepositState } from 'store/Provider/hooks';
 import { QuestionMarkIcon } from 'assets/images';
 import { formatStr2Ellipsis } from 'utils/format';
 import ViewContractAddressModal from 'pageComponents/Modal/ViewContractAddressModal';
 import { openWithBlank } from 'utils/common';
-import { useDeposit } from 'hooks/deposit';
 import { valueFixed2LessThanMin } from 'utils/calculate';
 
 export interface DepositInfoProps {
@@ -26,7 +25,7 @@ export default function DepositInfo({
   minAmountUsd,
 }: DepositInfoProps) {
   const { isMobilePX } = useCommonState();
-  const { currentSymbol } = useDeposit();
+  const { fromTokenSymbol } = useDepositState();
   const [openAddressModal, setOpenAddressModal] = useState(false);
 
   return (
@@ -36,7 +35,7 @@ export default function DepositInfo({
           <div className={clsx('flex-none', styles['info-title'])}>{MINIMUM_DEPOSIT}</div>
           <div className={clsx('flex-1')}>
             <div className={clsx('text-right', styles['info-value'])}>
-              {minimumDeposit} {currentSymbol}
+              {minimumDeposit} {fromTokenSymbol}
             </div>
             <div className={clsx('text-right', styles['info-exhibit'])}>
               {valueFixed2LessThanMin(minAmountUsd, '$ ')}

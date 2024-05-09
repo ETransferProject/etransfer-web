@@ -2,12 +2,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import DepositContent from 'pageComponents/DepositContent';
 import WithdrawContent from 'pageComponents/WithdrawContent';
 import HistoryContent from 'pageComponents/HistoryContent';
-import {
-  useAppDispatch,
-  useCommonState,
-  useResetStore,
-  useUserActionState,
-} from 'store/Provider/hooks';
+import { useAppDispatch, useCommonState, useResetStore } from 'store/Provider/hooks';
 import { SideMenuKey } from 'constants/home';
 import styles from './styles.module.scss';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -16,11 +11,10 @@ import {
   setIsShowRedDot,
   setSwitchVersionAction,
 } from 'store/reducers/common/slice';
-import { setCurrentChainItem } from 'store/reducers/userAction/slice';
+import { useSetCurrentChainItem } from 'hooks/common';
 import { CHAIN_LIST } from 'constants/index';
 import clsx from 'clsx';
 import { getTokenList } from 'utils/api/deposit';
-// import { getRecordStatus, postRecordRead } from 'utils/api/records';
 import { BusinessType } from 'types/api';
 import { setCurrentSymbol, setTokenList } from 'store/reducers/token/slice';
 import { useWithdraw } from 'hooks/withdraw';
@@ -33,8 +27,7 @@ export default function Content() {
   const dispatch = useAppDispatch();
   const resetStore = useResetStore();
   const { activeMenuKey, isMobilePX } = useCommonState();
-  const { deposit, withdraw } = useUserActionState();
-  const { currentChainItem: depositCurrentChainItem } = useDeposit();
+  const { toChainItem: depositCurrentChainItem } = useDeposit();
   const { currentSymbol: withdrawCurrentSymbol, currentChainItem: withdrawCurrentChainItem } =
     useWithdraw();
   const router = useRouter();
@@ -99,18 +92,14 @@ export default function Content() {
     ],
   );
 
+  const setCurrentChainItem = useSetCurrentChainItem();
   useEffect(() => {
     if (routeQuery.type) {
       dispatch(setActiveMenuKey(routeQuery.type));
     }
     if (routeQuery.chainId) {
       const ChainItemKey = CHAIN_LIST.filter((item) => item.key === routeQuery.chainId);
-      dispatch(
-        setCurrentChainItem({
-          activeMenuKey: routeQuery?.type,
-          chainItem: ChainItemKey[0],
-        }),
-      );
+      setCurrentChainItem(ChainItemKey[0], routeQuery?.type);
     }
     if (routeQuery.tokenSymbol) {
       dispatch(
@@ -126,12 +115,13 @@ export default function Content() {
     router.push('/');
   }, [
     activeMenuKey,
-    deposit.currentChainItem,
     dispatch,
     getToken,
-    routeQuery,
+    routeQuery.chainId,
+    routeQuery.tokenSymbol,
+    routeQuery.type,
     router,
-    withdraw.currentChainItem,
+    setCurrentChainItem,
   ]);
 
   const fetchRecordStatus = useCallback(async () => {

@@ -11,7 +11,7 @@ export default function MobileSelectChain({
   childrenClassName,
   menuItems,
   selectedItem,
-  isBorder,
+  isBorder = true,
   onClick,
 }: DeviceSelectChainProps & { title: string }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);

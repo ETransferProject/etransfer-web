@@ -15,24 +15,27 @@ import SelectTokenChain from '../SelectTokenChain';
 import Space from 'components/Space';
 import ExchangeRate from '../ExchangeRate';
 import Calculator from '../Calculator';
+import { useDepositState } from 'store/Provider/hooks';
 
 export default function WebContent({
-  networkList,
+  fromNetworkSelected,
   depositInfo,
   contractAddress,
   contractAddressLink,
   qrCodeValue,
-  networkSelected,
   tokenLogoUrl,
   showRetry = false,
-  isShowLoading = false,
-  currentToken,
-  tokenList,
+  isShowNetworkLoading = false,
+  fromTokenSelected,
+  toTokenSelected,
   onRetry,
-  chainChanged,
-  networkChanged,
-  onTokenChanged,
+  toTokenSelectCallback,
+  toChainChanged,
+  fromNetworkChanged,
+  fromTokenChanged,
 }: TDepositContentProps) {
+  const { fromTokenSymbol, toChainItem, toTokenSymbol } = useDepositState();
+
   const renderDepositDescription = useMemo(() => {
     return (
       Array.isArray(depositInfo?.extraNotes) &&
@@ -45,25 +48,32 @@ export default function WebContent({
       <div className={styles['deposit-title']}>Deposit Assets</div>
       <SelectTokenNetwork
         label={'From'}
-        tokenList={tokenList}
-        tokenSelected={currentToken}
-        tokenSelectCallback={onTokenChanged}
-        networkList={networkList}
-        networkSelected={networkSelected}
-        isShowNetworkLoading={isShowLoading}
-        networkSelectCallback={networkChanged}
+        tokenSelected={fromTokenSelected}
+        tokenSelectCallback={fromTokenChanged}
+        networkSelected={fromNetworkSelected}
+        isShowNetworkLoading={isShowNetworkLoading}
+        networkSelectCallback={fromNetworkChanged}
       />
       <Space direction="vertical" size={12} />
       <SelectTokenChain
         label={'To'}
-        tokenList={[]}
-        tokenSelectCallback={function (): void {
-          throw new Error('Function not implemented.');
-        }}
-        chainChanged={chainChanged}
+        tokenSelected={toTokenSelected}
+        tokenSelectCallback={toTokenSelectCallback}
+        chainChanged={toChainChanged}
       />
-      <Space direction="vertical" size={12} />
-      <ExchangeRate payUnit={''} receiveUnit={''} slippage={''} />
+
+      {fromTokenSymbol && toTokenSymbol && toChainItem.key && (
+        <>
+          <Space direction="vertical" size={12} />
+          <ExchangeRate
+            fromSymbol={fromTokenSymbol}
+            toSymbol={toTokenSymbol}
+            toChainId={toChainItem.key}
+            slippage={depositInfo.extraInfo?.slippage}
+          />
+        </>
+      )}
+
       <Space direction="vertical" size={24} />
       <Calculator payToken={'USDT'} receiveToken={'SGR'} />
       <Space direction="vertical" size={24} />

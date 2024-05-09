@@ -24,7 +24,8 @@ import {
   useAppDispatch,
   useCommonState,
   useLoading,
-  useUserActionState,
+  useUserState,
+  useWithdrawState,
 } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { ADDRESS_MAP, CHAIN_LIST, IChainNameItem, defaultNullValue } from 'constants/index';
@@ -45,7 +46,7 @@ import {
   setWithdrawAddress,
   setWithdrawCurrentNetwork,
   setWithdrawNetworkList,
-} from 'store/reducers/userAction/slice';
+} from 'store/reducers/withdraw/slice';
 import { useDebounceCallback } from 'hooks';
 import { useEffectOnce } from 'react-use';
 import PartialLoading from 'components/PartialLoading';
@@ -77,9 +78,10 @@ import { setIsShowRedDot } from 'store/reducers/common/slice';
 import { useWalletContext } from 'provider/walletProvider';
 import { isAuthTokenError, isHtmlError } from 'utils/api/error';
 import myEvents from 'utils/myEvent';
-import { useCurrentVersion } from 'hooks/common';
+import { useCurrentVersion, useSetCurrentChainItem } from 'hooks/common';
 import { AelfExploreType } from 'constants/network';
 import { isELFAddress, removeAddressSuffix, removeELFAddressSuffix } from 'utils/aelfBase';
+import { SideMenuKey } from 'constants/home';
 
 enum ValidateStatus {
   Error = 'error',
@@ -106,7 +108,8 @@ export default function WithdrawContent() {
   const isAndroid = devices.isMobile().android;
   const { isMobilePX } = useCommonState();
   const currentVersion = useCurrentVersion();
-  const { withdraw, userInfo } = useUserActionState();
+  const { userInfo } = useUserState();
+  const withdraw = useWithdrawState();
   const accounts = useAccounts();
   const { currentSymbol, tokenList, currentChainItem } = useWithdraw();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem || CHAIN_LIST[0]);
@@ -535,11 +538,13 @@ export default function WithdrawContent() {
     [getMaxBalance],
   );
 
+  const setCurrentChainItem = useSetCurrentChainItem();
   const handleChainChanged = useCallback(
     async (item: IChainNameItem) => {
       try {
         setLoading(true);
         currentChainItemRef.current = item;
+        setCurrentChainItem(item, SideMenuKey.Withdraw);
         // dispatch(setWithdrawAddress(''));
         // form.setFieldValue(FormKeys.ADDRESS, '');
         setBalance('');
@@ -569,6 +574,7 @@ export default function WithdrawContent() {
       getNetworkData,
       getWithdrawData,
       handleAmountValidate,
+      setCurrentChainItem,
       setLoading,
     ],
   );

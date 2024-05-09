@@ -25,6 +25,23 @@ export type TTokenItem = {
   decimals: number;
 };
 
+export type TGetDepositTokenListRequest = {
+  type: BusinessType;
+  chainId: ChainId;
+};
+
+export type TGetDepositTokenListResult = {
+  tokenList: TDepositTokenItem[];
+};
+
+export type TDepositTokenItem = TTokenItem & {
+  toTokenList?: TToTokenItem[];
+};
+
+export type TToTokenItem = TTokenItem & {
+  chainIdList?: ChainId[];
+};
+
 export type TGetNetworkListRequest = {
   type: BusinessType;
   chainId: ChainId;
@@ -69,6 +86,30 @@ export type TDepositInfo = {
   minAmount: string;
   extraNotes?: string[];
   minAmountUsd: string;
+  extraInfo?: TDepositExtraInfo;
+};
+
+export type TDepositExtraInfo = {
+  slippage: string;
+};
+
+export type TGetDepositCalculateRequest = {
+  toChainId: ChainId;
+  fromSymbol: string;
+  toSymbol: string;
+  fromAmount: string;
+};
+
+export type TGetDepositCalculateResult = {
+  conversionRate: TConversionRate;
+};
+
+export type TConversionRate = {
+  fromSymbol: string;
+  toSymbol: string;
+  fromAmount: string;
+  toAmount: string;
+  minimumReceiveAmount: string;
 };
 
 export type TGetWithdrawInfoRequest = {

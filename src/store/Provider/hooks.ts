@@ -4,7 +4,7 @@ import type { RootState, AppDispatch } from './store';
 import { emitLoading } from 'utils/events';
 import { LoadingProps } from 'components/Loading';
 import { initCommon } from 'store/reducers/common/slice';
-import { initUserAction } from 'store/reducers/userAction/slice';
+import { initUserState } from 'store/reducers/user/slice';
 import { resetTokenState } from 'store/reducers/token/slice';
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
@@ -14,7 +14,9 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 export const useCommonState = () => useAppSelector((state) => state.common);
 export const usePortkeyWalletState = () => useAppSelector((state) => state.portkeyWallet);
 export const useTokenState = () => useAppSelector((state) => state.token);
-export const useUserActionState = () => useAppSelector((state) => state.userAction);
+export const useUserState = () => useAppSelector((state) => state.user);
+export const useDepositState = () => useAppSelector((state) => state.deposit);
+export const useWithdrawState = () => useAppSelector((state) => state.withdraw);
 export const useRecordsState = () => useAppSelector((state) => state.records);
 
 export const useLoading = () => {
@@ -30,7 +32,7 @@ export const useResetStore = () => {
 
   return useCallback(() => {
     dispatch(initCommon());
-    dispatch(initUserAction());
+    dispatch(initUserState());
     dispatch(resetTokenState());
   }, [dispatch]);
 };

@@ -15,24 +15,27 @@ import SelectTokenChain from '../SelectTokenChain';
 import Space from 'components/Space';
 import Calculator from '../Calculator';
 import ExchangeRate from '../ExchangeRate';
+import { useDepositState } from 'store/Provider/hooks';
 
 export default function MobileDepositContent({
-  networkList,
+  fromNetworkSelected,
   depositInfo,
   contractAddress,
   contractAddressLink,
   qrCodeValue,
-  networkSelected,
   tokenLogoUrl,
   showRetry = false,
-  isShowLoading = false,
-  currentToken,
-  tokenList,
+  isShowNetworkLoading = false,
+  fromTokenSelected,
+  toTokenSelected,
   onRetry,
-  chainChanged,
-  networkChanged,
-  onTokenChanged,
+  toTokenSelectCallback,
+  toChainChanged,
+  fromNetworkChanged,
+  fromTokenChanged,
 }: TDepositContentProps) {
+  const { fromTokenSymbol, toChainItem, toTokenSymbol } = useDepositState();
+
   const renderDepositAddress = useMemo(() => {
     return (
       <div className={styles['deposit-address']}>
@@ -67,29 +70,33 @@ export default function MobileDepositContent({
     <>
       <SelectTokenNetwork
         label={'From'}
-        tokenList={tokenList}
-        tokenSelected={currentToken}
-        tokenSelectCallback={onTokenChanged}
-        networkList={networkList}
-        networkSelected={networkSelected}
-        isShowNetworkLoading={isShowLoading}
-        networkSelectCallback={networkChanged}
+        tokenSelected={fromTokenSelected}
+        tokenSelectCallback={fromTokenChanged}
+        networkSelected={fromNetworkSelected}
+        isShowNetworkLoading={isShowNetworkLoading}
+        networkSelectCallback={fromNetworkChanged}
       />
 
       <Space direction="vertical" size={8} />
 
       <SelectTokenChain
         label={'To'}
-        tokenList={[]}
-        tokenSelectCallback={function (): void {
-          throw new Error('Function not implemented.');
-        }}
-        chainChanged={chainChanged}
+        tokenSelected={toTokenSelected}
+        tokenSelectCallback={toTokenSelectCallback}
+        chainChanged={toChainChanged}
       />
 
-      <Space direction="vertical" size={12} />
-
-      <ExchangeRate payUnit={''} receiveUnit={''} slippage={''} />
+      {fromTokenSymbol && toTokenSymbol && toChainItem.key && (
+        <>
+          <Space direction="vertical" size={12} />
+          <ExchangeRate
+            fromSymbol={fromTokenSymbol}
+            toSymbol={toTokenSymbol}
+            toChainId={toChainItem.key}
+            slippage={depositInfo.extraInfo?.slippage}
+          />
+        </>
+      )}
 
       <Space direction="vertical" size={24} />
 
@@ -97,14 +104,14 @@ export default function MobileDepositContent({
 
       <Space direction="vertical" size={24} />
 
-      {currentToken && networkSelected && renderDepositAddress}
+      {fromTokenSelected && fromNetworkSelected && renderDepositAddress}
 
       <Space direction="vertical" size={12} />
 
-      {currentToken && networkSelected && depositInfo?.depositAddress && (
+      {fromTokenSelected && fromNetworkSelected && depositInfo?.depositAddress && (
         <>
           <DepositInfo
-            networkName={networkSelected.name}
+            networkName={fromNetworkSelected.name}
             minimumDeposit={depositInfo.minAmount}
             contractAddress={contractAddress}
             contractAddressLink={contractAddressLink}

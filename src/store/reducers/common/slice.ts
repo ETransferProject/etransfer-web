@@ -35,7 +35,7 @@ export const CommonSlice = createSlice({
     initCommon: (state) => {
       state.activeMenuKey = initialState.activeMenuKey;
     },
-    setSwitchVersionAction: (state, action) => {
+    setSwitchVersionAction: (state, action: PayloadAction<PortkeyVersion | undefined>) => {
       state.currentVersion = action.payload;
     },
     setIsShowRedDot: (state, action) => {

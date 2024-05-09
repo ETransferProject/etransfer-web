@@ -5,7 +5,10 @@ import { CalculatorIcon } from 'assets/images';
 import DynamicArrow from 'components/DynamicArrow';
 import clsx from 'clsx';
 import Space from 'components/Space';
-import { useCommonState } from 'store/Provider/hooks';
+import { useCommonState, useDepositState } from 'store/Provider/hooks';
+import { getDepositCalculate } from 'utils/api/deposit';
+import { defaultNullValue } from 'constants/index';
+import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
 
 type TCalculator = {
   payToken: string;
@@ -13,16 +16,40 @@ type TCalculator = {
 };
 
 export default function Calculator({ payToken, receiveToken }: TCalculator) {
-  const [payAmount, setPayAmount] = useState();
-  const [receiveAmount, setReceiveAmount] = useState('');
-  const [minReceiveAmount, setMinReceiveAmount] = useState('');
-  const [isExpand, setIsExpand] = useState(false);
   const { isMobilePX } = useCommonState();
+  const { fromTokenSymbol, toChainItem, toTokenSymbol } = useDepositState();
+  const [payAmount, setPayAmount] = useState('');
+  const [receiveAmount, setReceiveAmount] = useState(defaultNullValue);
+  const [minReceiveAmount, setMinReceiveAmount] = useState(defaultNullValue);
+  const [isExpand, setIsExpand] = useState(false);
 
-  const onPayChange = useCallback((e: any) => {
-    const value = e.target.value;
-    setPayAmount(value);
-  }, []);
+  const getCalculate = useCallback(
+    async (amount: string) => {
+      try {
+        if (!amount || !toChainItem.key || !fromTokenSymbol || !toTokenSymbol) return;
+        const { conversionRate } = await getDepositCalculate({
+          toChainId: toChainItem.key,
+          fromSymbol: fromTokenSymbol,
+          toSymbol: toTokenSymbol,
+          fromAmount: amount,
+        });
+        setReceiveAmount(conversionRate?.toAmount || defaultNullValue);
+        setMinReceiveAmount(conversionRate?.minimumReceiveAmount || defaultNullValue);
+      } catch (error) {
+        singleMessage.error(handleErrorMessage(error));
+      }
+    },
+    [fromTokenSymbol, toChainItem.key, toTokenSymbol],
+  );
+
+  const onPayChange = useCallback(
+    (e: any) => {
+      const value = e.target.value;
+      setPayAmount(value);
+      getCalculate(value);
+    },
+    [getCalculate],
+  );
 
   const renderHeader = useMemo(() => {
     return (

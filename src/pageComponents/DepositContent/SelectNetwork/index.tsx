@@ -2,12 +2,12 @@ import { AddIcon } from 'assets/images';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TNetworkItem } from 'types/api';
 import styles from './styles.module.scss';
-import { useAppDispatch, useCommonState, useUserActionState } from 'store/Provider/hooks';
+import { useAppDispatch, useCommonState, useDepositState } from 'store/Provider/hooks';
 import NetworkSelectDrawer from 'components/SelectNetwork/NetworkSelectDrawer';
 import NetworkSelectDropdown from 'components/SelectNetwork/NetworkSelectDropdown';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
-import { setAddInitOpenNetworkModalCount } from 'store/reducers/userAction/slice';
+import { setAddInitOpenNetworkModalCount } from 'store/reducers/deposit/slice';
 import DynamicArrow from 'components/DynamicArrow';
 
 type TSelectNetworkProps = {
@@ -31,9 +31,7 @@ export default function SelectNetwork({
 }: TSelectNetworkProps) {
   const { isMobilePX } = useCommonState();
   const dispatch = useAppDispatch();
-  const {
-    deposit: { initOpenNetworkModalCount },
-  } = useUserActionState();
+  const { initOpenNetworkModalCount } = useDepositState();
   const [isShowNetworkSelectDropdown, setIsShowNetworkSelectDropdown] = useState<boolean>(false);
 
   const onSelectNetwork = useCallback(

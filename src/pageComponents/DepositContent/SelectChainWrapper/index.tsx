@@ -6,6 +6,8 @@ import { IChainNameItem } from 'constants/index';
 import { Aelf } from 'assets/images';
 
 interface SelectChainWrapperProps {
+  menuItems: IChainNameItem[];
+  selectedItem: IChainNameItem;
   className?: string;
   mobileTitle?: string;
   mobileLabel?: string;
@@ -14,6 +16,8 @@ interface SelectChainWrapperProps {
 }
 
 export default function SelectChainWrapper({
+  menuItems,
+  selectedItem,
   className,
   mobileTitle = '',
   mobileLabel,
@@ -29,6 +33,8 @@ export default function SelectChainWrapper({
       <Aelf />
       <div className={styles['space-6']} />
       <SelectChain
+        menuItems={menuItems}
+        selectedItem={selectedItem}
         isBorder={false}
         title={mobileTitle}
         clickCallback={chainChanged}

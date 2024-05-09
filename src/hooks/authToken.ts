@@ -5,8 +5,8 @@ import { getLocalJWT, queryAuthApi } from 'api/utils';
 import { SupportedChainId, AppName, SupportedELFChainId } from 'constants/index';
 import { PortkeyVersion } from 'constants/wallet';
 import { useCallback } from 'react';
-import { useAppDispatch, useLoading, useUserActionState } from 'store/Provider/hooks';
-import { setUserInfo } from 'store/reducers/userAction/slice';
+import { useAppDispatch, useLoading, useUserState } from 'store/Provider/hooks';
+import { setUserInfo } from 'store/reducers/user/slice';
 import AElf from 'aelf-sdk';
 import { pubKeyToAddress, recoverPubKey } from 'utils/aelfBase';
 import { setSwitchVersionAction } from 'store/reducers/common/slice';
@@ -19,7 +19,7 @@ export function useQueryAuthToken() {
   const dispatch = useAppDispatch();
   const { loginState, logout, wallet, getSignature, walletType } = useWebLogin();
   const { setLoading } = useLoading();
-  const { userInfo } = useUserActionState();
+  const { userInfo } = useUserState();
 
   const loginSuccessActive = useCallback(() => {
     const { name = '', discoverInfo } = wallet;
