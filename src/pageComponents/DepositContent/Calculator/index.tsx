@@ -93,11 +93,11 @@ export default function Calculator({ payToken, receiveToken }: TCalculator) {
   const renderReceive = useMemo(() => {
     return (
       <div>
-        <div className={styles['label']}>Expected Receive</div>
+        <div className={styles['label']}>You Receive</div>
         <Space direction="vertical" size={8} />
         <div className={styles['receive-amount']}>{`≈${receiveAmount} ${receiveToken}`}</div>
         <div>
-          <span className={styles['label']}>Minimum Receive:</span>
+          <span className={styles['label']}>Minimum Sum To Receive:</span>
           <span
             className={styles['min-receive-amount']}>{`≈${minReceiveAmount} ${receiveToken}`}</span>
         </div>
