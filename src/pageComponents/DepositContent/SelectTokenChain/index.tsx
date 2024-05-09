@@ -34,9 +34,7 @@ export default function SelectTokenChain({
     }
   }, [accounts, setCurrentChainItem, toChainItem]);
 
-  const menuItems = useMemo(() => {
-    return toChainList || CHAIN_LIST;
-  }, [toChainList]);
+  const menuItems = useMemo(() => toChainList || CHAIN_LIST, [toChainList]);
 
   return (
     <div className={styles['deposit-select-token-chain']}>

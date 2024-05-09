@@ -21,13 +21,11 @@ import { useWithdraw } from 'hooks/withdraw';
 import { setV2DisconnectedAction } from 'store/reducers/portkeyWallet/actions';
 import { setHandleReset } from 'store/reducers/records/slice';
 import { useWebLoginEvent, WebLoginEvents } from 'aelf-web-login';
-import { useDeposit } from 'hooks/deposit';
 
 export default function Content() {
   const dispatch = useAppDispatch();
   const resetStore = useResetStore();
   const { activeMenuKey, isMobilePX } = useCommonState();
-  const { toChainItem: depositCurrentChainItem } = useDeposit();
   const { currentSymbol: withdrawCurrentSymbol, currentChainItem: withdrawCurrentChainItem } =
     useWithdraw();
   const router = useRouter();
@@ -53,43 +51,33 @@ export default function Content() {
   const getToken = useCallback(
     async (isInitCurrentSymbol?: boolean) => {
       // Records page not need token
-      if (currentActiveMenuKey === SideMenuKey.History) {
+      if (currentActiveMenuKey !== SideMenuKey.Withdraw) {
         return;
       }
 
       const res = await getTokenList({
-        type: activeMenuKey as unknown as BusinessType,
-        chainId:
-          activeMenuKey === SideMenuKey.Deposit
-            ? depositCurrentChainItem.key
-            : withdrawCurrentChainItem.key,
+        type: BusinessType.Withdraw,
+        chainId: withdrawCurrentChainItem.key,
       });
 
       dispatch(
         setTokenList({
-          key: activeMenuKey as unknown as BusinessType,
+          key: BusinessType.Withdraw,
           data: res.tokenList,
         }),
       );
 
-      if (isInitCurrentSymbol && activeMenuKey === SideMenuKey.Withdraw && !withdrawCurrentSymbol) {
+      if (isInitCurrentSymbol && !withdrawCurrentSymbol) {
         dispatch(
           setCurrentSymbol({
-            key: activeMenuKey as unknown as BusinessType,
+            key: BusinessType.Withdraw,
             symbol: res.tokenList[0].symbol,
           }),
         );
         return;
       }
     },
-    [
-      currentActiveMenuKey,
-      activeMenuKey,
-      depositCurrentChainItem.key,
-      withdrawCurrentChainItem.key,
-      dispatch,
-      withdrawCurrentSymbol,
-    ],
+    [currentActiveMenuKey, withdrawCurrentChainItem.key, dispatch, withdrawCurrentSymbol],
   );
 
   const setCurrentChainItem = useSetCurrentChainItem();

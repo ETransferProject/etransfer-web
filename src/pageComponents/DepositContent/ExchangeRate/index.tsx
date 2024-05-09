@@ -1,5 +1,5 @@
 import { TimeIcon } from 'assets/images';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { defaultNullValue } from 'constants/index';
@@ -23,6 +23,11 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
   const [updateTime, setUpdateTime] = useState(MAX_UPDATE_TIME);
   const updateTimeRef = useRef(MAX_UPDATE_TIME);
   const updateTimerRef = useRef<NodeJS.Timer | number>();
+
+  const slippageFormat = useMemo(() => {
+    if (!slippage) return '';
+    return Number(slippage) * 100;
+  }, [slippage]);
 
   const getCalculate = useCallback(async () => {
     try {
@@ -79,7 +84,7 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
         <TimeIcon />
         <span className={styles['count-time']}>{`${updateTime}s`}</span>
       </div>
-      {slippage && <div>{`Slippage: ${slippage}`}</div>}
+      {slippage && <div>{`Slippage: ${slippageFormat}%`}</div>}
     </div>
   );
 }

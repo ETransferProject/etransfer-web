@@ -27,11 +27,14 @@ export default function SelectChain({
 
   const onClickChain = useCallback(
     async (item: IChainNameItem) => {
+      if (item.key === selectedItem.key) return;
       await clickCallback(item);
+      // setOpenSynchronizingModal((pre) => {
+      //   return !pre;
+      // });
     },
-    [clickCallback],
+    [clickCallback, selectedItem.key],
   );
-
   const dropdownProps: DeviceSelectChainProps = useMemo(() => {
     return {
       menuItems,

@@ -2,6 +2,7 @@ import { ChainId } from '@portkey/provider-types';
 import { PortkeyVersion } from 'constants/wallet';
 import { TFromTransfer, TToTransfer } from './records';
 import type { Moment } from 'moment';
+import { IChainNameItem } from 'constants/index';
 
 export enum BusinessType {
   Deposit = 'Deposit',
@@ -27,7 +28,6 @@ export type TTokenItem = {
 
 export type TGetDepositTokenListRequest = {
   type: BusinessType;
-  chainId: ChainId;
 };
 
 export type TGetDepositTokenListResult = {
@@ -40,6 +40,7 @@ export type TDepositTokenItem = TTokenItem & {
 
 export type TToTokenItem = TTokenItem & {
   chainIdList?: ChainId[];
+  chainList?: IChainNameItem[];
 };
 
 export type TGetNetworkListRequest = {
@@ -75,6 +76,7 @@ export type TGetDepositInfoRequest = {
   chainId: ChainId;
   network: string;
   symbol?: string;
+  toSymbol?: string;
 };
 
 export type TGetDepositInfoResult = {

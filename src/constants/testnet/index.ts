@@ -37,12 +37,12 @@ export interface IChainNameItem {
 
 export const CHAIN_LIST: IChainNameItem[] = [
   {
-    key: SupportedELFChainId.AELF,
-    label: CHAIN_NAME_ENUM.MainChain,
-  },
-  {
     key: SupportedELFChainId.tDVW,
     label: CHAIN_NAME_ENUM.SideChain,
+  },
+  {
+    key: SupportedELFChainId.AELF,
+    label: CHAIN_NAME_ENUM.MainChain,
   },
 ];
 
