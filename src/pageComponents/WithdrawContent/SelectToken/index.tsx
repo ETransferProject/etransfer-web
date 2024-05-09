@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import { useAppDispatch, useCommonState } from 'store/Provider/hooks';
 import TokenSelectDrawer from 'components/SelectToken/TokenSelectDrawer';
 import TokenSelectDropdown from 'components/SelectToken/TokenSelectDropdown';
-import DownBigIcon from 'assets/images/downBig.svg';
+import DynamicArrow from 'components/DynamicArrow';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
 import { SelectImage } from 'components/SelectToken/TokenCard';
@@ -60,12 +60,7 @@ export default function SelectToken({
               <span className={styles['select-token-value-placeholder']}>Select a token</span>
             )}
           </div>
-
-          <DownBigIcon
-            className={clsx({
-              [styles['select-token-down-icon-rotate']]: isShowTokenSelectDropdown,
-            })}
-          />
+          <DynamicArrow isExpand={isShowTokenSelectDropdown} size="Big" />
         </div>
       </div>
 

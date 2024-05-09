@@ -56,24 +56,6 @@
         line-height: 24px;
       }
     }
-
-    .select-token-down-icon-wrapper {
-      @include media-web {
-        border-radius: 4px;
-        &:hover {
-          background-color: $blue-bg;
-          .select-token-down-icon {
-            path {
-              fill: $brand;
-            }
-          }
-        }
-      }
-    }
-
-    .select-token-down-icon-rotate {
-      transform: rotate(180deg);
-    }
   }
 
   .deposit-token-select-dropdown {

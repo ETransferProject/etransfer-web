@@ -1,4 +1,4 @@
-import { AddIcon, DownSmallIcon } from 'assets/images';
+import { AddIcon } from 'assets/images';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TNetworkItem } from 'types/api';
 import styles from './styles.module.scss';
@@ -8,6 +8,7 @@ import NetworkSelectDropdown from 'components/SelectNetwork/NetworkSelectDropdow
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
 import { setAddInitOpenNetworkModalCount } from 'store/reducers/userAction/slice';
+import DynamicArrow from 'components/DynamicArrow';
 
 type TSelectNetworkProps = {
   label?: string;
@@ -109,13 +110,7 @@ export default function SelectNetwork({
         onClick={() => setIsShowNetworkSelectDropdown(true)}>
         <div className={styles['select-network-label']}>{label}</div>
         {selected?.network ? renderSelected : renderNotSelected}
-        <div className={clsx('flex-center', styles['select-network-down-icon-wrapper'])}>
-          <DownSmallIcon
-            className={clsx(styles['select-network-down-icon'], {
-              [styles['select-network-down-icon-rotate']]: isShowNetworkSelectDropdown,
-            })}
-          />
-        </div>
+        <DynamicArrow size="Small" isExpand={isShowNetworkSelectDropdown} />
       </div>
 
       {isMobilePX ? (

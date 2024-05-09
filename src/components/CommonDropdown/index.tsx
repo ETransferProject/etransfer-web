@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Dropdown, DropdownProps, MenuProps } from 'antd';
-import DownIcon from 'assets/images/down.svg';
+import DynamicArrow, { TDynamicArrowSize } from 'components/DynamicArrow';
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 
@@ -10,7 +10,7 @@ interface CommonDropdownProps extends DropdownProps {
   /** use 'handleMenuClick' instead of 'onClick' */
   menu?: Omit<MenuProps, 'onClick'>;
   hideDownArrow?: boolean;
-  suffix?: React.ReactNode;
+  suffixArrowSize?: TDynamicArrowSize;
   handleMenuClick?: (...args: Parameters<Required<MenuProps>['onClick']>) => void;
 }
 
@@ -19,7 +19,7 @@ export default function CommonDropdown({
   childrenClassName,
   handleMenuClick,
   children,
-  suffix,
+  suffixArrowSize,
   ...props
 }: CommonDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,13 +47,12 @@ export default function CommonDropdown({
         )}>
         {children}
         {!props.hideDownArrow && (
-          <DownIcon
-            className={clsx('flex-none', styles['children-icon'], {
-              [styles['children-icon-rotate']]: isOpen,
-            })}
+          <DynamicArrow
+            isExpand={isOpen}
+            className={styles['children-icon']}
+            size={suffixArrowSize}
           />
         )}
-        {suffix}
       </div>
     </Dropdown>
   );

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
 import CommonDrawer from 'components/CommonDrawer';
-import DownSmallIcon from 'assets/images/downSmall.svg';
+import DynamicArrow from 'components/DynamicArrow';
 import { DeviceSelectChainProps } from '../types';
 import styles from './styles.module.scss';
 
@@ -26,7 +26,7 @@ export default function MobileSelectChain({
         )}
         onClick={() => setIsDrawerOpen(true)}>
         <div className={clsx(styles['trigger-text'], childrenClassName)}>{selectedItem?.label}</div>
-        <DownSmallIcon className={clsx('flex-none', styles['children-icon'])} />
+        <DynamicArrow isExpand={isDrawerOpen} size="Small" className={styles['children-icon']} />
       </div>
       <CommonDrawer title={title} open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
         <div className={clsx('flex-column', styles['drawer-content'])}>

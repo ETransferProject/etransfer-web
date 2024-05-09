@@ -1,10 +1,11 @@
+import { TDynamicArrowSize } from 'components/DynamicArrow';
 import { IChainNameItem } from 'constants/index';
 
 type TSelectChainCommon = {
   className?: string;
   childrenClassName?: string;
   isBorder?: boolean;
-  suffix?: React.ReactNode;
+  suffixArrowSize?: TDynamicArrowSize;
   hideDownArrow?: boolean;
 };
 

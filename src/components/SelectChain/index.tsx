@@ -17,7 +17,7 @@ export default function SelectChain({
   className,
   childrenClassName,
   isBorder,
-  suffix,
+  suffixArrowSize,
   hideDownArrow,
   clickCallback,
 }: SelectChainProps) {
@@ -100,7 +100,7 @@ export default function SelectChain({
           className={className}
           childrenClassName={childrenClassName}
           isBorder={isBorder}
-          suffix={suffix}
+          suffixArrowSize={suffixArrowSize}
           hideDownArrow={hideDownArrow}
         />
       )}

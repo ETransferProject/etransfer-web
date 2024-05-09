@@ -9,7 +9,7 @@ export default function WebSelectChain({
   menuItems,
   selectedItem,
   isBorder,
-  suffix,
+  suffixArrowSize,
   hideDownArrow,
   onClick,
 }: DeviceSelectChainProps) {
@@ -26,7 +26,7 @@ export default function WebSelectChain({
       handleMenuClick={(item) => {
         onClick?.(menuItems.find((chain) => chain?.key === item?.key) || menuItems[0]);
       }}
-      suffix={suffix}
+      suffixArrowSize={suffixArrowSize}
       hideDownArrow={hideDownArrow}>
       <div className={styles['trigger-text']}>{selectedItem?.label}</div>
     </CommonDropdown>

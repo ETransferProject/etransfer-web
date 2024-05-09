@@ -3,7 +3,7 @@ import SelectChain from 'components/SelectChain';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { IChainNameItem } from 'constants/index';
-import { Aelf, DownSmallIcon } from 'assets/images';
+import { Aelf } from 'assets/images';
 
 interface SelectChainWrapperProps {
   className?: string;
@@ -34,8 +34,7 @@ export default function SelectChainWrapper({
         clickCallback={chainChanged}
         className={styles['select-chain-container']}
         childrenClassName={styles['select-chain-content']}
-        hideDownArrow={true}
-        suffix={<DownSmallIcon />}
+        suffixArrowSize="Small"
       />
     </div>
   );

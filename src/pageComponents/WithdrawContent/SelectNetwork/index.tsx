@@ -4,7 +4,7 @@ import styles from './styles.module.scss';
 import { useCommonState } from 'store/Provider/hooks';
 import NetworkSelectDrawer from 'components/SelectNetwork/NetworkSelectDrawer';
 import NetworkSelectDropdown from 'components/SelectNetwork/NetworkSelectDropdown';
-import DownBigIcon from 'assets/images/downBig.svg';
+import DynamicArrow from 'components/DynamicArrow';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
 
@@ -63,11 +63,7 @@ export default function SelectNetwork({
             )}
           </div>
 
-          <DownBigIcon
-            className={clsx({
-              [styles['select-network-down-icon-rotate']]: isShowNetworkSelectDropdown,
-            })}
-          />
+          <DynamicArrow isExpand={isShowNetworkSelectDropdown} size="Big" />
         </div>
       </div>
 

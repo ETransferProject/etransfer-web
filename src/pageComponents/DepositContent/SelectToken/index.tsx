@@ -3,13 +3,14 @@ import styles from './styles.module.scss';
 import { useAppDispatch, useCommonState, useUserActionState } from 'store/Provider/hooks';
 import TokenSelectDrawer from 'components/SelectToken/TokenSelectDrawer';
 import TokenSelectDropdown from 'components/SelectToken/TokenSelectDropdown';
-import { AddBigIcon, DownIcon } from 'assets/images';
+import { AddBigIcon } from 'assets/images';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
 import { SelectImage } from 'components/SelectToken/TokenCard';
 import { BusinessType, TTokenItem } from 'types/api';
 import { setCurrentSymbol } from 'store/reducers/token/slice';
 import { setAddInitOpenTokenModalCount } from 'store/reducers/userAction/slice';
+import DynamicArrow from 'components/DynamicArrow';
 
 type TSelectTokenProps = {
   tokenList: TTokenItem[];
@@ -84,14 +85,7 @@ export default function SelectToken({
           ) : (
             renderNotSelected
           )}
-
-          <div className={clsx('flex-center', styles['select-token-down-icon-wrapper'])}>
-            <DownIcon
-              className={clsx(styles['select-token-down-icon'], {
-                [styles['select-token-down-icon-rotate']]: isShowTokenSelectDropdown,
-              })}
-            />
-          </div>
+          <DynamicArrow isExpand={isShowTokenSelectDropdown} />
         </div>
       </div>
 

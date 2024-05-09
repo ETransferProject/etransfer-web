@@ -49,24 +49,6 @@
     }
   }
 
-  .select-network-down-icon-wrapper {
-    @include media-web {
-      border-radius: 2px;
-      &:hover {
-        background-color: $blue-bg;
-        .select-network-down-icon {
-          path {
-            fill: $brand;
-          }
-        }
-      }
-    }
-  }
-
-  .select-network-down-icon-rotate {
-    transform: rotate(180deg);
-  }
-
   .deposit-network-select-dropdown {
     top: 122px;
     right: 0;

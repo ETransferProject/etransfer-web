@@ -2,11 +2,13 @@ import { DownBigIcon, DownIcon, DownSmallIcon } from 'assets/images';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
 
+export type TDynamicArrowSize = 'Big' | 'Normal' | 'Small';
+
 type TDynamicArrow = {
   className?: string;
   iconClassName?: string;
   isExpand?: boolean;
-  size?: 'Big' | 'Normal' | 'Small';
+  size?: TDynamicArrowSize;
 };
 
 export default function DynamicArrow({
