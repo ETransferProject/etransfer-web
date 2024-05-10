@@ -4,6 +4,7 @@ import { LargeNumberDisplay } from 'utils/calculate';
 import { useCommonState } from 'store/Provider/hooks';
 import { TRecordsStatus } from 'types/records';
 import { defaultNullValue } from 'constants/index';
+import { formatSymbolDisplay } from 'utils/format';
 
 type TAmountBoxProps = {
   amount: string;
@@ -21,7 +22,7 @@ export default function AmountBox({ amount, token, status }: TAmountBoxProps) {
         isMobilePX ? styles['mobile-amount-box'] : styles['web-amount-box'],
       )}>
       {status !== TRecordsStatus.Failed && (
-        <span>{`${LargeNumberDisplay(amount, token)} ${token}`}</span>
+        <span>{`${LargeNumberDisplay(amount, token)} ${formatSymbolDisplay(token)}`}</span>
       )}
       {status === TRecordsStatus.Failed && <span>{defaultNullValue}</span>}
     </div>

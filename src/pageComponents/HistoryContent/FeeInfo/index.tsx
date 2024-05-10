@@ -5,6 +5,7 @@ import { useCommonState } from 'store/Provider/hooks';
 import clsx from 'clsx';
 import { BusinessType } from 'types/api';
 import { defaultNullValue } from 'constants/index';
+import { formatSymbolDisplay } from 'utils/format';
 
 type TFeeInfoProps = {
   feeInfo: TFeeInfoType[];
@@ -30,7 +31,7 @@ export default function FeeInfo({ feeInfo, status, orderType }: TFeeInfoProps) {
           <span className={styles['fee-info-item-wrapper']} key={item.symbol}>
             {index !== 0 && <span className={styles['fee-info-item-add']}>+</span>}
             <span> {item.amount} </span>
-            <span> {item.symbol} </span>
+            <span> {formatSymbolDisplay(item.symbol)} </span>
           </span>
         );
       })}

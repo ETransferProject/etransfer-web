@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import styles from './styles.module.scss';
 import CommonImage from 'components/CommonImage';
 import { useEffect, useState } from 'react';
+import { formatSymbolDisplay } from 'utils/format';
 interface TokenCardProps {
   icon: string;
   name: string;
@@ -31,8 +32,8 @@ export function TokenCardForMobile({
         className,
       )}
       onClick={onClick}>
-      <SelectImage icon={icon} open={open} symbol={symbol} />
-      <span className={styles['token-card-name']}>{symbol}</span>
+      <SelectImage icon={icon} open={open} symbol={formatSymbolDisplay(symbol)} />
+      <span className={styles['token-card-name']}>{formatSymbolDisplay(symbol)}</span>
       <span className={styles['token-card-symbol']}>{name}</span>
     </div>
   );
@@ -57,8 +58,8 @@ export function TokenCardForWeb({
         className,
       )}
       onClick={onClick}>
-      <SelectImage icon={icon} open={open} symbol={symbol} />
-      <span className={styles['token-card-name']}>{symbol}</span>
+      <SelectImage icon={icon} open={open} symbol={formatSymbolDisplay(symbol)} />
+      <span className={styles['token-card-name']}>{formatSymbolDisplay(symbol)}</span>
       <span className={styles['token-card-symbol']}>{name}</span>
     </div>
   );

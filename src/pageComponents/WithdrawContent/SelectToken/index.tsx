@@ -9,6 +9,7 @@ import { SideMenuKey } from 'constants/home';
 import { SelectImage } from 'components/SelectToken/TokenCard';
 import { BusinessType, TTokenItem } from 'types/api';
 import { setCurrentSymbol } from 'store/reducers/token/slice';
+import { formatSymbolDisplay } from 'utils/format';
 
 type TSelectTokenProps = {
   tokenList: TTokenItem[];
@@ -52,8 +53,12 @@ export default function SelectToken({
           <div className={styles['select-token-value']}>
             {selected?.symbol ? (
               <span className={clsx('flex-row-center', styles['select-token-value-selected'])}>
-                <SelectImage open={true} symbol={selected.symbol} icon={selected.icon} />
-                <span className={styles['primary']}>{selected.symbol}</span>
+                <SelectImage
+                  open={true}
+                  symbol={formatSymbolDisplay(selected.symbol)}
+                  icon={selected.icon}
+                />
+                <span className={styles['primary']}>{formatSymbolDisplay(selected.symbol)}</span>
                 <span className={styles['secondary']}>{selected.name}</span>
               </span>
             ) : (

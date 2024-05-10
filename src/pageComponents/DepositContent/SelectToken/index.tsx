@@ -11,6 +11,7 @@ import { BusinessType, TDepositTokenItem } from 'types/api';
 import { setCurrentSymbol } from 'store/reducers/token/slice';
 import { setAddInitOpenTokenModalCount } from 'store/reducers/deposit/slice';
 import DynamicArrow from 'components/DynamicArrow';
+import { formatSymbolDisplay } from 'utils/format';
 
 type TSelectTokenProps = {
   tokenList?: TDepositTokenItem[];
@@ -33,6 +34,10 @@ export default function SelectToken({
   const dispatch = useAppDispatch();
   const { initOpenTokenModalCount } = useDepositState();
   const [isShowTokenSelectDropdown, setIsShowTokenSelectDropdown] = useState<boolean>(false);
+  const symbolFormat = useMemo(
+    () => formatSymbolDisplay(selected?.symbol || ''),
+    [selected?.symbol],
+  );
 
   const onSelectToken = useCallback(
     async (item: TDepositTokenItem) => {
@@ -76,8 +81,8 @@ export default function SelectToken({
         <div className={styles['select-token-value-row']}>
           {selected?.symbol ? (
             <span className={clsx('flex-row-center', styles['select-token-value-selected'])}>
-              <SelectImage open={true} symbol={selected.symbol} icon={selected.icon} />
-              <span className={styles['primary']}>{selected.symbol}</span>
+              <SelectImage open={true} symbol={symbolFormat} icon={selected.icon} />
+              <span className={styles['primary']}>{symbolFormat}</span>
               <span className={styles['secondary']}>{selected.name}</span>
             </span>
           ) : (

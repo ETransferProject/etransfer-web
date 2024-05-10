@@ -4,7 +4,7 @@ import styles from './styles.module.scss';
 import { CONTRACT_ADDRESS, MINIMUM_DEPOSIT } from 'constants/deposit';
 import { useCommonState, useDepositState } from 'store/Provider/hooks';
 import { QuestionMarkIcon } from 'assets/images';
-import { formatStr2Ellipsis } from 'utils/format';
+import { formatStr2Ellipsis, formatSymbolDisplay } from 'utils/format';
 import ViewContractAddressModal from 'pageComponents/Modal/ViewContractAddressModal';
 import { openWithBlank } from 'utils/common';
 import { valueFixed2LessThanMin } from 'utils/calculate';
@@ -35,7 +35,7 @@ export default function DepositInfo({
           <div className={clsx('flex-none', styles['info-title'])}>{MINIMUM_DEPOSIT}</div>
           <div className={clsx('flex-1')}>
             <div className={clsx('text-right', styles['info-value'])}>
-              {minimumDeposit} {fromTokenSymbol}
+              {minimumDeposit} {formatSymbolDisplay(fromTokenSymbol)}
             </div>
             <div className={clsx('text-right', styles['info-exhibit'])}>
               {valueFixed2LessThanMin(minAmountUsd, '$ ')}

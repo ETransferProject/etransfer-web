@@ -66,7 +66,12 @@ import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddre
 import { handleErrorMessage } from '@portkey/did-ui-react';
 import { useAccounts } from 'hooks/portkeyWallet';
 import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
-import { formatWithCommas, parseWithCommas, parseWithStringCommas } from 'utils/format';
+import {
+  formatSymbolDisplay,
+  formatWithCommas,
+  parseWithCommas,
+  parseWithStringCommas,
+} from 'utils/format';
 import { getAelfExploreLink } from 'utils/common';
 import { devices, sleep } from '@portkey/utils';
 import { useWithdraw } from 'hooks/withdraw';
@@ -128,7 +133,7 @@ export default function WithdrawContent() {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isFailModalOpen, setIsFailModalOpen] = useState(false);
   const [failModalReason, setFailModalReason] = useState('');
-  const [withdrawInfoSuccess, setWithdrawInfoSuccessCheck] = useState<TWithdrawInfoSuccess>(
+  const [withdrawInfoSuccess, setWithdrawInfoSuccess] = useState<TWithdrawInfoSuccess>(
     InitialWithdrawSuccessCheck,
   );
   const [isNetworkDisable, setIsNetworkDisable] = useState(false);
@@ -206,7 +211,7 @@ export default function WithdrawContent() {
           ) : (
             defaultNullValue
           )}
-          <RemainingQuota title={RemainingWithdrawalQuotaTooltip}></RemainingQuota>
+          <RemainingQuota content={RemainingWithdrawalQuotaTooltip}></RemainingQuota>
         </span>
         <span className={styles['remaining-limit-label']}>
           {isMobilePX && '• 24-Hour Limit:'}
@@ -374,7 +379,9 @@ export default function WithdrawContent() {
       }
       const parserNumber = Number(parseWithCommas(amount));
       const currentMinAmount = Number(parseWithCommas(newMinAmount || minAmount));
-      const currentTransactionUnit = newTransactionUnit || withdrawInfo.transactionUnit;
+      const currentTransactionUnit = formatSymbolDisplay(
+        newTransactionUnit || withdrawInfo.transactionUnit,
+      );
       if (parserNumber < currentMinAmount) {
         handleFormValidateDataChange({
           [FormKeys.AMOUNT]: {
@@ -445,7 +452,11 @@ export default function WithdrawContent() {
 
         const res = await getWithdrawInfo(params);
 
-        setWithdrawInfo(res.withdrawInfo);
+        setWithdrawInfo({
+          ...res.withdrawInfo,
+          limitCurrency: formatSymbolDisplay(res.withdrawInfo.limitCurrency),
+          transactionUnit: formatSymbolDisplay(res.withdrawInfo.transactionUnit),
+        });
         setIsTransactionFeeLoading(false);
 
         handleAmountValidate(
@@ -455,7 +466,11 @@ export default function WithdrawContent() {
         );
       } catch (error: any) {
         // when network error, transactionUnit should as the same with symbol
-        setWithdrawInfo({ ...InitialWithdrawInfo, transactionUnit: symbol });
+        setWithdrawInfo({
+          ...InitialWithdrawInfo,
+          limitCurrency: formatSymbolDisplay(symbol),
+          transactionUnit: formatSymbolDisplay(symbol),
+        });
         if (
           error.name !== CommonErrorNameType.CANCEL &&
           !isHtmlError(error?.code, handleErrorMessage(error)) &&
@@ -662,11 +677,11 @@ export default function WithdrawContent() {
           createWithdrawOrderRes,
         );
         if (createWithdrawOrderRes.orderId) {
-          setWithdrawInfoSuccessCheck({
+          setWithdrawInfoSuccess({
             receiveAmount: receiveAmount,
             network: currentNetworkRef.current,
             amount: balance,
-            symbol: currentSymbol,
+            symbol: formatSymbolDisplay(currentSymbol),
             chainItem: currentChainItemRef.current,
             arriveTime: currentNetworkRef.current.multiConfirmTime,
             receiveAmountUsd: withdrawInfo.receiveAmountUsd,
@@ -805,7 +820,11 @@ export default function WithdrawContent() {
 
   const handleTokenChange = async (item: TTokenItem) => {
     // when network failed, transactionUnit should show as symbol
-    setWithdrawInfo({ ...withdrawInfo, transactionUnit: item.symbol });
+    setWithdrawInfo({
+      ...withdrawInfo,
+      limitCurrency: formatSymbolDisplay(item.symbol),
+      transactionUnit: formatSymbolDisplay(item.symbol),
+    });
 
     try {
       setLoading(true);
