@@ -56,18 +56,19 @@ export default function Calculator({ payToken, receiveToken }: TCalculator) {
   const onPayChange = useCallback(
     (e: any) => {
       const value: string = e.target.value.trim();
+      if (!value) {
+        setPayAmount('');
+        setReceiveAmount(DEFAULT_AMOUNT);
+        setMinReceiveAmount(DEFAULT_AMOUNT);
+        return;
+      }
       // check decimals
       const stringReg = `^[0-9]{1,9}((\\.\\d)|(\\.\\d{0,${currentTokenDecimal}}))?$`;
       const CheckNumberReg = new RegExp(stringReg);
       if (!CheckNumberReg.exec(value)) return;
 
       setPayAmount(value);
-      if (value) {
-        getCalculate(value);
-      } else {
-        setReceiveAmount(DEFAULT_AMOUNT);
-        setMinReceiveAmount(DEFAULT_AMOUNT);
-      }
+      getCalculate(value);
     },
     [currentTokenDecimal, getCalculate],
   );
