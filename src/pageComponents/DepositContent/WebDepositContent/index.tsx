@@ -63,7 +63,7 @@ export default function WebContent({
         chainChanged={toChainChanged}
       />
 
-      {fromTokenSymbol && toTokenSymbol && toChainItem.key && (
+      {fromTokenSymbol && toTokenSymbol && toChainItem.key && fromTokenSymbol !== toTokenSymbol && (
         <>
           <Space direction="vertical" size={12} />
           <ExchangeRate
@@ -75,8 +75,13 @@ export default function WebContent({
         </>
       )}
 
-      <Space direction="vertical" size={24} />
-      <Calculator payToken={TokenType.USDT} receiveToken={TokenType.SGR} />
+      {fromTokenSymbol !== toTokenSymbol && (
+        <>
+          <Space direction="vertical" size={24} />
+          <Calculator payToken={TokenType.USDT} receiveToken={TokenType.SGR} />
+        </>
+      )}
+
       <Space direction="vertical" size={24} />
       {showRetry && <DepositRetryForWeb isShowImage={true} onClick={onRetry} />}
       {!showRetry && !!depositInfo.depositAddress && (

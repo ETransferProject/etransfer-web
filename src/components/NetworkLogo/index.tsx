@@ -13,7 +13,13 @@ import {
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 
-export default function NetworkLogo({ network }: { network: string }) {
+export default function NetworkLogo({
+  network,
+  className,
+}: {
+  network: string;
+  className?: string;
+}) {
   switch (network) {
     case BlockchainNetworkType.AELF:
       return <Aelf />;
@@ -35,6 +41,8 @@ export default function NetworkLogo({ network }: { network: string }) {
       return <Avax />;
     default:
       // when not match network's type, display first character and uppercase
-      return <div className={clsx(styles['network'])}>{network?.charAt(0).toUpperCase()}</div>;
+      return (
+        <div className={clsx(styles['network'], className)}>{network?.charAt(0).toUpperCase()}</div>
+      );
   }
 }

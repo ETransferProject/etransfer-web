@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BusinessType, TTokenItem } from 'types/api';
-import { TokenType, USDT_DECIMAL } from 'constants/index';
+import { TOKEN_INFO_USDT, TokenType } from 'constants/index';
 
 export type TokenState = {
   [key in BusinessType]: {
@@ -17,15 +17,7 @@ export const InitDepositTokenState = {
 
 // init withdraw USDT
 export const InitWithdrawTokenState = {
-  tokenList: [
-    {
-      name: 'Tether USD',
-      symbol: TokenType.USDT,
-      icon: '',
-      contractAddress: '',
-      decimals: USDT_DECIMAL,
-    },
-  ],
+  tokenList: [TOKEN_INFO_USDT],
   currentSymbol: TokenType.USDT,
 };
 

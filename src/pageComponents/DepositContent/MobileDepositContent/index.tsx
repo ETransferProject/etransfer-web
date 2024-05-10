@@ -87,7 +87,7 @@ export default function MobileDepositContent({
         chainChanged={toChainChanged}
       />
 
-      {fromTokenSymbol && toTokenSymbol && toChainItem.key && (
+      {fromTokenSymbol && toTokenSymbol && toChainItem.key && fromTokenSymbol !== toTokenSymbol && (
         <>
           <Space direction="vertical" size={12} />
           <ExchangeRate
@@ -99,9 +99,13 @@ export default function MobileDepositContent({
         </>
       )}
 
-      <Space direction="vertical" size={24} />
+      {fromTokenSymbol !== toTokenSymbol && (
+        <>
+          <Space direction="vertical" size={24} />
 
-      <Calculator payToken={TokenType.USDT} receiveToken={TokenType.SGR} />
+          <Calculator payToken={TokenType.USDT} receiveToken={TokenType.SGR} />
+        </>
+      )}
 
       <Space direction="vertical" size={24} />
 

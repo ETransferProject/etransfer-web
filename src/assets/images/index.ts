@@ -30,7 +30,6 @@ import Optimism from './chain/optimism.svg';
 import Polygon from './chain/polygon.svg';
 import Solana from './chain/solana.svg';
 import Tron from './chain/tron.svg';
-import Vector from './chain/vector.svg';
 import User from './user.svg';
 import ArrowUp from './arrowUp.svg';
 import ArrowRight from './arrowRight.svg';
@@ -83,7 +82,6 @@ export {
   Polygon,
   Solana,
   Tron,
-  Vector,
   User,
   ArrowUp,
   ArrowRight,

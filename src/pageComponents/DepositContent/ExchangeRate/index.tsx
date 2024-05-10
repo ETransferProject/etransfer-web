@@ -6,6 +6,7 @@ import { defaultNullValue } from 'constants/index';
 import { getDepositCalculate } from 'utils/api/deposit';
 import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
 import { ChainId } from '@portkey/provider-types';
+import { useEffectOnce } from 'react-use';
 
 type TExchangeRate = {
   fromSymbol: string;
@@ -31,6 +32,7 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
 
   const getCalculate = useCallback(async () => {
     try {
+      console.log('🌈 2', '');
       const { conversionRate } = await getDepositCalculate({
         toChainId,
         fromSymbol,
@@ -48,6 +50,7 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
       --updateTimeRef.current;
 
       if (updateTimeRef.current === 0) {
+        console.log('🌈 1', '');
         getCalculate();
         updateTimeRef.current = MAX_UPDATE_TIME;
       }
@@ -70,12 +73,16 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
     handleSetTimer();
   }, [handleSetTimer]);
 
+  useEffectOnce(() => {
+    getCalculate();
+  });
+
   useEffect(() => {
     resetTimer();
     return () => {
       stopInterval();
     };
-  }, [resetTimer, stopInterval]);
+  }, [getCalculate, resetTimer, stopInterval]);
 
   return (
     <div className={clsx('flex-row-between', 'exchange-rate')}>

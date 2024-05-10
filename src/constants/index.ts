@@ -32,3 +32,11 @@ export enum TokenType {
   USDT = 'USDT',
   SGR = 'SGR-1',
 }
+
+export const TOKEN_INFO_USDT = {
+  name: 'Tether USD',
+  symbol: TokenType.USDT,
+  icon: '',
+  contractAddress: '',
+  decimals: USDT_DECIMAL,
+};

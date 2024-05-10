@@ -8,6 +8,7 @@ import Space from 'components/Space';
 import { useCommonState, useDepositState } from 'store/Provider/hooks';
 import { getDepositCalculate } from 'utils/api/deposit';
 import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
+import { TOKEN_INFO_USDT } from 'constants/index';
 
 type TCalculator = {
   payToken: string;
@@ -18,11 +19,20 @@ const DEFAULT_AMOUNT = '0.00';
 
 export default function Calculator({ payToken, receiveToken }: TCalculator) {
   const { isMobilePX } = useCommonState();
-  const { fromTokenSymbol, toChainItem, toTokenSymbol } = useDepositState();
+  const { fromTokenSymbol, fromTokenList, toChainItem, toTokenSymbol } = useDepositState();
   const [payAmount, setPayAmount] = useState('');
   const [receiveAmount, setReceiveAmount] = useState(DEFAULT_AMOUNT);
   const [minReceiveAmount, setMinReceiveAmount] = useState(DEFAULT_AMOUNT);
   const [isExpand, setIsExpand] = useState(false);
+
+  const currentToken = useMemo(() => {
+    if (Array.isArray(fromTokenList) && fromTokenList.length > 0) {
+      return fromTokenList?.find((item) => item.symbol === fromTokenSymbol);
+    }
+    return TOKEN_INFO_USDT;
+  }, [fromTokenList, fromTokenSymbol]);
+
+  const currentTokenDecimal = useMemo(() => currentToken?.decimals, [currentToken?.decimals]);
 
   const getCalculate = useCallback(
     async (amount: string) => {
@@ -45,11 +55,21 @@ export default function Calculator({ payToken, receiveToken }: TCalculator) {
 
   const onPayChange = useCallback(
     (e: any) => {
-      const value = e.target.value;
+      const value: string = e.target.value.trim();
+      // check decimals
+      const stringReg = `^[0-9]{1,9}((\\.\\d)|(\\.\\d{0,${currentTokenDecimal}}))?$`;
+      const CheckNumberReg = new RegExp(stringReg);
+      if (!CheckNumberReg.exec(value)) return;
+
       setPayAmount(value);
-      getCalculate(value);
+      if (value) {
+        getCalculate(value);
+      } else {
+        setReceiveAmount(DEFAULT_AMOUNT);
+        setMinReceiveAmount(DEFAULT_AMOUNT);
+      }
     },
-    [getCalculate],
+    [currentTokenDecimal, getCalculate],
   );
 
   const renderHeader = useMemo(() => {
