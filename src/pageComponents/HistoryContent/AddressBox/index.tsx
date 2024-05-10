@@ -1,16 +1,5 @@
 import styles from './styles.module.scss';
 import clsx from 'clsx';
-import {
-  Aelf,
-  Ethereum,
-  Polygon,
-  Arbitrum,
-  Optimism,
-  Solana,
-  Tron,
-  Binance,
-  Avax,
-} from 'assets/images';
 import { useCallback } from 'react';
 import {
   AelfExploreType,
@@ -27,6 +16,7 @@ import { SupportedELFChainId } from 'constants/index';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
 import { useAccounts } from 'hooks/portkeyWallet';
+import NetworkLogo from 'components/NetworkLogo';
 
 type TAddressBoxProps = {
   type: 'To' | 'From';
@@ -49,32 +39,6 @@ export default function AddressBox({
 }: TAddressBoxProps) {
   const { isMobilePX } = useCommonState();
   const accounts = useAccounts();
-
-  const addressIcon = useCallback(() => {
-    switch (network) {
-      case BlockchainNetworkType.AELF:
-        return <Aelf />;
-      case BlockchainNetworkType.Ethereum:
-        return <Ethereum />;
-      case BlockchainNetworkType.Polygon:
-        return <Polygon />;
-      case BlockchainNetworkType.Arbitrum:
-        return <Arbitrum />;
-      case BlockchainNetworkType.Optimism:
-        return <Optimism />;
-      case BlockchainNetworkType.Solana:
-        return <Solana />;
-      case BlockchainNetworkType.Tron:
-        return <Tron />;
-      case BlockchainNetworkType.Binance:
-        return <Binance />;
-      case BlockchainNetworkType.Avax:
-        return <Avax />;
-      default:
-        // when not match network's type, display first character and uppercase
-        return <div className={clsx(styles['network'])}>{network?.charAt(0).toUpperCase()}</div>;
-    }
-  }, [network]);
 
   const calcAddress = useCallback(() => {
     const address = type === 'To' ? toAddress : fromAddress;
@@ -125,7 +89,7 @@ export default function AddressBox({
         styles['address-box'],
         isMobilePX ? styles['mobile-address-box'] : styles['web-address-box'],
       )}>
-      {addressIcon()}
+      <NetworkLogo network={network} />
       <CommonTooltip title={calcAddress()} trigger={'hover'}>
         <span className={clsx(styles['address-word'])} onClick={handleAddressClick}>
           {getOmittedStr(calcAddress(), 8, 9)}

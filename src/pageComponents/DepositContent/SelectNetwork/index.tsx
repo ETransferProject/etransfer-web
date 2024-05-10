@@ -9,6 +9,7 @@ import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
 import { setAddInitOpenNetworkModalCount } from 'store/reducers/deposit/slice';
 import DynamicArrow from 'components/DynamicArrow';
+import NetworkLogo from 'components/NetworkLogo';
 
 type TSelectNetworkProps = {
   label?: string;
@@ -68,18 +69,7 @@ export default function SelectNetwork({
   }, []);
 
   const renderNetworkLogo = useMemo(() => {
-    return (
-      <div className={clsx('row-center', styles['network-logo'])}>
-        {selected?.network.charAt(0)}
-      </div>
-      // <div>
-      //   {selected?.icon ? (
-      //     <div></div>
-      //   ) : (
-      //     <div className="network-logo">{selected?.network.charAt(0)}</div>
-      //   )}
-      // </div>
-    );
+    return selected?.network && <NetworkLogo network={selected?.network} />;
   }, [selected?.network]);
 
   const renderSelected = useMemo(() => {
