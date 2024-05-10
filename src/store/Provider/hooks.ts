@@ -6,6 +6,9 @@ import { LoadingProps } from 'components/Loading';
 import { initCommon } from 'store/reducers/common/slice';
 import { initUserState } from 'store/reducers/user/slice';
 import { resetTokenState } from 'store/reducers/token/slice';
+import { resetDepositState } from 'store/reducers/deposit/slice';
+import { resetWithdrawState } from 'store/reducers/withdraw/slice';
+import { resetRecordsState } from 'store/reducers/records/slice';
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch: () => AppDispatch = useDispatch;
@@ -34,5 +37,8 @@ export const useResetStore = () => {
     dispatch(initCommon());
     dispatch(initUserState());
     dispatch(resetTokenState());
+    dispatch(resetDepositState());
+    dispatch(resetWithdrawState());
+    dispatch(resetRecordsState());
   }, [dispatch]);
 };

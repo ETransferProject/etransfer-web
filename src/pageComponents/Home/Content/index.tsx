@@ -19,7 +19,7 @@ import { BusinessType } from 'types/api';
 import { setCurrentSymbol, setTokenList } from 'store/reducers/token/slice';
 import { useWithdraw } from 'hooks/withdraw';
 import { setV2DisconnectedAction } from 'store/reducers/portkeyWallet/actions';
-import { setHandleReset } from 'store/reducers/records/slice';
+import { resetRecordsState } from 'store/reducers/records/slice';
 import { useWebLoginEvent, WebLoginEvents } from 'aelf-web-login';
 
 export default function Content() {
@@ -125,7 +125,7 @@ export default function Content() {
 
   useEffect(() => {
     fetchRecordStatus();
-    isMobilePX && dispatch(setHandleReset());
+    isMobilePX && dispatch(resetRecordsState());
     // Ignore the impact of the change in fetchRecordStatus, just watch currentActiveMenuKey change
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentActiveMenuKey]);
@@ -134,7 +134,6 @@ export default function Content() {
   useWebLoginEvent(WebLoginEvents.LOGOUT, () => {
     dispatch(setV2DisconnectedAction());
     dispatch(setSwitchVersionAction(undefined));
-    dispatch(setHandleReset());
     resetStore();
   });
 
