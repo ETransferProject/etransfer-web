@@ -18,7 +18,7 @@ import ExclamationFilledSmall from './exclamationFilledSmall.svg';
 import OpenLinkIcon from './openLink.svg';
 import QuestionMarkIcon from './questionMark.svg';
 import SupportIcon from './supportIcon.svg';
-import Records from './records.svg';
+import Records from './recordIcon.svg';
 import Aelf from './chain/aelf.svg';
 import Arbitrum from './chain/arbitrum.svg';
 import Binance from './chain/binance.svg';
@@ -48,7 +48,7 @@ import AddBigIcon from './addBig.svg';
 import DownIcon from './down.svg';
 import DownBigIcon from './downBig.svg';
 import DownSmallIcon from './downSmall.svg';
-import CalculatorIcon from './Calculator.svg';
+import CalculatorIcon from './calculator.svg';
 
 export {
   Info,
