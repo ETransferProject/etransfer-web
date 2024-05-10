@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Input } from 'antd';
 import styles from './styles.module.scss';
 import { CalculatorIcon } from 'assets/images';
@@ -9,6 +9,7 @@ import { useCommonState, useDepositState } from 'store/Provider/hooks';
 import { getDepositCalculate } from 'utils/api/deposit';
 import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
 import { TOKEN_INFO_USDT } from 'constants/index';
+import { useEffectOnce } from 'react-use';
 
 type TCalculator = {
   payToken: string;
@@ -20,7 +21,8 @@ const DEFAULT_AMOUNT = '0.00';
 export default function Calculator({ payToken, receiveToken }: TCalculator) {
   const { isMobilePX } = useCommonState();
   const { fromTokenSymbol, fromTokenList, toChainItem, toTokenSymbol } = useDepositState();
-  const [payAmount, setPayAmount] = useState('');
+  const [payAmount, setPayAmount] = useState('100');
+  const amountRef = useRef('100');
   const [receiveAmount, setReceiveAmount] = useState(DEFAULT_AMOUNT);
   const [minReceiveAmount, setMinReceiveAmount] = useState(DEFAULT_AMOUNT);
   const [isExpand, setIsExpand] = useState(false);
@@ -34,29 +36,29 @@ export default function Calculator({ payToken, receiveToken }: TCalculator) {
 
   const currentTokenDecimal = useMemo(() => currentToken?.decimals, [currentToken?.decimals]);
 
-  const getCalculate = useCallback(
-    async (amount: string) => {
-      try {
-        if (!amount || !toChainItem.key || !fromTokenSymbol || !toTokenSymbol) return;
-        const { conversionRate } = await getDepositCalculate({
-          toChainId: toChainItem.key,
-          fromSymbol: fromTokenSymbol,
-          toSymbol: toTokenSymbol,
-          fromAmount: amount,
-        });
+  const getCalculate = useCallback(async () => {
+    try {
+      if (!amountRef.current || !toChainItem.key || !fromTokenSymbol || !toTokenSymbol) return;
+      const { conversionRate } = await getDepositCalculate({
+        toChainId: toChainItem.key,
+        fromSymbol: fromTokenSymbol,
+        toSymbol: toTokenSymbol,
+        fromAmount: amountRef.current,
+      });
+      if (amountRef.current) {
         setReceiveAmount(conversionRate?.toAmount || DEFAULT_AMOUNT);
         setMinReceiveAmount(conversionRate?.minimumReceiveAmount || DEFAULT_AMOUNT);
-      } catch (error) {
-        singleMessage.error(handleErrorMessage(error));
       }
-    },
-    [fromTokenSymbol, toChainItem.key, toTokenSymbol],
-  );
+    } catch (error) {
+      singleMessage.error(handleErrorMessage(error));
+    }
+  }, [fromTokenSymbol, toChainItem.key, toTokenSymbol]);
 
   const onPayChange = useCallback(
     (e: any) => {
       const value: string = e.target.value.trim();
       if (!value) {
+        amountRef.current = value;
         setPayAmount('');
         setReceiveAmount(DEFAULT_AMOUNT);
         setMinReceiveAmount(DEFAULT_AMOUNT);
@@ -67,11 +69,16 @@ export default function Calculator({ payToken, receiveToken }: TCalculator) {
       const CheckNumberReg = new RegExp(stringReg);
       if (!CheckNumberReg.exec(value)) return;
 
+      amountRef.current = value;
       setPayAmount(value);
-      getCalculate(value);
+      getCalculate();
     },
     [currentTokenDecimal, getCalculate],
   );
+
+  useEffectOnce(() => {
+    getCalculate();
+  });
 
   const renderHeader = useMemo(() => {
     return (
