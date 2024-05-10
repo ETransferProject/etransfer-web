@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { CHAIN_LIST, IChainNameItem } from 'constants/index';
+import { CHAIN_LIST, IChainNameItem, TokenType } from 'constants/index';
 import { TNetworkItem, TDepositTokenItem } from 'types/api';
 
 export type TDepositState = {
@@ -24,10 +24,10 @@ export type TDepositState = {
 };
 
 export const InitialDepositState: TDepositState = {
-  fromTokenSymbol: 'USDT',
+  fromTokenSymbol: TokenType.USDT,
   // fromTokenList: [],
   // fromNetworkList: [],
-  toTokenSymbol: 'USDT',
+  toTokenSymbol: TokenType.USDT,
   toChainItem: CHAIN_LIST[1] || CHAIN_LIST[0],
   // toTokenList: [],
   // toChainList: [],

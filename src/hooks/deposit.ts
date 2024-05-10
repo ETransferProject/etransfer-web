@@ -1,3 +1,4 @@
+import { TokenType } from 'constants/index';
 import { useMemo } from 'react';
 import { useDepositState } from 'store/Provider/hooks';
 
@@ -16,12 +17,12 @@ export function useDeposit() {
   return useMemo(
     () => ({
       // from
-      fromTokenSymbol: fromTokenSymbol || 'USDT',
+      fromTokenSymbol: fromTokenSymbol || TokenType.USDT,
       fromTokenList: fromTokenList || [],
       fromNetwork: fromNetwork,
       fromNetworkList: fromNetworkList || [],
       // to
-      toTokenSymbol: toTokenSymbol || 'USDT',
+      toTokenSymbol: toTokenSymbol || TokenType.USDT,
       toTokenList: toTokenList || [],
       toChainItem: toChainItem,
       toChainList: toChainList || [],

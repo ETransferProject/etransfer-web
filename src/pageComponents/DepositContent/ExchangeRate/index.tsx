@@ -31,13 +31,13 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
 
   const getCalculate = useCallback(async () => {
     try {
-      const { conversionRate } = await getDepositCalculate({
-        toChainId,
-        fromSymbol,
-        toSymbol,
-        fromAmount: EXCHANGE_FROM_AMOUNT,
-      });
-      setExchange(conversionRate?.toAmount || defaultNullValue);
+      // const { conversionRate } = await getDepositCalculate({
+      //   toChainId,
+      //   fromSymbol,
+      //   toSymbol,
+      //   fromAmount: EXCHANGE_FROM_AMOUNT,
+      // });
+      // setExchange(conversionRate?.toAmount || defaultNullValue);
     } catch (error) {
       singleMessage.error(handleErrorMessage(error));
     }

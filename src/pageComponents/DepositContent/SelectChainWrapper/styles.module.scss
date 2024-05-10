@@ -9,6 +9,12 @@
     line-height: 16px;
     user-select: none;
   }
+  .select-chain {
+    color: $primary-text;
+    font-size: 12px;
+    line-height: 16px;
+    @extend .font-family-medium;
+  }
   .select-chain-container {
     padding: 0;
   }

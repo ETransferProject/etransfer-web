@@ -11,7 +11,7 @@ import {
   TToTokenItem,
 } from 'types/api';
 import { getDepositInfo, getDepositTokenList, getNetworkList } from 'utils/api/deposit';
-import { CHAIN_LIST, IChainNameItem, SupportedELFChainId } from 'constants/index';
+import { CHAIN_LIST, IChainNameItem, TokenType } from 'constants/index';
 import {
   setDepositAddress,
   setFromNetwork,
@@ -90,13 +90,7 @@ export default function Content() {
       const { tokenList } = await getDepositTokenList({
         type: BusinessType.Deposit,
       });
-      // handle from
-      dispatch(setFromTokenList(tokenList));
-      const isExitFromTokenSelected = tokenList?.find((item) => item.symbol === fromTokenSymbol);
-      if (!isExitFromTokenSelected?.symbol) {
-        dispatch(setFromTokenSymbol(tokenList?.[0].symbol));
-      }
-      // handle to
+      // Format fromTokenList - add chainList for toTokenList
       const fromTokenList: TDepositTokenItem[] = JSON.parse(JSON.stringify(tokenList));
       fromTokenList.forEach((from) => {
         from.toTokenList?.forEach((to) => {
@@ -112,8 +106,18 @@ export default function Content() {
           to.chainList = toChainList;
         });
       });
+
+      // Handle fromTokenList and fromToken
+      dispatch(setFromTokenList(fromTokenList));
+      const isExitFromTokenSelected = fromTokenList?.find(
+        (item) => item.symbol === fromTokenSymbol,
+      );
+      if (!isExitFromTokenSelected?.symbol) {
+        dispatch(setFromTokenSymbol(fromTokenList?.[0].symbol));
+      }
+      // Handle toTokenList and toToken
       const toTokenList =
-        fromTokenList?.find((item) => item.symbol === 'USDT')?.toTokenList ||
+        fromTokenList?.find((item) => item.symbol === TokenType.USDT)?.toTokenList ||
         fromTokenList[0]?.toTokenList ||
         [];
       dispatch(setToTokenList(toTokenList));
@@ -129,7 +133,6 @@ export default function Content() {
       } else {
         const toToken = toTokenList?.[0] || [];
         dispatch(setToTokenSymbol(toToken?.symbol));
-
         dispatch(setToChainList(toToken?.chainList || []));
         dispatch(setToChainItem(toToken?.chainList?.[0] || CHAIN_LIST[0]));
       }
@@ -141,10 +144,10 @@ export default function Content() {
   }, [dispatch, fromTokenSymbol, setLoading, toChainItem.key, toTokenSymbol]);
 
   const getDepositData = useCallback(
-    async (chainId: SupportedELFChainId, symbol: string, toSymbol: string) => {
+    async (chainId: ChainId, symbol: string, toSymbol: string) => {
       try {
-        setLoading(true);
         if (!fromNetworkRef.current?.network) return;
+        setLoading(true);
         const res = await getDepositInfo({
           chainId,
           network: fromNetworkRef.current?.network || '',
@@ -156,16 +159,17 @@ export default function Content() {
         setDepositInfo(res.depositInfo);
         dispatch(setDepositAddress(res.depositInfo.depositAddress));
       } catch (error: any) {
-        setLoading(false);
-        setDepositInfo(InitDepositInfo);
-        dispatch(setDepositAddress(InitDepositInfo.depositAddress));
         if (error.name !== CommonErrorNameType.CANCEL && error.code === '50000') {
           setShowRetry(true);
         } else {
           setShowRetry(false);
         }
-      } finally {
-        setLoading(false);
+        if (error.name !== CommonErrorNameType.CANCEL) {
+          setDepositInfo(InitDepositInfo);
+          dispatch(setDepositAddress(InitDepositInfo.depositAddress));
+        } else {
+          setLoading(false);
+        }
       }
     },
     [dispatch, setLoading],
@@ -174,9 +178,9 @@ export default function Content() {
   const getNetworkData = useCallback(
     async ({ chainId, symbol, toSymbol }: TGetNetworkData) => {
       try {
+        setIsShowNetworkLoading(true);
         const lastSymbol = symbol || fromTokenSymbol;
         const lastToSymbol = toSymbol || toTokenSymbol;
-        setIsShowNetworkLoading(true);
         const { networkList } = await getNetworkList({
           type: BusinessType.Deposit,
           chainId: chainId,
@@ -186,21 +190,17 @@ export default function Content() {
         if (networkList?.length === 1 && networkList[0].status !== NetworkStatus.Offline) {
           fromNetworkRef.current = networkList[0];
           dispatch(setFromNetwork(networkList[0]));
-          console.log('🌈 🌈 🌈 🌈 🌈 🌈 1', '');
-          await getDepositData(toChainItem.key, lastSymbol, lastToSymbol);
         } else {
-          console.log('🌈 🌈 🌈 🌈 🌈 🌈 2', '');
           const exitNetwork = networkList.filter(
             (item) => item.network === fromNetworkRef.current?.network,
           );
           if (exitNetwork?.length === 0) {
             fromNetworkRef.current = undefined;
             dispatch(setFromNetwork(undefined));
-          } else {
-            await getDepositData(toChainItem.key, lastSymbol, lastToSymbol);
+            return;
           }
         }
-        setIsShowNetworkLoading(false);
+        await getDepositData(chainId, lastSymbol, lastToSymbol);
       } catch (error: any) {
         setIsShowNetworkLoading(false);
         if (error.name !== CommonErrorNameType.CANCEL && !isAuthTokenError(error)) {
@@ -210,38 +210,46 @@ export default function Content() {
         setIsShowNetworkLoading(false);
       }
     },
-    [dispatch, fromTokenSymbol, getDepositData, toChainItem.key, toTokenSymbol],
+    [dispatch, fromTokenSymbol, getDepositData, toTokenSymbol],
   );
 
   const handleFromTokenChange = async (newItem: TDepositTokenItem) => {
-    // set token data
+    // Set fromToken
     dispatch(setFromTokenSymbol(newItem.symbol));
+
+    // Check 1 - toToken
     const currentFromToken = fromTokenList?.find((item) => item.symbol === newItem.symbol);
-    console.log('🌈 🌈 🌈 🌈 🌈 🌈 currentFromToken', currentFromToken);
     const isExitToToken = currentFromToken?.toTokenList?.find(
       (item) => item.symbol === toTokenSymbol,
     );
-    console.log('🌈 🌈 🌈 🌈 🌈 🌈 isExitToToken', isExitToToken);
     let toSymbol = toTokenSymbol;
+
+    // toToken not exist, toToken = fromToken
     if (!isExitToToken) {
       toSymbol = newItem.symbol;
       dispatch(setToTokenSymbol(newItem.symbol));
       dispatch(setToChainItem(currentFromToken?.toTokenList?.[0]?.chainList?.[0] || CHAIN_LIST[0]));
+      // todo check data
       dispatch(setToChainList(currentFromToken?.toTokenList?.[0]?.chainList || []));
     }
+    // toToken exist, next check
     if (isExitToToken) {
+      // Check 2 - toChain
       const isExitToChain = isExitToToken.chainList?.find((item) => item.key === toChainItem.key);
+      // toChain not exist, set toChain and toChainList
       if (!isExitToChain) {
         dispatch(setToChainItem(isExitToToken.chainList?.[0] || CHAIN_LIST[0]));
       }
+      // toChain exist, set and toChainList
       dispatch(setToChainList(isExitToToken.chainList || []));
     }
 
-    // reset other data
+    // Reset other data
     setDepositInfo(InitDepositInfo);
     dispatch(setDepositAddress(InitDepositInfo.depositAddress));
     setShowRetry(false);
-    // get network data
+
+    // Refresh network and deposit info
     await getNetworkData({
       chainId: toChainItem.key,
       symbol: newItem.symbol,
@@ -262,28 +270,25 @@ export default function Content() {
     async (newItem: TToTokenItem) => {
       dispatch(setToTokenSymbol(newItem.symbol));
       dispatch(setToChainList(newItem.chainList || []));
-      let optionChainId = toChainItem.key;
 
+      // Check - to chain
+      let optionChainId = toChainItem.key;
       const isExitChain = newItem.chainList?.find((item) => item.key === toChainItem.key);
       if (!isExitChain) {
         const chainItem = newItem.chainList?.[0] || CHAIN_LIST[0];
         dispatch(setToChainItem(chainItem));
-
         optionChainId = chainItem.key;
       }
 
-      // check token
+      // Check - from token
       const isExitFromToken = fromTokenList?.find((from) => {
-        console.log('🌈 🌈 from', from.symbol);
         return (
           from.symbol === fromTokenSymbol &&
           from.toTokenList?.find((to) => {
-            console.log('🌈 🌈 to', to.symbol);
             return to.symbol === newItem.symbol;
           })
         );
       });
-      console.log('🌈 🌈 isExitFromToken', isExitFromToken);
 
       if (!isExitFromToken) {
         dispatch(setFromTokenSymbol(newItem.symbol));
@@ -291,13 +296,21 @@ export default function Content() {
         dispatch(setDepositAddress(InitDepositInfo.depositAddress));
         setShowRetry(false);
         // get network data
-        await getNetworkData({
+        return getNetworkData({
           chainId: toChainItem.key,
           symbol: newItem.symbol,
           toSymbol: newItem.symbol,
         });
-        return;
       } else {
+        if (!isExitChain) {
+          // toChain changed, need refresh network and deposit info.
+          return getNetworkData({
+            chainId: toChainItem.key,
+            symbol: newItem.symbol,
+            toSymbol: newItem.symbol,
+          });
+        }
+        // toChain and fromToken not changed, refresh deposit info.
         return getDepositData(optionChainId, fromTokenSymbol, newItem.symbol);
       }
     },
@@ -314,10 +327,9 @@ export default function Content() {
           chainId: item.key,
           symbol: fromTokenSymbol,
         }));
-      if (!fromNetworkRef.current?.network) return;
-      await getDepositData(item.key, fromTokenSymbol, toTokenSymbol);
+      // await getDepositData(item.key, fromTokenSymbol, toTokenSymbol);
     },
-    [fromTokenSymbol, getDepositData, getNetworkData, setCurrentChainItem, toTokenSymbol],
+    [fromTokenSymbol, getNetworkData, setCurrentChainItem],
   );
 
   const handleRetry = useCallback(async () => {
@@ -332,12 +344,10 @@ export default function Content() {
 
       getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
     } else {
-      if (fromTokenSymbol) {
-        getNetworkData({
-          chainId: toChainItem.key,
-          symbol: fromTokenSymbol,
-        });
-      }
+      getNetworkData({
+        chainId: toChainItem.key,
+        symbol: fromTokenSymbol,
+      });
     }
   }, [
     fromNetwork,
@@ -366,9 +376,9 @@ export default function Content() {
 
   return isMobilePX ? (
     <MobileDepositContent
-      fromNetworkSelected={fromNetwork}
       fromTokenSelected={fromTokenSelected}
       tokenLogoUrl={fromTokenSelected?.icon}
+      fromNetworkSelected={fromNetwork}
       contractAddress={fromNetwork?.contractAddress || ''}
       contractAddressLink={fromNetwork?.explorerUrl || ''}
       toTokenSelected={toTokenSelected}

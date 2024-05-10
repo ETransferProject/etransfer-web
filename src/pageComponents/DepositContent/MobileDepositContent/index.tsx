@@ -16,6 +16,7 @@ import Space from 'components/Space';
 import Calculator from '../Calculator';
 import ExchangeRate from '../ExchangeRate';
 import { useDepositState } from 'store/Provider/hooks';
+import { TokenType } from 'constants/index';
 
 export default function MobileDepositContent({
   fromNetworkSelected,
@@ -100,7 +101,7 @@ export default function MobileDepositContent({
 
       <Space direction="vertical" size={24} />
 
-      <Calculator payToken={'USDT'} receiveToken={'SGR'} />
+      <Calculator payToken={TokenType.USDT} receiveToken={TokenType.SGR} />
 
       <Space direction="vertical" size={24} />
 

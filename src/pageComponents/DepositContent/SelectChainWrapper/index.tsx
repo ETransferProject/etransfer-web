@@ -1,9 +1,10 @@
 import clsx from 'clsx';
 import SelectChain from 'components/SelectChain';
-import { useCommonState } from 'store/Provider/hooks';
+import { useCommonState, useDepositState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { IChainNameItem } from 'constants/index';
+import { IChainNameItem, TokenType } from 'constants/index';
 import { Aelf } from 'assets/images';
+import { useMemo } from 'react';
 
 interface SelectChainWrapperProps {
   menuItems: IChainNameItem[];
@@ -25,6 +26,8 @@ export default function SelectChainWrapper({
   chainChanged,
 }: SelectChainWrapperProps) {
   const { isMobilePX } = useCommonState();
+  const { toTokenSymbol } = useDepositState();
+  const isDisabled = useMemo(() => !!toTokenSymbol.includes(TokenType.SGR), [toTokenSymbol]);
 
   return (
     <div className={clsx('flex-row-center', styles['select-chain-wrapper'], className)}>
@@ -32,16 +35,20 @@ export default function SelectChainWrapper({
       <div className={styles['space-6']} />
       <Aelf />
       <div className={styles['space-6']} />
-      <SelectChain
-        menuItems={menuItems}
-        selectedItem={selectedItem}
-        isBorder={false}
-        title={mobileTitle}
-        clickCallback={chainChanged}
-        className={styles['select-chain-container']}
-        childrenClassName={styles['select-chain-content']}
-        suffixArrowSize="Small"
-      />
+      {isDisabled ? (
+        <div className={styles['select-chain']}>{selectedItem.label}</div>
+      ) : (
+        <SelectChain
+          menuItems={menuItems}
+          selectedItem={selectedItem}
+          isBorder={false}
+          title={mobileTitle}
+          clickCallback={chainChanged}
+          className={styles['select-chain-container']}
+          childrenClassName={styles['select-chain-content']}
+          suffixArrowSize="Small"
+        />
+      )}
     </div>
   );
 }

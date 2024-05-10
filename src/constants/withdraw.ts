@@ -1,4 +1,4 @@
-import { CHAIN_LIST, defaultNullValue } from 'constants/index';
+import { CHAIN_LIST, TokenType, defaultNullValue } from 'constants/index';
 import { NetworkStatus, TWithdrawInfo } from 'types/api';
 import { TWithdrawInfoSuccess } from 'types/deposit';
 
@@ -39,11 +39,11 @@ export const RemainingWithdrawalQuotaTooltip = `Withdrawals are subject to a 24-
 export const InitialWithdrawInfo: TWithdrawInfo = {
   maxAmount: '',
   minAmount: '',
-  limitCurrency: 'USDT',
+  limitCurrency: TokenType.USDT,
   totalLimit: '',
   remainingLimit: '',
   transactionFee: '',
-  transactionUnit: 'USDT',
+  transactionUnit: TokenType.USDT,
   expiredTimestamp: 0,
   aelfTransactionFee: '',
   aelfTransactionUnit: 'ELF',

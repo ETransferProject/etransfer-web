@@ -7,7 +7,6 @@ import clsx from 'clsx';
 import Space from 'components/Space';
 import { useCommonState, useDepositState } from 'store/Provider/hooks';
 import { getDepositCalculate } from 'utils/api/deposit';
-import { defaultNullValue } from 'constants/index';
 import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
 
 type TCalculator = {
@@ -15,12 +14,14 @@ type TCalculator = {
   receiveToken: string;
 };
 
+const DEFAULT_AMOUNT = '0.00';
+
 export default function Calculator({ payToken, receiveToken }: TCalculator) {
   const { isMobilePX } = useCommonState();
   const { fromTokenSymbol, toChainItem, toTokenSymbol } = useDepositState();
   const [payAmount, setPayAmount] = useState('');
-  const [receiveAmount, setReceiveAmount] = useState(defaultNullValue);
-  const [minReceiveAmount, setMinReceiveAmount] = useState(defaultNullValue);
+  const [receiveAmount, setReceiveAmount] = useState(DEFAULT_AMOUNT);
+  const [minReceiveAmount, setMinReceiveAmount] = useState(DEFAULT_AMOUNT);
   const [isExpand, setIsExpand] = useState(false);
 
   const getCalculate = useCallback(
@@ -33,8 +34,8 @@ export default function Calculator({ payToken, receiveToken }: TCalculator) {
           toSymbol: toTokenSymbol,
           fromAmount: amount,
         });
-        setReceiveAmount(conversionRate?.toAmount || defaultNullValue);
-        setMinReceiveAmount(conversionRate?.minimumReceiveAmount || defaultNullValue);
+        setReceiveAmount(conversionRate?.toAmount || DEFAULT_AMOUNT);
+        setMinReceiveAmount(conversionRate?.minimumReceiveAmount || DEFAULT_AMOUNT);
       } catch (error) {
         singleMessage.error(handleErrorMessage(error));
       }
