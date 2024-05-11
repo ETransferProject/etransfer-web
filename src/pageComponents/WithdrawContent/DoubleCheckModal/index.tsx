@@ -8,6 +8,7 @@ import { FeeItem, NetworkItem } from 'types/api';
 import styles from './styles.module.scss';
 import { valueFixed2LessThanMin } from 'utils/calculate';
 import { defaultNullValue } from 'constants/index';
+import { formatSymbolDisplay } from 'utils/format';
 
 export interface DoubleCheckModalProps {
   withdrawInfo: {
@@ -39,7 +40,7 @@ export default function DoubleCheckModal({
         {isTransactionFeeLoading && <SimpleLoading />}
         <span className={clsx(styles['receive-amount-center'])}>
           {!isTransactionFeeLoading && `${withdrawInfo.receiveAmount || defaultNullValue} `}
-          {withdrawInfo.symbol}
+          {formatSymbolDisplay(withdrawInfo.symbol)}
         </span>
       </>
     );
@@ -103,7 +104,9 @@ export default function DoubleCheckModal({
             <div className={styles['value']}>
               <div className={styles['value-content']}>
                 {`${withdrawInfo.amount || defaultNullValue}`}
-                <span className={styles['value-symbol']}>{withdrawInfo.symbol}</span>
+                <span className={styles['value-symbol']}>
+                  {formatSymbolDisplay(withdrawInfo.symbol)}
+                </span>
               </div>
 
               <div className={clsx(styles['amount-usd'])}>
