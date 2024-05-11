@@ -167,7 +167,6 @@ export default function Content() {
         if (error.name !== CommonErrorNameType.CANCEL) {
           setDepositInfo(InitDepositInfo);
           dispatch(setDepositAddress(InitDepositInfo.depositAddress));
-        } else {
           setLoading(false);
         }
       }
@@ -297,7 +296,7 @@ export default function Content() {
         setShowRetry(false);
         // get network data
         return getNetworkData({
-          chainId: toChainItem.key,
+          chainId: optionChainId,
           symbol: newItem.symbol,
           toSymbol: newItem.symbol,
         });
@@ -305,8 +304,8 @@ export default function Content() {
         if (!isExitChain) {
           // toChain changed, need refresh network and deposit info.
           return getNetworkData({
-            chainId: toChainItem.key,
-            symbol: newItem.symbol,
+            chainId: optionChainId,
+            symbol: fromTokenSymbol,
             toSymbol: newItem.symbol,
           });
         }

@@ -10,7 +10,7 @@ export default function LogoutButton({ setIsOpen }: TLogoutButtonType) {
   const { logout } = useWebLogin();
 
   const handleLogoutWallet = useCallback(async () => {
-    await logout();
+    logout();
     setIsOpen && setIsOpen(false);
   }, [logout, setIsOpen]);
 
