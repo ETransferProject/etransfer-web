@@ -7,6 +7,7 @@ import { getDepositCalculate } from 'utils/api/deposit';
 import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
 import { ChainId } from '@portkey/provider-types';
 import { useEffectOnce } from 'react-use';
+import { formatSymbolDisplay } from 'utils/format';
 
 type TExchangeRate = {
   fromSymbol: string;
@@ -87,7 +88,9 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
   return (
     <div className={clsx('flex-row-between', 'exchange-rate')}>
       <div className="flex-row-center">
-        <span className={styles['value']}>{`1 ${fromSymbol} ≈ ${exchange} ${toSymbol}`}</span>
+        <span className={styles['value']}>{`1 ${fromSymbol} ≈ ${exchange} ${formatSymbolDisplay(
+          toSymbol,
+        )}`}</span>
         <TimeIcon />
         <span className={styles['count-time']}>{`${updateTime}s`}</span>
       </div>

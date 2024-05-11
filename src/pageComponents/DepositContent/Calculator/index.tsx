@@ -10,6 +10,7 @@ import { getDepositCalculate } from 'utils/api/deposit';
 import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
 import { TOKEN_INFO_USDT } from 'constants/index';
 import { useEffectOnce } from 'react-use';
+import { formatSymbolDisplay } from 'utils/format';
 
 type TCalculator = {
   payToken: string;
@@ -104,7 +105,6 @@ export default function Calculator({ payToken, receiveToken }: TCalculator) {
         <div className={styles['label']}>You Pay</div>
         <Space direction="vertical" size={6} />
         <div className={clsx('flex-row-center', styles['you-pay-main'])}>
-          {/* TODO check rule */}
           <Input
             className={styles['pay-input']}
             placeholder="0.00"
@@ -124,11 +124,15 @@ export default function Calculator({ payToken, receiveToken }: TCalculator) {
       <div>
         <div className={styles['label']}>You Receive</div>
         <Space direction="vertical" size={8} />
-        <div className={styles['receive-amount']}>{`≈${receiveAmount} ${receiveToken}`}</div>
+        <div className={styles['receive-amount']}>{`≈${receiveAmount} ${formatSymbolDisplay(
+          receiveToken,
+        )}`}</div>
         <div>
           <span className={styles['label']}>Minimum Sum To Receive:</span>
           <span
-            className={styles['min-receive-amount']}>{`≈${minReceiveAmount} ${receiveToken}`}</span>
+            className={styles['min-receive-amount']}>{`≈${minReceiveAmount} ${formatSymbolDisplay(
+            receiveToken,
+          )}`}</span>
         </div>
       </div>
     );

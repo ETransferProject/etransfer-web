@@ -221,22 +221,22 @@ export default function Content() {
     const isExitToToken = currentFromToken?.toTokenList?.find(
       (item) => item.symbol === toTokenSymbol,
     );
-    let toSymbol = toTokenSymbol;
-
     // toToken not exist, toToken = fromToken
+    let toSymbol = toTokenSymbol;
     if (!isExitToToken) {
       toSymbol = newItem.symbol;
       dispatch(setToTokenSymbol(newItem.symbol));
       dispatch(setToChainItem(currentFromToken?.toTokenList?.[0]?.chainList?.[0] || CHAIN_LIST[0]));
-      // todo check data
       dispatch(setToChainList(currentFromToken?.toTokenList?.[0]?.chainList || []));
     }
     // toToken exist, next check
+    let toChain = toChainItem;
     if (isExitToToken) {
       // Check 2 - toChain
       const isExitToChain = isExitToToken.chainList?.find((item) => item.key === toChainItem.key);
       // toChain not exist, set toChain and toChainList
       if (!isExitToChain) {
+        toChain = isExitToToken.chainList?.[0] || CHAIN_LIST[0];
         dispatch(setToChainItem(isExitToToken.chainList?.[0] || CHAIN_LIST[0]));
       }
       // toChain exist, set and toChainList
@@ -250,7 +250,7 @@ export default function Content() {
 
     // Refresh network and deposit info
     await getNetworkData({
-      chainId: toChainItem.key,
+      chainId: toChain.key,
       symbol: newItem.symbol,
       toSymbol,
     });
@@ -326,7 +326,6 @@ export default function Content() {
           chainId: item.key,
           symbol: fromTokenSymbol,
         }));
-      // await getDepositData(item.key, fromTokenSymbol, toTokenSymbol);
     },
     [fromTokenSymbol, getNetworkData, setCurrentChainItem],
   );
