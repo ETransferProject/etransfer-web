@@ -3,7 +3,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from './store';
 import { emitLoading } from 'utils/events';
 import { LoadingProps } from 'components/Loading';
-import { initCommon } from 'store/reducers/common/slice';
+import { resetCommon } from 'store/reducers/common/slice';
 import { initUserState } from 'store/reducers/user/slice';
 import { resetTokenState } from 'store/reducers/token/slice';
 import { resetDepositState } from 'store/reducers/deposit/slice';
@@ -34,7 +34,7 @@ export const useResetStore = () => {
   const dispatch = useAppDispatch();
 
   return useCallback(() => {
-    dispatch(initCommon());
+    dispatch(resetCommon());
     dispatch(initUserState());
     dispatch(resetTokenState());
     dispatch(resetDepositState());

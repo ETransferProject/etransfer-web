@@ -3,6 +3,7 @@ import styles from './styles.module.scss';
 import { SideMenuKey } from 'constants/home';
 import { NetworkStatus } from 'types/api';
 import { useMemo } from 'react';
+import { formatSymbolDisplay } from 'utils/format';
 
 interface NetworkCardProps {
   type: SideMenuKey;
@@ -21,6 +22,12 @@ interface NetworkCardForWebProps extends NetworkCardProps {
   network: string;
 }
 
+const feeContent = (transactionFee?: string, transactionFeeUnit?: string) => {
+  return transactionFee
+    ? `Fee: ${transactionFee} ${formatSymbolDisplay(transactionFeeUnit || '')}`
+    : 'Fee: Failed to estimate the fee.';
+};
+
 export function NetworkCardForMobile({
   type,
   transactionFee,
@@ -33,12 +40,6 @@ export function NetworkCardForMobile({
   onClick,
   status,
 }: NetworkCardProps) {
-  const getFeeContent = useMemo(() => {
-    return transactionFee
-      ? `Fee: ${transactionFee} ${transactionFeeUnit}`
-      : 'Fee: Failed to estimate the fee.';
-  }, [transactionFee, transactionFeeUnit]);
-
   return (
     <div
       className={clsx(
@@ -59,7 +60,9 @@ export function NetworkCardForMobile({
         <span>{multiConfirmTime}</span>
       </div>
       <div className={styles['network-card-confirm-time']}>
-        {type === SideMenuKey.Deposit ? multiConfirm : getFeeContent}
+        {type === SideMenuKey.Deposit
+          ? multiConfirm
+          : feeContent(transactionFee, transactionFeeUnit)}
       </div>
     </div>
   );
@@ -78,12 +81,6 @@ export function NetworkCardForWeb({
   onClick,
   status,
 }: NetworkCardForWebProps) {
-  const getFeeContent = useMemo(() => {
-    return transactionFee
-      ? `Fee: ${transactionFee} ${transactionFeeUnit}`
-      : 'Fee: Failed to estimate the fee.';
-  }, [transactionFee, transactionFeeUnit]);
-
   return (
     <div
       className={clsx(
@@ -106,7 +103,9 @@ export function NetworkCardForWeb({
       <div className={clsx('flex-row-center-between', styles['network-card-row'])}>
         <span className={styles['network-card-name']}>{name}</span>
         <span className={styles['network-card-confirm-time']}>
-          {type === SideMenuKey.Deposit ? multiConfirm : getFeeContent}
+          {type === SideMenuKey.Deposit
+            ? multiConfirm
+            : feeContent(transactionFee, transactionFeeUnit)}
         </span>
       </div>
     </div>

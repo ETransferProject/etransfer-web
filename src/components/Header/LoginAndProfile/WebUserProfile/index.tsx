@@ -7,7 +7,7 @@ import Address from '../Address';
 import styles from './styles.module.scss';
 
 export default function WebUserProfile() {
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <div onClick={() => setIsOpen(true)}>
       <CommonDropdown
@@ -17,7 +17,7 @@ export default function WebUserProfile() {
             <div className={styles['dropdown']}>
               <Address hideBorder={false} />
               <div className={styles['button-wrapper']}>
-                <LogoutButton setIsOpen={setIsOpen} />
+                <LogoutButton closeDialog={() => setIsOpen(false)} />
               </div>
             </div>
           ) : (

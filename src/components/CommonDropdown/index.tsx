@@ -7,10 +7,10 @@ import styles from './styles.module.scss';
 interface CommonDropdownProps extends DropdownProps {
   childrenClassName?: string;
   isBorder?: boolean;
-  /** use 'handleMenuClick' instead of 'onClick' */
   menu?: Omit<MenuProps, 'onClick'>;
   hideDownArrow?: boolean;
   suffixArrowSize?: TDynamicArrowSize;
+  /** use 'handleMenuClick' instead of 'onClick' */
   handleMenuClick?: (...args: Parameters<Required<MenuProps>['onClick']>) => void;
 }
 

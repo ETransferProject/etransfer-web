@@ -33,7 +33,6 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
 
   const getCalculate = useCallback(async () => {
     try {
-      console.log('🌈 2', '');
       const { conversionRate } = await getDepositCalculate({
         toChainId,
         fromSymbol,
@@ -51,7 +50,6 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
       --updateTimeRef.current;
 
       if (updateTimeRef.current === 0) {
-        console.log('🌈 1', '');
         getCalculate();
         updateTimeRef.current = MAX_UPDATE_TIME;
       }

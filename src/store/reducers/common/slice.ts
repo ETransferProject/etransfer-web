@@ -32,14 +32,14 @@ export const CommonSlice = createSlice({
     setActiveMenuKey: (state, action: PayloadAction<SideMenuKey>) => {
       state.activeMenuKey = action.payload;
     },
-    initCommon: (state) => {
-      state.activeMenuKey = initialState.activeMenuKey;
-    },
     setSwitchVersionAction: (state, action: PayloadAction<PortkeyVersion | undefined>) => {
       state.currentVersion = action.payload;
     },
     setIsShowRedDot: (state, action) => {
       state.isShowRedDot = action.payload;
+    },
+    resetCommon: () => {
+      return initialState;
     },
   },
 });
@@ -48,7 +48,7 @@ export const {
   setIsMobile,
   setIsMobilePX,
   setActiveMenuKey,
-  initCommon,
+  resetCommon,
   setSwitchVersionAction,
   setIsShowRedDot,
 } = CommonSlice.actions;

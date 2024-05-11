@@ -3,16 +3,16 @@ import CommonButton, { CommonButtonSize, CommonButtonType } from 'components/Com
 import { useWebLogin } from 'aelf-web-login';
 
 type TLogoutButtonType = {
-  setIsOpen?: (value: boolean) => void;
+  closeDialog?: () => void;
 };
 
-export default function LogoutButton({ setIsOpen }: TLogoutButtonType) {
+export default function LogoutButton({ closeDialog }: TLogoutButtonType) {
   const { logout } = useWebLogin();
 
   const handleLogoutWallet = useCallback(async () => {
-    logout();
-    setIsOpen && setIsOpen(false);
-  }, [logout, setIsOpen]);
+    await Promise.resolve(logout());
+    closeDialog?.();
+  }, [closeDialog, logout]);
 
   return (
     <CommonButton

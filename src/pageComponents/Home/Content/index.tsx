@@ -18,7 +18,7 @@ import { getTokenList } from 'utils/api/deposit';
 import { BusinessType } from 'types/api';
 import { setCurrentSymbol, setTokenList } from 'store/reducers/token/slice';
 import { useWithdraw } from 'hooks/withdraw';
-import { setV2DisconnectedAction } from 'store/reducers/portkeyWallet/actions';
+import { setDisconnectedAction } from 'store/reducers/portkeyWallet/actions';
 import { resetRecordsState } from 'store/reducers/records/slice';
 import { useWebLoginEvent, WebLoginEvents } from 'aelf-web-login';
 
@@ -132,7 +132,7 @@ export default function Content() {
 
   // addeventListener LOGOUT and init value
   useWebLoginEvent(WebLoginEvents.LOGOUT, () => {
-    dispatch(setV2DisconnectedAction());
+    dispatch(setDisconnectedAction());
     dispatch(setSwitchVersionAction(undefined));
     resetStore();
   });

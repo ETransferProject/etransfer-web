@@ -28,7 +28,7 @@ export const InitialDepositState: TDepositState = {
   // fromTokenList: [],
   // fromNetworkList: [],
   toTokenSymbol: TokenType.USDT,
-  toChainItem: CHAIN_LIST[1] || CHAIN_LIST[0],
+  toChainItem: CHAIN_LIST[0],
   // toTokenList: [],
   // toChainList: [],
   initOpenNetworkModalCount: 0,
