@@ -1,7 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 const filePath = path.resolve(__dirname, `../src/constants/index.ts`);
-const networkFilePath = './test3';
+
+const process = require('process');
+const args = process.argv;
+const network = args[2];
+const networkFilePath = './' + network;
 
 fs.readFile(filePath, 'utf-8', (err, data) => {
   if (err) throw err;
