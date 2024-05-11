@@ -939,8 +939,9 @@ export default function WithdrawContent() {
               )}>
               {withdrawInfo.transactionUnit}
             </span>
-            + {(!isSuccessModalOpen && withdrawInfo.aelfTransactionFee) || defaultNullValue}
-            {withdrawInfo.aelfTransactionUnit}
+            {`+ ${(!isSuccessModalOpen && withdrawInfo.aelfTransactionFee) || defaultNullValue} ${
+              withdrawInfo.aelfTransactionUnit
+            }`}
           </span>
         </>
       );
