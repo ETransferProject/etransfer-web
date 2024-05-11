@@ -2,7 +2,6 @@ import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { SideMenuKey } from 'constants/home';
 import { NetworkStatus } from 'types/api';
-import { useMemo } from 'react';
 import { formatSymbolDisplay } from 'utils/format';
 
 interface NetworkCardProps {
