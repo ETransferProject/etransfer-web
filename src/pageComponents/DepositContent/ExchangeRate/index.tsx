@@ -8,6 +8,7 @@ import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
 import { ChainId } from '@portkey/provider-types';
 import { useEffectOnce } from 'react-use';
 import { formatSymbolDisplay } from 'utils/format';
+import { MAX_UPDATE_TIME } from 'constants/misc';
 
 type TExchangeRate = {
   fromSymbol: string;
@@ -16,7 +17,6 @@ type TExchangeRate = {
   slippage?: string;
 };
 
-const MAX_UPDATE_TIME = 15;
 const EXCHANGE_FROM_AMOUNT = '1';
 
 export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage }: TExchangeRate) {

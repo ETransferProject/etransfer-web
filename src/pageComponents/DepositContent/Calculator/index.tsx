@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Input } from 'antd';
 import styles from './styles.module.scss';
 import { CalculatorIcon } from 'assets/images';
@@ -11,6 +11,7 @@ import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
 import { TOKEN_INFO_USDT } from 'constants/index';
 import { useEffectOnce } from 'react-use';
 import { formatSymbolDisplay } from 'utils/format';
+import { MAX_UPDATE_TIME } from 'constants/misc';
 
 type TCalculator = {
   payToken: string;
@@ -56,6 +57,33 @@ export default function Calculator({ payToken, receiveToken }: TCalculator) {
     }
   }, [fromTokenSymbol, toChainItem.key, toTokenSymbol]);
 
+  const updateTimeRef = useRef(MAX_UPDATE_TIME);
+  const updateTimerRef = useRef<NodeJS.Timer | number>();
+  const handleSetTimer = useCallback(async () => {
+    updateTimerRef.current = setInterval(() => {
+      --updateTimeRef.current;
+
+      if (updateTimeRef.current === 0) {
+        getCalculate();
+        updateTimeRef.current = MAX_UPDATE_TIME;
+      }
+    }, 1000);
+  }, [getCalculate]);
+
+  const resetTimer = useCallback(() => {
+    clearInterval(updateTimerRef.current);
+    updateTimerRef.current = undefined;
+    updateTimeRef.current = MAX_UPDATE_TIME;
+    handleSetTimer();
+  }, [handleSetTimer]);
+
+  useEffect(() => {
+    return () => {
+      clearInterval(updateTimerRef.current);
+      updateTimerRef.current = undefined;
+    };
+  }, []);
+
   const onPayChange = useCallback(
     (e: any) => {
       const value: string = e.target.value.trim();
@@ -73,12 +101,18 @@ export default function Calculator({ payToken, receiveToken }: TCalculator) {
 
       amountRef.current = value;
       setPayAmount(value);
+      // start 15s countdown
+      resetTimer();
+      // then, get one-time new value
       getCalculate();
     },
-    [currentTokenDecimal, getCalculate],
+    [currentTokenDecimal, getCalculate, resetTimer],
   );
 
   useEffectOnce(() => {
+    // start 15s countdown
+    resetTimer();
+    // then, get one-time new value
     getCalculate();
   });
 
