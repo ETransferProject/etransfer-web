@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import DepositContent from 'pageComponents/DepositContent';
 import WithdrawContent from 'pageComponents/WithdrawContent';
 import HistoryContent from 'pageComponents/HistoryContent';
-import { useAppDispatch, useCommonState, useResetStore } from 'store/Provider/hooks';
+import { useAppDispatch, useCommonState } from 'store/Provider/hooks';
 import { SideMenuKey } from 'constants/home';
 import styles from './styles.module.scss';
 import { useRouter, useSearchParams } from 'next/navigation';
