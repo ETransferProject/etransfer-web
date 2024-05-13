@@ -29,12 +29,11 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    @extend .font-family-medium;
 
     .select-token-value-selected {
       .primary {
         color: $primary-text;
-        font-size: 16px;
+        font-size: 18px;
         line-height: 1.5;
         @extend .font-family-medium;
         margin-right: 8px;
@@ -45,8 +44,8 @@
         line-height: 22px;
       }
       .icon {
-        width: 24px;
-        height: 24px;
+        width: 28px;
+        height: 28px;
         margin-right: 8px;
       }
       .default {

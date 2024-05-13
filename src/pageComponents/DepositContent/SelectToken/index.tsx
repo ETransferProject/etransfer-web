@@ -81,7 +81,7 @@ export default function SelectToken({
         <div className={styles['select-token-value-row']}>
           {selected?.symbol ? (
             <span className={clsx('flex-row-center', styles['select-token-value-selected'])}>
-              <SelectImage open={true} symbol={symbolFormat} icon={selected.icon} />
+              <SelectImage open={true} symbol={symbolFormat} icon={selected.icon} size={28} />
               <span className={styles['primary']}>{symbolFormat}</span>
               <span className={styles['secondary']}>{selected.name}</span>
             </span>

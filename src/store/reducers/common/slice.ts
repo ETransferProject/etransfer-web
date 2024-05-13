@@ -38,8 +38,9 @@ export const CommonSlice = createSlice({
     setIsShowRedDot: (state, action) => {
       state.isShowRedDot = action.payload;
     },
-    resetCommon: () => {
-      return initialState;
+    resetCommon: (state) => {
+      state.activeMenuKey = SideMenuKey.Deposit;
+      state.currentVersion = PortkeyVersion.v2;
     },
   },
 });

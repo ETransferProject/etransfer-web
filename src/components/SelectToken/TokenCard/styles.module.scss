@@ -13,7 +13,6 @@
   .token-card-name {
     color: $primary-text;
     font-size: 14px;
-    line-height: 24px;
     @extend .font-family-medium;
   }
   .token-card-symbol {
@@ -34,7 +33,6 @@
   .token-card-name {
     color: $primary-text;
     font-size: 16px;
-    line-height: 24px;
     @extend .font-family-medium;
   }
   .token-card-symbol {
@@ -45,14 +43,12 @@
 }
 
 .token-card-icon {
-  width: 24px;
-  height: 24px;
   margin-right: 8px;
   border-radius: 50%;
   overflow: hidden;
 }
 .token-card-defaultIcon {
-  line-height: 24px;
+  font-size: 14px;
   border-radius: 50%;
   border: 1px solid $border;
   text-align: center;

@@ -69,10 +69,12 @@ export function SelectImage({
   icon,
   open,
   symbol,
+  size = 24,
 }: {
   icon: string;
   open: boolean;
   symbol: string;
+  size?: number;
 }) {
   const [showIcon, setShowIcon] = useState<boolean>(true);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
@@ -90,8 +92,8 @@ export function SelectImage({
           loading="eager"
           src={icon}
           alt="token"
-          width={24}
-          height={24}
+          width={size}
+          height={size}
           fill={false}
           className={clsx(styles['token-card-icon'], {
             [styles['token-card-icon-load']]: !isSuccess,
@@ -105,7 +107,8 @@ export function SelectImage({
       <div
         className={clsx(styles['token-card-defaultIcon'], styles['token-card-icon'], {
           [styles['token-card-defaultIcon-none']]: showIcon && isSuccess,
-        })}>
+        })}
+        style={{ width: size, height: size, lineHeight: size + 'px' }}>
         {symbol.charAt(0)}
       </div>
     </>

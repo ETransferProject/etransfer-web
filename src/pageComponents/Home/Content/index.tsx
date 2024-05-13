@@ -132,6 +132,7 @@ export default function Content() {
 
   // addeventListener LOGOUT and init value
   useWebLoginEvent(WebLoginEvents.LOGOUT, () => {
+    console.warn('Emit WebLoginEvents.LOGOUT');
     dispatch(setDisconnectedAction());
     dispatch(setSwitchVersionAction(undefined));
     resetStore();

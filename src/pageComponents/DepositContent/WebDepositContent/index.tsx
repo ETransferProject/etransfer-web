@@ -105,7 +105,7 @@ export default function WebContent({
             contractAddressLink={contractAddressLink}
             minAmountUsd={depositInfo.minAmountUsd || ''}
           />
-          <Space direction="vertical" size={12} />
+          <Space direction="vertical" size={24} />
           {renderDepositDescription}
         </>
       )}

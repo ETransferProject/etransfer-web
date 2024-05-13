@@ -124,7 +124,6 @@ function WalletProvider({ children }: { children: React.ReactNode }) {
   // WebLoginEvents.LOGINED - can not get wallet info.
   // Please use webLoginContext.loginState===WebLoginState.logined
   // useWebLoginEvent(WebLoginEvents.LOGINED, onInitWallet);
-  WebLoginEvents.LOGOUT;
   useEffect(() => {
     if (webLoginContext.loginState !== WebLoginState.logined) return;
     onInitWallet();
