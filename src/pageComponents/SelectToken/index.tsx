@@ -7,10 +7,10 @@ import Down from 'assets/images/downBig.svg';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
 import { SelectImage } from 'pageComponents/SelectToken/TokenCard';
-
 import { BusinessType, TokenItem } from 'types/api';
 import { setCurrentSymbol } from 'store/reducers/token/slice';
 import { setAddInitOpenTokenModalCount } from 'store/reducers/userAction/slice';
+import { formatSymbolDisplay } from 'utils/format';
 
 type TokenSelectProps = {
   isFormItemStyle?: boolean;
@@ -84,8 +84,12 @@ export default function SelectToken({
           <div className={styles['select-token-value']}>
             {selected?.symbol ? (
               <span className={clsx('flex-row-center', styles['select-token-value-selected'])}>
-                <SelectImage open={true} symbol={selected.symbol} icon={selected.icon} />
-                <span className={styles['primary']}>{selected.symbol}</span>
+                <SelectImage
+                  open={true}
+                  symbol={formatSymbolDisplay(selected.symbol)}
+                  icon={selected.icon}
+                />
+                <span className={styles['primary']}>{formatSymbolDisplay(selected.symbol)}</span>
                 <span className={styles['secondary']}>{selected.name}</span>
               </span>
             ) : (

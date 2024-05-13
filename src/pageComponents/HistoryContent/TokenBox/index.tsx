@@ -4,6 +4,7 @@ import { USDTToken, SGRToken } from 'assets/images';
 import { TTokenType } from 'types';
 import { useCommonState } from 'store/Provider/hooks';
 import { useCallback } from 'react';
+import { formatSymbolDisplay } from 'utils/format';
 
 type TokenBoxProps = {
   symbol: string;
@@ -34,7 +35,7 @@ export default function TokenBox({ symbol }: TokenBoxProps) {
         isMobilePX ? styles['mobil-token-box'] : styles['web-token-box'],
       )}>
       {tokenIcon()}
-      <span className={clsx(styles['token'])}>{symbol}</span>
+      <span className={clsx(styles['token'])}>{formatSymbolDisplay(symbol)}</span>
     </div>
   );
 }
