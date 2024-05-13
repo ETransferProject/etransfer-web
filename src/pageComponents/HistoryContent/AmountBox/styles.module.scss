@@ -14,3 +14,8 @@
 .mobile-amount-box {
   text-align: right;
 }
+
+.second {
+  color: $secondary-text;
+  @extend .font-family-regular;
+}

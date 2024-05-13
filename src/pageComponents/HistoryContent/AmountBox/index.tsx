@@ -9,10 +9,11 @@ import { formatSymbolDisplay } from 'utils/format';
 type TAmountBoxProps = {
   amount: string;
   token: string;
+  fromToken?: string;
   status?: string;
 };
 
-export default function AmountBox({ amount, token, status }: TAmountBoxProps) {
+export default function AmountBox({ amount, token, fromToken, status }: TAmountBoxProps) {
   const { isMobilePX } = useCommonState();
 
   return (
@@ -21,9 +22,12 @@ export default function AmountBox({ amount, token, status }: TAmountBoxProps) {
         styles['amount-box'],
         isMobilePX ? styles['mobile-amount-box'] : styles['web-amount-box'],
       )}>
-      {status !== TRecordsStatus.Failed && (
-        <span>{`${LargeNumberDisplay(amount, token)} ${formatSymbolDisplay(token)}`}</span>
-      )}
+      {status !== TRecordsStatus.Failed &&
+        (fromToken && fromToken !== token && status === TRecordsStatus.Processing ? (
+          <span className={styles['second']}>Swapping</span>
+        ) : (
+          <span>{`${LargeNumberDisplay(amount, token)} ${formatSymbolDisplay(token)}`}</span>
+        ))}
       {status === TRecordsStatus.Failed && <span>{defaultNullValue}</span>}
     </div>
   );

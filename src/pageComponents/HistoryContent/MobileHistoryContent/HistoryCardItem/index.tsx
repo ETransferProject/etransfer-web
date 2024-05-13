@@ -109,6 +109,7 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsContentP
                 <AmountBox
                   amount={recordItem.receivingAmount}
                   token={recordItem.toSymbol}
+                  fromToken={recordItem.symbol}
                   status={recordItem.status}
                 />
               </div>

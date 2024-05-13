@@ -59,7 +59,14 @@ const columns = [
     dataIndex: 'receivingAmount',
     key: 'receivingAmount',
     render: (receivingAmount: string, record: TRecordsTableListType) => {
-      return <AmountBox amount={receivingAmount} token={record.toSymbol} status={record.status} />;
+      return (
+        <AmountBox
+          amount={receivingAmount}
+          token={record.toSymbol}
+          status={record.status}
+          fromToken={record.symbol}
+        />
+      );
     },
   },
   {
