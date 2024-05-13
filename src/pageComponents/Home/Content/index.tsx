@@ -6,25 +6,20 @@ import { useAppDispatch, useCommonState, useResetStore } from 'store/Provider/ho
 import { SideMenuKey } from 'constants/home';
 import styles from './styles.module.scss';
 import { useRouter, useSearchParams } from 'next/navigation';
-import {
-  setActiveMenuKey,
-  setIsShowRedDot,
-  setSwitchVersionAction,
-} from 'store/reducers/common/slice';
-import { useSetCurrentChainItem } from 'hooks/common';
+import { setActiveMenuKey, setIsShowRedDot } from 'store/reducers/common/slice';
+import { useClearStore, useSetCurrentChainItem } from 'hooks/common';
 import { CHAIN_LIST } from 'constants/index';
 import clsx from 'clsx';
 import { getTokenList } from 'utils/api/deposit';
 import { BusinessType } from 'types/api';
 import { setCurrentSymbol, setTokenList } from 'store/reducers/token/slice';
 import { useWithdraw } from 'hooks/withdraw';
-import { setDisconnectedAction } from 'store/reducers/portkeyWallet/actions';
 import { resetRecordsState } from 'store/reducers/records/slice';
 import { useWebLoginEvent, WebLoginEvents } from 'aelf-web-login';
 
 export default function Content() {
   const dispatch = useAppDispatch();
-  const resetStore = useResetStore();
+  const clearStore = useClearStore();
   const { activeMenuKey, isMobilePX } = useCommonState();
   const { currentSymbol: withdrawCurrentSymbol, currentChainItem: withdrawCurrentChainItem } =
     useWithdraw();
@@ -130,13 +125,13 @@ export default function Content() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentActiveMenuKey]);
 
-  // addeventListener LOGOUT and init value
-  useWebLoginEvent(WebLoginEvents.LOGOUT, () => {
+  const logoutAsync = useCallback(async () => {
     console.warn('Emit WebLoginEvents.LOGOUT');
-    dispatch(setDisconnectedAction());
-    dispatch(setSwitchVersionAction(undefined));
-    resetStore();
-  });
+    clearStore();
+  }, [clearStore]);
+
+  // addeventListener LOGOUT and init value
+  useWebLoginEvent(WebLoginEvents.LOGOUT, logoutAsync);
 
   const content = useMemo(() => {
     switch (currentActiveMenuKey) {
