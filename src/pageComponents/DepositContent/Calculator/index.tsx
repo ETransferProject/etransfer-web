@@ -18,15 +18,16 @@ type TCalculator = {
 };
 
 const DEFAULT_AMOUNT = '0.00';
+const DEFAULT_PAY_AMOUNT = '100';
 
 export default function Calculator({ payToken, receiveToken }: TCalculator) {
   const { isMobilePX } = useCommonState();
   const { fromTokenSymbol, fromTokenList, toChainItem, toTokenSymbol } = useDepositState();
-  const [payAmount, setPayAmount] = useState('100');
-  const amountRef = useRef('100');
+  const [payAmount, setPayAmount] = useState(DEFAULT_PAY_AMOUNT);
+  const amountRef = useRef(DEFAULT_PAY_AMOUNT);
   const [receiveAmount, setReceiveAmount] = useState(DEFAULT_AMOUNT);
   const [minReceiveAmount, setMinReceiveAmount] = useState(DEFAULT_AMOUNT);
-  const [isExpand, setIsExpand] = useState(false);
+  const [isExpand, setIsExpand] = useState(true);
 
   const currentToken = useMemo(() => {
     if (Array.isArray(fromTokenList) && fromTokenList.length > 0) {

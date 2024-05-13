@@ -223,21 +223,22 @@ export default function Content() {
     );
     // toToken not exist, toToken = fromToken
     let toSymbol = toTokenSymbol;
+    let toChain = toChainItem;
     if (!isExitToToken) {
       toSymbol = newItem.symbol;
       dispatch(setToTokenSymbol(newItem.symbol));
-      dispatch(setToChainItem(currentFromToken?.toTokenList?.[0]?.chainList?.[0] || CHAIN_LIST[0]));
+      toChain = currentFromToken?.toTokenList?.[0]?.chainList?.[0] || CHAIN_LIST[0];
+      dispatch(setToChainItem(toChain));
       dispatch(setToChainList(currentFromToken?.toTokenList?.[0]?.chainList || []));
     }
     // toToken exist, next check
-    let toChain = toChainItem;
     if (isExitToToken) {
       // Check 2 - toChain
       const isExitToChain = isExitToToken.chainList?.find((item) => item.key === toChainItem.key);
       // toChain not exist, set toChain and toChainList
       if (!isExitToChain) {
         toChain = isExitToToken.chainList?.[0] || CHAIN_LIST[0];
-        dispatch(setToChainItem(isExitToToken.chainList?.[0] || CHAIN_LIST[0]));
+        dispatch(setToChainItem(toChain));
       }
       // toChain exist, set and toChainList
       dispatch(setToChainList(isExitToToken.chainList || []));
