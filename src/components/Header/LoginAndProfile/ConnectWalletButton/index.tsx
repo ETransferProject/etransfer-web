@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import CommonButton, { CommonButtonProps } from 'components/CommonButton';
 import { useCallback } from 'react';
 import { WebLoginState, useWebLogin } from 'aelf-web-login';
-
 import { useQueryAuthToken } from 'hooks/authToken';
 
 export default function ConnectWalletButton(props: CommonButtonProps) {

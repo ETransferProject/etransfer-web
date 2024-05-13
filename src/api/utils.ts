@@ -85,7 +85,7 @@ export const setLocalJWT = (key: string, data: LocalJWTData) => {
   return localStorage.setItem(LocalStorageKey.ACCESS_TOKEN, JSON.stringify({ [key]: localData }));
 };
 
-export const queryAuthApi = async (config: QueryAuthApiExtraRequest) => {
+export const queryAuthApi = async (config: QueryAuthApiExtraRequest, jwtKey?: string) => {
   const data = { ...queryAuthApiBaseConfig, ...config };
   const res = await axios.post<JWTData>(`${ETransferAuthHost}/connect/token`, stringify(data), {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -97,7 +97,7 @@ export const queryAuthApi = async (config: QueryAuthApiExtraRequest) => {
   myEvents.AuthTokenSuccess.emit();
 
   if (localStorage) {
-    setLocalJWT(config.ca_hash + config.managerAddress, res.data);
+    setLocalJWT(jwtKey || config.ca_hash + config.managerAddress, res.data);
   }
 
   return `${token_type} ${access_token}`;
