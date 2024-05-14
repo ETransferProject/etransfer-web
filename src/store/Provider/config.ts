@@ -7,7 +7,6 @@ import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist
 import CommonSlice from 'store/reducers/common/slice';
 import PortkeyWalletSlice from 'store/reducers/portkeyWallet/slice';
 import storage from 'redux-persist/lib/storage';
-import TokenSlice from 'store/reducers/token/slice';
 import UserSlice from 'store/reducers/user/slice';
 import DepositSlice from 'store/reducers/deposit/slice';
 import WithdrawSlice from 'store/reducers/withdraw/slice';
@@ -30,11 +29,6 @@ export const commonPersistConfig = {
 
 export const portkeyWalletPersistConfig = {
   key: PortkeyWalletSlice.name,
-  storage,
-};
-
-export const tokenPersistConfig = {
-  key: TokenSlice.name,
   storage,
 };
 
@@ -62,13 +56,7 @@ const reduxPersistConfig = {
 
   // Optionally, just specify the keys you DO want stored to persistence.
   // An empty array means 'don't store any reducers' -> infinite-red/ignite#409
-  whitelist: [
-    CommonSlice.name,
-    TokenSlice.name,
-    UserSlice.name,
-    DepositSlice.name,
-    WithdrawSlice.name,
-  ],
+  whitelist: [CommonSlice.name, UserSlice.name, DepositSlice.name, WithdrawSlice.name],
   // More info here:  https://shift.infinite.red/shipping-persistant-reducers-7341691232b1
   // transforms: [SetTokenTransform],
 };

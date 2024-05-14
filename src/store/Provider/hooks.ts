@@ -5,7 +5,6 @@ import { emitLoading } from 'utils/events';
 import { LoadingProps } from 'components/Loading';
 import { resetCommon } from 'store/reducers/common/slice';
 import { initUserState } from 'store/reducers/user/slice';
-import { resetTokenState } from 'store/reducers/token/slice';
 import { resetDepositState } from 'store/reducers/deposit/slice';
 import { resetWithdrawState } from 'store/reducers/withdraw/slice';
 import { resetRecordsState } from 'store/reducers/records/slice';
@@ -16,7 +15,6 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export const useCommonState = () => useAppSelector((state) => state.common);
 export const usePortkeyWalletState = () => useAppSelector((state) => state.portkeyWallet);
-export const useTokenState = () => useAppSelector((state) => state.token);
 export const useUserState = () => useAppSelector((state) => state.user);
 export const useDepositState = () => useAppSelector((state) => state.deposit);
 export const useWithdrawState = () => useAppSelector((state) => state.withdraw);
@@ -36,7 +34,6 @@ export const useResetStore = () => {
   return useCallback(() => {
     dispatch(resetCommon());
     dispatch(initUserState());
-    dispatch(resetTokenState());
     dispatch(resetDepositState());
     dispatch(resetWithdrawState());
     dispatch(resetRecordsState());

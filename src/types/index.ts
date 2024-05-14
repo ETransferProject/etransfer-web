@@ -8,13 +8,14 @@ export type TNetworkTypeV2 = NetworkType;
 export type ChainType = 'ELF';
 
 export type EntryConfig = {
-  type: SideMenuKey; // 'Deposit' | 'Withdraw'
-  chainId: SupportedELFChainId;
-  tokenSymbol: string; // only 'USDT'
-  depositFromNetwork: string; // eg: "ETH"
-  withDrawAddress: string;
-  withDrawNetwork: string; // eg: "ETH"
-  withDrawAmount: string; // not decimal
+  type?: SideMenuKey; // 'Deposit' | 'Withdraw'
+  chainId?: SupportedELFChainId;
+  tokenSymbol?: string; // 'USDT'|'SGR'|'ELF' , default = 'USDT'
+  // depositFromNetwork?: string; // eg: "ETH"
+  depositToToken?: string; // 'USDT'|'SGR'|'ELF' , default = 'USDT'
+  withDrawAddress?: string;
+  // withDrawNetwork?: string;
+  withDrawAmount?: string; // not decimal
 };
 
 export type AelfInstancesKey = keyof typeof AElfNodes;

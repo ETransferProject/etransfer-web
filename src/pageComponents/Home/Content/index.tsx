@@ -12,10 +12,11 @@ import { CHAIN_LIST } from 'constants/index';
 import clsx from 'clsx';
 import { getTokenList } from 'utils/api/deposit';
 import { BusinessType } from 'types/api';
-import { setCurrentSymbol, setTokenList } from 'store/reducers/token/slice';
 import { useWithdraw } from 'hooks/withdraw';
 import { resetRecordsState } from 'store/reducers/records/slice';
 import { useWebLoginEvent, WebLoginEvents } from 'aelf-web-login';
+import { setFromTokenSymbol, setToTokenSymbol } from 'store/reducers/deposit/slice';
+import { setCurrentSymbol, setTokenList } from 'store/reducers/withdraw/slice';
 
 export default function Content() {
   const dispatch = useAppDispatch();
@@ -32,8 +33,8 @@ export default function Content() {
       chainId: searchParams.get('chainId'),
       tokenSymbol: searchParams.get('tokenSymbol'),
       depositFromNetwork: searchParams.get('depositFromNetwork'),
+      depositToToken: searchParams.get('depositToToken'),
       withDrawAddress: searchParams.get('withDrawAddress'),
-      withDrawNetwork: searchParams.get('withDrawNetwork'),
       withDrawAmount: searchParams.get('withDrawAmount'),
     }),
     [searchParams],
@@ -46,29 +47,17 @@ export default function Content() {
   const getToken = useCallback(
     async (isInitCurrentSymbol?: boolean) => {
       // Records page not need token
-      if (currentActiveMenuKey !== SideMenuKey.Withdraw) {
-        return;
-      }
+      if (currentActiveMenuKey !== SideMenuKey.Withdraw) return;
 
       const res = await getTokenList({
         type: BusinessType.Withdraw,
         chainId: withdrawCurrentChainItem.key,
       });
 
-      dispatch(
-        setTokenList({
-          key: BusinessType.Withdraw,
-          data: res.tokenList,
-        }),
-      );
+      dispatch(setTokenList(res.tokenList));
 
       if (isInitCurrentSymbol && !withdrawCurrentSymbol) {
-        dispatch(
-          setCurrentSymbol({
-            key: BusinessType.Withdraw,
-            symbol: res.tokenList[0].symbol,
-          }),
-        );
+        dispatch(setCurrentSymbol(res.tokenList[0].symbol));
         return;
       }
     },
@@ -84,16 +73,21 @@ export default function Content() {
       const ChainItemKey = CHAIN_LIST.filter((item) => item.key === routeQuery.chainId);
       setCurrentChainItem(ChainItemKey[0], routeQuery?.type);
     }
-    if (routeQuery.tokenSymbol) {
-      dispatch(
-        setCurrentSymbol({
-          key: activeMenuKey as unknown as BusinessType,
-          symbol: routeQuery.tokenSymbol,
-        }),
-      );
-      getToken(false);
-    } else {
-      getToken(true);
+    if (routeQuery.type === SideMenuKey.Deposit) {
+      if (routeQuery.tokenSymbol) {
+        dispatch(setFromTokenSymbol(routeQuery.tokenSymbol));
+      }
+      if (routeQuery.depositToToken) {
+        dispatch(setToTokenSymbol(routeQuery.depositToToken));
+      }
+    }
+    if (routeQuery.type === SideMenuKey.Withdraw) {
+      if (routeQuery.tokenSymbol) {
+        dispatch(setCurrentSymbol(routeQuery.tokenSymbol));
+        getToken(false);
+      } else {
+        getToken(true);
+      }
     }
     router.push('/');
   }, [
@@ -101,6 +95,7 @@ export default function Content() {
     dispatch,
     getToken,
     routeQuery.chainId,
+    routeQuery.depositToToken,
     routeQuery.tokenSymbol,
     routeQuery.type,
     router,

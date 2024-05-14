@@ -43,6 +43,7 @@ import { ZERO } from 'constants/misc';
 import { ContractType } from 'constants/chain';
 import BigNumber from 'bignumber.js';
 import {
+  InitialWithdrawState,
   setWithdrawAddress,
   setWithdrawCurrentNetwork,
   setWithdrawNetworkList,
@@ -76,7 +77,6 @@ import { getAelfExploreLink } from 'utils/common';
 import { devices, sleep } from '@portkey/utils';
 import { useWithdraw } from 'hooks/withdraw';
 import { QuestionMarkIcon, Fingerprint } from 'assets/images';
-import { InitWithdrawTokenState } from 'store/reducers/token/slice';
 import RemainingQuota from './RemainingQuota';
 // import { getRecordStatus } from 'utils/api/records';
 import { setIsShowRedDot } from 'store/reducers/common/slice';
@@ -174,7 +174,7 @@ export default function WithdrawContent() {
     if (Array.isArray(tokenList) && tokenList.length > 0) {
       return tokenList.find((item) => item.symbol === currentSymbol) as TTokenItem;
     }
-    return InitWithdrawTokenState.tokenList[0];
+    return InitialWithdrawState.tokenList[0];
   }, [currentSymbol, tokenList]);
 
   const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
