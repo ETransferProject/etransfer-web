@@ -129,6 +129,14 @@ function WalletProvider({ children }: { children: React.ReactNode }) {
     onInitWallet();
   }, [onInitWallet, webLoginContext.loginState]);
 
+  const { getAuth } = useQueryAuthToken();
+  useEffect(() => {
+    if (webLoginContext.loginState !== WebLoginState.logined) return;
+    getAuth();
+    // Ignore the impact of the change in getAuth, just watch loginState change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [webLoginContext.loginState]);
+
   const { queryAuth } = useQueryAuthToken();
   const onAuthorizationExpired = useCallback(() => {
     if (webLoginContext.loginState !== WebLoginState.logined) {

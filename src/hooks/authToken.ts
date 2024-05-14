@@ -147,7 +147,7 @@ export function useQueryAuthToken() {
     walletType,
   ]);
 
-  const onAccept = useDebounceCallback(async () => {
+  const getAuth = useDebounceCallback(async () => {
     if (!wallet) return;
     if (loginState !== WebLoginState.logined) return;
     if (eTransferInstance.obtainingSignature) return;
@@ -168,11 +168,11 @@ export function useQueryAuthToken() {
         await queryAuth();
       }
     } catch (error) {
-      console.log('onAccept error:', error);
+      console.log('getAuth error:', error);
     } finally {
       eTransferInstance.setObtainingSignature(false);
     }
   }, [loginState]);
 
-  return { onAccept, queryAuth, loginSuccessActive };
+  return { getAuth, queryAuth, loginSuccessActive };
 }
