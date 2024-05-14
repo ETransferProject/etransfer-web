@@ -1,3 +1,4 @@
+import { resetLocalJWT } from 'api/utils';
 import { SideMenuKey } from 'constants/home';
 import { IChainNameItem } from 'constants/index';
 import { PortkeyVersion } from 'constants/wallet';
@@ -44,5 +45,6 @@ export function useClearStore() {
     dispatch(setDisconnectedAction());
     dispatch(setSwitchVersionAction(undefined));
     resetStore();
+    resetLocalJWT();
   }, [dispatch, resetStore]);
 }
