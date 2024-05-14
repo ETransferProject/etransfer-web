@@ -5,7 +5,7 @@ import { getLocalJWT, queryAuthApi } from 'api/utils';
 import { SupportedChainId, AppName, SupportedELFChainId } from 'constants/index';
 import { PortkeyVersion } from 'constants/wallet';
 import { useCallback } from 'react';
-import { useAppDispatch, useLoading } from 'store/Provider/hooks';
+import { useAppDispatch, useLoading, useUserState } from 'store/Provider/hooks';
 import { setUserInfo } from 'store/reducers/user/slice';
 import AElf from 'aelf-sdk';
 import { pubKeyToAddress, recoverPubKey } from 'utils/aelfBase';
@@ -18,6 +18,7 @@ import { eTransferInstance } from 'utils/etransferInstance';
 export function useQueryAuthToken() {
   const dispatch = useAppDispatch();
   const { loginState, logout, wallet, getSignature, walletType } = useWebLogin();
+  const { userInfo } = useUserState();
   const { setLoading } = useLoading();
 
   const loginSuccessActive = useCallback(() => {
@@ -116,8 +117,7 @@ export function useQueryAuthToken() {
         managerAddress: managerAddress,
         version: PortkeyVersion.v2,
       };
-      const key = `ELF_${wallet.address}_${SupportedChainId.sideChain}`;
-      await queryAuthApi(apiParams, key);
+      await queryAuthApi(apiParams);
       eTransferInstance.setObtainingToken(false);
       dispatch(
         setUserInfo({
@@ -155,7 +155,7 @@ export function useQueryAuthToken() {
       // Mark: only one signature process can be performed at the same time
       eTransferInstance.setObtainingSignature(true);
 
-      const key = `ELF_${wallet.address}_${SupportedChainId.sideChain}`;
+      const key = userInfo.caHash + userInfo.managerAddress;
       const data = getLocalJWT(key);
       // 1: local storage has JWT token
       if (data) {
