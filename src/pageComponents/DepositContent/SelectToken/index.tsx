@@ -41,13 +41,17 @@ export default function SelectToken({
 
   const onSelectToken = useCallback(
     async (item: TDepositTokenItem) => {
+      if (item.symbol === selected?.symbol) {
+        setIsShowTokenSelectDropdown(false);
+        return;
+      }
       onChange?.(item);
       dispatch(setCurrentSymbol({ key: BusinessType.Deposit, symbol: item.symbol }));
       setIsShowTokenSelectDropdown(false);
 
       selectCallback(item);
     },
-    [dispatch, onChange, selectCallback],
+    [dispatch, onChange, selectCallback, selected?.symbol],
   );
 
   useEffect(() => {

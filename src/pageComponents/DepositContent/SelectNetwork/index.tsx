@@ -37,13 +37,17 @@ export default function SelectNetwork({
 
   const onSelectNetwork = useCallback(
     async (item: TNetworkItem) => {
+      if (item.network === selected?.network) {
+        setIsShowNetworkSelectDropdown(false);
+        return;
+      }
       onChange?.(item);
 
       setIsShowNetworkSelectDropdown(false);
 
       await selectCallback(item);
     },
-    [onChange, selectCallback],
+    [onChange, selectCallback, selected?.network],
   );
 
   useEffect(() => {
