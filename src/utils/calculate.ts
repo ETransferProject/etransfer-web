@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import BN, { isBN } from 'bn.js';
 import { isEffectiveNumber, ZERO } from 'constants/misc';
-import { defaultNullValue, TokenType } from 'constants/index';
+import { defaultNullValue } from 'constants/index';
 
 export function timesDecimals(a?: BigNumber.Value, decimals: string | number = 18) {
   if (!a) return ZERO;
@@ -67,28 +67,13 @@ export function valueFixed2LessThanMin(strValue: string, currency?: string): str
  * @param token token type
  * @returns amount value
  */
-export function LargeNumberDisplay(strNumber: string, token: string) {
+export function LargeNumberDisplay(strNumber: string, decimals: number) {
   let valueBigNumber = new BigNumber(strNumber);
   if (valueBigNumber.isNaN()) {
     return defaultNullValue;
   }
 
-  // decimal number usdt 6  sgr 8
-  let decimal = 6;
-
-  switch (token) {
-    case TokenType.SGR:
-      decimal = 8;
-      break;
-    case TokenType.USDT:
-      decimal = 6;
-      break;
-    default:
-      decimal = 6;
-      break;
-  }
-
-  valueBigNumber = valueBigNumber.dp(decimal, BigNumber.ROUND_DOWN);
+  valueBigNumber = valueBigNumber.dp(decimals, BigNumber.ROUND_DOWN);
   return valueBigNumber.toFormat();
 }
 

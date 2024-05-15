@@ -99,13 +99,6 @@
   color: $secondary-text;
 }
 
-.fee-currency {
-  max-width: 60px;
-  margin: 0 4px;
-  display: inline-block;
-  @extend .ellipsis;
-}
-
 .fee-usd-box {
   align-items: end;
   gap: 0px;

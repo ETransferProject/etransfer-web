@@ -81,14 +81,16 @@ export default function Content() {
         dispatch(setToTokenSymbol(routeQuery.depositToToken));
       }
     }
-    if (routeQuery.type === SideMenuKey.Withdraw) {
-      if (routeQuery.tokenSymbol) {
-        dispatch(setCurrentSymbol(routeQuery.tokenSymbol));
-        getToken(false);
-      } else {
-        getToken(true);
-      }
+    if (routeQuery.type === SideMenuKey.Withdraw && routeQuery.tokenSymbol) {
+      dispatch(setCurrentSymbol(routeQuery.tokenSymbol));
     }
+
+    if (routeQuery.tokenSymbol) {
+      getToken(false);
+    } else {
+      getToken(true);
+    }
+
     router.push('/');
   }, [
     activeMenuKey,

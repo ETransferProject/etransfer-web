@@ -219,21 +219,6 @@
     flex: none;
     margin-right: 8px;
   }
-  .transaction-fee-value-data {
-    display: flex;
-    @extend .ellipsis;
-  }
-  .transaction-fee-value-data-default {
-    margin: 0 4px;
-  }
-  .transaction-fee-value-data-unit {
-    max-width: 57px;
-    display: inline-block;
-    @extend .ellipsis;
-    @include media-web {
-      max-width: 60px;
-    }
-  }
   .receive-amount-wrapper {
     .info-value {
       gap: 8px;

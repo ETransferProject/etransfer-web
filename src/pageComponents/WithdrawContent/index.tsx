@@ -87,6 +87,7 @@ import { useCurrentVersion, useSetCurrentChainItem } from 'hooks/common';
 import { AelfExploreType } from 'constants/network';
 import { isELFAddress, removeAddressSuffix, removeELFAddressSuffix } from 'utils/aelfBase';
 import { SideMenuKey } from 'constants/home';
+import TransactionFee from './TransactionFee';
 
 enum ValidateStatus {
   Error = 'error',
@@ -922,32 +923,6 @@ export default function WithdrawContent() {
     };
   }, [init]);
 
-  const renderTransactionFeeValue = () => {
-    if (!withdrawInfo.transactionFee || !withdrawInfo.aelfTransactionFee) {
-      return isTransactionFeeLoading ? <PartialLoading /> : defaultNullValue;
-    } else {
-      return (
-        <>
-          {isTransactionFeeLoading && <PartialLoading />}
-          <span className={styles['transaction-fee-value-data']}>
-            {!isTransactionFeeLoading &&
-              `${(!isSuccessModalOpen && withdrawInfo.transactionFee) || defaultNullValue} `}
-            <span
-              className={clsx(
-                styles['transaction-fee-value-data-default'],
-                styles['transaction-fee-value-data-unit'],
-              )}>
-              {withdrawInfo.transactionUnit}
-            </span>
-            {`+ ${(!isSuccessModalOpen && withdrawInfo.aelfTransactionFee) || defaultNullValue} ${
-              withdrawInfo.aelfTransactionUnit
-            }`}
-          </span>
-        </>
-      );
-    }
-  };
-
   return (
     <>
       <SelectChainWrapper
@@ -1116,7 +1091,14 @@ export default function WithdrawContent() {
                 )}>
                 <div className={styles['info-label']}>Transaction Fee: </div>
                 <div className={clsx('flex-row-center', styles['info-value'])}>
-                  {renderTransactionFeeValue()}
+                  <TransactionFee
+                    isTransactionFeeLoading={isTransactionFeeLoading}
+                    isSuccessModalOpen={isSuccessModalOpen}
+                    transactionFee={withdrawInfo.transactionFee}
+                    transactionUnit={withdrawInfo.transactionUnit}
+                    aelfTransactionFee={withdrawInfo.aelfTransactionFee}
+                    aelfTransactionUnit={withdrawInfo.aelfTransactionUnit}
+                  />
                 </div>
               </div>
               <div className={clsx('flex-column', styles['receive-amount-wrapper'])}>
