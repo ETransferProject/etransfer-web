@@ -340,23 +340,17 @@ export default function Content() {
 
     if (fromNetwork?.network && fromNetworkList && fromNetworkList?.length > 0) {
       fromNetworkRef.current = fromNetwork;
-
-      getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
-    } else {
-      getNetworkData({
-        chainId: toChainItem.key,
-        symbol: fromTokenSymbol,
-      });
     }
+
+    // get new network data, when refresh page and switch side menu
+    await getNetworkData({ chainId: toChainItem.key, symbol: fromTokenSymbol });
   }, [
     fromNetwork,
     fromNetworkList,
     fromTokenSymbol,
-    getDepositData,
     getNetworkData,
     getTokenList,
     toChainItem.key,
-    toTokenSymbol,
   ]);
 
   useEffectOnce(() => {
