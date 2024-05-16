@@ -332,6 +332,8 @@ export default function WithdrawContent() {
         setIsNetworkDisable(false);
         setIsShowNetworkLoading(false);
       } catch (error: any) {
+        console.log('getNetworkData error', error);
+
         setIsShowNetworkLoading(false);
         if (WithdrawAddressErrorCodeList.includes(error?.code)) {
           handleFormValidateDataChange({
@@ -356,9 +358,11 @@ export default function WithdrawContent() {
           setNetworkList([]);
         }
         dispatch(setWithdrawNetworkList([]));
-        setCurrentNetwork(undefined);
-        currentNetworkRef.current = undefined;
-        dispatch(setWithdrawCurrentNetwork(undefined));
+        if (error.name !== CommonErrorNameType.CANCEL && !isAuthTokenError(error)) {
+          setCurrentNetwork(undefined);
+          currentNetworkRef.current = undefined;
+          dispatch(setWithdrawCurrentNetwork(undefined));
+        }
       } finally {
         setIsShowNetworkLoading(false);
       }
@@ -523,8 +527,6 @@ export default function WithdrawContent() {
           caAddress,
         });
         const tempMaxBalance = divDecimals(maxBalance, decimal).toFixed();
-        // setMaxBalance(tempMaxBalance);
-
         setMaxBalance((preMaxBalance) => {
           if (preMaxBalance !== tempMaxBalance) {
             if (handleAmountValidate(undefined, undefined, tempMaxBalance)) {
@@ -561,8 +563,6 @@ export default function WithdrawContent() {
         setLoading(true);
         currentChainItemRef.current = item;
         setCurrentChainItem(item, SideMenuKey.Withdraw);
-        // dispatch(setWithdrawAddress(''));
-        // form.setFieldValue(FormKeys.ADDRESS, '');
         setBalance('');
         form.setFieldValue(FormKeys.AMOUNT, '');
         handleAmountValidate();
@@ -877,7 +877,7 @@ export default function WithdrawContent() {
     getWithdrawData();
   }, [form, getWithdrawData]);
 
-  const init = useCallback(() => {
+  const init = useCallback(async () => {
     form.setFieldValue(FormKeys.ADDRESS, withdraw.address || '');
 
     if (
@@ -890,12 +890,17 @@ export default function WithdrawContent() {
       setNetworkList(withdraw.networkList);
       form.setFieldValue(FormKeys.NETWORK, withdraw.currentNetwork);
 
+      // get new network data, when refresh page and switch side menu
+      await getNetworkData({ symbol: currentSymbol, address: withdraw.address || '' });
+
       getWithdrawData();
     } else {
       handleChainChanged(currentChainItemRef.current);
     }
   }, [
+    currentSymbol,
     form,
+    getNetworkData,
     getWithdrawData,
     handleChainChanged,
     withdraw.address,
