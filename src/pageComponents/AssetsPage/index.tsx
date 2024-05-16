@@ -3,13 +3,20 @@ import { Asset, PortkeyAssetProvider } from '@portkey/did-ui-react';
 import { WalletType, useWebLogin } from 'aelf-web-login';
 import { ChainId } from '@portkey/types';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { LeftOutlined } from '@ant-design/icons';
 import styles from './styles.module.scss';
+import { useClearStore } from 'hooks/common';
 
 export default function MyAsset() {
   const router = useRouter();
   const { wallet, walletType } = useWebLogin();
+  const clearStore = useClearStore();
+
+  const handleDeleteAccount = useCallback(() => {
+    clearStore();
+    localStorage.clear();
+  }, [clearStore]);
 
   useEffect(() => {
     if (walletType !== WalletType.portkey) {
@@ -38,6 +45,7 @@ export default function MyAsset() {
           onLifeCycleChange={(lifeCycle) => {
             console.log(lifeCycle, 'onLifeCycleChange');
           }}
+          onDeleteAccount={handleDeleteAccount}
         />
       </PortkeyAssetProvider>
     </div>
