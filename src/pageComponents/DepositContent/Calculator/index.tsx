@@ -85,22 +85,40 @@ export default function Calculator({ payToken, receiveToken }: TCalculator) {
   }, []);
 
   const onPayChange = useCallback(
-    (e: any) => {
-      const value: string = e.target.value.trim();
-      if (!value) {
-        amountRef.current = value;
+    (event: any) => {
+      const oldValue = amountRef.current;
+      const valueOrigin: string = event.target.value;
+      const newValue = valueOrigin.replace(/[^\d.]/g, '');
+
+      // CHECK1: not empty
+      if (!newValue || newValue === '.') {
+        event.target.value = '';
+        amountRef.current = '';
         setPayAmount('');
         setReceiveAmount(DEFAULT_AMOUNT);
         setMinReceiveAmount(DEFAULT_AMOUNT);
         return;
       }
-      // check decimals
+
+      // CHECK2: comma count
+      const commaCount = newValue?.match(/\./gim)?.length;
+      if (commaCount && commaCount > 1) {
+        event.target.value = oldValue;
+        return;
+      }
+
+      // CHECK3: decimals
       const stringReg = `^[0-9]{1,9}((\\.\\d)|(\\.\\d{0,${currentTokenDecimal}}))?$`;
       const CheckNumberReg = new RegExp(stringReg);
-      if (!CheckNumberReg.exec(value)) return;
 
-      amountRef.current = value;
-      setPayAmount(value);
+      if (!CheckNumberReg.exec(newValue)) {
+        event.target.value = oldValue;
+        return;
+      }
+
+      event.target.value = newValue;
+      amountRef.current = newValue;
+      setPayAmount(newValue);
       // start 15s countdown
       resetTimer();
       // then, get one-time new value
@@ -144,8 +162,7 @@ export default function Calculator({ payToken, receiveToken }: TCalculator) {
             className={styles['pay-input']}
             placeholder="0.00"
             value={payAmount}
-            onChange={onPayChange}
-            type="number"
+            onInput={onPayChange}
           />
           <div className={styles['dividing-line']} />
           <span className={styles['unit']}>{payToken}</span>
