@@ -1,7 +1,7 @@
 import { useMemo, useState, useRef } from 'react';
 import { useCopyToClipboard } from 'react-use';
 import clsx from 'clsx';
-import { Copy as NormalCopy, SmallCopy, Check as NormalCheck, SmallCheck } from 'assets/images';
+import { Copy as CopyNormal, CopySmall, Check as CheckNormal, CheckSmall } from 'assets/images';
 import styles from './styles.module.scss';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
@@ -24,14 +24,15 @@ export default function Copy({
 }) {
   const { isMobilePX } = useCommonState();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setCopyValue] = useCopyToClipboard();
   const [isShowCopyIcon, setIsShowCopyIcon] = useState(false);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const CopyIcon = useMemo(() => (size === CopySize.Small ? SmallCopy : NormalCopy), [size]);
-  const CheckIcon = useMemo(() => (size === CopySize.Small ? SmallCheck : NormalCheck), [size]);
+  const CopyIcon = useMemo(() => (size === CopySize.Small ? CopySmall : CopyNormal), [size]);
+  const CheckIcon = useMemo(() => (size === CopySize.Small ? CheckSmall : CheckNormal), [size]);
 
   const tooltipTitle = useMemo(() => {
     if (isShowCopyIcon || isMobilePX) {

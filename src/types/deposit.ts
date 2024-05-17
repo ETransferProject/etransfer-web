@@ -1,14 +1,14 @@
 import { IChainNameItem } from 'constants/index';
-import { NetworkItem } from './api';
+import { TNetworkItem } from './api';
 
-export type ContractAddress = {
+export type TContractAddress = {
   address: string;
   addressLink: string;
 };
 
-export type WithdrawInfoSuccess = {
+export type TWithdrawInfoSuccess = {
   receiveAmount: string;
-  network: NetworkItem;
+  network: TNetworkItem;
   amount: string;
   symbol: string;
   chainItem: IChainNameItem;

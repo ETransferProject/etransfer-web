@@ -2,21 +2,22 @@ import clsx from 'clsx';
 import CommonModalSwitchDrawer, {
   CommonModalSwitchDrawerProps,
 } from 'components/CommonModalSwitchDrawer';
-import SimpleLoading from 'components/SimpleLoading';
+import PartialLoading from 'components/PartialLoading';
 import { useCommonState } from 'store/Provider/hooks';
-import { FeeItem, NetworkItem } from 'types/api';
+import { TFeeItem, TNetworkItem } from 'types/api';
 import styles from './styles.module.scss';
 import { valueFixed2LessThanMin } from 'utils/calculate';
 import { defaultNullValue } from 'constants/index';
+import { formatSymbolDisplay } from 'utils/format';
 
 export interface DoubleCheckModalProps {
   withdrawInfo: {
     receiveAmount: string;
     address?: string;
-    network?: NetworkItem;
+    network?: TNetworkItem;
     amount: string;
-    transactionFee: FeeItem;
-    aelfTransactionFee: FeeItem;
+    transactionFee: TFeeItem;
+    aelfTransactionFee: TFeeItem;
     symbol: string;
     amountUsd: string;
     receiveAmountUsd: string;
@@ -36,10 +37,10 @@ export default function DoubleCheckModal({
   const renderAmountToBeReceived = () => {
     return (
       <>
-        {isTransactionFeeLoading && <SimpleLoading />}
+        {isTransactionFeeLoading && <PartialLoading />}
         <span className={clsx(styles['receive-amount-center'])}>
           {!isTransactionFeeLoading && `${withdrawInfo.receiveAmount || defaultNullValue} `}
-          {withdrawInfo.symbol}
+          {formatSymbolDisplay(withdrawInfo.symbol)}
         </span>
       </>
     );
@@ -47,11 +48,11 @@ export default function DoubleCheckModal({
 
   const renderTransactionFeeValue = () => {
     if (!withdrawInfo.transactionFee?.amount || !withdrawInfo.aelfTransactionFee?.amount) {
-      return isTransactionFeeLoading ? <SimpleLoading /> : defaultNullValue;
+      return isTransactionFeeLoading ? <PartialLoading /> : defaultNullValue;
     } else {
       return (
         <>
-          {isTransactionFeeLoading && <SimpleLoading />}
+          {isTransactionFeeLoading && <PartialLoading />}
           <div className={clsx('flex')}>
             {!isTransactionFeeLoading && `${withdrawInfo.transactionFee.amount} `}
             <span className={styles['fee-currency']}>
@@ -103,7 +104,9 @@ export default function DoubleCheckModal({
             <div className={styles['value']}>
               <div className={styles['value-content']}>
                 {`${withdrawInfo.amount || defaultNullValue}`}
-                <span className={styles['value-symbol']}>{withdrawInfo.symbol}</span>
+                <span className={styles['value-symbol']}>
+                  {formatSymbolDisplay(withdrawInfo.symbol)}
+                </span>
               </div>
 
               <div className={clsx(styles['amount-usd'])}>

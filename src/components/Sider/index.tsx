@@ -6,7 +6,7 @@ import { store } from 'store/Provider/store';
 import { useCommonState } from 'store/Provider/hooks';
 import { SideMenuKey, MENU_ITEMS } from 'constants/home';
 import styles from './styles.module.scss';
-import SupportEntry from 'pageComponents/SupportEntry';
+import SupportEntry from 'components/Sider/SupportEntry';
 
 export default function Sider() {
   const { activeMenuKey, isShowRedDot } = useCommonState();

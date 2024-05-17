@@ -5,7 +5,7 @@ import styles from '../styles.module.scss';
 import { useCommonState } from 'store/Provider/hooks';
 import CommonModalTips from 'components/CommonModalTips';
 
-export default function RemainingQuota({ title }: { title: string }) {
+export default function RemainingQuota({ content }: { content: string }) {
   const { isMobilePX } = useCommonState();
   const [openModal, setOpenModal] = useState(false);
 
@@ -30,7 +30,7 @@ export default function RemainingQuota({ title }: { title: string }) {
         closable={false}
         okText="OK"
         onOk={handleOk}>
-        <div className="text-center">{title}</div>
+        <div className="text-center">{content}</div>
       </CommonModalTips>
     </>
   );

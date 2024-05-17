@@ -1,0 +1,56 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+@import '/src/assets/theme/breakpoint.scss';
+@import '/src/styles/common.scss';
+
+.deposit-select-network {
+  .select-network-result {
+    gap: 6px;
+    cursor: pointer;
+  }
+
+  .select-network-label {
+    color: $secondary-text;
+    font-size: 12px;
+    line-height: 16px;
+    user-select: none;
+  }
+
+  .select-network-not-selected {
+    gap: 6px;
+    .select-network-value-placeholder {
+      color: $brand;
+      font-size: 12px;
+      line-height: 16px;
+      user-select: none;
+      @extend .font-family-medium;
+    }
+  }
+
+  .select-network-value-selected {
+    gap: 6px;
+    .network-logo {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1px solid $border;
+      font-size: 12px;
+    }
+    .primary {
+      color: $primary-text;
+      font-size: 12px;
+      line-height: 16px;
+      @extend .font-family-medium;
+    }
+    .secondary {
+      color: $secondary-text;
+      font-size: 12px;
+      line-height: 16px;
+    }
+  }
+
+  .deposit-network-select-dropdown {
+    top: 112px;
+    right: 0;
+  }
+}

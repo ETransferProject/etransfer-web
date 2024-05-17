@@ -58,6 +58,7 @@ export interface TRecordsTableListType {
   fromAddress: string;
   fromToAddress: string;
   fromChainId: SupportedELFChainId;
+  toSymbol: string;
   toNetwork: string;
   toFromAddress: string;
   toAddress: string;

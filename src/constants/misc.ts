@@ -15,3 +15,5 @@ export const isEffectiveNumber = (v: any) => {
   const val = new BigNumber(v);
   return !val.isNaN() && !val.lte(0);
 };
+
+export const MAX_UPDATE_TIME = 15;

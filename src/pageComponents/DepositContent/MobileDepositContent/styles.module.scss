@@ -14,16 +14,8 @@
   height: 164px;
 }
 
-.data-wrapper {
-  border: 1px solid $dividers;
-  border-radius: 6px;
-}
-
-.data-divider {
-  margin: 0px 12px;
-  border-top: 1px solid $dividers;
-}
-
-.data-address-wrapper {
+.deposit-address {
   padding: 16px 12px;
+  border-radius: 6px;
+  border: 1px solid $dividers;
 }

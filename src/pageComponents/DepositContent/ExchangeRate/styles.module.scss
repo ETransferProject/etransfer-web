@@ -1,0 +1,19 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+@import '/src/assets/theme/breakpoint.scss';
+@import '/src/styles/common.scss';
+
+.exchange-rate {
+  color: $primary-text;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.value {
+  margin-right: 16px;
+}
+
+.count-time {
+  color: $secondary-text;
+  margin-left: 2px;
+}

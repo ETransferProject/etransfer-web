@@ -37,12 +37,12 @@ export interface IChainNameItem {
 
 export const CHAIN_LIST: IChainNameItem[] = [
   {
-    key: SupportedELFChainId.AELF,
-    label: CHAIN_NAME_ENUM.MainChain,
-  },
-  {
     key: SupportedELFChainId.tDVW,
     label: CHAIN_NAME_ENUM.SideChain,
+  },
+  {
+    key: SupportedELFChainId.AELF,
+    label: CHAIN_NAME_ENUM.MainChain,
   },
 ];
 
@@ -81,17 +81,6 @@ export const WebLoginRequestDefaultsUrlV2 = 'https://aa-portkey-test.portkey.fin
 export const WebLoginServiceUrlV1 = 'https://did-portkey-test.portkey.finance';
 export const WebLoginServiceUrlV2 = 'https://aa-portkey-test.portkey.finance';
 export const WebLoginConnectUrlV2 = 'https://auth-aa-portkey-test.portkey.finance';
-
-// testnet-dev
-// export const ETransferHost = 'https://test.etransfer.exchange';
-// export const ETransferAuthHost = '';
-// export const WebLoginGraphqlUrlV1 = '/v1/graphql';
-// export const WebLoginGraphqlUrlV2 = '/v2/graphql';
-// export const WebLoginRequestDefaultsUrlV1 = 'https://did-portkey-test.portkey.finance';
-// export const WebLoginRequestDefaultsUrlV2 = 'https://aa-portkey-test.portkey.finance';
-// export const WebLoginServiceUrlV1 = '/v1/service';
-// export const WebLoginServiceUrlV2 = '/v2/service';
-// export const WebLoginConnectUrlV2 = '/v2/portkeyConnect';
 
 export const ADDRESS_MAP = {
   [PortkeyVersion.v1]: {

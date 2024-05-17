@@ -1,0 +1,64 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+@import '/src/assets/theme/breakpoint.scss';
+@import '/src/styles/common.scss';
+
+.deposit-select-token {
+  .select-token-result {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: pointer;
+  }
+
+  .select-token-not-selected {
+    gap: 8px;
+    .select-token-value-placeholder {
+      color: $brand;
+      font-size: 18px;
+      line-height: 28px;
+      user-select: none;
+      @extend .font-family-medium;
+    }
+  }
+
+  .select-token-value-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    .select-token-value-selected {
+      .primary {
+        color: $primary-text;
+        font-size: 18px;
+        line-height: 1.5;
+        @extend .font-family-medium;
+        margin-right: 8px;
+      }
+      .secondary {
+        color: $secondary-text;
+        font-size: 14px;
+        line-height: 22px;
+      }
+      .icon {
+        width: 28px;
+        height: 28px;
+        margin-right: 8px;
+      }
+      .default {
+        border-radius: 50%;
+        border: 1px solid $border;
+        text-align: center;
+        line-height: 24px;
+      }
+    }
+  }
+
+  .deposit-token-select-dropdown {
+    top: 112px;
+    right: 0;
+  }
+}

@@ -1,19 +1,25 @@
 import React, { useState } from 'react';
 import { Dropdown, DropdownProps, MenuProps } from 'antd';
-import DownIcon from 'assets/images/down.svg';
+import DynamicArrow, { TDynamicArrowSize } from 'components/DynamicArrow';
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 
 interface CommonDropdownProps extends DropdownProps {
-  handleMenuClick?: (...args: Parameters<Required<MenuProps>['onClick']>) => void;
-  /** use 'handleMenuClick' instead of 'onClick' */
+  childrenClassName?: string;
+  isBorder?: boolean;
   menu?: Omit<MenuProps, 'onClick'>;
   hideDownArrow?: boolean;
+  suffixArrowSize?: TDynamicArrowSize;
+  /** use 'handleMenuClick' instead of 'onClick' */
+  handleMenuClick?: (...args: Parameters<Required<MenuProps>['onClick']>) => void;
 }
 
 export default function CommonDropdown({
+  isBorder = true,
+  childrenClassName,
   handleMenuClick,
   children,
+  suffixArrowSize,
   ...props
 }: CommonDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,13 +37,20 @@ export default function CommonDropdown({
       onOpenChange={(open) => {
         setIsOpen(open);
       }}>
-      <div className={clsx('cursor-pointer', 'flex-row-center', styles['children-container'])}>
+      <div
+        className={clsx(
+          'cursor-pointer',
+          'flex-row-center',
+          styles['children-container'],
+          isBorder && styles['children-container-border'],
+          childrenClassName,
+        )}>
         {children}
         {!props.hideDownArrow && (
-          <DownIcon
-            className={clsx('flex-none', styles['children-icon'], {
-              [styles['children-icon-rotate']]: isOpen,
-            })}
+          <DynamicArrow
+            isExpand={isOpen}
+            className={styles['children-icon']}
+            size={suffixArrowSize}
           />
         )}
       </div>

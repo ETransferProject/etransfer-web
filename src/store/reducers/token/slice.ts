@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BusinessType, TokenItem } from 'types/api';
-import { USDT_DECIMAL } from 'constants/index';
+import { BusinessType, TTokenItem } from 'types/api';
+import { TOKEN_INFO_USDT, TokenType } from 'constants/index';
 
 export type TokenState = {
   [key in BusinessType]: {
-    tokenList: TokenItem[];
+    tokenList: TTokenItem[];
     currentSymbol: string;
   };
 };
@@ -17,16 +17,8 @@ export const InitDepositTokenState = {
 
 // init withdraw USDT
 export const InitWithdrawTokenState = {
-  tokenList: [
-    {
-      name: 'Tether USD',
-      symbol: 'USDT',
-      icon: '',
-      contractAddress: '',
-      decimals: USDT_DECIMAL,
-    },
-  ],
-  currentSymbol: 'USDT',
+  tokenList: [TOKEN_INFO_USDT],
+  currentSymbol: TokenType.USDT,
 };
 
 export const InitialTokenState: TokenState = {
@@ -38,7 +30,7 @@ export const TokenSlice = createSlice({
   name: 'token',
   initialState: InitialTokenState,
   reducers: {
-    setTokenList: (state, action: PayloadAction<{ key: BusinessType; data: TokenItem[] }>) => {
+    setTokenList: (state, action: PayloadAction<{ key: BusinessType; data: TTokenItem[] }>) => {
       if (!state[action.payload.key]) {
         state[action.payload.key] = JSON.parse(
           JSON.stringify(InitialTokenState[action.payload.key]),

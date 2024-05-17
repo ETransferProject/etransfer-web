@@ -4,12 +4,12 @@ import CommonModalSwitchDrawer, {
   CommonModalSwitchDrawerProps,
 } from 'components/CommonModalSwitchDrawer';
 import styles from './styles.module.scss';
-import { WithdrawInfoSuccess } from 'types/deposit';
+import { TWithdrawInfoSuccess } from 'types/deposit';
 import { valueFixed2LessThanMin } from 'utils/calculate';
 import { defaultNullValue } from 'constants/index';
 
 interface SuccessModalProps {
-  withdrawInfo: WithdrawInfoSuccess;
+  withdrawInfo: TWithdrawInfoSuccess;
   modalProps: CommonModalSwitchDrawerProps;
 }
 
