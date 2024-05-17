@@ -227,7 +227,13 @@ export default function Content() {
     if (!isExitToToken) {
       toSymbol = newItem.symbol;
       dispatch(setToTokenSymbol(newItem.symbol));
-      toChain = currentFromToken?.toTokenList?.[0]?.chainList?.[0] || CHAIN_LIST[0];
+      // Check 2 - toChain
+      const isExitToChain = currentFromToken?.toTokenList?.find((item) =>
+        item.chainIdList?.includes(toChainItem.key),
+      );
+      if (!isExitToChain) {
+        toChain = currentFromToken?.toTokenList?.[0]?.chainList?.[0] || CHAIN_LIST[0];
+      }
       dispatch(setToChainItem(toChain));
       dispatch(setToChainList(currentFromToken?.toTokenList?.[0]?.chainList || []));
     }
