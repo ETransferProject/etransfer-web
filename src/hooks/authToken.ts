@@ -1,15 +1,14 @@
-import { GetCAHolderByManagerParams } from '@portkey-v1/services';
+import { GetCAHolderByManagerParams } from '@portkey/services';
 import { Accounts, ChainId } from '@portkey/provider-types';
 import { useWebLogin, WebLoginState, WalletType, PortkeyDid } from 'aelf-web-login';
 import { getLocalJWT, queryAuthApi } from 'api/utils';
 import { SupportedChainId, AppName, SupportedELFChainId } from 'constants/index';
 import { PortkeyVersion } from 'constants/wallet';
 import { useCallback } from 'react';
-import { useAppDispatch, useLoading, useUserActionState } from 'store/Provider/hooks';
-import { setUserInfo } from 'store/reducers/userAction/slice';
-import { recoverPubKey } from 'utils/loginUtils';
+import { useAppDispatch, useLoading, useUserState } from 'store/Provider/hooks';
+import { setUserInfo } from 'store/reducers/user/slice';
 import AElf from 'aelf-sdk';
-import { pubKeyToAddress } from 'utils/aelfUtils';
+import { pubKeyToAddress, recoverPubKey } from 'utils/aelfBase';
 import { setSwitchVersionAction } from 'store/reducers/common/slice';
 import { setV2ConnectedInfoAction } from 'store/reducers/portkeyWallet/actions';
 import { useDebounceCallback } from 'hooks';
@@ -19,8 +18,8 @@ import { eTransferInstance } from 'utils/etransferInstance';
 export function useQueryAuthToken() {
   const dispatch = useAppDispatch();
   const { loginState, logout, wallet, getSignature, walletType } = useWebLogin();
+  const { userInfo } = useUserState();
   const { setLoading } = useLoading();
-  const { userInfo } = useUserActionState();
 
   const loginSuccessActive = useCallback(() => {
     const { name = '', discoverInfo } = wallet;
@@ -148,23 +147,32 @@ export function useQueryAuthToken() {
     walletType,
   ]);
 
-  const onAccept = useDebounceCallback(async () => {
+  const getAuth = useDebounceCallback(async () => {
     if (!wallet) return;
     if (loginState !== WebLoginState.logined) return;
-    // 1 if has logined, get token from local storage
-    const { caHash, managerAddress } = userInfo;
-    const key = caHash + managerAddress;
-    const data = getLocalJWT(key);
-    if (data) {
-      const token_type = data.token_type;
-      const access_token = data.access_token;
-      service.defaults.headers.common['Authorization'] = `${token_type} ${access_token}`;
-      loginSuccessActive();
-      return;
+    if (eTransferInstance.obtainingSignature) return;
+    try {
+      // Mark: only one signature process can be performed at the same time
+      eTransferInstance.setObtainingSignature(true);
+
+      const key = userInfo.caHash + userInfo.managerAddress;
+      const data = getLocalJWT(key);
+      // 1: local storage has JWT token
+      if (data) {
+        const token_type = data.token_type;
+        const access_token = data.access_token;
+        service.defaults.headers.common['Authorization'] = `${token_type} ${access_token}`;
+        loginSuccessActive();
+      } else {
+        // 2: local storage don not has JWT token
+        await queryAuth();
+      }
+    } catch (error) {
+      console.log('getAuth error:', error);
+    } finally {
+      eTransferInstance.setObtainingSignature(false);
     }
-    // 2 if no data -> default queryAuth
-    queryAuth();
   }, [loginState]);
 
-  return { onAccept, queryAuth, loginSuccessActive };
+  return { getAuth, queryAuth, loginSuccessActive };
 }

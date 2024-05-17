@@ -10,35 +10,30 @@ import {
 import { ChainId, SendOptions } from '@portkey/types';
 import { SendOptions as SendOptionsV1 } from '@portkey-v1/types';
 
-export interface IWebLoginArgs {
-  address: string;
-  chainId: string;
-}
-
 export type TCallViewMethod = CallContractHookInterface['callViewMethod'];
 export type TCallSendMethod = CallContractHookInterface['callSendMethod'];
-export type CallContractFunc = any; //WalletHookInterface['callContract'];
-export type GetSignatureFunc = WalletHookInterface['getSignature'];
+export type TCallContractFunc = any; //WalletHookInterface['callContract'];
+export type TGetSignatureFunc = WalletHookInterface['getSignature'];
 export type TSignatureParams = Omit<SignatureParams, 'appName' | 'address'>;
 
-export interface IWallet {
+export type TWallet = {
   walletInfo: WalletInfo;
   walletType: WalletType;
-  callContract: CallContractFunc;
+  callContract: TCallContractFunc;
   getSignature: (params: TSignatureParams) => Promise<SignatureData>;
-  setCallContract: (callContract: CallContractFunc) => void;
-  setGetSignature: (getSignature: GetSignatureFunc) => void;
+  setCallContract: (callContract: TCallContractFunc) => void;
+  setGetSignature: (getSignature: TGetSignatureFunc) => void;
   callSendMethod<T, R>(
     chain: ChainId,
     params: CallContractParams<T>,
     sendOptions?: SendOptions | SendOptionsV1,
   ): Promise<R> | undefined;
   callViewMethod<T, R>(chain: ChainId, params: CallContractParams<T>): Promise<R> | undefined;
-}
+};
 
-export type IWalletProps = {
+export type TWalletProps = {
   walletInfo: WalletInfo;
   walletType: WalletType;
-  callContract: CallContractFunc;
-  getSignature: GetSignatureFunc;
+  callContract: TCallContractFunc;
+  getSignature: TGetSignatureFunc;
 };

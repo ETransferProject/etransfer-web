@@ -20,7 +20,7 @@ import {
 import Wallet from 'contract/webLogin';
 import { useLocation } from 'react-use';
 import { singleMessage } from '@portkey/did-ui-react';
-import { IWallet } from 'contract/types';
+import { TWallet } from 'contract/types';
 import myEvents from 'utils/myEvent';
 import { resetLocalJWT } from 'api/utils';
 import { useQueryAuthToken } from 'hooks/authToken';
@@ -33,7 +33,7 @@ const INITIAL_STATE = {};
 const WalletContext = createContext<any>(INITIAL_STATE);
 
 export type TWalletContextState = {
-  wallet?: IWallet;
+  wallet?: TWallet;
 };
 
 export function useWalletContext(): [TWalletContextState, React.Dispatch<any>] {
@@ -124,11 +124,18 @@ function WalletProvider({ children }: { children: React.ReactNode }) {
   // WebLoginEvents.LOGINED - can not get wallet info.
   // Please use webLoginContext.loginState===WebLoginState.logined
   // useWebLoginEvent(WebLoginEvents.LOGINED, onInitWallet);
-  WebLoginEvents.LOGOUT;
   useEffect(() => {
     if (webLoginContext.loginState !== WebLoginState.logined) return;
     onInitWallet();
   }, [onInitWallet, webLoginContext.loginState]);
+
+  const { getAuth } = useQueryAuthToken();
+  useEffect(() => {
+    if (webLoginContext.loginState !== WebLoginState.logined) return;
+    getAuth();
+    // Ignore the impact of the change in getAuth, just watch loginState change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [webLoginContext.loginState]);
 
   const { queryAuth } = useQueryAuthToken();
   const onAuthorizationExpired = useCallback(() => {

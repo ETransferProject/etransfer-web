@@ -1,10 +1,8 @@
 import axios from 'axios';
 import { BaseConfig, RequestConfig } from './types';
 import { stringify } from 'query-string';
-import { ETransferAuthHost, SupportedELFChainId } from 'constants/index';
+import { ETransferAuthHost } from 'constants/index';
 import { LocalStorageKey } from 'constants/localStorage';
-import getPortkeyWallet from 'wallet/portkeyWallet';
-import AElf from 'aelf-sdk';
 import service from './axios';
 import { PortkeyVersion } from 'constants/wallet';
 import myEvents from 'utils/myEvent';
@@ -103,52 +101,4 @@ export const queryAuthApi = async (config: QueryAuthApiExtraRequest) => {
   }
 
   return `${token_type} ${access_token}`;
-};
-
-// const plainText = `Welcome to ETransfer!
-
-// Click to sign in. This request will not trigger a blockchain transaction or cost any transaction fees.
-
-// Nonce:
-// ${Date.now()}`;
-
-export const queryAuthToken = async ({
-  chainId,
-  version,
-}: {
-  chainId: SupportedELFChainId;
-  version: PortkeyVersion;
-}) => {
-  const portkeyWallet = getPortkeyWallet(version);
-  const managerAddress = await portkeyWallet.getManagerAddress();
-  const caHash = await portkeyWallet.getCaHash();
-
-  const key = caHash + managerAddress;
-  const localData = getLocalJWT(key);
-
-  if (localData) {
-    service.defaults.headers.common[
-      'Authorization'
-    ] = `${localData.token_type} ${localData.access_token}`;
-    return `${localData.token_type} ${localData.access_token}`;
-  }
-
-  const plainText = `Nonce:${Date.now()}`;
-  const plainTextHex = Buffer.from(plainText).toString('hex');
-
-  const { pubKey, signatureStr } = await portkeyWallet.getManagerPublicKey(
-    AElf.utils.sha256(plainTextHex),
-  );
-  if (!pubKey || !signatureStr) return; // TODO
-  if (!caHash) return; // TODO
-
-  return queryAuthApi({
-    pubkey: pubKey,
-    signature: signatureStr,
-    plain_text: plainTextHex,
-    ca_hash: caHash,
-    chain_id: chainId,
-    managerAddress,
-    version: version,
-  });
 };

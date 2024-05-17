@@ -55,7 +55,7 @@ export const PortkeyWalletSlice = createSlice({
         state.v1.name = action.payload.name;
       })
       .addCase(setV1DisconnectedAction, (state) => {
-        state.v1 = { ...initialPortkeyWalletState.v1 };
+        state.v1 = JSON.parse(JSON.stringify(initialPortkeyWalletState.v1));
       })
       .addCase(setV2AccountsAction, (state, action) => {
         state.v2.accounts = action.payload;
@@ -69,9 +69,11 @@ export const PortkeyWalletSlice = createSlice({
         state.v2.name = action.payload.name;
       })
       .addCase(setV2DisconnectedAction, (state) => {
-        state.v2 = { ...initialPortkeyWalletState.v2 };
+        state.v2 = JSON.parse(JSON.stringify(initialPortkeyWalletState.v2));
       })
-      .addCase(setDisconnectedAction, () => ({ ...initialPortkeyWalletState }));
+      .addCase(setDisconnectedAction, () => {
+        return JSON.parse(JSON.stringify(initialPortkeyWalletState));
+      });
   },
 });
 

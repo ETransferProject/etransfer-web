@@ -2,8 +2,12 @@
 @import 'src/assets/theme/font.scss';
 
 .trigger-container {
-  height: 28px;
   padding: 0 8px;
+  cursor: pointer;
+}
+
+.trigger-container-border {
+  height: 28px;
   border: 1px solid $dividers;
   border-radius: 6px;
 }

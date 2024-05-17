@@ -26,8 +26,10 @@ const AuthList = {
 
 const DepositApiList = {
   getTokenList: '/api/etransfer/token/list',
+  getDepositTokenList: '/api/etransfer/token/option',
   getNetworkList: '/api/etransfer/network/list',
   getDepositInfo: '/api/etransfer/deposit/info',
+  depositCalculator: '/api/etransfer/deposit/calculator',
   getWithdrawInfo: '/api/etransfer/withdraw/info',
   createWithdrawOrder: {
     target: '/api/etransfer/withdraw/order',

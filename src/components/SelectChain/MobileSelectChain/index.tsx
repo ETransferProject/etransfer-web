@@ -1,24 +1,32 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
 import CommonDrawer from 'components/CommonDrawer';
-import SmallDownIcon from 'assets/images/smallDown.svg';
-import { CommonSelectChainProps } from '../types';
+import DynamicArrow from 'components/DynamicArrow';
+import { DeviceSelectChainProps } from '../types';
 import styles from './styles.module.scss';
 
 export default function MobileSelectChain({
   title,
+  className,
+  childrenClassName,
   menuItems,
   selectedItem,
+  isBorder = true,
   onClick,
-}: CommonSelectChainProps & { title: string }) {
+}: DeviceSelectChainProps & { title: string }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   return (
     <>
       <div
-        className={clsx('flex-row-center', styles['trigger-container'])}
+        className={clsx(
+          'flex-row-center',
+          styles['trigger-container'],
+          isBorder && styles['trigger-container-border'],
+          className,
+        )}
         onClick={() => setIsDrawerOpen(true)}>
-        <div className={styles['trigger-text']}>{selectedItem?.label}</div>
-        <SmallDownIcon className={clsx('flex-none', styles['children-icon'])} />
+        <div className={clsx(styles['trigger-text'], childrenClassName)}>{selectedItem?.label}</div>
+        <DynamicArrow isExpand={isDrawerOpen} size="Small" className={styles['children-icon']} />
       </div>
       <CommonDrawer title={title} open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
         <div className={clsx('flex-column', styles['drawer-content'])}>

@@ -1,82 +1,45 @@
 import React, { useMemo } from 'react';
 import clsx from 'clsx';
-import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
 import CommonAddress from 'components/CommonAddress';
-import SelectNetwork from 'pageComponents/SelectNetwork';
 import DepositInfo from 'pageComponents/DepositContent/DepositInfo';
 import DepositDescription from 'pageComponents/DepositContent/DepositDescription';
 import styles from './styles.module.scss';
-import { DepositContentProps } from '..';
+import { TDepositContentProps } from '..';
 import CommonQRCode from 'components/CommonQRCode';
 import { DEPOSIT_ADDRESS_LABEL } from 'constants/deposit';
 import CommonImage from 'components/CommonImage';
 import { qrCodePlaceholder } from 'assets/images';
-import { SideMenuKey } from 'constants/home';
 import { DepositRetryForMobile } from 'pageComponents/DepositContent/DepositRetry';
-import SelectToken from 'pageComponents/SelectToken';
+import SelectTokenNetwork from '../SelectTokenNetwork';
+import SelectTokenChain from '../SelectTokenChain';
+import Space from 'components/Space';
+import Calculator from '../Calculator';
+import ExchangeRate from '../ExchangeRate';
+import { useDepositState } from 'store/Provider/hooks';
+import { TokenType } from 'constants/index';
 
 export default function MobileDepositContent({
-  networkList,
+  fromNetworkSelected,
   depositInfo,
   contractAddress,
   contractAddressLink,
   qrCodeValue,
-  networkSelected,
   tokenLogoUrl,
   showRetry = false,
-  isShowLoading = false,
-  currentToken,
-  tokenList,
+  isShowNetworkLoading = false,
+  fromTokenSelected,
+  toTokenSelected,
   onRetry,
-  chainChanged,
-  networkChanged,
-  onTokenChanged,
-}: DepositContentProps) {
-  const renderSelectToken = ({ noBorder }: { noBorder?: boolean } = {}) => {
-    return (
-      <>
-        <SelectToken
-          type={SideMenuKey.Deposit}
-          selected={currentToken}
-          selectCallback={onTokenChanged}
-          tokenList={tokenList}
-          noBorder={noBorder}
-        />
-      </>
-    );
-  };
+  toTokenSelectCallback,
+  toChainChanged,
+  fromNetworkChanged,
+  fromTokenChanged,
+}: TDepositContentProps) {
+  const { fromTokenSymbol, toChainItem, toTokenSymbol } = useDepositState();
 
-  const renderSelectNetwork = ({ noBorder }: { noBorder?: boolean } = {}) => {
+  const renderDepositAddress = useMemo(() => {
     return (
-      <>
-        <SelectNetwork
-          type={SideMenuKey.Deposit}
-          networkList={networkList}
-          selectCallback={networkChanged}
-          selected={networkSelected}
-          noBorder={noBorder}
-          isShowLoading={isShowLoading}
-        />
-      </>
-    );
-  };
-
-  const renderDepositDescription = useMemo(() => {
-    return (
-      Array.isArray(depositInfo?.extraNotes) &&
-      depositInfo?.extraNotes.length > 0 && <DepositDescription list={depositInfo.extraNotes} />
-    );
-  }, [depositInfo.extraNotes]);
-
-  return (
-    <>
-      <SelectChainWrapper
-        className={styles['deposit-select-chain-wrapper']}
-        mobileTitle="Deposit to"
-        mobileLabel="to"
-        chainChanged={chainChanged}
-      />
-      <div className={clsx('flex-column', styles['content-wrapper'])}>
+      <div className={styles['deposit-address']}>
         <div className={clsx('flex-row-content-center', styles['QR-code-wrapper'])}>
           {qrCodeValue ? (
             <CommonQRCode value={qrCodeValue} logoUrl={tokenLogoUrl} />
@@ -88,51 +51,81 @@ export default function MobileDepositContent({
             />
           )}
         </div>
-        {!currentToken && renderSelectToken()}
-
-        {currentToken &&
-          (networkSelected ? (
-            <>
-              <div className={styles['data-wrapper']}>
-                {renderSelectToken({ noBorder: true })}
-                <div className={styles['data-divider']} />
-                {renderSelectNetwork({ noBorder: true })}
-                <div className={styles['data-divider']} />
-                <div className={styles['data-address-wrapper']}>
-                  {showRetry && <DepositRetryForMobile onClick={onRetry} />}
-                  {!showRetry && depositInfo?.depositAddress && (
-                    <CommonAddress
-                      label={DEPOSIT_ADDRESS_LABEL}
-                      value={depositInfo.depositAddress}
-                    />
-                  )}
-                </div>
-              </div>
-              {depositInfo?.depositAddress && (
-                <>
-                  <div className={styles['info-wrapper']}>
-                    <DepositInfo
-                      networkName={networkSelected.name}
-                      minimumDeposit={depositInfo.minAmount}
-                      contractAddress={contractAddress}
-                      contractAddressLink={contractAddressLink}
-                      minAmountUsd={depositInfo.minAmountUsd}
-                    />
-                  </div>
-                  {renderDepositDescription}
-                </>
-              )}
-            </>
-          ) : (
-            <>
-              <div className={styles['data-wrapper']}>
-                {renderSelectToken({ noBorder: true })}
-                <div className={styles['data-divider']} />
-                {renderSelectNetwork({ noBorder: true })}
-              </div>
-            </>
-          ))}
+        <Space direction="vertical" size={16} />
+        {showRetry && <DepositRetryForMobile onClick={onRetry} />}
+        {!showRetry && depositInfo?.depositAddress && (
+          <CommonAddress label={DEPOSIT_ADDRESS_LABEL} value={depositInfo.depositAddress} />
+        )}
       </div>
+    );
+  }, [depositInfo.depositAddress, onRetry, qrCodeValue, showRetry, tokenLogoUrl]);
+
+  const renderDepositDescription = useMemo(() => {
+    return (
+      Array.isArray(depositInfo?.extraNotes) &&
+      depositInfo?.extraNotes.length > 0 && <DepositDescription list={depositInfo.extraNotes} />
+    );
+  }, [depositInfo.extraNotes]);
+
+  return (
+    <>
+      <SelectTokenNetwork
+        label={'From'}
+        tokenSelected={fromTokenSelected}
+        tokenSelectCallback={fromTokenChanged}
+        networkSelected={fromNetworkSelected}
+        isShowNetworkLoading={isShowNetworkLoading}
+        networkSelectCallback={fromNetworkChanged}
+      />
+
+      <Space direction="vertical" size={8} />
+
+      <SelectTokenChain
+        label={'To'}
+        tokenSelected={toTokenSelected}
+        tokenSelectCallback={toTokenSelectCallback}
+        chainChanged={toChainChanged}
+      />
+
+      {fromTokenSymbol && toTokenSymbol && toChainItem.key && fromTokenSymbol !== toTokenSymbol && (
+        <>
+          <Space direction="vertical" size={12} />
+          <ExchangeRate
+            fromSymbol={fromTokenSymbol}
+            toSymbol={toTokenSymbol}
+            toChainId={toChainItem.key}
+            slippage={depositInfo.extraInfo?.slippage}
+          />
+        </>
+      )}
+
+      {fromTokenSymbol !== toTokenSymbol && (
+        <>
+          <Space direction="vertical" size={24} />
+
+          <Calculator payToken={TokenType.USDT} receiveToken={TokenType.SGR} />
+        </>
+      )}
+
+      <Space direction="vertical" size={24} />
+
+      {fromTokenSelected && fromNetworkSelected && renderDepositAddress}
+
+      <Space direction="vertical" size={12} />
+
+      {fromTokenSelected && fromNetworkSelected && depositInfo?.depositAddress && (
+        <>
+          <DepositInfo
+            networkName={fromNetworkSelected.name}
+            minimumDeposit={depositInfo.minAmount}
+            contractAddress={contractAddress}
+            contractAddressLink={contractAddressLink}
+            minAmountUsd={depositInfo.minAmountUsd}
+          />
+          <Space direction="vertical" size={24} />
+          {renderDepositDescription}
+        </>
+      )}
     </>
   );
 }

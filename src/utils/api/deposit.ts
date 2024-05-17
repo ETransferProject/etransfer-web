@@ -1,32 +1,35 @@
-import axios from 'axios';
-import { handleErrorMessage } from '@portkey/did-ui-react';
 import { request } from 'api';
-import { CancelTokenSourceKey, CommonErrorNameType } from 'api/types';
+import { CancelTokenSourceKey } from 'api/types';
 import {
-  CreateWithdrawOrderRequest,
-  CreateWithdrawOrderResult,
-  GetDepositInfoRequest,
-  GetDepositInfoResult,
-  GetNetworkListRequest,
-  GetNetworkListResult,
-  GetTokenListRequest,
-  GetTokenListResult,
-  GetWithdrawInfoRequest,
-  GetWithdrawInfoResult,
+  TCreateWithdrawOrderRequest,
+  TCreateWithdrawOrderResult,
+  TGetDepositCalculateRequest,
+  TGetDepositCalculateResult,
+  TGetDepositInfoRequest,
+  TGetDepositInfoResult,
+  TGetDepositTokenListRequest,
+  TGetDepositTokenListResult,
+  TGetNetworkListRequest,
+  TGetNetworkListResult,
+  TGetTokenListRequest,
+  TGetTokenListResult,
+  TGetWithdrawInfoRequest,
+  TGetWithdrawInfoResult,
 } from 'types/api';
+import { formatApiError } from './error';
 
-export const getTokenList = async (params: GetTokenListRequest): Promise<GetTokenListResult> => {
+export const getTokenList = async (params: TGetTokenListRequest): Promise<TGetTokenListResult> => {
   try {
     const res = await request.deposit.getTokenList({ params });
     return res.data;
   } catch (error) {
-    throw new Error(handleErrorMessage(error, 'getTokenList error'));
+    throw formatApiError(error, 'getTokenList error', false);
   }
 };
 
 export const getNetworkList = async (
-  params: GetNetworkListRequest,
-): Promise<GetNetworkListResult> => {
+  params: TGetNetworkListRequest,
+): Promise<TGetNetworkListResult> => {
   try {
     const res = await request.deposit.getNetworkList({
       params,
@@ -34,19 +37,13 @@ export const getNetworkList = async (
     });
     return res.data;
   } catch (error: any) {
-    const newError: any = new Error(handleErrorMessage(error, 'getNetworkList error'));
-    if (axios.isCancel(error)) {
-      newError.name = CommonErrorNameType.CANCEL;
-    }
-    newError.code = error?.code;
-
-    throw newError;
+    throw formatApiError(error, 'getNetworkList error', true);
   }
 };
 
 export const getDepositInfo = async (
-  params: GetDepositInfoRequest,
-): Promise<GetDepositInfoResult> => {
+  params: TGetDepositInfoRequest,
+): Promise<TGetDepositInfoResult> => {
   try {
     const res = await request.deposit.getDepositInfo({
       params,
@@ -54,19 +51,39 @@ export const getDepositInfo = async (
     });
     return res.data;
   } catch (error: any) {
-    const newError: any = new Error(handleErrorMessage(error, 'getDepositInfo error'));
-    if (axios.isCancel(error)) {
-      newError.name = CommonErrorNameType.CANCEL;
-    }
-    newError.code = error?.code;
+    throw formatApiError(error, 'getDepositInfo error', true);
+  }
+};
 
-    throw newError;
+export const getDepositTokenList = async (
+  params: TGetDepositTokenListRequest,
+): Promise<TGetDepositTokenListResult> => {
+  try {
+    const res = await request.deposit.getDepositTokenList({
+      params,
+    });
+    return res.data;
+  } catch (error: any) {
+    throw formatApiError(error, 'getDepositCalculate error', false);
+  }
+};
+
+export const getDepositCalculate = async (
+  params: TGetDepositCalculateRequest,
+): Promise<TGetDepositCalculateResult> => {
+  try {
+    const res = await request.deposit.depositCalculator({
+      params,
+    });
+    return res.data;
+  } catch (error: any) {
+    throw formatApiError(error, 'getDepositCalculate error', false);
   }
 };
 
 export const getWithdrawInfo = async (
-  params: GetWithdrawInfoRequest,
-): Promise<GetWithdrawInfoResult> => {
+  params: TGetWithdrawInfoRequest,
+): Promise<TGetWithdrawInfoResult> => {
   try {
     const res = await request.deposit.getWithdrawInfo({
       params,
@@ -74,26 +91,17 @@ export const getWithdrawInfo = async (
     });
     return res.data;
   } catch (error: any) {
-    const newError: any = new Error(handleErrorMessage(error, 'getWithdrawInfo error'));
-    if (axios.isCancel(error)) {
-      newError.name = CommonErrorNameType.CANCEL;
-    }
-    newError.code = error?.code;
-
-    throw newError;
+    throw formatApiError(error, 'getWithdrawInfo error', true);
   }
 };
 
 export const createWithdrawOrder = async (
-  params: CreateWithdrawOrderRequest,
-): Promise<CreateWithdrawOrderResult> => {
+  params: TCreateWithdrawOrderRequest,
+): Promise<TCreateWithdrawOrderResult> => {
   try {
     const res = await request.deposit.createWithdrawOrder({ data: params });
     return res.data;
   } catch (error: any) {
-    const newError: any = new Error(handleErrorMessage(error, 'createWithdrawOrder error'));
-
-    newError.code = error?.code;
-    throw newError;
+    throw formatApiError(error, 'createWithdrawOrder error', false);
   }
 };

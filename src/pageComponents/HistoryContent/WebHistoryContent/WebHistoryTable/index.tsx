@@ -9,7 +9,6 @@ import FeeInfo from 'pageComponents/HistoryContent/FeeInfo';
 import EmptyDataBox from 'pageComponents/HistoryContent/EmptyDataBox';
 import StatusBox from 'pageComponents/HistoryContent/StatusBox';
 import ArrivalTimeBox from 'pageComponents/HistoryContent/ArrivalTimeBox';
-import TokenBox from 'pageComponents/HistoryContent/TokenBox';
 import AmountBox from 'pageComponents/HistoryContent/AmountBox';
 import AddressBox from 'pageComponents/HistoryContent/AddressBox';
 
@@ -48,14 +47,6 @@ const columns = [
     },
   },
   {
-    title: 'Token',
-    dataIndex: 'symbol',
-    key: 'symbol',
-    render: (symbol: string) => {
-      return <TokenBox symbol={symbol} />;
-    },
-  },
-  {
     title: 'Amount Sent',
     dataIndex: 'sendingAmount',
     key: 'sendingAmount',
@@ -68,7 +59,14 @@ const columns = [
     dataIndex: 'receivingAmount',
     key: 'receivingAmount',
     render: (receivingAmount: string, record: TRecordsTableListType) => {
-      return <AmountBox amount={receivingAmount} token={record.symbol} status={record.status} />;
+      return (
+        <AmountBox
+          amount={receivingAmount}
+          token={record.toSymbol}
+          status={record.status}
+          fromToken={record.symbol}
+        />
+      );
     },
   },
   {
@@ -144,6 +142,7 @@ export default function WebRecordsTable({ requestRecordsList }: TRecordsContentP
         fromAddress: fromTransfer.fromAddress,
         fromToAddress: fromTransfer.toAddress,
         fromChainId: fromTransfer.chainId,
+        toSymbol: toTransfer.symbol,
         toNetwork: toTransfer.network,
         toFromAddress: toTransfer.fromAddress,
         toAddress: toTransfer.toAddress,

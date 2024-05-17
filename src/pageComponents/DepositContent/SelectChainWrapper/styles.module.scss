@@ -1,0 +1,39 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
+
+.select-chain-wrapper {
+  .select-chain-label {
+    color: $secondary-text;
+    font-size: 12px;
+    line-height: 16px;
+    user-select: none;
+  }
+  .select-chain {
+    color: $primary-text;
+    font-size: 12px;
+    line-height: 16px;
+    @extend .font-family-medium;
+  }
+  .select-chain-container {
+    padding: 0;
+  }
+  .select-chain-content {
+    color: $primary-text;
+    font-size: 12px;
+    line-height: 16px;
+    @extend .font-family-medium;
+    div {
+      font-size: 12px;
+      line-height: 16px;
+      @extend .font-family-medium;
+    }
+    span {
+      margin-left: 6px;
+    }
+  }
+}
+
+.space-6 {
+  width: 6px;
+}

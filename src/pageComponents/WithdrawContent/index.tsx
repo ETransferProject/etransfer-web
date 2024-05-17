@@ -2,54 +2,54 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { Form, Tooltip } from 'antd';
 import clsx from 'clsx';
-import SelectChainWrapper from 'pageComponents/SelectChainWrapper';
+import SelectChainWrapper from 'pageComponents/WithdrawContent/SelectChainWrapper';
 import CommonButton from 'components/CommonButton';
 import FormTextarea from 'components/FormTextarea';
 import CommonLink from 'components/CommonLink';
-import SelectNetwork from 'pageComponents/SelectNetwork';
-import SelectToken from 'pageComponents/SelectToken';
+import SelectToken from './SelectToken';
+import SelectNetwork from './SelectNetwork';
 import DoubleCheckModal from './DoubleCheckModal';
 import SuccessModal from './SuccessModal';
 import FailModal from './FailModal';
 import {
-  NetworkItem,
-  WithdrawInfo,
-  GetNetworkListRequest,
+  TNetworkItem,
+  TWithdrawInfo,
+  TGetNetworkListRequest,
   BusinessType,
-  GetWithdrawInfoRequest,
-  TokenItem,
+  TGetWithdrawInfoRequest,
+  TTokenItem,
   NetworkStatus,
 } from 'types/api';
 import {
   useAppDispatch,
   useCommonState,
   useLoading,
-  useUserActionState,
+  useUserState,
+  useWithdrawState,
 } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { ADDRESS_MAP, CHAIN_LIST, IChainNameItem, defaultNullValue } from 'constants/index';
 import { createWithdrawOrder, getNetworkList, getWithdrawInfo } from 'utils/api/deposit';
 import { CONTRACT_ADDRESS } from 'constants/deposit';
-import { WithdrawInfoSuccess } from 'types/deposit';
+import { TWithdrawInfoSuccess } from 'types/deposit';
 import {
   checkTokenAllowanceAndApprove,
   createTransferTokenTransaction,
   getBalance,
-} from 'utils/aelfUtils';
+} from 'utils/contract';
 import singleMessage from 'components/SingleMessage';
 import { divDecimals, timesDecimals } from 'utils/calculate';
 import { ZERO } from 'constants/misc';
 import { ContractType } from 'constants/chain';
 import BigNumber from 'bignumber.js';
-import { SideMenuKey } from 'constants/home';
 import {
   setWithdrawAddress,
   setWithdrawCurrentNetwork,
   setWithdrawNetworkList,
-} from 'store/reducers/userAction/slice';
+} from 'store/reducers/withdraw/slice';
 import { useDebounceCallback } from 'hooks';
 import { useEffectOnce } from 'react-use';
-import SimpleLoading from 'components/SimpleLoading';
+import PartialLoading from 'components/PartialLoading';
 import {
   AmountGreaterThanBalanceMessage,
   DefaultWithdrawErrorMessage,
@@ -72,15 +72,8 @@ import {
   parseWithCommas,
   parseWithStringCommas,
 } from 'utils/format';
-import {
-  sleep,
-  getExploreLink,
-  removeELFAddressSuffix,
-  isELFAddress,
-  removeAddressSuffix,
-} from 'utils/common';
-import { devices } from '@portkey/utils';
-import { ConnectWalletError } from 'constants/wallet';
+import { getAelfExploreLink } from 'utils/common';
+import { devices, sleep } from '@portkey/utils';
 import { useWithdraw } from 'hooks/withdraw';
 import { QuestionMarkIcon, Fingerprint } from 'assets/images';
 import { InitWithdrawTokenState } from 'store/reducers/token/slice';
@@ -90,6 +83,10 @@ import { setIsShowRedDot } from 'store/reducers/common/slice';
 import { useWalletContext } from 'provider/walletProvider';
 import { isAuthTokenError, isHtmlError } from 'utils/api/error';
 import myEvents from 'utils/myEvent';
+import { useCurrentVersion, useSetCurrentChainItem } from 'hooks/common';
+import { AelfExploreType } from 'constants/network';
+import { isELFAddress, removeAddressSuffix, removeELFAddressSuffix } from 'utils/aelfBase';
+import { SideMenuKey } from 'constants/home';
 
 enum ValidateStatus {
   Error = 'error',
@@ -104,29 +101,30 @@ enum FormKeys {
   AMOUNT = 'amount',
 }
 
-type FormValuesType = {
+type TFormValues = {
   [FormKeys.TOKEN]: string;
   [FormKeys.ADDRESS]: string;
-  [FormKeys.NETWORK]: NetworkItem;
+  [FormKeys.NETWORK]: TNetworkItem;
   [FormKeys.AMOUNT]: string;
 };
 
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const isAndroid = devices.isMobile().android;
-  const { isMobilePX, currentVersion } = useCommonState();
-  const { withdraw, userInfo } = useUserActionState();
-  const currentChainItem = useMemo(() => withdraw.currentChainItem, [withdraw.currentChainItem]);
-  const currentChainItemRef = useRef<IChainNameItem>(currentChainItem || CHAIN_LIST[0]);
+  const { isMobilePX } = useCommonState();
+  const currentVersion = useCurrentVersion();
+  const { userInfo } = useUserState();
+  const withdraw = useWithdrawState();
   const accounts = useAccounts();
-  const { currentSymbol, tokenList } = useWithdraw();
+  const { currentSymbol, tokenList, currentChainItem } = useWithdraw();
+  const currentChainItemRef = useRef<IChainNameItem>(currentChainItem || CHAIN_LIST[0]);
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
-  const [networkList, setNetworkList] = useState<NetworkItem[]>([]);
-  const [currentNetwork, setCurrentNetwork] = useState<NetworkItem>();
-  const currentNetworkRef = useRef<NetworkItem>();
-  const [form] = Form.useForm<FormValuesType>();
-  const [withdrawInfo, setWithdrawInfo] = useState<WithdrawInfo>(InitialWithdrawInfo);
+  const [networkList, setNetworkList] = useState<TNetworkItem[]>([]);
+  const [currentNetwork, setCurrentNetwork] = useState<TNetworkItem>();
+  const currentNetworkRef = useRef<TNetworkItem>();
+  const [form] = Form.useForm<TFormValues>();
+  const [withdrawInfo, setWithdrawInfo] = useState<TWithdrawInfo>(InitialWithdrawInfo);
   const [balance, setBalance] = useState('0');
   const [maxBalance, setMaxBalance] = useState('');
   const [isMaxBalanceLoading, setIsMaxBalanceLoading] = useState(false);
@@ -135,7 +133,7 @@ export default function WithdrawContent() {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isFailModalOpen, setIsFailModalOpen] = useState(false);
   const [failModalReason, setFailModalReason] = useState('');
-  const [withdrawInfoSuccess, setWithdrawInfoSuccess] = useState<WithdrawInfoSuccess>(
+  const [withdrawInfoSuccess, setWithdrawInfoSuccess] = useState<TWithdrawInfoSuccess>(
     InitialWithdrawSuccessCheck,
   );
   const [isNetworkDisable, setIsNetworkDisable] = useState(false);
@@ -174,7 +172,7 @@ export default function WithdrawContent() {
 
   const currentToken = useMemo(() => {
     if (Array.isArray(tokenList) && tokenList.length > 0) {
-      return tokenList.find((item) => item.symbol === currentSymbol) as TokenItem;
+      return tokenList.find((item) => item.symbol === currentSymbol) as TTokenItem;
     }
     return InitWithdrawTokenState.tokenList[0];
   }, [currentSymbol, tokenList]);
@@ -280,10 +278,10 @@ export default function WithdrawContent() {
   }, [currentSymbol, dispatch]);
 
   const getNetworkData = useCallback(
-    async ({ symbol, address }: Omit<GetNetworkListRequest, 'type' | 'chainId'>) => {
+    async ({ symbol, address }: Omit<TGetNetworkListRequest, 'type' | 'chainId'>) => {
       try {
         setIsShowNetworkLoading(true);
-        const params: GetNetworkListRequest = {
+        const params: TGetNetworkListRequest = {
           type: BusinessType.Withdraw,
           chainId: currentChainItemRef.current.key,
           symbol: symbol,
@@ -333,6 +331,8 @@ export default function WithdrawContent() {
         setIsNetworkDisable(false);
         setIsShowNetworkLoading(false);
       } catch (error: any) {
+        console.log('getNetworkData error', error);
+
         setIsShowNetworkLoading(false);
         if (WithdrawAddressErrorCodeList.includes(error?.code)) {
           handleFormValidateDataChange({
@@ -357,9 +357,11 @@ export default function WithdrawContent() {
           setNetworkList([]);
         }
         dispatch(setWithdrawNetworkList([]));
-        setCurrentNetwork(undefined);
-        currentNetworkRef.current = undefined;
-        dispatch(setWithdrawCurrentNetwork(undefined));
+        if (error.name !== CommonErrorNameType.CANCEL && !isAuthTokenError(error)) {
+          setCurrentNetwork(undefined);
+          currentNetworkRef.current = undefined;
+          dispatch(setWithdrawCurrentNetwork(undefined));
+        }
       } finally {
         setIsShowNetworkLoading(false);
       }
@@ -434,11 +436,11 @@ export default function WithdrawContent() {
   );
 
   const getWithdrawData = useCallback(
-    async (item?: TokenItem, newMaxBalance?: string) => {
+    async (item?: TTokenItem, newMaxBalance?: string) => {
       const symbol = item?.symbol || currentSymbol;
       try {
         setIsTransactionFeeLoading(true);
-        const params: GetWithdrawInfoRequest = {
+        const params: TGetWithdrawInfoRequest = {
           chainId: currentChainItemRef.current.key,
           symbol,
           version: currentVersion,
@@ -510,23 +512,20 @@ export default function WithdrawContent() {
 
   const [{ wallet }] = useWalletContext();
   const getMaxBalance = useCallback(
-    async (isLoading: boolean, item?: TokenItem) => {
+    async (isLoading: boolean, item?: TTokenItem) => {
       try {
         const symbol = item?.symbol || currentSymbol;
         const decimal = item?.decimals || currentTokenDecimal;
         const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
-        if (!caAddress || !currentVersion || !wallet) return '';
+        if (!caAddress || !wallet) return '';
         isLoading && setIsMaxBalanceLoading(true);
         const maxBalance = await getBalance({
           wallet,
           symbol: symbol,
           chainId: currentChainItemRef.current.key,
           caAddress,
-          version: currentVersion,
         });
         const tempMaxBalance = divDecimals(maxBalance, decimal).toFixed();
-        // setMaxBalance(tempMaxBalance);
-
         setMaxBalance((preMaxBalance) => {
           if (preMaxBalance !== tempMaxBalance) {
             if (handleAmountValidate(undefined, undefined, tempMaxBalance)) {
@@ -543,19 +542,11 @@ export default function WithdrawContent() {
         isLoading && setIsMaxBalanceLoading(false);
       }
     },
-    [
-      accounts,
-      currentSymbol,
-      currentTokenDecimal,
-      currentVersion,
-      getWithdrawData,
-      handleAmountValidate,
-      wallet,
-    ],
+    [accounts, currentSymbol, currentTokenDecimal, getWithdrawData, handleAmountValidate, wallet],
   );
 
   const getMaxBalanceInterval = useCallback(
-    async (item?: TokenItem) => {
+    async (item?: TTokenItem) => {
       if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
       getMaxBalanceTimerRef.current = setInterval(async () => {
         await getMaxBalance(false, item);
@@ -564,13 +555,13 @@ export default function WithdrawContent() {
     [getMaxBalance],
   );
 
+  const setCurrentChainItem = useSetCurrentChainItem();
   const handleChainChanged = useCallback(
     async (item: IChainNameItem) => {
       try {
         setLoading(true);
         currentChainItemRef.current = item;
-        // dispatch(setWithdrawAddress(''));
-        // form.setFieldValue(FormKeys.ADDRESS, '');
+        setCurrentChainItem(item, SideMenuKey.Withdraw);
         setBalance('');
         form.setFieldValue(FormKeys.AMOUNT, '');
         handleAmountValidate();
@@ -598,6 +589,7 @@ export default function WithdrawContent() {
       getNetworkData,
       getWithdrawData,
       handleAmountValidate,
+      setCurrentChainItem,
       setLoading,
     ],
   );
@@ -625,7 +617,7 @@ export default function WithdrawContent() {
   }, [getWithdrawData, withdrawInfo.expiredTimestamp, currentNetworkRef.current?.network]);
 
   const handleNetworkChanged = useCallback(
-    async (item: NetworkItem) => {
+    async (item: TNetworkItem) => {
       setCurrentNetwork(item);
       currentNetworkRef.current = item;
       dispatch(setWithdrawCurrentNetwork(item));
@@ -638,8 +630,6 @@ export default function WithdrawContent() {
   );
 
   const handleApproveToken = useCallback(async () => {
-    if (!currentVersion) throw new Error(ConnectWalletError);
-
     const newMaxBalance = await getMaxBalance(false);
     if (ZERO.plus(newMaxBalance).isLessThan(ZERO.plus(balance))) {
       const error = new Error(
@@ -658,19 +648,10 @@ export default function WithdrawContent() {
       address: ownerAddress,
       approveTargetAddress: currentTokenAddress,
       amount: balance,
-      version: currentVersion,
     });
 
     return checkRes;
-  }, [
-    accounts,
-    balance,
-    currentSymbol,
-    currentTokenAddress,
-    currentVersion,
-    getMaxBalance,
-    wallet,
-  ]);
+  }, [accounts, balance, currentSymbol, currentTokenAddress, getMaxBalance, wallet]);
 
   const fetchRecordStatus = useCallback(async () => {
     // const res = await getRecordStatus();
@@ -737,7 +718,6 @@ export default function WithdrawContent() {
 
   const sendTransferTokenTransaction = useDebounceCallback(async () => {
     try {
-      if (!currentVersion) throw new Error(ConnectWalletError);
       setLoading(true, { text: 'Please approve the transaction in the wallet...' });
       const address = form.getFieldValue(FormKeys.ADDRESS);
       if (!address) throw new Error('Please enter a correct address.');
@@ -756,7 +736,6 @@ export default function WithdrawContent() {
           symbol: currentSymbol,
           amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
           chainId: currentChainItemRef.current.key,
-          version: currentVersion,
           fromManagerAddress: userInfo.managerAddress,
         });
         console.log(transaction, '=====transaction');
@@ -839,7 +818,7 @@ export default function WithdrawContent() {
     handleFormValidateDataChange,
   ]);
 
-  const handleTokenChange = async (item: TokenItem) => {
+  const handleTokenChange = async (item: TTokenItem) => {
     // when network failed, transactionUnit should show as symbol
     setWithdrawInfo({
       ...withdrawInfo,
@@ -897,7 +876,7 @@ export default function WithdrawContent() {
     getWithdrawData();
   }, [form, getWithdrawData]);
 
-  const init = useCallback(() => {
+  const init = useCallback(async () => {
     form.setFieldValue(FormKeys.ADDRESS, withdraw.address || '');
 
     if (
@@ -910,12 +889,17 @@ export default function WithdrawContent() {
       setNetworkList(withdraw.networkList);
       form.setFieldValue(FormKeys.NETWORK, withdraw.currentNetwork);
 
+      // get new network data, when refresh page and switch side menu
+      await getNetworkData({ symbol: currentSymbol, address: withdraw.address || '' });
+
       getWithdrawData();
     } else {
       handleChainChanged(currentChainItemRef.current);
     }
   }, [
+    currentSymbol,
     form,
+    getNetworkData,
     getWithdrawData,
     handleChainChanged,
     withdraw.address,
@@ -945,11 +929,11 @@ export default function WithdrawContent() {
 
   const renderTransactionFeeValue = () => {
     if (!withdrawInfo.transactionFee || !withdrawInfo.aelfTransactionFee) {
-      return isTransactionFeeLoading ? <SimpleLoading /> : defaultNullValue;
+      return isTransactionFeeLoading ? <PartialLoading /> : defaultNullValue;
     } else {
       return (
         <>
-          {isTransactionFeeLoading && <SimpleLoading />}
+          {isTransactionFeeLoading && <PartialLoading />}
           <span className={styles['transaction-fee-value-data']}>
             {!isTransactionFeeLoading &&
               `${(!isSuccessModalOpen && withdrawInfo.transactionFee) || defaultNullValue} `}
@@ -987,8 +971,6 @@ export default function WithdrawContent() {
               validateStatus={formValidateData[FormKeys.TOKEN].validateStatus}
               help={formValidateData[FormKeys.TOKEN].errorMessage}>
               <SelectToken
-                isFormItemStyle
-                type={SideMenuKey.Withdraw}
                 selected={currentToken}
                 selectCallback={handleTokenChange}
                 tokenList={tokenList}
@@ -1019,8 +1001,6 @@ export default function WithdrawContent() {
               validateStatus={formValidateData[FormKeys.NETWORK].validateStatus}
               help={formValidateData[FormKeys.NETWORK].errorMessage}>
               <SelectNetwork
-                isFormItemStyle
-                type={SideMenuKey.Withdraw}
                 networkList={networkList}
                 selected={currentNetwork}
                 isDisabled={isNetworkDisable}
@@ -1116,7 +1096,7 @@ export default function WithdrawContent() {
             <div className={styles['info-label']}>Balance</div>
             <div className={styles['info-value']}>
               {!maxBalance || isMaxBalanceLoading ? (
-                <SimpleLoading />
+                <PartialLoading />
               ) : (
                 `${maxBalance} ${withdrawInfo.transactionUnit}`
               )}
@@ -1152,7 +1132,7 @@ export default function WithdrawContent() {
                     styles['info-value'],
                     styles['info-value-big-font'],
                   )}>
-                  {isTransactionFeeLoading && <SimpleLoading />}
+                  {isTransactionFeeLoading && <PartialLoading />}
                   {!isTransactionFeeLoading &&
                     `${(!isSuccessModalOpen && receiveAmount) || defaultNullValue} `}
                   <span className={clsx(styles['info-unit'])}>{withdrawInfo.transactionUnit}</span>
@@ -1211,9 +1191,9 @@ export default function WithdrawContent() {
           onClose: clickSuccessOk,
           onOk: clickSuccessOk,
           footerSlot: CommonLink({
-            href: getExploreLink(
+            href: getAelfExploreLink(
               withdrawInfoSuccess.transactionId,
-              'transaction',
+              AelfExploreType.transaction,
               currentChainItemRef.current.key,
             ),
             isTagA: true,

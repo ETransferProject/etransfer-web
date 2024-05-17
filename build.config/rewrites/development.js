@@ -26,14 +26,6 @@ module.exports = [
     source: '/connect/:path*',
     destination: `${AuthHost}/connect/:path*`,
   },
-  // {
-  //   source: '/portkeyV1/api/:path*',
-  //   destination: `${ApiHostV1}/api/:path*`,
-  // },
-  // {
-  //   source: '/portkeyV2/api/:path*',
-  //   destination: `${ApiHostV2}/api/:path*`,
-  // },
   {
     source: '/v1/graphql/:path*',
     destination: `${GraphqlHostV1}/graphql/:path*`,

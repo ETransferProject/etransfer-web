@@ -56,7 +56,7 @@ export const RecordsSlice = createSlice({
     setHasMore: (state, action) => {
       state.hasMore = action.payload;
     },
-    setHandleReset: () => {
+    resetRecordsState: () => {
       return initialRecordState;
     },
   },
@@ -72,7 +72,7 @@ export const {
   setMaxResultCount,
   setSearch,
   setHasMore,
-  setHandleReset,
+  resetRecordsState,
 } = RecordsSlice.actions;
 
 export default RecordsSlice;

@@ -29,3 +29,15 @@ export enum ExploreUrlType {
   BSC = 'https://bscscan.com',
   AVAXC = 'https://subnets.avax.network/c-chain',
 }
+
+export enum AelfExploreType {
+  transaction = 'transaction',
+  token = 'token',
+  address = 'address',
+  block = 'block',
+}
+
+export enum OtherExploreType {
+  transaction = 'transaction',
+  address = 'address',
+}

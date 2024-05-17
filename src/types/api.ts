@@ -2,22 +2,23 @@ import { ChainId } from '@portkey/provider-types';
 import { PortkeyVersion } from 'constants/wallet';
 import { TFromTransfer, TToTransfer } from './records';
 import type { Moment } from 'moment';
+import { IChainNameItem } from 'constants/index';
 
 export enum BusinessType {
   Deposit = 'Deposit',
   Withdraw = 'Withdraw',
 }
 
-export type GetTokenListRequest = {
+export type TGetTokenListRequest = {
   type: BusinessType;
   chainId: ChainId;
 };
 
-export type GetTokenListResult = {
-  tokenList: TokenItem[];
+export type TGetTokenListResult = {
+  tokenList: TTokenItem[];
 };
 
-export type TokenItem = {
+export type TTokenItem = {
   name: string;
   symbol: string;
   icon: string;
@@ -25,18 +26,35 @@ export type TokenItem = {
   decimals: number;
 };
 
-export type GetNetworkListRequest = {
+export type TGetDepositTokenListRequest = {
+  type: BusinessType;
+};
+
+export type TGetDepositTokenListResult = {
+  tokenList: TDepositTokenItem[];
+};
+
+export type TDepositTokenItem = TTokenItem & {
+  toTokenList?: TToTokenItem[];
+};
+
+export type TToTokenItem = TTokenItem & {
+  chainIdList?: ChainId[];
+  chainList?: IChainNameItem[];
+};
+
+export type TGetNetworkListRequest = {
   type: BusinessType;
   chainId: ChainId;
   symbol?: string;
   address?: string;
 };
 
-export type GetNetworkListResult = {
-  networkList: NetworkItem[];
+export type TGetNetworkListResult = {
+  networkList: TNetworkItem[];
 };
 
-export type NetworkItem = {
+export type TNetworkItem = {
   network: string;
   name: string;
   multiConfirm: string;
@@ -54,24 +72,49 @@ export enum NetworkStatus {
   Offline = 'Offline',
 }
 
-export type GetDepositInfoRequest = {
+export type TGetDepositInfoRequest = {
   chainId: ChainId;
   network: string;
   symbol?: string;
+  toSymbol?: string;
 };
 
-export type GetDepositInfoResult = {
-  depositInfo: DepositInfo;
+export type TGetDepositInfoResult = {
+  depositInfo: TDepositInfo;
 };
 
-export type DepositInfo = {
+export type TDepositInfo = {
   depositAddress: string;
   minAmount: string;
   extraNotes?: string[];
   minAmountUsd: string;
+  extraInfo?: TDepositExtraInfo;
 };
 
-export type GetWithdrawInfoRequest = {
+export type TDepositExtraInfo = {
+  slippage: string;
+};
+
+export type TGetDepositCalculateRequest = {
+  toChainId: ChainId;
+  fromSymbol: string;
+  toSymbol: string;
+  fromAmount: string;
+};
+
+export type TGetDepositCalculateResult = {
+  conversionRate: TConversionRate;
+};
+
+export type TConversionRate = {
+  fromSymbol: string;
+  toSymbol: string;
+  fromAmount: string;
+  toAmount: string;
+  minimumReceiveAmount: string;
+};
+
+export type TGetWithdrawInfoRequest = {
   chainId: ChainId;
   network?: string;
   symbol?: string;
@@ -80,11 +123,11 @@ export type GetWithdrawInfoRequest = {
   version?: PortkeyVersion;
 };
 
-export type GetWithdrawInfoResult = {
-  withdrawInfo: WithdrawInfo;
+export type TGetWithdrawInfoResult = {
+  withdrawInfo: TWithdrawInfo;
 };
 
-export type WithdrawInfo = {
+export type TWithdrawInfo = {
   maxAmount: string;
   minAmount: string;
   limitCurrency: string;
@@ -101,24 +144,24 @@ export type WithdrawInfo = {
   /** aelf */
   aelfTransactionUnit: string;
   receiveAmount: string;
-  feeList: FeeItem[];
+  feeList: TFeeItem[];
   receiveAmountUsd: string;
   amountUsd: string;
   feeUsd: string;
 };
 
-export type FeeItem = {
+export type TFeeItem = {
   name: string;
   currency: string;
   amount: string;
 };
 
-export type FeeInfoItem = {
+export type TFeeInfoItem = {
   amount: string;
   unit: string;
 };
 
-export type CreateWithdrawOrderRequest = {
+export type TCreateWithdrawOrderRequest = {
   network: string;
   symbol: string;
   amount: string;
@@ -127,7 +170,7 @@ export type CreateWithdrawOrderRequest = {
   rawTransaction: string;
 };
 
-export type CreateWithdrawOrderResult = {
+export type TCreateWithdrawOrderResult = {
   orderId: string;
   transactionId: string;
 };

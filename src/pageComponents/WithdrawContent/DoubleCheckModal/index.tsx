@@ -2,9 +2,9 @@ import clsx from 'clsx';
 import CommonModalSwitchDrawer, {
   CommonModalSwitchDrawerProps,
 } from 'components/CommonModalSwitchDrawer';
-import SimpleLoading from 'components/SimpleLoading';
+import PartialLoading from 'components/PartialLoading';
 import { useCommonState } from 'store/Provider/hooks';
-import { FeeItem, NetworkItem } from 'types/api';
+import { TFeeItem, TNetworkItem } from 'types/api';
 import styles from './styles.module.scss';
 import { valueFixed2LessThanMin } from 'utils/calculate';
 import { defaultNullValue } from 'constants/index';
@@ -14,10 +14,10 @@ export interface DoubleCheckModalProps {
   withdrawInfo: {
     receiveAmount: string;
     address?: string;
-    network?: NetworkItem;
+    network?: TNetworkItem;
     amount: string;
-    transactionFee: FeeItem;
-    aelfTransactionFee: FeeItem;
+    transactionFee: TFeeItem;
+    aelfTransactionFee: TFeeItem;
     symbol: string;
     amountUsd: string;
     receiveAmountUsd: string;
@@ -37,7 +37,7 @@ export default function DoubleCheckModal({
   const renderAmountToBeReceived = () => {
     return (
       <>
-        {isTransactionFeeLoading && <SimpleLoading />}
+        {isTransactionFeeLoading && <PartialLoading />}
         <span className={clsx(styles['receive-amount-center'])}>
           {!isTransactionFeeLoading && `${withdrawInfo.receiveAmount || defaultNullValue} `}
           {formatSymbolDisplay(withdrawInfo.symbol)}
@@ -48,11 +48,11 @@ export default function DoubleCheckModal({
 
   const renderTransactionFeeValue = () => {
     if (!withdrawInfo.transactionFee?.amount || !withdrawInfo.aelfTransactionFee?.amount) {
-      return isTransactionFeeLoading ? <SimpleLoading /> : defaultNullValue;
+      return isTransactionFeeLoading ? <PartialLoading /> : defaultNullValue;
     } else {
       return (
         <>
-          {isTransactionFeeLoading && <SimpleLoading />}
+          {isTransactionFeeLoading && <PartialLoading />}
           <div className={clsx('flex')}>
             {!isTransactionFeeLoading && `${withdrawInfo.transactionFee.amount} `}
             <span className={styles['fee-currency']}>

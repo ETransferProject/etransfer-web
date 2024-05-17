@@ -1,34 +1,23 @@
-import { ChainId } from 'types';
 import { EXPLORE_CONFIG, SupportedELFChainId } from 'constants/index';
-import { ExploreUrlType } from 'constants/network';
-import AElf from 'aelf-sdk';
-import { ChainType } from '@portkey/types';
+import { AelfExploreType, ExploreUrlType, OtherExploreType } from 'constants/network';
 
-export const sleep = (time: number) => {
-  return new Promise<void>((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, time);
-  });
-};
-
-export function getExploreLink(
+export function getAelfExploreLink(
   data: string,
-  type: 'transaction' | 'token' | 'address' | 'block',
-  chainId: ChainId,
+  type: AelfExploreType,
+  chainId: SupportedELFChainId,
 ): string {
   const prefix = EXPLORE_CONFIG[chainId];
   switch (type) {
-    case 'transaction': {
+    case AelfExploreType.transaction: {
       return `${prefix}tx/${data}`;
     }
-    case 'token': {
+    case AelfExploreType.token: {
       return `${prefix}token/${data}`;
     }
-    case 'block': {
+    case AelfExploreType.block: {
       return `${prefix}block/${data}`;
     }
-    case 'address':
+    case AelfExploreType.address:
     default: {
       return `${prefix}address/${data}`;
     }
@@ -37,18 +26,18 @@ export function getExploreLink(
 
 export function getOtherExploreLink(
   data: string,
+  type: OtherExploreType,
   network: keyof typeof ExploreUrlType,
-  type: 'transaction' | 'address',
 ): string {
   const prefix = ExploreUrlType[network];
   switch (type) {
-    case 'transaction': {
+    case OtherExploreType.transaction: {
       if (network === 'TRX') {
         return `${prefix}/#/transaction/${data}`;
       }
       return `${prefix}/tx/${data}`;
     }
-    case 'address':
+    case OtherExploreType.address:
     default: {
       if (network === 'TRX') {
         return `${prefix}/#/address/${data}`;
@@ -56,59 +45,6 @@ export function getOtherExploreLink(
       return `${prefix}/address/${data}`;
     }
   }
-}
-
-export const isELFAddress = (value: string) => {
-  if (/[\u4e00-\u9fa5]/.test(value)) return false;
-  try {
-    return !!AElf.utils.decodeAddressRep(value);
-  } catch {
-    return false;
-  }
-};
-
-export const removeAddressSuffix = (address: string) => {
-  const arr = address.split('_');
-  if (arr.length === 3) return arr[1];
-
-  return address;
-};
-
-export const removeELFAddressSuffix = (address: string) => {
-  if (isELFAddress(address)) return removeAddressSuffix(address);
-
-  return address;
-};
-
-/**
- * format address like "aaa...bbb" to "ELF_aaa...bbb_AELF"
- * @param address
- * @param chainId
- * @param chainType
- * @returns
- */
-export const addressFormat = (
-  address: string,
-  chainId: SupportedELFChainId = SupportedELFChainId.AELF,
-  chainType: ChainType = 'aelf',
-): string => {
-  if (chainType !== 'aelf') return address;
-  const arr = address.split('_');
-  if (address.includes('_') && arr.length < 3) return address;
-  if (address.includes('_')) return `ELF_${arr[1]}_${chainId}`;
-  return `ELF_${address}_${chainId}`;
-};
-
-export function shortenAddress(address: string | null, chars = 4, end = 42): string {
-  const parsed = address;
-  if (!parsed) throw Error(`Invalid 'address' parameter '${address}'.`);
-  return `${parsed.substring(0, chars + 2)}...${parsed.substring(end - chars)}`;
-}
-
-export function shortenString(address: string | null, chars = 10): string {
-  const parsed = address;
-  if (!parsed) return '';
-  return `${parsed.substring(0, chars)}...${parsed.substring(parsed.length - chars)}`;
 }
 
 export function openWithBlank(url: string): void {

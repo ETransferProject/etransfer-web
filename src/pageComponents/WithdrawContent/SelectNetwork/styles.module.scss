@@ -1,0 +1,60 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+@import '/src/assets/theme/breakpoint.scss';
+@import '/src/styles/common.scss';
+
+.withdraw-select-network {
+  position: relative;
+  .select-network-result {
+    display: flex;
+    padding: 24px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 8px;
+    border-radius: 6px;
+    border: 1px solid $dividers;
+    cursor: pointer;
+
+    @include media-mobile-and-pad {
+      padding: 16px 12px;
+    }
+
+    &.select-network-result-form-item {
+      @extend .form-item-wrapper;
+      .select-network-value-row .select-network-value .select-network-value-placeholder {
+        color: $disable-text;
+      }
+    }
+
+    .select-network-value-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      @extend .font-family-medium;
+      .select-network-value {
+        .select-network-value-selected {
+          .primary {
+            color: $primary-text;
+            font-size: 16px;
+            line-height: 1.5;
+            @extend .font-family-medium;
+            margin-right: 8px;
+          }
+          .secondary {
+            color: $secondary-text;
+            font-size: 14px;
+            line-height: 22px;
+          }
+        }
+        .select-network-value-placeholder {
+          color: $disable-text;
+          font-size: 16px;
+          line-height: 1.5;
+          user-select: none;
+        }
+      }
+    }
+  }
+}

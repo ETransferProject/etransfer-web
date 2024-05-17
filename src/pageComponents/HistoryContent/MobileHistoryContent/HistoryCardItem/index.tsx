@@ -7,7 +7,6 @@ import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import FeeInfo from 'pageComponents/HistoryContent/FeeInfo';
 import StatusBox from 'pageComponents/HistoryContent/StatusBox';
 import ArrivalTimeBox from 'pageComponents/HistoryContent/ArrivalTimeBox';
-import TokenBox from 'pageComponents/HistoryContent/TokenBox';
 import AmountBox from 'pageComponents/HistoryContent/AmountBox';
 import AddressBox from 'pageComponents/HistoryContent/AddressBox';
 import { TRecordsContentParams } from 'types/api';
@@ -42,6 +41,7 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsContentP
         fromAddress: fromTransfer.fromAddress,
         fromToAddress: fromTransfer.toAddress,
         fromChainId: fromTransfer.chainId,
+        toSymbol: toTransfer.symbol,
         toNetwork: toTransfer.network,
         toFromAddress: toTransfer.fromAddress,
         toAddress: toTransfer.toAddress,
@@ -101,10 +101,6 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsContentP
                 <ArrivalTimeBox arrivalTime={recordItem.arrivalTime} status={recordItem.status} />
               </div>
               <div className={styles['records-card-item-line']}>
-                <span className={styles['records-card-item-label']}>Token</span>
-                <TokenBox symbol={recordItem.symbol} />
-              </div>
-              <div className={styles['records-card-item-line']}>
                 <span className={styles['records-card-item-label']}>Amount Sent</span>
                 <AmountBox amount={recordItem.sendingAmount} token={recordItem.symbol} />
               </div>
@@ -112,7 +108,8 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsContentP
                 <span className={styles['records-card-item-label']}>Amount Received</span>
                 <AmountBox
                   amount={recordItem.receivingAmount}
-                  token={recordItem.symbol}
+                  token={recordItem.toSymbol}
+                  fromToken={recordItem.symbol}
                   status={recordItem.status}
                 />
               </div>

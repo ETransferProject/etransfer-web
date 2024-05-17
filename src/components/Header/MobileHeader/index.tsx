@@ -2,7 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { useCommonState } from 'store/Provider/hooks';
 import SelectMenu from 'components/Header/SelectMenu';
-import SelectWallet from 'pageComponents/SelectWallet';
+import LoginAndProfileEntry from 'components/Header/LoginAndProfile';
 import styles from './styles.module.scss';
 import { SideMenuKey } from 'constants/home';
 import { useIsActive } from 'hooks/portkeyWallet';
@@ -22,7 +22,7 @@ export default function MobileHeader() {
         {activeMenuKey === SideMenuKey.Withdraw && 'Withdraw Assets'}
         {activeMenuKey === SideMenuKey.History && 'History'}
       </span>
-      <SelectWallet />
+      <LoginAndProfileEntry />
     </div>
   );
 }
