@@ -8,7 +8,6 @@ import styles from './styles.module.scss';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey, setIsShowRedDot } from 'store/reducers/common/slice';
 import { useSetCurrentChainItem } from 'hooks/common';
-import { CHAIN_LIST } from 'constants/index';
 import clsx from 'clsx';
 import { getTokenList } from 'utils/api/deposit';
 import { BusinessType } from 'types/api';
@@ -30,12 +29,6 @@ export default function Content() {
   const routeQuery = useMemo(
     () => ({
       type: searchParams.get('type') as SideMenuKey,
-      chainId: searchParams.get('chainId'),
-      tokenSymbol: searchParams.get('tokenSymbol'),
-      depositFromNetwork: searchParams.get('depositFromNetwork'),
-      withDrawAddress: searchParams.get('withDrawAddress'),
-      withDrawNetwork: searchParams.get('withDrawNetwork'),
-      withDrawAmount: searchParams.get('withDrawAmount'),
     }),
     [searchParams],
   );
@@ -81,32 +74,11 @@ export default function Content() {
     if (routeQuery.type) {
       dispatch(setActiveMenuKey(routeQuery.type));
     }
-    if (routeQuery.chainId) {
-      const ChainItemKey = CHAIN_LIST.filter((item) => item.key === routeQuery.chainId);
-      setCurrentChainItem(ChainItemKey[0], routeQuery?.type);
-    }
-    if (routeQuery.tokenSymbol) {
-      dispatch(
-        setCurrentSymbol({
-          key: activeMenuKey as unknown as BusinessType,
-          symbol: routeQuery.tokenSymbol,
-        }),
-      );
-      getToken(false);
-    } else {
-      getToken(true);
-    }
+
+    getToken(true);
+
     router.push('/');
-  }, [
-    activeMenuKey,
-    dispatch,
-    getToken,
-    routeQuery.chainId,
-    routeQuery.tokenSymbol,
-    routeQuery.type,
-    router,
-    setCurrentChainItem,
-  ]);
+  }, [dispatch, getToken, routeQuery.type, router, setCurrentChainItem]);
 
   const updateRecordStatus = useCallback(async () => {
     try {

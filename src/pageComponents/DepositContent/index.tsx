@@ -33,6 +33,7 @@ import { isAuthTokenError } from 'utils/api/error';
 import { useSetCurrentChainItem } from 'hooks/common';
 import { SideMenuKey } from 'constants/home';
 import { ChainId } from '@portkey/provider-types';
+import { useSearchParams } from 'next/navigation';
 
 export type TDepositContentProps = {
   fromNetworkSelected?: TNetworkItem;
@@ -84,64 +85,65 @@ export default function Content() {
     return toTokenList?.find((item) => item.symbol === toTokenSymbol) || toTokenList?.[0];
   }, [toTokenList, toTokenSymbol]);
 
-  const getTokenList = useCallback(async () => {
-    try {
-      setLoading(true);
-      const { tokenList } = await getDepositTokenList({
-        type: BusinessType.Deposit,
-      });
-      // Format fromTokenList - add chainList for toTokenList
-      const fromTokenList: TDepositTokenItem[] = JSON.parse(JSON.stringify(tokenList));
-      fromTokenList.forEach((from) => {
-        from.toTokenList?.forEach((to) => {
-          const toChainList: IChainNameItem[] = [];
-          to?.chainIdList?.forEach((item) => {
-            if (item === CHAIN_LIST[0].key) {
-              toChainList.push(CHAIN_LIST[0]);
-            }
-            if (item === CHAIN_LIST[1].key) {
-              toChainList.push(CHAIN_LIST[1]);
-            }
-          });
-          to.chainList = toChainList;
+  const getTokenList = useCallback(
+    async (chainId: ChainId, fromSymbol: string, toSymbol: string) => {
+      try {
+        setLoading(true);
+        const { tokenList } = await getDepositTokenList({
+          type: BusinessType.Deposit,
         });
-      });
+        // Format fromTokenList - add chainList for toTokenList
+        const fromTokenList: TDepositTokenItem[] = JSON.parse(JSON.stringify(tokenList));
+        fromTokenList.forEach((from) => {
+          from.toTokenList?.forEach((to) => {
+            const toChainList: IChainNameItem[] = [];
+            to?.chainIdList?.forEach((item) => {
+              if (item === CHAIN_LIST[0].key) {
+                toChainList.push(CHAIN_LIST[0]);
+              }
+              if (item === CHAIN_LIST[1].key) {
+                toChainList.push(CHAIN_LIST[1]);
+              }
+            });
+            to.chainList = toChainList;
+          });
+        });
 
-      // Handle fromTokenList and fromToken
-      dispatch(setFromTokenList(fromTokenList));
-      const isExitFromTokenSelected = fromTokenList?.find(
-        (item) => item.symbol === fromTokenSymbol,
-      );
-      if (!isExitFromTokenSelected?.symbol) {
-        dispatch(setFromTokenSymbol(fromTokenList?.[0].symbol));
-      }
-      // Handle toTokenList and toToken
-      const toTokenList =
-        fromTokenList?.find((item) => item.symbol === TokenType.USDT)?.toTokenList ||
-        fromTokenList[0]?.toTokenList ||
-        [];
-      dispatch(setToTokenList(toTokenList));
-      const isExitToTokenSelected = toTokenList?.find((item) => item.symbol === toTokenSymbol);
-      if (isExitToTokenSelected?.symbol) {
-        dispatch(setToChainList(isExitToTokenSelected?.chainList || []));
-        const isExitChain = isExitToTokenSelected?.chainList?.find(
-          (item) => item.key === toChainItem.key,
-        );
-        if (!isExitChain) {
-          dispatch(setToChainItem(isExitToTokenSelected?.chainList?.[0] || CHAIN_LIST[0]));
+        // Handle fromTokenList and fromToken
+        dispatch(setFromTokenList(fromTokenList));
+        const isExitFromTokenSelected = fromTokenList?.find((item) => item.symbol === fromSymbol);
+        if (!isExitFromTokenSelected?.symbol) {
+          dispatch(setFromTokenSymbol(fromTokenList?.[0].symbol));
         }
-      } else {
-        const toToken = toTokenList?.[0] || [];
-        dispatch(setToTokenSymbol(toToken?.symbol));
-        dispatch(setToChainList(toToken?.chainList || []));
-        dispatch(setToChainItem(toToken?.chainList?.[0] || CHAIN_LIST[0]));
+        // Handle toTokenList and toToken
+        const toTokenList =
+          fromTokenList?.find((item) => item.symbol === TokenType.USDT)?.toTokenList ||
+          fromTokenList[0]?.toTokenList ||
+          [];
+        dispatch(setToTokenList(toTokenList));
+        const isExitToTokenSelected = toTokenList?.find((item) => item.symbol === toSymbol);
+        if (isExitToTokenSelected?.symbol) {
+          dispatch(setToChainList(isExitToTokenSelected?.chainList || []));
+          const isExitChain = isExitToTokenSelected?.chainList?.find(
+            (item) => item.key === chainId,
+          );
+          if (!isExitChain) {
+            dispatch(setToChainItem(isExitToTokenSelected?.chainList?.[0] || CHAIN_LIST[0]));
+          }
+        } else {
+          const toToken = toTokenList?.[0] || [];
+          dispatch(setToTokenSymbol(toToken?.symbol));
+          dispatch(setToChainList(toToken?.chainList || []));
+          dispatch(setToChainItem(toToken?.chainList?.[0] || CHAIN_LIST[0]));
+        }
+      } catch (error) {
+        console.log('getTokenList error', error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.log('getTokenList error', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [dispatch, fromTokenSymbol, setLoading, toChainItem.key, toTokenSymbol]);
+    },
+    [dispatch, setLoading],
+  );
 
   const getDepositData = useCallback(
     async (chainId: ChainId, symbol: string, toSymbol: string) => {
@@ -335,22 +337,63 @@ export default function Content() {
     await getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
   }, [fromTokenSymbol, getDepositData, toChainItem.key, toTokenSymbol]);
 
+  const searchParams = useSearchParams();
+  const routeQuery = useMemo(
+    () => ({
+      type: searchParams.get('type') as SideMenuKey,
+      chainId: searchParams.get('chainId'),
+      tokenSymbol: searchParams.get('tokenSymbol'),
+      depositToToken: searchParams.get('depositToToken'),
+    }),
+    [searchParams],
+  );
   const init = useCallback(async () => {
-    await getTokenList();
+    let chainId = toChainItem.key;
+    let fromSymbol = fromTokenSymbol;
+    let toSymbol = toTokenSymbol;
+    if (routeQuery.type === SideMenuKey.Deposit) {
+      if (routeQuery.chainId) {
+        const chainItem = CHAIN_LIST.find((item) => item.key === routeQuery.chainId);
+        if (chainItem) {
+          chainId = chainItem.key;
+          setCurrentChainItem(chainItem, SideMenuKey.Deposit);
+        }
+      }
+      if (routeQuery.tokenSymbol) {
+        fromSymbol = routeQuery.tokenSymbol;
+        dispatch(setFromTokenSymbol(routeQuery.tokenSymbol));
+        fromNetworkRef.current = undefined;
+        dispatch(setFromNetwork(undefined));
+        dispatch(setFromNetworkList([]));
+      }
+      if (routeQuery.depositToToken) {
+        toSymbol = routeQuery.depositToToken;
+        dispatch(setToTokenSymbol(routeQuery.depositToToken));
+      }
+    }
+
+    await getTokenList(chainId, fromSymbol, toSymbol);
 
     if (fromNetwork?.network && fromNetworkList && fromNetworkList?.length > 0) {
       fromNetworkRef.current = fromNetwork;
     }
 
     // get new network data, when refresh page and switch side menu
-    await getNetworkData({ chainId: toChainItem.key, symbol: fromTokenSymbol });
+    await getNetworkData({ chainId, symbol: fromSymbol, toSymbol });
   }, [
+    dispatch,
     fromNetwork,
     fromNetworkList,
     fromTokenSymbol,
     getNetworkData,
     getTokenList,
+    routeQuery.chainId,
+    routeQuery.depositToToken,
+    routeQuery.tokenSymbol,
+    routeQuery.type,
+    setCurrentChainItem,
     toChainItem.key,
+    toTokenSymbol,
   ]);
 
   useEffectOnce(() => {

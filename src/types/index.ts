@@ -11,10 +11,11 @@ export type EntryConfig = {
   type: SideMenuKey; // 'Deposit' | 'Withdraw'
   chainId: SupportedELFChainId;
   tokenSymbol: string; // only 'USDT'
-  depositFromNetwork: string; // eg: "ETH"
-  withDrawAddress: string;
-  withDrawNetwork: string; // eg: "ETH"
-  withDrawAmount: string; // not decimal
+  // depositFromNetwork?: string; // eg: "ETH"
+  depositToToken?: string; // 'USDT'|'SGR'|'ELF' , default = 'USDT'
+  withdrawAddress?: string;
+  // withdrawNetwork?: string;
+  // withdrawAmount?: string; // not decimal
 };
 
 export type AelfInstancesKey = keyof typeof AElfNodes;
