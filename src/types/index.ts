@@ -13,9 +13,9 @@ export type EntryConfig = {
   tokenSymbol?: string; // 'USDT'|'SGR'|'ELF' , default = 'USDT'
   // depositFromNetwork?: string; // eg: "ETH"
   depositToToken?: string; // 'USDT'|'SGR'|'ELF' , default = 'USDT'
-  withDrawAddress?: string;
-  // withDrawNetwork?: string;
-  withDrawAmount?: string; // not decimal
+  withdrawAddress?: string;
+  // withdrawNetwork?: string;
+  // withdrawAmount?: string; // not decimal
 };
 
 export type AelfInstancesKey = keyof typeof AElfNodes;

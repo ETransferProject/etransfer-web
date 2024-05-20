@@ -7,35 +7,20 @@ import { SideMenuKey } from 'constants/home';
 import styles from './styles.module.scss';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey, setIsShowRedDot } from 'store/reducers/common/slice';
-import { useClearStore, useSetCurrentChainItem } from 'hooks/common';
-import { CHAIN_LIST } from 'constants/index';
+import { useClearStore } from 'hooks/common';
 import clsx from 'clsx';
-import { getTokenList } from 'utils/api/deposit';
-import { BusinessType } from 'types/api';
-import { useWithdraw } from 'hooks/withdraw';
 import { resetRecordsState } from 'store/reducers/records/slice';
 import { useWebLoginEvent, WebLoginEvents } from 'aelf-web-login';
-import { setFromTokenSymbol, setToTokenSymbol } from 'store/reducers/deposit/slice';
-import { setCurrentSymbol, setTokenList } from 'store/reducers/withdraw/slice';
 
 export default function Content() {
   const dispatch = useAppDispatch();
   const clearStore = useClearStore();
   const { activeMenuKey, isMobilePX } = useCommonState();
-  const { currentSymbol: withdrawCurrentSymbol, currentChainItem: withdrawCurrentChainItem } =
-    useWithdraw();
   const router = useRouter();
-  const searchParams = useSearchParams(); // TODO
-  // const params: EntryConfig = useParams();
+  const searchParams = useSearchParams();
   const routeQuery = useMemo(
     () => ({
       type: searchParams.get('type') as SideMenuKey,
-      chainId: searchParams.get('chainId'),
-      tokenSymbol: searchParams.get('tokenSymbol'),
-      depositFromNetwork: searchParams.get('depositFromNetwork'),
-      depositToToken: searchParams.get('depositToToken'),
-      withDrawAddress: searchParams.get('withDrawAddress'),
-      withDrawAmount: searchParams.get('withDrawAmount'),
     }),
     [searchParams],
   );
@@ -44,65 +29,13 @@ export default function Content() {
     return searchParams.get('type') || activeMenuKey;
   }, [activeMenuKey, searchParams]);
 
-  const getToken = useCallback(
-    async (isInitCurrentSymbol?: boolean) => {
-      // Records page not need token
-      if (currentActiveMenuKey !== SideMenuKey.Withdraw) return;
-
-      const res = await getTokenList({
-        type: BusinessType.Withdraw,
-        chainId: withdrawCurrentChainItem.key,
-      });
-
-      dispatch(setTokenList(res.tokenList));
-
-      if (isInitCurrentSymbol && !withdrawCurrentSymbol) {
-        dispatch(setCurrentSymbol(res.tokenList[0].symbol));
-        return;
-      }
-    },
-    [currentActiveMenuKey, withdrawCurrentChainItem.key, dispatch, withdrawCurrentSymbol],
-  );
-
-  const setCurrentChainItem = useSetCurrentChainItem();
   useEffect(() => {
     if (routeQuery.type) {
       dispatch(setActiveMenuKey(routeQuery.type));
     }
-    if (routeQuery.chainId) {
-      const ChainItemKey = CHAIN_LIST.filter((item) => item.key === routeQuery.chainId);
-      setCurrentChainItem(ChainItemKey[0], routeQuery?.type);
-    }
-    if (routeQuery.type === SideMenuKey.Deposit) {
-      if (routeQuery.tokenSymbol) {
-        dispatch(setFromTokenSymbol(routeQuery.tokenSymbol));
-      }
-      if (routeQuery.depositToToken) {
-        dispatch(setToTokenSymbol(routeQuery.depositToToken));
-      }
-    }
-    if (routeQuery.type === SideMenuKey.Withdraw && routeQuery.tokenSymbol) {
-      dispatch(setCurrentSymbol(routeQuery.tokenSymbol));
-    }
-
-    if (routeQuery.tokenSymbol) {
-      getToken(false);
-    } else {
-      getToken(true);
-    }
 
     router.push('/');
-  }, [
-    activeMenuKey,
-    dispatch,
-    getToken,
-    routeQuery.chainId,
-    routeQuery.depositToToken,
-    routeQuery.tokenSymbol,
-    routeQuery.type,
-    router,
-    setCurrentChainItem,
-  ]);
+  }, [activeMenuKey, dispatch, routeQuery.type, router]);
 
   const fetchRecordStatus = useCallback(async () => {
     if (currentActiveMenuKey === SideMenuKey.History) {

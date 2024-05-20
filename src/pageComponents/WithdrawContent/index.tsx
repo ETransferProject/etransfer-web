@@ -29,7 +29,12 @@ import {
 } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { ADDRESS_MAP, CHAIN_LIST, IChainNameItem, defaultNullValue } from 'constants/index';
-import { createWithdrawOrder, getNetworkList, getWithdrawInfo } from 'utils/api/deposit';
+import {
+  createWithdrawOrder,
+  getNetworkList,
+  getTokenList,
+  getWithdrawInfo,
+} from 'utils/api/deposit';
 import { CONTRACT_ADDRESS } from 'constants/deposit';
 import { TWithdrawInfoSuccess } from 'types/deposit';
 import {
@@ -44,6 +49,8 @@ import { ContractType } from 'constants/chain';
 import BigNumber from 'bignumber.js';
 import {
   InitialWithdrawState,
+  setCurrentSymbol,
+  setTokenList,
   setWithdrawAddress,
   setWithdrawCurrentNetwork,
   setWithdrawNetworkList,
@@ -88,6 +95,7 @@ import { AelfExploreType } from 'constants/network';
 import { isELFAddress, removeAddressSuffix, removeELFAddressSuffix } from 'utils/aelfBase';
 import { SideMenuKey } from 'constants/home';
 import TransactionFee from './TransactionFee';
+import { useSearchParams } from 'next/navigation';
 
 enum ValidateStatus {
   Error = 'error',
@@ -172,10 +180,8 @@ export default function WithdrawContent() {
   const getMaxBalanceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const currentToken = useMemo(() => {
-    if (Array.isArray(tokenList) && tokenList.length > 0) {
-      return tokenList.find((item) => item.symbol === currentSymbol) as TTokenItem;
-    }
-    return InitialWithdrawState.tokenList[0];
+    const item = tokenList?.find((item) => item.symbol === currentSymbol);
+    return item?.symbol ? item : InitialWithdrawState.tokenList[0];
   }, [currentSymbol, tokenList]);
 
   const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
@@ -437,8 +443,8 @@ export default function WithdrawContent() {
   );
 
   const getWithdrawData = useCallback(
-    async (item?: TTokenItem, newMaxBalance?: string) => {
-      const symbol = item?.symbol || currentSymbol;
+    async (optionSymbol?: string, newMaxBalance?: string) => {
+      const symbol = optionSymbol || currentSymbol;
       try {
         setIsTransactionFeeLoading(true);
         const params: TGetWithdrawInfoRequest = {
@@ -558,7 +564,7 @@ export default function WithdrawContent() {
 
   const setCurrentChainItem = useSetCurrentChainItem();
   const handleChainChanged = useCallback(
-    async (item: IChainNameItem) => {
+    async (item: IChainNameItem, symbol?: string) => {
       try {
         setLoading(true);
         currentChainItemRef.current = item;
@@ -572,10 +578,10 @@ export default function WithdrawContent() {
         getMaxBalance(true);
 
         await getNetworkData({
-          symbol: currentSymbol,
+          symbol: symbol || currentSymbol,
           address: form.getFieldValue(FormKeys.ADDRESS) || undefined,
         });
-        await getWithdrawData();
+        await getWithdrawData(symbol || currentSymbol);
       } catch (error) {
         console.log('Change chain error: ', error);
       } finally {
@@ -848,7 +854,7 @@ export default function WithdrawContent() {
         symbol: item.symbol,
         address: form.getFieldValue(FormKeys.ADDRESS) || undefined,
       });
-      await getWithdrawData(item);
+      await getWithdrawData(item.symbol);
     } finally {
       setLoading(false);
     }
@@ -877,8 +883,58 @@ export default function WithdrawContent() {
     getWithdrawData();
   }, [form, getWithdrawData]);
 
+  const searchParams = useSearchParams();
+  const routeQuery = useMemo(
+    () => ({
+      type: searchParams.get('type') as SideMenuKey,
+      chainId: searchParams.get('chainId'),
+      tokenSymbol: searchParams.get('tokenSymbol'),
+      withdrawAddress: searchParams.get('withdrawAddress'),
+    }),
+    [searchParams],
+  );
+
+  const getToken = useCallback(
+    async (isInitCurrentSymbol?: boolean) => {
+      const res = await getTokenList({
+        type: BusinessType.Withdraw,
+        chainId: currentChainItemRef.current.key,
+      });
+
+      dispatch(setTokenList(res.tokenList));
+
+      if (isInitCurrentSymbol && !currentSymbol) {
+        dispatch(setCurrentSymbol(res.tokenList[0].symbol));
+        return;
+      }
+    },
+    [dispatch, currentSymbol],
+  );
+
   const init = useCallback(async () => {
-    form.setFieldValue(FormKeys.ADDRESS, withdraw.address || '');
+    let newCurrentSymbol = currentSymbol;
+    if (routeQuery?.type === SideMenuKey.Withdraw) {
+      if (routeQuery.chainId) {
+        const chainItem = CHAIN_LIST.find((item) => item.key === routeQuery.chainId);
+        if (chainItem) {
+          currentChainItemRef.current = chainItem;
+          setCurrentChainItem(chainItem, SideMenuKey.Withdraw);
+        }
+      }
+      if (routeQuery.tokenSymbol) {
+        newCurrentSymbol = routeQuery.tokenSymbol;
+        dispatch(setCurrentSymbol(routeQuery.tokenSymbol));
+
+        await getToken(false);
+      }
+    }
+    if (!routeQuery.tokenSymbol) {
+      await getToken(true);
+    }
+
+    const address = routeQuery.withdrawAddress || withdraw.address || '';
+    form.setFieldValue(FormKeys.ADDRESS, address);
+    dispatch(setWithdrawAddress(address));
 
     if (
       withdraw?.currentNetwork?.network &&
@@ -891,18 +947,24 @@ export default function WithdrawContent() {
       form.setFieldValue(FormKeys.NETWORK, withdraw.currentNetwork);
 
       // get new network data, when refresh page and switch side menu
-      await getNetworkData({ symbol: currentSymbol, address: withdraw.address || '' });
-
-      getWithdrawData();
+      await getNetworkData({ symbol: newCurrentSymbol, address });
+      getWithdrawData(newCurrentSymbol);
     } else {
-      handleChainChanged(currentChainItemRef.current);
+      handleChainChanged(currentChainItemRef.current, newCurrentSymbol);
     }
   }, [
     currentSymbol,
+    dispatch,
     form,
     getNetworkData,
+    getToken,
     getWithdrawData,
     handleChainChanged,
+    routeQuery.chainId,
+    routeQuery.tokenSymbol,
+    routeQuery?.type,
+    routeQuery.withdrawAddress,
+    setCurrentChainItem,
     withdraw.address,
     withdraw.currentNetwork,
     withdraw.networkList,
