@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import { TRecordsRequestType, TRecordsRequestStatus } from 'types/records';
 import { TRecordsListItem } from 'types/api';
 import moment from 'moment';
+import myEvents from 'utils/myEvent';
 
 export default function Content() {
   const { isMobilePX } = useCommonState();
@@ -26,15 +27,17 @@ export default function Content() {
   const requestRecordsList = useDebounceCallback(async (isLoading = false) => {
     try {
       isLoading && setLoading(true);
-      const startTimestamp = timestamp && timestamp[0];
-      const startTimestampFormat = moment(startTimestamp).format('YYYY-MM-DD 00:00:00');
-      const endTimestamp = timestamp && timestamp[1];
-      const endTimestampFormat = moment(endTimestamp).format('YYYY-MM-DD 23:59:59');
+
+      const startTimestampFormat = moment(timestamp?.[0]).format('YYYY-MM-DD 00:00:00');
+      const endTimestampFormat = moment(timestamp?.[1]).format('YYYY-MM-DD 23:59:59');
+      const startTimestamp = moment(startTimestampFormat).valueOf() || null;
+      const endTimestamp = moment(endTimestampFormat).valueOf() || null;
+
       const { items: recordsListRes, totalCount } = await getRecordsList({
         type,
         status,
-        startTimestamp: moment(startTimestampFormat).valueOf() || null,
-        endTimestamp: moment(endTimestampFormat).valueOf() || null,
+        startTimestamp: startTimestamp,
+        endTimestamp: endTimestamp,
         skipCount: (skipCount - 1) * maxResultCount,
         maxResultCount,
       });
@@ -60,6 +63,8 @@ export default function Content() {
       console.log('records', error);
     } finally {
       setLoading(false);
+
+      myEvents.UpdateNewRecordStatus.emit();
     }
   }, []);
 

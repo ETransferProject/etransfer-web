@@ -25,6 +25,7 @@ import myEvents from 'utils/myEvent';
 import { resetLocalJWT } from 'api/utils';
 import { useQueryAuthToken } from 'hooks/authToken';
 import { eTransferInstance } from 'utils/etransferInstance';
+import { useClearStore } from 'hooks/common';
 
 export const DESTROY = 'DESTROY';
 const SET_WALLET = 'SET_WALLET';
@@ -168,6 +169,13 @@ function WalletProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
   useWebLoginEvent(WebLoginEvents.LOGIN_ERROR, onLoginError);
+
+  const clearStore = useClearStore();
+  const logoutAsync = useCallback(async () => {
+    console.warn('Emit WebLoginEvents.LOGOUT');
+    clearStore();
+  }, [clearStore]);
+  useWebLoginEvent(WebLoginEvents.LOGOUT, logoutAsync);
 
   return (
     <WalletContext.Provider value={useMemo(() => [state, dispatch], [state, dispatch])}>

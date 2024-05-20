@@ -62,8 +62,11 @@ export default function WebRecordsHeader({ requestRecordsList }: TRecordsContent
     requestRecordsList();
   }, [dispatch, requestRecordsList]);
 
-  const defaultDate: TRangeValue = useMemo(
-    () => [moment(timestamp?.[0]), moment(timestamp?.[1])],
+  const valueDate: TRangeValue = useMemo(
+    () => [
+      timestamp?.[0] ? moment(timestamp?.[0]) : null,
+      timestamp?.[1] ? moment(timestamp?.[1]) : null,
+    ],
     [timestamp],
   );
 
@@ -99,7 +102,7 @@ export default function WebRecordsHeader({ requestRecordsList }: TRecordsContent
         <RangePicker
           size={'large'}
           allowClear={false}
-          defaultValue={defaultDate}
+          value={valueDate}
           className={clsx(styles['web-records-range-picker'])}
           format={dateFormat}
           allowEmpty={[true, true]}

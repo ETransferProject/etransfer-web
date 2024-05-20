@@ -11,8 +11,7 @@ import SupportEntry from 'components/Sider/SupportEntry';
 
 export default function SelectMenu() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-
-  const { activeMenuKey } = useCommonState();
+  const { activeMenuKey, isShowRedDot } = useCommonState();
 
   useEffect(() => {
     // init activeMenuKey
@@ -51,11 +50,17 @@ export default function SelectMenu() {
                     setIsDrawerOpen(false);
                   }}>
                   <MenuIcon className={styles['menu-item-icon']} />
-                  <div className={styles['menu-item-label']}>{item.label}</div>
+                  <div className={styles['menu-item-label']}>
+                    {item.label}
+                    {isShowRedDot && item.key === SideMenuKey.History && (
+                      <span className={styles['menu-item-red-dot']} />
+                    )}
+                  </div>
                 </div>
               );
             })}
           </div>
+
           <SupportEntry className={styles.supportEntry} />
         </div>
       </CommonDrawer>

@@ -22,12 +22,3 @@ export const getRecordStatus = async (): Promise<TCurrentRecordsStatus> => {
     throw formatApiError(error, 'getRecordStatus error', false);
   }
 };
-
-export const postRecordRead = async (): Promise<null> => {
-  try {
-    const res = await request.records.postRecordRead();
-    return res.data;
-  } catch (error: any) {
-    throw formatApiError(error, 'postRecordRead error', false);
-  }
-};

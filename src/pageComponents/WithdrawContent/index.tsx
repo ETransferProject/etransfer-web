@@ -78,8 +78,6 @@ import { useWithdraw } from 'hooks/withdraw';
 import { QuestionMarkIcon, Fingerprint } from 'assets/images';
 import { InitWithdrawTokenState } from 'store/reducers/token/slice';
 import RemainingQuota from './RemainingQuota';
-// import { getRecordStatus } from 'utils/api/records';
-import { setIsShowRedDot } from 'store/reducers/common/slice';
 import { useWalletContext } from 'provider/walletProvider';
 import { isAuthTokenError, isHtmlError } from 'utils/api/error';
 import myEvents from 'utils/myEvent';
@@ -653,12 +651,6 @@ export default function WithdrawContent() {
     return checkRes;
   }, [accounts, balance, currentSymbol, currentTokenAddress, getMaxBalance, wallet]);
 
-  const fetchRecordStatus = useCallback(async () => {
-    // const res = await getRecordStatus();
-    // dispatch(setIsShowRedDot(res.status));
-    dispatch(setIsShowRedDot(false));
-  }, [dispatch]);
-
   const handleCreateWithdrawOrder = useCallback(
     async ({ address, rawTransaction }: { address: string; rawTransaction: string }) => {
       try {
@@ -700,20 +692,12 @@ export default function WithdrawContent() {
         }
         setIsFailModalOpen(true);
       } finally {
-        // update records status
-        fetchRecordStatus();
+        myEvents.UpdateNewRecordStatus.emit();
         setLoading(false);
         setIsDoubleCheckModalOpen(false);
       }
     },
-    [
-      balance,
-      currentSymbol,
-      receiveAmount,
-      setLoading,
-      withdrawInfo.receiveAmountUsd,
-      fetchRecordStatus,
-    ],
+    [balance, currentSymbol, receiveAmount, setLoading, withdrawInfo.receiveAmountUsd],
   );
 
   const sendTransferTokenTransaction = useDebounceCallback(async () => {
