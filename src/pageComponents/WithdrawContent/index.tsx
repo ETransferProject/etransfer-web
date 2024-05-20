@@ -905,57 +905,70 @@ export default function WithdrawContent() {
 
       if (isInitCurrentSymbol && !currentSymbol) {
         dispatch(setCurrentSymbol(res.tokenList[0].symbol));
-        return;
       }
+      return res.tokenList;
     },
     [dispatch, currentSymbol],
   );
 
   const init = useCallback(async () => {
-    let newCurrentSymbol = currentSymbol;
-    if (routeQuery?.type === SideMenuKey.Withdraw) {
-      if (routeQuery.chainId) {
-        const chainItem = CHAIN_LIST.find((item) => item.key === routeQuery.chainId);
-        if (chainItem) {
-          currentChainItemRef.current = chainItem;
-          setCurrentChainItem(chainItem, SideMenuKey.Withdraw);
+    try {
+      let newCurrentSymbol = currentSymbol;
+      let newTokenList = tokenList;
+      setLoading(true);
+      if (routeQuery?.type === SideMenuKey.Withdraw) {
+        if (routeQuery.chainId) {
+          const chainItem = CHAIN_LIST.find((item) => item.key === routeQuery.chainId);
+          if (chainItem) {
+            currentChainItemRef.current = chainItem;
+            setCurrentChainItem(chainItem, SideMenuKey.Withdraw);
+          }
+        }
+        if (routeQuery.tokenSymbol) {
+          newCurrentSymbol = routeQuery.tokenSymbol;
+          dispatch(setCurrentSymbol(routeQuery.tokenSymbol));
+
+          newTokenList = await getToken(false);
         }
       }
-      if (routeQuery.tokenSymbol) {
-        newCurrentSymbol = routeQuery.tokenSymbol;
-        dispatch(setCurrentSymbol(routeQuery.tokenSymbol));
-
-        await getToken(false);
+      if (!routeQuery.tokenSymbol) {
+        newTokenList = await getToken(true);
       }
-    }
-    if (!routeQuery.tokenSymbol) {
-      await getToken(true);
-    }
 
-    const address = routeQuery.withdrawAddress || withdraw.address || '';
-    form.setFieldValue(FormKeys.ADDRESS, address);
-    dispatch(setWithdrawAddress(address));
+      const address = routeQuery.withdrawAddress || withdraw.address || '';
+      form.setFieldValue(FormKeys.ADDRESS, address);
+      dispatch(setWithdrawAddress(address));
 
-    if (
-      withdraw?.currentNetwork?.network &&
-      withdraw?.networkList &&
-      withdraw.networkList?.length > 0
-    ) {
-      setCurrentNetwork(withdraw.currentNetwork);
-      currentNetworkRef.current = withdraw.currentNetwork;
-      setNetworkList(withdraw.networkList);
-      form.setFieldValue(FormKeys.NETWORK, withdraw.currentNetwork);
+      if (
+        withdraw?.currentNetwork?.network &&
+        withdraw?.networkList &&
+        withdraw.networkList?.length > 0
+      ) {
+        setCurrentNetwork(withdraw.currentNetwork);
+        currentNetworkRef.current = withdraw.currentNetwork;
+        setNetworkList(withdraw.networkList);
+        form.setFieldValue(FormKeys.NETWORK, withdraw.currentNetwork);
 
-      // get new network data, when refresh page and switch side menu
-      await getNetworkData({ symbol: newCurrentSymbol, address });
-      getWithdrawData(newCurrentSymbol);
-    } else {
-      handleChainChanged(currentChainItemRef.current, newCurrentSymbol);
+        // get new network data, when refresh page and switch side menu
+        await getNetworkData({ symbol: newCurrentSymbol, address });
+        getWithdrawData(newCurrentSymbol);
+      } else {
+        handleChainChanged(currentChainItemRef.current, newCurrentSymbol);
+      }
+
+      const newCurrentToken = newTokenList.find((item) => item.symbol === newCurrentSymbol);
+
+      getMaxBalanceInterval(newCurrentToken);
+    } catch (error) {
+      console.log('withdraw init error', error);
+    } finally {
+      setLoading(false);
     }
   }, [
     currentSymbol,
     dispatch,
     form,
+    getMaxBalanceInterval,
     getNetworkData,
     getToken,
     getWithdrawData,
@@ -965,6 +978,8 @@ export default function WithdrawContent() {
     routeQuery?.type,
     routeQuery.withdrawAddress,
     setCurrentChainItem,
+    setLoading,
+    tokenList,
     withdraw.address,
     withdraw.currentNetwork,
     withdraw.networkList,
@@ -973,8 +988,6 @@ export default function WithdrawContent() {
   useEffectOnce(() => {
     init();
 
-    // interval fetch balance
-    getMaxBalanceInterval();
     return () => {
       if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
     };
