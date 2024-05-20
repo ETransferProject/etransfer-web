@@ -4,10 +4,11 @@ import { Select, DatePicker, Button } from 'antd';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import { setType, setStatus, setTimestamp, setSkipCount } from 'store/reducers/records/slice';
 import { TRecordsRequestType, TRecordsRequestStatus, TRecordsStatusI18n } from 'types/records';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { TRangeValue, TRecordsContentParams, BusinessType } from 'types/api';
 import { Reset } from 'assets/images';
 import { SwapRightDefault, SwapRightSelected } from 'assets/images';
+import moment from 'moment';
 
 const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY-MM-DD';
@@ -37,7 +38,7 @@ export default function WebRecordsHeader({ requestRecordsList }: TRecordsContent
   const handleDateRangeChange = useCallback(
     (timestamp: TRangeValue) => {
       if (timestamp && timestamp[0] && timestamp[1]) {
-        dispatch(setTimestamp(timestamp));
+        dispatch(setTimestamp([moment(timestamp[0]).valueOf(), moment(timestamp[1]).valueOf()]));
         dispatch(setSkipCount(1));
         requestRecordsList();
       }
@@ -60,6 +61,11 @@ export default function WebRecordsHeader({ requestRecordsList }: TRecordsContent
     dispatch(setSkipCount(1));
     requestRecordsList();
   }, [dispatch, requestRecordsList]);
+
+  const defaultDate: TRangeValue = useMemo(
+    () => [moment(timestamp?.[0]), moment(timestamp?.[1])],
+    [timestamp],
+  );
 
   return (
     <div className={clsx(styles['web-records-header-wrapper'])}>
@@ -93,7 +99,7 @@ export default function WebRecordsHeader({ requestRecordsList }: TRecordsContent
         <RangePicker
           size={'large'}
           allowClear={false}
-          value={timestamp}
+          defaultValue={defaultDate}
           className={clsx(styles['web-records-range-picker'])}
           format={dateFormat}
           allowEmpty={[true, true]}

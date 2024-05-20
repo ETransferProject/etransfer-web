@@ -17,6 +17,7 @@ import { Select, DatePicker } from 'antd';
 import type { Moment } from 'moment';
 import { TRecordsContentParams, BusinessType } from 'types/api';
 import { defaultNullValue } from 'constants/index';
+import moment from 'moment';
 
 const dateFormat = 'YYYY-MM-DD';
 
@@ -27,10 +28,10 @@ export default function Filter({ requestRecordsList }: TRecordsContentParams) {
   const [filterType, setFilterType] = useState<TRecordsRequestType>(type);
   const [filterStatus, setFilterStatus] = useState<TRecordsRequestStatus>(status);
   const [filterTimestampStart, setFilterTimestampStart] = useState<Moment | null>(
-    (timestamp && timestamp[0]) || null,
+    moment(timestamp && timestamp[0]) || null,
   );
   const [filterTimestampEnd, setFilterTimestampEnd] = useState<Moment | null>(
-    (timestamp && timestamp[1]) || null,
+    moment(timestamp && timestamp[1]) || null,
   );
 
   const isShowReset = useCallback(() => {
@@ -100,7 +101,9 @@ export default function Filter({ requestRecordsList }: TRecordsContentParams) {
   const handleApplyFilter = useCallback(() => {
     dispatch(setType(filterType));
     dispatch(setStatus(filterStatus));
-    dispatch(setTimestamp([filterTimestampStart, filterTimestampEnd]));
+    dispatch(
+      setTimestamp([moment(filterTimestampStart).valueOf(), moment(filterTimestampEnd).valueOf()]),
+    );
     dispatch(setSkipCount(1));
     dispatch(setRecordsList([]));
     setIsShowFilterDrawer(false);
@@ -117,8 +120,8 @@ export default function Filter({ requestRecordsList }: TRecordsContentParams) {
   const handleOpenFilterDrawer = useCallback(() => {
     setFilterType(type);
     setFilterStatus(status);
-    setFilterTimestampStart((timestamp && timestamp[0]) || null);
-    setFilterTimestampEnd((timestamp && timestamp[1]) || null);
+    setFilterTimestampStart(moment(timestamp && timestamp[0]) || null);
+    setFilterTimestampEnd(moment(timestamp && timestamp[1]) || null);
 
     setIsShowFilterDrawer(true);
   }, [type, status, timestamp]);
@@ -147,17 +150,11 @@ export default function Filter({ requestRecordsList }: TRecordsContentParams) {
         )}
         {isShowTimestamp() && (
           <div className={styles['filter-item']}>
-            {(timestamp &&
-              timestamp[0] &&
-              timestamp[0].format &&
-              timestamp[0].format(dateFormat)) ||
-              `${defaultNullValue} `}
+            {(timestamp && timestamp[0] && moment(timestamp[0]).format(dateFormat)) ||
+              `${defaultNullValue}`}
             {' - '}
-            {(timestamp &&
-              timestamp[1] &&
-              timestamp[1].format &&
-              timestamp[1].format(dateFormat)) ||
-              ` ${defaultNullValue}`}
+            {(timestamp && timestamp[1] && moment(timestamp[1]).format(dateFormat)) ||
+              `${defaultNullValue}`}
             <CloseSmall
               className={styles['filter-close-icon']}
               onClick={() => closeItem('timestamp')}
