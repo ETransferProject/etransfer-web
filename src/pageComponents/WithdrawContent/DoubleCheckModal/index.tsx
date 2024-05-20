@@ -9,6 +9,7 @@ import styles from './styles.module.scss';
 import { valueFixed2LessThanMin } from 'utils/calculate';
 import { defaultNullValue } from 'constants/index';
 import { formatSymbolDisplay } from 'utils/format';
+import TransactionFee from '../TransactionFee';
 
 export interface DoubleCheckModalProps {
   withdrawInfo: {
@@ -44,25 +45,6 @@ export default function DoubleCheckModal({
         </span>
       </>
     );
-  };
-
-  const renderTransactionFeeValue = () => {
-    if (!withdrawInfo.transactionFee?.amount || !withdrawInfo.aelfTransactionFee?.amount) {
-      return isTransactionFeeLoading ? <PartialLoading /> : defaultNullValue;
-    } else {
-      return (
-        <>
-          {isTransactionFeeLoading && <PartialLoading />}
-          <div className={clsx('flex')}>
-            {!isTransactionFeeLoading && `${withdrawInfo.transactionFee.amount} `}
-            <span className={styles['fee-currency']}>
-              {withdrawInfo.transactionFee.currency}
-            </span> + {withdrawInfo.aelfTransactionFee.amount}{' '}
-            {withdrawInfo.aelfTransactionFee.currency}
-          </div>
-        </>
-      );
-    }
   };
 
   return (
@@ -117,7 +99,13 @@ export default function DoubleCheckModal({
           <div className={clsx(styles['detail-row'], styles['transaction-fee-wrapper'])}>
             <div className={styles['label']}>Transaction Fee</div>
             <div className={clsx('flex-column-center', styles['value'], styles['fee-usd-box'])}>
-              {renderTransactionFeeValue()}
+              <TransactionFee
+                isTransactionFeeLoading={isTransactionFeeLoading}
+                transactionFee={withdrawInfo.transactionFee?.amount}
+                transactionUnit={withdrawInfo.transactionFee?.currency}
+                aelfTransactionFee={withdrawInfo.aelfTransactionFee?.amount}
+                aelfTransactionUnit={withdrawInfo.aelfTransactionFee?.currency}
+              />
               <div className={clsx(styles['fee-usd'])}>
                 {valueFixed2LessThanMin(withdrawInfo.feeUsd, '$ ')}
               </div>

@@ -8,9 +8,9 @@ export type TNetworkTypeV2 = NetworkType;
 export type ChainType = 'ELF';
 
 export type EntryConfig = {
-  type: SideMenuKey; // 'Deposit' | 'Withdraw'
-  chainId: SupportedELFChainId;
-  tokenSymbol: string; // only 'USDT'
+  type?: SideMenuKey; // 'Deposit' | 'Withdraw'
+  chainId?: SupportedELFChainId;
+  tokenSymbol?: string; // 'USDT'|'SGR'|'ELF' , default = 'USDT'
   // depositFromNetwork?: string; // eg: "ETH"
   depositToToken?: string; // 'USDT'|'SGR'|'ELF' , default = 'USDT'
   withdrawAddress?: string;

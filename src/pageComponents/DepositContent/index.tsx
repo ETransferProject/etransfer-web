@@ -11,7 +11,7 @@ import {
   TToTokenItem,
 } from 'types/api';
 import { getDepositInfo, getDepositTokenList, getNetworkList } from 'utils/api/deposit';
-import { CHAIN_LIST, IChainNameItem, TokenType } from 'constants/index';
+import { CHAIN_LIST, IChainNameItem } from 'constants/index';
 import {
   setDepositAddress,
   setFromNetwork,
@@ -94,6 +94,7 @@ export default function Content() {
         });
         // Format fromTokenList - add chainList for toTokenList
         const fromTokenList: TDepositTokenItem[] = JSON.parse(JSON.stringify(tokenList));
+        const toTokenList: TToTokenItem[] = [];
         fromTokenList.forEach((from) => {
           from.toTokenList?.forEach((to) => {
             const toChainList: IChainNameItem[] = [];
@@ -106,6 +107,9 @@ export default function Content() {
               }
             });
             to.chainList = toChainList;
+
+            const findToToken = toTokenList.find((pushToToken) => pushToToken.symbol === to.symbol);
+            if (!findToToken) toTokenList.push(to);
           });
         });
 
@@ -116,10 +120,6 @@ export default function Content() {
           dispatch(setFromTokenSymbol(fromTokenList?.[0].symbol));
         }
         // Handle toTokenList and toToken
-        const toTokenList =
-          fromTokenList?.find((item) => item.symbol === TokenType.USDT)?.toTokenList ||
-          fromTokenList[0]?.toTokenList ||
-          [];
         dispatch(setToTokenList(toTokenList));
         const isExitToTokenSelected = toTokenList?.find((item) => item.symbol === toSymbol);
         if (isExitToTokenSelected?.symbol) {
@@ -229,7 +229,13 @@ export default function Content() {
     if (!isExitToToken) {
       toSymbol = newItem.symbol;
       dispatch(setToTokenSymbol(newItem.symbol));
-      toChain = currentFromToken?.toTokenList?.[0]?.chainList?.[0] || CHAIN_LIST[0];
+      // Check 2 - toChain
+      const isExitToChain = currentFromToken?.toTokenList?.find((item) =>
+        item.chainIdList?.includes(toChainItem.key),
+      );
+      if (!isExitToChain) {
+        toChain = currentFromToken?.toTokenList?.[0]?.chainList?.[0] || CHAIN_LIST[0];
+      }
       dispatch(setToChainItem(toChain));
       dispatch(setToChainList(currentFromToken?.toTokenList?.[0]?.chainList || []));
     }

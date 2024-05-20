@@ -7,12 +7,7 @@ import { SideMenuKey } from 'constants/home';
 import styles from './styles.module.scss';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey, setIsShowRedDot } from 'store/reducers/common/slice';
-import { useSetCurrentChainItem } from 'hooks/common';
 import clsx from 'clsx';
-import { getTokenList } from 'utils/api/deposit';
-import { BusinessType } from 'types/api';
-import { setCurrentSymbol, setTokenList } from 'store/reducers/token/slice';
-import { useWithdraw } from 'hooks/withdraw';
 import myEvents from 'utils/myEvent';
 import { getRecordStatus } from 'utils/api/records';
 
@@ -21,11 +16,8 @@ export const MAX_UPDATE_TIME = 6;
 export default function Content() {
   const dispatch = useAppDispatch();
   const { activeMenuKey } = useCommonState();
-  const { currentSymbol: withdrawCurrentSymbol, currentChainItem: withdrawCurrentChainItem } =
-    useWithdraw();
   const router = useRouter();
-  const searchParams = useSearchParams(); // TODO
-  // const params: EntryConfig = useParams();
+  const searchParams = useSearchParams();
   const routeQuery = useMemo(
     () => ({
       type: searchParams.get('type') as SideMenuKey,
@@ -37,48 +29,13 @@ export default function Content() {
     return searchParams.get('type') || activeMenuKey;
   }, [activeMenuKey, searchParams]);
 
-  const getToken = useCallback(
-    async (isInitCurrentSymbol?: boolean) => {
-      // Records page not need token
-      if (currentActiveMenuKey !== SideMenuKey.Withdraw) {
-        return;
-      }
-
-      const res = await getTokenList({
-        type: BusinessType.Withdraw,
-        chainId: withdrawCurrentChainItem.key,
-      });
-
-      dispatch(
-        setTokenList({
-          key: BusinessType.Withdraw,
-          data: res.tokenList,
-        }),
-      );
-
-      if (isInitCurrentSymbol && !withdrawCurrentSymbol) {
-        dispatch(
-          setCurrentSymbol({
-            key: BusinessType.Withdraw,
-            symbol: res.tokenList[0].symbol,
-          }),
-        );
-        return;
-      }
-    },
-    [currentActiveMenuKey, withdrawCurrentChainItem.key, dispatch, withdrawCurrentSymbol],
-  );
-
-  const setCurrentChainItem = useSetCurrentChainItem();
   useEffect(() => {
     if (routeQuery.type) {
       dispatch(setActiveMenuKey(routeQuery.type));
     }
 
-    getToken(true);
-
     router.push('/');
-  }, [dispatch, getToken, routeQuery.type, router, setCurrentChainItem]);
+  }, [activeMenuKey, dispatch, routeQuery.type, router]);
 
   const updateRecordStatus = useCallback(async () => {
     try {
