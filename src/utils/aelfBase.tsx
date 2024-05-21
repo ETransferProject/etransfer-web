@@ -197,7 +197,7 @@ export function isDIDAddressSuffix(value?: string) {
   if (isDIDAddress(value)) {
     const arr = value.split('_');
 
-    if (arr && arr.length === 3 && Object.values(AllSupportedELFChainId).includes(arr[2] as any)) {
+    if (arr && arr.length === 3 && Object.values(SupportedELFChainId).includes(arr[2] as any)) {
       return true;
     }
   }
