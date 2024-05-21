@@ -8,7 +8,6 @@ import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
 import { SelectImage } from 'components/SelectToken/TokenCard';
 import { BusinessType, TDepositTokenItem } from 'types/api';
-import { setCurrentSymbol } from 'store/reducers/token/slice';
 import { setAddInitOpenTokenModalCount } from 'store/reducers/deposit/slice';
 import DynamicArrow from 'components/DynamicArrow';
 import { formatSymbolDisplay } from 'utils/format';
@@ -46,12 +45,11 @@ export default function SelectToken({
         return;
       }
       onChange?.(item);
-      dispatch(setCurrentSymbol({ key: BusinessType.Deposit, symbol: item.symbol }));
       setIsShowTokenSelectDropdown(false);
 
       selectCallback(item);
     },
-    [dispatch, onChange, selectCallback, selected?.symbol],
+    [onChange, selectCallback, selected?.symbol],
   );
 
   useEffect(() => {
