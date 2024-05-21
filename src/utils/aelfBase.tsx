@@ -4,7 +4,7 @@ import { ChainType } from '@portkey/provider-types';
 import { AElfNodes } from 'constants/aelf';
 import { AllSupportedELFChainId } from 'constants/chain';
 import { AelfInstancesKey } from 'types';
-import { isSymbol } from './reg';
+import { isSymbol, isValidBase58 } from './reg';
 
 export function getNodeByChainId(chainId: AllSupportedELFChainId) {
   return AElfNodes[chainId as AelfInstancesKey];
@@ -181,6 +181,28 @@ export const isELFAddress = (value: string) => {
     return false;
   }
 };
+
+export function isDIDAddress(value?: string) {
+  if (!value || !isValidBase58(value)) return false;
+  if (value.includes('_') && value.split('_').length < 3) return false;
+  try {
+    return !!AElf.utils.decodeAddressRep(value);
+  } catch {
+    return false;
+  }
+}
+
+export function isDIDAddressSuffix(value?: string) {
+  if (!value) return false;
+  if (isDIDAddress(value)) {
+    const arr = value.split('_');
+
+    if (arr && arr.length === 3 && Object.values(AllSupportedELFChainId).includes(arr[2] as any)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 export const removeAddressSuffix = (address: string) => {
   const arr = address.split('_');

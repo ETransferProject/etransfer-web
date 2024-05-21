@@ -90,7 +90,7 @@ import { isAuthTokenError, isHtmlError } from 'utils/api/error';
 import myEvents from 'utils/myEvent';
 import { useCurrentVersion, useSetCurrentChainItem } from 'hooks/common';
 import { AelfExploreType } from 'constants/network';
-import { isELFAddress, removeAddressSuffix, removeELFAddressSuffix } from 'utils/aelfBase';
+import { isDIDAddressSuffix, removeAddressSuffix, removeELFAddressSuffix } from 'utils/aelfBase';
 import { SideMenuKey } from 'constants/home';
 import TransactionFee from './TransactionFee';
 import { useSearchParams } from 'next/navigation';
@@ -292,7 +292,7 @@ export default function WithdrawContent() {
           symbol: symbol,
         };
         if (address) {
-          params.address = removeELFAddressSuffix(address);
+          params.address = isDIDAddressSuffix(address) ? removeELFAddressSuffix(address) : address;
         }
 
         const { networkList } = await getNetworkList(params);
@@ -668,7 +668,7 @@ export default function WithdrawContent() {
           symbol: currentSymbol,
           amount: balance,
           fromChainId: currentChainItemRef.current.key,
-          toAddress: removeELFAddressSuffix(address),
+          toAddress: isDIDAddressSuffix(address) ? removeELFAddressSuffix(address) : address,
           rawTransaction: rawTransaction,
         });
         console.log(
@@ -789,7 +789,7 @@ export default function WithdrawContent() {
       return;
     }
 
-    if (isELFAddress(address)) {
+    if (isDIDAddressSuffix(address)) {
       form.setFieldValue(FormKeys.ADDRESS, removeELFAddressSuffix(address));
       dispatch(setWithdrawAddress(removeAddressSuffix(address)));
     }
