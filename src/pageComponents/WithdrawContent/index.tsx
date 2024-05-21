@@ -699,10 +699,11 @@ export default function WithdrawContent() {
         }
         setIsFailModalOpen(true);
       } finally {
-        await sleep(1000);
-        myEvents.UpdateNewRecordStatus.emit();
         setLoading(false);
         setIsDoubleCheckModalOpen(false);
+
+        await sleep(1000);
+        myEvents.UpdateNewRecordStatus.emit();
       }
     },
     [balance, currentSymbol, receiveAmount, setLoading, withdrawInfo.receiveAmountUsd],
