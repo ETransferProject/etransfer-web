@@ -28,10 +28,12 @@ export default function Content() {
     try {
       isLoading && setLoading(true);
 
-      const startTimestampFormat = moment(timestamp?.[0]).format('YYYY-MM-DD 00:00:00');
-      const endTimestampFormat = moment(timestamp?.[1]).format('YYYY-MM-DD 23:59:59');
-      const startTimestamp = moment(startTimestampFormat).valueOf() || null;
-      const endTimestamp = moment(endTimestampFormat).valueOf() || null;
+      const startTimestampFormat =
+        timestamp?.[0] && moment(timestamp?.[0]).format('YYYY-MM-DD 00:00:00');
+      const endTimestampFormat =
+        timestamp?.[1] && moment(timestamp?.[1]).format('YYYY-MM-DD 23:59:59');
+      const startTimestamp = startTimestampFormat ? moment(startTimestampFormat).valueOf() : null;
+      const endTimestamp = endTimestampFormat ? moment(endTimestampFormat).valueOf() : null;
 
       const { items: recordsListRes, totalCount } = await getRecordsList({
         type,
