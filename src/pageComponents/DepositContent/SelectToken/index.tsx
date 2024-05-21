@@ -7,7 +7,7 @@ import { AddBigIcon } from 'assets/images';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
 import { SelectImage } from 'components/SelectToken/TokenCard';
-import { BusinessType, TDepositTokenItem } from 'types/api';
+import { TDepositTokenItem } from 'types/api';
 import { setAddInitOpenTokenModalCount } from 'store/reducers/deposit/slice';
 import DynamicArrow from 'components/DynamicArrow';
 import { formatSymbolDisplay } from 'utils/format';
