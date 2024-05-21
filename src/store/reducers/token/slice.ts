@@ -40,13 +40,15 @@ export const TokenSlice = createSlice({
     },
     setCurrentSymbol: (state, action: PayloadAction<{ key: BusinessType; symbol: string }>) => {
       if (!state[action.payload.key]) {
-        state[action.payload.key] = InitialTokenState[action.payload.key];
+        state[action.payload.key] = JSON.parse(
+          JSON.stringify(InitialTokenState[action.payload.key]),
+        );
       }
       state[action.payload.key].currentSymbol = action.payload.symbol;
     },
     resetTokenState: (state) => {
-      state[BusinessType.Deposit] = InitDepositTokenState;
-      state[BusinessType.Withdraw] = InitWithdrawTokenState;
+      state[BusinessType.Deposit] = JSON.parse(JSON.stringify(InitDepositTokenState));
+      state[BusinessType.Withdraw] = JSON.parse(JSON.stringify(InitWithdrawTokenState));
     },
   },
 });
