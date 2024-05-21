@@ -9,14 +9,14 @@ import StatusBox from 'pageComponents/HistoryContent/StatusBox';
 import ArrivalTimeBox from 'pageComponents/HistoryContent/ArrivalTimeBox';
 import AmountBox from 'pageComponents/HistoryContent/AmountBox';
 import AddressBox from 'pageComponents/HistoryContent/AddressBox';
-import { TRecordsContentParams } from 'types/api';
+import { TRecordsBodyProps } from 'pageComponents/HistoryContent';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebounceCallback } from 'hooks';
 import { setSkipCount, setHasMore } from 'store/reducers/records/slice';
 
 const NoDataText = '-- No Data --';
 
-export default function HistoryCardItem({ requestRecordsList }: TRecordsContentParams) {
+export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProps) {
   const dispatch = useAppDispatch();
   const { recordsList, hasMore, maxResultCount, totalCount, skipCount } = useRecordsState();
 

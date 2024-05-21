@@ -5,7 +5,8 @@ import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import { setType, setStatus, setTimestamp, setSkipCount } from 'store/reducers/records/slice';
 import { TRecordsRequestType, TRecordsRequestStatus, TRecordsStatusI18n } from 'types/records';
 import { useCallback, useMemo } from 'react';
-import { TRangeValue, TRecordsContentParams, BusinessType } from 'types/api';
+import { TRangeValue, BusinessType } from 'types/api';
+import { TRecordsContentProps } from 'pageComponents/HistoryContent';
 import { Reset } from 'assets/images';
 import { SwapRightDefault, SwapRightSelected } from 'assets/images';
 import moment from 'moment';
@@ -13,7 +14,7 @@ import moment from 'moment';
 const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY-MM-DD';
 
-export default function WebRecordsHeader({ requestRecordsList }: TRecordsContentParams) {
+export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecordsContentProps) {
   const dispatch = useAppDispatch();
   const { type, status, timestamp } = useRecordsState();
 
@@ -53,14 +54,6 @@ export default function WebRecordsHeader({ requestRecordsList }: TRecordsContent
     }
     return isShow;
   }, [type, status, timestamp]);
-
-  const handleReset = useCallback(() => {
-    dispatch(setType(TRecordsRequestType.ALL));
-    dispatch(setStatus(TRecordsRequestStatus.ALL));
-    dispatch(setTimestamp(null));
-    dispatch(setSkipCount(1));
-    requestRecordsList();
-  }, [dispatch, requestRecordsList]);
 
   const valueDate: TRangeValue = useMemo(
     () => [
@@ -113,7 +106,7 @@ export default function WebRecordsHeader({ requestRecordsList }: TRecordsContent
           <Button
             className={clsx(styles['web-records-reset-button'])}
             size={'large'}
-            onClick={handleReset}>
+            onClick={onReset}>
             <Reset className={clsx(styles['web-records-reset-icon'])} />
             <span className={clsx(styles['web-records-reset-word'])}>Reset</span>
           </Button>

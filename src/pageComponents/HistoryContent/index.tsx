@@ -2,17 +2,34 @@ import { useCommonState, useAppDispatch, useRecordsState, useLoading } from 'sto
 import WebHistoryContent from './WebHistoryContent';
 import MobileHistoryContent from './MobileHistoryContent';
 import { getRecordsList } from 'utils/api/records';
-import { setRecordsList, setTotalCount, setHasMore } from 'store/reducers/records/slice';
+import {
+  setRecordsList,
+  setTotalCount,
+  setHasMore,
+  setType,
+  setStatus,
+  setTimestamp,
+  setSkipCount,
+} from 'store/reducers/records/slice';
 import { useDebounceCallback } from 'hooks';
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 import { TRecordsRequestType, TRecordsRequestStatus } from 'types/records';
 import { TRecordsListItem } from 'types/api';
 import moment from 'moment';
 import myEvents from 'utils/myEvent';
 import { sleep } from '@portkey/utils';
+import { useEffectOnce } from 'react-use';
+
+export type TRecordsContentProps = TRecordsBodyProps & {
+  onReset: () => void;
+};
+
+export type TRecordsBodyProps = {
+  requestRecordsList: () => void;
+};
 
 export default function Content() {
-  const { isMobilePX } = useCommonState();
+  const { isMobilePX, isUnreadHistory } = useCommonState();
   const dispatch = useAppDispatch();
   const { setLoading } = useLoading();
 
@@ -72,13 +89,40 @@ export default function Content() {
     }
   }, []);
 
-  useEffect(() => {
+  const handleReset = useCallback(() => {
+    dispatch(setType(TRecordsRequestType.ALL));
+    dispatch(setStatus(TRecordsRequestStatus.ALL));
+    dispatch(setTimestamp(null));
+    dispatch(setSkipCount(1));
+    if (isMobilePX) {
+      dispatch(setRecordsList([]));
+    }
     requestRecordsList(true);
-  }, [requestRecordsList]);
+  }, [dispatch, isMobilePX, requestRecordsList]);
+
+  useEffectOnce(() => {
+    const { remove } = myEvents.HistoryActive.addListener(() => {
+      if (isUnreadHistory) {
+        handleReset();
+      }
+    });
+
+    return () => {
+      remove();
+    };
+  });
+
+  useEffectOnce(() => {
+    if (isUnreadHistory) {
+      handleReset();
+    } else {
+      requestRecordsList(true);
+    }
+  });
 
   return isMobilePX ? (
-    <MobileHistoryContent requestRecordsList={requestRecordsList} />
+    <MobileHistoryContent requestRecordsList={requestRecordsList} onReset={handleReset} />
   ) : (
-    <WebHistoryContent requestRecordsList={() => requestRecordsList(true)} />
+    <WebHistoryContent requestRecordsList={() => requestRecordsList(true)} onReset={handleReset} />
   );
 }

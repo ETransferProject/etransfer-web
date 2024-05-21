@@ -7,9 +7,10 @@ import { useCommonState } from 'store/Provider/hooks';
 import { SideMenuKey, MENU_ITEMS } from 'constants/home';
 import styles from './styles.module.scss';
 import SupportEntry from 'components/Sider/SupportEntry';
+import myEvents from 'utils/myEvent';
 
 export default function Sider() {
-  const { activeMenuKey, isShowRedDot } = useCommonState();
+  const { activeMenuKey, isUnreadHistory } = useCommonState();
   useEffect(() => {
     // init activeMenuKey
     if (!activeMenuKey) {
@@ -29,10 +30,13 @@ export default function Sider() {
               })}
               onClick={() => {
                 store.dispatch(setActiveMenuKey(item.key));
+                if (item.key === SideMenuKey.History) {
+                  myEvents.HistoryActive.emit();
+                }
               }}>
               <MenuIcon className={clsx('flex-none', styles['menu-item-icon'])} />
               <span className={styles['menu-item-label']}>{item.label}</span>
-              {isShowRedDot && item.key === SideMenuKey.History && (
+              {isUnreadHistory && item.key === SideMenuKey.History && (
                 <span className={styles['menu-item-red-dot']} />
               )}
             </div>

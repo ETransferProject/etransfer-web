@@ -15,13 +15,14 @@ import CommonDrawer from 'components/CommonDrawer';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import { Select, DatePicker } from 'antd';
 import type { Moment } from 'moment';
-import { TRecordsContentParams, BusinessType } from 'types/api';
+import { BusinessType } from 'types/api';
+import { TRecordsContentProps } from 'pageComponents/HistoryContent';
 import { defaultNullValue } from 'constants/index';
 import moment from 'moment';
 
 const dateFormat = 'YYYY-MM-DD';
 
-export default function Filter({ requestRecordsList }: TRecordsContentParams) {
+export default function Filter({ requestRecordsList, onReset }: TRecordsContentProps) {
   const dispatch = useAppDispatch();
   const { type, status, timestamp } = useRecordsState();
   const [isShowFilterDrawer, setIsShowFilterDrawer] = useState(false);
@@ -73,15 +74,6 @@ export default function Filter({ requestRecordsList }: TRecordsContentParams) {
     },
     [dispatch, requestRecordsList],
   );
-
-  const handleReset = useCallback(() => {
-    dispatch(setType(TRecordsRequestType.ALL));
-    dispatch(setStatus(TRecordsRequestStatus.ALL));
-    dispatch(setTimestamp(null));
-    dispatch(setSkipCount(1));
-    dispatch(setRecordsList([]));
-    requestRecordsList();
-  }, [dispatch, requestRecordsList]);
 
   const handleResetFilter = useCallback(() => {
     setFilterType(TRecordsRequestType.ALL);
@@ -153,7 +145,7 @@ export default function Filter({ requestRecordsList }: TRecordsContentParams) {
           </div>
         )}
         {isShowReset && (
-          <div className={clsx(styles['filter-reset'])} onClick={handleReset}>
+          <div className={clsx(styles['filter-reset'])} onClick={onReset}>
             Reset
           </div>
         )}

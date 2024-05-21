@@ -6,7 +6,7 @@ import { useAppDispatch, useCommonState } from 'store/Provider/hooks';
 import { SideMenuKey } from 'constants/home';
 import styles from './styles.module.scss';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { setActiveMenuKey, setIsShowRedDot } from 'store/reducers/common/slice';
+import { setActiveMenuKey, setIsUnreadHistory } from 'store/reducers/common/slice';
 import clsx from 'clsx';
 import myEvents from 'utils/myEvent';
 import { getRecordStatus } from 'utils/api/records';
@@ -40,7 +40,7 @@ export default function Content() {
   const updateRecordStatus = useCallback(async () => {
     try {
       const res = await getRecordStatus();
-      dispatch(setIsShowRedDot(res.status));
+      dispatch(setIsUnreadHistory(res.status));
     } catch (error) {
       console.log('update new records error', error);
     }

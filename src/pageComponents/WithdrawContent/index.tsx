@@ -264,6 +264,23 @@ export default function WithdrawContent() {
     [judgeIsSubmitDisabled],
   );
 
+  const getToken = useCallback(
+    async (isInitCurrentSymbol?: boolean) => {
+      const res = await getTokenList({
+        type: BusinessType.Withdraw,
+        chainId: currentChainItemRef.current.key,
+      });
+
+      dispatch(setTokenList(res.tokenList));
+
+      if (isInitCurrentSymbol && !currentSymbol) {
+        dispatch(setCurrentSymbol(res.tokenList[0].symbol));
+      }
+      return res.tokenList;
+    },
+    [dispatch, currentSymbol],
+  );
+
   const getAllNetworkData = useCallback(async () => {
     // only get data and render page, don't update error
     try {
@@ -575,6 +592,7 @@ export default function WithdrawContent() {
         getMaxBalanceInterval();
         getMaxBalance(true);
 
+        await getToken(true);
         await getNetworkData({
           symbol: symbol || currentSymbol,
           address: form.getFieldValue(FormKeys.ADDRESS) || undefined,
@@ -592,6 +610,7 @@ export default function WithdrawContent() {
       getMaxBalance,
       getMaxBalanceInterval,
       getNetworkData,
+      getToken,
       getWithdrawData,
       handleAmountValidate,
       setCurrentChainItem,
@@ -878,23 +897,6 @@ export default function WithdrawContent() {
       withdrawAddress: searchParams.get('withdrawAddress'),
     }),
     [searchParams],
-  );
-
-  const getToken = useCallback(
-    async (isInitCurrentSymbol?: boolean) => {
-      const res = await getTokenList({
-        type: BusinessType.Withdraw,
-        chainId: currentChainItemRef.current.key,
-      });
-
-      dispatch(setTokenList(res.tokenList));
-
-      if (isInitCurrentSymbol && !currentSymbol) {
-        dispatch(setCurrentSymbol(res.tokenList[0].symbol));
-      }
-      return res.tokenList;
-    },
-    [dispatch, currentSymbol],
   );
 
   const init = useCallback(async () => {

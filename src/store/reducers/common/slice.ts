@@ -7,7 +7,7 @@ export interface CommonState {
   isMobilePX: boolean;
   activeMenuKey: SideMenuKey;
   currentVersion?: PortkeyVersion;
-  isShowRedDot?: boolean;
+  isUnreadHistory?: boolean;
 }
 
 export const initialState: CommonState = {
@@ -15,7 +15,7 @@ export const initialState: CommonState = {
   isMobilePX: false,
   activeMenuKey: SideMenuKey.Deposit,
   currentVersion: PortkeyVersion.v2,
-  isShowRedDot: false,
+  isUnreadHistory: false,
 };
 
 //it automatically uses the immer library to let you write simpler immutable updates with normal mutative code
@@ -35,8 +35,8 @@ export const CommonSlice = createSlice({
     setSwitchVersionAction: (state, action: PayloadAction<PortkeyVersion | undefined>) => {
       state.currentVersion = action.payload;
     },
-    setIsShowRedDot: (state, action) => {
-      state.isShowRedDot = action.payload;
+    setIsUnreadHistory: (state, action) => {
+      state.isUnreadHistory = action.payload;
     },
     resetCommon: (state) => {
       state.activeMenuKey = SideMenuKey.Deposit;
@@ -51,7 +51,7 @@ export const {
   setActiveMenuKey,
   resetCommon,
   setSwitchVersionAction,
-  setIsShowRedDot,
+  setIsUnreadHistory,
 } = CommonSlice.actions;
 
 export default CommonSlice;
