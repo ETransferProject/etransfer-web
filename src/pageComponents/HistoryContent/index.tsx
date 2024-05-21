@@ -9,6 +9,7 @@ import { TRecordsRequestType, TRecordsRequestStatus } from 'types/records';
 import { TRecordsListItem } from 'types/api';
 import moment from 'moment';
 import myEvents from 'utils/myEvent';
+import { sleep } from '@portkey/utils';
 
 export default function Content() {
   const { isMobilePX } = useCommonState();
@@ -66,6 +67,7 @@ export default function Content() {
     } finally {
       setLoading(false);
 
+      await sleep(1000);
       myEvents.UpdateNewRecordStatus.emit();
     }
   }, []);
