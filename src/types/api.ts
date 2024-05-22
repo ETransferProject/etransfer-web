@@ -200,7 +200,3 @@ export type TGetRecordsListResult = {
   totalCount: number;
   items: TRecordsListItem[];
 };
-
-export type TRecordsContentParams = {
-  requestRecordsList: () => void;
-};

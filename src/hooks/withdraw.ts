@@ -1,20 +1,17 @@
 import { useMemo } from 'react';
-import { useTokenState, useWithdrawState } from 'store/Provider/hooks';
-import { BusinessType } from 'types/api';
-import { InitWithdrawTokenState } from 'store/reducers/token/slice';
+import { useWithdrawState } from 'store/Provider/hooks';
+import { InitialWithdrawState } from 'store/reducers/withdraw/slice';
 import { CHAIN_LIST } from 'constants/index';
 
 export function useWithdraw() {
-  const tokenState = useTokenState();
-  const { currentChainItem } = useWithdrawState();
+  const { currentChainItem, tokenList, currentSymbol } = useWithdrawState();
 
   return useMemo(
     () => ({
-      tokenList: tokenState[BusinessType.Withdraw]?.tokenList || InitWithdrawTokenState.tokenList,
-      currentSymbol:
-        tokenState[BusinessType.Withdraw]?.currentSymbol || InitWithdrawTokenState.currentSymbol,
+      tokenList: tokenList || InitialWithdrawState.tokenList,
+      currentSymbol: currentSymbol || InitialWithdrawState.currentSymbol,
       currentChainItem: currentChainItem || CHAIN_LIST[0],
     }),
-    [tokenState, currentChainItem],
+    [tokenList, currentSymbol, currentChainItem],
   );
 }

@@ -135,6 +135,7 @@ export function useQueryAuthToken() {
       return;
     } finally {
       setLoading(false);
+      eTransferInstance.setObtainingToken(false);
     }
   }, [
     dispatch,

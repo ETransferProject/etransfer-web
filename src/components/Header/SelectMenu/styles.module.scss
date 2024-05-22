@@ -46,9 +46,20 @@
 }
 
 .menu-item-label {
+  position: relative;
   font-size: 16px;
   line-height: 1.5;
   @extend .font-family-medium;
+}
+
+.menu-item-red-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background-color: $error;
+  position: absolute;
+  top: 4px;
+  right: -8px;
 }
 
 .supportEntry {

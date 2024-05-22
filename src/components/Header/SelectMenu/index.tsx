@@ -8,11 +8,11 @@ import { store } from 'store/Provider/store';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import SupportEntry from 'components/Sider/SupportEntry';
+import myEvents from 'utils/myEvent';
 
 export default function SelectMenu() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-
-  const { activeMenuKey } = useCommonState();
+  const { activeMenuKey, isUnreadHistory } = useCommonState();
 
   useEffect(() => {
     // init activeMenuKey
@@ -49,13 +49,22 @@ export default function SelectMenu() {
                   onClick={() => {
                     store.dispatch(setActiveMenuKey(item.key));
                     setIsDrawerOpen(false);
+                    if (item.key === SideMenuKey.History && isUnreadHistory) {
+                      myEvents.HistoryActive.emit();
+                    }
                   }}>
                   <MenuIcon className={styles['menu-item-icon']} />
-                  <div className={styles['menu-item-label']}>{item.label}</div>
+                  <div className={styles['menu-item-label']}>
+                    {item.label}
+                    {isUnreadHistory && item.key === SideMenuKey.History && (
+                      <span className={styles['menu-item-red-dot']} />
+                    )}
+                  </div>
                 </div>
               );
             })}
           </div>
+
           <SupportEntry className={styles.supportEntry} />
         </div>
       </CommonDrawer>

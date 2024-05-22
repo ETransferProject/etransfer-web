@@ -45,3 +45,7 @@ export function isValidPositiveNumber(n?: string) {
   if (!n || n.includes('-')) return false;
   return P_N_REG.test(n);
 }
+
+export const isValidBase58 = (str: string) => {
+  return !/[\u4e00-\u9fa5\u3000-\u303f\uff01-\uff5e]/.test(str);
+};

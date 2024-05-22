@@ -40,7 +40,6 @@ const DepositApiList = {
 const HistoryApiList = {
   getRecordsList: '/api/etransfer/record/list',
   getRecordStatus: '/api/etransfer/record/status',
-  postRecordRead: '/api/etransfer/record/read',
 };
 
 /**
