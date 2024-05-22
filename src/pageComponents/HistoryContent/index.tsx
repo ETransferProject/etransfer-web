@@ -101,11 +101,7 @@ export default function Content() {
   }, [dispatch, isMobilePX, requestRecordsList]);
 
   useEffectOnce(() => {
-    const { remove } = myEvents.HistoryActive.addListener(() => {
-      if (isUnreadHistory) {
-        handleReset();
-      }
-    });
+    const { remove } = myEvents.HistoryActive.addListener(handleReset);
 
     return () => {
       remove();

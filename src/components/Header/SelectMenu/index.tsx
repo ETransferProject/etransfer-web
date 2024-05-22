@@ -49,7 +49,7 @@ export default function SelectMenu() {
                   onClick={() => {
                     store.dispatch(setActiveMenuKey(item.key));
                     setIsDrawerOpen(false);
-                    if (item.key === SideMenuKey.History) {
+                    if (item.key === SideMenuKey.History && isUnreadHistory) {
                       myEvents.HistoryActive.emit();
                     }
                   }}>

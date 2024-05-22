@@ -30,7 +30,7 @@ export default function Sider() {
               })}
               onClick={() => {
                 store.dispatch(setActiveMenuKey(item.key));
-                if (item.key === SideMenuKey.History) {
+                if (item.key === SideMenuKey.History && isUnreadHistory) {
                   myEvents.HistoryActive.emit();
                 }
               }}>
