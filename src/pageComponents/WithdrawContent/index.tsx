@@ -579,7 +579,7 @@ export default function WithdrawContent() {
 
   const setCurrentChainItem = useSetCurrentChainItem();
   const handleChainChanged = useCallback(
-    async (item: IChainNameItem, symbol?: string) => {
+    async (item: IChainNameItem, token?: TTokenItem) => {
       try {
         setLoading(true);
         currentChainItemRef.current = item;
@@ -590,14 +590,14 @@ export default function WithdrawContent() {
 
         // reset max balance
         getMaxBalanceInterval();
-        getMaxBalance(true);
+        getMaxBalance(true, token);
 
         await getToken(true);
         await getNetworkData({
-          symbol: symbol || currentSymbol,
+          symbol: token?.symbol || currentSymbol,
           address: form.getFieldValue(FormKeys.ADDRESS) || undefined,
         });
-        await getWithdrawData(symbol || currentSymbol);
+        await getWithdrawData(token?.symbol || currentSymbol);
       } catch (error) {
         console.log('Change chain error: ', error);
       } finally {
@@ -923,6 +923,8 @@ export default function WithdrawContent() {
         newTokenList = await getToken(true);
       }
 
+      const newCurrentToken = newTokenList.find((item) => item.symbol === newCurrentSymbol);
+
       const address = routeQuery.withdrawAddress || withdraw.address || '';
       form.setFieldValue(FormKeys.ADDRESS, address);
       dispatch(setWithdrawAddress(address));
@@ -941,10 +943,8 @@ export default function WithdrawContent() {
         await getNetworkData({ symbol: newCurrentSymbol, address });
         getWithdrawData(newCurrentSymbol);
       } else {
-        handleChainChanged(currentChainItemRef.current, newCurrentSymbol);
+        handleChainChanged(currentChainItemRef.current, newCurrentToken);
       }
-
-      const newCurrentToken = newTokenList.find((item) => item.symbol === newCurrentSymbol);
 
       getMaxBalanceInterval(newCurrentToken);
     } catch (error) {
@@ -1136,7 +1136,7 @@ export default function WithdrawContent() {
               {!maxBalance || isMaxBalanceLoading ? (
                 <PartialLoading />
               ) : (
-                `${maxBalance} ${withdrawInfo.transactionUnit}`
+                `${maxBalance} ${currentSymbol}`
               )}
             </div>
           </div>
