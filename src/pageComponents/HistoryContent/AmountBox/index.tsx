@@ -5,6 +5,8 @@ import { useCommonState } from 'store/Provider/hooks';
 import { TRecordsStatus } from 'types/records';
 import { defaultNullValue } from 'constants/index';
 import { formatSymbolDisplay } from 'utils/format';
+import { useFindToken } from 'hooks/common';
+import { useMemo } from 'react';
 
 type TAmountBoxProps = {
   amount: string;
@@ -15,6 +17,12 @@ type TAmountBoxProps = {
 
 export default function AmountBox({ amount, token, fromToken, status }: TAmountBoxProps) {
   const { isMobilePX } = useCommonState();
+  const findToken = useFindToken();
+
+  const amountDisplay = useMemo(() => {
+    const currentToken = findToken(token);
+    return LargeNumberDisplay(amount, Number(currentToken?.decimals) || 6);
+  }, [amount, findToken, token]);
 
   return (
     <div
@@ -26,7 +34,7 @@ export default function AmountBox({ amount, token, fromToken, status }: TAmountB
         (fromToken && fromToken !== token && status === TRecordsStatus.Processing ? (
           <span className={styles['second']}>Swapping</span>
         ) : (
-          <span>{`${LargeNumberDisplay(amount, token)} ${formatSymbolDisplay(token)}`}</span>
+          <span>{`${amountDisplay} ${formatSymbolDisplay(token)}`}</span>
         ))}
       {status === TRecordsStatus.Failed && <span>{defaultNullValue}</span>}
     </div>

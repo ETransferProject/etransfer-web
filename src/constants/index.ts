@@ -31,6 +31,7 @@ export const defaultNullValue = '--';
 export enum TokenType {
   USDT = 'USDT',
   SGR = 'SGR-1',
+  ELF = 'ELF',
 }
 
 export const TOKEN_INFO_USDT = {

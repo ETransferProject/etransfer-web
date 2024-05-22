@@ -2,15 +2,34 @@ import { useCommonState, useAppDispatch, useRecordsState, useLoading } from 'sto
 import WebHistoryContent from './WebHistoryContent';
 import MobileHistoryContent from './MobileHistoryContent';
 import { getRecordsList } from 'utils/api/records';
-import { setRecordsList, setTotalCount, setHasMore } from 'store/reducers/records/slice';
+import {
+  setRecordsList,
+  setTotalCount,
+  setHasMore,
+  setType,
+  setStatus,
+  setTimestamp,
+  setSkipCount,
+} from 'store/reducers/records/slice';
 import { useDebounceCallback } from 'hooks';
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 import { TRecordsRequestType, TRecordsRequestStatus } from 'types/records';
 import { TRecordsListItem } from 'types/api';
 import moment from 'moment';
+import myEvents from 'utils/myEvent';
+import { sleep } from '@portkey/utils';
+import { useEffectOnce } from 'react-use';
+
+export type TRecordsContentProps = TRecordsBodyProps & {
+  onReset: () => void;
+};
+
+export type TRecordsBodyProps = {
+  requestRecordsList: () => void;
+};
 
 export default function Content() {
-  const { isMobilePX } = useCommonState();
+  const { isMobilePX, isUnreadHistory } = useCommonState();
   const dispatch = useAppDispatch();
   const { setLoading } = useLoading();
 
@@ -26,15 +45,19 @@ export default function Content() {
   const requestRecordsList = useDebounceCallback(async (isLoading = false) => {
     try {
       isLoading && setLoading(true);
-      const startTimestamp = timestamp && timestamp[0];
-      const startTimestampFormat = moment(startTimestamp).format('YYYY-MM-DD 00:00:00');
-      const endTimestamp = timestamp && timestamp[1];
-      const endTimestampFormat = moment(endTimestamp).format('YYYY-MM-DD 23:59:59');
+
+      const startTimestampFormat =
+        timestamp?.[0] && moment(timestamp?.[0]).format('YYYY-MM-DD 00:00:00');
+      const endTimestampFormat =
+        timestamp?.[1] && moment(timestamp?.[1]).format('YYYY-MM-DD 23:59:59');
+      const startTimestamp = startTimestampFormat ? moment(startTimestampFormat).valueOf() : null;
+      const endTimestamp = endTimestampFormat ? moment(endTimestampFormat).valueOf() : null;
+
       const { items: recordsListRes, totalCount } = await getRecordsList({
         type,
         status,
-        startTimestamp: moment(startTimestampFormat).valueOf() || null,
-        endTimestamp: moment(endTimestampFormat).valueOf() || null,
+        startTimestamp: startTimestamp,
+        endTimestamp: endTimestamp,
         skipCount: (skipCount - 1) * maxResultCount,
         maxResultCount,
       });
@@ -60,16 +83,42 @@ export default function Content() {
       console.log('records', error);
     } finally {
       setLoading(false);
+
+      await sleep(1000);
+      myEvents.UpdateNewRecordStatus.emit();
     }
   }, []);
 
-  useEffect(() => {
+  const handleReset = useCallback(() => {
+    dispatch(setType(TRecordsRequestType.ALL));
+    dispatch(setStatus(TRecordsRequestStatus.ALL));
+    dispatch(setTimestamp(null));
+    dispatch(setSkipCount(1));
+    if (isMobilePX) {
+      dispatch(setRecordsList([]));
+    }
     requestRecordsList(true);
-  }, [requestRecordsList]);
+  }, [dispatch, isMobilePX, requestRecordsList]);
+
+  useEffectOnce(() => {
+    const { remove } = myEvents.HistoryActive.addListener(handleReset);
+
+    return () => {
+      remove();
+    };
+  });
+
+  useEffectOnce(() => {
+    if (isUnreadHistory) {
+      handleReset();
+    } else {
+      requestRecordsList(true);
+    }
+  });
 
   return isMobilePX ? (
-    <MobileHistoryContent requestRecordsList={requestRecordsList} />
+    <MobileHistoryContent requestRecordsList={requestRecordsList} onReset={handleReset} />
   ) : (
-    <WebHistoryContent requestRecordsList={() => requestRecordsList(true)} />
+    <WebHistoryContent requestRecordsList={() => requestRecordsList(true)} onReset={handleReset} />
   );
 }

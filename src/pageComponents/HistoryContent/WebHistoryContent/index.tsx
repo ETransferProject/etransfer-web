@@ -1,11 +1,11 @@
 import WebHistoryHeader from './WebHistoryHeader';
 import WebHistoryTable from './WebHistoryTable';
-import { TRecordsContentParams } from 'types/api';
+import { TRecordsContentProps } from 'pageComponents/HistoryContent';
 
-export default function WebHistoryContent({ requestRecordsList }: TRecordsContentParams) {
+export default function WebHistoryContent({ requestRecordsList, onReset }: TRecordsContentProps) {
   return (
     <div>
-      <WebHistoryHeader requestRecordsList={requestRecordsList} />
+      <WebHistoryHeader requestRecordsList={requestRecordsList} onReset={onReset} />
       <WebHistoryTable requestRecordsList={requestRecordsList} />
     </div>
   );

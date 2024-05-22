@@ -21,7 +21,7 @@ export default function TokenBox({ symbol }: TTokenBoxProps) {
         return <SGRToken className={styles['token-icon']} />;
       default:
         return (
-          <div className={clsx(styles['token-icon'], styles['word-symbol'])}>
+          <div className={clsx('row-center', styles['token-icon'], styles['word-symbol'])}>
             {symbol?.charAt(0).toUpperCase()}
           </div>
         );

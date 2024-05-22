@@ -105,7 +105,7 @@ export function SelectImage({
         />
       )}
       <div
-        className={clsx(styles['token-card-defaultIcon'], styles['token-card-icon'], {
+        className={clsx('row-center', styles['token-card-defaultIcon'], styles['token-card-icon'], {
           [styles['token-card-defaultIcon-none']]: showIcon && isSuccess,
         })}
         style={{ width: size, height: size, lineHeight: size + 'px' }}>

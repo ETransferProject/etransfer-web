@@ -4,15 +4,17 @@ import { Select, DatePicker, Button } from 'antd';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import { setType, setStatus, setTimestamp, setSkipCount } from 'store/reducers/records/slice';
 import { TRecordsRequestType, TRecordsRequestStatus, TRecordsStatusI18n } from 'types/records';
-import { useCallback } from 'react';
-import { TRangeValue, TRecordsContentParams, BusinessType } from 'types/api';
+import { useCallback, useMemo } from 'react';
+import { TRangeValue, BusinessType } from 'types/api';
+import { TRecordsContentProps } from 'pageComponents/HistoryContent';
 import { Reset } from 'assets/images';
 import { SwapRightDefault, SwapRightSelected } from 'assets/images';
+import moment from 'moment';
 
 const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY-MM-DD';
 
-export default function WebRecordsHeader({ requestRecordsList }: TRecordsContentParams) {
+export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecordsContentProps) {
   const dispatch = useAppDispatch();
   const { type, status, timestamp } = useRecordsState();
 
@@ -37,7 +39,7 @@ export default function WebRecordsHeader({ requestRecordsList }: TRecordsContent
   const handleDateRangeChange = useCallback(
     (timestamp: TRangeValue) => {
       if (timestamp && timestamp[0] && timestamp[1]) {
-        dispatch(setTimestamp(timestamp));
+        dispatch(setTimestamp([moment(timestamp[0]).valueOf(), moment(timestamp[1]).valueOf()]));
         dispatch(setSkipCount(1));
         requestRecordsList();
       }
@@ -53,13 +55,13 @@ export default function WebRecordsHeader({ requestRecordsList }: TRecordsContent
     return isShow;
   }, [type, status, timestamp]);
 
-  const handleReset = useCallback(() => {
-    dispatch(setType(TRecordsRequestType.ALL));
-    dispatch(setStatus(TRecordsRequestStatus.ALL));
-    dispatch(setTimestamp(null));
-    dispatch(setSkipCount(1));
-    requestRecordsList();
-  }, [dispatch, requestRecordsList]);
+  const valueDate: TRangeValue = useMemo(
+    () => [
+      timestamp?.[0] ? moment(timestamp?.[0]) : null,
+      timestamp?.[1] ? moment(timestamp?.[1]) : null,
+    ],
+    [timestamp],
+  );
 
   return (
     <div className={clsx(styles['web-records-header-wrapper'])}>
@@ -93,7 +95,7 @@ export default function WebRecordsHeader({ requestRecordsList }: TRecordsContent
         <RangePicker
           size={'large'}
           allowClear={false}
-          value={timestamp}
+          value={valueDate}
           className={clsx(styles['web-records-range-picker'])}
           format={dateFormat}
           allowEmpty={[true, true]}
@@ -104,7 +106,7 @@ export default function WebRecordsHeader({ requestRecordsList }: TRecordsContent
           <Button
             className={clsx(styles['web-records-reset-button'])}
             size={'large'}
-            onClick={handleReset}>
+            onClick={onReset}>
             <Reset className={clsx(styles['web-records-reset-icon'])} />
             <span className={clsx(styles['web-records-reset-word'])}>Reset</span>
           </Button>

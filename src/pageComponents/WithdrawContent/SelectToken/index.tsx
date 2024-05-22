@@ -7,8 +7,8 @@ import DynamicArrow from 'components/DynamicArrow';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
 import { SelectImage } from 'components/SelectToken/TokenCard';
-import { BusinessType, TTokenItem } from 'types/api';
-import { setCurrentSymbol } from 'store/reducers/token/slice';
+import { TTokenItem } from 'types/api';
+import { setCurrentSymbol } from 'store/reducers/withdraw/slice';
 import { formatSymbolDisplay } from 'utils/format';
 
 type TSelectTokenProps = {
@@ -39,7 +39,7 @@ export default function SelectToken({
         return;
       }
       onChange?.(item);
-      dispatch(setCurrentSymbol({ key: BusinessType.Withdraw, symbol: item.symbol }));
+      dispatch(setCurrentSymbol(item.symbol));
       setIsShowTokenSelectDropdown(false);
 
       selectCallback(item);

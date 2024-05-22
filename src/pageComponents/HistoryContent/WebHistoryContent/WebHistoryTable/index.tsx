@@ -2,7 +2,8 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import { Table } from 'antd';
-import { TRecordsListItem, TRecordsContentParams } from 'types/api';
+import { TRecordsListItem } from 'types/api';
+import { TRecordsBodyProps } from 'pageComponents/HistoryContent';
 import { TFeeInfoType, TRecordsTableListType } from 'types/records';
 import { setSkipCount, setMaxResultCount } from 'store/reducers/records/slice';
 import FeeInfo from 'pageComponents/HistoryContent/FeeInfo';
@@ -117,7 +118,7 @@ const columns = [
   },
 ];
 
-export default function WebRecordsTable({ requestRecordsList }: TRecordsContentParams) {
+export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProps) {
   const { recordsList, totalCount, skipCount, maxResultCount } = useRecordsState();
   const dispatch = useAppDispatch();
 
