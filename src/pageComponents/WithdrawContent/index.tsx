@@ -1028,6 +1028,7 @@ export default function WithdrawContent() {
                 textareaProps={{
                   placeholder: 'Enter an address',
                 }}
+                autoSize={{ maxRows: 2 }}
               />
             </Form.Item>
           </div>

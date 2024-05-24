@@ -9,6 +9,7 @@ const { TextArea } = Input;
 interface FormTextareaProps {
   textareaProps?: Omit<TextAreaProps, 'value' | 'onChange'>;
   value?: string;
+  autoSize: boolean | object;
   onChange?: (value: string | null) => void;
   onBlur?: FocusEventHandler<HTMLTextAreaElement>;
 }
@@ -16,6 +17,7 @@ interface FormTextareaProps {
 export default function FormTextarea({
   textareaProps,
   value,
+  autoSize,
   onChange,
   onBlur,
 }: FormTextareaProps) {
@@ -23,7 +25,7 @@ export default function FormTextarea({
     <div className={clsx('flex-row-start', styles['textarea-wrapper'])}>
       <TextArea
         spellCheck={false}
-        autoSize
+        autoSize={autoSize}
         {...textareaProps}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
