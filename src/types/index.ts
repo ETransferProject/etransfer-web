@@ -11,8 +11,9 @@ export type EntryConfig = {
   type?: SideMenuKey; // 'Deposit' | 'Withdraw'
   chainId?: SupportedELFChainId;
   tokenSymbol?: string; // 'USDT'|'SGR'|'ELF' , default = 'USDT'
-  // depositFromNetwork?: string; // eg: "ETH"
+  depositFromNetwork?: string; // eg: "ETH"
   depositToToken?: string; // 'USDT'|'SGR'|'ELF' , default = 'USDT'
+  calculatePay?: string;
   withdrawAddress?: string;
   // withdrawNetwork?: string;
   // withdrawAmount?: string; // not decimal
