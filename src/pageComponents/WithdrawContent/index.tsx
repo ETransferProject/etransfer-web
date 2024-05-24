@@ -239,7 +239,7 @@ export default function WithdrawContent() {
   ]);
 
   const getAddressInput = useCallback(() => {
-    return form.getFieldValue(FormKeys.ADDRESS).trim();
+    return form.getFieldValue(FormKeys.ADDRESS)?.trim();
   }, [form]);
 
   const judgeIsSubmitDisabled = useCallback(
@@ -1081,7 +1081,7 @@ export default function WithdrawContent() {
                 autoComplete="off"
                 placeholder={`Minimum: ${minAmount}`}
                 onInput={(event: any) => {
-                  const value = event.target?.value.trim();
+                  const value = event.target?.value?.trim();
                   const oldValue = form.getFieldValue(FormKeys.AMOUNT);
 
                   // CHECK1: not empty
