@@ -238,6 +238,10 @@ export default function WithdrawContent() {
     isMobilePX,
   ]);
 
+  const getAddressInput = useCallback(() => {
+    return form.getFieldValue(FormKeys.ADDRESS)?.trim();
+  }, [form]);
+
   const judgeIsSubmitDisabled = useCallback(
     (currentFormValidateData: typeof formValidateData) => {
       const isValueUndefined = (value: unknown) => value === undefined || value === '';
@@ -245,12 +249,12 @@ export default function WithdrawContent() {
         currentFormValidateData[FormKeys.ADDRESS].validateStatus === ValidateStatus.Error ||
         currentFormValidateData[FormKeys.NETWORK].validateStatus === ValidateStatus.Error ||
         currentFormValidateData[FormKeys.AMOUNT].validateStatus === ValidateStatus.Error ||
-        isValueUndefined(form.getFieldValue(FormKeys.ADDRESS)) ||
+        isValueUndefined(getAddressInput()) ||
         isValueUndefined(currentNetworkRef.current) ||
         isValueUndefined(form.getFieldValue(FormKeys.AMOUNT));
       setIsSubmitDisabled(isDisabled);
     },
-    [form],
+    [form, getAddressInput],
   );
 
   const handleFormValidateDataChange = useCallback(
@@ -595,7 +599,7 @@ export default function WithdrawContent() {
         await getToken(true);
         await getNetworkData({
           symbol: token?.symbol || currentSymbol,
-          address: form.getFieldValue(FormKeys.ADDRESS) || undefined,
+          address: getAddressInput() || undefined,
         });
         await getWithdrawData(token?.symbol || currentSymbol);
       } catch (error) {
@@ -607,6 +611,7 @@ export default function WithdrawContent() {
     [
       currentSymbol,
       form,
+      getAddressInput,
       getMaxBalance,
       getMaxBalanceInterval,
       getNetworkData,
@@ -731,7 +736,7 @@ export default function WithdrawContent() {
   const sendTransferTokenTransaction = useDebounceCallback(async () => {
     try {
       setLoading(true, { text: 'Please approve the transaction in the wallet...' });
-      const address = form.getFieldValue(FormKeys.ADDRESS);
+      const address = getAddressInput();
       if (!address) throw new Error('Please enter a correct address.');
 
       const approveRes = await handleApproveToken();
@@ -779,8 +784,15 @@ export default function WithdrawContent() {
     handleAmountValidate();
   }, [form, maxBalance, handleAmountValidate]);
 
+  const onAddressChange = useCallback(
+    (value: string | null) => {
+      dispatch(setWithdrawAddress(value || ''));
+    },
+    [dispatch],
+  );
+
   const onAddressBlur = useCallback(async () => {
-    const address = form.getFieldValue(FormKeys.ADDRESS);
+    const address = getAddressInput();
     dispatch(setWithdrawAddress(address));
 
     if (!address) {
@@ -824,6 +836,7 @@ export default function WithdrawContent() {
     currentSymbol,
     dispatch,
     form,
+    getAddressInput,
     getAllNetworkData,
     getNetworkData,
     getWithdrawData,
@@ -857,20 +870,13 @@ export default function WithdrawContent() {
 
       await getNetworkData({
         symbol: item.symbol,
-        address: form.getFieldValue(FormKeys.ADDRESS) || undefined,
+        address: getAddressInput() || undefined,
       });
       await getWithdrawData(item.symbol);
     } finally {
       setLoading(false);
     }
   };
-
-  const onAddressChange = useCallback(
-    (value: string | null) => {
-      dispatch(setWithdrawAddress(value || ''));
-    },
-    [dispatch],
-  );
 
   const clickSuccessOk = useCallback(() => {
     setIsSuccessModalOpen(false);
@@ -1028,6 +1034,7 @@ export default function WithdrawContent() {
                 textareaProps={{
                   placeholder: 'Enter an address',
                 }}
+                autoSize={{ maxRows: 2 }}
               />
             </Form.Item>
           </div>
@@ -1074,7 +1081,7 @@ export default function WithdrawContent() {
                 autoComplete="off"
                 placeholder={`Minimum: ${minAmount}`}
                 onInput={(event: any) => {
-                  const value = event.target?.value.trim();
+                  const value = event.target?.value?.trim();
                   const oldValue = form.getFieldValue(FormKeys.AMOUNT);
 
                   // CHECK1: not empty
@@ -1201,7 +1208,7 @@ export default function WithdrawContent() {
       <DoubleCheckModal
         withdrawInfo={{
           receiveAmount,
-          address: form.getFieldValue(FormKeys.ADDRESS),
+          address: getAddressInput(),
           network: currentNetwork,
           amount: balance,
           transactionFee: {

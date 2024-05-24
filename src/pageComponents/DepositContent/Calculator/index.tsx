@@ -12,6 +12,7 @@ import { TOKEN_INFO_USDT } from 'constants/index';
 import { useEffectOnce } from 'react-use';
 import { formatSymbolDisplay } from 'utils/format';
 import { MAX_UPDATE_TIME } from 'constants/misc';
+import { useSearchParams } from 'next/navigation';
 
 type TCalculator = {
   payToken: string;
@@ -24,8 +25,11 @@ const DEFAULT_PAY_AMOUNT = '100';
 export default function Calculator({ payToken, receiveToken }: TCalculator) {
   const { isMobilePX } = useCommonState();
   const { fromTokenSymbol, fromTokenList, toChainItem, toTokenSymbol } = useDepositState();
-  const [payAmount, setPayAmount] = useState(DEFAULT_PAY_AMOUNT);
-  const amountRef = useRef(DEFAULT_PAY_AMOUNT);
+  const searchParams = useSearchParams();
+  const [payAmount, setPayAmount] = useState(
+    searchParams.get('calculatePay') || DEFAULT_PAY_AMOUNT,
+  );
+  const amountRef = useRef(searchParams.get('calculatePay') || DEFAULT_PAY_AMOUNT);
   const [receiveAmount, setReceiveAmount] = useState(DEFAULT_AMOUNT);
   const [minReceiveAmount, setMinReceiveAmount] = useState(DEFAULT_AMOUNT);
   const [isExpand, setIsExpand] = useState(true);

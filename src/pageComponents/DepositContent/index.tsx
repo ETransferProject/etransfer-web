@@ -73,7 +73,7 @@ export default function Content() {
   } = useDepositState();
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
-  const fromNetworkRef = useRef<TNetworkItem>();
+  const fromNetworkRef = useRef<string>();
   const [depositInfo, setDepositInfo] = useState<TDepositInfo>(InitDepositInfo);
   const [showRetry, setShowRetry] = useState(false);
 
@@ -148,11 +148,11 @@ export default function Content() {
   const getDepositData = useCallback(
     async (chainId: ChainId, symbol: string, toSymbol: string) => {
       try {
-        if (!fromNetworkRef.current?.network) return;
+        if (!fromNetworkRef.current) return;
         setLoading(true);
         const res = await getDepositInfo({
           chainId,
-          network: fromNetworkRef.current?.network || '',
+          network: fromNetworkRef.current || '',
           symbol,
           toSymbol,
         });
@@ -189,17 +189,16 @@ export default function Content() {
         });
         dispatch(setFromNetworkList(networkList));
         if (networkList?.length === 1 && networkList[0].status !== NetworkStatus.Offline) {
-          fromNetworkRef.current = networkList[0];
+          fromNetworkRef.current = networkList[0].network;
           dispatch(setFromNetwork(networkList[0]));
         } else {
-          const exitNetwork = networkList.filter(
-            (item) => item.network === fromNetworkRef.current?.network,
-          );
+          const exitNetwork = networkList.filter((item) => item.network === fromNetworkRef.current);
           if (exitNetwork?.length === 0) {
             fromNetworkRef.current = undefined;
             dispatch(setFromNetwork(undefined));
             return;
           }
+          dispatch(setFromNetwork(exitNetwork[0]));
         }
         await getDepositData(chainId, lastSymbol, lastToSymbol);
       } catch (error: any) {
@@ -267,7 +266,7 @@ export default function Content() {
 
   const handleFromNetworkChanged = useCallback(
     async (item: TNetworkItem) => {
-      fromNetworkRef.current = item;
+      fromNetworkRef.current = item.network;
       dispatch(setFromNetwork(item));
       await getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
     },
@@ -350,6 +349,7 @@ export default function Content() {
       chainId: searchParams.get('chainId'),
       tokenSymbol: searchParams.get('tokenSymbol'),
       depositToToken: searchParams.get('depositToToken'),
+      depositFromNetwork: searchParams.get('depositFromNetwork'),
     }),
     [searchParams],
   );
@@ -357,6 +357,7 @@ export default function Content() {
     let chainId = toChainItem.key;
     let fromSymbol = fromTokenSymbol;
     let toSymbol = toTokenSymbol;
+    let routeNetworkRef = '';
     if (routeQuery.type === SideMenuKey.Deposit) {
       if (routeQuery.chainId) {
         const chainItem = CHAIN_LIST.find((item) => item.key === routeQuery.chainId);
@@ -368,20 +369,28 @@ export default function Content() {
       if (routeQuery.tokenSymbol) {
         fromSymbol = routeQuery.tokenSymbol;
         dispatch(setFromTokenSymbol(routeQuery.tokenSymbol));
-        fromNetworkRef.current = undefined;
-        dispatch(setFromNetwork(undefined));
-        dispatch(setFromNetworkList([]));
       }
       if (routeQuery.depositToToken) {
         toSymbol = routeQuery.depositToToken;
         dispatch(setToTokenSymbol(routeQuery.depositToToken));
       }
+      if (routeQuery.depositFromNetwork) {
+        routeNetworkRef = routeQuery.depositFromNetwork;
+        fromNetworkRef.current = routeQuery.depositFromNetwork;
+        dispatch(setFromNetwork(undefined));
+        dispatch(setFromNetworkList([]));
+      }
     }
 
     await getTokenList(chainId, fromSymbol, toSymbol);
 
-    if (fromNetwork?.network && fromNetworkList && fromNetworkList?.length > 0) {
-      fromNetworkRef.current = fromNetwork;
+    if (
+      !routeNetworkRef &&
+      fromNetwork?.network &&
+      fromNetworkList &&
+      fromNetworkList?.length > 0
+    ) {
+      fromNetworkRef.current = fromNetwork.network;
     }
 
     // get new network data, when refresh page and switch side menu
@@ -394,6 +403,7 @@ export default function Content() {
     getNetworkData,
     getTokenList,
     routeQuery.chainId,
+    routeQuery.depositFromNetwork,
     routeQuery.depositToToken,
     routeQuery.tokenSymbol,
     routeQuery.type,
