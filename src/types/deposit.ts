@@ -1,5 +1,6 @@
 import { IChainNameItem } from 'constants/index';
 import { TNetworkItem } from './api';
+import { AllSupportedELFChainId } from 'constants/chain';
 
 export type TContractAddress = {
   address: string;
@@ -15,4 +16,9 @@ export type TWithdrawInfoSuccess = {
   arriveTime: string;
   receiveAmountUsd: string;
   transactionId: string;
+};
+
+export type TArrivalTimeConfig = {
+  chainList: AllSupportedELFChainId[];
+  dividingQuota: string;
 };

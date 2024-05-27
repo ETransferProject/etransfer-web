@@ -12,7 +12,7 @@ export type TViewContractAddressModal = {
   onOk?: () => void;
 };
 
-const ViewContractAddressModalTitle = 'USDT Contract Address on ';
+const ViewContractAddressModalTitle = 'Contract Address on ';
 
 export default function ViewContractAddressModal({
   open = false,

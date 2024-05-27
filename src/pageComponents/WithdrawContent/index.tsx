@@ -20,13 +20,7 @@ import {
   TTokenItem,
   NetworkStatus,
 } from 'types/api';
-import {
-  useAppDispatch,
-  useCommonState,
-  useLoading,
-  useUserState,
-  useWithdrawState,
-} from 'store/Provider/hooks';
+import { useAppDispatch, useCommonState, useLoading, useWithdrawState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { ADDRESS_MAP, CHAIN_LIST, IChainNameItem, defaultNullValue } from 'constants/index';
 import {
@@ -94,6 +88,7 @@ import { isDIDAddressSuffix, removeAddressSuffix, removeELFAddressSuffix } from 
 import { SideMenuKey } from 'constants/home';
 import TransactionFee from './TransactionFee';
 import { useSearchParams } from 'next/navigation';
+import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
 
 enum ValidateStatus {
   Error = 'error',
@@ -120,7 +115,6 @@ export default function WithdrawContent() {
   const isAndroid = devices.isMobile().android;
   const { isMobilePX } = useCommonState();
   const currentVersion = useCurrentVersion();
-  const { userInfo } = useUserState();
   const withdraw = useWithdrawState();
   const accounts = useAccounts();
   const { currentSymbol, tokenList, currentChainItem } = useWithdraw();
@@ -744,16 +738,24 @@ export default function WithdrawContent() {
       console.log('>>>>>> sendTransferTokenTransaction approveRes', approveRes);
 
       if (approveRes && wallet?.getSignature) {
+        const { caHash } = await getCaHashAndOriginChainIdByWallet(
+          wallet.walletInfo,
+          wallet.walletType,
+        );
+        const managerAddress = await getManagerAddressByWallet(
+          wallet.walletInfo,
+          wallet.walletType,
+        );
         const transaction = await createTransferTokenTransaction({
           wallet,
           caContractAddress:
             ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.CA],
           eTransferContractAddress: currentTokenAddress,
-          caHash: userInfo.caHash || '',
+          caHash: caHash,
           symbol: currentSymbol,
           amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
           chainId: currentChainItemRef.current.key,
-          fromManagerAddress: userInfo.managerAddress,
+          fromManagerAddress: managerAddress,
         });
         console.log(transaction, '=====transaction');
 

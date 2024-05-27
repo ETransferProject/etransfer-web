@@ -38,8 +38,9 @@ export default function TransactionFee({
     return (
       <span className={styles['transaction-fee']}>
         {`${(!isSuccessModalOpen && transactionFee) || defaultNullValue} `}
-        <span className={styles['transaction-fee-unit']}>{` ${transactionUnit}`}</span>
-        {` + ${
+        <span className={styles['transaction-fee-unit']}>&nbsp;{`${transactionUnit}`}</span>
+        &nbsp;
+        {`+ ${
           (!isSuccessModalOpen && aelfTransactionFee) || defaultNullValue
         } ${aelfTransactionUnit}`}
       </span>
