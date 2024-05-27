@@ -29,7 +29,7 @@ const isNeedQuota = (symbol: TokenType, chainId: AllSupportedELFChainId) => {
 export default function SuccessModal({ withdrawInfo, modalProps }: SuccessModalProps) {
   const arrivalTime = useMemo(() => {
     const symbol = withdrawInfo.symbol as TokenType;
-    const chainId = withdrawInfo.chainItem.key as unknown as AllSupportedELFChainId;
+    const chainId = withdrawInfo.network.network as unknown as AllSupportedELFChainId;
     if (
       isNeedQuota(symbol, chainId) &&
       withdrawInfo.amount <= ARRIVAL_TIME_CONFIG[symbol].dividingQuota
@@ -41,7 +41,7 @@ export default function SuccessModal({ withdrawInfo, modalProps }: SuccessModalP
   }, [
     withdrawInfo.amount,
     withdrawInfo.arriveTime,
-    withdrawInfo.chainItem.key,
+    withdrawInfo.network.network,
     withdrawInfo.symbol,
   ]);
 

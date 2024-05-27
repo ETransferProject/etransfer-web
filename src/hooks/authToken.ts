@@ -1,24 +1,22 @@
-import { GetCAHolderByManagerParams } from '@portkey/services';
-import { Accounts, ChainId } from '@portkey/provider-types';
-import { useWebLogin, WebLoginState, WalletType, PortkeyDid } from 'aelf-web-login';
+import { Accounts } from '@portkey/provider-types';
+import { useWebLogin, WebLoginState, WalletType } from 'aelf-web-login';
 import { getLocalJWT, queryAuthApi } from 'api/utils';
-import { SupportedChainId, AppName, SupportedELFChainId } from 'constants/index';
+import { SupportedChainId, AppName } from 'constants/index';
 import { PortkeyVersion } from 'constants/wallet';
 import { useCallback } from 'react';
-import { useAppDispatch, useLoading, useUserState } from 'store/Provider/hooks';
-import { setUserInfo } from 'store/reducers/user/slice';
+import { useAppDispatch, useLoading } from 'store/Provider/hooks';
 import AElf from 'aelf-sdk';
-import { pubKeyToAddress, recoverPubKey } from 'utils/aelfBase';
+import { recoverPubKey } from 'utils/aelfBase';
 import { setSwitchVersionAction } from 'store/reducers/common/slice';
 import { setV2ConnectedInfoAction } from 'store/reducers/portkeyWallet/actions';
 import { useDebounceCallback } from 'hooks';
 import service from 'api/axios';
 import { eTransferInstance } from 'utils/etransferInstance';
+import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
 
 export function useQueryAuthToken() {
   const dispatch = useAppDispatch();
   const { loginState, logout, wallet, getSignature, walletType } = useWebLogin();
-  const { userInfo } = useUserState();
   const { setLoading } = useLoading();
 
   const loginSuccessActive = useCallback(() => {
@@ -66,27 +64,9 @@ export function useQueryAuthToken() {
   const queryAuth = useCallback(async () => {
     if (!wallet) return;
     if (loginState !== WebLoginState.logined) return;
-    let caHash = '';
-    const address = wallet.address;
-    let originChainId: ChainId = SupportedChainId.sideChain;
+
     setLoading(true);
-    if (walletType === WalletType.discover) {
-      try {
-        const res = await PortkeyDid.did.services.getHolderInfoByManager({
-          caAddresses: [address],
-        } as unknown as GetCAHolderByManagerParams);
-        const caInfo = res[0];
-        caHash = caInfo?.caHash || '';
-        originChainId = (caInfo?.chainId as ChainId) || SupportedChainId.sideChain;
-      } catch (error) {
-        console.log('getHolderInfoByManager error', error);
-        return;
-      }
-    }
-    if (walletType === WalletType.portkey) {
-      caHash = wallet.portkeyInfo?.caInfo?.caHash || '';
-      originChainId = wallet.portkeyInfo?.chainId || SupportedChainId.sideChain;
-    }
+    const { caHash, originChainId } = await getCaHashAndOriginChainIdByWallet(wallet, walletType);
     try {
       const plainTextOrigin = `Nonce:${Date.now()}`;
       const plainText: any = Buffer.from(plainTextOrigin).toString('hex').replace('0x', '');
@@ -107,7 +87,7 @@ export function useQueryAuthToken() {
       if (result.error) throw result.errorMessage;
       const signature = result?.signature || '';
       const pubkey = recoverPubKey(plainText, signature) + '';
-      const managerAddress = pubKeyToAddress(pubkey);
+      const managerAddress = await getManagerAddressByWallet(wallet, walletType, pubkey);
       const apiParams = {
         pubkey,
         signature,
@@ -119,13 +99,6 @@ export function useQueryAuthToken() {
       };
       await queryAuthApi(apiParams);
       eTransferInstance.setObtainingToken(false);
-      dispatch(
-        setUserInfo({
-          caHash,
-          managerAddress,
-          originChainId: originChainId as SupportedELFChainId,
-        }),
-      );
       console.log('login success');
       console.log(loginState, wallet);
       loginSuccessActive();
@@ -137,16 +110,7 @@ export function useQueryAuthToken() {
       setLoading(false);
       eTransferInstance.setObtainingToken(false);
     }
-  }, [
-    dispatch,
-    getSignature,
-    loginState,
-    loginSuccessActive,
-    logout,
-    setLoading,
-    wallet,
-    walletType,
-  ]);
+  }, [getSignature, loginState, loginSuccessActive, logout, setLoading, wallet, walletType]);
 
   const getAuth = useDebounceCallback(async () => {
     if (!wallet) return;
@@ -155,8 +119,9 @@ export function useQueryAuthToken() {
     try {
       // Mark: only one signature process can be performed at the same time
       eTransferInstance.setObtainingSignature(true);
-
-      const key = userInfo.caHash + userInfo.managerAddress;
+      const { caHash } = await getCaHashAndOriginChainIdByWallet(wallet, walletType);
+      const managerAddress = await getManagerAddressByWallet(wallet, walletType);
+      const key = caHash + managerAddress;
       const data = getLocalJWT(key);
       // 1: local storage has JWT token
       if (data) {
