@@ -78,7 +78,7 @@ export const InitialWithdrawSuccessCheck: TWithdrawInfoSuccess = {
 
 export const ARRIVAL_TIME_CONFIG: Record<string, TArrivalTimeConfig> = {
   USDT: {
-    dividingQuota: '3', // '300'
+    dividingQuota: '300',
     chainList: [
       AllSupportedELFChainId.AELF,
       AllSupportedELFChainId.tDVV,
@@ -86,7 +86,7 @@ export const ARRIVAL_TIME_CONFIG: Record<string, TArrivalTimeConfig> = {
     ],
   },
   ELF: {
-    dividingQuota: '2', // '5000'
+    dividingQuota: '5000',
     chainList: [
       AllSupportedELFChainId.AELF,
       AllSupportedELFChainId.tDVV,
