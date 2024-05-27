@@ -1,6 +1,7 @@
 import { CHAIN_LIST, TokenType, defaultNullValue } from 'constants/index';
 import { NetworkStatus, TWithdrawInfo } from 'types/api';
-import { TWithdrawInfoSuccess } from 'types/deposit';
+import { TArrivalTimeConfig, TWithdrawInfoSuccess } from 'types/deposit';
+import { AllSupportedELFChainId } from './chain';
 
 export const WithdrawAddressErrorCodeList = ['40100', '40101'];
 
@@ -73,4 +74,23 @@ export const InitialWithdrawSuccessCheck: TWithdrawInfoSuccess = {
   arriveTime: '',
   receiveAmountUsd: defaultNullValue,
   transactionId: '',
+};
+
+export const ARRIVAL_TIME_CONFIG: Record<string, TArrivalTimeConfig> = {
+  USDT: {
+    dividingQuota: '3', // '300'
+    chainList: [
+      AllSupportedELFChainId.AELF,
+      AllSupportedELFChainId.tDVV,
+      AllSupportedELFChainId.tDVW,
+    ],
+  },
+  ELF: {
+    dividingQuota: '2', // '5000'
+    chainList: [
+      AllSupportedELFChainId.AELF,
+      AllSupportedELFChainId.tDVV,
+      AllSupportedELFChainId.tDVW,
+    ],
+  },
 };

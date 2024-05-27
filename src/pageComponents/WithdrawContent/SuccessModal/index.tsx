@@ -6,14 +6,45 @@ import CommonModalSwitchDrawer, {
 import styles from './styles.module.scss';
 import { TWithdrawInfoSuccess } from 'types/deposit';
 import { valueFixed2LessThanMin } from 'utils/calculate';
-import { defaultNullValue } from 'constants/index';
+import { TokenType, defaultNullValue } from 'constants/index';
+import { useMemo } from 'react';
+import { ARRIVAL_TIME_CONFIG } from 'constants/withdraw';
+import { AllSupportedELFChainId } from 'constants/chain';
 
 interface SuccessModalProps {
   withdrawInfo: TWithdrawInfoSuccess;
   modalProps: CommonModalSwitchDrawerProps;
 }
 
+const isNeedQuota = (symbol: TokenType, chainId: AllSupportedELFChainId) => {
+  if (!symbol || !chainId) return false;
+  if (
+    [TokenType.ELF, TokenType.USDT].includes(symbol) &&
+    ARRIVAL_TIME_CONFIG[symbol].chainList.includes(chainId)
+  )
+    return true;
+  return false;
+};
+
 export default function SuccessModal({ withdrawInfo, modalProps }: SuccessModalProps) {
+  const arrivalTime = useMemo(() => {
+    const symbol = withdrawInfo.symbol as TokenType;
+    const chainId = withdrawInfo.network.network as unknown as AllSupportedELFChainId;
+    if (
+      isNeedQuota(symbol, chainId) &&
+      withdrawInfo.amount <= ARRIVAL_TIME_CONFIG[symbol].dividingQuota
+    ) {
+      return '30s';
+    } else {
+      return withdrawInfo.arriveTime;
+    }
+  }, [
+    withdrawInfo.amount,
+    withdrawInfo.arriveTime,
+    withdrawInfo.network.network,
+    withdrawInfo.symbol,
+  ]);
+
   return (
     <CommonModalSwitchDrawer {...modalProps} hideCancelButton okText="Yes, I know">
       <div className={clsx('flex-column', styles['container'])}>
@@ -46,7 +77,7 @@ export default function SuccessModal({ withdrawInfo, modalProps }: SuccessModalP
           </div>
           <div className={styles['detail-row']}>
             <div className={styles['label']}>Arrival Time</div>
-            <div className={styles['value']}>≈ {withdrawInfo.arriveTime}</div>
+            <div className={styles['value']}>≈ {arrivalTime}</div>
           </div>
         </div>
       </div>

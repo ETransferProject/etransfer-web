@@ -4,12 +4,10 @@ import { persistReducer } from 'redux-persist';
 import {
   commonPersistConfig,
   portkeyWalletPersistConfig,
-  userPersistConfig,
   depositPersistConfig,
   withdrawPersistConfig,
 } from './config';
 import PortkeyWalletSlice from 'store/reducers/portkeyWallet/slice';
-import UserSlice from 'store/reducers/user/slice';
 import DepositSlice from 'store/reducers/deposit/slice';
 import WithdrawSlice from 'store/reducers/withdraw/slice';
 import RecordsSlice from 'store/reducers/records/slice';
@@ -19,14 +17,12 @@ export const portkeyWalletReducer = persistReducer(
   portkeyWalletPersistConfig,
   PortkeyWalletSlice.reducer,
 );
-export const userReducer = persistReducer(userPersistConfig, UserSlice.reducer);
 export const depositReducer = persistReducer(depositPersistConfig, DepositSlice.reducer);
 export const withdrawReducer = persistReducer(withdrawPersistConfig, WithdrawSlice.reducer);
 
 const rootReducer = customCombineReducers({
   [CommonSlice.name]: CommonSlice.reducer,
   [PortkeyWalletSlice.name]: PortkeyWalletSlice.reducer,
-  [UserSlice.name]: UserSlice.reducer,
   [DepositSlice.name]: DepositSlice.reducer,
   [WithdrawSlice.name]: WithdrawSlice.reducer,
   [RecordsSlice.name]: RecordsSlice.reducer,
