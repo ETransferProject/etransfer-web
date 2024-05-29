@@ -1,5 +1,6 @@
 @import 'src/assets/theme/font.scss';
 @import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/constants.scss';
 @import 'src/assets/theme/breakpoint.scss';
 @import 'src/styles/common.scss';
 
@@ -102,6 +103,10 @@
 .fee-usd-box {
   align-items: end;
   gap: 0px;
+}
+
+.fee-value{
+  @include text-overflow;
 }
 
 .receive-amount-usd {

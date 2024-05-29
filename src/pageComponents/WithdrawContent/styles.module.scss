@@ -177,7 +177,7 @@
 .form-footer {
   min-width: $page-min-width;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 12px;
   @include media-mobile {
     position: fixed;
@@ -187,10 +187,12 @@
     width: 100vw;
     margin-left: -16px;
     padding: 20px 16px;
+    align-items: end;
   }
   @include media-pad {
     width: 100%;
     margin-top: 64px;
+    align-items: end;
   }
   @include media-web {
     width: 100%;
@@ -207,14 +209,6 @@
 }
 .footer-info-wrapper {
   min-width: 0;
-  .transaction-fee-wrapper {
-    flex-wrap: wrap;
-    gap: 0;
-    .info-value {
-      gap: 4px;
-      min-width: 0;
-    }
-  }
   .info-label {
     flex: none;
     margin-right: 8px;
@@ -225,7 +219,6 @@
     }
   }
   @include media-mobile-and-pad {
-    flex-direction: column-reverse;
     gap: 2px;
     .info-label,
     .info-value {
@@ -238,13 +231,13 @@
     }
   }
   @include media-web {
-    flex-direction: column;
-    gap: 16px;
+    gap: 24px;
   }
 }
 
 .form-submit-button-wrapper {
   margin-bottom: 0;
+  margin-top: 10px;
 }
 
 .form-submit-button {
