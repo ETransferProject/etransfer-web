@@ -9,7 +9,7 @@ import { WalletType } from 'aelf-web-login';
 import { TWallet } from 'contract/types';
 import { sleep } from '@portkey/utils';
 import { GetRawTx, getAElf, getRawTx } from 'utils/aelfBase';
-import { createManagerForwardCall } from 'portkeySDK/utils/contract';
+import { createManagerForwardCall, createTokenTransfer } from 'portkeySDK/utils/contract';
 
 class TXError extends Error {
   public TransactionId?: string;
@@ -235,16 +235,25 @@ export const createTransferTokenTransaction = async ({
   chainId,
   fromManagerAddress,
 }: CreateTransferTokenTransactionParams) => {
-  const managerForwardCall = await createManagerForwardCall({
-    caContractAddress,
-    contractAddress: eTransferContractAddress,
-    caHash,
-    methodName: ContractMethodName.TransferToken,
-    args: { symbol, amount },
-    chainId,
-  });
+  let transactionParams;
+  if (wallet.walletType === WalletType.elf) {
+    transactionParams = await createTokenTransfer({
+      caContractAddress,
+      args: { symbol, amount },
+      chainId,
+    });
+  } else {
+    transactionParams = await createManagerForwardCall({
+      caContractAddress,
+      contractAddress: eTransferContractAddress,
+      caHash,
+      methodName: ContractMethodName.TransferToken,
+      args: { symbol, amount },
+      chainId,
+    });
+  }
 
-  const transactionParams = AElf.utils.uint8ArrayToHex(managerForwardCall);
+  const packedInput = AElf.utils.uint8ArrayToHex(transactionParams);
 
   const aelf = getAElf(chainId as unknown as AllSupportedELFChainId);
   const { BestChainHeight, BestChainHash } = await aelf.chain.getChainStatus();
@@ -253,7 +262,7 @@ export const createTransferTokenTransaction = async ({
     wallet,
     blockHeightInput: BestChainHeight,
     blockHashInput: BestChainHash,
-    packedInput: transactionParams,
+    packedInput,
     address: fromManagerAddress,
     contractAddress: caContractAddress,
     functionName: ManagerForwardCall,

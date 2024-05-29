@@ -1,6 +1,6 @@
 import { Accounts } from '@portkey/provider-types';
 import { useWebLogin, WebLoginState, WalletType } from 'aelf-web-login';
-import { getLocalJWT, queryAuthApi } from 'api/utils';
+import { QueryAuthApiExtraRequest, getLocalJWT, queryAuthApi } from 'api/utils';
 import { SupportedChainId, AppName } from 'constants/index';
 import { PortkeyVersion } from 'constants/wallet';
 import { useCallback } from 'react';
@@ -13,6 +13,7 @@ import { useDebounceCallback } from 'hooks';
 import service from 'api/axios';
 import { eTransferInstance } from 'utils/etransferInstance';
 import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
+import { AuthTokenSource } from 'types/api';
 
 export function useQueryAuthToken() {
   const dispatch = useAppDispatch();
@@ -62,6 +63,7 @@ export function useQueryAuthToken() {
   }, [dispatch, wallet, walletType]);
 
   const queryAuth = useCallback(async () => {
+    console.log('🌈 🌈 🌈 🌈 🌈 🌈 wallet', wallet);
     if (!wallet) return;
     if (loginState !== WebLoginState.logined) return;
 
@@ -88,15 +90,18 @@ export function useQueryAuthToken() {
       const signature = result?.signature || '';
       const pubkey = recoverPubKey(plainText, signature) + '';
       const managerAddress = await getManagerAddressByWallet(wallet, walletType, pubkey);
-      const apiParams = {
+      const apiParams: QueryAuthApiExtraRequest = {
         pubkey,
         signature,
         plain_text: plainText,
-        ca_hash: caHash,
-        chain_id: originChainId,
-        managerAddress: managerAddress,
         version: PortkeyVersion.v2,
+        source: walletType === WalletType.elf ? AuthTokenSource.NightElf : AuthTokenSource.Portkey,
+        managerAddress: managerAddress,
+        ca_hash: caHash || undefined,
+        chain_id: originChainId || undefined,
+        recaptchaToken: '' || undefined,
       };
+
       await queryAuthApi(apiParams);
       eTransferInstance.setObtainingToken(false);
       console.log('login success');

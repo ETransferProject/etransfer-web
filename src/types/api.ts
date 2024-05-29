@@ -9,6 +9,11 @@ export enum BusinessType {
   Withdraw = 'Withdraw',
 }
 
+export enum AuthTokenSource {
+  Portkey = 'portkey',
+  NightElf = 'nightElf',
+}
+
 export type TGetTokenListRequest = {
   type: BusinessType;
   chainId: ChainId;

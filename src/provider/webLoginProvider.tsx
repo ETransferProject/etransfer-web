@@ -75,8 +75,8 @@ export default function Providers({ children }: { children: ReactNode }) {
     <WebLoginPortkeyProvider networkType={NETWORK_TYPE_V1} networkTypeV2={NETWORK_TYPE_V2}>
       <WebLoginProviderDynamic
         nightElf={{
-          useMultiChain: false,
-          connectEagerly: false,
+          useMultiChain: true,
+          connectEagerly: true,
         }}
         portkey={{
           design: 'SocialDesign',
@@ -88,16 +88,13 @@ export default function Providers({ children }: { children: ReactNode }) {
           iconSrc: EtransferLogoIconBase64,
           title: 'Log In to ETransfer',
         }}
-        extraWallets={['discover']}
+        extraWallets={['discover', 'elf']}
         discover={{
           autoRequestAccount: true,
           autoLogoutOnDisconnected: true,
           autoLogoutOnNetworkMismatch: true,
           autoLogoutOnAccountMismatch: true,
           autoLogoutOnChainMismatch: true,
-          // onPluginNotFound: (openStore) => {
-          //   console.log('openStore:', openStore);
-          // },
         }}>
         <WalletProviderDynamic>{children}</WalletProviderDynamic>
       </WebLoginProviderDynamic>

@@ -4,6 +4,7 @@ import AElf from 'aelf-sdk';
 import service from '../../api/axios';
 import { PortkeyVersion } from 'constants/wallet';
 import { getLocalJWT, queryAuthApi } from 'api/utils';
+import { AuthTokenSource } from 'types/api';
 
 export const queryAuthToken = async ({
   chainId,
@@ -43,5 +44,6 @@ export const queryAuthToken = async ({
     chain_id: chainId,
     managerAddress,
     version: version,
+    source: AuthTokenSource.Portkey,
   });
 };
