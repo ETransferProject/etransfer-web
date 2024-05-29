@@ -9,7 +9,6 @@ import styles from './styles.module.scss';
 import { valueFixed2LessThanMin } from 'utils/calculate';
 import { defaultNullValue } from 'constants/index';
 import { formatSymbolDisplay } from 'utils/format';
-import TransactionFee from '../TransactionFee';
 
 export interface DoubleCheckModalProps {
   withdrawInfo: {
@@ -97,15 +96,24 @@ export default function DoubleCheckModal({
             </div>
           </div>
           <div className={clsx(styles['detail-row'], styles['transaction-fee-wrapper'])}>
+            <div className={styles['label']}>Estimated Gas Fee</div>
+            <div className={clsx('flex-row-center', styles['value'], styles['fee-usd-box'])}>
+              <span className={clsx('flex-1', styles['fee-value'])}>
+                {withdrawInfo.aelfTransactionFee?.amount}
+              </span>
+              &nbsp;{withdrawInfo.aelfTransactionFee?.currency}
+            </div>
+          </div>
+          <div className={clsx(styles['detail-row'], styles['transaction-fee-wrapper'])}>
             <div className={styles['label']}>Transaction Fee</div>
             <div className={clsx('flex-column-center', styles['value'], styles['fee-usd-box'])}>
-              <TransactionFee
-                isTransactionFeeLoading={isTransactionFeeLoading}
-                transactionFee={withdrawInfo.transactionFee?.amount}
-                transactionUnit={withdrawInfo.transactionFee?.currency}
-                aelfTransactionFee={withdrawInfo.aelfTransactionFee?.amount}
-                aelfTransactionUnit={withdrawInfo.aelfTransactionFee?.currency}
-              />
+              <div className="flex-row-center">
+                <span className={clsx('flex-1', styles['fee-value'])}>
+                  {withdrawInfo.transactionFee?.amount}
+                </span>
+                &nbsp;{withdrawInfo.transactionFee?.currency}
+              </div>
+
               <div className={clsx(styles['fee-usd'])}>
                 {valueFixed2LessThanMin(withdrawInfo.feeUsd, '$ ')}
               </div>

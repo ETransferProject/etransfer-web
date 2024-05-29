@@ -86,7 +86,7 @@ import { useCurrentVersion, useSetCurrentChainItem } from 'hooks/common';
 import { AelfExploreType } from 'constants/network';
 import { isDIDAddressSuffix, removeAddressSuffix, removeELFAddressSuffix } from 'utils/aelfBase';
 import { SideMenuKey } from 'constants/home';
-import TransactionFee from './TransactionFee';
+import FeeInfo from './FeeInfo';
 import { useSearchParams } from 'next/navigation';
 import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
 
@@ -1160,24 +1160,6 @@ export default function WithdrawContent() {
           )}
           <div className={clsx(styles['form-footer'], styles['form-footer-safe-area'])}>
             <div className={clsx('flex-1', 'flex-column', styles['footer-info-wrapper'])}>
-              <div
-                className={clsx(
-                  'flex-row-center',
-                  styles['info-wrapper'],
-                  styles['transaction-fee-wrapper'],
-                )}>
-                <div className={styles['info-label']}>Transaction Fee: </div>
-                <div className={clsx('flex-row-center', styles['info-value'])}>
-                  <TransactionFee
-                    isTransactionFeeLoading={isTransactionFeeLoading}
-                    isSuccessModalOpen={isSuccessModalOpen}
-                    transactionFee={withdrawInfo.transactionFee}
-                    transactionUnit={withdrawInfo.transactionUnit}
-                    aelfTransactionFee={withdrawInfo.aelfTransactionFee}
-                    aelfTransactionUnit={withdrawInfo.aelfTransactionUnit}
-                  />
-                </div>
-              </div>
               <div className={clsx('flex-column', styles['receive-amount-wrapper'])}>
                 <div className={styles['info-label']}>Amount to Be Received</div>
                 <div
@@ -1192,6 +1174,14 @@ export default function WithdrawContent() {
                   <span className={clsx(styles['info-unit'])}>{withdrawInfo.transactionUnit}</span>
                 </div>
               </div>
+              <FeeInfo
+                isTransactionFeeLoading={isTransactionFeeLoading}
+                isSuccessModalOpen={isSuccessModalOpen}
+                transactionFee={withdrawInfo.transactionFee}
+                transactionUnit={withdrawInfo.transactionUnit}
+                aelfTransactionFee={withdrawInfo.aelfTransactionFee}
+                aelfTransactionUnit={withdrawInfo.aelfTransactionUnit}
+              />
             </div>
             <Form.Item
               shouldUpdate
