@@ -1,0 +1,41 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
+
+.fee-item {
+  flex-wrap: nowrap;
+  gap: 0;
+}
+
+.fee-label {
+  flex: none;
+  margin-right: 8px;
+  color: $secondary-text;
+  font-size: 14px;
+  line-height: 22px;
+  @include media-mobile-and-pad {
+    font-size: 11px;
+    line-height: 16px;
+  }
+}
+
+.fee-value {
+  color: $primary-text;
+  font-size: 14px;
+  line-height: 22px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  @include media-mobile-and-pad {
+    font-size: 11px;
+    line-height: 16px;
+  }
+}
+.fee-unit {
+  display: inline-block;
+  font-size: 14px;
+  line-height: 22px;
+  @include media-mobile-and-pad {
+    font-size: 11px;
+    line-height: 16px;
+  }
+}

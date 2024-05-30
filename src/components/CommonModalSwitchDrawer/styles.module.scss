@@ -6,16 +6,16 @@
       border: none;
     }
   }
-  
+
   .drawer-button-wrapper {
     display: flex;
     align-items: center;
+    gap: 12px;
     .cancel-button {
-      flex: 4;
+      flex: 1;
     }
     .ok-button {
-      flex: 6;
+      flex: 1;
     }
   }
-
 }
