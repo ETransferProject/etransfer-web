@@ -88,19 +88,19 @@ export const createManagerForwardCall = async ({
 };
 
 type TCreateTokenTransfer = {
-  caContractAddress: string;
+  contractAddress: string;
   args: any;
   chainId: SupportedELFChainId;
 };
 
 // only for portkey v2
 export const createTokenTransfer = async ({
-  caContractAddress,
+  contractAddress,
   args,
   chainId,
 }: TCreateTokenTransfer) => {
   const instance = aelfInstanceV2.getInstance(chainId as unknown as AllSupportedELFChainId);
-  const methods = await getContractMethodsV2(instance, caContractAddress);
+  const methods = await getContractMethodsV2(instance, contractAddress);
 
   const protoInputType = methods['TransferToken'];
 

@@ -163,7 +163,9 @@ export function useQueryAuthToken() {
       eTransferInstance.setObtainingSignature(true);
       const { caHash } = await getCaHashAndOriginChainIdByWallet(wallet, walletType);
       const managerAddress = await getManagerAddressByWallet(wallet, walletType);
-      const key = caHash + managerAddress;
+      const source =
+        walletType === WalletType.elf ? AuthTokenSource.NightElf : AuthTokenSource.Portkey;
+      const key = (caHash || source) + managerAddress;
       const data = getLocalJWT(key);
       // 1: local storage has JWT token
       if (data) {

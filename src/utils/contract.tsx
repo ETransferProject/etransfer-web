@@ -238,7 +238,7 @@ export const createTransferTokenTransaction = async ({
   let transactionParams;
   if (wallet.walletType === WalletType.elf) {
     transactionParams = await createTokenTransfer({
-      caContractAddress,
+      contractAddress: eTransferContractAddress,
       args: { symbol, amount },
       chainId,
     });
@@ -257,6 +257,20 @@ export const createTransferTokenTransaction = async ({
 
   const aelf = getAElf(chainId as unknown as AllSupportedELFChainId);
   const { BestChainHeight, BestChainHash } = await aelf.chain.getChainStatus();
+
+  if (wallet.walletType === WalletType.elf) {
+    const transaction = await handleTransaction({
+      wallet,
+      blockHeightInput: BestChainHeight,
+      blockHashInput: BestChainHash,
+      packedInput,
+      address: fromManagerAddress,
+      contractAddress: eTransferContractAddress,
+      functionName: 'TransferToken',
+    });
+    console.log('>>>>>> createTransferTokenTransaction transaction', transaction);
+    return transaction;
+  }
 
   const transaction = await handleTransaction({
     wallet,
