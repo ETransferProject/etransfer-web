@@ -14,11 +14,55 @@ import service from 'api/axios';
 import { eTransferInstance } from 'utils/etransferInstance';
 import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
 import { AuthTokenSource } from 'types/api';
+import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
+import { ReCaptchaType } from 'pageComponents/GoogleReCaptcha/types';
+import singleMessage from 'components/SingleMessage';
+import { checkEOARegistration } from 'utils/api/user';
 
 export function useQueryAuthToken() {
   const dispatch = useAppDispatch();
   const { loginState, logout, wallet, getSignature, walletType } = useWebLogin();
   const { setLoading } = useLoading();
+
+  const handlePortkeyAccount = useCallback(() => {
+    const accounts: Accounts = {};
+    // portkey address need manual setup: 'ELF_' + address + '_' + chainId
+    const isMainChainAddress = wallet.portkeyInfo?.accounts?.[SupportedChainId.mainChain];
+    const istSideChainAddress = wallet.portkeyInfo?.accounts?.[SupportedChainId.sideChain];
+
+    if (accounts && isMainChainAddress && !istSideChainAddress) {
+      const baseAddress = 'ELF_' + wallet.portkeyInfo?.accounts?.[SupportedChainId.mainChain] + '_';
+      accounts[SupportedChainId.mainChain] = [baseAddress + SupportedChainId.mainChain];
+      accounts[SupportedChainId.sideChain] = [baseAddress + SupportedChainId.sideChain];
+    } else if (accounts && !isMainChainAddress && istSideChainAddress) {
+      const baseAddress = 'ELF_' + wallet.portkeyInfo?.accounts?.[SupportedChainId.sideChain] + '_';
+      accounts[SupportedChainId.mainChain] = [baseAddress + SupportedChainId.mainChain];
+      accounts[SupportedChainId.sideChain] = [baseAddress + SupportedChainId.sideChain];
+    }
+    if (isMainChainAddress && istSideChainAddress) {
+      accounts[SupportedChainId.mainChain] = [
+        'ELF_' + isMainChainAddress + '_' + SupportedChainId.mainChain,
+      ];
+      accounts[SupportedChainId.sideChain] = [
+        'ELF_' + istSideChainAddress + '_' + SupportedChainId.sideChain,
+      ];
+    }
+    return accounts;
+  }, [wallet.portkeyInfo?.accounts]);
+
+  const handleNightElfAccount = useCallback(() => {
+    const accounts: Accounts = {};
+    if (wallet.nightElfInfo?.account) {
+      accounts[SupportedChainId.mainChain] = [
+        'ELF_' + wallet.nightElfInfo?.account + '_' + SupportedChainId.mainChain,
+      ];
+      accounts[SupportedChainId.sideChain] = [
+        'ELF_' + wallet.nightElfInfo?.account + '_' + SupportedChainId.sideChain,
+      ];
+    }
+
+    return accounts;
+  }, [wallet.nightElfInfo?.account]);
 
   const loginSuccessActive = useCallback(() => {
     const { name = '', discoverInfo } = wallet;
@@ -28,29 +72,10 @@ export function useQueryAuthToken() {
       accounts = discoverInfo?.accounts || {};
     }
     if (walletType === WalletType.portkey) {
-      // portkey address need manual setup: 'ELF_' + address + '_' + chainId
-      const isMainChainAddress = wallet.portkeyInfo?.accounts?.[SupportedChainId.mainChain];
-      const istSideChainAddress = wallet.portkeyInfo?.accounts?.[SupportedChainId.sideChain];
-
-      if (accounts && isMainChainAddress && !istSideChainAddress) {
-        const baseAddress =
-          'ELF_' + wallet.portkeyInfo?.accounts?.[SupportedChainId.mainChain] + '_';
-        accounts[SupportedChainId.mainChain] = [baseAddress + SupportedChainId.mainChain];
-        accounts[SupportedChainId.sideChain] = [baseAddress + SupportedChainId.sideChain];
-      } else if (accounts && !isMainChainAddress && istSideChainAddress) {
-        const baseAddress =
-          'ELF_' + wallet.portkeyInfo?.accounts?.[SupportedChainId.sideChain] + '_';
-        accounts[SupportedChainId.mainChain] = [baseAddress + SupportedChainId.mainChain];
-        accounts[SupportedChainId.sideChain] = [baseAddress + SupportedChainId.sideChain];
-      }
-      if (isMainChainAddress && istSideChainAddress) {
-        accounts[SupportedChainId.mainChain] = [
-          'ELF_' + isMainChainAddress + '_' + SupportedChainId.mainChain,
-        ];
-        accounts[SupportedChainId.sideChain] = [
-          'ELF_' + istSideChainAddress + '_' + SupportedChainId.sideChain,
-        ];
-      }
+      accounts = handlePortkeyAccount();
+    }
+    if (walletType === WalletType.elf) {
+      accounts = handleNightElfAccount();
     }
     dispatch(
       setV2ConnectedInfoAction({
@@ -60,14 +85,26 @@ export function useQueryAuthToken() {
       }),
     );
     dispatch(setSwitchVersionAction(PortkeyVersion.v2));
-  }, [dispatch, wallet, walletType]);
+  }, [dispatch, handleNightElfAccount, handlePortkeyAccount, wallet, walletType]);
 
   const queryAuth = useCallback(async () => {
-    console.log('🌈 🌈 🌈 🌈 🌈 🌈 wallet', wallet);
     if (!wallet) return;
     if (loginState !== WebLoginState.logined) return;
-
+    let recaptchaResult;
     setLoading(true);
+    if (walletType === WalletType.elf) {
+      const isRegistered = await checkEOARegistration({ address: wallet.address });
+      if (!isRegistered.result) {
+        const result = await googleReCaptchaModal();
+
+        if (result.type === ReCaptchaType.success) {
+          recaptchaResult = result.data;
+        } else {
+          singleMessage.error('User canceled'); // TODO
+          return;
+        }
+      }
+    }
     const { caHash, originChainId } = await getCaHashAndOriginChainIdByWallet(wallet, walletType);
     try {
       const plainTextOrigin = `Nonce:${Date.now()}`;
@@ -99,7 +136,7 @@ export function useQueryAuthToken() {
         managerAddress: managerAddress,
         ca_hash: caHash || undefined,
         chain_id: originChainId || undefined,
-        recaptchaToken: '' || undefined,
+        recaptchaToken: recaptchaResult || undefined,
       };
 
       await queryAuthApi(apiParams);

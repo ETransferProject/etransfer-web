@@ -205,3 +205,11 @@ export type TGetRecordsListResult = {
   totalCount: number;
   items: TRecordsListItem[];
 };
+
+export type TCheckEOARegistrationRequest = {
+  address: string;
+};
+
+export type TCheckEOARegistrationResult = {
+  result: boolean;
+};

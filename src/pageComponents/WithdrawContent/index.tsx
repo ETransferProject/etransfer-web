@@ -38,7 +38,7 @@ import {
 } from 'utils/contract';
 import singleMessage from 'components/SingleMessage';
 import { divDecimals, timesDecimals } from 'utils/calculate';
-import { ZERO } from 'constants/misc';
+import { ZERO } from 'constants/calculate';
 import { ContractType } from 'constants/chain';
 import BigNumber from 'bignumber.js';
 import {

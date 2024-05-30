@@ -11,7 +11,7 @@ import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
 import { TOKEN_INFO_USDT } from 'constants/index';
 import { useEffectOnce } from 'react-use';
 import { formatSymbolDisplay } from 'utils/format';
-import { MAX_UPDATE_TIME } from 'constants/misc';
+import { MAX_UPDATE_TIME } from 'constants/calculate';
 import { useSearchParams } from 'next/navigation';
 
 type TCalculator = {

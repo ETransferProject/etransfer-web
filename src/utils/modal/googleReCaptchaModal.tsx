@@ -1,0 +1,48 @@
+import { Modal } from 'antd';
+import { RE_CAPTCHA_SITE_KEY } from 'constants/misc';
+import GoogleReCaptcha from 'pageComponents/GoogleReCaptcha';
+import { ReCaptchaType } from 'pageComponents/GoogleReCaptcha/types';
+
+type TGoogleReCaptchaResult = { type: ReCaptchaType; data: string | any; error?: any };
+
+const googleReCaptchaModal = async (
+  width?: number,
+): Promise<TGoogleReCaptchaResult | undefined | any> => {
+  return new Promise((resolve, reject) => {
+    const modal = Modal.info({
+      wrapClassName: 'reCaptcha-modal-wrapper',
+      className: 'reCaptcha-modal-container',
+      width: width,
+      content: (
+        <GoogleReCaptcha
+          siteKey={RE_CAPTCHA_SITE_KEY}
+          theme="light"
+          size="normal"
+          onSuccess={(res) => {
+            resolve({ type: ReCaptchaType.success, data: res });
+            modal.destroy();
+          }}
+          onError={(error) => {
+            console.log('error', error);
+            reject({ type: ReCaptchaType.error, error });
+            modal.destroy();
+          }}
+          onExpire={(res) => {
+            console.log('res', res);
+            reject({ type: ReCaptchaType.expire, data: res });
+            modal.destroy();
+          }}
+        />
+      ),
+      onCancel: () => {
+        reject({
+          type: ReCaptchaType.cancel,
+          data: 'User canceled the verification',
+        });
+        modal.destroy();
+      },
+    });
+  });
+};
+
+export default googleReCaptchaModal;
