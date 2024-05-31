@@ -1,5 +1,5 @@
 import { Modal } from 'antd';
-import { RE_CAPTCHA_SITE_KEY } from 'constants/misc';
+// import { RE_CAPTCHA_SITE_KEY } from 'constants/misc';
 import GoogleReCaptcha from 'pageComponents/GoogleReCaptcha';
 import { ReCaptchaType } from 'pageComponents/GoogleReCaptcha/types';
 
@@ -15,7 +15,7 @@ const googleReCaptchaModal = async (
       width: width,
       content: (
         <GoogleReCaptcha
-          siteKey={RE_CAPTCHA_SITE_KEY}
+          siteKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
           theme="light"
           size="normal"
           onSuccess={(res) => {
