@@ -5,10 +5,23 @@ import { ReCaptchaType } from 'pageComponents/GoogleReCaptcha/types';
 
 type TGoogleReCaptchaResult = { type: ReCaptchaType; data: string | any; error?: any };
 
+console.log(
+  'ReCaptcha - NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_MEASUREMENT_ID1',
+  process.env.NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_MEASUREMENT_ID,
+);
+console.log(
+  'ReCaptcha - NEXT_PUBLIC_RECAPTCHA_SITE_KEY',
+  process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
+);
+
 const googleReCaptchaModal = async (
   width?: number,
 ): Promise<TGoogleReCaptchaResult | undefined | any> => {
-  console.log('process.env', process.env);
+  console.log(
+    'NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_MEASUREMENT_ID1',
+    process.env.NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_MEASUREMENT_ID,
+  );
+  console.log('NEXT_PUBLIC_RECAPTCHA_SITE_KEY', process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY);
   return new Promise((resolve, reject) => {
     const modal = Modal.info({
       wrapClassName: 'reCaptcha-modal-wrapper',
