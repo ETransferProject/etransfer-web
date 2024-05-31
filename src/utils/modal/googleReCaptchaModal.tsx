@@ -8,6 +8,7 @@ type TGoogleReCaptchaResult = { type: ReCaptchaType; data: string | any; error?:
 const googleReCaptchaModal = async (
   width?: number,
 ): Promise<TGoogleReCaptchaResult | undefined | any> => {
+  console.log('process.env', process.env);
   return new Promise((resolve, reject) => {
     const modal = Modal.info({
       wrapClassName: 'reCaptcha-modal-wrapper',
