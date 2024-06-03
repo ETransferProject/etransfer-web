@@ -16,7 +16,6 @@ import Space from 'components/Space';
 import ExchangeRate from '../ExchangeRate';
 import Calculator from '../Calculator';
 import { useDepositState } from 'store/Provider/hooks';
-import { TokenType } from 'constants/index';
 
 export default function WebContent({
   fromNetworkSelected,
