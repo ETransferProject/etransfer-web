@@ -77,7 +77,7 @@ export default function WebContent({
       {fromTokenSymbol !== toTokenSymbol && (
         <>
           <Space direction="vertical" size={24} />
-          <Calculator payToken={fromTokenSymbol} receiveToken={toTokenSymbol} />
+          <Calculator />
         </>
       )}
 
