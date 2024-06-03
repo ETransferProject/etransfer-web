@@ -103,7 +103,7 @@ export default function MobileDepositContent({
         <>
           <Space direction="vertical" size={24} />
 
-          <Calculator payToken={TokenType.USDT} receiveToken={TokenType.SGR} />
+          <Calculator payToken={fromTokenSymbol} receiveToken={toTokenSymbol} />
         </>
       )}
 
