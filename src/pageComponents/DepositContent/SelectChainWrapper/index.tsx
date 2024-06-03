@@ -1,8 +1,8 @@
 import clsx from 'clsx';
 import SelectChain from 'components/SelectChain';
-import { useCommonState, useDepositState } from 'store/Provider/hooks';
+import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { IChainNameItem, TokenType } from 'constants/index';
+import { IChainNameItem } from 'constants/index';
 import { Aelf } from 'assets/images';
 import { useMemo } from 'react';
 
@@ -26,8 +26,9 @@ export default function SelectChainWrapper({
   chainChanged,
 }: SelectChainWrapperProps) {
   const { isMobilePX } = useCommonState();
-  const { toTokenSymbol } = useDepositState();
-  const isDisabled = useMemo(() => !!toTokenSymbol.includes(TokenType.SGR), [toTokenSymbol]);
+  const isDisabled = useMemo(() => {
+    return menuItems?.length <= 1;
+  }, [menuItems?.length]);
 
   return (
     <div className={clsx('flex-row-center', styles['select-chain-wrapper'], className)}>
