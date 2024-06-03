@@ -1,0 +1,30 @@
+@import '/src/assets/theme/breakpoint.scss';
+
+.reCaptcha-modal-container {
+  width: 480px;
+  min-width: 320px;
+  top: 50%;
+  transform: translateY(-50%);
+  @include media-mobile-and-pad {
+    width: 320px;
+  }
+  .ant-modal-content {
+    // min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    .ant-modal-confirm-body-wrapper {
+      .ant-modal-confirm-body {
+        padding: 24px;
+        margin-bottom: 24px;
+        .anticon {
+          display: none;
+        }
+      }
+      .ant-modal-confirm-btns {
+        display: none;
+      }
+    }
+  }
+}

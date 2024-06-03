@@ -87,6 +87,36 @@ export const createManagerForwardCall = async ({
   return protoInputType.encode(message).finish();
 };
 
+type TCreateTokenTransfer = {
+  contractAddress: string;
+  args: any;
+  chainId: SupportedELFChainId;
+};
+
+// only for portkey v2
+export const createTokenTransfer = async ({
+  contractAddress,
+  args,
+  chainId,
+}: TCreateTokenTransfer) => {
+  const instance = aelfInstanceV2.getInstance(chainId as unknown as AllSupportedELFChainId);
+  const methods = await getContractMethodsV2(instance, contractAddress);
+
+  const protoInputType = methods['TransferToken'];
+
+  let input = AElf.utils.transform.transformMapToArray(protoInputType, args);
+
+  input = AElf.utils.transform.transform(
+    protoInputType,
+    input,
+    AElf.utils.transform.INPUT_TRANSFORMERS,
+  );
+
+  const message = protoInputType.fromObject(input);
+
+  return protoInputType.encode(message).finish();
+};
+
 export const handleTransaction = async ({
   blockHeightInput,
   blockHashInput,

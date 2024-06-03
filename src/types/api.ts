@@ -9,6 +9,11 @@ export enum BusinessType {
   Withdraw = 'Withdraw',
 }
 
+export enum AuthTokenSource {
+  Portkey = 'portkey',
+  NightElf = 'nightElf',
+}
+
 export type TGetTokenListRequest = {
   type: BusinessType;
   chainId: ChainId;
@@ -199,4 +204,12 @@ export type TRecordsListItem = {
 export type TGetRecordsListResult = {
   totalCount: number;
   items: TRecordsListItem[];
+};
+
+export type TCheckEOARegistrationRequest = {
+  address: string;
+};
+
+export type TCheckEOARegistrationResult = {
+  result: boolean;
 };
