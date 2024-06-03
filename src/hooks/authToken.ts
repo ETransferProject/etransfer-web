@@ -18,6 +18,7 @@ import { ReCaptchaType } from 'components/GoogleRecaptcha/types';
 import { checkEOARegistration } from 'utils/api/user';
 import myEvents from 'utils/myEvent';
 import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
+import singleMessage from 'components/SingleMessage';
 
 export function useQueryAuthToken() {
   const dispatch = useAppDispatch();
@@ -111,8 +112,10 @@ export function useQueryAuthToken() {
 
   const [isReCaptchaLoading, setIsReCaptchaLoading] = useState(true);
   useEffect(() => {
-    const { remove } = myEvents.GoogleReCaptcha.addListener(() => {
-      setIsReCaptchaLoading(false);
+    const { remove } = myEvents.GoogleReCaptcha.addListener((res) => {
+      if (res === 'onLoad') {
+        setIsReCaptchaLoading(false);
+      }
     });
     return () => {
       remove();
@@ -163,8 +166,15 @@ export function useQueryAuthToken() {
       console.log('login success');
       console.log(loginState, wallet);
       loginSuccessActive();
-    } catch (error) {
+    } catch (error: any) {
       console.log('queryAuthApi error', error);
+      if (
+        error?.type === ReCaptchaType.cancel ||
+        error?.type === ReCaptchaType.error ||
+        error?.type === ReCaptchaType.expire
+      ) {
+        singleMessage.error(error?.data);
+      }
       logout();
       return;
     } finally {

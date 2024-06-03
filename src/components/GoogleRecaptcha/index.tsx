@@ -55,7 +55,7 @@ const createMainScriptElement = (): HTMLScriptElement => {
   scriptElement.async = true;
   scriptElement.defer = true;
   scriptElement.onload = () => {
-    myEvents.GoogleReCaptcha.emit();
+    myEvents.GoogleReCaptcha.emit('onLoad');
   };
 
   return scriptElement;
