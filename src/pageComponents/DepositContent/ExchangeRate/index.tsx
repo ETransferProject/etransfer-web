@@ -6,7 +6,6 @@ import { defaultNullValue } from 'constants/index';
 import { getDepositCalculate } from 'utils/api/deposit';
 import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
 import { ChainId } from '@portkey/provider-types';
-import { useEffectOnce } from 'react-use';
 import { formatSymbolDisplay } from 'utils/format';
 import { MAX_UPDATE_TIME } from 'constants/calculate';
 
@@ -72,16 +71,18 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
     handleSetTimer();
   }, [handleSetTimer]);
 
-  useEffectOnce(() => {
+  useEffect(() => {
     getCalculate();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fromSymbol, toSymbol, toChainId]);
 
   useEffect(() => {
     resetTimer();
     return () => {
       stopInterval();
     };
-  }, [getCalculate, resetTimer, stopInterval]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fromSymbol, toSymbol, toChainId]);
 
   return (
     <div className={clsx('flex-row-between', 'exchange-rate')}>
