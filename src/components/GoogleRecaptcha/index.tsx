@@ -16,6 +16,7 @@ import { FC, useEffect, useState } from 'react';
 // for anything concerning security.
 import { nanoid } from 'nanoid/non-secure';
 import { GoogleReCaptchaProps } from './types';
+import myEvents from 'utils/myEvent';
 
 /** ID assigned to the main reCAPTCHA script. */
 const MAIN_SCRIPT_ID = 'recaptcha';
@@ -53,6 +54,9 @@ const createMainScriptElement = (): HTMLScriptElement => {
   scriptElement.src = MAIN_SCRIPT_SRC;
   scriptElement.async = true;
   scriptElement.defer = true;
+  scriptElement.onload = () => {
+    myEvents.GoogleReCaptcha.emit();
+  };
 
   return scriptElement;
 };
@@ -137,32 +141,32 @@ const mutationCallbackGenerator = (
  * React Hook for bind and unbinding reCAPTCHA callbacks to the `window`.
  */
 const useWindowCallbackBinder = (
-  callbacks: Pick<GoogleReCaptchaProps, 'onSuccess' | 'onError' | 'onExpire'>,
+  callbacks: Pick<GoogleReCaptchaProps, 'onSuccess' | 'onError' | 'onExpired'>,
 ) => {
   const [onSuccessCallbackId] = useState(nanoid());
   const [onErrorCallbackId] = useState(nanoid());
-  const [onExpireCallbackId] = useState(nanoid());
+  const [onExpiredCallbackId] = useState(nanoid());
 
-  const { onSuccess, onError, onExpire } = callbacks;
+  const { onSuccess, onError, onExpired } = callbacks;
   useEffect(() => {
     if (typeof window === 'undefined') return;
     // Feels hacky, but it's shorter than extending the Window interface.
     (window as any)[onSuccessCallbackId] = onSuccess;
-    (window as any)[onExpireCallbackId] = onExpire;
+    (window as any)[onExpiredCallbackId] = onExpired;
     (window as any)[onErrorCallbackId] = onError;
 
     return () => {
       if (typeof window === 'undefined') return;
       delete (window as any)[onSuccessCallbackId];
-      delete (window as any)[onExpireCallbackId];
+      delete (window as any)[onExpiredCallbackId];
       delete (window as any)[onErrorCallbackId];
     };
-  }, [onSuccess, onSuccessCallbackId, onError, onErrorCallbackId, onExpire, onExpireCallbackId]);
+  }, [onSuccess, onSuccessCallbackId, onError, onErrorCallbackId, onExpired, onExpiredCallbackId]);
 
   return {
     onSuccessCallbackId,
     onErrorCallbackId,
-    onExpireCallbackId,
+    onExpiredCallbackId,
   };
 };
 
@@ -206,9 +210,9 @@ const useRecaptchaHiddenDivManager = () => {
   }, []);
 };
 
-const GoogleReCaptcha: FC<GoogleReCaptchaProps> = (props) => {
+const GoogleReCaptchaAuto: FC<GoogleReCaptchaProps> = (props) => {
   const { siteKey, theme, size, ...callbacks } = props;
-  const { onSuccessCallbackId, onErrorCallbackId, onExpireCallbackId } =
+  const { onSuccessCallbackId, onErrorCallbackId, onExpiredCallbackId } =
     useWindowCallbackBinder(callbacks);
 
   useRecaptchaHiddenDivManager();
@@ -224,9 +228,9 @@ const GoogleReCaptcha: FC<GoogleReCaptchaProps> = (props) => {
       data-size={size}
       data-callback={onSuccessCallbackId}
       data-error-callback={onErrorCallbackId}
-      data-expired-callback={onExpireCallbackId}
+      data-expired-callback={onExpiredCallbackId}
     />
   ) : null;
 };
 
-export default GoogleReCaptcha;
+export default GoogleReCaptchaAuto;

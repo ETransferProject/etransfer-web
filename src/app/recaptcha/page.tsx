@@ -1,7 +1,7 @@
 'use client';
 import React, { useCallback } from 'react';
 import { RE_CAPTCHA_SITE_KEY } from 'constants/misc';
-import GoogleReCaptcha from 'pageComponents/GoogleReCaptcha';
+import GoogleReCaptcha from 'components/GoogleRecaptcha';
 import styles from './styles.module.scss';
 
 export default function ReCaptcha() {
@@ -23,7 +23,7 @@ export default function ReCaptcha() {
       '*',
     );
   }, []);
-  const handleExpire = useCallback((value: any) => {
+  const handleExpired = useCallback((value: any) => {
     window.opener.postMessage(
       {
         type: 'GOOGLE_RECAPTCHA_EXPIRED',
@@ -41,7 +41,7 @@ export default function ReCaptcha() {
         size="normal"
         onSuccess={handleSuccess}
         onError={handleError}
-        onExpire={handleExpire}
+        onExpired={handleExpired}
       />
     </div>
   );

@@ -2,7 +2,7 @@ export enum ReCaptchaType {
   success = 'success',
   error = 'error',
   cancel = 'cancel',
-  expire = 'expire',
+  expire = 'expired',
 }
 
 export interface BaseReCaptcha {
@@ -17,6 +17,6 @@ export interface BaseReCaptcha {
 
 export interface GoogleReCaptchaProps extends BaseReCaptcha {
   onSuccess?: (result: string) => any;
-  onExpire?: (e?: any) => any;
+  onExpired?: (e?: any) => any;
   onError?: (e?: any) => any;
 }

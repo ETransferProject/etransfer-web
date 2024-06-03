@@ -10,15 +10,6 @@ import * as Sentry from '@sentry/nextjs';
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-console.log(
-  'firebase - NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_MEASUREMENT_ID1',
-  process.env.NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_MEASUREMENT_ID,
-);
-console.log(
-  'firebase - NEXT_PUBLIC_RECAPTCHA_SITE_KEY',
-  process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
-);
-
 const firebaseBaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_ANALYTICS_API_KEY,
   authDomain: 'etransfer-83ef6.firebaseapp.com',

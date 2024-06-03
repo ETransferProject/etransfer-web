@@ -3,7 +3,7 @@ import { useWebLogin, WebLoginState, WalletType } from 'aelf-web-login';
 import { QueryAuthApiExtraRequest, getLocalJWT, queryAuthApi } from 'api/utils';
 import { SupportedChainId, AppName } from 'constants/index';
 import { PortkeyVersion } from 'constants/wallet';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAppDispatch, useLoading } from 'store/Provider/hooks';
 import AElf from 'aelf-sdk';
 import { recoverPubKey } from 'utils/aelfBase';
@@ -14,9 +14,10 @@ import service from 'api/axios';
 import { eTransferInstance } from 'utils/etransferInstance';
 import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
 import { AuthTokenSource } from 'types/api';
-import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
-import { ReCaptchaType } from 'pageComponents/GoogleReCaptcha/types';
+import { ReCaptchaType } from 'components/GoogleRecaptcha/types';
 import { checkEOARegistration } from 'utils/api/user';
+import myEvents from 'utils/myEvent';
+import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
 
 export function useQueryAuthToken() {
   const dispatch = useAppDispatch();
@@ -86,47 +87,69 @@ export function useQueryAuthToken() {
     dispatch(setSwitchVersionAction(PortkeyVersion.v2));
   }, [dispatch, handleNightElfAccount, handlePortkeyAccount, wallet, walletType]);
 
+  const handleGetSignature = useCallback(async () => {
+    const plainTextOrigin = `Nonce:${Date.now()}`;
+    const plainText: any = Buffer.from(plainTextOrigin).toString('hex').replace('0x', '');
+    let signInfo: string;
+    if (walletType !== WalletType.portkey) {
+      // nightElf or discover
+      signInfo = AElf.utils.sha256(plainText);
+    } else {
+      // portkey sdk
+      signInfo = Buffer.from(plainText).toString('hex');
+    }
+    console.log('getSignature');
+    const result = await getSignature({
+      appName: AppName,
+      address: wallet.address,
+      signInfo,
+    });
+    if (result.error) throw result.errorMessage;
+
+    return { signature: result?.signature || '', plainText };
+  }, [getSignature, wallet.address, walletType]);
+
+  const [isReCaptchaLoading, setIsReCaptchaLoading] = useState(true);
+  useEffect(() => {
+    const { remove } = myEvents.GoogleReCaptcha.addListener(() => {
+      setIsReCaptchaLoading(false);
+    });
+    return () => {
+      remove();
+    };
+  }, [setLoading]);
+
+  const handleReCaptcha = useCallback(async (): Promise<string | undefined> => {
+    if (walletType === WalletType.elf) {
+      const isRegistered = await checkEOARegistration({ address: wallet.address });
+      if (!isRegistered.result) {
+        // change loading text
+        if (isReCaptchaLoading) setLoading(true, { text: 'Captcha Human Verification Loading' });
+
+        const result = await googleReCaptchaModal();
+        if (result.type === ReCaptchaType.success) {
+          return result.data;
+        }
+      }
+    }
+    return undefined;
+  }, [isReCaptchaLoading, setLoading, wallet.address, walletType]);
+
   const queryAuth = useCallback(async () => {
     if (!wallet) return;
     if (loginState !== WebLoginState.logined) return;
     try {
-      let recaptchaResult;
       setLoading(true);
-      if (walletType === WalletType.elf) {
-        const isRegistered = await checkEOARegistration({ address: wallet.address });
-        if (!isRegistered.result) {
-          const result = await googleReCaptchaModal();
-          if (result.type === ReCaptchaType.success) {
-            recaptchaResult = result.data;
-          }
-        }
-      }
+      const recaptchaResult = await handleReCaptcha();
+      setLoading(true); // to change loading text = 'Loading...'
       const { caHash, originChainId } = await getCaHashAndOriginChainIdByWallet(wallet, walletType);
-
-      const plainTextOrigin = `Nonce:${Date.now()}`;
-      const plainText: any = Buffer.from(plainTextOrigin).toString('hex').replace('0x', '');
-      let signInfo: string;
-      if (walletType !== WalletType.portkey) {
-        // nightElf or discover
-        signInfo = AElf.utils.sha256(plainText);
-      } else {
-        // portkey sdk
-        signInfo = Buffer.from(plainText).toString('hex');
-      }
-      console.log('getSignature');
-      const result = await getSignature({
-        appName: AppName,
-        address: wallet.address,
-        signInfo,
-      });
-      if (result.error) throw result.errorMessage;
-      const signature = result?.signature || '';
-      const pubkey = recoverPubKey(plainText, signature) + '';
+      const signatureResult = await handleGetSignature();
+      const pubkey = recoverPubKey(signatureResult.plainText, signatureResult.signature) + '';
       const managerAddress = await getManagerAddressByWallet(wallet, walletType, pubkey);
       const apiParams: QueryAuthApiExtraRequest = {
         pubkey,
-        signature,
-        plain_text: plainText,
+        signature: signatureResult.signature,
+        plain_text: signatureResult.plainText,
         version: PortkeyVersion.v2,
         source: walletType === WalletType.elf ? AuthTokenSource.NightElf : AuthTokenSource.Portkey,
         managerAddress: managerAddress,
@@ -148,7 +171,16 @@ export function useQueryAuthToken() {
       setLoading(false);
       eTransferInstance.setObtainingToken(false);
     }
-  }, [getSignature, loginState, loginSuccessActive, logout, setLoading, wallet, walletType]);
+  }, [
+    handleGetSignature,
+    handleReCaptcha,
+    loginState,
+    loginSuccessActive,
+    logout,
+    setLoading,
+    wallet,
+    walletType,
+  ]);
 
   const getAuth = useDebounceCallback(async () => {
     if (!wallet) return;
