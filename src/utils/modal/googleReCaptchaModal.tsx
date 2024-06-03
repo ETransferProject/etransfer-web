@@ -1,4 +1,5 @@
 import { Modal } from 'antd';
+import CloseIcon from 'assets/images/close.svg';
 // import { RE_CAPTCHA_SITE_KEY } from 'constants/misc';
 import GoogleReCaptcha from 'pageComponents/GoogleReCaptcha';
 import { ReCaptchaType } from 'pageComponents/GoogleReCaptcha/types';
@@ -24,6 +25,8 @@ const googleReCaptchaModal = async (
   console.log('NEXT_PUBLIC_RECAPTCHA_SITE_KEY', process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY);
   return new Promise((resolve, reject) => {
     const modal = Modal.info({
+      closable: true,
+      closeIcon: <CloseIcon />,
       wrapClassName: 'reCaptcha-modal-wrapper',
       className: 'reCaptcha-modal-container',
       width: width,

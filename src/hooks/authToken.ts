@@ -16,7 +16,6 @@ import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'ut
 import { AuthTokenSource } from 'types/api';
 import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
 import { ReCaptchaType } from 'pageComponents/GoogleReCaptcha/types';
-import singleMessage from 'components/SingleMessage';
 import { checkEOARegistration } from 'utils/api/user';
 
 export function useQueryAuthToken() {
@@ -90,23 +89,20 @@ export function useQueryAuthToken() {
   const queryAuth = useCallback(async () => {
     if (!wallet) return;
     if (loginState !== WebLoginState.logined) return;
-    let recaptchaResult;
-    setLoading(true);
-    if (walletType === WalletType.elf) {
-      const isRegistered = await checkEOARegistration({ address: wallet.address });
-      if (!isRegistered.result) {
-        const result = await googleReCaptchaModal();
-
-        if (result.type === ReCaptchaType.success) {
-          recaptchaResult = result.data;
-        } else {
-          singleMessage.error('User canceled'); // TODO
-          return;
+    try {
+      let recaptchaResult;
+      setLoading(true);
+      if (walletType === WalletType.elf) {
+        const isRegistered = await checkEOARegistration({ address: wallet.address });
+        if (!isRegistered.result) {
+          const result = await googleReCaptchaModal();
+          if (result.type === ReCaptchaType.success) {
+            recaptchaResult = result.data;
+          }
         }
       }
-    }
-    const { caHash, originChainId } = await getCaHashAndOriginChainIdByWallet(wallet, walletType);
-    try {
+      const { caHash, originChainId } = await getCaHashAndOriginChainIdByWallet(wallet, walletType);
+
       const plainTextOrigin = `Nonce:${Date.now()}`;
       const plainText: any = Buffer.from(plainTextOrigin).toString('hex').replace('0x', '');
       let signInfo: string;
