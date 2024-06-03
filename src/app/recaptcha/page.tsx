@@ -6,6 +6,7 @@ import styles from './styles.module.scss';
 
 export default function ReCaptcha() {
   const handleSuccess = useCallback((response: string) => {
+    console.warn('Google reCaptcha response:', response);
     window.opener.postMessage(
       {
         type: 'GOOGLE_RECAPTCHA_RESULT',

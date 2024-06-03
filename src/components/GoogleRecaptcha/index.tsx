@@ -22,7 +22,7 @@ import myEvents from 'utils/myEvent';
 const MAIN_SCRIPT_ID = 'recaptcha';
 
 /** Source of the main reCAPTCHA script. */
-const MAIN_SCRIPT_SRC = 'https://www.google.com/recaptcha/api.js';
+const MAIN_SCRIPT_SRC = 'https://www.google.com/recaptcha/api.js?hl=en';
 
 /**
  * Pattern of the second, implicit reCAPTCHA script.
