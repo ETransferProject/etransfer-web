@@ -1,7 +1,7 @@
 import { Modal } from 'antd';
 import CloseIcon from 'assets/images/close.svg';
 import { RE_CAPTCHA_SITE_KEY } from 'constants/misc';
-import GoogleReCaptchaAuto from 'components/GoogleRecaptcha';
+import GoogleReCaptcha from 'components/GoogleRecaptcha';
 import { ReCaptchaType } from 'components/GoogleRecaptcha/types';
 
 type TGoogleReCaptchaResult = { type: ReCaptchaType; data: string | any; error?: any };
@@ -17,7 +17,7 @@ const googleReCaptchaModal = async (
       className: 'reCaptcha-modal-container',
       width: width,
       content: RE_CAPTCHA_SITE_KEY ? (
-        <GoogleReCaptchaAuto
+        <GoogleReCaptcha
           siteKey={RE_CAPTCHA_SITE_KEY}
           theme="light"
           size="normal"
