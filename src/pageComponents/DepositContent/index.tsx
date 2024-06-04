@@ -278,15 +278,6 @@ export default function Content() {
       dispatch(setToTokenSymbol(newItem.symbol));
       dispatch(setToChainList(newItem.chainList || []));
 
-      // Check - to chain
-      let optionChainId = toChainItem.key;
-      const isExitChain = newItem.chainList?.find((item) => item.key === toChainItem.key);
-      if (!isExitChain) {
-        const chainItem = newItem.chainList?.[0] || CHAIN_LIST[0];
-        dispatch(setToChainItem(chainItem));
-        optionChainId = chainItem.key;
-      }
-
       // Check - from token
       const isExitFromToken = fromTokenList?.find((from) => {
         return (
@@ -301,6 +292,21 @@ export default function Content() {
         dispatch(setFromTokenSymbol(newItem.symbol));
         setDepositInfo(InitDepositInfo);
         dispatch(setDepositAddress(InitDepositInfo.depositAddress));
+        const currentFromToken = fromTokenList?.find((item) => item.symbol === newItem.symbol);
+        const currentToToken = currentFromToken?.toTokenList?.find(
+          (to) => to.symbol === newItem.symbol,
+        );
+        dispatch(setToChainList(currentToToken?.chainList || []));
+
+        // Check - to chain
+        let optionChainId = toChainItem.key;
+        const isExitChain = currentToToken?.chainList?.find((item) => item.key === toChainItem.key);
+        if (!isExitChain) {
+          const chainItem = currentToToken?.chainList?.[0] || CHAIN_LIST[0];
+          dispatch(setToChainItem(chainItem));
+          optionChainId = chainItem.key;
+        }
+
         setShowRetry(false);
         // get network data
         return getNetworkData({
@@ -309,7 +315,16 @@ export default function Content() {
           toSymbol: newItem.symbol,
         });
       } else {
+        // Check - to chain
+        const currentToToken = isExitFromToken?.toTokenList?.find(
+          (to) => to.symbol === newItem.symbol,
+        );
+        let optionChainId = toChainItem.key;
+        const isExitChain = currentToToken?.chainList?.find((item) => item.key === toChainItem.key);
         if (!isExitChain) {
+          const chainItem = currentToToken?.chainList?.[0] || CHAIN_LIST[0];
+          dispatch(setToChainItem(chainItem));
+          optionChainId = chainItem.key;
           // toChain changed, need refresh network and deposit info.
           return getNetworkData({
             chainId: optionChainId,
