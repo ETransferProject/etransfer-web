@@ -11,7 +11,7 @@ export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware(storeConfig.defaultMiddlewareOptions).concat(middlewareList),
-  devTools: process.env.NODE_ENV !== 'production',
+  devTools: process.env.NEXT_PUBLIC_NODE_ENV !== 'production',
 });
 
 export type AppDispatch = typeof store.dispatch;

@@ -6,6 +6,7 @@ import { LocalStorageKey } from 'constants/localStorage';
 import service from './axios';
 import { PortkeyVersion } from 'constants/wallet';
 import myEvents from 'utils/myEvent';
+import { AuthTokenSource } from 'types/api';
 
 export function spliceUrl(baseUrl: string, extendArg?: string) {
   return extendArg ? baseUrl + '/' + extendArg : baseUrl;
@@ -32,22 +33,23 @@ type QueryAuthApiBaseConfig = {
   grant_type: string;
   scope: string;
   client_id: string;
-  source: string;
 };
 export type QueryAuthApiExtraRequest = {
   pubkey: string;
   signature: string;
   plain_text: string;
-  ca_hash: string;
-  chain_id: string;
-  managerAddress: string;
   version: PortkeyVersion;
+  source: AuthTokenSource;
+  managerAddress: string;
+  ca_hash?: string; // for Portkey
+  chain_id?: string; // for Portkey
+  recaptchaToken?: string; // for NightElf
 };
+
 const queryAuthApiBaseConfig: QueryAuthApiBaseConfig = {
   grant_type: 'signature',
   scope: 'ETransferServer',
   client_id: 'ETransferServer_App',
-  source: 'portkey',
 };
 
 export type JWTData = {
@@ -97,7 +99,8 @@ export const queryAuthApi = async (config: QueryAuthApiExtraRequest) => {
   myEvents.AuthTokenSuccess.emit();
 
   if (localStorage) {
-    setLocalJWT(config.ca_hash + config.managerAddress, res.data);
+    const key = config?.ca_hash || config.source + config.managerAddress;
+    setLocalJWT(key, res.data);
   }
 
   return `${token_type} ${access_token}`;

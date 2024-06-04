@@ -10,7 +10,7 @@ import { getDepositCalculate } from 'utils/api/deposit';
 import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
 import { TOKEN_INFO_USDT } from 'constants/index';
 import { formatSymbolDisplay } from 'utils/format';
-import { MAX_UPDATE_TIME } from 'constants/misc';
+import { MAX_UPDATE_TIME } from 'constants/calculate';
 import { useSearchParams } from 'next/navigation';
 
 const DEFAULT_AMOUNT = '0.00';
