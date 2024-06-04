@@ -9,20 +9,14 @@ import { useCommonState, useDepositState } from 'store/Provider/hooks';
 import { getDepositCalculate } from 'utils/api/deposit';
 import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
 import { TOKEN_INFO_USDT } from 'constants/index';
-import { useEffectOnce } from 'react-use';
 import { formatSymbolDisplay } from 'utils/format';
 import { MAX_UPDATE_TIME } from 'constants/calculate';
 import { useSearchParams } from 'next/navigation';
 
-type TCalculator = {
-  payToken: string;
-  receiveToken: string;
-};
-
 const DEFAULT_AMOUNT = '0.00';
 const DEFAULT_PAY_AMOUNT = '100';
 
-export default function Calculator({ payToken, receiveToken }: TCalculator) {
+export default function Calculator() {
   const { isMobilePX } = useCommonState();
   const { fromTokenSymbol, fromTokenList, toChainItem, toTokenSymbol } = useDepositState();
   const searchParams = useSearchParams();
@@ -131,12 +125,13 @@ export default function Calculator({ payToken, receiveToken }: TCalculator) {
     [currentTokenDecimal, getCalculate, resetTimer],
   );
 
-  useEffectOnce(() => {
+  useEffect(() => {
     // start 15s countdown
     resetTimer();
     // then, get one-time new value
     getCalculate();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fromTokenSymbol, toChainItem, toTokenSymbol]);
 
   const renderHeader = useMemo(() => {
     return (
@@ -169,11 +164,11 @@ export default function Calculator({ payToken, receiveToken }: TCalculator) {
             onInput={onPayChange}
           />
           <div className={styles['dividing-line']} />
-          <span className={styles['unit']}>{payToken}</span>
+          <span className={styles['unit']}>{fromTokenSymbol}</span>
         </div>
       </div>
     );
-  }, [onPayChange, payAmount, payToken]);
+  }, [fromTokenSymbol, onPayChange, payAmount]);
 
   const renderReceive = useMemo(() => {
     return (
@@ -181,18 +176,18 @@ export default function Calculator({ payToken, receiveToken }: TCalculator) {
         <div className={styles['label']}>You Receive</div>
         <Space direction="vertical" size={8} />
         <div className={styles['receive-amount']}>{`≈${receiveAmount} ${formatSymbolDisplay(
-          receiveToken,
+          toTokenSymbol,
         )}`}</div>
         <div>
           <span className={styles['label']}>Minimum Sum To Receive:</span>
           <span
             className={styles['min-receive-amount']}>{`≈${minReceiveAmount} ${formatSymbolDisplay(
-            receiveToken,
+            toTokenSymbol,
           )}`}</span>
         </div>
       </div>
     );
-  }, [minReceiveAmount, receiveAmount, receiveToken]);
+  }, [minReceiveAmount, receiveAmount, toTokenSymbol]);
 
   return (
     <div className={styles['calculator']}>
