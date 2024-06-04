@@ -785,8 +785,11 @@ export default function WithdrawContent() {
   const setMaxToken = useCallback(async () => {
     setBalance(maxBalance);
     form.setFieldValue(FormKeys.AMOUNT, maxBalance);
-    handleAmountValidate();
-  }, [form, maxBalance, handleAmountValidate]);
+
+    if (handleAmountValidate()) {
+      await getWithdrawData();
+    }
+  }, [maxBalance, form, handleAmountValidate, getWithdrawData]);
 
   const onAddressChange = useCallback(
     (value: string | null) => {
