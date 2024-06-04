@@ -1,8 +1,9 @@
 'use client';
 import React, { useCallback } from 'react';
-import { RE_CAPTCHA_SITE_KEY } from 'constants/misc';
+import { RECAPTCHA_SITE_KEY_MAINNET, RECAPTCHA_SITE_KEY_TESTNET } from 'constants/misc';
 import GoogleReCaptcha from 'components/GoogleRecaptcha';
 import styles from './styles.module.scss';
+import { NETWORK_TYPE_V2 } from 'constants/index';
 
 export default function ReCaptcha() {
   const handleSuccess = useCallback((response: string) => {
@@ -37,7 +38,9 @@ export default function ReCaptcha() {
   return (
     <div className={styles.reCaptchaContainer}>
       <GoogleReCaptcha
-        siteKey={RE_CAPTCHA_SITE_KEY}
+        siteKey={
+          NETWORK_TYPE_V2 === 'TESTNET' ? RECAPTCHA_SITE_KEY_TESTNET : RECAPTCHA_SITE_KEY_MAINNET
+        }
         theme="light"
         size="normal"
         onSuccess={handleSuccess}
