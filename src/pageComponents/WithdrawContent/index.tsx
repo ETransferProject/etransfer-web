@@ -38,7 +38,7 @@ import {
 } from 'utils/contract';
 import singleMessage from 'components/SingleMessage';
 import { divDecimals, timesDecimals } from 'utils/calculate';
-import { ZERO } from 'constants/misc';
+import { ZERO } from 'constants/calculate';
 import { ContractType } from 'constants/chain';
 import BigNumber from 'bignumber.js';
 import {
@@ -89,6 +89,7 @@ import { SideMenuKey } from 'constants/home';
 import FeeInfo from './FeeInfo';
 import { useSearchParams } from 'next/navigation';
 import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
+import { WalletType } from 'aelf-web-login';
 
 enum ValidateStatus {
   Error = 'error',
@@ -746,6 +747,7 @@ export default function WithdrawContent() {
           wallet.walletInfo,
           wallet.walletType,
         );
+        const ownerAddress = accounts?.[currentChainItemRef.current.key]?.[0] || '';
         const transaction = await createTransferTokenTransaction({
           wallet,
           caContractAddress:
@@ -755,7 +757,7 @@ export default function WithdrawContent() {
           symbol: currentSymbol,
           amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
           chainId: currentChainItemRef.current.key,
-          fromManagerAddress: managerAddress,
+          fromManagerAddress: wallet.walletType === WalletType.elf ? ownerAddress : managerAddress,
         });
         console.log(transaction, '=====transaction');
 
@@ -783,8 +785,11 @@ export default function WithdrawContent() {
   const setMaxToken = useCallback(async () => {
     setBalance(maxBalance);
     form.setFieldValue(FormKeys.AMOUNT, maxBalance);
-    handleAmountValidate();
-  }, [form, maxBalance, handleAmountValidate]);
+
+    if (handleAmountValidate()) {
+      await getWithdrawData();
+    }
+  }, [maxBalance, form, handleAmountValidate, getWithdrawData]);
 
   const onAddressChange = useCallback(
     (value: string | null) => {

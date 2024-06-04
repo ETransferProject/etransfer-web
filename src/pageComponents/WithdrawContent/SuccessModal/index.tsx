@@ -32,7 +32,7 @@ export default function SuccessModal({ withdrawInfo, modalProps }: SuccessModalP
     const chainId = withdrawInfo.network.network as unknown as AllSupportedELFChainId;
     if (
       isNeedQuota(symbol, chainId) &&
-      withdrawInfo.amount <= ARRIVAL_TIME_CONFIG[symbol].dividingQuota
+      Number(withdrawInfo.amount) <= Number(ARRIVAL_TIME_CONFIG[symbol].dividingQuota)
     ) {
       return '30s';
     } else {

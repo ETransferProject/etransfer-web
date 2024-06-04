@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import BN, { isBN } from 'bn.js';
-import { isEffectiveNumber, ZERO } from 'constants/misc';
+import { isEffectiveNumber, ZERO } from 'constants/calculate';
 import { defaultNullValue } from 'constants/index';
 
 export function timesDecimals(a?: BigNumber.Value, decimals: string | number = 18) {

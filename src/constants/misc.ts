@@ -1,19 +1,3 @@
-import BigNumber from 'bignumber.js';
+export const RECAPTCHA_SITE_KEY_MAINNET = process.env.NEXT_PUBLIC_MAINNET_RECAPTCHA_SITE_KEY || '';
 
-export enum REQ_CODE {
-  UserDenied = -1,
-  Fail = -2,
-  Success = 1,
-}
-
-export const LANG_MAX = new BigNumber('9223372036854774784');
-
-export const ZERO = new BigNumber(0);
-export const ONE = new BigNumber(1);
-
-export const isEffectiveNumber = (v: any) => {
-  const val = new BigNumber(v);
-  return !val.isNaN() && !val.lte(0);
-};
-
-export const MAX_UPDATE_TIME = 15;
+export const RECAPTCHA_SITE_KEY_TESTNET = process.env.NEXT_PUBLIC_TESTNET_RECAPTCHA_SITE_KEY || '';

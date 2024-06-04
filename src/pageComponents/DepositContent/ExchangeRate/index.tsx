@@ -7,7 +7,7 @@ import { getDepositCalculate } from 'utils/api/deposit';
 import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
 import { ChainId } from '@portkey/provider-types';
 import { formatSymbolDisplay } from 'utils/format';
-import { MAX_UPDATE_TIME } from 'constants/misc';
+import { MAX_UPDATE_TIME } from 'constants/calculate';
 
 type TExchangeRate = {
   fromSymbol: string;
