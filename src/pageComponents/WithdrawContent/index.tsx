@@ -1150,7 +1150,7 @@ export default function WithdrawContent() {
               {!maxBalance || isMaxBalanceLoading ? (
                 <PartialLoading />
               ) : (
-                `${maxBalance} ${currentSymbol}`
+                `${maxBalance} ${formatSymbolDisplay(currentSymbol)}`
               )}
             </div>
           </div>
