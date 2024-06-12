@@ -33,7 +33,7 @@ import { isAuthTokenError } from 'utils/api/error';
 import { useSetCurrentChainItem } from 'hooks/common';
 import { SideMenuKey } from 'constants/home';
 import { ChainId } from '@portkey/provider-types';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export type TDepositContentProps = {
   fromNetworkSelected?: TNetworkItem;
@@ -373,28 +373,27 @@ export default function Content() {
     let fromSymbol = fromTokenSymbol;
     let toSymbol = toTokenSymbol;
     let routeNetworkRef = '';
-    if (routeQuery.type === SideMenuKey.Deposit) {
-      if (routeQuery.chainId) {
-        const chainItem = CHAIN_LIST.find((item) => item.key === routeQuery.chainId);
-        if (chainItem) {
-          chainId = chainItem.key;
-          setCurrentChainItem(chainItem, SideMenuKey.Deposit);
-        }
+
+    if (routeQuery.chainId) {
+      const chainItem = CHAIN_LIST.find((item) => item.key === routeQuery.chainId);
+      if (chainItem) {
+        chainId = chainItem.key;
+        setCurrentChainItem(chainItem, SideMenuKey.Deposit);
       }
-      if (routeQuery.tokenSymbol) {
-        fromSymbol = routeQuery.tokenSymbol;
-        dispatch(setFromTokenSymbol(routeQuery.tokenSymbol));
-      }
-      if (routeQuery.depositToToken) {
-        toSymbol = routeQuery.depositToToken;
-        dispatch(setToTokenSymbol(routeQuery.depositToToken));
-      }
-      if (routeQuery.depositFromNetwork) {
-        routeNetworkRef = routeQuery.depositFromNetwork;
-        fromNetworkRef.current = routeQuery.depositFromNetwork;
-        dispatch(setFromNetwork(undefined));
-        dispatch(setFromNetworkList([]));
-      }
+    }
+    if (routeQuery.tokenSymbol) {
+      fromSymbol = routeQuery.tokenSymbol;
+      dispatch(setFromTokenSymbol(routeQuery.tokenSymbol));
+    }
+    if (routeQuery.depositToToken) {
+      toSymbol = routeQuery.depositToToken;
+      dispatch(setToTokenSymbol(routeQuery.depositToToken));
+    }
+    if (routeQuery.depositFromNetwork) {
+      routeNetworkRef = routeQuery.depositFromNetwork;
+      fromNetworkRef.current = routeQuery.depositFromNetwork;
+      dispatch(setFromNetwork(undefined));
+      dispatch(setFromNetworkList([]));
     }
 
     await getTokenList(chainId, fromSymbol, toSymbol);
@@ -421,14 +420,16 @@ export default function Content() {
     routeQuery.depositFromNetwork,
     routeQuery.depositToToken,
     routeQuery.tokenSymbol,
-    routeQuery.type,
     setCurrentChainItem,
     toChainItem.key,
     toTokenSymbol,
   ]);
 
+  const router = useRouter();
   useEffectOnce(() => {
     init();
+
+    router.replace('/deposit');
   });
 
   useEffect(() => {

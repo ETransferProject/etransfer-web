@@ -5,3 +5,9 @@ $mobile-header-height: 56px;
 $web-header-height: 80px;
 $mobile-form-footer-max-height: 95px;
 $page-min-width: 360px;
+
+$web-content-min-margin-left: 40px;
+$web-breakpoint: $content-width + ($sider-width + $web-content-min-margin-left) * 2;
+$content-padding-bottom: 24px;
+$web-content-padding-bottom: 80px;
+

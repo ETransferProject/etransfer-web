@@ -11,7 +11,7 @@ import AmountBox from 'pageComponents/HistoryContent/AmountBox';
 import AddressBox from 'pageComponents/HistoryContent/AddressBox';
 import { TRecordsBodyProps } from 'pageComponents/HistoryContent';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useDebounceCallback } from 'hooks';
+import { useDebounceCallback } from 'hooks/debounce';
 import { setSkipCount, setHasMore } from 'store/reducers/records/slice';
 
 const NoDataText = '-- No Data --';

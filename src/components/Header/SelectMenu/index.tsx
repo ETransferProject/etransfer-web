@@ -1,25 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import MenuOutlined from '@ant-design/icons/MenuOutlined';
 import CommonDrawer from 'components/CommonDrawer';
 import { MENU_ITEMS, SideMenuKey } from 'constants/home';
-import { setActiveMenuKey } from 'store/reducers/common/slice';
-import { store } from 'store/Provider/store';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import SupportEntry from 'components/Sider/SupportEntry';
 import myEvents from 'utils/myEvent';
+import { useChangeSideMenu } from 'hooks/route';
 
 export default function SelectMenu() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const { activeMenuKey, isUnreadHistory } = useCommonState();
-
-  useEffect(() => {
-    // init activeMenuKey
-    if (!activeMenuKey) {
-      store.dispatch(setActiveMenuKey(SideMenuKey.Deposit));
-    }
-  }, [activeMenuKey]);
+  const changeSideMenu = useChangeSideMenu();
 
   return (
     <>
@@ -47,11 +40,11 @@ export default function SelectMenu() {
                     [styles['menu-item-active']]: item.key === activeMenuKey,
                   })}
                   onClick={() => {
-                    store.dispatch(setActiveMenuKey(item.key));
                     setIsDrawerOpen(false);
                     if (item.key === SideMenuKey.History && isUnreadHistory) {
                       myEvents.HistoryActive.emit();
                     }
+                    changeSideMenu(item.key);
                   }}>
                   <MenuIcon className={styles['menu-item-icon']} />
                   <div className={styles['menu-item-label']}>

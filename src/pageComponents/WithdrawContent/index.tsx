@@ -49,7 +49,7 @@ import {
   setWithdrawCurrentNetwork,
   setWithdrawNetworkList,
 } from 'store/reducers/withdraw/slice';
-import { useDebounceCallback } from 'hooks';
+import { useDebounceCallback } from 'hooks/debounce';
 import { useEffectOnce } from 'react-use';
 import PartialLoading from 'components/PartialLoading';
 import {
@@ -87,7 +87,7 @@ import { AelfExploreType } from 'constants/network';
 import { isDIDAddressSuffix, removeAddressSuffix, removeELFAddressSuffix } from 'utils/aelfBase';
 import { SideMenuKey } from 'constants/home';
 import FeeInfo from './FeeInfo';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
 import { WalletType } from 'aelf-web-login';
 
@@ -917,22 +917,20 @@ export default function WithdrawContent() {
       let newCurrentSymbol = currentSymbol;
       let newTokenList = tokenList;
       setLoading(true);
-      if (routeQuery?.type === SideMenuKey.Withdraw) {
-        if (routeQuery.chainId) {
-          const chainItem = CHAIN_LIST.find((item) => item.key === routeQuery.chainId);
-          if (chainItem) {
-            currentChainItemRef.current = chainItem;
-            setCurrentChainItem(chainItem, SideMenuKey.Withdraw);
-          }
-        }
-        if (routeQuery.tokenSymbol) {
-          newCurrentSymbol = routeQuery.tokenSymbol;
-          dispatch(setCurrentSymbol(routeQuery.tokenSymbol));
 
-          newTokenList = await getToken(false);
+      if (routeQuery.chainId) {
+        const chainItem = CHAIN_LIST.find((item) => item.key === routeQuery.chainId);
+        if (chainItem) {
+          currentChainItemRef.current = chainItem;
+          setCurrentChainItem(chainItem, SideMenuKey.Withdraw);
         }
       }
-      if (!routeQuery.tokenSymbol) {
+      if (routeQuery.tokenSymbol) {
+        newCurrentSymbol = routeQuery.tokenSymbol;
+        dispatch(setCurrentSymbol(routeQuery.tokenSymbol));
+
+        newTokenList = await getToken(false);
+      } else {
         newTokenList = await getToken(true);
       }
 
@@ -976,7 +974,6 @@ export default function WithdrawContent() {
     handleChainChanged,
     routeQuery.chainId,
     routeQuery.tokenSymbol,
-    routeQuery?.type,
     routeQuery.withdrawAddress,
     setCurrentChainItem,
     setLoading,
@@ -986,8 +983,11 @@ export default function WithdrawContent() {
     withdraw.networkList,
   ]);
 
+  const router = useRouter();
   useEffectOnce(() => {
     init();
+
+    router.replace('/withdraw');
 
     return () => {
       if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);

@@ -35,7 +35,7 @@
     "@portkey/utils": "2.6.6",
     "@reduxjs/toolkit": "^1.8.5",
     "@sentry/nextjs": "^7.19.0",
-    "aelf-web-login": "2.0.1-beta.15",
+    "aelf-web-login": "2.0.1-beta.18",
     "axios": "^0.24.0",
     "clsx": "^2.0.0",
     "firebase": "^9.23.0",

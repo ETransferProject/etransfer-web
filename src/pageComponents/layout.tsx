@@ -12,8 +12,19 @@ import { MOBILE_PX } from 'constants/media';
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { useIsActive } from 'hooks/portkeyWallet';
+import { useActivePage } from 'hooks/common';
+import { useRouteParamType } from 'hooks/route';
+import { useUpdateRecord } from 'hooks/updateRecord';
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({
+  children,
+  isShowHeader = false,
+  isShowSider = false,
+}: {
+  children: React.ReactNode;
+  isShowHeader?: boolean;
+  isShowSider?: boolean;
+}) => {
   useEffect((): any => {
     if (typeof window !== 'undefined') {
       const resize = () => {
@@ -36,6 +47,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   }, []);
   const { isMobilePX } = useCommonState();
   const isActive = useIsActive();
+
+  useRouteParamType();
+  useActivePage();
+  useUpdateRecord();
+
   return (
     <AntdLayout
       className={clsx(
@@ -43,12 +59,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         styles['layout-wrapper'],
         styles['layout-wrapper-weight'],
       )}>
-      <Header />
+      {isShowHeader && <Header />}
       <AntdLayout
         className={clsx(styles['layout-content-wrapper'], {
           [styles['layout-content-wrapper-with-header']]: isActive || !isMobilePX,
         })}>
-        {!isMobilePX && isActive && <Sider />}
+        {isShowSider && !isMobilePX && isActive && <Sider />}
         <AntdLayout.Content className={`etransfer-web-content`}>
           <Suspense fallback={<Loading />}>{children}</Suspense>
         </AntdLayout.Content>

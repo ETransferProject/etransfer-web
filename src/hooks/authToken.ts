@@ -9,7 +9,7 @@ import AElf from 'aelf-sdk';
 import { recoverPubKey } from 'utils/aelfBase';
 import { setSwitchVersionAction } from 'store/reducers/common/slice';
 import { setV2ConnectedInfoAction } from 'store/reducers/portkeyWallet/actions';
-import { useDebounceCallback } from 'hooks';
+import { useDebounceCallback } from 'hooks/debounce';
 import service from 'api/axios';
 import { eTransferInstance } from 'utils/etransferInstance';
 import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';

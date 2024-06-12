@@ -11,7 +11,7 @@ import {
   setTimestamp,
   setSkipCount,
 } from 'store/reducers/records/slice';
-import { useDebounceCallback } from 'hooks';
+import { useDebounceCallback } from 'hooks/debounce';
 import { useCallback } from 'react';
 import { TRecordsRequestType, TRecordsRequestStatus } from 'types/records';
 import { TRecordsListItem } from 'types/api';
