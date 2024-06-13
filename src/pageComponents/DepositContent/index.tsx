@@ -85,6 +85,8 @@ export default function Content() {
     return toTokenList?.find((item) => item.symbol === toTokenSymbol) || toTokenList?.[0];
   }, [toTokenList, toTokenSymbol]);
 
+  // const [tokenChainMap, setTokenChainMap] = useState<Record<string, TToTokenItem>>();
+
   const getTokenList = useCallback(
     async (chainId: ChainId, fromSymbol: string, toSymbol: string) => {
       try {
@@ -94,6 +96,7 @@ export default function Content() {
         });
         // Format fromTokenList - add chainList for toTokenList
         const fromTokenList: TDepositTokenItem[] = JSON.parse(JSON.stringify(tokenList));
+        const tokenChainMap: Record<string, TToTokenItem> = {};
         const toTokenList: TToTokenItem[] = [];
         fromTokenList.forEach((from) => {
           from.toTokenList?.forEach((to) => {
@@ -107,12 +110,12 @@ export default function Content() {
               }
             });
             to.chainList = toChainList;
-
+            tokenChainMap[from.symbol + to.symbol] = JSON.parse(JSON.stringify(to));
             const findToToken = toTokenList.find((pushToToken) => pushToToken.symbol === to.symbol);
             if (!findToToken) toTokenList.push(to);
           });
         });
-
+        // setTokenChainMap(tokenChainMap);
         // Handle fromTokenList and fromToken
         dispatch(setFromTokenList(fromTokenList));
         const isExitFromTokenSelected = fromTokenList?.find((item) => item.symbol === fromSymbol);
@@ -122,19 +125,26 @@ export default function Content() {
         // Handle toTokenList and toToken
         dispatch(setToTokenList(toTokenList));
         const isExitToTokenSelected = toTokenList?.find((item) => item.symbol === toSymbol);
+        const tempFromTokenSymbol = isExitFromTokenSelected?.symbol || fromTokenList?.[0].symbol;
+
         if (isExitToTokenSelected?.symbol) {
-          dispatch(setToChainList(isExitToTokenSelected?.chainList || []));
-          const isExitChain = isExitToTokenSelected?.chainList?.find(
-            (item) => item.key === chainId,
-          );
+          const tempToTokenSymbol = isExitToTokenSelected?.symbol || toTokenList?.[0].symbol;
+          const isExitChain = tokenChainMap[
+            tempFromTokenSymbol + tempToTokenSymbol
+          ]?.chainList?.find((item) => item.key === chainId);
           if (!isExitChain) {
             dispatch(setToChainItem(isExitToTokenSelected?.chainList?.[0] || CHAIN_LIST[0]));
           }
+          dispatch(
+            setToChainList(tokenChainMap[tempFromTokenSymbol + tempToTokenSymbol].chainList || []),
+          );
         } else {
           const toToken = toTokenList?.[0] || [];
+          const tempToTokenSymbol = toToken.symbol;
+          const tempChainList = tokenChainMap[tempFromTokenSymbol + tempToTokenSymbol]?.chainList;
           dispatch(setToTokenSymbol(toToken?.symbol));
-          dispatch(setToChainList(toToken?.chainList || []));
-          dispatch(setToChainItem(toToken?.chainList?.[0] || CHAIN_LIST[0]));
+          dispatch(setToChainList(tempChainList || []));
+          dispatch(setToChainItem(tempChainList?.[0] || CHAIN_LIST[0]));
         }
       } catch (error) {
         console.log('getTokenList error', error);
