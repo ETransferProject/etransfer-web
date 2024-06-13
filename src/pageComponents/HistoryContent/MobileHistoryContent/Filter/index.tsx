@@ -3,13 +3,7 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { FilterIcon, CloseSmall } from 'assets/images';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
-import {
-  setType,
-  setStatus,
-  setTimestamp,
-  setSkipCount,
-  setRecordsList,
-} from 'store/reducers/records/slice';
+import { setSkipCount, setRecordsList } from 'store/reducers/records/slice';
 import { TRecordsRequestType, TRecordsRequestStatus, TRecordsStatusI18n } from 'types/records';
 import CommonDrawer from 'components/CommonDrawer';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
@@ -19,6 +13,7 @@ import { BusinessType } from 'types/api';
 import { TRecordsContentProps } from 'pageComponents/HistoryContent';
 import { defaultNullValue } from 'constants/index';
 import moment from 'moment';
+import { useHistoryFilter } from 'hooks/history';
 
 const dateFormat = 'YYYY-MM-DD';
 
@@ -53,17 +48,18 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
     return isShow;
   }, [timestamp]);
 
+  const { setFilter, setMethodFilter, setStatusFilter, setTimestampFilter } = useHistoryFilter();
   const closeItem = useCallback(
     (clickType: string) => {
       switch (clickType) {
         case 'type':
-          dispatch(setType(TRecordsRequestType.ALL));
+          setMethodFilter(TRecordsRequestType.ALL);
           break;
         case 'status':
-          dispatch(setStatus(TRecordsRequestStatus.ALL));
+          setStatusFilter(TRecordsRequestStatus.ALL);
           break;
         case 'timestamp':
-          dispatch(setTimestamp(null));
+          setTimestampFilter(null);
           break;
         default:
           break;
@@ -72,7 +68,7 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
       dispatch(setRecordsList([]));
       requestRecordsList();
     },
-    [dispatch, requestRecordsList],
+    [dispatch, requestRecordsList, setMethodFilter, setStatusFilter, setTimestampFilter],
   );
 
   const handleResetFilter = useCallback(() => {
@@ -84,21 +80,26 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
   }, [dispatch]);
 
   const handleApplyFilter = useCallback(() => {
-    dispatch(setType(filterType));
-    dispatch(setStatus(filterStatus));
-    dispatch(
-      setTimestamp([moment(filterTimestampStart).valueOf(), moment(filterTimestampEnd).valueOf()]),
-    );
+    const start = moment(filterTimestampStart).valueOf();
+    const end = moment(filterTimestampEnd).valueOf();
+    const timeIsNaN = isNaN(start) || isNaN(end);
+
+    setFilter({
+      method: filterType,
+      status: filterStatus,
+      timeArray: timeIsNaN ? null : [start, end],
+    });
     dispatch(setSkipCount(1));
     dispatch(setRecordsList([]));
     setIsShowFilterDrawer(false);
     requestRecordsList();
   }, [
-    dispatch,
+    setFilter,
     filterType,
     filterStatus,
     filterTimestampStart,
     filterTimestampEnd,
+    dispatch,
     requestRecordsList,
   ]);
 

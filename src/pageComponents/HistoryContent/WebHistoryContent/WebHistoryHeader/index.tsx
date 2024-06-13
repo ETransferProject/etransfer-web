@@ -2,7 +2,7 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { Select, DatePicker, Button } from 'antd';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
-import { setType, setStatus, setTimestamp, setSkipCount } from 'store/reducers/records/slice';
+import { setSkipCount } from 'store/reducers/records/slice';
 import { TRecordsRequestType, TRecordsRequestStatus, TRecordsStatusI18n } from 'types/records';
 import { useCallback, useMemo } from 'react';
 import { TRangeValue, BusinessType } from 'types/api';
@@ -10,6 +10,7 @@ import { TRecordsContentProps } from 'pageComponents/HistoryContent';
 import { Reset } from 'assets/images';
 import { SwapRightDefault, SwapRightSelected } from 'assets/images';
 import moment from 'moment';
+import { useHistoryFilter } from 'hooks/history';
 
 const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY-MM-DD';
@@ -17,34 +18,35 @@ const dateFormat = 'YYYY-MM-DD';
 export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecordsContentProps) {
   const dispatch = useAppDispatch();
   const { type, status, timestamp } = useRecordsState();
+  const { setMethodFilter, setStatusFilter, setTimestampFilter } = useHistoryFilter();
 
   const handleTypeChange = useCallback(
     (type: TRecordsRequestType) => {
-      dispatch(setType(type));
+      setMethodFilter(type);
       dispatch(setSkipCount(1));
       requestRecordsList();
     },
-    [dispatch, requestRecordsList],
+    [dispatch, requestRecordsList, setMethodFilter],
   );
 
   const handleStatusChange = useCallback(
     (status: TRecordsRequestStatus) => {
-      dispatch(setStatus(status));
+      setStatusFilter(status);
       dispatch(setSkipCount(1));
       requestRecordsList();
     },
-    [dispatch, requestRecordsList],
+    [dispatch, requestRecordsList, setStatusFilter],
   );
 
   const handleDateRangeChange = useCallback(
     (timestamp: TRangeValue) => {
       if (timestamp && timestamp[0] && timestamp[1]) {
-        dispatch(setTimestamp([moment(timestamp[0]).valueOf(), moment(timestamp[1]).valueOf()]));
+        setTimestampFilter([moment(timestamp[0]).valueOf(), moment(timestamp[1]).valueOf()]);
         dispatch(setSkipCount(1));
         requestRecordsList();
       }
     },
-    [dispatch, requestRecordsList],
+    [dispatch, requestRecordsList, setTimestampFilter],
   );
 
   const isShowReset = useCallback(() => {

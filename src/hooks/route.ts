@@ -6,7 +6,6 @@ import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { stringifyUrl } from 'query-string';
 
 export function useRouteParamType(): { type: SideMenuKey } {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const routeType = useMemo(() => searchParams.get('type') as SideMenuKey, [searchParams]);
@@ -22,7 +21,7 @@ export function useRouteParamType(): { type: SideMenuKey } {
     if (routeType && pathname === '/') {
       dispatch(setActiveMenuKey(routeType));
     }
-  }, [activeMenuKey, dispatch, pathname, routeType, router]);
+  }, [activeMenuKey, dispatch, pathname, routeType]);
 
   return { type: currentActiveMenuKey };
 }
@@ -105,6 +104,10 @@ export function useCheckAllowSearch() {
             searchObject.calculatePay = searchParams.get('calculatePay');
           if (searchParams.get('withdrawAddress'))
             searchObject.withdrawAddress = searchParams.get('withdrawAddress');
+          if (searchParams.get('method')) searchObject.method = searchParams.get('method');
+          if (searchParams.get('status')) searchObject.status = searchParams.get('status');
+          if (searchParams.get('start')) searchObject.start = searchParams.get('start');
+          if (searchParams.get('end')) searchObject.end = searchParams.get('end');
           break;
 
         case '/deposit':
@@ -128,6 +131,10 @@ export function useCheckAllowSearch() {
           break;
 
         case '/history':
+          if (searchParams.get('method')) searchObject.method = searchParams.get('method');
+          if (searchParams.get('status')) searchObject.status = searchParams.get('status');
+          if (searchParams.get('start')) searchObject.start = searchParams.get('start');
+          if (searchParams.get('end')) searchObject.end = searchParams.get('end');
           break;
 
         default:

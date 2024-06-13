@@ -6,19 +6,22 @@ import {
   setRecordsList,
   setTotalCount,
   setHasMore,
+  setSkipCount,
   setType,
   setStatus,
   setTimestamp,
-  setSkipCount,
 } from 'store/reducers/records/slice';
 import { useDebounceCallback } from 'hooks/debounce';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { TRecordsRequestType, TRecordsRequestStatus } from 'types/records';
 import { TRecordsListItem } from 'types/api';
 import moment from 'moment';
 import myEvents from 'utils/myEvent';
 import { sleep } from '@portkey/utils';
 import { useEffectOnce } from 'react-use';
+import { useHistoryFilter } from 'hooks/history';
+import { useRouter, useSearchParams } from 'next/navigation';
+import queryString from 'query-string';
 
 export type TRecordsContentProps = TRecordsBodyProps & {
   onReset: () => void;
@@ -31,6 +34,7 @@ export type TRecordsBodyProps = {
 export default function Content() {
   const { isMobilePX, isUnreadHistory } = useCommonState();
   const dispatch = useAppDispatch();
+  const { setFilter } = useHistoryFilter();
   const { setLoading } = useLoading();
 
   const {
@@ -90,15 +94,68 @@ export default function Content() {
   }, []);
 
   const handleReset = useCallback(() => {
-    dispatch(setType(TRecordsRequestType.ALL));
-    dispatch(setStatus(TRecordsRequestStatus.ALL));
-    dispatch(setTimestamp(null));
+    setFilter({
+      method: TRecordsRequestType.ALL,
+      status: TRecordsRequestStatus.ALL,
+      timeArray: null,
+    });
     dispatch(setSkipCount(1));
     if (isMobilePX) {
       dispatch(setRecordsList([]));
     }
     requestRecordsList(true);
-  }, [dispatch, isMobilePX, requestRecordsList]);
+  }, [dispatch, isMobilePX, requestRecordsList, setFilter]);
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const routeQuery = useMemo(
+    () => ({
+      methods: searchParams.get('methods'),
+      status: searchParams.get('status'),
+      start: searchParams.get('start'),
+      end: searchParams.get('end'),
+    }),
+    [searchParams],
+  );
+
+  useEffectOnce(() => {
+    const search: any = {
+      method: routeQuery.methods != null ? routeQuery.methods : undefined,
+      status: routeQuery.status != null ? routeQuery.status : undefined,
+      start: routeQuery.start != null ? routeQuery.start : undefined,
+      end: routeQuery.end != null ? routeQuery.end : undefined,
+    };
+    if (routeQuery.methods != null) {
+      dispatch(setType(Number(routeQuery.methods)));
+    } else {
+      search.methods = type;
+    }
+
+    if (routeQuery.status != null) {
+      dispatch(setStatus(Number(routeQuery.status)));
+    } else {
+      search.status = status;
+    }
+
+    const start = timestamp?.[0];
+    const end = timestamp?.[1];
+    const timeIsAllow = start && !isNaN(start) && end && !isNaN(end);
+    if (routeQuery.start != null && routeQuery.end != null) {
+      dispatch(setTimestamp([Number(routeQuery.start), Number(routeQuery.end)]));
+    } else if (timeIsAllow) {
+      search.start = start;
+      search.end = end;
+    }
+
+    const searchStr = queryString.stringify(search);
+    router.replace(`/history${searchStr ? '?' + searchStr : ''}`);
+
+    if (isUnreadHistory) {
+      handleReset();
+    } else {
+      requestRecordsList(true);
+    }
+  });
 
   useEffectOnce(() => {
     const { remove } = myEvents.HistoryActive.addListener(handleReset);
@@ -106,14 +163,6 @@ export default function Content() {
     return () => {
       remove();
     };
-  });
-
-  useEffectOnce(() => {
-    if (isUnreadHistory) {
-      handleReset();
-    } else {
-      requestRecordsList(true);
-    }
   });
 
   return isMobilePX ? (
