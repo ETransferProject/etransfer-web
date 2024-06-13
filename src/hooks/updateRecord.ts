@@ -4,6 +4,7 @@ import { setIsUnreadHistory } from 'store/reducers/common/slice';
 import { getRecordStatus } from 'utils/api/records';
 import myEvents from 'utils/myEvent';
 import { useIsActive } from './portkeyWallet';
+import { eTransferInstance } from 'utils/etransferInstance';
 
 export const MAX_UPDATE_TIME = 6;
 
@@ -13,6 +14,7 @@ export function useUpdateRecord() {
 
   const updateRecordStatus = useCallback(async () => {
     if (!isActive) return;
+    if (eTransferInstance.unauthorized) return;
 
     try {
       const res = await getRecordStatus();

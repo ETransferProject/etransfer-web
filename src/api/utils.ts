@@ -68,7 +68,7 @@ export const getLocalJWT = (key: string) => {
     const data = JSON.parse(localData) as { [key: string]: LocalJWTData };
     const cData = data[key];
     if (!cData || !cData?.expiresTime) return;
-    if (Date.now() - 0.5 * Day > cData?.expiresTime) return;
+    if (Date.now() + 0.5 * Day > cData?.expiresTime) return;
     return cData;
   } catch (error) {
     return;
@@ -99,7 +99,7 @@ export const queryAuthApi = async (config: QueryAuthApiExtraRequest) => {
   myEvents.AuthTokenSuccess.emit();
 
   if (localStorage) {
-    const key = config?.ca_hash || config.source + config.managerAddress;
+    const key = (config?.ca_hash || config.source) + config.managerAddress;
     setLocalJWT(key, res.data);
   }
 

@@ -3,7 +3,7 @@ import EventEmitter from 'events';
 export const eventBus = new EventEmitter();
 
 const EventList = [
-  'DeniedRequest',
+  'Unauthorized',
   'AuthTokenSuccess',
   'UpdateNewRecordStatus',
   'HistoryActive',

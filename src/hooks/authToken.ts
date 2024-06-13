@@ -4,7 +4,7 @@ import { QueryAuthApiExtraRequest, getLocalJWT, queryAuthApi } from 'api/utils';
 import { SupportedChainId, AppName } from 'constants/index';
 import { PortkeyVersion } from 'constants/wallet';
 import { useCallback, useEffect, useState } from 'react';
-import { useAppDispatch, useLoading } from 'store/Provider/hooks';
+import { useAppDispatch, useCommonState, useLoading } from 'store/Provider/hooks';
 import AElf from 'aelf-sdk';
 import { recoverPubKey } from 'utils/aelfBase';
 import { setSwitchVersionAction } from 'store/reducers/common/slice';
@@ -19,11 +19,14 @@ import { checkEOARegistration } from 'utils/api/user';
 import myEvents from 'utils/myEvent';
 import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
 import singleMessage from 'components/SingleMessage';
+import { useRouterPush } from './route';
 
 export function useQueryAuthToken() {
   const dispatch = useAppDispatch();
+  const { activeMenuKey } = useCommonState();
   const { loginState, logout, wallet, getSignature, walletType } = useWebLogin();
   const { setLoading } = useLoading();
+  const routerPush = useRouterPush();
 
   const handlePortkeyAccount = useCallback(() => {
     const accounts: Accounts = {};
@@ -86,7 +89,16 @@ export function useQueryAuthToken() {
       }),
     );
     dispatch(setSwitchVersionAction(PortkeyVersion.v2));
-  }, [dispatch, handleNightElfAccount, handlePortkeyAccount, wallet, walletType]);
+    routerPush('/' + activeMenuKey.toLocaleLowerCase());
+  }, [
+    activeMenuKey,
+    dispatch,
+    handleNightElfAccount,
+    handlePortkeyAccount,
+    routerPush,
+    wallet,
+    walletType,
+  ]);
 
   const handleGetSignature = useCallback(async () => {
     const plainTextOrigin = `Nonce:${Date.now()}`;
@@ -141,7 +153,10 @@ export function useQueryAuthToken() {
   const queryAuth = useCallback(async () => {
     if (!wallet) return;
     if (loginState !== WebLoginState.logined) return;
+    if (eTransferInstance.obtainingSignature) return;
     try {
+      // Mark: only one signature process can be performed at the same time
+      eTransferInstance.setObtainingSignature(true);
       setLoading(true);
       const recaptchaResult = await handleReCaptcha();
       setLoading(true); // to change loading text = 'Loading...'
@@ -162,7 +177,7 @@ export function useQueryAuthToken() {
       };
 
       await queryAuthApi(apiParams);
-      eTransferInstance.setObtainingToken(false);
+      eTransferInstance.setUnauthorized(false);
       console.log('login success');
       console.log(loginState, wallet);
       loginSuccessActive();
@@ -179,7 +194,8 @@ export function useQueryAuthToken() {
       return;
     } finally {
       setLoading(false);
-      eTransferInstance.setObtainingToken(false);
+      eTransferInstance.setUnauthorized(false);
+      eTransferInstance.setObtainingSignature(false);
     }
   }, [
     handleGetSignature,
@@ -197,8 +213,6 @@ export function useQueryAuthToken() {
     if (loginState !== WebLoginState.logined) return;
     if (eTransferInstance.obtainingSignature) return;
     try {
-      // Mark: only one signature process can be performed at the same time
-      eTransferInstance.setObtainingSignature(true);
       const { caHash } = await getCaHashAndOriginChainIdByWallet(wallet, walletType);
       const managerAddress = await getManagerAddressByWallet(wallet, walletType);
       const source =
@@ -217,8 +231,6 @@ export function useQueryAuthToken() {
       }
     } catch (error) {
       console.log('getAuth error:', error);
-    } finally {
-      eTransferInstance.setObtainingSignature(false);
     }
   }, [loginState]);
 

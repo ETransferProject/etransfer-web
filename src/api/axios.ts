@@ -7,14 +7,13 @@ const isDeniedRequest = (error: { message: string }) => {
     if (message?.includes('401')) return true;
   } catch (error) {
     console.log(error);
-    //
   }
   return false;
 };
 
 const axiosInstance = axios.create({
   baseURL: '/',
-  timeout: 50000,
+  timeout: 20000,
 });
 
 axiosInstance.defaults.headers.common['x-csrf-token'] = 'AUTH_TOKEN';
@@ -38,7 +37,7 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     if (isDeniedRequest(error)) {
-      myEvents.DeniedRequest.emit();
+      myEvents.Unauthorized.emit();
     }
     return Promise.reject(error);
   },

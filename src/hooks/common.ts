@@ -83,13 +83,15 @@ export function useSetCurrentChainItem() {
 export function useClearStore() {
   const dispatch = useAppDispatch();
   const resetStore = useResetStore();
+  const routerPush = useRouterPush();
 
   return useCallback(() => {
     dispatch(setDisconnectedAction());
     dispatch(setSwitchVersionAction(undefined));
     resetStore();
     resetLocalJWT();
-  }, [dispatch, resetStore]);
+    routerPush('/');
+  }, [dispatch, resetStore, routerPush]);
 }
 
 export function useMixAllTokenList() {

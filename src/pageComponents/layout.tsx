@@ -12,7 +12,6 @@ import { MOBILE_PX } from 'constants/media';
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { useIsActive } from 'hooks/portkeyWallet';
-import { useActivePage } from 'hooks/common';
 import { useRouteParamType } from 'hooks/route';
 import { useUpdateRecord } from 'hooks/updateRecord';
 
@@ -49,7 +48,7 @@ const Layout = ({
   const isActive = useIsActive();
 
   useRouteParamType();
-  useActivePage();
+  // useActivePage();
   useUpdateRecord();
 
   return (

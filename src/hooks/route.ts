@@ -3,9 +3,11 @@ import { useAppDispatch, useCommonState } from 'store/Provider/hooks';
 import { SideMenuKey } from 'constants/home';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
+import { stringifyUrl } from 'query-string';
 
 export function useRouteParamType(): { type: SideMenuKey } {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const routeType = useMemo(() => searchParams.get('type') as SideMenuKey, [searchParams]);
   const dispatch = useAppDispatch();
@@ -17,10 +19,10 @@ export function useRouteParamType(): { type: SideMenuKey } {
   );
 
   useEffect(() => {
-    if (routeType) {
+    if (routeType && pathname === '/') {
       dispatch(setActiveMenuKey(routeType));
     }
-  }, [activeMenuKey, dispatch, routeType, router]);
+  }, [activeMenuKey, dispatch, pathname, routeType, router]);
 
   return { type: currentActiveMenuKey };
 }
@@ -35,10 +37,10 @@ export function useRouteSearchString() {
 export function useRouterPush() {
   const router = useRouter();
   const pathname = usePathname();
-  const search = useRouteSearchString();
   const searchParams = useSearchParams();
   const routeType = useMemo(() => searchParams.get('type') as SideMenuKey, [searchParams]);
   const { activeMenuKey } = useCommonState();
+  const checkAllowSearch = useCheckAllowSearch();
 
   const currentActiveMenuKey = useMemo(() => {
     let result = '';
@@ -63,15 +65,77 @@ export function useRouterPush() {
   return useCallback(
     (path: string) => {
       let href = path.toLocaleLowerCase();
-
+      const search = checkAllowSearch(path.toLocaleLowerCase());
       if (path === '/' && !routeType) {
-        href += `?type=${currentActiveMenuKey}${search ? '&' + search : ''}`;
+        href = stringifyUrl({
+          url: path.toLocaleLowerCase(),
+          query: {
+            ...search,
+            type: currentActiveMenuKey,
+          },
+        });
       } else {
-        href += `${search ? '?' + search : ''}`;
+        href = stringifyUrl({
+          url: path.toLocaleLowerCase(),
+          query: Object.keys(search).length > 0 ? search : undefined,
+        });
       }
       router.push(href);
     },
-    [currentActiveMenuKey, routeType, router, search],
+    [checkAllowSearch, currentActiveMenuKey, routeType, router],
+  );
+}
+
+export function useCheckAllowSearch() {
+  const searchParams = useSearchParams();
+
+  return useCallback(
+    (path: string) => {
+      const searchObject: Record<string, string | null> = {};
+      switch (path) {
+        case '/':
+          if (searchParams.get('chainId')) searchObject.chainId = searchParams.get('chainId');
+          if (searchParams.get('tokenSymbol'))
+            searchObject.tokenSymbol = searchParams.get('tokenSymbol');
+          if (searchParams.get('depositToToken'))
+            searchObject.depositToToken = searchParams.get('depositToToken');
+          if (searchParams.get('depositFromNetwork'))
+            searchObject.depositFromNetwork = searchParams.get('depositFromNetwork');
+          if (searchParams.get('calculatePay'))
+            searchObject.calculatePay = searchParams.get('calculatePay');
+          if (searchParams.get('withdrawAddress'))
+            searchObject.withdrawAddress = searchParams.get('withdrawAddress');
+          break;
+
+        case '/deposit':
+          if (searchParams.get('chainId')) searchObject.chainId = searchParams.get('chainId');
+          if (searchParams.get('tokenSymbol'))
+            searchObject.tokenSymbol = searchParams.get('tokenSymbol');
+          if (searchParams.get('depositToToken'))
+            searchObject.depositToToken = searchParams.get('depositToToken');
+          if (searchParams.get('depositFromNetwork'))
+            searchObject.depositFromNetwork = searchParams.get('depositFromNetwork');
+          if (searchParams.get('calculatePay'))
+            searchObject.calculatePay = searchParams.get('calculatePay');
+          break;
+
+        case '/withdraw':
+          if (searchParams.get('chainId')) searchObject.chainId = searchParams.get('chainId');
+          if (searchParams.get('tokenSymbol'))
+            searchObject.tokenSymbol = searchParams.get('tokenSymbol');
+          if (searchParams.get('withdrawAddress'))
+            searchObject.withdrawAddress = searchParams.get('withdrawAddress');
+          break;
+
+        case '/history':
+          break;
+
+        default:
+          break;
+      }
+      return searchObject;
+    },
+    [searchParams],
   );
 }
 
@@ -84,7 +148,7 @@ export function useChangeSideMenu() {
     (key: SideMenuKey) => {
       console.log('>>>useChangeSideMenu', key);
       dispatch(setActiveMenuKey(key));
-      routerRef.current(`/${key.toLocaleLowerCase()}}`);
+      routerRef.current(`/${key.toLocaleLowerCase()}`);
     },
     [dispatch],
   );

@@ -90,7 +90,7 @@ export default function InitProvider() {
   }, [listener, connectEagerly]);
 
   useEffectOnce(() => {
-    const listener = myEvents.DeniedRequest.addListener(() => {
+    const listener = myEvents.Unauthorized.addListener(() => {
       singleMessage.error(LoginExpiredTip);
       resetLocalJWT();
       store.dispatch(setV1DisconnectedAction());
