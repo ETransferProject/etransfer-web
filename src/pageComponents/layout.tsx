@@ -63,7 +63,7 @@ const Layout = ({
         className={clsx(styles['layout-content-wrapper'], {
           [styles['layout-content-wrapper-with-header']]: isActive || !isMobilePX,
         })}>
-        {isShowSider && !isMobilePX && isActive && <Sider />}
+        {isShowSider && !isMobilePX && <Sider />}
         <AntdLayout.Content className={`etransfer-web-content`}>
           <Suspense fallback={<Loading />}>{children}</Suspense>
         </AntdLayout.Content>
