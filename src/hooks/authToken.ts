@@ -3,7 +3,7 @@ import { useWebLogin, WebLoginState, WalletType } from 'aelf-web-login';
 import { QueryAuthApiExtraRequest, getLocalJWT, queryAuthApi } from 'api/utils';
 import { SupportedChainId, AppName } from 'constants/index';
 import { PortkeyVersion } from 'constants/wallet';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useCommonState, useLoading } from 'store/Provider/hooks';
 import AElf from 'aelf-sdk';
 import { recoverPubKey } from 'utils/aelfBase';
@@ -20,6 +20,8 @@ import myEvents from 'utils/myEvent';
 import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
 import singleMessage from 'components/SingleMessage';
 import { useRouterPush } from './route';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { SideMenuKey } from 'constants/home';
 
 export function useQueryAuthToken() {
   const dispatch = useAppDispatch();
@@ -27,6 +29,9 @@ export function useQueryAuthToken() {
   const { loginState, logout, wallet, getSignature, walletType } = useWebLogin();
   const { setLoading } = useLoading();
   const routerPush = useRouterPush();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const routeType = useMemo(() => searchParams.get('type') as SideMenuKey, [searchParams]);
 
   const handlePortkeyAccount = useCallback(() => {
     const accounts: Accounts = {};
@@ -89,12 +94,16 @@ export function useQueryAuthToken() {
       }),
     );
     dispatch(setSwitchVersionAction(PortkeyVersion.v2));
-    routerPush('/' + activeMenuKey.toLocaleLowerCase());
+    if (pathname === '/') {
+      routerPush('/' + (routeType || activeMenuKey).toLocaleLowerCase());
+    }
   }, [
     activeMenuKey,
     dispatch,
     handleNightElfAccount,
     handlePortkeyAccount,
+    pathname,
+    routeType,
     routerPush,
     wallet,
     walletType,

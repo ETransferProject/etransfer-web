@@ -48,7 +48,6 @@ const Layout = ({
   const isActive = useIsActive();
 
   useRouteParamType();
-  // useActivePage();
   useUpdateRecord();
 
   return (
