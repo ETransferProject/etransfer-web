@@ -12,7 +12,7 @@ import {
   setTimestamp,
 } from 'store/reducers/records/slice';
 import { useDebounceCallback } from 'hooks/debounce';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { TRecordsRequestType, TRecordsRequestStatus } from 'types/records';
 import { TRecordsListItem } from 'types/api';
 import moment from 'moment';
@@ -22,6 +22,7 @@ import { useEffectOnce } from 'react-use';
 import { useHistoryFilter } from 'hooks/history';
 import { useRouter, useSearchParams } from 'next/navigation';
 import queryString from 'query-string';
+import { useWalletContext } from 'provider/walletProvider';
 
 export type TRecordsContentProps = TRecordsBodyProps & {
   onReset: () => void;
@@ -110,7 +111,7 @@ export default function Content() {
   const searchParams = useSearchParams();
   const routeQuery = useMemo(
     () => ({
-      methods: searchParams.get('methods'),
+      method: searchParams.get('method'),
       status: searchParams.get('status'),
       start: searchParams.get('start'),
       end: searchParams.get('end'),
@@ -118,17 +119,33 @@ export default function Content() {
     [searchParams],
   );
 
+  const [{ wallet }] = useWalletContext();
+  const init = useCallback(async () => {
+    if (!wallet) return;
+    await wallet?.setAuthFromStorage();
+    await sleep(500);
+    if (isUnreadHistory) {
+      handleReset();
+    } else {
+      requestRecordsList(true);
+    }
+  }, [handleReset, isUnreadHistory, requestRecordsList, wallet]);
+
+  useEffect(() => {
+    init();
+  }, [init]);
+
   useEffectOnce(() => {
     const search: any = {
-      method: routeQuery.methods != null ? routeQuery.methods : undefined,
+      method: routeQuery.method != null ? routeQuery.method : undefined,
       status: routeQuery.status != null ? routeQuery.status : undefined,
       start: routeQuery.start != null ? routeQuery.start : undefined,
       end: routeQuery.end != null ? routeQuery.end : undefined,
     };
-    if (routeQuery.methods != null) {
-      dispatch(setType(Number(routeQuery.methods)));
+    if (routeQuery.method != null) {
+      dispatch(setType(Number(routeQuery.method)));
     } else {
-      search.methods = type;
+      search.method = type;
     }
 
     if (routeQuery.status != null) {
@@ -149,12 +166,6 @@ export default function Content() {
 
     const searchStr = queryString.stringify(search);
     router.replace(`/history${searchStr ? '?' + searchStr : ''}`);
-
-    if (isUnreadHistory) {
-      handleReset();
-    } else {
-      requestRecordsList(true);
-    }
   });
 
   useEffectOnce(() => {

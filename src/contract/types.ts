@@ -20,6 +20,7 @@ export type TWallet = {
   walletInfo: WalletInfo;
   walletType: WalletType;
   callContract: TCallContractFunc;
+  setAuthFromStorage: () => Promise<void>;
   getSignature: (params: TSignatureParams) => Promise<SignatureData>;
   setCallContract: (callContract: TCallContractFunc) => void;
   setGetSignature: (getSignature: TGetSignatureFunc) => void;
