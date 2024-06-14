@@ -1,11 +1,4 @@
 'use client';
+import dynamic from 'next/dynamic';
 
-import DepositContent from 'pageComponents/DepositContent';
-
-export default function Deposit() {
-  return (
-    <div className="content-container content-container-safe-area">
-      <DepositContent />
-    </div>
-  );
-}
+export default dynamic(() => import('pageComponents/DepositContent'), { ssr: false });

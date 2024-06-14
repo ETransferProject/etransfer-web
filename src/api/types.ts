@@ -11,7 +11,7 @@ export enum CancelTokenSourceKey {
 }
 
 export type RequestConfig = {
-  query?: string; //this for url parameter； example: test/:id
+  query?: string; //this for url parameter; example: test/:id
   cancelTokenSourceKey?: CancelTokenSourceKey;
 } & AxiosRequestConfig;
 

@@ -1,12 +1,4 @@
 'use client';
+import dynamic from 'next/dynamic';
 
-import HomeContent from 'pageComponents/Home';
-import Layout from 'pageComponents/layout';
-
-export default function Home() {
-  return (
-    <Layout isShowHeader={true}>
-      <HomeContent />
-    </Layout>
-  );
-}
+export default dynamic(() => import('pageComponents/Home'));

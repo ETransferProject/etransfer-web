@@ -67,7 +67,7 @@ export default function MobileDepositContent({
   }, [depositInfo.extraNotes]);
 
   return (
-    <>
+    <div className="content-container content-container-safe-area">
       <SelectTokenNetwork
         label={'From'}
         tokenSelected={fromTokenSelected}
@@ -125,6 +125,6 @@ export default function MobileDepositContent({
           {renderDepositDescription}
         </>
       )}
-    </>
+    </div>
   );
 }

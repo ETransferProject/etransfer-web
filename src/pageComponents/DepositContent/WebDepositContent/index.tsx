@@ -44,7 +44,7 @@ export default function WebContent({
   }, [depositInfo.extraNotes]);
 
   return (
-    <>
+    <div className="content-container content-container-safe-area">
       <div className={styles['deposit-title']}>Deposit Assets</div>
       <SelectTokenNetwork
         label={'From'}
@@ -108,6 +108,6 @@ export default function WebContent({
           {renderDepositDescription}
         </>
       )}
-    </>
+    </div>
   );
 }

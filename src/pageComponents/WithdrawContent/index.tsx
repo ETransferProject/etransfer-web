@@ -90,6 +90,7 @@ import FeeInfo from './FeeInfo';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
 import { WalletType } from 'aelf-web-login';
+import { setActiveMenuKey } from 'store/reducers/common/slice';
 
 enum ValidateStatus {
   Error = 'error',
@@ -985,6 +986,7 @@ export default function WithdrawContent() {
 
   const router = useRouter();
   useEffectOnce(() => {
+    dispatch(setActiveMenuKey(SideMenuKey.Withdraw));
     init();
 
     router.replace('/withdraw');
@@ -1005,7 +1007,7 @@ export default function WithdrawContent() {
   }, [init]);
 
   return (
-    <>
+    <div className="content-container content-container-safe-area">
       <SelectChainWrapper
         mobileTitle="Withdraw from"
         mobileLabel="from"
@@ -1263,6 +1265,6 @@ export default function WithdrawContent() {
           onOk: clickFailedOk,
         }}
       />
-    </>
+    </div>
   );
 }

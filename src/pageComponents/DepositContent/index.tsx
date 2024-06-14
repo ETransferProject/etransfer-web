@@ -34,6 +34,7 @@ import { useSetCurrentChainItem } from 'hooks/common';
 import { SideMenuKey } from 'constants/home';
 import { ChainId } from '@portkey/provider-types';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { setActiveMenuKey } from 'store/reducers/common/slice';
 
 export type TDepositContentProps = {
   fromNetworkSelected?: TNetworkItem;
@@ -437,6 +438,7 @@ export default function Content() {
 
   const router = useRouter();
   useEffectOnce(() => {
+    dispatch(setActiveMenuKey(SideMenuKey.Deposit));
     init();
 
     router.replace('/deposit');

@@ -1,11 +1,4 @@
 'use client';
+import dynamic from 'next/dynamic';
 
-import HistoryContent from 'pageComponents/HistoryContent';
-
-export default function Deposit() {
-  return (
-    <div className="wide-screen-content-container">
-      <HistoryContent />
-    </div>
-  );
-}
+export default dynamic(() => import('pageComponents/HistoryContent'), { ssr: false });

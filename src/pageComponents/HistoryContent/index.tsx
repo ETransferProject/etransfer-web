@@ -23,6 +23,8 @@ import { useHistoryFilter } from 'hooks/history';
 import { useRouter, useSearchParams } from 'next/navigation';
 import queryString from 'query-string';
 import { useWalletContext } from 'provider/walletProvider';
+import { SideMenuKey } from 'constants/home';
+import { setActiveMenuKey } from 'store/reducers/common/slice';
 
 export type TRecordsContentProps = TRecordsBodyProps & {
   onReset: () => void;
@@ -136,6 +138,7 @@ export default function Content() {
   }, [init]);
 
   useEffectOnce(() => {
+    dispatch(setActiveMenuKey(SideMenuKey.History));
     const search: any = {
       method: routeQuery.method != null ? routeQuery.method : undefined,
       status: routeQuery.status != null ? routeQuery.status : undefined,
@@ -176,9 +179,16 @@ export default function Content() {
     };
   });
 
-  return isMobilePX ? (
-    <MobileHistoryContent requestRecordsList={requestRecordsList} onReset={handleReset} />
-  ) : (
-    <WebHistoryContent requestRecordsList={() => requestRecordsList(true)} onReset={handleReset} />
+  return (
+    <div className="wide-screen-content-container">
+      {isMobilePX ? (
+        <MobileHistoryContent requestRecordsList={requestRecordsList} onReset={handleReset} />
+      ) : (
+        <WebHistoryContent
+          requestRecordsList={() => requestRecordsList(true)}
+          onReset={handleReset}
+        />
+      )}
+    </div>
   );
 }
