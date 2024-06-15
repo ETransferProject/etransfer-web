@@ -17,15 +17,15 @@ $web-content-padding-bottom: 80px;
   }
   @include media-web {
     width: $content-width;
-    margin-left: calc((100vw - $content-width) / 2);
+    // margin-left: calc((100vw - $content-width) / 2);
     padding: 40px 0 $web-content-padding-bottom;
     @media screen and (max-width: $web-breakpoint) {
-      margin-left: calc($web-content-min-margin-left + $sider-width);
+      // margin-left: calc($web-content-min-margin-left + $sider-width);
     }
   }
   @include media-huge-screen {
     width: $content-width;
-    margin-left: calc(($max-width - $content-width) / 2 - $sider-width);
+    // margin-left: calc(($max-width - $content-width) / 2 - $sider-width);
     padding: 40px 0 $web-content-padding-bottom;
   }
 }
@@ -54,7 +54,7 @@ $web-content-padding-bottom: 80px;
     width: calc(100vw - $sider-width);
     height: calc(100vh - $web-header-height);
     max-width: calc($max-width - $sider-width);
-    margin-left: $sider-width;
+    // margin-left: $sider-width;
   }
   @include media-huge-screen {
     width: calc($max-width + 1px - $sider-width);

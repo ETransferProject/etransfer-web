@@ -4,13 +4,10 @@
 @import 'src/assets/theme/breakpoint.scss';
 
 .menu-container {
-  position: fixed;
   width: $sider-width;
-  height: calc(100% - 80px);
   padding-top: 40px;
   background-color: $page-bg;
   @include media-huge-screen {
-    height: calc(100vh - 80px);
     position: relative;
     margin-left: calc((100vw - $max-width) / 2);
   }
@@ -44,11 +41,6 @@
   font-size: 16px;
   line-height: 1.5;
   @extend .font-family-medium;
-}
-
-.supportEntry {
-  margin-bottom: 64px; // 80-16
-  margin-right: 62px;
 }
 
 .menu-item-red-dot {

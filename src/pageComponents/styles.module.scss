@@ -11,6 +11,7 @@
     height: 100vh;
   }
   .layout-content-wrapper {
+    position: relative;
     flex-direction: row;
   }
   .layout-content-wrapper-with-header {
@@ -21,4 +22,8 @@
       margin-top: $web-header-height;
     }
   }
+}
+.layout-footer {
+  padding: 0 !important;
+  margin: 0 !important;
 }

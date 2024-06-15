@@ -6,7 +6,6 @@ import { store } from 'store/Provider/store';
 import { useCommonState } from 'store/Provider/hooks';
 import { SideMenuKey, MENU_ITEMS } from 'constants/home';
 import styles from './styles.module.scss';
-import SupportEntry from 'components/Sider/SupportEntry';
 import myEvents from 'utils/myEvent';
 
 export default function Sider() {
@@ -43,7 +42,6 @@ export default function Sider() {
           );
         })}
       </Space>
-      <SupportEntry className={styles.supportEntry} />
     </div>
   );
 }

@@ -12,6 +12,7 @@ import { MOBILE_PX } from 'constants/media';
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { useIsActive } from 'hooks/portkeyWallet';
+import Footer from 'components/Footer';
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   useEffect((): any => {
@@ -49,10 +50,15 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           [styles['layout-content-wrapper-with-header']]: isActive || !isMobilePX,
         })}>
         {!isMobilePX && isActive && <Sider />}
-        <AntdLayout.Content className={`etransfer-web-content`}>
+        <AntdLayout.Content className={'etransfer-web-content'}>
           <Suspense fallback={<Loading />}>{children}</Suspense>
         </AntdLayout.Content>
       </AntdLayout>
+      {!isMobilePX && isActive && (
+        <AntdLayout.Footer className={styles['layout-footer']}>
+          <Footer />
+        </AntdLayout.Footer>
+      )}
     </AntdLayout>
   );
 };

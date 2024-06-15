@@ -30,7 +30,6 @@
   gap: 12px;
   height: 56px;
   padding: 16px 12px;
-  border-bottom: 1px solid $dividers;
   color: $secondary-text;
 
   &.menu-item-active {
@@ -62,6 +61,67 @@
   right: -8px;
 }
 
-.supportEntry {
-  margin-bottom: 69px; // 85-16
+.divider {
+  height: 0px;
+  border-top: 1px solid $dividers;
+  margin: 16px 0;
+}
+
+.footer {
+  color: $secondary-text;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  :global {
+    .ant-collapse-header {
+      padding: 16px 16px 16px 16px !important;
+    }
+    .ant-collapse-content-box {
+      padding: 0 !important;
+    }
+  }
+  .arrow-down {
+    transform: rotate(180deg);
+  }
+}
+
+.footer-item-faq {
+  color: $secondary-text;
+  padding: 16px 44px 16px 16px;
+}
+
+.footer-item-faq-name {
+  margin-left: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.footer-item-group-name {
+  color: $secondary-text;
+  margin-left: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.footer-secondMenu-wrapper {
+  margin: 0;
+  padding: 0;
+}
+
+.footer-secondMenu-item {
+  cursor: pointer;
+  padding: 12px 16px 12px 32px;
+}
+
+.secondMenu-item-icon {
+  margin-right: 12px;
+}
+
+.secondMenu-item-name {
+  color: #55585e;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
 }
