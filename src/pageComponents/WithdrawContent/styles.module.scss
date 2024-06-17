@@ -4,6 +4,29 @@
 @import 'src/assets/theme/breakpoint.scss';
 @import 'src/styles/variable.scss';
 
+.main-wrapper {
+  flex: 2;
+}
+
+.main-content {
+  padding: 0 11.12%;
+}
+
+.faq-wrapper {
+  flex: 1;
+}
+
+.faq {
+  padding-left: 8%;
+  padding-right: 40px;
+}
+
+.form-container {
+  @include media-web {
+    min-width: 440px;
+  }
+}
+
 .form-wrapper {
   :global {
     .ant-form-item-label {

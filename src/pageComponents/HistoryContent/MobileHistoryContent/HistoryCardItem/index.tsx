@@ -13,6 +13,7 @@ import { TRecordsBodyProps } from 'pageComponents/HistoryContent';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebounceCallback } from 'hooks';
 import { setSkipCount, setHasMore } from 'store/reducers/records/slice';
+import TxHashBox from 'pageComponents/HistoryContent/TxHashBox';
 
 const NoDataText = '-- No Data --';
 
@@ -122,9 +123,11 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
                   network={recordItem.fromNetwork}
                   fromChainId={recordItem.fromChainId}
                   toChainId={recordItem.toChainId}
-                  fromToAddress={recordItem.fromToAddress}
-                  toFromAddress={recordItem.toFromAddress}
                 />
+              </div>
+              <div className={styles['records-card-item-line']}>
+                <span className={styles['records-card-item-label']}>From Hash</span>
+                <TxHashBox isShowIcon={false} chainId={recordItem.toChainId} txHash="" />
               </div>
               <div className={styles['records-card-item-line']}>
                 <span className={styles['records-card-item-label']}>To</span>
@@ -135,9 +138,11 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
                   network={recordItem.toNetwork}
                   fromChainId={recordItem.fromChainId}
                   toChainId={recordItem.toChainId}
-                  fromToAddress={recordItem.fromToAddress}
-                  toFromAddress={recordItem.toFromAddress}
                 />
+              </div>
+              <div className={styles['records-card-item-line']}>
+                <span className={styles['records-card-item-label']}>To Hash</span>
+                <TxHashBox isShowIcon={false} chainId={recordItem.toChainId} txHash="" />
               </div>
               <div className={styles['records-card-item-Fee']}>
                 <span className={styles['records-card-item-label']}>Transaction Fee</span>

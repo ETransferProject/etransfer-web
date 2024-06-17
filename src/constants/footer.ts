@@ -9,27 +9,7 @@ import {
   TelegramIcon,
   TwitterIcon,
 } from 'assets/images';
-
-type TFooterConfig = {
-  logoUrl: string;
-  describe: string[];
-  faq: TFrequentlyAskedQuestions;
-  menus: TFooterMenu[];
-};
-
-type TFooterMenu = {
-  group: string;
-  items: TFooterMenuItem[];
-  icon: string;
-};
-
-type TFooterMenuItem = {
-  name: string;
-  link: string;
-  icon?: string;
-};
-
-type TFrequentlyAskedQuestions = Required<TFooterMenuItem>;
+import { TFooterConfig, TFooterMenuItem, TFrequentlyAskedQuestionsSection } from 'types/footer';
 
 export const FOOTER_CONFIG: TFooterConfig = {
   logoUrl: FooterLogo,
@@ -110,5 +90,48 @@ export const FOOTER_CONFIG: TFooterConfig = {
         },
       ],
     },
+  ],
+};
+
+export const DOCUMENTATION_LINK: Record<string, TFooterMenuItem> = {
+  aboutETransfer: {
+    name: 'What is ETransfer?',
+    link: 'https://etransfer.gitbook.io/docs/faq#what-is-etransfer',
+  },
+  depositProcess: {
+    name: 'How to deposit to Aelf by ETransfer?',
+    link: 'https://etransfer.gitbook.io/docs/faq#how-to-deposit-to-aelf-by-etransfer',
+  },
+  withdrawProcess: {
+    name: 'How to withdraw from Aelf by ETransfer?',
+    link: 'https://etransfer.gitbook.io/docs/faq#how-to-withdraw-from-aelf-by-etransfer',
+  },
+  notArrived: {
+    name: 'The assets have not arrived.',
+    link: 'https://etransfer.gitbook.io/docs/faq#my-assets-have-not-arrived',
+  },
+  completedTime: {
+    name: 'How long does it take for the transfer to be completed?',
+    link: 'https://etransfer.gitbook.io/docs/faq#how-long-does-it-take-for-the-transfer-to-be-completed',
+  },
+};
+
+export const FAQ_DEPOSIT: TFrequentlyAskedQuestionsSection = {
+  title: 'FAQ',
+  list: [
+    DOCUMENTATION_LINK.aboutETransfer,
+    DOCUMENTATION_LINK.depositProcess,
+    DOCUMENTATION_LINK.notArrived,
+    DOCUMENTATION_LINK.completedTime,
+  ],
+};
+
+export const FAQ_WITHDRAW: TFrequentlyAskedQuestionsSection = {
+  title: 'FAQ',
+  list: [
+    DOCUMENTATION_LINK.aboutETransfer,
+    DOCUMENTATION_LINK.withdrawProcess,
+    DOCUMENTATION_LINK.notArrived,
+    DOCUMENTATION_LINK.completedTime,
   ],
 };

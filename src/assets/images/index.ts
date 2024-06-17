@@ -60,6 +60,7 @@ import LegalIcon from './legal.svg';
 import DeveloperIcon from './developer.svg';
 import CommunityIcon from './community.svg';
 import ContactsIcon from './contacts.svg';
+import NextLineIcon from './nextLineIcon.svg';
 
 export {
   Logo,
@@ -121,4 +122,5 @@ export {
   DeveloperIcon,
   CommunityIcon,
   ContactsIcon,
+  NextLineIcon,
 };

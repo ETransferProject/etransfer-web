@@ -18,15 +18,13 @@ import { useCommonState } from 'store/Provider/hooks';
 import { useAccounts } from 'hooks/portkeyWallet';
 import NetworkLogo from 'components/NetworkLogo';
 
-type TAddressBoxProps = {
+export type TAddressBoxProps = {
   type: 'To' | 'From';
   fromAddress: string;
   toAddress: string;
   network: string;
   fromChainId: SupportedELFChainId;
   toChainId: SupportedELFChainId;
-  fromToAddress: string;
-  toFromAddress: string;
 };
 
 export default function AddressBox({
