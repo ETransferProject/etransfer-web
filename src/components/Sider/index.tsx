@@ -4,7 +4,6 @@ import clsx from 'clsx';
 import { useCommonState } from 'store/Provider/hooks';
 import { SideMenuKey, MENU_ITEMS } from 'constants/home';
 import styles from './styles.module.scss';
-import SupportEntry from 'components/Sider/SupportEntry';
 import myEvents from 'utils/myEvent';
 import { useChangeSideMenu } from 'hooks/route';
 
@@ -38,7 +37,6 @@ export default function Sider() {
           );
         })}
       </Space>
-      <SupportEntry className={styles.supportEntry} />
     </div>
   );
 }

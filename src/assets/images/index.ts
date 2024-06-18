@@ -1,8 +1,11 @@
+import Logo from './logo/logo.svg';
+import LargeLogo from './logo/largeLogo.png';
+import FooterLogo from './logo/footerLogo.svg';
+
 import Info from './info.svg';
 import Close from './close.svg';
 import CloseSmall from './closeSmall.svg';
 import Swap from './swap.svg';
-import Logo from './logo.svg';
 import Deposit from './deposit.svg';
 import Withdraw from './withdraw.svg';
 import Check from './check.svg';
@@ -12,7 +15,6 @@ import CopySmall from './copySmall.svg';
 import Portkey from './wallet/portkey.svg';
 import Portkey24 from './wallet/portkey24.svg';
 import PortkeyV2 from './wallet/portkeyV2.svg';
-import LargeLogo from './largeLogo.png';
 import qrCodePlaceholder from './qrCodePlaceholder.png';
 import ExclamationFilledSmall from './exclamationFilledSmall.svg';
 import OpenLinkIcon from './openLink.svg';
@@ -49,12 +51,25 @@ import DownBigIcon from './downBig.svg';
 import DownSmallIcon from './downSmall.svg';
 import CalculatorIcon from './calculator.svg';
 
+import TelegramIcon from './community/telegram.svg';
+import DiscordIcon from './community/discord.svg';
+import TwitterIcon from './community/twitter.svg';
+
+import QuestionMarkLarge from './questionMarkLarge.svg';
+import LegalIcon from './legal.svg';
+import DeveloperIcon from './developer.svg';
+import CommunityIcon from './community.svg';
+import ContactsIcon from './contacts.svg';
+import NextLineIcon from './nextLineIcon.svg';
+
 export {
+  Logo,
+  LargeLogo,
+  FooterLogo,
   Info,
   Close,
   CloseSmall,
   Swap,
-  Logo,
   Deposit,
   Withdraw,
   Check,
@@ -64,7 +79,6 @@ export {
   PortkeyV2,
   Copy,
   CopySmall,
-  LargeLogo,
   qrCodePlaceholder,
   ExclamationFilledSmall,
   OpenLinkIcon,
@@ -100,4 +114,13 @@ export {
   DownBigIcon,
   DownSmallIcon,
   CalculatorIcon,
+  TelegramIcon,
+  DiscordIcon,
+  TwitterIcon,
+  QuestionMarkLarge,
+  LegalIcon,
+  DeveloperIcon,
+  CommunityIcon,
+  ContactsIcon,
+  NextLineIcon,
 };

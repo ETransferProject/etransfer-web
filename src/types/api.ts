@@ -194,7 +194,7 @@ export interface TGetRecordsListRequest {
 
 export type TRecordsListItem = {
   id: string;
-  orderType: string;
+  orderType: BusinessType;
   status: string;
   arrivalTime: number;
   fromTransfer: TFromTransfer;

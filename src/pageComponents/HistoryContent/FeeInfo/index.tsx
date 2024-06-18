@@ -10,14 +10,18 @@ import { formatSymbolDisplay } from 'utils/format';
 type TFeeInfoProps = {
   feeInfo: TFeeInfoType[];
   status: string;
-  orderType: string;
+  orderType: BusinessType;
 };
 
 export default function FeeInfo({ feeInfo, status, orderType }: TFeeInfoProps) {
   const { isMobilePX } = useCommonState();
 
-  if (status === TRecordsStatus.Failed || orderType === BusinessType.Deposit) {
+  if (status === TRecordsStatus.Failed) {
     return <div className={styles['fee-info-wrapper']}>{defaultNullValue}</div>;
+  }
+
+  if (orderType === BusinessType.Deposit) {
+    return <div className={styles['fee-info-wrapper']}>Free</div>;
   }
 
   return (

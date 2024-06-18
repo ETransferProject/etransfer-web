@@ -14,15 +14,18 @@ import styles from './styles.module.scss';
 import { useIsActive } from 'hooks/portkeyWallet';
 import { useRouteParamType } from 'hooks/route';
 import { useUpdateRecord } from 'hooks/updateRecord';
+import Footer from 'components/Footer';
 
 const Layout = ({
   children,
   isShowHeader = false,
   isShowSider = false,
+  isShowFooter = false,
 }: {
   children: React.ReactNode;
   isShowHeader?: boolean;
   isShowSider?: boolean;
+  isShowFooter?: boolean;
 }) => {
   useEffect((): any => {
     if (typeof window !== 'undefined') {
@@ -63,10 +66,15 @@ const Layout = ({
           [styles['layout-content-wrapper-with-header']]: isActive || !isMobilePX,
         })}>
         {isShowSider && !isMobilePX && <Sider />}
-        <AntdLayout.Content className={`etransfer-web-content`}>
+        <AntdLayout.Content className={'etransfer-web-content'}>
           <Suspense fallback={<Loading />}>{children}</Suspense>
         </AntdLayout.Content>
       </AntdLayout>
+      {isShowFooter && !isMobilePX && (
+        <AntdLayout.Footer className={styles['layout-footer']}>
+          <Footer />
+        </AntdLayout.Footer>
+      )}
     </AntdLayout>
   );
 };

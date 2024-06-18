@@ -11,7 +11,7 @@ import EmptyDataBox from 'pageComponents/HistoryContent/EmptyDataBox';
 import StatusBox from 'pageComponents/HistoryContent/StatusBox';
 import ArrivalTimeBox from 'pageComponents/HistoryContent/ArrivalTimeBox';
 import AmountBox from 'pageComponents/HistoryContent/AmountBox';
-import AddressBox from 'pageComponents/HistoryContent/AddressBox';
+import FromAndToBox from 'pageComponents/HistoryContent/FromAndToBox';
 
 const columns = [
   {
@@ -76,15 +76,16 @@ const columns = [
     key: 'fromAddress',
     render: (fromAddress: string, record: TRecordsTableListType) => {
       return (
-        <AddressBox
+        <FromAndToBox
           type={'From'}
           fromAddress={fromAddress}
           toAddress={record.toAddress}
           network={record.fromNetwork}
           fromChainId={record.fromChainId}
           toChainId={record.toChainId}
-          fromToAddress={record.fromToAddress}
-          toFromAddress={record.toFromAddress}
+          orderStatus={record.status}
+          txHashLabel="Tx Hash"
+          txHash={record.fromTxId}
         />
       );
     },
@@ -95,15 +96,16 @@ const columns = [
     key: 'toAddress',
     render: (toAddress: string, record: TRecordsTableListType) => {
       return (
-        <AddressBox
+        <FromAndToBox
           type={'To'}
           fromAddress={record.fromAddress}
           toAddress={toAddress}
           network={record.toNetwork}
           fromChainId={record.fromChainId}
           toChainId={record.toChainId}
-          fromToAddress={record.fromToAddress}
-          toFromAddress={record.toFromAddress}
+          orderStatus={record.status}
+          txHashLabel="Tx Hash"
+          txHash={record.toTxId}
         />
       );
     },
@@ -143,11 +145,13 @@ export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProp
         fromAddress: fromTransfer.fromAddress,
         fromToAddress: fromTransfer.toAddress,
         fromChainId: fromTransfer.chainId,
+        fromTxId: fromTransfer.txId,
         toSymbol: toTransfer.symbol,
         toNetwork: toTransfer.network,
         toFromAddress: toTransfer.fromAddress,
         toAddress: toTransfer.toAddress,
         toChainId: toTransfer.chainId,
+        toTxId: toTransfer.txId,
         feeInfo: toTransfer.feeInfo,
       });
     });

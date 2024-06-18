@@ -1,0 +1,59 @@
+@import '/src/assets/theme/color.scss';
+
+.footer {
+  font-size: 14px;
+  background-color: $hover-bg;
+  color: $secondary-text;
+  padding: 60px 40px 40px;
+}
+.left {
+  min-width: 400px;
+  margin-right: 16px;
+  flex: 7;
+}
+
+.left-logo {
+  margin-bottom: 16px;
+}
+
+.left-describe {
+  font-weight: 400;
+  line-height: 22px;
+}
+
+.right {
+  flex: 10;
+}
+
+.right-menu {
+  min-width: 120px;
+}
+
+.right-menu-group {
+  color: $primary-text;
+  font-weight: 500;
+  line-height: 22px;
+  margin-bottom: 12px;
+}
+
+.right-menu-secondMenu {
+  gap: 8px;
+}
+
+.right-menu-secondMenu-item {
+  cursor: pointer;
+  color: $secondary-text;
+  font-weight: 400;
+  line-height: 22px;
+
+  &:hover {
+    color: $primary-text;
+    svg path {
+      fill: $primary-text;
+    }
+  }
+}
+
+.secondMenu-item-icon {
+  margin-right: 8px;
+}

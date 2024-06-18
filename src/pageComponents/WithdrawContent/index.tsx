@@ -91,6 +91,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
 import { WalletType } from 'aelf-web-login';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
+import FAQ from 'components/FAQ';
+import { FAQ_WITHDRAW } from 'constants/footer';
 
 enum ValidateStatus {
   Error = 'error',
@@ -185,10 +187,10 @@ export default function WithdrawContent() {
     [currentToken.contractAddress],
   );
 
-  const onSubmit = () => {
+  const onSubmit = useCallback(() => {
     if (!currentNetwork) return;
     setIsDoubleCheckModalOpen(true);
-  };
+  }, [currentNetwork]);
 
   const remainingLimitComponent = useMemo(() => {
     return (
@@ -851,40 +853,54 @@ export default function WithdrawContent() {
     handleFormValidateDataChange,
   ]);
 
-  const handleTokenChange = async (item: TTokenItem) => {
-    // when network failed, transactionUnit should show as symbol
-    setWithdrawInfo({
-      ...withdrawInfo,
-      limitCurrency: formatSymbolDisplay(item.symbol),
-      transactionUnit: formatSymbolDisplay(item.symbol),
-    });
-
-    try {
-      setLoading(true);
-      setBalance('');
-
-      // change token and empty form key's value
-      form.setFieldValue(FormKeys.AMOUNT, '');
-      form.setFieldValue(FormKeys.ADDRESS, '');
-      form.setFieldValue(FormKeys.NETWORK, '');
-      handleAmountValidate();
-      dispatch(setWithdrawAddress(''));
-      currentNetworkRef.current = undefined;
-      dispatch(setWithdrawCurrentNetwork(undefined));
-
-      // reset max balance
-      getMaxBalanceInterval(item);
-      getMaxBalance(true, item);
-
-      await getNetworkData({
-        symbol: item.symbol,
-        address: getAddressInput() || undefined,
+  const handleTokenChange = useCallback(
+    async (item: TTokenItem) => {
+      // when network failed, transactionUnit should show as symbol
+      setWithdrawInfo({
+        ...withdrawInfo,
+        limitCurrency: formatSymbolDisplay(item.symbol),
+        transactionUnit: formatSymbolDisplay(item.symbol),
       });
-      await getWithdrawData(item.symbol);
-    } finally {
-      setLoading(false);
-    }
-  };
+
+      try {
+        setLoading(true);
+        setBalance('');
+
+        // change token and empty form key's value
+        form.setFieldValue(FormKeys.AMOUNT, '');
+        form.setFieldValue(FormKeys.ADDRESS, '');
+        form.setFieldValue(FormKeys.NETWORK, '');
+        handleAmountValidate();
+        dispatch(setWithdrawAddress(''));
+        currentNetworkRef.current = undefined;
+        dispatch(setWithdrawCurrentNetwork(undefined));
+
+        // reset max balance
+        getMaxBalanceInterval(item);
+        getMaxBalance(true, item);
+
+        await getNetworkData({
+          symbol: item.symbol,
+          address: getAddressInput() || undefined,
+        });
+        await getWithdrawData(item.symbol);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [
+      dispatch,
+      form,
+      getAddressInput,
+      getMaxBalance,
+      getMaxBalanceInterval,
+      getNetworkData,
+      getWithdrawData,
+      handleAmountValidate,
+      setLoading,
+      withdrawInfo,
+    ],
+  );
 
   const clickSuccessOk = useCallback(() => {
     setIsSuccessModalOpen(false);
@@ -1006,204 +1022,265 @@ export default function WithdrawContent() {
     };
   }, [init]);
 
-  return (
-    <div className="content-container content-container-safe-area">
-      <SelectChainWrapper
-        mobileTitle="Withdraw from"
-        mobileLabel="from"
-        webLabel={'Withdraw Assets from'}
-        chainChanged={(item: IChainNameItem) => handleChainChanged(item)}
-      />
-      <div>
-        <Form className={styles['form-wrapper']} layout="vertical" requiredMark={false} form={form}>
-          <div className={styles['form-item-wrapper']}>
-            <Form.Item
-              className={styles['form-item']}
-              label="Withdrawal Assets"
-              name={FormKeys.TOKEN}
-              validateStatus={formValidateData[FormKeys.TOKEN].validateStatus}
-              help={formValidateData[FormKeys.TOKEN].errorMessage}>
-              <SelectToken
-                selected={currentToken}
-                selectCallback={handleTokenChange}
-                tokenList={tokenList}
-              />
-            </Form.Item>
-          </div>
-          <div className={styles['form-item-wrapper']}>
-            <Form.Item
-              className={styles['form-item']}
-              label="Withdrawal Address"
-              name={FormKeys.ADDRESS}
-              validateStatus={formValidateData[FormKeys.ADDRESS].validateStatus}
-              help={formValidateData[FormKeys.ADDRESS].errorMessage}>
-              <FormTextarea
-                onChange={onAddressChange}
-                onBlur={onAddressBlur}
-                textareaProps={{
-                  placeholder: 'Enter an address',
-                }}
-                autoSize={{ maxRows: 2 }}
-              />
-            </Form.Item>
-          </div>
-          <div className={styles['form-item-wrapper']}>
-            <Form.Item
-              className={styles['form-item']}
-              label="Withdrawal Network"
-              name={FormKeys.NETWORK}
-              validateStatus={formValidateData[FormKeys.NETWORK].validateStatus}
-              help={formValidateData[FormKeys.NETWORK].errorMessage}>
-              <SelectNetwork
-                networkList={networkList}
-                selected={currentNetwork}
-                isDisabled={isNetworkDisable}
-                isShowLoading={isShowNetworkLoading}
-                selectCallback={handleNetworkChanged}
-              />
-            </Form.Item>
-            {!isMobilePX && !!currentNetwork?.contractAddress && (
-              <ContractAddressForWeb
+  const renderMainContent = useMemo(() => {
+    return (
+      <div
+        className={clsx(
+          'content-container',
+          'content-container-safe-area',
+          !isMobilePX && styles['main-content'],
+        )}>
+        <SelectChainWrapper
+          mobileTitle="Withdraw from"
+          mobileLabel="from"
+          webLabel={'Withdraw Assets from'}
+          chainChanged={(item: IChainNameItem) => handleChainChanged(item)}
+        />
+        <div className={styles['form-container']}>
+          <Form
+            className={styles['form-wrapper']}
+            layout="vertical"
+            requiredMark={false}
+            form={form}>
+            <div className={styles['form-item-wrapper']}>
+              <Form.Item
+                className={styles['form-item']}
+                label="Withdrawal Assets"
+                name={FormKeys.TOKEN}
+                validateStatus={formValidateData[FormKeys.TOKEN].validateStatus}
+                help={formValidateData[FormKeys.TOKEN].errorMessage}>
+                <SelectToken
+                  selected={currentToken}
+                  selectCallback={handleTokenChange}
+                  tokenList={tokenList}
+                />
+              </Form.Item>
+            </div>
+            <div className={styles['form-item-wrapper']}>
+              <Form.Item
+                className={styles['form-item']}
+                label="Withdrawal Address"
+                name={FormKeys.ADDRESS}
+                validateStatus={formValidateData[FormKeys.ADDRESS].validateStatus}
+                help={formValidateData[FormKeys.ADDRESS].errorMessage}>
+                <FormTextarea
+                  onChange={onAddressChange}
+                  onBlur={onAddressBlur}
+                  textareaProps={{
+                    placeholder: 'Enter an address',
+                  }}
+                  autoSize={{ maxRows: 2 }}
+                />
+              </Form.Item>
+            </div>
+            <div className={styles['form-item-wrapper']}>
+              <Form.Item
+                className={styles['form-item']}
+                label="Withdrawal Network"
+                name={FormKeys.NETWORK}
+                validateStatus={formValidateData[FormKeys.NETWORK].validateStatus}
+                help={formValidateData[FormKeys.NETWORK].errorMessage}>
+                <SelectNetwork
+                  networkList={networkList}
+                  selected={currentNetwork}
+                  isDisabled={isNetworkDisable}
+                  isShowLoading={isShowNetworkLoading}
+                  selectCallback={handleNetworkChanged}
+                />
+              </Form.Item>
+              {!isMobilePX && !!currentNetwork?.contractAddress && (
+                <ContractAddressForWeb
+                  label={CONTRACT_ADDRESS}
+                  address={currentNetwork.contractAddress}
+                  explorerUrl={currentNetwork?.explorerUrl}
+                />
+              )}
+            </div>
+            <div className={clsx(styles['form-item-wrapper'], styles['amount-form-item-wrapper'])}>
+              <Form.Item
+                className={styles['form-item']}
+                label={
+                  <div className={clsx('flex-row-between', styles['form-label-wrapper'])}>
+                    <span className={styles['form-label']}>Withdrawal Amount</span>
+                    {!isMobilePX && remainingLimitComponent}
+                  </div>
+                }
+                name={FormKeys.AMOUNT}
+                validateStatus={formValidateData[FormKeys.AMOUNT].validateStatus}
+                help={formValidateData[FormKeys.AMOUNT].errorMessage}>
+                <FormInput
+                  unit={withdrawInfo.transactionUnit}
+                  maxButtonConfig={{
+                    onClick: () => setMaxToken(),
+                  }}
+                  autoComplete="off"
+                  placeholder={`Minimum: ${minAmount}`}
+                  onInput={(event: any) => {
+                    const value = event.target?.value?.trim();
+                    const oldValue = form.getFieldValue(FormKeys.AMOUNT);
+
+                    // CHECK1: not empty
+                    if (!value) return (event.target.value = '');
+
+                    // CHECK2: comma count
+                    const commaCount = value.match(/\./gim)?.length;
+                    if (commaCount > 1) {
+                      return (event.target.value = oldValue);
+                    }
+
+                    // CHECK3: input number and decimal count
+                    const lastNumber = value.charAt(value.length - 1);
+                    const valueNotComma = parseWithStringCommas(value);
+                    const stringReg = `^[0-9]{1,9}((\\.\\d)|(\\.\\d{0,${currentTokenDecimal}}))?$`;
+                    const CheckNumberReg = new RegExp(stringReg);
+
+                    if (!CheckNumberReg.exec(valueNotComma)) {
+                      if (lastNumber !== '.') {
+                        return (event.target.value = oldValue);
+                      }
+                    } else {
+                      const beforePoint = formatWithCommas({ amount: valueNotComma });
+                      const afterPoint = lastNumber === '.' ? '.' : '';
+                      event.target.value = beforePoint + afterPoint;
+                    }
+                  }}
+                  onFocus={async () => {
+                    if (isAndroid) {
+                      // The keyboard does not block the input box
+                      await sleep(200);
+                      document.getElementById('inputAmountWrapper')?.scrollIntoView({
+                        block: 'center',
+                        behavior: 'smooth',
+                      });
+                    }
+                  }}
+                  onChange={(event: any) => {
+                    const value = event.target?.value;
+                    const valueNotComma = parseWithCommas(value);
+                    setBalance(valueNotComma || '');
+                  }}
+                  onBlur={() => {
+                    if (handleAmountValidate()) {
+                      getWithdrawData();
+                    }
+                  }}
+                />
+              </Form.Item>
+            </div>
+            <div
+              className={clsx(
+                'flex-row-center',
+                styles['info-wrapper'],
+                styles['balance-info-wrapper'],
+              )}>
+              <div className={styles['info-label']}>Balance</div>
+              <div className={styles['info-value']}>
+                {!maxBalance || isMaxBalanceLoading ? (
+                  <PartialLoading />
+                ) : (
+                  `${maxBalance} ${formatSymbolDisplay(currentSymbol)}`
+                )}
+              </div>
+            </div>
+            {isMobilePX && remainingLimitComponent}
+            {isMobilePX && currentNetwork?.contractAddress && (
+              <ContractAddressForMobile
                 label={CONTRACT_ADDRESS}
+                networkName={currentNetwork.name}
                 address={currentNetwork.contractAddress}
                 explorerUrl={currentNetwork?.explorerUrl}
               />
             )}
-          </div>
-          <div className={clsx(styles['form-item-wrapper'], styles['amount-form-item-wrapper'])}>
-            <Form.Item
-              className={styles['form-item']}
-              label={
-                <div className={clsx('flex-row-between', styles['form-label-wrapper'])}>
-                  <span className={styles['form-label']}>Withdrawal Amount</span>
-                  {!isMobilePX && remainingLimitComponent}
+            <div className={clsx(styles['form-footer'], styles['form-footer-safe-area'])}>
+              <div className={clsx('flex-1', 'flex-column', styles['footer-info-wrapper'])}>
+                <div className={clsx('flex-column', styles['receive-amount-wrapper'])}>
+                  <div className={styles['info-label']}>Amount to Be Received</div>
+                  <div
+                    className={clsx(
+                      'flex-row-center',
+                      styles['info-value'],
+                      styles['info-value-big-font'],
+                    )}>
+                    {isTransactionFeeLoading && <PartialLoading />}
+                    {!isTransactionFeeLoading &&
+                      `${(!isSuccessModalOpen && receiveAmount) || defaultNullValue} `}
+                    <span className={clsx(styles['info-unit'])}>
+                      {withdrawInfo.transactionUnit}
+                    </span>
+                  </div>
                 </div>
-              }
-              name={FormKeys.AMOUNT}
-              validateStatus={formValidateData[FormKeys.AMOUNT].validateStatus}
-              help={formValidateData[FormKeys.AMOUNT].errorMessage}>
-              <FormInput
-                unit={withdrawInfo.transactionUnit}
-                maxButtonConfig={{
-                  onClick: () => setMaxToken(),
-                }}
-                autoComplete="off"
-                placeholder={`Minimum: ${minAmount}`}
-                onInput={(event: any) => {
-                  const value = event.target?.value?.trim();
-                  const oldValue = form.getFieldValue(FormKeys.AMOUNT);
-
-                  // CHECK1: not empty
-                  if (!value) return (event.target.value = '');
-
-                  // CHECK2: comma count
-                  const commaCount = value.match(/\./gim)?.length;
-                  if (commaCount > 1) {
-                    return (event.target.value = oldValue);
-                  }
-
-                  // CHECK3: input number and decimal count
-                  const lastNumber = value.charAt(value.length - 1);
-                  const valueNotComma = parseWithStringCommas(value);
-                  const stringReg = `^[0-9]{1,9}((\\.\\d)|(\\.\\d{0,${currentTokenDecimal}}))?$`;
-                  const CheckNumberReg = new RegExp(stringReg);
-
-                  if (!CheckNumberReg.exec(valueNotComma)) {
-                    if (lastNumber !== '.') {
-                      return (event.target.value = oldValue);
-                    }
-                  } else {
-                    const beforePoint = formatWithCommas({ amount: valueNotComma });
-                    const afterPoint = lastNumber === '.' ? '.' : '';
-                    event.target.value = beforePoint + afterPoint;
-                  }
-                }}
-                onFocus={async () => {
-                  if (isAndroid) {
-                    // The keyboard does not block the input box
-                    await sleep(200);
-                    document.getElementById('inputAmountWrapper')?.scrollIntoView({
-                      block: 'center',
-                      behavior: 'smooth',
-                    });
-                  }
-                }}
-                onChange={(event: any) => {
-                  const value = event.target?.value;
-                  const valueNotComma = parseWithCommas(value);
-                  setBalance(valueNotComma || '');
-                }}
-                onBlur={() => {
-                  if (handleAmountValidate()) {
-                    getWithdrawData();
-                  }
-                }}
-              />
-            </Form.Item>
-          </div>
-          <div
-            className={clsx(
-              'flex-row-center',
-              styles['info-wrapper'],
-              styles['balance-info-wrapper'],
-            )}>
-            <div className={styles['info-label']}>Balance</div>
-            <div className={styles['info-value']}>
-              {!maxBalance || isMaxBalanceLoading ? (
-                <PartialLoading />
-              ) : (
-                `${maxBalance} ${formatSymbolDisplay(currentSymbol)}`
-              )}
-            </div>
-          </div>
-          {isMobilePX && remainingLimitComponent}
-          {isMobilePX && currentNetwork?.contractAddress && (
-            <ContractAddressForMobile
-              label={CONTRACT_ADDRESS}
-              networkName={currentNetwork.name}
-              address={currentNetwork.contractAddress}
-              explorerUrl={currentNetwork?.explorerUrl}
-            />
-          )}
-          <div className={clsx(styles['form-footer'], styles['form-footer-safe-area'])}>
-            <div className={clsx('flex-1', 'flex-column', styles['footer-info-wrapper'])}>
-              <div className={clsx('flex-column', styles['receive-amount-wrapper'])}>
-                <div className={styles['info-label']}>Amount to Be Received</div>
-                <div
-                  className={clsx(
-                    'flex-row-center',
-                    styles['info-value'],
-                    styles['info-value-big-font'],
-                  )}>
-                  {isTransactionFeeLoading && <PartialLoading />}
-                  {!isTransactionFeeLoading &&
-                    `${(!isSuccessModalOpen && receiveAmount) || defaultNullValue} `}
-                  <span className={clsx(styles['info-unit'])}>{withdrawInfo.transactionUnit}</span>
-                </div>
+                <FeeInfo
+                  isTransactionFeeLoading={isTransactionFeeLoading}
+                  isSuccessModalOpen={isSuccessModalOpen}
+                  transactionFee={withdrawInfo.transactionFee}
+                  transactionUnit={withdrawInfo.transactionUnit}
+                  aelfTransactionFee={withdrawInfo.aelfTransactionFee}
+                  aelfTransactionUnit={withdrawInfo.aelfTransactionUnit}
+                />
               </div>
-              <FeeInfo
-                isTransactionFeeLoading={isTransactionFeeLoading}
-                isSuccessModalOpen={isSuccessModalOpen}
-                transactionFee={withdrawInfo.transactionFee}
-                transactionUnit={withdrawInfo.transactionUnit}
-                aelfTransactionFee={withdrawInfo.aelfTransactionFee}
-                aelfTransactionUnit={withdrawInfo.aelfTransactionUnit}
-              />
+              <Form.Item
+                shouldUpdate
+                className={clsx('flex-none', styles['form-submit-button-wrapper'])}>
+                <CommonButton
+                  className={styles['form-submit-button']}
+                  // htmlType="submit"
+                  onClick={onSubmit}
+                  disabled={isTransactionFeeLoading || !receiveAmount || isSubmitDisabled}>
+                  Withdraw
+                </CommonButton>
+              </Form.Item>
             </div>
-            <Form.Item
-              shouldUpdate
-              className={clsx('flex-none', styles['form-submit-button-wrapper'])}>
-              <CommonButton
-                className={styles['form-submit-button']}
-                // htmlType="submit"
-                onClick={onSubmit}
-                disabled={isTransactionFeeLoading || !receiveAmount || isSubmitDisabled}>
-                Withdraw
-              </CommonButton>
-            </Form.Item>
-          </div>
-        </Form>
+          </Form>
+        </div>
       </div>
+    );
+  }, [
+    currentNetwork,
+    currentSymbol,
+    currentToken,
+    currentTokenDecimal,
+    form,
+    formValidateData,
+    getWithdrawData,
+    handleAmountValidate,
+    handleChainChanged,
+    handleNetworkChanged,
+    handleTokenChange,
+    isAndroid,
+    isMaxBalanceLoading,
+    isMobilePX,
+    isNetworkDisable,
+    isShowNetworkLoading,
+    isSubmitDisabled,
+    isSuccessModalOpen,
+    isTransactionFeeLoading,
+    maxBalance,
+    minAmount,
+    networkList,
+    onAddressBlur,
+    onAddressChange,
+    onSubmit,
+    receiveAmount,
+    remainingLimitComponent,
+    setMaxToken,
+    tokenList,
+    withdrawInfo.aelfTransactionFee,
+    withdrawInfo.aelfTransactionUnit,
+    withdrawInfo.transactionFee,
+    withdrawInfo.transactionUnit,
+  ]);
+
+  return (
+    <>
+      <div className={clsx(!isMobilePX && 'flex-row')}>
+        <div className={clsx(!isMobilePX && styles['main-wrapper'])}>{renderMainContent}</div>
+        {!isMobilePX && (
+          <div className={styles['faq-wrapper']}>
+            <FAQ className={styles['faq']} title={FAQ_WITHDRAW.title} list={FAQ_WITHDRAW.list} />
+          </div>
+        )}
+      </div>
+
       <DoubleCheckModal
         withdrawInfo={{
           receiveAmount,
@@ -1265,6 +1342,6 @@ export default function WithdrawContent() {
           onOk: clickFailedOk,
         }}
       />
-    </div>
+    </>
   );
 }
