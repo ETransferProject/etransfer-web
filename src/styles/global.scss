@@ -50,6 +50,8 @@ input[type='number'] {
 }
 
 .content-container {
+  width: 100%;
+  height: 100%;
   @include media-mobile {
     padding: 0 16px;
   }
@@ -59,16 +61,17 @@ input[type='number'] {
     padding-bottom: $content-padding-bottom;
   }
   @include media-web {
-    width: $content-width;
-    margin-left: calc((100vw - $content-width) / 2);
+    // width: $content-width;
+    // margin-left: calc((100vw - $content-width) / 2);
     padding: 40px 0 $web-content-padding-bottom;
-    @media screen and (max-width: $web-breakpoint) {
-      margin-left: calc($web-content-min-margin-left + $sider-width);
-    }
+    // @media screen and (max-width: $web-breakpoint) {
+    //   margin-left: calc($web-content-min-margin-left + $sider-width);
+    // }
   }
   @include media-huge-screen {
-    width: $content-width;
-    margin-left: calc(($max-width - $content-width) / 2 - $sider-width);
+    // TODO
+    // width: $content-width;
+    // margin-left: calc(($max-width - $content-width) / 2 - $sider-width);
     padding: 40px 0 $web-content-padding-bottom;
   }
 }
@@ -99,10 +102,11 @@ input[type='number'] {
     padding: 0;
   }
   @include media-huge-web {
+    // TODO
     width: calc(100vw - $sider-width);
     height: calc(100vh - $web-header-height);
     max-width: calc($max-width - $sider-width);
-    margin-left: $sider-width;
+    // margin-left: $sider-width;
   }
   @include media-huge-screen {
     width: calc($max-width + 1px - $sider-width);
