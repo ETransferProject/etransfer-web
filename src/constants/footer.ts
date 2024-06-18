@@ -28,18 +28,18 @@ export const FOOTER_CONFIG: TFooterConfig = {
       icon: CommunityIcon,
       items: [
         {
-          icon: TelegramIcon,
-          name: 'Telegram',
-          link: '',
+          icon: TwitterIcon,
+          name: 'Twitter',
+          link: 'https://x.com/ETransfer_Web3',
         },
         {
           icon: DiscordIcon,
           name: 'Discord',
-          link: '',
+          link: 'https://discord.gg/zuN2wrZrd9',
         },
         {
-          icon: TwitterIcon,
-          name: 'Twitter',
+          icon: TelegramIcon,
+          name: 'Telegram',
           link: '',
         },
       ],
