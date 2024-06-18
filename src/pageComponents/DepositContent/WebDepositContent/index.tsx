@@ -49,8 +49,8 @@ export default function WebContent({
     return (
       <div
         className={clsx(
-          'content-container',
-          'content-container-safe-area',
+          'main-content-container',
+          'main-content-container-safe-area',
           styles['main-content'],
         )}>
         <div className={styles['deposit-title']}>Deposit Assets</div>
@@ -147,11 +147,12 @@ export default function WebContent({
   ]);
 
   return (
-    <div className="flex-row">
+    <div className="content-container flex-row">
       <div className={styles['main-container']}>
         <div className={styles['main-wrapper']}>{renderDepositMainContent}</div>
       </div>
-      <div className={styles['faq-wrapper']}>
+      <div className={clsx('flex-row', styles['faq-wrapper'])}>
+        <div className={styles['faq-left']}></div>
         <FAQ className={styles['faq']} title={FAQ_DEPOSIT.title} list={FAQ_DEPOSIT.list} />
       </div>
     </div>

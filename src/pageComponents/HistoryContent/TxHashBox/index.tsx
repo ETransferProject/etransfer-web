@@ -30,7 +30,7 @@ export default function TxHashBox({
   orderStatus,
   isShowIcon = true,
 }: TTxHashBoxProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const viewTxDetail = useCallback(() => {
     if (network === BlockchainNetworkType.AELF) {
       openWithBlank(getAelfExploreLink(txHash, AelfExploreType.transaction, chainId));
@@ -50,19 +50,13 @@ export default function TxHashBox({
       {isShowIcon && <NextLineIcon />}
       {txHashLabel && (
         <span
-          className={clsx(
-            styles['label'],
-            isMobilePX ? styles['mobile-font'] : styles['web-font'],
-          )}>
+          className={clsx(styles['label'], isPadPX ? styles['mobile-font'] : styles['web-font'])}>
           {txHashLabel}
         </span>
       )}
       {txHash ? (
         <span
-          className={clsx(
-            styles['value'],
-            isMobilePX ? styles['mobile-font'] : styles['web-font'],
-          )}>
+          className={clsx(styles['value'], isPadPX ? styles['mobile-font'] : styles['web-font'])}>
           {getOmittedStr(txHash, 6, 6)}
         </span>
       ) : (

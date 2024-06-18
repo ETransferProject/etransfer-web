@@ -24,7 +24,7 @@ export default function SelectChainWrapper({
   webLabel,
   chainChanged,
 }: SelectChainWrapperProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const { currentChainItem } = useWithdraw();
   const accounts = useAccounts();
   const setCurrentChainItem = useSetCurrentChainItem();
@@ -42,7 +42,7 @@ export default function SelectChainWrapper({
 
   return (
     <div className={clsx(styles['select-chain-wrapper'], className)}>
-      <span className={styles['select-chain-label']}>{isMobilePX ? mobileLabel : webLabel}</span>
+      <span className={styles['select-chain-label']}>{isPadPX ? mobileLabel : webLabel}</span>
       <SelectChain
         title={mobileTitle}
         clickCallback={chainChanged}

@@ -1,10 +1,22 @@
 @import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/breakpoint.scss';
 
 .footer {
   font-size: 14px;
   background-color: $hover-bg;
   color: $secondary-text;
   padding: 60px 40px 40px;
+
+  flex-direction: row;
+  justify-content: space-between;
+
+  @include media-mobile-and-pad {
+    padding: 60px 24px 40px;
+
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 24px;
+  }
 }
 .left {
   min-width: 400px;
@@ -23,10 +35,12 @@
 
 .right {
   flex: 10;
+  gap: 16px;
 }
 
 .right-menu {
   min-width: 120px;
+  flex: 1;
 }
 
 .right-menu-group {

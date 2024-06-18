@@ -9,7 +9,7 @@ import { useIsActive } from 'hooks/portkeyWallet';
 
 export default function LoginAndProfileEntry() {
   const isActive = useIsActive();
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
 
   if (!isActive) {
     return (
@@ -19,5 +19,5 @@ export default function LoginAndProfileEntry() {
       />
     );
   }
-  return isMobilePX ? <MobileUserProfile /> : <WebUserProfile />;
+  return isPadPX ? <MobileUserProfile /> : <WebUserProfile />;
 }

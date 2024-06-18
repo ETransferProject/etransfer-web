@@ -13,7 +13,7 @@ import { useWebLogin, WalletType } from 'aelf-web-login';
 export default function MobileUserProfile() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [isShowAddress, setIsShowAddress] = useState<boolean>(true);
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const router = useRouter();
   const isActive = useIsActive();
   const { walletType } = useWebLogin();
@@ -34,7 +34,7 @@ export default function MobileUserProfile() {
           'flex-none',
           'flex-center',
           styles['wallet-container'],
-          isMobilePX && styles['wallet-mobile'],
+          isPadPX && styles['wallet-mobile'],
         )}
         onClick={() => {
           setIsDrawerOpen(true);

@@ -1,5 +1,6 @@
 @import 'src/assets/theme/font.scss';
 @import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
 
 .main-container {
   flex: 2;
@@ -17,9 +18,15 @@
   flex: 1;
 }
 
+.faq-left {
+  flex: 1;
+}
+
 .faq {
   padding-left: 8%;
-  padding-right: 40px;
+  @include media-huge-screen {
+    padding-right: 40px;
+  }
 }
 
 .deposit-title {

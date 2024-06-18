@@ -14,7 +14,7 @@ type TFeeInfoProps = {
 };
 
 export default function FeeInfo({ feeInfo, status, orderType }: TFeeInfoProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
 
   if (status === TRecordsStatus.Failed) {
     return <div className={styles['fee-info-wrapper']}>{defaultNullValue}</div>;
@@ -28,7 +28,7 @@ export default function FeeInfo({ feeInfo, status, orderType }: TFeeInfoProps) {
     <div
       className={clsx(
         styles['fee-info-wrapper'],
-        isMobilePX ? styles['mobile-fee-info-wrapper'] : styles['web-fee-info-wrapper'],
+        isPadPX ? styles['mobile-fee-info-wrapper'] : styles['web-fee-info-wrapper'],
       )}>
       {feeInfo.map((item, index) => {
         return (

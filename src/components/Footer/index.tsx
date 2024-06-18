@@ -5,7 +5,7 @@ import clsx from 'clsx';
 
 export default function Footer() {
   return (
-    <div className={clsx('flex-row-between', styles['footer'])}>
+    <div className={clsx('flex', styles['footer'])}>
       {/* left */}
       <div className={styles['left']}>
         <div className={styles['left-logo']}>
@@ -18,7 +18,7 @@ export default function Footer() {
         </div>
       </div>
       {/* right */}
-      <div className={clsx('flex-row-between', styles['right'])}>
+      <div className={clsx('flex-row', styles['right'])}>
         {FOOTER_CONFIG.menus.map((menu) => {
           return (
             <div key={'footerMenus' + menu.group} className={styles['right-menu']}>

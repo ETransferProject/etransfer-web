@@ -62,7 +62,7 @@ type TGetNetworkData = {
 
 export default function Content() {
   const dispatch = useAppDispatch();
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const {
     fromNetwork,
     fromNetworkList,
@@ -454,7 +454,7 @@ export default function Content() {
     };
   }, [init]);
 
-  return isMobilePX ? (
+  return isPadPX ? (
     <MobileDepositContent
       fromTokenSelected={fromTokenSelected}
       tokenLogoUrl={fromTokenSelected?.icon}

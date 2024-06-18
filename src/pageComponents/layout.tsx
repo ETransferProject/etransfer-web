@@ -5,10 +5,10 @@ import Header from 'components/Header';
 import Sider from 'components/Sider';
 import Loading from 'components/Loading';
 import { devices } from '@portkey/utils';
-import { setIsMobile, setIsMobilePX } from 'store/reducers/common/slice';
+import { setIsMobile, setIsMobilePX, setIsPadPX } from 'store/reducers/common/slice';
 import { store } from 'store/Provider/store';
 import { useCommonState } from 'store/Provider/hooks';
-import { MOBILE_PX } from 'constants/media';
+import { MOBILE_PX, PAD_PX } from 'constants/media';
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { useIsActive } from 'hooks/portkeyWallet';
@@ -39,6 +39,9 @@ const Layout = ({
         store.dispatch(setIsMobile(isMobileDevice));
         const isMobilePX = window.innerWidth <= MOBILE_PX;
         store.dispatch(setIsMobilePX(isMobilePX));
+
+        const isPadPX = window.innerWidth <= PAD_PX;
+        store.dispatch(setIsPadPX(isPadPX));
       };
       resize();
       window.addEventListener('resize', resize);
@@ -47,7 +50,7 @@ const Layout = ({
       };
     }
   }, []);
-  const { isMobilePX } = useCommonState();
+  const { isPadPX, isMobilePX } = useCommonState();
   const isActive = useIsActive();
 
   useRouteParamType();
@@ -63,9 +66,9 @@ const Layout = ({
       {isShowHeader && <Header />}
       <AntdLayout
         className={clsx(styles['layout-content-wrapper'], {
-          [styles['layout-content-wrapper-with-header']]: isActive || !isMobilePX,
+          [styles['layout-content-wrapper-with-header']]: isActive || !isPadPX,
         })}>
-        {isShowSider && !isMobilePX && <Sider />}
+        {isShowSider && !isPadPX && <Sider />}
         <AntdLayout.Content className={'etransfer-web-content'}>
           <Suspense fallback={<Loading />}>{children}</Suspense>
         </AntdLayout.Content>

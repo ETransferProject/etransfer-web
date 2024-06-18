@@ -14,6 +14,7 @@ import { TRecordsContentProps } from 'pageComponents/HistoryContent';
 import { defaultNullValue } from 'constants/index';
 import moment from 'moment';
 import { useHistoryFilter } from 'hooks/history';
+import SimpleTipModal from 'pageComponents/Modal/SimpleTipModal';
 
 const dateFormat = 'YYYY-MM-DD';
 
@@ -47,6 +48,8 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
     }
     return isShow;
   }, [timestamp]);
+
+  const [openTipModal, setOpenTipModal] = useState(false);
 
   const { setFilter, setMethodFilter, setStatusFilter, setTimestampFilter } = useHistoryFilter();
   const closeItem = useCallback(
@@ -83,6 +86,12 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
     const start = moment(filterTimestampStart).valueOf();
     const end = moment(filterTimestampEnd).valueOf();
     const timeIsNaN = isNaN(start) || isNaN(end);
+    const oneTimeIsNaN = (isNaN(start) && !isNaN(end)) || (!isNaN(start) && isNaN(end));
+
+    if (oneTimeIsNaN) {
+      setOpenTipModal(true);
+      return;
+    }
 
     setFilter({
       method: filterType,
@@ -155,6 +164,7 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
         open={isShowFilterDrawer}
         height={'100%'}
         title={<div className={styles['filter-title']}>Filters</div>}
+        id="historyFilterDrawer"
         className={styles['filter-drawer-wrapper']}
         destroyOnClose
         placement={'right'}
@@ -224,6 +234,13 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
           />
         </div>
       </CommonDrawer>
+
+      <SimpleTipModal
+        open={openTipModal}
+        getContainer="#historyFilterDrawer"
+        content={'Please select another time!'}
+        onOk={() => setOpenTipModal(false)}
+      />
     </div>
   );
 }

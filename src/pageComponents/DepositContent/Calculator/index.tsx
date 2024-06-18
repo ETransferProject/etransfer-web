@@ -17,7 +17,7 @@ const DEFAULT_AMOUNT = '0.00';
 const DEFAULT_PAY_AMOUNT = '100';
 
 export default function Calculator() {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const { fromTokenSymbol, fromTokenList, toChainItem, toTokenSymbol } = useDepositState();
   const searchParams = useSearchParams();
   const [payAmount, setPayAmount] = useState(
@@ -195,7 +195,7 @@ export default function Calculator() {
       {isExpand && (
         <>
           <Space direction="vertical" size={16} />
-          {isMobilePX ? (
+          {isPadPX ? (
             <div className={styles['calculator-content']}>
               <div>{renderYouPay}</div>
               <Space direction="vertical" size={16} />

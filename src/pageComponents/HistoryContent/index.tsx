@@ -35,7 +35,7 @@ export type TRecordsBodyProps = {
 };
 
 export default function Content() {
-  const { isMobilePX, isUnreadHistory } = useCommonState();
+  const { isPadPX, isUnreadHistory } = useCommonState();
   const dispatch = useAppDispatch();
   const { setFilter } = useHistoryFilter();
   const { setLoading } = useLoading();
@@ -69,7 +69,7 @@ export default function Content() {
         maxResultCount,
       });
       setLoading(false);
-      if (isMobilePX) {
+      if (isPadPX) {
         let mobileRecordsList = [...recordsList, ...recordsListRes];
         mobileRecordsList = mobileRecordsList.reduce((result: TRecordsListItem[], item) => {
           if (!result.some((it: TRecordsListItem) => it.id === item.id)) {
@@ -103,11 +103,11 @@ export default function Content() {
       timeArray: null,
     });
     dispatch(setSkipCount(1));
-    if (isMobilePX) {
+    if (isPadPX) {
       dispatch(setRecordsList([]));
     }
     requestRecordsList(true);
-  }, [dispatch, isMobilePX, requestRecordsList, setFilter]);
+  }, [dispatch, isPadPX, requestRecordsList, setFilter]);
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -181,7 +181,7 @@ export default function Content() {
 
   return (
     <div className="wide-screen-content-container">
-      {isMobilePX ? (
+      {isPadPX ? (
         <MobileHistoryContent requestRecordsList={requestRecordsList} onReset={handleReset} />
       ) : (
         <WebHistoryContent

@@ -35,7 +35,7 @@ export default function AddressBox({
   fromChainId,
   toChainId,
 }: TAddressBoxProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const accounts = useAccounts();
 
   const calcAddress = useCallback(() => {
@@ -85,7 +85,7 @@ export default function AddressBox({
     <div
       className={clsx(
         styles['address-box'],
-        isMobilePX ? styles['mobile-address-box'] : styles['web-address-box'],
+        isPadPX ? styles['mobile-address-box'] : styles['web-address-box'],
       )}>
       <NetworkLogo network={network} />
       <CommonTooltip title={calcAddress()} trigger={'hover'}>

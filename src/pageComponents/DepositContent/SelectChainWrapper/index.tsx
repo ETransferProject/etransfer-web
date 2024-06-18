@@ -25,14 +25,14 @@ export default function SelectChainWrapper({
   webLabel,
   chainChanged,
 }: SelectChainWrapperProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const isDisabled = useMemo(() => {
     return menuItems?.length <= 1;
   }, [menuItems?.length]);
 
   return (
     <div className={clsx('flex-row-center', styles['select-chain-wrapper'], className)}>
-      <span className={styles['select-chain-label']}>{isMobilePX ? mobileLabel : webLabel}</span>
+      <span className={styles['select-chain-label']}>{isPadPX ? mobileLabel : webLabel}</span>
       <div className={styles['space-6']} />
       <Aelf />
       <div className={styles['space-6']} />

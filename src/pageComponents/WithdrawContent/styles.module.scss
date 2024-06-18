@@ -16,9 +16,15 @@
   flex: 1;
 }
 
+.faq-left {
+  flex: 1;
+}
+
 .faq {
   padding-left: 8%;
-  padding-right: 40px;
+  @include media-huge-screen {
+    padding-right: 40px;
+  }
 }
 
 .form-container {

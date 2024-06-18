@@ -22,10 +22,10 @@ export default function StatusBox({ status, network }: TStatusBoxProps) {
   const [isMobileOpenModal, setIsMobileOpenModal] = useState(false);
   const [tipMessage, setTipMessage] = useState('');
   const [title, setTitle] = useState('');
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
 
   const handleClick = useCallback(() => {
-    if (!isMobilePX) {
+    if (!isPadPX) {
       return;
     }
     // set tip message: Processing  Failed
@@ -44,13 +44,13 @@ export default function StatusBox({ status, network }: TStatusBoxProps) {
         break;
     }
     setIsMobileOpenModal(true);
-  }, [isMobilePX, status, network]);
+  }, [isPadPX, status, network]);
 
   const content = useMemo(() => {
     switch (status) {
       case TRecordsStatus.Processing:
         return (
-          <Tooltip title={!isMobilePX && ProcessingTipMessage + network}>
+          <Tooltip title={!isPadPX && ProcessingTipMessage + network}>
             <div className={styles['status-box']} onClick={() => handleClick()}>
               <TimeFilled />
               <span className={styles.processing}>{TRecordsStatusI18n.Processing}</span>
@@ -62,7 +62,7 @@ export default function StatusBox({ status, network }: TStatusBoxProps) {
         return <div className={styles['status-box']}>{TRecordsStatusI18n.Succeed}</div>;
       case TRecordsStatus.Failed:
         return (
-          <Tooltip title={!isMobilePX && FailedTipMessage} placement="top">
+          <Tooltip title={!isPadPX && FailedTipMessage} placement="top">
             <div className={styles['status-box']} onClick={() => handleClick()}>
               <CloseFilled />
               <span className={styles.failed}>{TRecordsStatusI18n.Failed}</span>
@@ -73,7 +73,7 @@ export default function StatusBox({ status, network }: TStatusBoxProps) {
       default:
         return null;
     }
-  }, [status, handleClick, network, isMobilePX]);
+  }, [status, handleClick, network, isPadPX]);
 
   return (
     <div className={styles['status-wrapper']}>
