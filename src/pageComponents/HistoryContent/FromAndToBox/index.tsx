@@ -9,6 +9,7 @@ export default function FromAndToBox({
   network,
   fromChainId,
   toChainId,
+  orderStatus,
   txHashLabel,
   txHash,
 }: Omit<TAddressBoxProps & TTxHashBoxProps, 'chainId'>) {
@@ -26,7 +27,9 @@ export default function FromAndToBox({
       <TxHashBox
         txHashLabel={txHashLabel}
         txHash={txHash}
+        orderStatus={orderStatus}
         chainId={type === 'From' ? fromChainId : toChainId}
+        network={network}
       />
     </div>
   );

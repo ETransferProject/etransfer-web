@@ -33,6 +33,10 @@ export function getOtherExploreLink(
   switch (type) {
     case OtherExploreType.transaction: {
       if (network === 'TRX') {
+        console.log(
+          '🌈 🌈 🌈 🌈 🌈 🌈 `${prefix}/#/transaction/${data}`',
+          `${prefix}/#/transaction/${data}`,
+        );
         return `${prefix}/#/transaction/${data}`;
       }
       return `${prefix}/tx/${data}`;

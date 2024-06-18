@@ -7,6 +7,7 @@ import CommonModal from 'components/CommonModal';
 import { Tooltip } from 'antd';
 import { ProcessingTipMessage, FailedTipMessage } from 'constants/records';
 import { SupportedELFChainId } from 'constants/index';
+import { BusinessType } from 'types/api';
 
 type TStatusBoxProps = {
   status: string;
@@ -14,7 +15,7 @@ type TStatusBoxProps = {
   network: string;
   fromChainId: SupportedELFChainId;
   toChainId: SupportedELFChainId;
-  orderType: string;
+  orderType: BusinessType;
 };
 
 export default function StatusBox({ status, network }: TStatusBoxProps) {

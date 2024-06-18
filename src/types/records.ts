@@ -1,4 +1,5 @@
 import { SupportedELFChainId } from 'constants/index';
+import { BusinessType } from './api';
 
 export enum TRecordsRequestType {
   ALL = 0,
@@ -50,7 +51,7 @@ export type TFeeInfoType = {
 
 export interface TRecordsTableListType {
   key: string;
-  orderType: string;
+  orderType: BusinessType;
   status: string;
   arrivalTime: number;
   symbol: string;

@@ -2,56 +2,48 @@ import { NextLineIcon } from 'assets/images';
 import styles from './styles.module.scss';
 import { getOmittedStr } from 'utils/calculate';
 import { useCallback } from 'react';
-import { getAelfExploreLink, openWithBlank } from 'utils/common';
-import { AelfExploreType } from 'constants/network';
-import { SupportedELFChainId, defaultNullValue } from 'constants/index';
+import { getAelfExploreLink, getOtherExploreLink, openWithBlank } from 'utils/common';
+import {
+  AelfExploreType,
+  BlockchainNetworkType,
+  ExploreUrlType,
+  OtherExploreType,
+} from 'constants/network';
+import { SupportedELFChainId } from 'constants/index';
 import clsx from 'clsx';
 import { useCommonState } from 'store/Provider/hooks';
 
 export type TTxHashBoxProps = {
   txHashLabel?: string;
   chainId: SupportedELFChainId;
+  network: string;
   txHash: string;
+  orderStatus: string;
   isShowIcon?: boolean;
 };
-
-export type TxHashBoxForEnd = Omit<TTxHashBoxProps, 'chainId'> & {
-  viewTxDetail: () => void;
-};
-
-export function TxHashBoxForWeb({ txHashLabel, txHash, viewTxDetail }: TxHashBoxForEnd) {
-  return (
-    <div className="flex-row-center" onClick={viewTxDetail}>
-      <NextLineIcon />
-      <span className={clsx(styles['web-label'], styles['web-font'])}>{txHashLabel}</span>
-      <span className={clsx(styles['web-value'], styles['web-font'])}>
-        {getOmittedStr(txHash, 6, 6)}
-      </span>
-    </div>
-  );
-}
-
-export function TxHashBoxForMobile({ txHashLabel, txHash, viewTxDetail }: TxHashBoxForEnd) {
-  return (
-    <div className="flex-row-center-between" onClick={viewTxDetail}>
-      <span className={clsx(styles['mobile-label'], styles['mobile-font'])}>{txHashLabel}</span>
-      <span className={clsx(styles['mobile-value'], styles['mobile-font'])}>
-        {getOmittedStr(txHash, 6, 6)}
-      </span>
-    </div>
-  );
-}
 
 export default function TxHashBox({
   txHashLabel,
   chainId,
+  network,
   txHash,
+  orderStatus,
   isShowIcon = true,
 }: TTxHashBoxProps) {
   const { isMobilePX } = useCommonState();
   const viewTxDetail = useCallback(() => {
-    openWithBlank(getAelfExploreLink(txHash, AelfExploreType.transaction, chainId));
-  }, [chainId, txHash]);
+    if (network === BlockchainNetworkType.AELF) {
+      openWithBlank(getAelfExploreLink(txHash, AelfExploreType.transaction, chainId));
+      return;
+    }
+    openWithBlank(
+      getOtherExploreLink(
+        txHash,
+        OtherExploreType.transaction,
+        network as keyof typeof ExploreUrlType,
+      ),
+    );
+  }, [chainId, network, txHash]);
 
   return (
     <div className="flex-row-center" onClick={viewTxDetail}>
@@ -74,7 +66,7 @@ export default function TxHashBox({
           {getOmittedStr(txHash, 6, 6)}
         </span>
       ) : (
-        <span className={styles['null-value']}>{defaultNullValue}</span>
+        <span className={styles['null-value']}>{orderStatus.toLocaleLowerCase()}</span>
       )}
     </div>
   );

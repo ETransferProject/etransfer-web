@@ -131,8 +131,10 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
                 <span className={styles['records-card-item-label']}>From Hash</span>
                 <TxHashBox
                   isShowIcon={false}
+                  orderStatus={recordItem.status}
                   chainId={recordItem.fromChainId}
                   txHash={recordItem.fromTxId}
+                  network={recordItem.fromNetwork}
                 />
               </div>
               <div className={styles['records-card-item-line']}>
@@ -150,8 +152,10 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
                 <span className={styles['records-card-item-label']}>To Hash</span>
                 <TxHashBox
                   isShowIcon={false}
+                  orderStatus={recordItem.status}
                   chainId={recordItem.toChainId}
                   txHash={recordItem.toTxId}
+                  network={recordItem.toNetwork}
                 />
               </div>
               <div className={styles['records-card-item-Fee']}>

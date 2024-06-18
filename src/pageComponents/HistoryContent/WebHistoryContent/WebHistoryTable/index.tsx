@@ -83,6 +83,7 @@ const columns = [
           network={record.fromNetwork}
           fromChainId={record.fromChainId}
           toChainId={record.toChainId}
+          orderStatus={record.status}
           txHashLabel="Tx Hash"
           txHash={record.fromTxId}
         />
@@ -102,6 +103,7 @@ const columns = [
           network={record.toNetwork}
           fromChainId={record.fromChainId}
           toChainId={record.toChainId}
+          orderStatus={record.status}
           txHashLabel="Tx Hash"
           txHash={record.toTxId}
         />
