@@ -82,7 +82,7 @@ export const FOOTER_CONFIG: TFooterConfig = {
       items: [
         {
           name: 'Emails',
-          link: 'contact@etransfer.exchange',
+          link: 'mailto:contact@etransfer.exchange',
         },
         {
           name: 'Support',

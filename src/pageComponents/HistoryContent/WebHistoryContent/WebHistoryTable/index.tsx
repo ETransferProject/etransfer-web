@@ -84,7 +84,7 @@ const columns = [
           fromChainId={record.fromChainId}
           toChainId={record.toChainId}
           txHashLabel="Tx Hash"
-          txHash=""
+          txHash={record.fromTxId}
         />
       );
     },
@@ -103,7 +103,7 @@ const columns = [
           fromChainId={record.fromChainId}
           toChainId={record.toChainId}
           txHashLabel="Tx Hash"
-          txHash=""
+          txHash={record.toTxId}
         />
       );
     },
@@ -143,11 +143,13 @@ export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProp
         fromAddress: fromTransfer.fromAddress,
         fromToAddress: fromTransfer.toAddress,
         fromChainId: fromTransfer.chainId,
+        fromTxId: fromTransfer.txId,
         toSymbol: toTransfer.symbol,
         toNetwork: toTransfer.network,
         toFromAddress: toTransfer.fromAddress,
         toAddress: toTransfer.toAddress,
         toChainId: toTransfer.chainId,
+        toTxId: toTransfer.txId,
         feeInfo: toTransfer.feeInfo,
       });
     });

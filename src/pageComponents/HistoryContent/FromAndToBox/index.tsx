@@ -23,7 +23,11 @@ export default function FromAndToBox({
         toChainId={toChainId}
       />
       <Space direction={'vertical'} size={2} />
-      <TxHashBox txHashLabel={txHashLabel} txHash={txHash} chainId={toChainId} />
+      <TxHashBox
+        txHashLabel={txHashLabel}
+        txHash={txHash}
+        chainId={type === 'From' ? fromChainId : toChainId}
+      />
     </div>
   );
 }

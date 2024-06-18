@@ -42,11 +42,13 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
         fromAddress: fromTransfer.fromAddress,
         fromToAddress: fromTransfer.toAddress,
         fromChainId: fromTransfer.chainId,
+        fromTxId: fromTransfer.txId,
         toSymbol: toTransfer.symbol,
         toNetwork: toTransfer.network,
         toFromAddress: toTransfer.fromAddress,
         toAddress: toTransfer.toAddress,
         toChainId: toTransfer.chainId,
+        toTxId: toTransfer.txId,
         feeInfo: toTransfer.feeInfo,
       });
     });
@@ -127,7 +129,11 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
               </div>
               <div className={styles['records-card-item-line']}>
                 <span className={styles['records-card-item-label']}>From Hash</span>
-                <TxHashBox isShowIcon={false} chainId={recordItem.toChainId} txHash="" />
+                <TxHashBox
+                  isShowIcon={false}
+                  chainId={recordItem.fromChainId}
+                  txHash={recordItem.fromTxId}
+                />
               </div>
               <div className={styles['records-card-item-line']}>
                 <span className={styles['records-card-item-label']}>To</span>
@@ -142,7 +148,11 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
               </div>
               <div className={styles['records-card-item-line']}>
                 <span className={styles['records-card-item-label']}>To Hash</span>
-                <TxHashBox isShowIcon={false} chainId={recordItem.toChainId} txHash="" />
+                <TxHashBox
+                  isShowIcon={false}
+                  chainId={recordItem.toChainId}
+                  txHash={recordItem.toTxId}
+                />
               </div>
               <div className={styles['records-card-item-Fee']}>
                 <span className={styles['records-card-item-label']}>Transaction Fee</span>
