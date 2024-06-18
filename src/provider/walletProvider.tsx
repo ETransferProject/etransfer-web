@@ -146,7 +146,7 @@ function WalletProvider({ children }: { children: React.ReactNode }) {
   const onAuthorizationExpired = useCallback(async () => {
     if (webLoginContext.loginState !== WebLoginState.logined) {
       console.log('AuthorizationExpired: Not Logined');
-      routerPushRef.current('/');
+      routerPushRef.current('/', false);
       return;
     }
     resetLocalJWT();

@@ -441,7 +441,7 @@ export default function Content() {
     dispatch(setActiveMenuKey(SideMenuKey.Deposit));
     init();
 
-    router.replace('/deposit');
+    router.push('/deposit');
   });
 
   useEffect(() => {

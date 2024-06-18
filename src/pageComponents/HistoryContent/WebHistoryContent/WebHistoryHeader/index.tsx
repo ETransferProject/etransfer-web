@@ -11,6 +11,7 @@ import { Reset } from 'assets/images';
 import { SwapRightDefault, SwapRightSelected } from 'assets/images';
 import moment from 'moment';
 import { useHistoryFilter } from 'hooks/history';
+import { END_TIME_FORMAT, START_TIME_FORMAT } from 'constants/records';
 
 const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY-MM-DD';
@@ -41,7 +42,12 @@ export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecor
   const handleDateRangeChange = useCallback(
     (timestamp: TRangeValue) => {
       if (timestamp && timestamp[0] && timestamp[1]) {
-        setTimestampFilter([moment(timestamp[0]).valueOf(), moment(timestamp[1]).valueOf()]);
+        const startTimestampFormat = moment(timestamp[0]).format(START_TIME_FORMAT);
+        const endTimestampFormat = moment(timestamp[1]).format(END_TIME_FORMAT);
+        setTimestampFilter([
+          moment(startTimestampFormat).valueOf(),
+          moment(endTimestampFormat).valueOf(),
+        ]);
         dispatch(setSkipCount(1));
         requestRecordsList();
       }

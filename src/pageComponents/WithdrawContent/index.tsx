@@ -1000,7 +1000,7 @@ export default function WithdrawContent() {
     dispatch(setActiveMenuKey(SideMenuKey.Withdraw));
     init();
 
-    router.replace('/withdraw');
+    router.push('/withdraw');
 
     return () => {
       if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);

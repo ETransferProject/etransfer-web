@@ -62,7 +62,7 @@ export function useRouterPush() {
   }, [activeMenuKey, pathname]);
 
   return useCallback(
-    (path: string) => {
+    (path: string, isAddType = true) => {
       let href = path.toLocaleLowerCase();
       const search = checkAllowSearch(path.toLocaleLowerCase());
       if (path === '/' && !routeType) {
@@ -70,7 +70,7 @@ export function useRouterPush() {
           url: path.toLocaleLowerCase(),
           query: {
             ...search,
-            type: currentActiveMenuKey,
+            type: isAddType ? currentActiveMenuKey : undefined,
           },
         });
       } else {

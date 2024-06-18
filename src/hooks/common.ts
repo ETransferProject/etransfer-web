@@ -54,7 +54,7 @@ export function useClearStore() {
     dispatch(setSwitchVersionAction(undefined));
     resetStore();
     resetLocalJWT();
-    routerPush('/');
+    routerPush('/', false);
   }, [dispatch, resetStore, routerPush]);
 }
 

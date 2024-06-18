@@ -49,9 +49,15 @@ export default function Content() {
     recordsList,
   } = useRecordsState();
 
-  const requestRecordsList = useDebounceCallback(async (isLoading = false) => {
+  const requestRecordsList = useDebounceCallback(async (isLoading = false, isSetAuth = false) => {
     try {
       isLoading && setLoading(true);
+
+      if (isSetAuth) {
+        if (!wallet) return;
+        await wallet?.setAuthFromStorage();
+        await sleep(500);
+      }
 
       const startTimestampFormat =
         timestamp?.[0] && moment(timestamp?.[0]).format('YYYY-MM-DD 00:00:00');
@@ -68,7 +74,7 @@ export default function Content() {
         skipCount: (skipCount - 1) * maxResultCount,
         maxResultCount,
       });
-      setLoading(false);
+
       if (isPadPX) {
         let mobileRecordsList = [...recordsList, ...recordsListRes];
         mobileRecordsList = mobileRecordsList.reduce((result: TRecordsListItem[], item) => {
@@ -96,18 +102,21 @@ export default function Content() {
     }
   }, []);
 
-  const handleReset = useCallback(() => {
-    setFilter({
-      method: TRecordsRequestType.ALL,
-      status: TRecordsRequestStatus.ALL,
-      timeArray: null,
-    });
-    dispatch(setSkipCount(1));
-    if (isPadPX) {
-      dispatch(setRecordsList([]));
-    }
-    requestRecordsList(true);
-  }, [dispatch, isPadPX, requestRecordsList, setFilter]);
+  const handleReset = useCallback(
+    async (isSetAuth = false) => {
+      setFilter({
+        method: TRecordsRequestType.ALL,
+        status: TRecordsRequestStatus.ALL,
+        timeArray: null,
+      });
+      dispatch(setSkipCount(1));
+      if (isPadPX) {
+        dispatch(setRecordsList([]));
+      }
+      await requestRecordsList(true, isSetAuth);
+    },
+    [dispatch, isPadPX, requestRecordsList, setFilter],
+  );
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -122,16 +131,13 @@ export default function Content() {
   );
 
   const [{ wallet }] = useWalletContext();
-  const init = useCallback(async () => {
-    if (!wallet) return;
-    await wallet?.setAuthFromStorage();
-    await sleep(500);
+  const init = useCallback(() => {
     if (isUnreadHistory) {
-      handleReset();
+      handleReset(true);
     } else {
-      requestRecordsList(true);
+      requestRecordsList(true, true);
     }
-  }, [handleReset, isUnreadHistory, requestRecordsList, wallet]);
+  }, [handleReset, isUnreadHistory, requestRecordsList]);
 
   useEffect(() => {
     init();

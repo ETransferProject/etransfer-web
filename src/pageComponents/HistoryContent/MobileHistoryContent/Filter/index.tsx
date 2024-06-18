@@ -15,6 +15,7 @@ import { defaultNullValue } from 'constants/index';
 import moment from 'moment';
 import { useHistoryFilter } from 'hooks/history';
 import SimpleTipModal from 'pageComponents/Modal/SimpleTipModal';
+import { END_TIME_FORMAT, START_TIME_FORMAT } from 'constants/records';
 
 const dateFormat = 'YYYY-MM-DD';
 
@@ -93,10 +94,16 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
       return;
     }
 
+    // format
+    const startTimestampFormat = moment(
+      moment(filterTimestampStart).format(START_TIME_FORMAT),
+    ).valueOf();
+    const endTimestampFormat = moment(moment(filterTimestampEnd).format(END_TIME_FORMAT)).valueOf();
+
     setFilter({
       method: filterType,
       status: filterStatus,
-      timeArray: timeIsNaN ? null : [start, end],
+      timeArray: timeIsNaN ? null : [startTimestampFormat, endTimestampFormat],
     });
     dispatch(setSkipCount(1));
     dispatch(setRecordsList([]));
