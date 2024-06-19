@@ -51,6 +51,8 @@ input[type='number'] {
 
 .etransfer-web-wrapper {
   height: unset;
+  display: flex;
+  flex-direction: column;
 }
 
 .etransfer-web-notLogin {
