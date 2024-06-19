@@ -1,13 +1,12 @@
 import clsx from 'clsx';
 import SelectChain from 'components/SelectChain';
-import { useCommonState } from 'store/Provider/hooks';
+import { useAppDispatch, useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { CHAIN_LIST, IChainNameItem } from 'constants/index';
-import { useSetCurrentChainItem } from 'hooks/common';
-import { SideMenuKey } from 'constants/home';
-import { useEffect } from 'react';
 import { useWithdraw } from 'hooks/withdraw';
 import { useAccounts } from 'hooks/portkeyWallet';
+import { setWithdrawChainItem } from 'store/reducers/withdraw/slice';
+import { useEffectOnce } from 'react-use';
 
 interface SelectChainWrapperProps {
   className?: string;
@@ -27,18 +26,18 @@ export default function SelectChainWrapper({
   const { isPadPX } = useCommonState();
   const { currentChainItem } = useWithdraw();
   const accounts = useAccounts();
-  const setCurrentChainItem = useSetCurrentChainItem();
+  const dispatch = useAppDispatch();
 
-  useEffect(() => {
+  useEffectOnce(() => {
     // Default: first one
     // The first one is empty, show the second one
     if (!accounts?.[CHAIN_LIST[0].key]?.[0]) {
-      setCurrentChainItem(CHAIN_LIST[1], SideMenuKey.Withdraw);
+      dispatch(setWithdrawChainItem(CHAIN_LIST[1]));
     }
     if (accounts?.[CHAIN_LIST[0].key]?.[0] && !currentChainItem) {
-      setCurrentChainItem(CHAIN_LIST[0], SideMenuKey.Withdraw);
+      dispatch(setWithdrawChainItem(CHAIN_LIST[0]));
     }
-  }, [accounts, currentChainItem, setCurrentChainItem]);
+  });
 
   return (
     <div className={clsx(styles['select-chain-wrapper'], className)}>

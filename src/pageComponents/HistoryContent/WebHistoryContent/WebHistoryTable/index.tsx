@@ -77,12 +77,13 @@ const columns = [
     render: (fromAddress: string, record: TRecordsTableListType) => {
       return (
         <FromAndToBox
-          type={'From'}
+          type="From"
           fromAddress={fromAddress}
           toAddress={record.toAddress}
           network={record.fromNetwork}
           fromChainId={record.fromChainId}
           toChainId={record.toChainId}
+          orderType={record.orderType}
           orderStatus={record.status}
           txHashLabel="Tx Hash"
           txHash={record.fromTxId}
@@ -97,12 +98,13 @@ const columns = [
     render: (toAddress: string, record: TRecordsTableListType) => {
       return (
         <FromAndToBox
-          type={'To'}
+          type="To"
           fromAddress={record.fromAddress}
           toAddress={toAddress}
           network={record.toNetwork}
           fromChainId={record.fromChainId}
           toChainId={record.toChainId}
+          orderType={record.orderType}
           orderStatus={record.status}
           txHashLabel="Tx Hash"
           txHash={record.toTxId}

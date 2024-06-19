@@ -30,7 +30,6 @@ import { CommonErrorNameType } from 'api/types';
 import { handleErrorMessage } from '@portkey/did-ui-react';
 import myEvents from 'utils/myEvent';
 import { isAuthTokenError } from 'utils/api/error';
-import { useSetCurrentChainItem } from 'hooks/common';
 import { SideMenuKey } from 'constants/home';
 import { ChainId } from '@portkey/provider-types';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -350,18 +349,17 @@ export default function Content() {
     [dispatch, fromTokenList, fromTokenSymbol, getDepositData, getNetworkData, toChainItem.key],
   );
 
-  const setCurrentChainItem = useSetCurrentChainItem();
   const handleToChainChanged = useCallback(
     async (item: IChainNameItem) => {
       // if currentSymbol is empty, don't send request
-      setCurrentChainItem(item, SideMenuKey.Deposit);
+      dispatch(setToChainItem(item));
       fromTokenSymbol &&
         (await getNetworkData({
           chainId: item.key,
           symbol: fromTokenSymbol,
         }));
     },
-    [fromTokenSymbol, getNetworkData, setCurrentChainItem],
+    [dispatch, fromTokenSymbol, getNetworkData],
   );
 
   const handleRetry = useCallback(async () => {
@@ -389,7 +387,7 @@ export default function Content() {
       const chainItem = CHAIN_LIST.find((item) => item.key === routeQuery.chainId);
       if (chainItem) {
         chainId = chainItem.key;
-        setCurrentChainItem(chainItem, SideMenuKey.Deposit);
+        dispatch(setToChainItem(chainItem));
       }
     }
     if (routeQuery.tokenSymbol) {
@@ -431,7 +429,6 @@ export default function Content() {
     routeQuery.depositFromNetwork,
     routeQuery.depositToToken,
     routeQuery.tokenSymbol,
-    setCurrentChainItem,
     toChainItem.key,
     toTokenSymbol,
   ]);
@@ -441,7 +438,7 @@ export default function Content() {
     dispatch(setActiveMenuKey(SideMenuKey.Deposit));
     init();
 
-    router.push('/deposit');
+    router.replace('/deposit');
   });
 
   useEffect(() => {

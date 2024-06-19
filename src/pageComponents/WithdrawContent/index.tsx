@@ -46,6 +46,7 @@ import {
   setCurrentSymbol,
   setTokenList,
   setWithdrawAddress,
+  setWithdrawChainItem,
   setWithdrawCurrentNetwork,
   setWithdrawNetworkList,
 } from 'store/reducers/withdraw/slice';
@@ -82,7 +83,7 @@ import RemainingQuota from './RemainingQuota';
 import { useWalletContext } from 'provider/walletProvider';
 import { isAuthTokenError, isHtmlError } from 'utils/api/error';
 import myEvents from 'utils/myEvent';
-import { useCurrentVersion, useSetCurrentChainItem } from 'hooks/common';
+import { useCurrentVersion } from 'hooks/common';
 import { AelfExploreType } from 'constants/network';
 import { isDIDAddressSuffix, removeAddressSuffix, removeELFAddressSuffix } from 'utils/aelfBase';
 import { SideMenuKey } from 'constants/home';
@@ -574,13 +575,12 @@ export default function WithdrawContent() {
     [getMaxBalance],
   );
 
-  const setCurrentChainItem = useSetCurrentChainItem();
   const handleChainChanged = useCallback(
     async (item: IChainNameItem, token?: TTokenItem) => {
       try {
         setLoading(true);
         currentChainItemRef.current = item;
-        setCurrentChainItem(item, SideMenuKey.Withdraw);
+        dispatch(setWithdrawChainItem(item));
         setBalance('');
         form.setFieldValue(FormKeys.AMOUNT, '');
         handleAmountValidate();
@@ -603,6 +603,7 @@ export default function WithdrawContent() {
     },
     [
       currentSymbol,
+      dispatch,
       form,
       getAddressInput,
       getMaxBalance,
@@ -611,7 +612,6 @@ export default function WithdrawContent() {
       getToken,
       getWithdrawData,
       handleAmountValidate,
-      setCurrentChainItem,
       setLoading,
     ],
   );
@@ -934,7 +934,7 @@ export default function WithdrawContent() {
         const chainItem = CHAIN_LIST.find((item) => item.key === routeQuery.chainId);
         if (chainItem) {
           currentChainItemRef.current = chainItem;
-          setCurrentChainItem(chainItem, SideMenuKey.Withdraw);
+          dispatch(setWithdrawChainItem(chainItem));
         }
       }
       if (routeQuery.tokenSymbol) {
@@ -987,7 +987,6 @@ export default function WithdrawContent() {
     routeQuery.chainId,
     routeQuery.tokenSymbol,
     routeQuery.withdrawAddress,
-    setCurrentChainItem,
     setLoading,
     tokenList,
     withdraw.address,
@@ -1000,7 +999,7 @@ export default function WithdrawContent() {
     dispatch(setActiveMenuKey(SideMenuKey.Withdraw));
     init();
 
-    router.push('/withdraw');
+    router.replace('/withdraw');
 
     return () => {
       if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);

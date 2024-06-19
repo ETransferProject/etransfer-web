@@ -25,6 +25,7 @@ import queryString from 'query-string';
 import { useWalletContext } from 'provider/walletProvider';
 import { SideMenuKey } from 'constants/home';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
+import { resetWithdrawState } from 'store/reducers/withdraw/slice';
 
 export type TRecordsContentProps = TRecordsBodyProps & {
   onReset: () => void;
@@ -141,7 +142,8 @@ export default function Content() {
 
   useEffect(() => {
     init();
-  }, [init]);
+    dispatch(resetWithdrawState());
+  }, [dispatch, init]);
 
   useEffectOnce(() => {
     dispatch(setActiveMenuKey(SideMenuKey.History));

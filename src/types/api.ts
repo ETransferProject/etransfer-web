@@ -1,6 +1,6 @@
 import { ChainId } from '@portkey/provider-types';
 import { PortkeyVersion } from 'constants/wallet';
-import { TFromTransfer, TToTransfer } from './records';
+import { TFromTransfer, TRecordsStatus, TToTransfer } from './records';
 import type { Moment } from 'moment';
 import { IChainNameItem } from 'constants/index';
 
@@ -195,7 +195,7 @@ export interface TGetRecordsListRequest {
 export type TRecordsListItem = {
   id: string;
   orderType: BusinessType;
-  status: string;
+  status: TRecordsStatus;
   arrivalTime: number;
   fromTransfer: TFromTransfer;
   toTransfer: TToTransfer;

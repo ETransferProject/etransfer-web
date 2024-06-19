@@ -148,8 +148,9 @@ export function useCheckAllowSearch() {
 
 export function useChangeSideMenu() {
   const dispatch = useAppDispatch();
-  const routerPush = useRouterPush();
-  const routerRef = useRef(routerPush);
+  const router = useRouter();
+  const routerRef = useRef(router.push);
+  routerRef.current = router.push;
 
   return useCallback(
     (key: SideMenuKey) => {

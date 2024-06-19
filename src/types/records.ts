@@ -52,7 +52,7 @@ export type TFeeInfoType = {
 export interface TRecordsTableListType {
   key: string;
   orderType: BusinessType;
-  status: string;
+  status: TRecordsStatus;
   arrivalTime: number;
   symbol: string;
   sendingAmount: string;
