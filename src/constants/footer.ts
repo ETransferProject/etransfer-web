@@ -58,7 +58,7 @@ export const FOOTER_CONFIG: TFooterConfig = {
         },
         {
           name: 'Explorer',
-          link: 'https://aelfscan.io/',
+          link: 'https://explorer.aelf.io/',
         },
       ],
     },

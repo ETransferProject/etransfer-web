@@ -118,7 +118,7 @@ type TFormValues = {
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const isAndroid = devices.isMobile().android;
-  const { isPadPX } = useCommonState();
+  const { isPadPX, isMobilePX } = useCommonState();
   const currentVersion = useCurrentVersion();
   const withdraw = useWithdrawState();
   const accounts = useAccounts();
@@ -218,8 +218,8 @@ export default function WithdrawContent() {
           <RemainingQuota content={RemainingWithdrawalQuotaTooltip}></RemainingQuota>
         </span>
         <span className={styles['remaining-limit-label']}>
-          {isPadPX && '• 24-Hour Limit:'}
-          {!isPadPX && (
+          {isMobilePX && '• 24-Hour Limit:'}
+          {!isMobilePX && (
             <Tooltip
               className={clsx(styles['question-label'])}
               placement="top"
@@ -230,7 +230,12 @@ export default function WithdrawContent() {
         </span>
       </div>
     );
-  }, [withdrawInfo.remainingLimit, withdrawInfo.totalLimit, withdrawInfo.limitCurrency, isPadPX]);
+  }, [
+    withdrawInfo.remainingLimit,
+    withdrawInfo.totalLimit,
+    withdrawInfo.limitCurrency,
+    isMobilePX,
+  ]);
 
   const getAddressInput = useCallback(() => {
     return form.getFieldValue(FormKeys.ADDRESS)?.trim();
@@ -1082,7 +1087,7 @@ export default function WithdrawContent() {
                   selectCallback={handleNetworkChanged}
                 />
               </Form.Item>
-              {!isPadPX && !!currentNetwork?.contractAddress && (
+              {!isMobilePX && !!currentNetwork?.contractAddress && (
                 <ContractAddressForWeb
                   label={CONTRACT_ADDRESS}
                   address={currentNetwork.contractAddress}
@@ -1096,7 +1101,7 @@ export default function WithdrawContent() {
                 label={
                   <div className={clsx('flex-row-between', styles['form-label-wrapper'])}>
                     <span className={styles['form-label']}>Withdrawal Amount</span>
-                    {!isPadPX && remainingLimitComponent}
+                    {!isMobilePX && remainingLimitComponent}
                   </div>
                 }
                 name={FormKeys.AMOUNT}
@@ -1176,8 +1181,8 @@ export default function WithdrawContent() {
                 )}
               </div>
             </div>
-            {isPadPX && remainingLimitComponent}
-            {isPadPX && currentNetwork?.contractAddress && (
+            {isMobilePX && remainingLimitComponent}
+            {isMobilePX && currentNetwork?.contractAddress && (
               <ContractAddressForMobile
                 label={CONTRACT_ADDRESS}
                 networkName={currentNetwork.name}
@@ -1242,8 +1247,9 @@ export default function WithdrawContent() {
     handleTokenChange,
     isAndroid,
     isMaxBalanceLoading,
-    isPadPX,
+    isMobilePX,
     isNetworkDisable,
+    isPadPX,
     isShowNetworkLoading,
     isSubmitDisabled,
     isSuccessModalOpen,
@@ -1266,13 +1272,23 @@ export default function WithdrawContent() {
 
   return (
     <>
-      <div className={clsx('content-container', !isPadPX && 'flex-row')}>
-        <div className={clsx(!isPadPX && styles['main-wrapper'])}>{renderMainContent}</div>
+      <div className={clsx('content-container', styles['section'], !isPadPX && 'flex-row')}>
+        <div className={clsx(!isMobilePX && styles['main-wrapper'])}>{renderMainContent}</div>
         {!isPadPX && (
           <div className={clsx('flex-row', styles['faq-wrapper'])}>
             <div className={styles['faq-left']}></div>
             <FAQ className={styles['faq']} title={FAQ_WITHDRAW.title} list={FAQ_WITHDRAW.list} />
           </div>
+        )}
+        {isPadPX && !isMobilePX && (
+          <>
+            <div className={styles['divider']} />
+            <FAQ
+              className={clsx(styles['section'], styles['faq'])}
+              title={FAQ_WITHDRAW.title}
+              list={FAQ_WITHDRAW.list}
+            />
+          </>
         )}
       </div>
 
@@ -1321,7 +1337,7 @@ export default function WithdrawContent() {
             ),
             isTagA: true,
             children: (
-              <div className={clsx(styles['link-wrap'], !isPadPX && styles['linkToExplore'])}>
+              <div className={clsx(styles['link-wrap'], !isMobilePX && styles['linkToExplore'])}>
                 <span className={styles['link-word']}>View on aelf Explorer</span>
                 <Fingerprint className={styles['link-explore-icon']} />
               </div>

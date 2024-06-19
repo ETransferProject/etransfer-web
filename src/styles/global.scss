@@ -64,7 +64,7 @@ input[type='number'] {
 .content-container {
   padding-right: 40px;
 
-  @include media-pad {
+  @include media-mobile-and-pad {
     padding-right: 0;
   }
 
@@ -80,7 +80,7 @@ input[type='number'] {
     padding: 0 16px;
   }
   @include media-pad {
-    width: $content-width;
+    // width: $content-width;
     margin: auto;
     margin-bottom: $content-padding-bottom;
   }
