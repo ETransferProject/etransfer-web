@@ -10,7 +10,7 @@ import myEvents from 'utils/myEvent';
 import { useChangeSideMenu } from 'hooks/route';
 import { FOOTER_CONFIG } from 'constants/footer';
 import LinkForBlank from 'components/LinkForBlank';
-import { ArrowUp } from 'assets/images';
+import { ArrowUp, Fingerprint } from 'assets/images';
 import { usePathname } from 'next/navigation';
 
 export default function SelectMenu() {
@@ -118,15 +118,22 @@ export default function SelectMenu() {
                             className={styles['footer-secondMenu-wrapper']}
                             ariaLabel={secondMenu.name}
                             element={
-                              <div className={styles['footer-secondMenu-item']}>
-                                {secondMenu.icon && (
-                                  <span className={styles['secondMenu-item-icon']}>
-                                    <secondMenu.icon />
+                              <div
+                                className={clsx(
+                                  'flex-row-center-between',
+                                  styles['footer-secondMenu-item'],
+                                )}>
+                                <div>
+                                  {secondMenu.icon && (
+                                    <span className={styles['secondMenu-item-icon']}>
+                                      <secondMenu.icon />
+                                    </span>
+                                  )}
+                                  <span className={styles['secondMenu-item-name']}>
+                                    {secondMenu.name}
                                   </span>
-                                )}
-                                <span className={styles['secondMenu-item-name']}>
-                                  {secondMenu.name}
-                                </span>
+                                </div>
+                                <Fingerprint />
                               </div>
                             }
                           />

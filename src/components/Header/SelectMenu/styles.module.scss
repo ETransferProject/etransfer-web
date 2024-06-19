@@ -113,6 +113,10 @@
 .footer-secondMenu-item {
   cursor: pointer;
   padding: 12px 16px 12px 32px;
+
+  svg path {
+    fill: $secondary-text;
+  }
 }
 
 .secondMenu-item-icon {
