@@ -55,6 +55,10 @@ import TelegramIcon from './community/telegram.svg';
 import DiscordIcon from './community/discord.svg';
 import TwitterIcon from './community/twitter.svg';
 
+import TelegramBigIcon from './community/telegramBig.svg';
+import DiscordBigIcon from './community/discordBig.svg';
+import TwitterBigIcon from './community/twitterBig.svg';
+
 import QuestionMarkLarge from './questionMarkLarge.svg';
 import LegalIcon from './legal.svg';
 import DeveloperIcon from './developer.svg';
@@ -117,6 +121,9 @@ export {
   TelegramIcon,
   DiscordIcon,
   TwitterIcon,
+  TelegramBigIcon,
+  DiscordBigIcon,
+  TwitterBigIcon,
   QuestionMarkLarge,
   LegalIcon,
   DeveloperIcon,

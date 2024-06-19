@@ -30,7 +30,7 @@
   gap: 12px;
   height: 56px;
   padding: 16px 12px;
-  color: $secondary-text;
+  color: $third-text;
 
   &.menu-item-active {
     color: $normal;
@@ -40,7 +40,7 @@
     }
   }
   .menu-item-icon path {
-    fill: $secondary-text;
+    fill: $third-text;
   }
 }
 
@@ -68,10 +68,12 @@
 }
 
 .footer {
-  color: $secondary-text;
+  color: $third-text;
   font-size: 16px;
   font-weight: 500;
   line-height: 24px;
+  padding-bottom: 24px;
+
   :global {
     .ant-collapse-header {
       padding: 16px 16px 16px 16px !important;
@@ -86,7 +88,7 @@
 }
 
 .footer-item-faq {
-  color: $secondary-text;
+  color: $third-text;
   padding: 16px 44px 16px 16px;
 }
 
@@ -98,7 +100,7 @@
 }
 
 .footer-item-group-name {
-  color: $secondary-text;
+  color: $third-text;
   margin-left: 12px;
   font-size: 16px;
   font-weight: 500;
@@ -115,7 +117,7 @@
   padding: 12px 16px 12px 32px;
 
   svg path {
-    fill: $secondary-text;
+    fill: $third-text;
   }
 }
 
@@ -124,7 +126,7 @@
 }
 
 .secondMenu-item-name {
-  color: #55585e;
+  color: $third-text;
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;

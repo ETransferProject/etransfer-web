@@ -11,14 +11,12 @@ import { useChangeSideMenu } from 'hooks/route';
 import { FOOTER_CONFIG } from 'constants/footer';
 import LinkForBlank from 'components/LinkForBlank';
 import { ArrowUp, Fingerprint } from 'assets/images';
-import { usePathname } from 'next/navigation';
 
 export default function SelectMenu() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-  const { activeMenuKey, isUnreadHistory, isMobilePX, isPadPX } = useCommonState();
+  const { activeMenuKey, isUnreadHistory, isMobilePX } = useCommonState();
   const changeSideMenu = useChangeSideMenu();
   const [activePanel, setActivePanel] = useState<string | string[]>([]);
-  const pathname = usePathname();
 
   return (
     <>
@@ -64,86 +62,96 @@ export default function SelectMenu() {
             })}
           </div>
 
-          <div className={styles['divider']} />
+          {isMobilePX && (
+            <>
+              <div className={styles['divider']} />
+              <div className={styles['footer']}>
+                <LinkForBlank
+                  href={FOOTER_CONFIG.faq.link}
+                  className={styles['menu-secondMenu-item']}
+                  ariaLabel="FAQ"
+                  element={
+                    <div className={clsx('flex-row-center', styles['footer-item-faq'])}>
+                      <FOOTER_CONFIG.faq.icon />
+                      <span className={styles['footer-item-faq-name']}>
+                        {FOOTER_CONFIG.faq.name}
+                      </span>
+                    </div>
+                  }
+                />
 
-          {((pathname === '/history' && isPadPX) || (pathname !== '/history' && isMobilePX)) && (
-            <div className={styles['footer']}>
-              <LinkForBlank
-                href={FOOTER_CONFIG.faq.link}
-                className={styles['menu-secondMenu-item']}
-                ariaLabel="FAQ"
-                element={
-                  <div className={clsx('flex-row-center', styles['footer-item-faq'])}>
-                    <FOOTER_CONFIG.faq.icon />
-                    <span className={styles['footer-item-faq-name']}>{FOOTER_CONFIG.faq.name}</span>
-                  </div>
-                }
-              />
-
-              <Collapse
-                ghost
-                expandIconPosition="end"
-                onChange={(res) => {
-                  setActivePanel(res);
-                }}>
-                {FOOTER_CONFIG.menus.map((menu) => {
-                  return (
-                    <Collapse.Panel
-                      key={'footerMenus' + menu.group}
-                      className={styles['footer-item']}
-                      forceRender={true}
-                      showArrow={false}
-                      header={
-                        <div className="flex-row-center-between">
-                          <div>
-                            <span className={clsx('flex-row-center', styles['footer-item-group'])}>
-                              <menu.icon />
-                              <span className={styles['footer-item-group-name']}>{menu.group}</span>
-                            </span>
+                <Collapse
+                  ghost
+                  expandIconPosition="end"
+                  onChange={(res) => {
+                    setActivePanel(res);
+                  }}>
+                  {FOOTER_CONFIG.menus.map((menu) => {
+                    return (
+                      <Collapse.Panel
+                        key={'footerMenus' + menu.group}
+                        className={styles['footer-item']}
+                        forceRender={true}
+                        showArrow={false}
+                        header={
+                          <div className="flex-row-center-between">
+                            <div>
+                              <span
+                                className={clsx('flex-row-center', styles['footer-item-group'])}>
+                                <menu.icon />
+                                <span className={styles['footer-item-group-name']}>
+                                  {menu.group}
+                                </span>
+                              </span>
+                            </div>
+                            <ArrowUp
+                              className={
+                                activePanel?.includes('footerMenus' + menu.group)
+                                  ? ''
+                                  : styles['arrow-down']
+                              }
+                            />
                           </div>
-                          <ArrowUp
-                            className={
-                              activePanel?.includes('footerMenus' + menu.group)
-                                ? ''
-                                : styles['arrow-down']
-                            }
-                          />
-                        </div>
-                      }>
-                      {menu.items.map((secondMenu) => {
-                        return (
-                          <LinkForBlank
-                            key={'footerSecondMenu' + secondMenu.name}
-                            href={secondMenu.link}
-                            className={styles['footer-secondMenu-wrapper']}
-                            ariaLabel={secondMenu.name}
-                            element={
-                              <div
-                                className={clsx(
-                                  'flex-row-center-between',
-                                  styles['footer-secondMenu-item'],
-                                )}>
-                                <div>
-                                  {secondMenu.icon && (
-                                    <span className={styles['secondMenu-item-icon']}>
-                                      <secondMenu.icon />
+                        }>
+                        {menu.items.map((secondMenu) => {
+                          return (
+                            <LinkForBlank
+                              key={'footerSecondMenu' + secondMenu.name}
+                              href={secondMenu.link}
+                              className={styles['footer-secondMenu-wrapper']}
+                              ariaLabel={secondMenu.name}
+                              element={
+                                <div
+                                  className={clsx(
+                                    'flex-row-center-between',
+                                    styles['footer-secondMenu-item'],
+                                  )}>
+                                  <div className="flex-row-center">
+                                    {secondMenu.iconBig && (
+                                      <span
+                                        className={clsx(
+                                          'flex-row-center',
+                                          styles['secondMenu-item-icon'],
+                                        )}>
+                                        <secondMenu.iconBig />
+                                      </span>
+                                    )}
+                                    <span className={styles['secondMenu-item-name']}>
+                                      {secondMenu.name}
                                     </span>
-                                  )}
-                                  <span className={styles['secondMenu-item-name']}>
-                                    {secondMenu.name}
-                                  </span>
+                                  </div>
+                                  <Fingerprint />
                                 </div>
-                                <Fingerprint />
-                              </div>
-                            }
-                          />
-                        );
-                      })}
-                    </Collapse.Panel>
-                  );
-                })}
-              </Collapse>
-            </div>
+                              }
+                            />
+                          );
+                        })}
+                      </Collapse.Panel>
+                    );
+                  })}
+                </Collapse>
+              </div>
+            </>
           )}
         </div>
       </CommonDrawer>

@@ -49,6 +49,15 @@ input[type='number'] {
   }
 }
 
+.etransfer-web-wrapper {
+  height: unset;
+}
+
+.etransfer-web-notLogin {
+  width: 100%;
+  height: 100%;
+}
+
 .etransfer-web-content {
   width: 100%;
   height: 100%;
@@ -59,7 +68,7 @@ input[type='number'] {
   }
   @include media-huge-screen {
     width: calc($max-width + 1px - $sider-width);
-    margin: none;
+    margin: unset;
   }
 }
 
@@ -118,12 +127,10 @@ input[type='number'] {
   }
   @include media-huge-web {
     width: calc(100vw - $sider-width);
-    height: calc(100vh - $web-header-height);
     max-width: calc($max-width - $sider-width);
   }
   @include media-huge-screen {
     width: calc($max-width + 1px - $sider-width);
-    height: calc(100vh - $web-header-height);
-    margin: none;
+    margin: unset;
   }
 }

@@ -71,7 +71,7 @@ export default function MobileDepositContent({
 
   return (
     <div className="main-content-container main-content-container-safe-area">
-      <div className={styles['section']}>
+      <div className={clsx(styles['main-section'], styles['section'])}>
         <SelectTokenNetwork
           label={'From'}
           tokenSelected={fromTokenSelected}

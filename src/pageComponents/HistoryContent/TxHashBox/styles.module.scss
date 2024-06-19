@@ -9,6 +9,9 @@
 .value {
   color: $brand;
   cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .null-value {
@@ -22,7 +25,7 @@
 }
 
 .mobile-font {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
   line-height: 22px;
 }

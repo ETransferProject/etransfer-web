@@ -14,6 +14,7 @@ import styles from './styles.module.scss';
 import { useRouteParamType } from 'hooks/route';
 import { useUpdateRecord } from 'hooks/updateRecord';
 import Footer from 'components/Footer';
+import { usePathname } from 'next/navigation';
 
 const Layout = ({
   children,
@@ -26,6 +27,7 @@ const Layout = ({
   isShowSider?: boolean;
   isShowFooter?: boolean;
 }) => {
+  const pathname = usePathname();
   useEffect((): any => {
     if (typeof window !== 'undefined') {
       const resize = () => {
@@ -61,7 +63,7 @@ const Layout = ({
         styles['layout-wrapper'],
         styles['layout-wrapper-weight'],
       )}>
-      {isShowHeader && <Header />}
+      {isShowHeader && (!isPadPX || (isPadPX && pathname !== '/')) && <Header />}
       <div
         className={clsx(
           'flex-row',
@@ -69,7 +71,7 @@ const Layout = ({
           styles['layout-content-wrapper-with-header'],
         )}>
         {isShowSider && !isPadPX && <Sider />}
-        <div className={'etransfer-web-content'}>
+        <div className={pathname !== '/' ? 'etransfer-web-content' : 'etransfer-web-notLogin'}>
           <Suspense fallback={<Loading />}>{children}</Suspense>
         </div>
       </div>

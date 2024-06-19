@@ -22,6 +22,12 @@
   border: 1px solid $dividers;
 }
 
+.main-section {
+  @include media-mobile-and-pad {
+    padding-top: 16px;
+  }
+}
+
 .section {
   @include media-pad {
     width: $content-width;

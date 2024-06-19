@@ -2,11 +2,14 @@ import {
   CommunityIcon,
   ContactsIcon,
   DeveloperIcon,
+  DiscordBigIcon,
   DiscordIcon,
   FooterLogo,
   LegalIcon,
   QuestionMarkLarge,
+  TelegramBigIcon,
   TelegramIcon,
+  TwitterBigIcon,
   TwitterIcon,
 } from 'assets/images';
 import { TFooterConfig, TFooterMenuItem, TFrequentlyAskedQuestionsSection } from 'types/footer';
@@ -29,16 +32,19 @@ export const FOOTER_CONFIG: TFooterConfig = {
       items: [
         {
           icon: TwitterIcon,
+          iconBig: TwitterBigIcon,
           name: 'Twitter',
           link: 'https://x.com/ETransfer_Web3',
         },
         {
           icon: DiscordIcon,
+          iconBig: DiscordBigIcon,
           name: 'Discord',
           link: 'https://discord.gg/zuN2wrZrd9',
         },
         {
           icon: TelegramIcon,
+          iconBig: TelegramBigIcon,
           name: 'Telegram',
           link: 'https://t.me/etransferofficial',
         },

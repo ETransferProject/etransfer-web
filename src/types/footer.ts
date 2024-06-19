@@ -15,9 +15,10 @@ export type TFooterMenuItem = {
   name: string;
   link: string;
   icon?: string;
+  iconBig?: string;
 };
 
-export type TFrequentlyAskedQuestions = Required<TFooterMenuItem>;
+export type TFrequentlyAskedQuestions = Omit<Required<TFooterMenuItem>, 'iconBig'>;
 
 export type TFrequentlyAskedQuestionsSection = {
   title: string;
