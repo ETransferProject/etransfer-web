@@ -5,7 +5,7 @@ import { WebLoginState, useWebLogin } from 'aelf-web-login';
 import { useQueryAuthToken } from 'hooks/authToken';
 
 export default function ConnectWalletButton(props: CommonButtonProps) {
-  const { login, loginState } = useWebLogin();
+  const { login, loginState, loginEagerly } = useWebLogin();
   const { getAuth } = useQueryAuthToken();
 
   const handleLogin = useCallback(async () => {
@@ -16,7 +16,10 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
     if (loginState === WebLoginState.initial || loginState === WebLoginState.lock) {
       login();
     }
-  }, [getAuth, login, loginState]);
+    if (loginState === WebLoginState.eagerly) {
+      loginEagerly();
+    }
+  }, [getAuth, login, loginEagerly, loginState]);
 
   return (
     <CommonButton {...props} onClick={handleLogin}>

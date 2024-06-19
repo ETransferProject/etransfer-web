@@ -7,6 +7,7 @@ const EventList = [
   'AuthTokenSuccess',
   'UpdateNewRecordStatus',
   'HistoryActive',
+  'GoogleReCaptcha',
 ] as const;
 
 // eslint-disable-next-line no-new-func

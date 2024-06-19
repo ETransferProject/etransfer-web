@@ -33,7 +33,7 @@ export default function SelectChainWrapper({
     // Default: first one
     // The first one is empty, show the second one
     if (!accounts?.[CHAIN_LIST[0].key]?.[0]) {
-      setCurrentChainItem(CHAIN_LIST[1]);
+      setCurrentChainItem(CHAIN_LIST[1], SideMenuKey.Withdraw);
     }
     if (accounts?.[CHAIN_LIST[0].key]?.[0] && !currentChainItem) {
       setCurrentChainItem(CHAIN_LIST[0], SideMenuKey.Withdraw);
