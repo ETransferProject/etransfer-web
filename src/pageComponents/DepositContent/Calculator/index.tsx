@@ -12,6 +12,8 @@ import { TOKEN_INFO_USDT } from 'constants/index';
 import { formatSymbolDisplay } from 'utils/format';
 import { MAX_UPDATE_TIME } from 'constants/calculate';
 import { useSearchParams } from 'next/navigation';
+import { isAuthTokenError } from 'utils/api/error';
+import { SIGNATURE_MISSING_TIP } from 'constants/misc';
 
 const DEFAULT_AMOUNT = '0.00';
 const DEFAULT_PAY_AMOUNT = '100';
@@ -51,7 +53,11 @@ export default function Calculator() {
         setMinReceiveAmount(conversionRate?.minimumReceiveAmount || DEFAULT_AMOUNT);
       }
     } catch (error) {
-      singleMessage.error(handleErrorMessage(error));
+      if (isAuthTokenError(error)) {
+        singleMessage.info(SIGNATURE_MISSING_TIP);
+      } else {
+        singleMessage.error(handleErrorMessage(error));
+      }
     }
   }, [fromTokenSymbol, toChainItem.key, toTokenSymbol]);
 
