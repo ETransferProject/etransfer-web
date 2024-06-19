@@ -40,7 +40,7 @@ export const FOOTER_CONFIG: TFooterConfig = {
         {
           icon: TelegramIcon,
           name: 'Telegram',
-          link: '',
+          link: 'https://t.me/etransferofficial',
         },
       ],
     },
@@ -50,7 +50,7 @@ export const FOOTER_CONFIG: TFooterConfig = {
       items: [
         {
           name: 'Documentation',
-          link: 'https://etransfer.gitbook.io/docs/about-etransfer/introduction',
+          link: 'https://etransfer.gitbook.io/docs',
         },
         {
           name: 'Wallet',
@@ -99,11 +99,11 @@ export const DOCUMENTATION_LINK: Record<string, TFooterMenuItem> = {
     link: 'https://etransfer.gitbook.io/docs/faq#what-is-etransfer',
   },
   depositProcess: {
-    name: 'How to deposit to Aelf by ETransfer?',
+    name: 'How to deposit to aelf by ETransfer?',
     link: 'https://etransfer.gitbook.io/docs/faq#how-to-deposit-to-aelf-by-etransfer',
   },
   withdrawProcess: {
-    name: 'How to withdraw from Aelf by ETransfer?',
+    name: 'How to withdraw from aelf by ETransfer?',
     link: 'https://etransfer.gitbook.io/docs/faq#how-to-withdraw-from-aelf-by-etransfer',
   },
   notArrived: {
