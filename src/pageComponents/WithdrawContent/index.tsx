@@ -218,8 +218,8 @@ export default function WithdrawContent() {
           <RemainingQuota content={RemainingWithdrawalQuotaTooltip}></RemainingQuota>
         </span>
         <span className={styles['remaining-limit-label']}>
-          {isMobilePX && '• 24-Hour Limit:'}
-          {!isMobilePX && (
+          {isPadPX && '• 24-Hour Limit:'}
+          {!isPadPX && (
             <Tooltip
               className={clsx(styles['question-label'])}
               placement="top"
@@ -230,12 +230,7 @@ export default function WithdrawContent() {
         </span>
       </div>
     );
-  }, [
-    withdrawInfo.remainingLimit,
-    withdrawInfo.totalLimit,
-    withdrawInfo.limitCurrency,
-    isMobilePX,
-  ]);
+  }, [withdrawInfo.remainingLimit, withdrawInfo.totalLimit, withdrawInfo.limitCurrency, isPadPX]);
 
   const getAddressInput = useCallback(() => {
     return form.getFieldValue(FormKeys.ADDRESS)?.trim();
@@ -1087,7 +1082,7 @@ export default function WithdrawContent() {
                   selectCallback={handleNetworkChanged}
                 />
               </Form.Item>
-              {!isMobilePX && !!currentNetwork?.contractAddress && (
+              {!isPadPX && !!currentNetwork?.contractAddress && (
                 <ContractAddressForWeb
                   label={CONTRACT_ADDRESS}
                   address={currentNetwork.contractAddress}
@@ -1101,7 +1096,7 @@ export default function WithdrawContent() {
                 label={
                   <div className={clsx('flex-row-between', styles['form-label-wrapper'])}>
                     <span className={styles['form-label']}>Withdrawal Amount</span>
-                    {!isMobilePX && remainingLimitComponent}
+                    {!isPadPX && remainingLimitComponent}
                   </div>
                 }
                 name={FormKeys.AMOUNT}
@@ -1181,8 +1176,8 @@ export default function WithdrawContent() {
                 )}
               </div>
             </div>
-            {isMobilePX && remainingLimitComponent}
-            {isMobilePX && currentNetwork?.contractAddress && (
+            {isPadPX && remainingLimitComponent}
+            {isPadPX && currentNetwork?.contractAddress && (
               <ContractAddressForMobile
                 label={CONTRACT_ADDRESS}
                 networkName={currentNetwork.name}
@@ -1247,7 +1242,6 @@ export default function WithdrawContent() {
     handleTokenChange,
     isAndroid,
     isMaxBalanceLoading,
-    isMobilePX,
     isNetworkDisable,
     isPadPX,
     isShowNetworkLoading,
@@ -1339,7 +1333,7 @@ export default function WithdrawContent() {
             ),
             isTagA: true,
             children: (
-              <div className={clsx(styles['link-wrap'], !isMobilePX && styles['linkToExplore'])}>
+              <div className={clsx(styles['link-wrap'], !isPadPX && styles['linkToExplore'])}>
                 <span className={styles['link-word']}>View on aelf Explorer</span>
                 <Fingerprint className={styles['link-explore-icon']} />
               </div>
