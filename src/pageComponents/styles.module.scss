@@ -13,6 +13,7 @@
   .layout-content-wrapper {
     position: relative;
     flex-direction: row;
+    height: 100%;
   }
   .layout-content-wrapper-with-header {
     @include media-mobile-and-pad {

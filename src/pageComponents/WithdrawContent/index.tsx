@@ -1272,8 +1272,10 @@ export default function WithdrawContent() {
 
   return (
     <>
-      <div className={clsx('content-container', styles['section'], !isPadPX && 'flex-row')}>
-        <div className={clsx(!isMobilePX && styles['main-wrapper'])}>{renderMainContent}</div>
+      <div className={clsx('content-container', !isPadPX && 'flex-row')}>
+        <div className={clsx(styles['section'], !isMobilePX && styles['main-wrapper'])}>
+          {renderMainContent}
+        </div>
         {!isPadPX && (
           <div className={clsx('flex-row', styles['faq-wrapper'])}>
             <div className={styles['faq-left']}></div>

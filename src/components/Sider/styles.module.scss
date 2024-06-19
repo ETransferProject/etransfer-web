@@ -5,6 +5,8 @@
 
 .menu-container {
   width: $sider-width;
+  min-width: $sider-width;
+  min-height: $content-min-height;
   padding-top: 40px;
   background-color: $page-bg;
   @include media-huge-screen {

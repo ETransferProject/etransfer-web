@@ -64,20 +64,21 @@ const Layout = ({
         styles['layout-wrapper-weight'],
       )}>
       {isShowHeader && <Header />}
-      <AntdLayout
-        className={clsx(styles['layout-content-wrapper'], {
+      <div
+        className={clsx('flex-row', styles['layout-content-wrapper'], {
           [styles['layout-content-wrapper-with-header']]: isActive || !isPadPX,
         })}>
         {isShowSider && !isPadPX && <Sider />}
-        <AntdLayout.Content className={'etransfer-web-content'}>
+        <div className={'etransfer-web-content'}>
           <Suspense fallback={<Loading />}>{children}</Suspense>
-        </AntdLayout.Content>
-      </AntdLayout>
-      {isShowFooter && !isMobilePX && (
+        </div>
+      </div>
+      {isShowFooter && !isMobilePX && <Footer />}
+      {/* {isShowFooter && !isMobilePX && (
         <AntdLayout.Footer className={styles['layout-footer']}>
           <Footer />
         </AntdLayout.Footer>
-      )}
+      )} */}
     </AntdLayout>
   );
 };
