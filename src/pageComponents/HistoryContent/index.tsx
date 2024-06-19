@@ -12,7 +12,7 @@ import {
   setTimestamp,
 } from 'store/reducers/records/slice';
 import { useDebounceCallback } from 'hooks/debounce';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { TRecordsRequestType, TRecordsRequestStatus } from 'types/records';
 import { TRecordsListItem } from 'types/api';
 import moment from 'moment';
@@ -26,6 +26,8 @@ import { useWalletContext } from 'provider/walletProvider';
 import { SideMenuKey } from 'constants/home';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { resetWithdrawState } from 'store/reducers/withdraw/slice';
+import { useIsActive } from 'hooks/portkeyWallet';
+import { useRouterPush } from 'hooks/route';
 
 export type TRecordsContentProps = TRecordsBodyProps & {
   onReset: () => void;
@@ -40,6 +42,11 @@ export default function Content() {
   const dispatch = useAppDispatch();
   const { setFilter } = useHistoryFilter();
   const { setLoading } = useLoading();
+  const [{ wallet }] = useWalletContext();
+  const isActive = useIsActive();
+  const routerPush = useRouterPush();
+  const routerPushRef = useRef(routerPush);
+  routerPushRef.current = routerPush;
 
   const {
     type = TRecordsRequestType.ALL,
@@ -131,22 +138,18 @@ export default function Content() {
     [searchParams],
   );
 
-  const [{ wallet }] = useWalletContext();
-  const init = useCallback(() => {
-    if (isUnreadHistory) {
-      handleReset(true);
-    } else {
-      requestRecordsList(true, true);
+  const checkActive = useCallback(async () => {
+    await sleep(100);
+    if (!isActive) {
+      routerPushRef.current('/');
     }
-  }, [handleReset, isUnreadHistory, requestRecordsList]);
-
-  useEffect(() => {
-    init();
-    dispatch(resetWithdrawState());
-  }, [dispatch, init]);
+  }, [isActive]);
 
   useEffectOnce(() => {
     dispatch(setActiveMenuKey(SideMenuKey.History));
+
+    checkActive();
+
     const search: any = {
       method: routeQuery.method != null ? routeQuery.method : undefined,
       status: routeQuery.status != null ? routeQuery.status : undefined,
@@ -179,6 +182,32 @@ export default function Content() {
     router.replace(`/history${searchStr ? '?' + searchStr : ''}`);
   });
 
+  const init = useCallback(() => {
+    if (isUnreadHistory) {
+      handleReset(true);
+    } else {
+      requestRecordsList(true, true);
+    }
+  }, [handleReset, isUnreadHistory, requestRecordsList]);
+
+  useEffect(() => {
+    init();
+    dispatch(resetWithdrawState());
+  }, [dispatch, init]);
+
+  // lister login
+  const refreshData = useCallback(() => {
+    requestRecordsList(true, true);
+  }, [requestRecordsList]);
+  useEffectOnce(() => {
+    const { remove } = myEvents.LoginSuccess.addListener(refreshData);
+
+    return () => {
+      remove();
+    };
+  });
+
+  // lister unread records
   useEffectOnce(() => {
     const { remove } = myEvents.HistoryActive.addListener(handleReset);
 

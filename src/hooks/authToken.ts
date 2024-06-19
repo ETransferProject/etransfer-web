@@ -94,6 +94,7 @@ export function useQueryAuthToken() {
       }),
     );
     dispatch(setSwitchVersionAction(PortkeyVersion.v2));
+    myEvents.LoginSuccess.emit();
     if (pathname === '/') {
       routerPush('/' + (routeType || activeMenuKey).toLocaleLowerCase());
     }
