@@ -11,7 +11,6 @@ import { useCommonState } from 'store/Provider/hooks';
 import { MOBILE_PX, PAD_PX } from 'constants/media';
 import clsx from 'clsx';
 import styles from './styles.module.scss';
-import { useIsActive } from 'hooks/portkeyWallet';
 import { useRouteParamType } from 'hooks/route';
 import { useUpdateRecord } from 'hooks/updateRecord';
 import Footer from 'components/Footer';
@@ -51,7 +50,6 @@ const Layout = ({
     }
   }, []);
   const { isPadPX, isMobilePX } = useCommonState();
-  const isActive = useIsActive();
 
   useRouteParamType();
   useUpdateRecord();
@@ -65,9 +63,11 @@ const Layout = ({
       )}>
       {isShowHeader && <Header />}
       <div
-        className={clsx('flex-row', styles['layout-content-wrapper'], {
-          [styles['layout-content-wrapper-with-header']]: isActive || !isPadPX,
-        })}>
+        className={clsx(
+          'flex-row',
+          styles['layout-content-wrapper'],
+          styles['layout-content-wrapper-with-header'],
+        )}>
         {isShowSider && !isPadPX && <Sider />}
         <div className={'etransfer-web-content'}>
           <Suspense fallback={<Loading />}>{children}</Suspense>
