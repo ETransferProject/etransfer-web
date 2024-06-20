@@ -26,6 +26,7 @@ import { resetLocalJWT } from 'api/utils';
 import { useQueryAuthToken } from 'hooks/authToken';
 import { eTransferInstance } from 'utils/etransferInstance';
 import { useClearStore } from 'hooks/common';
+import { useRouterPush } from 'hooks/route';
 
 export const DESTROY = 'DESTROY';
 const SET_WALLET = 'SET_WALLET';
@@ -139,22 +140,27 @@ function WalletProvider({ children }: { children: React.ReactNode }) {
   }, [webLoginContext.loginState]);
 
   const { queryAuth } = useQueryAuthToken();
-  const onAuthorizationExpired = useCallback(() => {
+  const routerPush = useRouterPush();
+  const routerPushRef = useRef(routerPush);
+  routerPushRef.current = routerPush;
+  const onAuthorizationExpired = useCallback(async () => {
     if (webLoginContext.loginState !== WebLoginState.logined) {
       console.log('AuthorizationExpired: Not Logined');
+      routerPushRef.current('/', false);
       return;
     }
     resetLocalJWT();
     console.log('AuthorizationExpired');
-    eTransferInstance.setObtainingToken(true);
-    queryAuth();
+    eTransferInstance.setUnauthorized(true);
+    await queryAuth();
   }, [queryAuth, webLoginContext.loginState]);
   const onAuthorizationExpiredRef = useRef(onAuthorizationExpired);
   onAuthorizationExpiredRef.current = onAuthorizationExpired;
 
   useEffect(() => {
-    const { remove } = myEvents.DeniedRequest.addListener(() => {
-      if (eTransferInstance.obtainingToken) return;
+    const { remove } = myEvents.Unauthorized.addListener(() => {
+      if (eTransferInstance.unauthorized) return;
+      eTransferInstance.setUnauthorized(true);
       onAuthorizationExpiredRef.current?.();
     });
     return () => {

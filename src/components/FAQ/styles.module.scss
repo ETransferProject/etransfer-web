@@ -1,0 +1,26 @@
+@import '/src/assets/theme/color.scss';
+
+.faq {
+  min-width: 245px;
+}
+
+.faq-title {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 28px;
+  margin-bottom: 30px;
+}
+
+.faq-list {
+  gap: 24px;
+}
+
+.faq-item {
+  color: $primary-text;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  &:hover {
+    color: $brand;
+  }
+}

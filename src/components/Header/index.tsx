@@ -9,11 +9,11 @@ import { BrandName } from 'constants/index';
 export type DefaultHeadProps = { title?: string; description?: string };
 
 export default function Header(props: DefaultHeadProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   return (
     <div className={styles['header-wrapper']}>
       <DefaultHead {...props} />
-      {isMobilePX ? <MobileHeader /> : <WebHeader />}
+      {isPadPX ? <MobileHeader /> : <WebHeader />}
     </div>
   );
 }

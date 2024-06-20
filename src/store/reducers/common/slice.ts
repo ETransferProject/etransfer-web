@@ -5,6 +5,7 @@ import { SideMenuKey } from 'constants/home';
 export interface CommonState {
   isMobile: boolean;
   isMobilePX: boolean;
+  isPadPX: boolean;
   activeMenuKey: SideMenuKey;
   currentVersion?: PortkeyVersion;
   isUnreadHistory?: boolean;
@@ -13,6 +14,7 @@ export interface CommonState {
 export const initialState: CommonState = {
   isMobile: false,
   isMobilePX: false,
+  isPadPX: false,
   activeMenuKey: SideMenuKey.Deposit,
   currentVersion: PortkeyVersion.v2,
   isUnreadHistory: false,
@@ -28,6 +30,9 @@ export const CommonSlice = createSlice({
     },
     setIsMobilePX: (state, action: PayloadAction<boolean>) => {
       state.isMobilePX = action.payload;
+    },
+    setIsPadPX: (state, action: PayloadAction<boolean>) => {
+      state.isPadPX = action.payload;
     },
     setActiveMenuKey: (state, action: PayloadAction<SideMenuKey>) => {
       state.activeMenuKey = action.payload;
@@ -48,6 +53,7 @@ export const CommonSlice = createSlice({
 export const {
   setIsMobile,
   setIsMobilePX,
+  setIsPadPX,
   setActiveMenuKey,
   resetCommon,
   setSwitchVersionAction,

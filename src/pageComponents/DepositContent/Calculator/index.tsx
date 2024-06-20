@@ -12,12 +12,14 @@ import { TOKEN_INFO_USDT } from 'constants/index';
 import { formatSymbolDisplay } from 'utils/format';
 import { MAX_UPDATE_TIME } from 'constants/calculate';
 import { useSearchParams } from 'next/navigation';
+import { isAuthTokenError } from 'utils/api/error';
+import { SIGNATURE_MISSING_TIP } from 'constants/misc';
 
 const DEFAULT_AMOUNT = '0.00';
 const DEFAULT_PAY_AMOUNT = '100';
 
 export default function Calculator() {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const { fromTokenSymbol, fromTokenList, toChainItem, toTokenSymbol } = useDepositState();
   const searchParams = useSearchParams();
   const [payAmount, setPayAmount] = useState(
@@ -51,7 +53,11 @@ export default function Calculator() {
         setMinReceiveAmount(conversionRate?.minimumReceiveAmount || DEFAULT_AMOUNT);
       }
     } catch (error) {
-      singleMessage.error(handleErrorMessage(error));
+      if (isAuthTokenError(error)) {
+        singleMessage.info(SIGNATURE_MISSING_TIP);
+      } else {
+        singleMessage.error(handleErrorMessage(error));
+      }
     }
   }, [fromTokenSymbol, toChainItem.key, toTokenSymbol]);
 
@@ -195,7 +201,7 @@ export default function Calculator() {
       {isExpand && (
         <>
           <Space direction="vertical" size={16} />
-          {isMobilePX ? (
+          {isPadPX ? (
             <div className={styles['calculator-content']}>
               <div>{renderYouPay}</div>
               <Space direction="vertical" size={16} />

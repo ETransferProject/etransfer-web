@@ -11,7 +11,10 @@
     height: 100vh;
   }
   .layout-content-wrapper {
+    position: relative;
     flex-direction: row;
+    // height: 100%;
+    flex: 1;
   }
   .layout-content-wrapper-with-header {
     @include media-mobile-and-pad {
@@ -21,4 +24,10 @@
       margin-top: $web-header-height;
     }
   }
+}
+
+.layout-footer {
+  z-index: 1;
+  padding: 0 !important;
+  margin: 0 !important;
 }

@@ -5,10 +5,9 @@ import styles from './styles.module.scss';
 import { CHAIN_LIST, IChainNameItem } from 'constants/index';
 import Space from 'components/Space';
 import { useEffect, useMemo } from 'react';
-import { useSetCurrentChainItem } from 'hooks/common';
-import { SideMenuKey } from 'constants/home';
 import { useAccounts } from 'hooks/portkeyWallet';
-import { useDepositState } from 'store/Provider/hooks';
+import { useAppDispatch, useDepositState } from 'store/Provider/hooks';
+import { setToChainItem } from 'store/reducers/deposit/slice';
 
 type TSelectTokenChain = {
   label: string;
@@ -24,15 +23,15 @@ export default function SelectTokenChain({
 }: TSelectTokenChain) {
   const { toChainItem, toChainList, toTokenList } = useDepositState();
   const accounts = useAccounts();
-  const setCurrentChainItem = useSetCurrentChainItem();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     // Default: first one
     // The first one is empty, show the second one
     if (accounts?.[CHAIN_LIST[0].key]?.[0] && !toChainItem) {
-      setCurrentChainItem(CHAIN_LIST[0], SideMenuKey.Deposit);
+      dispatch(setToChainItem(CHAIN_LIST[0]));
     }
-  }, [accounts, setCurrentChainItem, toChainItem]);
+  }, [accounts, dispatch, toChainItem]);
 
   const menuItems = useMemo(() => toChainList || CHAIN_LIST, [toChainList]);
 
