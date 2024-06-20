@@ -7,7 +7,9 @@ import Layout from 'pageComponents/layout';
 export default function Home() {
   return (
     <Layout isShowHeader={true}>
-      <div className={styles['content-wrapper']}>{<NotConnectedWalletContent />}</div>
+      <div className={styles['content-wrapper']}>
+        <NotConnectedWalletContent />
+      </div>
     </Layout>
   );
 }
