@@ -193,7 +193,7 @@ export default function Content() {
     init();
   }, [dispatch, init]);
 
-  // lister login
+  // Listener login
   const refreshData = useCallback(() => {
     requestRecordsList(true, true);
   }, [requestRecordsList]);
@@ -205,7 +205,7 @@ export default function Content() {
     };
   });
 
-  // lister unread records
+  // Listener unread records
   useEffectOnce(() => {
     const { remove } = myEvents.HistoryActive.addListener(handleReset);
 

@@ -141,7 +141,7 @@ export default function Calculator() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromTokenSymbol, toChainItem, toTokenSymbol]);
 
-  // lister login
+  // Listener login
   const getCalculateRef = useRef(getCalculate);
   getCalculateRef.current = getCalculate;
   useEffectOnce(() => {

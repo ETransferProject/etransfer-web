@@ -92,7 +92,7 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromSymbol, toSymbol, toChainId]);
 
-  // lister login
+  // Listener login
   const getCalculateRef = useRef(getCalculate);
   getCalculateRef.current = getCalculate;
   useEffectOnce(() => {
