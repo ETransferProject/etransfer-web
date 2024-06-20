@@ -565,15 +565,14 @@ export default function WithdrawContent() {
     [accounts, currentSymbol, currentTokenDecimal, getWithdrawData, handleAmountValidate, wallet],
   );
 
-  const getMaxBalanceInterval = useCallback(
-    async (item?: TTokenItem) => {
-      if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
-      getMaxBalanceTimerRef.current = setInterval(async () => {
-        await getMaxBalance(false, item);
-      }, 8000);
-    },
-    [getMaxBalance],
-  );
+  const getMaxBalanceRef = useRef(getMaxBalance);
+  getMaxBalanceRef.current = getMaxBalance;
+  const getMaxBalanceInterval = useCallback(async (item?: TTokenItem) => {
+    if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
+    getMaxBalanceTimerRef.current = setInterval(async () => {
+      await getMaxBalanceRef.current(false, item);
+    }, 8000);
+  }, []);
 
   const handleChainChanged = useCallback(
     async (item: IChainNameItem, token?: TTokenItem) => {
