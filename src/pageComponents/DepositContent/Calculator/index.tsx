@@ -14,6 +14,8 @@ import { MAX_UPDATE_TIME } from 'constants/calculate';
 import { useSearchParams } from 'next/navigation';
 import { isAuthTokenError } from 'utils/api/error';
 import { SIGNATURE_MISSING_TIP } from 'constants/misc';
+import { useEffectOnce } from 'react-use';
+import myEvents from 'utils/myEvent';
 
 const DEFAULT_AMOUNT = '0.00';
 const DEFAULT_PAY_AMOUNT = '100';
@@ -138,6 +140,17 @@ export default function Calculator() {
     getCalculate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromTokenSymbol, toChainItem, toTokenSymbol]);
+
+  // lister login
+  const getCalculateRef = useRef(getCalculate);
+  getCalculateRef.current = getCalculate;
+  useEffectOnce(() => {
+    const { remove } = myEvents.LoginSuccess.addListener(getCalculateRef.current);
+
+    return () => {
+      remove();
+    };
+  });
 
   const renderHeader = useMemo(() => {
     return (

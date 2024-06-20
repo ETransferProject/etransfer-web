@@ -10,6 +10,8 @@ import { formatSymbolDisplay } from 'utils/format';
 import { MAX_UPDATE_TIME } from 'constants/calculate';
 import { isAuthTokenError } from 'utils/api/error';
 import { SIGNATURE_MISSING_TIP } from 'constants/misc';
+import { useEffectOnce } from 'react-use';
+import myEvents from 'utils/myEvent';
 
 type TExchangeRate = {
   fromSymbol: string;
@@ -89,6 +91,17 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromSymbol, toSymbol, toChainId]);
+
+  // lister login
+  const getCalculateRef = useRef(getCalculate);
+  getCalculateRef.current = getCalculate;
+  useEffectOnce(() => {
+    const { remove } = myEvents.LoginSuccess.addListener(getCalculateRef.current);
+
+    return () => {
+      remove();
+    };
+  });
 
   return (
     <div className={clsx('flex-row-between', 'exchange-rate')}>
