@@ -11,7 +11,7 @@ type TTokenBoxProps = {
 };
 
 export default function TokenBox({ symbol }: TTokenBoxProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
 
   const tokenIcon = useCallback(() => {
     switch (symbol) {
@@ -32,7 +32,7 @@ export default function TokenBox({ symbol }: TTokenBoxProps) {
     <div
       className={clsx(
         styles['token-box'],
-        isMobilePX ? styles['mobil-token-box'] : styles['web-token-box'],
+        isPadPX ? styles['mobil-token-box'] : styles['web-token-box'],
       )}>
       {tokenIcon()}
       <span className={clsx(styles['token'])}>{formatSymbolDisplay(symbol)}</span>

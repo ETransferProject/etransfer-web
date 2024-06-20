@@ -24,7 +24,7 @@ export default function DepositInfo({
   contractAddressLink,
   minAmountUsd,
 }: DepositInfoProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const { fromTokenSymbol } = useDepositState();
   const [openAddressModal, setOpenAddressModal] = useState(false);
 
@@ -47,7 +47,7 @@ export default function DepositInfo({
         <div className={clsx('flex', styles['info-line'])}>
           <div className={clsx('flex-none', styles['info-title'])}>{CONTRACT_ADDRESS}</div>
           <div className={clsx('flex-1', 'flex-row-content-end')}>
-            {!isMobilePX && (
+            {!isPadPX && (
               <span
                 className={clsx('text-right', styles['info-value'], {
                   'text-link': !!contractAddressLink,
@@ -56,7 +56,7 @@ export default function DepositInfo({
                 {contractAddress || '-'}
               </span>
             )}
-            {isMobilePX && (
+            {isPadPX && (
               <span
                 className={clsx('text-right', styles['info-value'])}
                 onClick={() => setOpenAddressModal(true)}>

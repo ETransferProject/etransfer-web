@@ -34,9 +34,6 @@ export default function MyAsset() {
         originChainId={wallet?.portkeyInfo?.chainId as ChainId}
         pin={wallet?.portkeyInfo?.pin}>
         <Asset
-          // faucet={{
-          //   faucetContractAddress: configInfo?.faucetContractAddress,
-          // }}
           isShowRamp={false}
           isShowRampBuy={false}
           isShowRampSell={false}

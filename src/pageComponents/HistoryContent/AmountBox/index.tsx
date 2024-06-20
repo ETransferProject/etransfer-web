@@ -16,7 +16,7 @@ type TAmountBoxProps = {
 };
 
 export default function AmountBox({ amount, token, fromToken, status }: TAmountBoxProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const findToken = useFindToken();
 
   const amountDisplay = useMemo(() => {
@@ -28,7 +28,7 @@ export default function AmountBox({ amount, token, fromToken, status }: TAmountB
     <div
       className={clsx(
         styles['amount-box'],
-        isMobilePX ? styles['mobile-amount-box'] : styles['web-amount-box'],
+        isPadPX ? styles['mobile-amount-box'] : styles['web-amount-box'],
       )}>
       {status !== TRecordsStatus.Failed &&
         (fromToken && fromToken !== token && status === TRecordsStatus.Processing ? (

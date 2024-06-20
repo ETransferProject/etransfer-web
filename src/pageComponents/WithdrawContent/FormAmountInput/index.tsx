@@ -11,7 +11,7 @@ interface FormInputProps extends InputProps {
 }
 
 export default function FormAmountInput({ unit, maxButtonConfig, ...props }: FormInputProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   return (
     <div
       id="inputAmountWrapper"
@@ -20,14 +20,14 @@ export default function FormAmountInput({ unit, maxButtonConfig, ...props }: For
       <div className={clsx('flex-none', 'flex-row-center', styles['input-amount-addon-after'])}>
         {maxButtonConfig && (
           <div
-            className={clsx('cursor-pointer', isMobilePX && styles['max-mobile'], styles['max'])}
+            className={clsx('cursor-pointer', isPadPX && styles['max-mobile'], styles['max'])}
             onClick={maxButtonConfig.onClick}>
             Max
           </div>
         )}
         {maxButtonConfig && unit && <div className={styles['dividing-line']}></div>}
         {unit && (
-          <div className={clsx(styles['unit'], isMobilePX && styles['unit-mobile'])}>{unit}</div>
+          <div className={clsx(styles['unit'], isPadPX && styles['unit-mobile'])}>{unit}</div>
         )}
       </div>
     </div>

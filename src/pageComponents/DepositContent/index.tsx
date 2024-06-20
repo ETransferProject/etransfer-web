@@ -30,10 +30,10 @@ import { CommonErrorNameType } from 'api/types';
 import { handleErrorMessage } from '@portkey/did-ui-react';
 import myEvents from 'utils/myEvent';
 import { isAuthTokenError } from 'utils/api/error';
-import { useSetCurrentChainItem } from 'hooks/common';
 import { SideMenuKey } from 'constants/home';
 import { ChainId } from '@portkey/provider-types';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { setActiveMenuKey } from 'store/reducers/common/slice';
 
 export type TDepositContentProps = {
   fromNetworkSelected?: TNetworkItem;
@@ -61,7 +61,7 @@ type TGetNetworkData = {
 
 export default function Content() {
   const dispatch = useAppDispatch();
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const {
     fromNetwork,
     fromNetworkList,
@@ -349,18 +349,17 @@ export default function Content() {
     [dispatch, fromTokenList, fromTokenSymbol, getDepositData, getNetworkData, toChainItem.key],
   );
 
-  const setCurrentChainItem = useSetCurrentChainItem();
   const handleToChainChanged = useCallback(
     async (item: IChainNameItem) => {
       // if currentSymbol is empty, don't send request
-      setCurrentChainItem(item, SideMenuKey.Deposit);
+      dispatch(setToChainItem(item));
       fromTokenSymbol &&
         (await getNetworkData({
           chainId: item.key,
           symbol: fromTokenSymbol,
         }));
     },
-    [fromTokenSymbol, getNetworkData, setCurrentChainItem],
+    [dispatch, fromTokenSymbol, getNetworkData],
   );
 
   const handleRetry = useCallback(async () => {
@@ -383,28 +382,27 @@ export default function Content() {
     let fromSymbol = fromTokenSymbol;
     let toSymbol = toTokenSymbol;
     let routeNetworkRef = '';
-    if (routeQuery.type === SideMenuKey.Deposit) {
-      if (routeQuery.chainId) {
-        const chainItem = CHAIN_LIST.find((item) => item.key === routeQuery.chainId);
-        if (chainItem) {
-          chainId = chainItem.key;
-          setCurrentChainItem(chainItem, SideMenuKey.Deposit);
-        }
+
+    if (routeQuery.chainId) {
+      const chainItem = CHAIN_LIST.find((item) => item.key === routeQuery.chainId);
+      if (chainItem) {
+        chainId = chainItem.key;
+        dispatch(setToChainItem(chainItem));
       }
-      if (routeQuery.tokenSymbol) {
-        fromSymbol = routeQuery.tokenSymbol;
-        dispatch(setFromTokenSymbol(routeQuery.tokenSymbol));
-      }
-      if (routeQuery.depositToToken) {
-        toSymbol = routeQuery.depositToToken;
-        dispatch(setToTokenSymbol(routeQuery.depositToToken));
-      }
-      if (routeQuery.depositFromNetwork) {
-        routeNetworkRef = routeQuery.depositFromNetwork;
-        fromNetworkRef.current = routeQuery.depositFromNetwork;
-        dispatch(setFromNetwork(undefined));
-        dispatch(setFromNetworkList([]));
-      }
+    }
+    if (routeQuery.tokenSymbol) {
+      fromSymbol = routeQuery.tokenSymbol;
+      dispatch(setFromTokenSymbol(routeQuery.tokenSymbol));
+    }
+    if (routeQuery.depositToToken) {
+      toSymbol = routeQuery.depositToToken;
+      dispatch(setToTokenSymbol(routeQuery.depositToToken));
+    }
+    if (routeQuery.depositFromNetwork) {
+      routeNetworkRef = routeQuery.depositFromNetwork;
+      fromNetworkRef.current = routeQuery.depositFromNetwork;
+      dispatch(setFromNetwork(undefined));
+      dispatch(setFromNetworkList([]));
     }
 
     await getTokenList(chainId, fromSymbol, toSymbol);
@@ -431,14 +429,16 @@ export default function Content() {
     routeQuery.depositFromNetwork,
     routeQuery.depositToToken,
     routeQuery.tokenSymbol,
-    routeQuery.type,
-    setCurrentChainItem,
     toChainItem.key,
     toTokenSymbol,
   ]);
 
+  const router = useRouter();
   useEffectOnce(() => {
+    dispatch(setActiveMenuKey(SideMenuKey.Deposit));
     init();
+
+    router.replace('/deposit');
   });
 
   useEffect(() => {
@@ -451,7 +451,7 @@ export default function Content() {
     };
   }, [init]);
 
-  return isMobilePX ? (
+  return isPadPX ? (
     <MobileDepositContent
       fromTokenSelected={fromTokenSelected}
       tokenLogoUrl={fromTokenSelected?.icon}

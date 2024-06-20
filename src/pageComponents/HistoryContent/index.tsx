@@ -6,19 +6,28 @@ import {
   setRecordsList,
   setTotalCount,
   setHasMore,
+  setSkipCount,
   setType,
   setStatus,
   setTimestamp,
-  setSkipCount,
 } from 'store/reducers/records/slice';
-import { useDebounceCallback } from 'hooks';
-import { useCallback } from 'react';
+import { useDebounceCallback } from 'hooks/debounce';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { TRecordsRequestType, TRecordsRequestStatus } from 'types/records';
 import { TRecordsListItem } from 'types/api';
 import moment from 'moment';
 import myEvents from 'utils/myEvent';
 import { sleep } from '@portkey/utils';
 import { useEffectOnce } from 'react-use';
+import { useHistoryFilter } from 'hooks/history';
+import { useRouter, useSearchParams } from 'next/navigation';
+import queryString from 'query-string';
+import { useWalletContext } from 'provider/walletProvider';
+import { SideMenuKey } from 'constants/home';
+import { setActiveMenuKey } from 'store/reducers/common/slice';
+import { resetWithdrawState } from 'store/reducers/withdraw/slice';
+import { useIsActive } from 'hooks/portkeyWallet';
+import { useRouterPush } from 'hooks/route';
 
 export type TRecordsContentProps = TRecordsBodyProps & {
   onReset: () => void;
@@ -29,9 +38,15 @@ export type TRecordsBodyProps = {
 };
 
 export default function Content() {
-  const { isMobilePX, isUnreadHistory } = useCommonState();
+  const { isPadPX, isUnreadHistory } = useCommonState();
   const dispatch = useAppDispatch();
+  const { setFilter } = useHistoryFilter();
   const { setLoading } = useLoading();
+  const [{ wallet }] = useWalletContext();
+  const isActive = useIsActive();
+  const routerPush = useRouterPush();
+  const routerPushRef = useRef(routerPush);
+  routerPushRef.current = routerPush;
 
   const {
     type = TRecordsRequestType.ALL,
@@ -42,9 +57,15 @@ export default function Content() {
     recordsList,
   } = useRecordsState();
 
-  const requestRecordsList = useDebounceCallback(async (isLoading = false) => {
+  const requestRecordsList = useDebounceCallback(async (isLoading = false, isSetAuth = false) => {
     try {
       isLoading && setLoading(true);
+
+      if (isSetAuth) {
+        if (!wallet) return;
+        await wallet?.setAuthFromStorage();
+        await sleep(500);
+      }
 
       const startTimestampFormat =
         timestamp?.[0] && moment(timestamp?.[0]).format('YYYY-MM-DD 00:00:00');
@@ -61,8 +82,8 @@ export default function Content() {
         skipCount: (skipCount - 1) * maxResultCount,
         maxResultCount,
       });
-      setLoading(false);
-      if (isMobilePX) {
+
+      if (isPadPX) {
         let mobileRecordsList = [...recordsList, ...recordsListRes];
         mobileRecordsList = mobileRecordsList.reduce((result: TRecordsListItem[], item) => {
           if (!result.some((it: TRecordsListItem) => it.id === item.id)) {
@@ -89,17 +110,104 @@ export default function Content() {
     }
   }, []);
 
-  const handleReset = useCallback(() => {
-    dispatch(setType(TRecordsRequestType.ALL));
-    dispatch(setStatus(TRecordsRequestStatus.ALL));
-    dispatch(setTimestamp(null));
-    dispatch(setSkipCount(1));
-    if (isMobilePX) {
-      dispatch(setRecordsList([]));
-    }
-    requestRecordsList(true);
-  }, [dispatch, isMobilePX, requestRecordsList]);
+  const handleReset = useCallback(
+    async (isSetAuth = false) => {
+      setFilter({
+        method: TRecordsRequestType.ALL,
+        status: TRecordsRequestStatus.ALL,
+        timeArray: null,
+      });
+      dispatch(setSkipCount(1));
+      if (isPadPX) {
+        dispatch(setRecordsList([]));
+      }
+      await requestRecordsList(true, isSetAuth);
+    },
+    [dispatch, isPadPX, requestRecordsList, setFilter],
+  );
 
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const routeQuery = useMemo(
+    () => ({
+      method: searchParams.get('method'),
+      status: searchParams.get('status'),
+      start: searchParams.get('start'),
+      end: searchParams.get('end'),
+    }),
+    [searchParams],
+  );
+
+  const checkActive = useCallback(async () => {
+    await sleep(100);
+    if (!isActive) {
+      routerPushRef.current('/');
+    }
+  }, [isActive]);
+
+  useEffectOnce(() => {
+    dispatch(setActiveMenuKey(SideMenuKey.History));
+
+    checkActive();
+
+    const search: any = {
+      method: routeQuery.method != null ? routeQuery.method : undefined,
+      status: routeQuery.status != null ? routeQuery.status : undefined,
+      start: routeQuery.start != null ? routeQuery.start : undefined,
+      end: routeQuery.end != null ? routeQuery.end : undefined,
+    };
+    if (routeQuery.method != null) {
+      dispatch(setType(Number(routeQuery.method)));
+    } else {
+      search.method = type;
+    }
+
+    if (routeQuery.status != null) {
+      dispatch(setStatus(Number(routeQuery.status)));
+    } else {
+      search.status = status;
+    }
+
+    const start = timestamp?.[0];
+    const end = timestamp?.[1];
+    const timeIsAllow = start && !isNaN(start) && end && !isNaN(end);
+    if (routeQuery.start != null && routeQuery.end != null) {
+      dispatch(setTimestamp([Number(routeQuery.start), Number(routeQuery.end)]));
+    } else if (timeIsAllow) {
+      search.start = start;
+      search.end = end;
+    }
+
+    const searchStr = queryString.stringify(search);
+    router.replace(`/history${searchStr ? '?' + searchStr : ''}`);
+  });
+
+  const init = useCallback(() => {
+    if (isUnreadHistory) {
+      handleReset(true);
+    } else {
+      requestRecordsList(true, true);
+    }
+  }, [handleReset, isUnreadHistory, requestRecordsList]);
+
+  useEffect(() => {
+    init();
+    dispatch(resetWithdrawState());
+  }, [dispatch, init]);
+
+  // lister login
+  const refreshData = useCallback(() => {
+    requestRecordsList(true, true);
+  }, [requestRecordsList]);
+  useEffectOnce(() => {
+    const { remove } = myEvents.LoginSuccess.addListener(refreshData);
+
+    return () => {
+      remove();
+    };
+  });
+
+  // lister unread records
   useEffectOnce(() => {
     const { remove } = myEvents.HistoryActive.addListener(handleReset);
 
@@ -108,17 +216,16 @@ export default function Content() {
     };
   });
 
-  useEffectOnce(() => {
-    if (isUnreadHistory) {
-      handleReset();
-    } else {
-      requestRecordsList(true);
-    }
-  });
-
-  return isMobilePX ? (
-    <MobileHistoryContent requestRecordsList={requestRecordsList} onReset={handleReset} />
-  ) : (
-    <WebHistoryContent requestRecordsList={() => requestRecordsList(true)} onReset={handleReset} />
+  return (
+    <div className="wide-screen-content-container">
+      {isPadPX ? (
+        <MobileHistoryContent requestRecordsList={requestRecordsList} onReset={handleReset} />
+      ) : (
+        <WebHistoryContent
+          requestRecordsList={() => requestRecordsList(true)}
+          onReset={handleReset}
+        />
+      )}
+    </div>
   );
 }

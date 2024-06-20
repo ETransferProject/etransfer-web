@@ -16,8 +16,8 @@ export interface LoadingProps {
 }
 
 export default function Loading() {
-  const { isMobilePX } = useCommonState();
-  const defaultWidth = isMobilePX ? 240 : 360;
+  const { isPadPX } = useCommonState();
+  const defaultWidth = isPadPX ? 240 : 360;
 
   const [loadingInfo, setLoadingInfo] = useState<LoadingProps>();
 

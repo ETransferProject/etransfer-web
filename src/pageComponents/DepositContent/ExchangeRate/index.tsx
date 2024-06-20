@@ -8,6 +8,8 @@ import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
 import { ChainId } from '@portkey/provider-types';
 import { formatSymbolDisplay } from 'utils/format';
 import { MAX_UPDATE_TIME } from 'constants/calculate';
+import { isAuthTokenError } from 'utils/api/error';
+import { SIGNATURE_MISSING_TIP } from 'constants/misc';
 
 type TExchangeRate = {
   fromSymbol: string;
@@ -40,7 +42,11 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
       });
       setExchange(conversionRate?.toAmount || defaultNullValue);
     } catch (error) {
-      singleMessage.error(handleErrorMessage(error));
+      if (isAuthTokenError(error)) {
+        singleMessage.info(SIGNATURE_MISSING_TIP);
+      } else {
+        singleMessage.error(handleErrorMessage(error));
+      }
     }
   }, [fromSymbol, toChainId, toSymbol]);
 
