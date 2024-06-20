@@ -1021,6 +1021,7 @@ export default function WithdrawContent() {
         className={clsx(
           'main-content-container',
           'main-content-container-safe-area',
+          'withdraw-content-container',
           !isPadPX && styles['main-content'],
         )}>
         <SelectChainWrapper

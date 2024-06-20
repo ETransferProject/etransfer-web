@@ -13,8 +13,10 @@
 }
 
 .section {
+  margin-top: 40px;
   @include media-pad {
     width: $content-width;
+    margin-top: 0;
     margin: auto;
   }
 }
@@ -27,7 +29,11 @@
 }
 
 .faq-wrapper {
+  margin-top: 48px;
   flex: 1;
+  @include media-pad {
+    margin-top: 0;
+  }
 }
 
 .faq-left {
