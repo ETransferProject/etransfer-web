@@ -19,6 +19,9 @@
     margin-top: 0;
     margin: auto;
   }
+  @include media-mobile {
+    margin-top: 0;
+  }
 }
 
 .divider {

@@ -5,13 +5,13 @@ import MobileUserProfile from './MobileUserProfile';
 import WebUserProfile from './WebUserProfile';
 import { CommonButtonSize } from 'components/CommonButton';
 import styles from './styles.module.scss';
-import { useIsActive } from 'hooks/portkeyWallet';
+import { usePathname } from 'next/navigation';
 
 export default function LoginAndProfileEntry() {
-  const isActive = useIsActive();
   const { isPadPX } = useCommonState();
+  const pathname = usePathname();
 
-  if (!isActive) {
+  if (pathname === '/') {
     return (
       <ConnectWalletButton
         className={styles['connect-wallet-button']}
@@ -19,5 +19,6 @@ export default function LoginAndProfileEntry() {
       />
     );
   }
+
   return isPadPX ? <MobileUserProfile /> : <WebUserProfile />;
 }
