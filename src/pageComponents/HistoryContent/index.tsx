@@ -25,7 +25,6 @@ import queryString from 'query-string';
 import { useWalletContext } from 'provider/walletProvider';
 import { SideMenuKey } from 'constants/home';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
-import { resetWithdrawState } from 'store/reducers/withdraw/slice';
 import { useIsActive } from 'hooks/portkeyWallet';
 import { useRouterPush } from 'hooks/route';
 
@@ -192,10 +191,9 @@ export default function Content() {
 
   useEffect(() => {
     init();
-    dispatch(resetWithdrawState());
   }, [dispatch, init]);
 
-  // lister login
+  // Listener login
   const refreshData = useCallback(() => {
     requestRecordsList(true, true);
   }, [requestRecordsList]);
@@ -207,7 +205,7 @@ export default function Content() {
     };
   });
 
-  // lister unread records
+  // Listener unread records
   useEffectOnce(() => {
     const { remove } = myEvents.HistoryActive.addListener(handleReset);
 
