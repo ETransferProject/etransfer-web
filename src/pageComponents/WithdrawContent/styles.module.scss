@@ -45,6 +45,7 @@
   padding-bottom: 24px;
   @include media-pad {
     padding-left: 0;
+    padding-bottom: 80px;
   }
   @include media-huge-screen {
     padding-right: 40px;
