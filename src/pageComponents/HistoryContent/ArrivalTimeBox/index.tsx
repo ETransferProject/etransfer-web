@@ -12,7 +12,7 @@ type TArrivalTimeBoxProps = {
 };
 
 export default function ArrivalTimeBox({ arrivalTime, status }: TArrivalTimeBoxProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
 
   const content = useMemo(() => {
     const yearMonthDay = moment(arrivalTime).format('YYYY-MM-DD');
@@ -50,7 +50,7 @@ export default function ArrivalTimeBox({ arrivalTime, status }: TArrivalTimeBoxP
     <div
       className={clsx(
         styles['arrival-time-box'],
-        isMobilePX ? styles['mobile-arrival-time-box'] : styles['web-arrival-time-box'],
+        isPadPX ? styles['mobile-arrival-time-box'] : styles['web-arrival-time-box'],
       )}>
       {content}
     </div>

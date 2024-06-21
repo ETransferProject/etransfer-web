@@ -31,10 +31,10 @@ export const RecordsSlice = createSlice({
     setTotalCount: (state, action) => {
       state.totalCount = action.payload;
     },
-    setType: (state, action) => {
+    setType: (state, action: PayloadAction<TRecordsRequestType>) => {
       state.type = action.payload;
     },
-    setStatus: (state, action) => {
+    setStatus: (state, action: PayloadAction<TRecordsRequestStatus>) => {
       state.status = action.payload;
     },
     setTimestamp: (state, action: PayloadAction<number[] | null>) => {
@@ -49,9 +49,6 @@ export const RecordsSlice = createSlice({
     },
     setMaxResultCount: (state, action) => {
       state.maxResultCount = action.payload;
-    },
-    setSearch: (state, action) => {
-      state.search = action.payload;
     },
     setHasMore: (state, action) => {
       state.hasMore = action.payload;
@@ -70,7 +67,6 @@ export const {
   setTimestamp,
   setSkipCount,
   setMaxResultCount,
-  setSearch,
   setHasMore,
   resetRecordsState,
 } = RecordsSlice.actions;

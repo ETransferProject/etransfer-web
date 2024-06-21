@@ -1,9 +1,39 @@
 @import 'src/assets/theme/font.scss';
 @import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
+
+.main-container {
+  flex: 2;
+}
+
+.main-wrapper {
+  padding: 0 11.12%;
+}
+
+.main-content {
+  min-width: 440px;
+}
+
+.faq-wrapper {
+  flex: 1;
+}
+
+.faq-left {
+  flex: 1;
+}
+
+.faq {
+  padding-top: 48px;
+  padding-left: 8%;
+  @include media-huge-screen {
+    padding-right: 40px;
+  }
+}
 
 .deposit-title {
   font-size: 24px;
-  line-height: 32px;
+  height: 42px;
+  line-height: 42px;
   margin-bottom: 24px;
   @extend .font-family-medium;
 }

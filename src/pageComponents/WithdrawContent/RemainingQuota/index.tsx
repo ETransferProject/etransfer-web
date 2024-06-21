@@ -6,7 +6,7 @@ import { useCommonState } from 'store/Provider/hooks';
 import CommonModalTips from 'components/CommonModalTips';
 
 export default function RemainingQuota({ content }: { content: string }) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const [openModal, setOpenModal] = useState(false);
 
   const handleView = useCallback(() => {
@@ -19,7 +19,7 @@ export default function RemainingQuota({ content }: { content: string }) {
 
   return (
     <>
-      {isMobilePX && (
+      {isPadPX && (
         <QuestionMarkIcon onClick={handleView} className={clsx(styles['question-mark'])} />
       )}
 

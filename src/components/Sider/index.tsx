@@ -1,22 +1,16 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Space } from 'antd';
 import clsx from 'clsx';
-import { setActiveMenuKey } from 'store/reducers/common/slice';
-import { store } from 'store/Provider/store';
 import { useCommonState } from 'store/Provider/hooks';
 import { SideMenuKey, MENU_ITEMS } from 'constants/home';
 import styles from './styles.module.scss';
-import SupportEntry from 'components/Sider/SupportEntry';
 import myEvents from 'utils/myEvent';
+import { useChangeSideMenu } from 'hooks/route';
 
 export default function Sider() {
   const { activeMenuKey, isUnreadHistory } = useCommonState();
-  useEffect(() => {
-    // init activeMenuKey
-    if (!activeMenuKey) {
-      store.dispatch(setActiveMenuKey(SideMenuKey.Deposit));
-    }
-  }, [activeMenuKey]);
+  const changeSideMenu = useChangeSideMenu();
+
   return (
     <div className={clsx('flex-column-between', styles['menu-container'])}>
       <Space className={styles['menu-items-wrapper']} direction="vertical">
@@ -29,10 +23,10 @@ export default function Sider() {
                 [styles['menu-item-active']]: item.key === activeMenuKey,
               })}
               onClick={() => {
-                store.dispatch(setActiveMenuKey(item.key));
                 if (item.key === SideMenuKey.History && isUnreadHistory) {
                   myEvents.HistoryActive.emit();
                 }
+                changeSideMenu(item.key);
               }}>
               <MenuIcon className={clsx('flex-none', styles['menu-item-icon'])} />
               <span className={styles['menu-item-label']}>{item.label}</span>
@@ -43,7 +37,6 @@ export default function Sider() {
           );
         })}
       </Space>
-      <SupportEntry className={styles.supportEntry} />
     </div>
   );
 }

@@ -20,6 +20,10 @@ import { SendOptions as SendOptionsV1 } from '@portkey-v1/types';
 import { sleep } from '@portkey/utils';
 import { AllSupportedELFChainId } from 'constants/chain';
 import { SupportedELFChainId, AppName } from 'constants/index';
+import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
+import { AuthTokenSource } from 'types/api';
+import { getLocalJWT } from 'api/utils';
+import service from 'api/axios';
 
 class Wallet implements TWallet {
   walletInfo: WalletInfo;
@@ -79,6 +83,21 @@ class Wallet implements TWallet {
       address: this.walletInfo.address,
       ...params,
     });
+  }
+
+  async setAuthFromStorage() {
+    const { caHash } = await getCaHashAndOriginChainIdByWallet(this.walletInfo, this.walletType);
+    const managerAddress = await getManagerAddressByWallet(this.walletInfo, this.walletType);
+    const source =
+      this.walletType === WalletType.elf ? AuthTokenSource.NightElf : AuthTokenSource.Portkey;
+    const key = (caHash || source) + managerAddress;
+    const data = getLocalJWT(key);
+    // local storage has JWT token
+    if (data) {
+      const token_type = data.token_type;
+      const access_token = data.access_token;
+      service.defaults.headers.common['Authorization'] = `${token_type} ${access_token}`;
+    }
   }
 
   getWebLoginContext() {

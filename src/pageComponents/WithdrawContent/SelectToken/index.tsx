@@ -28,7 +28,7 @@ export default function SelectToken({
   onChange,
   selectCallback,
 }: TSelectTokenProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const dispatch = useAppDispatch();
   const [isShowTokenSelectDropdown, setIsShowTokenSelectDropdown] = useState<boolean>(false);
 
@@ -73,7 +73,7 @@ export default function SelectToken({
         </div>
       </div>
 
-      {isMobilePX ? (
+      {isPadPX ? (
         <TokenSelectDrawer
           open={isShowTokenSelectDropdown}
           onClose={() => setIsShowTokenSelectDropdown(false)}

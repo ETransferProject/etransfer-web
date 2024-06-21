@@ -29,7 +29,7 @@ export default function SelectToken({
   onChange,
   selectCallback,
 }: TSelectTokenProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const dispatch = useAppDispatch();
   const { initOpenTokenModalCount } = useDepositState();
   const [isShowTokenSelectDropdown, setIsShowTokenSelectDropdown] = useState<boolean>(false);
@@ -54,7 +54,7 @@ export default function SelectToken({
 
   useEffect(() => {
     if (
-      isMobilePX &&
+      isPadPX &&
       tokenList &&
       tokenList.length > 0 &&
       !selected?.symbol &&
@@ -63,7 +63,7 @@ export default function SelectToken({
       dispatch(setAddInitOpenTokenModalCount());
       setIsShowTokenSelectDropdown(true);
     }
-  }, [dispatch, initOpenTokenModalCount, tokenList, isMobilePX, selected?.symbol]);
+  }, [dispatch, initOpenTokenModalCount, tokenList, isPadPX, selected?.symbol]);
 
   const renderNotSelected = useMemo(() => {
     return (
@@ -94,7 +94,7 @@ export default function SelectToken({
         </div>
       </div>
 
-      {isMobilePX ? (
+      {isPadPX ? (
         <TokenSelectDrawer
           open={isShowTokenSelectDropdown}
           onClose={() => setIsShowTokenSelectDropdown(false)}

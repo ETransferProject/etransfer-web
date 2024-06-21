@@ -30,7 +30,7 @@ export default function SelectNetwork({
   onChange,
   selectCallback,
 }: TSelectNetworkProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const dispatch = useAppDispatch();
   const { initOpenNetworkModalCount } = useDepositState();
   const [isShowNetworkSelectDropdown, setIsShowNetworkSelectDropdown] = useState<boolean>(false);
@@ -52,7 +52,7 @@ export default function SelectNetwork({
 
   useEffect(() => {
     if (
-      isMobilePX &&
+      isPadPX &&
       networkList &&
       networkList.length > 0 &&
       !selected?.network &&
@@ -61,7 +61,7 @@ export default function SelectNetwork({
       dispatch(setAddInitOpenNetworkModalCount());
       setIsShowNetworkSelectDropdown(true);
     }
-  }, [dispatch, initOpenNetworkModalCount, isMobilePX, networkList, selected?.network]);
+  }, [dispatch, initOpenNetworkModalCount, isPadPX, networkList, selected?.network]);
 
   const renderNotSelected = useMemo(() => {
     return (
@@ -79,7 +79,7 @@ export default function SelectNetwork({
   const renderSelected = useMemo(() => {
     return (
       selected?.network &&
-      (isMobilePX ? (
+      (isPadPX ? (
         <span className={clsx('flex-row-center', styles['select-network-value-selected'])}>
           {renderNetworkLogo}
           <span className={styles['primary']}>{selected?.name}</span>
@@ -92,7 +92,7 @@ export default function SelectNetwork({
         </span>
       ))
     );
-  }, [isMobilePX, renderNetworkLogo, selected?.name, selected?.network]);
+  }, [isPadPX, renderNetworkLogo, selected?.name, selected?.network]);
 
   return (
     <div className={styles['deposit-select-network']}>
@@ -105,7 +105,7 @@ export default function SelectNetwork({
         <DynamicArrow size="Small" isExpand={isShowNetworkSelectDropdown} />
       </div>
 
-      {isMobilePX ? (
+      {isPadPX ? (
         <NetworkSelectDrawer
           open={isShowNetworkSelectDropdown}
           onClose={() => setIsShowNetworkSelectDropdown(false)}

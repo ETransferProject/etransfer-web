@@ -4,11 +4,11 @@ import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 
 export default function DepositDescription({ list }: { list: string[] }) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   return (
     <div
       className={clsx(styles['description-wrapper'], {
-        [styles['mobile-description-wrapper']]: isMobilePX,
+        [styles['mobile-description-wrapper']]: isPadPX,
       })}>
       {Array.isArray(list) &&
         list?.map((item, idx) => {

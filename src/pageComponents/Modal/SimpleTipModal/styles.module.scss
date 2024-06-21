@@ -1,0 +1,18 @@
+@import 'src/assets/theme/color.scss';
+
+.simpleTipModal {
+  .simpleTipModalBody {
+    color: $primary-text;
+  }
+
+  :global {
+    .ant-modal-content {
+      .ant-modal-header {
+        display: none !important;
+      }
+      .ant-modal-body {
+        padding: 20px;
+      }
+    }
+  }
+}

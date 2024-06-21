@@ -11,8 +11,9 @@ import AmountBox from 'pageComponents/HistoryContent/AmountBox';
 import AddressBox from 'pageComponents/HistoryContent/AddressBox';
 import { TRecordsBodyProps } from 'pageComponents/HistoryContent';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useDebounceCallback } from 'hooks';
+import { useDebounceCallback } from 'hooks/debounce';
 import { setSkipCount, setHasMore } from 'store/reducers/records/slice';
+import TxHashBox from 'pageComponents/HistoryContent/TxHashBox';
 
 const NoDataText = '-- No Data --';
 
@@ -41,11 +42,13 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
         fromAddress: fromTransfer.fromAddress,
         fromToAddress: fromTransfer.toAddress,
         fromChainId: fromTransfer.chainId,
+        fromTxId: fromTransfer.txId,
         toSymbol: toTransfer.symbol,
         toNetwork: toTransfer.network,
         toFromAddress: toTransfer.fromAddress,
         toAddress: toTransfer.toAddress,
         toChainId: toTransfer.chainId,
+        toTxId: toTransfer.txId,
         feeInfo: toTransfer.feeInfo,
       });
     });
@@ -122,8 +125,18 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
                   network={recordItem.fromNetwork}
                   fromChainId={recordItem.fromChainId}
                   toChainId={recordItem.toChainId}
-                  fromToAddress={recordItem.fromToAddress}
-                  toFromAddress={recordItem.toFromAddress}
+                />
+              </div>
+              <div className={styles['records-card-item-line']}>
+                <span className={styles['records-card-item-label']}>From Hash</span>
+                <TxHashBox
+                  isShowIcon={false}
+                  type="From"
+                  orderType={recordItem.orderType}
+                  orderStatus={recordItem.status}
+                  chainId={recordItem.fromChainId}
+                  txHash={recordItem.fromTxId}
+                  network={recordItem.fromNetwork}
                 />
               </div>
               <div className={styles['records-card-item-line']}>
@@ -135,8 +148,18 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
                   network={recordItem.toNetwork}
                   fromChainId={recordItem.fromChainId}
                   toChainId={recordItem.toChainId}
-                  fromToAddress={recordItem.fromToAddress}
-                  toFromAddress={recordItem.toFromAddress}
+                />
+              </div>
+              <div className={styles['records-card-item-line']}>
+                <span className={styles['records-card-item-label']}>To Hash</span>
+                <TxHashBox
+                  isShowIcon={false}
+                  type="To"
+                  orderType={recordItem.orderType}
+                  orderStatus={recordItem.status}
+                  chainId={recordItem.toChainId}
+                  txHash={recordItem.toTxId}
+                  network={recordItem.toNetwork}
                 />
               </div>
               <div className={styles['records-card-item-Fee']}>

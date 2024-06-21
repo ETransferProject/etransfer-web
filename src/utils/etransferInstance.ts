@@ -1,14 +1,14 @@
 class ETransferInstance {
-  public obtainingToken: boolean;
+  public unauthorized: boolean;
   public obtainingSignature: boolean;
 
   constructor() {
-    this.obtainingToken = false;
+    this.unauthorized = false;
     this.obtainingSignature = false;
   }
 
-  setObtainingToken(status: boolean) {
-    this.obtainingToken = status;
+  setUnauthorized(status: boolean) {
+    this.unauthorized = status;
   }
 
   setObtainingSignature(status: boolean) {

@@ -4,8 +4,8 @@
 .web-records-title {
   font-size: 24px;
   font-weight: $font-family-medium-weight;
-  height: 32px;
-  line-height: 32px;
+  height: 42px;
+  line-height: 42px;
 }
 
 .web-records-search-wrapper {
@@ -17,7 +17,8 @@
   }
 }
 
-.web-records-select-type, .web-records-select-status {
+.web-records-select-type,
+.web-records-select-status {
   width: 156px;
   border-radius: 6px;
 }

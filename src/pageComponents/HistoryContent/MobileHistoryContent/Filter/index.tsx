@@ -3,13 +3,7 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { FilterIcon, CloseSmall } from 'assets/images';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
-import {
-  setType,
-  setStatus,
-  setTimestamp,
-  setSkipCount,
-  setRecordsList,
-} from 'store/reducers/records/slice';
+import { setSkipCount, setRecordsList } from 'store/reducers/records/slice';
 import { TRecordsRequestType, TRecordsRequestStatus, TRecordsStatusI18n } from 'types/records';
 import CommonDrawer from 'components/CommonDrawer';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
@@ -19,6 +13,9 @@ import { BusinessType } from 'types/api';
 import { TRecordsContentProps } from 'pageComponents/HistoryContent';
 import { defaultNullValue } from 'constants/index';
 import moment from 'moment';
+import { useHistoryFilter } from 'hooks/history';
+import SimpleTipModal from 'pageComponents/Modal/SimpleTipModal';
+import { END_TIME_FORMAT, START_TIME_FORMAT } from 'constants/records';
 
 const dateFormat = 'YYYY-MM-DD';
 
@@ -53,17 +50,20 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
     return isShow;
   }, [timestamp]);
 
+  const [openTipModal, setOpenTipModal] = useState(false);
+
+  const { setFilter, setMethodFilter, setStatusFilter, setTimestampFilter } = useHistoryFilter();
   const closeItem = useCallback(
     (clickType: string) => {
       switch (clickType) {
         case 'type':
-          dispatch(setType(TRecordsRequestType.ALL));
+          setMethodFilter(TRecordsRequestType.ALL);
           break;
         case 'status':
-          dispatch(setStatus(TRecordsRequestStatus.ALL));
+          setStatusFilter(TRecordsRequestStatus.ALL);
           break;
         case 'timestamp':
-          dispatch(setTimestamp(null));
+          setTimestampFilter(null);
           break;
         default:
           break;
@@ -72,7 +72,7 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
       dispatch(setRecordsList([]));
       requestRecordsList();
     },
-    [dispatch, requestRecordsList],
+    [dispatch, requestRecordsList, setMethodFilter, setStatusFilter, setTimestampFilter],
   );
 
   const handleResetFilter = useCallback(() => {
@@ -84,21 +84,38 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
   }, [dispatch]);
 
   const handleApplyFilter = useCallback(() => {
-    dispatch(setType(filterType));
-    dispatch(setStatus(filterStatus));
-    dispatch(
-      setTimestamp([moment(filterTimestampStart).valueOf(), moment(filterTimestampEnd).valueOf()]),
-    );
+    const start = moment(filterTimestampStart).valueOf();
+    const end = moment(filterTimestampEnd).valueOf();
+    const timeIsNaN = isNaN(start) || isNaN(end);
+    const oneTimeIsNaN = (isNaN(start) && !isNaN(end)) || (!isNaN(start) && isNaN(end));
+
+    if (oneTimeIsNaN) {
+      setOpenTipModal(true);
+      return;
+    }
+
+    // format
+    const startTimestampFormat = moment(
+      moment(filterTimestampStart).format(START_TIME_FORMAT),
+    ).valueOf();
+    const endTimestampFormat = moment(moment(filterTimestampEnd).format(END_TIME_FORMAT)).valueOf();
+
+    setFilter({
+      method: filterType,
+      status: filterStatus,
+      timeArray: timeIsNaN ? null : [startTimestampFormat, endTimestampFormat],
+    });
     dispatch(setSkipCount(1));
     dispatch(setRecordsList([]));
     setIsShowFilterDrawer(false);
     requestRecordsList();
   }, [
-    dispatch,
+    setFilter,
     filterType,
     filterStatus,
     filterTimestampStart,
     filterTimestampEnd,
+    dispatch,
     requestRecordsList,
   ]);
 
@@ -154,6 +171,7 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
         open={isShowFilterDrawer}
         height={'100%'}
         title={<div className={styles['filter-title']}>Filters</div>}
+        id="historyFilterDrawer"
         className={styles['filter-drawer-wrapper']}
         destroyOnClose
         placement={'right'}
@@ -223,6 +241,13 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
           />
         </div>
       </CommonDrawer>
+
+      <SimpleTipModal
+        open={openTipModal}
+        getContainer="#historyFilterDrawer"
+        content={'Please select another time!'}
+        onOk={() => setOpenTipModal(false)}
+      />
     </div>
   );
 }
