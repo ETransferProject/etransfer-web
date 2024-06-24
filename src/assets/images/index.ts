@@ -3,6 +3,7 @@ import LargeLogo from './logo/largeLogo.png';
 import FooterLogo from './logo/footerLogo.svg';
 
 import Info from './info.svg';
+import InfoBrandIcon from './infoBrand.svg';
 import Close from './close.svg';
 import CloseSmall from './closeSmall.svg';
 import Swap from './swap.svg';
@@ -85,6 +86,7 @@ export {
   LargeLogo,
   FooterLogo,
   Info,
+  InfoBrandIcon,
   Close,
   CloseSmall,
   Swap,

@@ -20,6 +20,7 @@ import SelectToken from '../SelectToken';
 import SelectNetwork from '../SelectNetwork';
 import { CHAIN_LIST } from 'constants/index';
 import SelectChainWrapper from '../SelectChainWrapper';
+import DepositTip from '../DepositTip';
 
 export default function WebContent({
   fromNetworkSelected,
@@ -70,7 +71,7 @@ export default function WebContent({
           <div className="flex-1">
             <div className={styles['label']}>Deposit Token</div>
             <SelectToken
-              className={styles['selected-data']}
+              className={styles['selected-token']}
               tokenList={fromTokenList}
               selected={fromTokenSelected}
               selectCallback={fromTokenChanged}
@@ -80,7 +81,7 @@ export default function WebContent({
           <div className="flex-1">
             <div className={styles['label']}>Receive Token</div>
             <SelectToken
-              className={styles['selected-data']}
+              className={styles['selected-token']}
               tokenList={toTokenList}
               selected={toTokenSelected}
               selectCallback={toTokenSelectCallback}
@@ -92,7 +93,12 @@ export default function WebContent({
           <DoubleArrowIcon />
         </div>
 
-        <div className={clsx('flex-row-center', styles['selected-data-wrapper'])}>
+        <div
+          className={clsx(
+            'flex-row-center',
+            styles['selected-data-wrapper'],
+            styles['selected-row-2'],
+          )}>
           <div className="flex-1">
             <div className={styles['label']}>From</div>
             <SelectNetwork
@@ -144,10 +150,16 @@ export default function WebContent({
           </>
         )}
 
-        <Space direction="vertical" size={24} />
+        <Space direction="vertical" size={40} />
+        {(showRetry || !!depositInfo.depositAddress) && (
+          <div className={styles['label']}>Deposit address</div>
+        )}
         {showRetry && <DepositRetryForWeb isShowImage={true} onClick={onRetry} />}
         {!showRetry && !!depositInfo.depositAddress && (
           <>
+            <Space direction="vertical" size={4} />
+            <DepositTip fromToken={fromTokenSymbol} toToken={toTokenSymbol} />
+            <Space direction="vertical" size={12} />
             <div className={clsx('flex-row-center', styles['deposit-address-wrapper'])}>
               {qrCodeValue ? (
                 <CommonQRCode value={qrCodeValue} logoUrl={tokenLogoUrl} logoSize={20} />

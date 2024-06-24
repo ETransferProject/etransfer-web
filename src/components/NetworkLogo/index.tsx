@@ -76,7 +76,9 @@ export default function NetworkLogo({
   const renderNetworkLogo = useMemo(() => NetworkLogoMap?.[network]?.[size], [network, size]);
   return (
     <>
-      {<div className={className}>{renderNetworkLogo}</div> || (
+      {renderNetworkLogo ? (
+        <div className={className}>{renderNetworkLogo}</div>
+      ) : (
         // when not match network's type, display first character and uppercase
         <div className={clsx(styles['network'], className)}>{network?.charAt(0).toUpperCase()}</div>
       )}

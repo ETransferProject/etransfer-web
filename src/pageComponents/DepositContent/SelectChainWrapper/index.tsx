@@ -31,12 +31,7 @@ export default function SelectChainWrapper({
 
   return (
     <div className={clsx('flex-row-center', styles['select-chain-wrapper'], className)}>
-      {isPadPX && (
-        <div>
-          <span className={styles['select-chain-label']}>{mobileLabel}</span>
-          <Space direction={'horizontal'} size={isPadPX ? 6 : 8} />
-        </div>
-      )}
+      {isPadPX && <span className={styles['select-chain-label']}>{mobileLabel}</span>}
 
       {isPadPX ? <Aelf /> : <AelfMedium />}
       <Space direction={'horizontal'} size={isPadPX ? 6 : 8} />

@@ -9,6 +9,7 @@
     font-size: 12px;
     line-height: 16px;
     user-select: none;
+    margin-right: 6px;
   }
   .select-chain {
     color: $primary-text;
@@ -23,8 +24,11 @@
   }
   .select-chain-container {
     padding: 0;
-    justify-content: space-between;
-    flex: 1;
+
+    @include media-web {
+      justify-content: space-between;
+      flex: 1;
+    }
   }
   .select-chain-content {
     color: $primary-text;

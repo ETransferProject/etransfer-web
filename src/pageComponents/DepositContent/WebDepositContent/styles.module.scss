@@ -62,10 +62,19 @@
   color: $secondary-text;
 }
 
+.selected-token,
 .selected-data {
   padding: 12px;
   border-radius: 6px;
   background-color: $normal-bg;
+}
+
+.selected-token {
+  position: relative;
+}
+
+.selected-row-2 {
+  position: relative;
 }
 
 .arrow-right {

@@ -78,7 +78,7 @@ export default function SelectNetwork({
     return (
       selected?.network && (
         <NetworkLogo
-          className="flex-shrink-0"
+          className="flex-shrink-0 flex"
           network={selected?.network}
           size={isPadPX ? 'small' : 'normal'}
         />

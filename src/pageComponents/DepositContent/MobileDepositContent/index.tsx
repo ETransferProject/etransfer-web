@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import CommonAddress from 'components/CommonAddress';
 import DepositInfo from 'pageComponents/DepositContent/DepositInfo';
@@ -18,6 +18,9 @@ import ExchangeRate from '../ExchangeRate';
 import { useCommonState, useDepositState } from 'store/Provider/hooks';
 import FAQ from 'components/FAQ';
 import { FAQ_DEPOSIT } from 'constants/footer';
+import DepositTip from '../DepositTip';
+import CommonDrawer from 'components/CommonDrawer';
+import CommonButton from 'components/CommonButton';
 
 export default function MobileDepositContent({
   fromNetworkSelected,
@@ -35,9 +38,14 @@ export default function MobileDepositContent({
   toChainChanged,
   fromNetworkChanged,
   fromTokenChanged,
-}: TDepositContentProps) {
+  onNext,
+}: TDepositContentProps & { onNext: () => Promise<void> }) {
   const { fromTokenSymbol, toChainItem, toTokenSymbol } = useDepositState();
   const { isPadPX, isMobilePX } = useCommonState();
+  const nextDisable = useMemo(
+    () => !fromTokenSymbol || !toTokenSymbol || !toChainItem.key || !fromNetworkSelected,
+    [fromNetworkSelected, fromTokenSymbol, toChainItem.key, toTokenSymbol],
+  );
 
   const renderDepositAddress = useMemo(() => {
     return (
@@ -68,6 +76,62 @@ export default function MobileDepositContent({
       depositInfo?.extraNotes.length > 0 && <DepositDescription list={depositInfo.extraNotes} />
     );
   }, [depositInfo.extraNotes]);
+
+  const [isShowDepositInfo, setIsShowDepositInfo] = useState(false);
+  const renderDepositInfoDrawer = useMemo(() => {
+    return (
+      <CommonDrawer
+        open={isShowDepositInfo}
+        onClose={() => setIsShowDepositInfo(false)}
+        destroyOnClose
+        placement="bottom"
+        title="Deposit Address"
+        closable={true}
+        height="88%">
+        {fromTokenSymbol && toTokenSymbol && (
+          <DepositTip fromToken={fromTokenSymbol} toToken={toTokenSymbol} isShowIcon={false} />
+        )}
+
+        <Space direction="vertical" size={16} />
+
+        {fromTokenSelected && fromNetworkSelected && renderDepositAddress}
+
+        <Space direction="vertical" size={12} />
+
+        {fromTokenSelected && fromNetworkSelected && depositInfo?.depositAddress && (
+          <>
+            <DepositInfo
+              networkName={fromNetworkSelected.name}
+              minimumDeposit={depositInfo.minAmount}
+              contractAddress={contractAddress}
+              contractAddressLink={contractAddressLink}
+              minAmountUsd={depositInfo.minAmountUsd}
+            />
+            <Space direction="vertical" size={24} />
+            {renderDepositDescription}
+          </>
+        )}
+      </CommonDrawer>
+    );
+  }, [
+    contractAddress,
+    contractAddressLink,
+    depositInfo?.depositAddress,
+    depositInfo.minAmount,
+    depositInfo.minAmountUsd,
+    fromNetworkSelected,
+    fromTokenSelected,
+    fromTokenSymbol,
+    isShowDepositInfo,
+    renderDepositAddress,
+    renderDepositDescription,
+    toTokenSymbol,
+  ]);
+
+  const onClickNext = useCallback(async () => {
+    await onNext();
+    setIsShowDepositInfo(true);
+  }, [onNext]);
 
   return (
     <div className="main-content-container main-content-container-safe-area">
@@ -114,24 +178,12 @@ export default function MobileDepositContent({
         )}
 
         <Space direction="vertical" size={24} />
-
-        {fromTokenSelected && fromNetworkSelected && renderDepositAddress}
-
-        <Space direction="vertical" size={12} />
-
-        {fromTokenSelected && fromNetworkSelected && depositInfo?.depositAddress && (
-          <>
-            <DepositInfo
-              networkName={fromNetworkSelected.name}
-              minimumDeposit={depositInfo.minAmount}
-              contractAddress={contractAddress}
-              contractAddressLink={contractAddressLink}
-              minAmountUsd={depositInfo.minAmountUsd}
-            />
-            <Space direction="vertical" size={24} />
-            {renderDepositDescription}
-          </>
-        )}
+        <CommonButton
+          className={styles['next-button']}
+          onClick={onClickNext}
+          disabled={nextDisable}>
+          Next
+        </CommonButton>
       </div>
       {isPadPX && !isMobilePX && (
         <>
@@ -143,6 +195,7 @@ export default function MobileDepositContent({
           />
         </>
       )}
+      {renderDepositInfoDrawer}
     </div>
   );
 }
