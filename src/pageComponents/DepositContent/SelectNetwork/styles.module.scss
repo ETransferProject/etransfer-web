@@ -1,4 +1,5 @@
 @import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/constants.scss';
 @import '/src/assets/theme/font.scss';
 @import '/src/assets/theme/breakpoint.scss';
 @import '/src/styles/common.scss';
@@ -7,6 +8,10 @@
   .select-network-result {
     gap: 6px;
     cursor: pointer;
+
+    @include media-web {
+      gap: 8px;
+    }
   }
 
   .select-network-label {
@@ -18,29 +23,56 @@
 
   .select-network-not-selected {
     gap: 6px;
+
+    @include media-web {
+      gap: 8px;
+    }
+
     .select-network-value-placeholder {
       color: $brand;
       font-size: 12px;
       line-height: 16px;
       user-select: none;
       @extend .font-family-medium;
+
+      @include media-web {
+        font-size: 16px;
+        line-height: 24px;
+      }
     }
   }
 
   .select-network-value-selected {
     gap: 6px;
+
+    @include media-web {
+      gap: 8px;
+    }
+
     .network-logo {
       width: 16px;
       height: 16px;
       border-radius: 50%;
       border: 1px solid $border;
       font-size: 12px;
+
+      @include media-web {
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+      }
     }
     .primary {
       color: $primary-text;
       font-size: 12px;
       line-height: 16px;
       @extend .font-family-medium;
+      @include text-overflow;
+
+      @include media-web {
+        font-size: 16px;
+        line-height: 24px;
+      }
     }
     .secondary {
       color: $secondary-text;

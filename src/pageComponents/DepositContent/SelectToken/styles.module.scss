@@ -1,4 +1,5 @@
 @import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/constants.scss';
 @import '/src/assets/theme/font.scss';
 @import '/src/assets/theme/breakpoint.scss';
 @import '/src/styles/common.scss';
@@ -17,10 +18,15 @@
     gap: 8px;
     .select-token-value-placeholder {
       color: $brand;
-      font-size: 18px;
-      line-height: 28px;
+      font-size: 16px;
+      line-height: 24px;
       user-select: none;
       @extend .font-family-medium;
+
+      @include media-web {
+        font-size: 18px;
+        line-height: 28px;
+      }
     }
   }
 
@@ -33,26 +39,31 @@
     .select-token-value-selected {
       .primary {
         color: $primary-text;
-        font-size: 18px;
-        line-height: 1.5;
+        font-size: 16px;
+        line-height: 24px;
         @extend .font-family-medium;
         margin-right: 8px;
+
+        @include media-web {
+          font-size: 18px;
+          line-height: 28px;
+        }
       }
       .secondary {
         color: $secondary-text;
         font-size: 14px;
         line-height: 22px;
+        @include text-overflow;
       }
       .icon {
         width: 28px;
         height: 28px;
         margin-right: 8px;
-      }
-      .default {
-        border-radius: 50%;
-        border: 1px solid $border;
-        text-align: center;
-        line-height: 24px;
+
+        @include media-web {
+          width: 24px;
+          height: 24px;
+        }
       }
     }
   }

@@ -1,4 +1,4 @@
-import { AddIcon } from 'assets/images';
+import { AddIcon, AddMedium } from 'assets/images';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TNetworkItem } from 'types/api';
 import styles from './styles.module.scss';
@@ -17,6 +17,7 @@ type TSelectNetworkProps = {
   selected?: TNetworkItem;
   isDisabled?: boolean;
   isShowLoading?: boolean;
+  className?: string;
   onChange?: (item: TNetworkItem) => void;
   selectCallback: (item: TNetworkItem) => Promise<void>;
 };
@@ -27,6 +28,7 @@ export default function SelectNetwork({
   selected,
   isDisabled,
   isShowLoading,
+  className,
   onChange,
   selectCallback,
 }: TSelectNetworkProps) {
@@ -66,43 +68,47 @@ export default function SelectNetwork({
   const renderNotSelected = useMemo(() => {
     return (
       <div className={clsx('flex-row-center', styles['select-network-not-selected'])}>
-        <AddIcon />
+        {isPadPX ? <AddIcon className="flex-shrink-0" /> : <AddMedium className="flex-shrink-0" />}
         <span className={styles['select-network-value-placeholder']}>Select Network</span>
       </div>
     );
-  }, []);
+  }, [isPadPX]);
 
   const renderNetworkLogo = useMemo(() => {
-    return selected?.network && <NetworkLogo network={selected?.network} />;
-  }, [selected?.network]);
+    return (
+      selected?.network && (
+        <NetworkLogo
+          className="flex-shrink-0"
+          network={selected?.network}
+          size={isPadPX ? 'small' : 'normal'}
+        />
+      )
+    );
+  }, [isPadPX, selected?.network]);
 
   const renderSelected = useMemo(() => {
     return (
-      selected?.network &&
-      (isPadPX ? (
+      selected?.network && (
         <span className={clsx('flex-row-center', styles['select-network-value-selected'])}>
           {renderNetworkLogo}
           <span className={styles['primary']}>{selected?.name}</span>
         </span>
-      ) : (
-        <span className={clsx('flex-row-center', styles['select-network-value-selected'])}>
-          {renderNetworkLogo}
-          <span className={styles['primary']}>{selected?.network}</span>
-          <span className={styles['secondary']}>{selected?.name}</span>
-        </span>
-      ))
+      )
     );
-  }, [isPadPX, renderNetworkLogo, selected?.name, selected?.network]);
+  }, [renderNetworkLogo, selected?.name, selected?.network]);
 
   return (
-    <div className={styles['deposit-select-network']}>
+    <div className={clsx(styles['deposit-select-network'], className)}>
       <div
         id="select-network-result"
-        className={clsx('flex-row-center', styles['select-network-result'])}
+        className={clsx(
+          isPadPX ? 'flex-row-center' : 'flex-row-center-between',
+          styles['select-network-result'],
+        )}
         onClick={() => setIsShowNetworkSelectDropdown(true)}>
-        <div className={styles['select-network-label']}>{label}</div>
+        {isPadPX && <div className={styles['select-network-label']}>{label}</div>}
         {selected?.network ? renderSelected : renderNotSelected}
-        <DynamicArrow size="Small" isExpand={isShowNetworkSelectDropdown} />
+        <DynamicArrow size={isPadPX ? 'Small' : 'Normal'} isExpand={isShowNetworkSelectDropdown} />
       </div>
 
       {isPadPX ? (

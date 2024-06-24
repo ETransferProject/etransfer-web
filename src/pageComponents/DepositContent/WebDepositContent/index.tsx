@@ -8,16 +8,18 @@ import { TDepositContentProps } from '..';
 import CommonQRCode from 'components/CommonQRCode';
 import { DEPOSIT_ADDRESS_LABEL } from 'constants/deposit';
 import CommonImage from 'components/CommonImage';
-import { qrCodePlaceholder } from 'assets/images';
+import { DoubleArrowIcon, qrCodePlaceholder } from 'assets/images';
 import { DepositRetryForWeb } from 'pageComponents/DepositContent/DepositRetry';
-import SelectTokenNetwork from '../SelectTokenNetwork';
-import SelectTokenChain from '../SelectTokenChain';
 import Space from 'components/Space';
 import ExchangeRate from '../ExchangeRate';
 import Calculator from '../Calculator';
 import { useDepositState } from 'store/Provider/hooks';
 import FAQ from 'components/FAQ';
 import { FAQ_DEPOSIT } from 'constants/footer';
+import SelectToken from '../SelectToken';
+import SelectNetwork from '../SelectNetwork';
+import { CHAIN_LIST } from 'constants/index';
+import SelectChainWrapper from '../SelectChainWrapper';
 
 export default function WebContent({
   fromNetworkSelected,
@@ -36,7 +38,15 @@ export default function WebContent({
   fromNetworkChanged,
   fromTokenChanged,
 }: TDepositContentProps) {
-  const { fromTokenSymbol, toChainItem, toTokenSymbol } = useDepositState();
+  const {
+    fromTokenSymbol,
+    toChainItem,
+    toTokenSymbol,
+    fromTokenList,
+    fromNetworkList,
+    toTokenList,
+    toChainList,
+  } = useDepositState();
 
   const renderDepositDescription = useMemo(() => {
     return (
@@ -45,6 +55,7 @@ export default function WebContent({
     );
   }, [depositInfo.extraNotes]);
 
+  const menuItems = useMemo(() => toChainList || CHAIN_LIST, [toChainList]);
   const renderDepositMainContent = useMemo(() => {
     return (
       <div
@@ -54,21 +65,62 @@ export default function WebContent({
           styles['main-content'],
         )}>
         <div className={styles['deposit-title']}>Deposit Assets</div>
-        <SelectTokenNetwork
-          label={'From'}
-          tokenSelected={fromTokenSelected}
-          tokenSelectCallback={fromTokenChanged}
-          networkSelected={fromNetworkSelected}
-          isShowNetworkLoading={isShowNetworkLoading}
-          networkSelectCallback={fromNetworkChanged}
-        />
-        <Space direction="vertical" size={12} />
-        <SelectTokenChain
-          label={'To'}
-          tokenSelected={toTokenSelected}
-          tokenSelectCallback={toTokenSelectCallback}
-          chainChanged={toChainChanged}
-        />
+
+        <div className={clsx('flex-row-center', styles['selected-data-wrapper'])}>
+          <div className="flex-1">
+            <div className={styles['label']}>Deposit Token</div>
+            <SelectToken
+              className={styles['selected-data']}
+              tokenList={fromTokenList}
+              selected={fromTokenSelected}
+              selectCallback={fromTokenChanged}
+            />
+          </div>
+
+          <div className="flex-1">
+            <div className={styles['label']}>Receive Token</div>
+            <SelectToken
+              className={styles['selected-data']}
+              tokenList={toTokenList}
+              selected={toTokenSelected}
+              selectCallback={toTokenSelectCallback}
+            />
+          </div>
+        </div>
+
+        <div className={clsx('row-center', styles['arrow-right'])}>
+          <DoubleArrowIcon />
+        </div>
+
+        <div className={clsx('flex-row-center', styles['selected-data-wrapper'])}>
+          <div className="flex-1">
+            <div className={styles['label']}>From</div>
+            <SelectNetwork
+              className={styles['selected-data']}
+              networkList={fromNetworkList || []}
+              selected={fromNetworkSelected}
+              isShowLoading={isShowNetworkLoading}
+              selectCallback={fromNetworkChanged}
+            />
+          </div>
+          <div className="flex-1">
+            <div className={clsx('flex-row-center-between', styles['label'])}>
+              <span>To</span>
+              <div className="flex-row-center">
+                <div className={styles['circle']} />
+                <span className={styles['connected']}>Connected</span>
+              </div>
+            </div>
+
+            <SelectChainWrapper
+              className={styles['selected-data']}
+              menuItems={menuItems}
+              selectedItem={toChainItem}
+              mobileTitle={`Deposit ${'To'}`}
+              chainChanged={toChainChanged}
+            />
+          </div>
+        </div>
 
         {fromTokenSymbol &&
           toTokenSymbol &&
@@ -98,7 +150,7 @@ export default function WebContent({
           <>
             <div className={clsx('flex-row-center', styles['deposit-address-wrapper'])}>
               {qrCodeValue ? (
-                <CommonQRCode value={qrCodeValue} logoUrl={tokenLogoUrl} />
+                <CommonQRCode value={qrCodeValue} logoUrl={tokenLogoUrl} logoSize={20} />
               ) : (
                 <CommonImage
                   className={clsx('flex-none', styles['qr-code-placeholder'])}
@@ -129,17 +181,21 @@ export default function WebContent({
     depositInfo.minAmount,
     depositInfo.minAmountUsd,
     fromNetworkChanged,
+    fromNetworkList,
     fromNetworkSelected,
     fromTokenChanged,
+    fromTokenList,
     fromTokenSelected,
     fromTokenSymbol,
     isShowNetworkLoading,
+    menuItems,
     onRetry,
     qrCodeValue,
     renderDepositDescription,
     showRetry,
     toChainChanged,
-    toChainItem.key,
+    toChainItem,
+    toTokenList,
     toTokenSelectCallback,
     toTokenSelected,
     toTokenSymbol,

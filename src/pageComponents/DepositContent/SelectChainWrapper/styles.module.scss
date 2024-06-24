@@ -1,5 +1,6 @@
 @import 'src/assets/theme/font.scss';
 @import 'src/assets/theme/color.scss';
+@import '/src/assets/theme/constants.scss';
 @import 'src/assets/theme/breakpoint.scss';
 
 .select-chain-wrapper {
@@ -14,26 +15,45 @@
     font-size: 12px;
     line-height: 16px;
     @extend .font-family-medium;
+
+    @include media-web {
+      font-size: 16px;
+      line-height: 24px;
+    }
   }
   .select-chain-container {
     padding: 0;
+    justify-content: space-between;
+    flex: 1;
   }
   .select-chain-content {
     color: $primary-text;
     font-size: 12px;
     line-height: 16px;
     @extend .font-family-medium;
+
+    @include media-web {
+      font-size: 16px;
+      line-height: 24px;
+    }
+
     div {
       font-size: 12px;
       line-height: 16px;
       @extend .font-family-medium;
+      @include text-overflow;
+
+      @include media-web {
+        font-size: 16px;
+        line-height: 24px;
+      }
     }
     span {
       margin-left: 6px;
+
+      @include media-web {
+        margin-left: 8px;
+      }
     }
   }
-}
-
-.space-6 {
-  width: 6px;
 }
