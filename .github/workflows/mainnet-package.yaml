@@ -1,10 +1,11 @@
 name: Build and Push Image
 on:
   push:
-    branches: ['master']
+    branches:
+      - 'master/*'
 jobs:
   build-and-push-image:
-    runs-on: etransfer-web-runner
+    runs-on: etransfer-runner
     permissions:
       contents: read
     outputs:
@@ -29,10 +30,14 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         env:
-          NEXT_PUBLIC_SENTRY_DNS: ${{ secrets.MAINNET_NEXT_PUBLIC_SENTRY_DNS }} # testnet   mainnet
-          NEXT_PUBLIC_ANALYTICS_ID: ${{ secrets.MAINNET_NEXT_NEXT_PUBLIC_ANALYTICS_ID }}
-          NEXT_PUBLIC_APP_ENV: mainnet
-          NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: ${{ secrets.MAINNET_NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}
+          NEXT_PUBLIC_FIREBASE_ANALYTICS_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_ANALYTICS_API_KEY }} # testnet   mainnet
+          NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_APP_ID: ${{ secrets.NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_APP_ID }}
+          NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_MEASUREMENT_ID }}
+          NEXT_PUBLIC_TESTNET_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TESTNET_RECAPTCHA_SITE_KEY }}
+          NEXT_PUBLIC_MAINNET_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_MAINNET_RECAPTCHA_SITE_KEY }}
+          NEXT_PUBLIC_MAINNET_FIREBASE_ANALYTICS_APP_ID: ${{ secrets.NEXT_PUBLIC_MAINNET_FIREBASE_ANALYTICS_APP_ID }}
+          NEXT_PUBLIC_MAINNET_FIREBASE_ANALYTICS_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_MAINNET_FIREBASE_ANALYTICS_MEASUREMENT_ID }}
+          ENVIRONMENT: mainnet
         with:
           context: .
           push: true
@@ -42,11 +47,14 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            NEXT_PUBLIC_SENTRY_DNS=${{ secrets.MAINNET_NEXT_PUBLIC_SENTRY_DNS }}
-            NEXT_PUBLIC_ANALYTICS_ID=${{ secrets.MAINNET_NEXT_NEXT_PUBLIC_ANALYTICS_ID }}
-            NEXT_PUBLIC_APP_ENV=mainnet
-            NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=${{ secrets.MAINNET_NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}
-            ENV_NAME=mainnet
+            NEXT_PUBLIC_FIREBASE_ANALYTICS_API_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_ANALYTICS_API_KEY }}
+            NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_APP_ID=${{ secrets.NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_APP_ID }}
+            NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_MEASUREMENT_ID }}
+            NEXT_PUBLIC_TESTNET_RECAPTCHA_SITE_KEY=${{ secrets.NEXT_PUBLIC_TESTNET_RECAPTCHA_SITE_KEY }}
+            NEXT_PUBLIC_MAINNET_RECAPTCHA_SITE_KEY=${{ secrets.NEXT_PUBLIC_MAINNET_RECAPTCHA_SITE_KEY }}  
+            NEXT_PUBLIC_MAINNET_FIREBASE_ANALYTICS_APP_ID=${{ secrets.NEXT_PUBLIC_MAINNET_FIREBASE_ANALYTICS_APP_ID }}  
+            NEXT_PUBLIC_MAINNET_FIREBASE_ANALYTICS_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_MAINNET_FIREBASE_ANALYTICS_MEASUREMENT_ID }}
+            ENVIRONMENT=mainnet
   dispatch:
     runs-on: etransfer-runner
     needs: build-and-push-image
@@ -57,12 +65,12 @@ jobs:
           github-token: ${{ secrets.TOK }}
           script: |
             await github.rest.actions.createWorkflowDispatch({
-              owner: 'etransferWebProject',
+              owner: 'ETransferProject',
               repo: 'devops',
               workflow_id: 'deployment_mainnet.yaml',
               ref: 'main',
               inputs: {
-                appName: 'etransfer-web-server',
+                appName: 'etransfer-web',
                 commit_sha: 'sha-${{ needs.build-and-push-image.outputs.short_sha }}',
               }
             })
