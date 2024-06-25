@@ -30,7 +30,9 @@ export default function SelectChainWrapper({
   }, [menuItems?.length]);
 
   return (
-    <div className={clsx('flex-row-center', styles['select-chain-wrapper'], className)}>
+    <div
+      id="depositChainSelect"
+      className={clsx('flex-row-center', styles['select-chain-wrapper'], className)}>
       {isPadPX && <span className={styles['select-chain-label']}>{mobileLabel}</span>}
 
       {isPadPX ? <Aelf /> : <AelfMedium />}
@@ -40,6 +42,7 @@ export default function SelectChainWrapper({
         <div className={styles['select-chain']}>{selectedItem.label}</div>
       ) : (
         <SelectChain
+          getContainer="webDepositChainWrapper"
           menuItems={menuItems}
           selectedItem={selectedItem}
           isBorder={false}
@@ -47,6 +50,7 @@ export default function SelectChainWrapper({
           clickCallback={chainChanged}
           className={styles['select-chain-container']}
           childrenClassName={styles['select-chain-content']}
+          overlayClassName={styles['select-chain-overlay']}
           suffixArrowSize={isPadPX ? 'Small' : 'Normal'}
         />
       )}

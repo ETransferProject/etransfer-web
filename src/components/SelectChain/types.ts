@@ -4,8 +4,10 @@ import { IChainNameItem } from 'constants/index';
 type TSelectChainCommon = {
   menuItems: IChainNameItem[];
   selectedItem: IChainNameItem;
+  getContainer: string;
   className?: string;
   childrenClassName?: string;
+  overlayClassName?: string;
   isBorder?: boolean;
   suffixArrowSize?: TDynamicArrowSize;
   hideDownArrow?: boolean;

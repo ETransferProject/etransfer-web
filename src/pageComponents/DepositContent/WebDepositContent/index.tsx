@@ -110,7 +110,9 @@ export default function WebContent({
             />
           </div>
           <div className={styles['space']}></div>
-          <div className={clsx(styles['selected-chain-wrapper'])}>
+          <div
+            className={clsx('position-relative', styles['selected-chain-wrapper'])}
+            id="webDepositChainWrapper">
             <div className={clsx('flex-row-center-between', styles['label'])}>
               <span>To</span>
               <div className="flex-row-center">

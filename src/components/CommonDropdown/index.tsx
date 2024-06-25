@@ -4,7 +4,8 @@ import DynamicArrow, { TDynamicArrowSize } from 'components/DynamicArrow';
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 
-interface CommonDropdownProps extends DropdownProps {
+export interface CommonDropdownProps extends DropdownProps {
+  getContainer: string;
   childrenClassName?: string;
   isBorder?: boolean;
   menu?: Omit<MenuProps, 'onClick'>;
@@ -15,6 +16,7 @@ interface CommonDropdownProps extends DropdownProps {
 }
 
 export default function CommonDropdown({
+  getContainer,
   isBorder = true,
   childrenClassName,
   handleMenuClick,
@@ -27,6 +29,7 @@ export default function CommonDropdown({
     <Dropdown
       trigger={['click']}
       {...props}
+      getPopupContainer={() => document.getElementById(getContainer as string) as HTMLElement}
       menu={{
         ...props.menu,
         onClick: (params) => {
