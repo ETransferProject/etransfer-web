@@ -32,7 +32,7 @@ export default function DoubleCheckModal({
   modalProps,
   isTransactionFeeLoading,
 }: DoubleCheckModalProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
 
   const renderAmountToBeReceived = () => {
     return (
@@ -70,7 +70,7 @@ export default function DoubleCheckModal({
           <div className={clsx(styles['detail-row'], styles['withdrawal-network-wrapper'])}>
             <div className={styles['label']}>Withdrawal Network</div>
             <div className={clsx('flex-row-center', styles['value'])}>
-              {isMobilePX ? (
+              {isPadPX ? (
                 withdrawInfo.network?.name
               ) : (
                 <>

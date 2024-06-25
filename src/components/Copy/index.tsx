@@ -22,7 +22,7 @@ export default function Copy({
   className?: string;
   size?: CopySize;
 }) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setCopyValue] = useCopyToClipboard();
@@ -35,19 +35,19 @@ export default function Copy({
   const CheckIcon = useMemo(() => (size === CopySize.Small ? CheckSmall : CheckNormal), [size]);
 
   const tooltipTitle = useMemo(() => {
-    if (isShowCopyIcon || isMobilePX) {
+    if (isShowCopyIcon || isPadPX) {
       return 'Copied';
-    } else if (!isMobilePX) {
+    } else if (!isPadPX) {
       return 'Copy';
     }
     return '';
-  }, [isShowCopyIcon, isMobilePX]);
+  }, [isPadPX, isShowCopyIcon]);
 
   return (
     <CommonTooltip
       title={tooltipTitle}
-      trigger={isMobilePX ? '' : 'hover'}
-      open={isMobilePX ? isTooltipOpen : undefined}>
+      trigger={isPadPX ? '' : 'hover'}
+      open={isPadPX ? isTooltipOpen : undefined}>
       <span
         onClick={() => {
           if (isShowCopyIcon) {
@@ -55,14 +55,14 @@ export default function Copy({
           }
           setCopyValue(toCopy);
           setIsShowCopyIcon(true);
-          if (isMobilePX) {
+          if (isPadPX) {
             setIsTooltipOpen(true);
           }
           if (timerRef.current) {
             clearTimeout(timerRef.current);
           }
           timerRef.current = setTimeout(() => {
-            if (isMobilePX) {
+            if (isPadPX) {
               setIsTooltipOpen(false);
             }
             setIsShowCopyIcon(false);

@@ -17,7 +17,7 @@ export default function SelectChain({
   selectedItem,
   clickCallback,
 }: SelectChainProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
 
   const [openSynchronizingModal, setOpenSynchronizingModal] = useState(false);
 
@@ -45,7 +45,7 @@ export default function SelectChain({
 
   return (
     <>
-      {isMobilePX ? (
+      {isPadPX ? (
         <MobileSelectChain
           {...dropdownProps}
           title={title}
