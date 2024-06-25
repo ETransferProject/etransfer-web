@@ -3,12 +3,14 @@ import OpenLink from 'components/OpenLink';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
 import CommonModalTips from 'components/CommonModalTips';
+import { CommonModalProps } from 'components/CommonModal';
 
 export type TViewContractAddressModal = {
   open?: boolean;
   network: string;
   value: string;
   link?: string;
+  getContainer?: CommonModalProps['getContainer'];
   onOk?: () => void;
 };
 
@@ -19,13 +21,14 @@ export default function ViewContractAddressModal({
   network,
   value,
   link,
+  getContainer,
   onOk,
 }: TViewContractAddressModal) {
   return (
     <CommonModalTips
       className={styles.viewContractAddressModal}
       footerClassName={styles.viewContractAddressModalFooter}
-      getContainer="body"
+      getContainer={getContainer}
       open={open}
       closable={false}
       okText="OK"

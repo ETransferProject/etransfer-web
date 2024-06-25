@@ -54,6 +54,7 @@
         font-size: 14px;
         line-height: 22px;
         @include text-overflow;
+        word-break: break-all;
       }
       .icon {
         width: 28px;

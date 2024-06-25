@@ -81,6 +81,7 @@ export default function MobileDepositContent({
   const renderDepositInfoDrawer = useMemo(() => {
     return (
       <CommonDrawer
+        id="mobileDepositInfoDrawer"
         open={isShowDepositInfo}
         onClose={() => setIsShowDepositInfo(false)}
         destroyOnClose
@@ -101,6 +102,7 @@ export default function MobileDepositContent({
         {fromTokenSelected && fromNetworkSelected && depositInfo?.depositAddress && (
           <>
             <DepositInfo
+              modalContainer={'#mobileDepositInfoDrawer'}
               networkName={fromNetworkSelected.name}
               minimumDeposit={depositInfo.minAmount}
               contractAddress={contractAddress}
@@ -136,54 +138,57 @@ export default function MobileDepositContent({
   return (
     <div className="main-content-container main-content-container-safe-area">
       <div className={clsx(styles['main-section'], styles['section'])}>
-        <SelectTokenNetwork
-          label={'From'}
-          tokenSelected={fromTokenSelected}
-          tokenSelectCallback={fromTokenChanged}
-          networkSelected={fromNetworkSelected}
-          isShowNetworkLoading={isShowNetworkLoading}
-          networkSelectCallback={fromNetworkChanged}
-        />
+        <div>
+          <SelectTokenNetwork
+            label={'From'}
+            tokenSelected={fromTokenSelected}
+            tokenSelectCallback={fromTokenChanged}
+            networkSelected={fromNetworkSelected}
+            isShowNetworkLoading={isShowNetworkLoading}
+            networkSelectCallback={fromNetworkChanged}
+          />
 
-        <Space direction="vertical" size={8} />
+          <Space direction="vertical" size={8} />
 
-        <SelectTokenChain
-          label={'To'}
-          tokenSelected={toTokenSelected}
-          tokenSelectCallback={toTokenSelectCallback}
-          chainChanged={toChainChanged}
-        />
+          <SelectTokenChain
+            label={'To'}
+            tokenSelected={toTokenSelected}
+            tokenSelectCallback={toTokenSelectCallback}
+            chainChanged={toChainChanged}
+          />
 
-        {fromTokenSymbol &&
-          toTokenSymbol &&
-          toChainItem.key &&
-          fromTokenSymbol !== toTokenSymbol && (
+          {fromTokenSymbol &&
+            toTokenSymbol &&
+            toChainItem.key &&
+            fromTokenSymbol !== toTokenSymbol && (
+              <>
+                <Space direction="vertical" size={12} />
+                <ExchangeRate
+                  fromSymbol={fromTokenSymbol}
+                  toSymbol={toTokenSymbol}
+                  toChainId={toChainItem.key}
+                  slippage={depositInfo.extraInfo?.slippage}
+                />
+              </>
+            )}
+
+          {fromTokenSymbol !== toTokenSymbol && (
             <>
-              <Space direction="vertical" size={12} />
-              <ExchangeRate
-                fromSymbol={fromTokenSymbol}
-                toSymbol={toTokenSymbol}
-                toChainId={toChainItem.key}
-                slippage={depositInfo.extraInfo?.slippage}
-              />
+              <Space direction="vertical" size={24} />
+
+              <Calculator />
             </>
           )}
-
-        {fromTokenSymbol !== toTokenSymbol && (
-          <>
-            <Space direction="vertical" size={24} />
-
-            <Calculator />
-          </>
-        )}
-
-        <Space direction="vertical" size={24} />
-        <CommonButton
-          className={styles['next-button']}
-          onClick={onClickNext}
-          disabled={nextDisable}>
-          Next
-        </CommonButton>
+        </div>
+        <div>
+          <Space direction="vertical" size={24} />
+          <CommonButton
+            className={styles['next-button']}
+            onClick={onClickNext}
+            disabled={nextDisable}>
+            Next
+          </CommonButton>
+        </div>
       </div>
       {isPadPX && !isMobilePX && (
         <>

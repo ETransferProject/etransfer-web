@@ -68,7 +68,7 @@ export default function WebContent({
         <div className={styles['deposit-title']}>Deposit Assets</div>
 
         <div className={clsx('flex-row-center', styles['selected-data-wrapper'])}>
-          <div className="flex-1">
+          <div className={clsx(styles['selected-token-wrapper'])}>
             <div className={styles['label']}>Deposit Token</div>
             <SelectToken
               className={styles['selected-token']}
@@ -77,8 +77,8 @@ export default function WebContent({
               selectCallback={fromTokenChanged}
             />
           </div>
-
-          <div className="flex-1">
+          <div className={styles['space']}></div>
+          <div className={clsx(styles['selected-token-wrapper'])}>
             <div className={styles['label']}>Receive Token</div>
             <SelectToken
               className={styles['selected-token']}
@@ -99,17 +99,18 @@ export default function WebContent({
             styles['selected-data-wrapper'],
             styles['selected-row-2'],
           )}>
-          <div className="flex-1">
+          <div className={clsx(styles['selected-chain-wrapper'])}>
             <div className={styles['label']}>From</div>
             <SelectNetwork
-              className={styles['selected-data']}
+              className={styles['selected-chain']}
               networkList={fromNetworkList || []}
               selected={fromNetworkSelected}
               isShowLoading={isShowNetworkLoading}
               selectCallback={fromNetworkChanged}
             />
           </div>
-          <div className="flex-1">
+          <div className={styles['space']}></div>
+          <div className={clsx(styles['selected-chain-wrapper'])}>
             <div className={clsx('flex-row-center-between', styles['label'])}>
               <span>To</span>
               <div className="flex-row-center">
@@ -119,7 +120,7 @@ export default function WebContent({
             </div>
 
             <SelectChainWrapper
-              className={styles['selected-data']}
+              className={styles['selected-chain']}
               menuItems={menuItems}
               selectedItem={toChainItem}
               mobileTitle={`Deposit ${'To'}`}

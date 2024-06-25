@@ -12,6 +12,11 @@
   @include media-web {
     min-width: 440px;
   }
+  @include media-web-2xl {
+    max-width: 614px;
+    min-width: 440px;
+    width: 100%;
+  }
 }
 
 .select-chain-label {
