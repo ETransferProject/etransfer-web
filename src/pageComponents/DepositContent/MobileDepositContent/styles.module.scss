@@ -60,11 +60,3 @@
   line-height: 24px;
   @extend .font-family-medium;
 }
-
-.deposit-info-drawer {
-  :global {
-    .ant-drawer-content-wrapper {
-      background-color: $page-bg;
-    }
-  }
-}
