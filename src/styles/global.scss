@@ -18,6 +18,13 @@ body {
   font-size: 14px;
   @extend .font-family-regular;
 }
+div,
+span,
+p,
+a {
+  @extend .font-family-regular;
+}
+
 body {
   margin: 0;
 

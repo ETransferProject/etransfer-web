@@ -45,6 +45,12 @@
   align-items: center;
   justify-content: center;
 }
+.column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 .flex-center {
   display: flex;
   justify-content: center;

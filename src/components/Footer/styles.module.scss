@@ -1,5 +1,6 @@
 @import '/src/assets/theme/color.scss';
 @import '/src/assets/theme/breakpoint.scss';
+@import '/src/assets/theme/font.scss';
 
 .footer {
   font-size: 14px;
@@ -29,7 +30,6 @@
 }
 
 .left-describe {
-  font-weight: 400;
   line-height: 22px;
 }
 
@@ -45,9 +45,9 @@
 
 .right-menu-group {
   color: $primary-text;
-  font-weight: 500;
   line-height: 22px;
   margin-bottom: 12px;
+  @extend .font-family-medium;
 }
 
 .right-menu-secondMenu {
@@ -57,7 +57,6 @@
 .right-menu-secondMenu-item {
   cursor: pointer;
   color: $secondary-text;
-  font-weight: 400;
   line-height: 22px;
 
   &:hover {

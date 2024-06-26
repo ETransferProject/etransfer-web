@@ -82,6 +82,7 @@ export default function MobileDepositContent({
     return (
       <CommonDrawer
         id="mobileDepositInfoDrawer"
+        className={styles['deposit-info-drawer']}
         open={isShowDepositInfo}
         onClose={() => setIsShowDepositInfo(false)}
         destroyOnClose

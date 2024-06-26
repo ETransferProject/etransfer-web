@@ -189,8 +189,11 @@ export default function Content() {
     }
   }, [handleReset, isUnreadHistory, requestRecordsList]);
 
+  const initRef = useRef(init);
+  initRef.current = init;
+
   useEffect(() => {
-    init();
+    initRef.current();
   }, [dispatch, init]);
 
   // Listener login
