@@ -59,7 +59,6 @@ export default function Content() {
   const requestRecordsList = useDebounceCallback(async (isLoading = false, isSetAuth = false) => {
     try {
       isLoading && setLoading(true);
-
       if (isSetAuth) {
         if (!wallet) return;
         await wallet?.setAuthFromStorage();
@@ -194,7 +193,7 @@ export default function Content() {
 
   useEffect(() => {
     initRef.current();
-  }, [dispatch, init]);
+  }, []);
 
   // Listener login
   const refreshData = useCallback(() => {
