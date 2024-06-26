@@ -139,49 +139,49 @@ export default function MobileDepositContent({
   return (
     <div className="main-content-container main-content-container-safe-area">
       <div className={clsx(styles['main-section'], styles['section'])}>
-        <div>
-          <SelectTokenNetwork
-            label={'From'}
-            tokenSelected={fromTokenSelected}
-            tokenSelectCallback={fromTokenChanged}
-            networkSelected={fromNetworkSelected}
-            isShowNetworkLoading={isShowNetworkLoading}
-            networkSelectCallback={fromNetworkChanged}
-          />
+        <SelectTokenNetwork
+          label={'From'}
+          tokenSelected={fromTokenSelected}
+          tokenSelectCallback={fromTokenChanged}
+          networkSelected={fromNetworkSelected}
+          isShowNetworkLoading={isShowNetworkLoading}
+          networkSelectCallback={fromNetworkChanged}
+        />
 
-          <Space direction="vertical" size={8} />
+        <Space direction="vertical" size={8} />
 
-          <SelectTokenChain
-            label={'To'}
-            tokenSelected={toTokenSelected}
-            tokenSelectCallback={toTokenSelectCallback}
-            chainChanged={toChainChanged}
-          />
+        <SelectTokenChain
+          label={'To'}
+          tokenSelected={toTokenSelected}
+          tokenSelectCallback={toTokenSelectCallback}
+          chainChanged={toChainChanged}
+        />
 
-          {fromTokenSymbol &&
-            toTokenSymbol &&
-            toChainItem.key &&
-            fromTokenSymbol !== toTokenSymbol && (
-              <>
-                <Space direction="vertical" size={12} />
-                <ExchangeRate
-                  fromSymbol={fromTokenSymbol}
-                  toSymbol={toTokenSymbol}
-                  toChainId={toChainItem.key}
-                  slippage={depositInfo.extraInfo?.slippage}
-                />
-              </>
-            )}
-
-          {fromTokenSymbol !== toTokenSymbol && (
+        {fromTokenSymbol &&
+          toTokenSymbol &&
+          toChainItem.key &&
+          fromTokenSymbol !== toTokenSymbol && (
             <>
-              <Space direction="vertical" size={24} />
-
-              <Calculator />
+              <Space direction="vertical" size={12} />
+              <ExchangeRate
+                fromSymbol={fromTokenSymbol}
+                toSymbol={toTokenSymbol}
+                toChainId={toChainItem.key}
+                slippage={depositInfo.extraInfo?.slippage}
+              />
             </>
           )}
-        </div>
-        <div>
+
+        {fromTokenSymbol !== toTokenSymbol && (
+          <>
+            <Space direction="vertical" size={24} />
+
+            <Calculator />
+          </>
+        )}
+
+        <div
+          className={clsx(styles['next-button-wrapper'], styles['next-button-wrapper-safe-area'])}>
           <Space direction="vertical" size={24} />
           <CommonButton
             className={styles['next-button']}

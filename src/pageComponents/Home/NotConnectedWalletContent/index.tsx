@@ -11,8 +11,8 @@ export default function NotConnectedWalletContent() {
   const { isPadPX } = useCommonState();
 
   return (
-    <div className={clsx('flex-column-center', styles['container'], styles['container-safe-area'])}>
-      <div className={clsx('column-center', 'flex-1')}>
+    <div className={clsx(styles['container'], styles['container-safe-area'])}>
+      <div className={clsx('flex-column-center')}>
         {isPadPX && <Logo className={styles['logo']} />}
         <CommonImage className={styles['large-logo']} src={LargeLogo} alt="logo" />
         <div className={styles['primary-text']}>Deposit/Withdraw Digital Assets</div>
@@ -24,12 +24,16 @@ export default function NotConnectedWalletContent() {
             Securely between aelf and other popular networks.
           </p>
         </div>
-      </div>
-      <div className={clsx(styles['connect-wallet-button-wrapper'])}>
-        <ConnectWalletButton
-          className={styles['connect-wallet-button']}
-          size={CommonButtonSize.Large}
-        />
+        <div
+          className={clsx(
+            styles['connect-wallet-button-wrapper'],
+            styles['connect-wallet-button-wrapper-safe-area'],
+          )}>
+          <ConnectWalletButton
+            className={styles['connect-wallet-button']}
+            size={CommonButtonSize.Large}
+          />
+        </div>
       </div>
     </div>
   );
