@@ -53,6 +53,10 @@
   gap: 8px;
 }
 
+.calculator-header-title {
+  @extend .font-family-medium;
+}
+
 .label {
   color: $secondary-text;
   font-size: 12px;
@@ -63,6 +67,10 @@
   font-size: 16px;
   line-height: 24px;
   @extend .font-family-medium;
+}
+
+.min-receive {
+  flex-wrap: wrap;
 }
 
 .min-receive-amount {

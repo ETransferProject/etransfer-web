@@ -8,6 +8,7 @@ import { formatStr2Ellipsis, formatSymbolDisplay } from 'utils/format';
 import ViewContractAddressModal from 'pageComponents/Modal/ViewContractAddressModal';
 import { openWithBlank } from 'utils/common';
 import { valueFixed2LessThanMin } from 'utils/calculate';
+import { CommonModalProps } from 'components/CommonModal';
 
 export interface DepositInfoProps {
   networkName?: string;
@@ -15,6 +16,7 @@ export interface DepositInfoProps {
   contractAddress: string;
   contractAddressLink: string;
   minAmountUsd: string;
+  modalContainer?: CommonModalProps['getContainer'];
 }
 
 export default function DepositInfo({
@@ -23,6 +25,7 @@ export default function DepositInfo({
   contractAddress,
   contractAddressLink,
   minAmountUsd,
+  modalContainer,
 }: DepositInfoProps) {
   const { isPadPX } = useCommonState();
   const { fromTokenSymbol } = useDepositState();
@@ -76,6 +79,7 @@ export default function DepositInfo({
 
       <ViewContractAddressModal
         open={openAddressModal}
+        getContainer={modalContainer}
         network={networkName || ''}
         value={contractAddress}
         link={contractAddressLink}

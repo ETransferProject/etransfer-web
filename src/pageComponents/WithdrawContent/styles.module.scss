@@ -9,7 +9,14 @@
 }
 
 .main-content {
-  padding: 0 11.12%;
+  padding: 0 11%;
+
+  @include media-web-2xl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 32px;
+  }
 }
 
 .section {
@@ -58,6 +65,12 @@
 .form-container {
   @include media-web {
     min-width: 440px;
+  }
+
+  @include media-web-2xl {
+    max-width: 614px;
+    min-width: 440px;
+    width: 100%;
   }
 }
 

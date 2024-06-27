@@ -11,6 +11,7 @@ export default function WebUserProfile() {
   return (
     <div onClick={() => setIsOpen(true)}>
       <CommonDropdown
+        getContainer="etransfer-root"
         menu={{ items: [] }}
         dropdownRender={() =>
           isOpen ? (

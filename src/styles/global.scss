@@ -16,8 +16,11 @@ body {
   background-color: $page-bg;
   min-width: $page-min-width;
   font-size: 14px;
-  @extend .font-family-regular;
+
+  // Solve the font loading error problem caused by the UI framework taking effect in the first place
+  @extend .font-family-regular-important;
 }
+
 body {
   margin: 0;
 
