@@ -55,8 +55,9 @@
   @include media-mobile {
     width: 100%;
     position: fixed;
+    left: 0;
     bottom: 0;
-    width: calc(100% - 32px);
+    padding: 0 16px;
     background-color: $page-bg;
   }
 }
