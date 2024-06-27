@@ -40,9 +40,10 @@ export default function SelectChainWrapper({
   });
 
   return (
-    <div className={clsx(styles['select-chain-wrapper'], className)}>
+    <div className={clsx(styles['select-chain-wrapper'], className)} id="withdrawChainSelect">
       <span className={styles['select-chain-label']}>{isPadPX ? mobileLabel : webLabel}</span>
       <SelectChain
+        getContainer="withdrawChainSelect"
         title={mobileTitle}
         clickCallback={chainChanged}
         menuItems={CHAIN_LIST}

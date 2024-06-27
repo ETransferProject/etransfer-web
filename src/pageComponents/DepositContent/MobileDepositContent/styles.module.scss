@@ -26,6 +26,10 @@
   @include media-mobile-and-pad {
     padding-top: 16px;
   }
+
+  @include media-mobile {
+    height: 100%;
+  }
 }
 
 .section {
@@ -44,4 +48,32 @@
 
 .faq {
   padding-bottom: 56px;
+}
+
+.next-button-wrapper {
+  min-width: $page-min-width;
+  @include media-mobile {
+    width: 100%;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    padding: 0 16px;
+    background-color: $page-bg;
+  }
+}
+
+.next-button-wrapper-safe-area {
+  @include media-mobile {
+    padding-top: 16px;
+    padding-bottom: calc(16px + constant(safe-area-inset-bottom));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+}
+
+.next-button {
+  width: 100%;
+  height: 48px;
+  font-size: 16px;
+  line-height: 24px;
+  @extend .font-family-medium;
 }

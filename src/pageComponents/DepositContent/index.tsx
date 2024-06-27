@@ -85,8 +85,6 @@ export default function Content() {
     return toTokenList?.find((item) => item.symbol === toTokenSymbol) || toTokenList?.[0];
   }, [toTokenList, toTokenSymbol]);
 
-  // const [tokenChainMap, setTokenChainMap] = useState<Record<string, TToTokenItem>>();
-
   const getTokenList = useCallback(
     async (chainId: ChainId, fromSymbol: string, toSymbol: string) => {
       try {
@@ -96,8 +94,6 @@ export default function Content() {
         });
         // Format fromTokenList - add chainList for toTokenList
         const fromTokenList: TDepositTokenItem[] = JSON.parse(JSON.stringify(tokenList));
-        const tokenChainMap: Record<string, TToTokenItem> = {};
-        const toTokenList: TToTokenItem[] = [];
         fromTokenList.forEach((from) => {
           from.toTokenList?.forEach((to) => {
             const toChainList: IChainNameItem[] = [];
@@ -110,38 +106,36 @@ export default function Content() {
               }
             });
             to.chainList = toChainList;
-            tokenChainMap[from.symbol + to.symbol] = JSON.parse(JSON.stringify(to));
-            const findToToken = toTokenList.find((pushToToken) => pushToToken.symbol === to.symbol);
-            if (!findToToken) toTokenList.push(to);
           });
         });
-        // setTokenChainMap(tokenChainMap);
+
         // Handle fromTokenList and fromToken
         dispatch(setFromTokenList(fromTokenList));
         const isExitFromTokenSelected = fromTokenList?.find((item) => item.symbol === fromSymbol);
+        const currentFromTokenSelected =
+          isExitFromTokenSelected?.symbol || fromTokenList?.[0].symbol;
+        const currentToTokenList: TToTokenItem[] =
+          isExitFromTokenSelected?.toTokenList || fromTokenList?.[0]?.toTokenList || [];
+
         if (!isExitFromTokenSelected?.symbol) {
-          dispatch(setFromTokenSymbol(fromTokenList?.[0].symbol));
+          dispatch(setFromTokenSymbol(currentFromTokenSelected));
         }
+
         // Handle toTokenList and toToken
-        dispatch(setToTokenList(toTokenList));
-        const isExitToTokenSelected = toTokenList?.find((item) => item.symbol === toSymbol);
-        const tempFromTokenSymbol = isExitFromTokenSelected?.symbol || fromTokenList?.[0].symbol;
+        dispatch(setToTokenList(currentToTokenList));
+        const isExitToTokenSelected = currentToTokenList?.find((item) => item.symbol === toSymbol);
 
         if (isExitToTokenSelected?.symbol) {
-          const tempToTokenSymbol = isExitToTokenSelected?.symbol || toTokenList?.[0].symbol;
-          const isExitChain = tokenChainMap[
-            tempFromTokenSymbol + tempToTokenSymbol
-          ]?.chainList?.find((item) => item.key === chainId);
+          const isExitChain = isExitToTokenSelected?.chainList?.find(
+            (item) => item.key === chainId,
+          );
           if (!isExitChain) {
             dispatch(setToChainItem(isExitToTokenSelected?.chainList?.[0] || CHAIN_LIST[0]));
           }
-          dispatch(
-            setToChainList(tokenChainMap[tempFromTokenSymbol + tempToTokenSymbol].chainList || []),
-          );
+          dispatch(setToChainList(isExitToTokenSelected.chainList || []));
         } else {
-          const toToken = toTokenList?.[0] || [];
-          const tempToTokenSymbol = toToken.symbol;
-          const tempChainList = tokenChainMap[tempFromTokenSymbol + tempToTokenSymbol]?.chainList;
+          const toToken = currentToTokenList?.[0] || [];
+          const tempChainList = toToken?.chainList;
           dispatch(setToTokenSymbol(toToken?.symbol));
           dispatch(setToChainList(tempChainList || []));
           dispatch(setToChainItem(tempChainList?.[0] || CHAIN_LIST[0]));
@@ -210,7 +204,7 @@ export default function Content() {
           }
           dispatch(setFromNetwork(exitNetwork[0]));
         }
-        await getDepositData(chainId, lastSymbol, lastToSymbol);
+        !isPadPX && (await getDepositData(chainId, lastSymbol, lastToSymbol));
       } catch (error: any) {
         setIsShowNetworkLoading(false);
         if (error.name !== CommonErrorNameType.CANCEL && !isAuthTokenError(error)) {
@@ -220,33 +214,31 @@ export default function Content() {
         setIsShowNetworkLoading(false);
       }
     },
-    [dispatch, fromTokenSymbol, getDepositData, toTokenSymbol],
+    [dispatch, fromTokenSymbol, getDepositData, isPadPX, toTokenSymbol],
   );
 
   const handleFromTokenChange = async (newItem: TDepositTokenItem) => {
     // Set fromToken
     dispatch(setFromTokenSymbol(newItem.symbol));
+    dispatch(setToTokenList(newItem.toTokenList || []));
 
-    // Check 1 - toToken
-    const currentFromToken = fromTokenList?.find((item) => item.symbol === newItem.symbol);
-    const isExitToToken = currentFromToken?.toTokenList?.find(
-      (item) => item.symbol === toTokenSymbol,
-    );
-    // toToken not exist, toToken = fromToken
     let toSymbol = toTokenSymbol;
     let toChain = toChainItem;
+    // Check 1 - toToken
+    const isExitToToken = newItem.toTokenList?.find((item) => item.symbol === toTokenSymbol);
+    // toToken not exist, toToken = fromToken
     if (!isExitToToken) {
       toSymbol = newItem.symbol;
       dispatch(setToTokenSymbol(newItem.symbol));
       // Check 2 - toChain
-      const isExitToChain = currentFromToken?.toTokenList?.find((item) =>
+      const isExitToChain = newItem?.toTokenList?.find((item) =>
         item.chainIdList?.includes(toChainItem.key),
       );
       if (!isExitToChain) {
-        toChain = currentFromToken?.toTokenList?.[0]?.chainList?.[0] || CHAIN_LIST[0];
+        toChain = newItem?.toTokenList?.[0]?.chainList?.[0] || CHAIN_LIST[0];
       }
       dispatch(setToChainItem(toChain));
-      dispatch(setToChainList(currentFromToken?.toTokenList?.[0]?.chainList || []));
+      dispatch(setToChainList(newItem?.toTokenList?.[0]?.chainList || []));
     }
     // toToken exist, next check
     if (isExitToToken) {
@@ -278,9 +270,9 @@ export default function Content() {
     async (item: TNetworkItem) => {
       fromNetworkRef.current = item.network;
       dispatch(setFromNetwork(item));
-      await getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
+      !isPadPX && (await getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol));
     },
-    [dispatch, fromTokenSymbol, getDepositData, toChainItem.key, toTokenSymbol],
+    [dispatch, fromTokenSymbol, getDepositData, isPadPX, toChainItem.key, toTokenSymbol],
   );
 
   const handleToTokenChange = useCallback(
@@ -288,79 +280,43 @@ export default function Content() {
       dispatch(setToTokenSymbol(newItem.symbol));
       dispatch(setToChainList(newItem.chainList || []));
 
-      // Check - from token
-      const isExitFromToken = fromTokenList?.find((from) => {
-        return (
-          from.symbol === fromTokenSymbol &&
-          from.toTokenList?.find((to) => {
-            return to.symbol === newItem.symbol;
-          })
-        );
-      });
-
-      if (!isExitFromToken) {
-        dispatch(setFromTokenSymbol(newItem.symbol));
-        setDepositInfo(InitDepositInfo);
-        dispatch(setDepositAddress(InitDepositInfo.depositAddress));
-        const currentFromToken = fromTokenList?.find((item) => item.symbol === newItem.symbol);
-        const currentToToken = currentFromToken?.toTokenList?.find(
-          (to) => to.symbol === newItem.symbol,
-        );
-        dispatch(setToChainList(currentToToken?.chainList || []));
-
-        // Check - to chain
-        let optionChainId = toChainItem.key;
-        const isExitChain = currentToToken?.chainList?.find((item) => item.key === toChainItem.key);
-        if (!isExitChain) {
-          const chainItem = currentToToken?.chainList?.[0] || CHAIN_LIST[0];
-          dispatch(setToChainItem(chainItem));
-          optionChainId = chainItem.key;
-        }
-
-        setShowRetry(false);
-        // get network data
+      // Check - to chain
+      let optionChainId = toChainItem.key;
+      const isExitChain = newItem?.chainList?.find((item) => item.key === toChainItem.key);
+      if (!isExitChain) {
+        const chainItem = newItem?.chainList?.[0] || CHAIN_LIST[0];
+        dispatch(setToChainItem(chainItem));
+        optionChainId = chainItem.key;
+        // toChain changed, need refresh network and deposit info.
         return getNetworkData({
           chainId: optionChainId,
-          symbol: newItem.symbol,
+          symbol: fromTokenSymbol,
           toSymbol: newItem.symbol,
         });
-      } else {
-        // Check - to chain
-        const currentToToken = isExitFromToken?.toTokenList?.find(
-          (to) => to.symbol === newItem.symbol,
-        );
-        let optionChainId = toChainItem.key;
-        const isExitChain = currentToToken?.chainList?.find((item) => item.key === toChainItem.key);
-        if (!isExitChain) {
-          const chainItem = currentToToken?.chainList?.[0] || CHAIN_LIST[0];
-          dispatch(setToChainItem(chainItem));
-          optionChainId = chainItem.key;
-          // toChain changed, need refresh network and deposit info.
-          return getNetworkData({
-            chainId: optionChainId,
-            symbol: fromTokenSymbol,
-            toSymbol: newItem.symbol,
-          });
-        }
-        // toChain and fromToken not changed, refresh deposit info.
-        return getDepositData(optionChainId, fromTokenSymbol, newItem.symbol);
       }
+      // toChain and fromToken not changed, refresh deposit info.
+      return !isPadPX && getDepositData(optionChainId, fromTokenSymbol, newItem.symbol);
     },
-    [dispatch, fromTokenList, fromTokenSymbol, getDepositData, getNetworkData, toChainItem.key],
+    [dispatch, fromTokenSymbol, getDepositData, getNetworkData, isPadPX, toChainItem.key],
   );
 
   const handleToChainChanged = useCallback(
     async (item: IChainNameItem) => {
       // if currentSymbol is empty, don't send request
       dispatch(setToChainItem(item));
-      fromTokenSymbol &&
-        (await getNetworkData({
+      if (fromTokenSymbol) {
+        await getNetworkData({
           chainId: item.key,
           symbol: fromTokenSymbol,
-        }));
+        });
+      }
     },
     [dispatch, fromTokenSymbol, getNetworkData],
   );
+
+  const handleNext = useCallback(async () => {
+    await getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
+  }, [fromTokenSymbol, getDepositData, toChainItem.key, toTokenSymbol]);
 
   const handleRetry = useCallback(async () => {
     await getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
@@ -468,6 +424,7 @@ export default function Content() {
       fromTokenChanged={handleFromTokenChange}
       toTokenSelectCallback={handleToTokenChange}
       toChainChanged={handleToChainChanged}
+      onNext={handleNext}
     />
   ) : (
     <WebDepositContent

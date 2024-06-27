@@ -40,7 +40,6 @@ export default function SelectTokenChain({
       <SelectChainWrapper
         menuItems={menuItems}
         selectedItem={toChainItem}
-        webLabel={label}
         mobileLabel={label}
         mobileTitle={`Deposit ${label}`}
         chainChanged={chainChanged}

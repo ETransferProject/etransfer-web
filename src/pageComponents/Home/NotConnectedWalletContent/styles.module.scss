@@ -15,6 +15,7 @@ $mobile-connect-wallet-button-padding-bottom: 30px;
     justify-content: center;
     height: 100%;
     min-height: 600px;
+    margin-top: -$mobile-header-height;
   }
   @include media-pad {
     width: $content-width;
@@ -80,7 +81,7 @@ $mobile-connect-wallet-button-padding-bottom: 30px;
 .connect-wallet-button-wrapper {
   min-width: $page-min-width;
   @include media-mobile {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     width: 100%;
     padding: 0 16px;

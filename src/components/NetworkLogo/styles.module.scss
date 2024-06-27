@@ -1,4 +1,5 @@
 @import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
 
 .network {
   width: 16px;
@@ -8,7 +9,13 @@
   align-items: center;
   font-size: 10px;
   color: $secondary-text;
-  border-radius: 8px;
+  border-radius: 50%;
   border: 1px solid $border;
   background: $hover-bg;
+
+  @include media-web {
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+  }
 }

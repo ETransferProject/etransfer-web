@@ -87,7 +87,7 @@ export default function AddressBox({
         styles['address-box'],
         isPadPX ? styles['mobile-address-box'] : styles['web-address-box'],
       )}>
-      <NetworkLogo network={network} />
+      <NetworkLogo network={network} size="small" />
       <CommonTooltip title={calcAddress()} trigger={'hover'}>
         <span className={clsx(styles['address-word'])} onClick={handleAddressClick}>
           {getOmittedStr(calcAddress(), 8, 9)}
