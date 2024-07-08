@@ -45,7 +45,7 @@ export const getTokenDashboard = async (
   }
 };
 
-export const getNetworkOption = async (): Promise<TTransferDashboardFilterResult> => {
+export const getTransferFilterOption = async (): Promise<TTransferDashboardFilterResult> => {
   try {
     const res = await request.infoDashboard.getNetworkOption();
     return res.data;

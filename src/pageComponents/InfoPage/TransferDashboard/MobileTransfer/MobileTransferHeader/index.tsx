@@ -6,22 +6,52 @@ import { InfoBusinessType, InfoBusinessTypeOptions } from 'constants/infoDashboa
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import { Select } from 'antd';
 import clsx from 'clsx';
+import { useFilter } from '../../hooks';
+import { MobileTransferDashboardHeaderProps } from '../../types';
 
-export default function MobileTransferHeader() {
+export default function MobileTransferHeader({
+  fromTokenList,
+  fromChainList,
+  toTokenList,
+  toChainList,
+  type,
+  fromToken,
+  fromChain,
+  toToken,
+  toChain,
+  handleResetFilter,
+  handleApplyFilter,
+}: MobileTransferDashboardHeaderProps) {
   const [isShowFilterDrawer, setIsShowFilterDrawer] = useState(false);
-  const [filterType, setFilterType] = useState<InfoBusinessType>(InfoBusinessType.ALL);
+
+  const [newFilterType, setNewFilterType] = useState<InfoBusinessType>(type);
+  const [newFilterFromToken, setNewFilterFromToken] = useState<number>(fromToken);
+  const [newFilterFromChain, setNewFilterFromChain] = useState<number>(fromChain);
+  const [newFilterToToken, setNewFilterToToken] = useState<number>(toToken);
+  const [newFilterToChain, setNewFilterToChain] = useState<number>(toChain);
+
+  const { fromTokenOptions, fromChainOptions, toTokenOptions, toChainOptions } = useFilter({
+    fromTokenList,
+    fromChainList,
+    toTokenList,
+    toChainList,
+  });
 
   const handleOpenFilterDrawer = useCallback(() => {
     setIsShowFilterDrawer(true);
   }, []);
 
-  const handleResetFilter = useCallback(() => {
-    setFilterType(InfoBusinessType.ALL);
-  }, []);
+  const onApply = useCallback(() => {
+    handleApplyFilter({
+      type: newFilterType,
+      fromToken: newFilterFromToken,
+      fromChain: newFilterFromChain,
+      toToken: newFilterToChain,
+      toChain: newFilterToChain,
+    });
 
-  const handleApplyFilter = useCallback(() => {
-    console.log('apply', '');
-  }, []);
+    setIsShowFilterDrawer(false);
+  }, [handleApplyFilter, newFilterFromChain, newFilterFromToken, newFilterToChain, newFilterType]);
 
   return (
     <div className={styles['mobile-transfer-header']}>
@@ -46,7 +76,7 @@ export default function MobileTransferHeader() {
               onClick={handleResetFilter}>
               {'Reset'}
             </CommonButton>
-            <CommonButton className={styles['ok-button']} onClick={() => handleApplyFilter()}>
+            <CommonButton className={styles['ok-button']} onClick={onApply}>
               {'Apply'}
             </CommonButton>
           </div>
@@ -56,11 +86,51 @@ export default function MobileTransferHeader() {
           <div className={styles['filter-drawer-label']}>Type</div>
           <Select
             size={'large'}
-            value={filterType}
+            value={newFilterType}
             className={clsx(styles['mobile-transfer-select-type'], styles['border-change'])}
-            onChange={setFilterType}
+            onChange={setNewFilterType}
             popupClassName={'drop-wrap'}
             options={InfoBusinessTypeOptions}
+          />
+
+          <div className={styles['filter-drawer-label']}>Source Token</div>
+          <Select
+            size={'large'}
+            value={newFilterFromToken}
+            className={clsx(styles['mobile-transfer-select-type'], styles['border-change'])}
+            onChange={setNewFilterFromToken}
+            popupClassName={'drop-wrap'}
+            options={fromTokenOptions}
+          />
+
+          <div className={styles['filter-drawer-label']}>Source Chain</div>
+          <Select
+            size={'large'}
+            value={newFilterFromChain}
+            className={clsx(styles['mobile-transfer-select-type'], styles['border-change'])}
+            onChange={setNewFilterFromChain}
+            popupClassName={'drop-wrap'}
+            options={fromChainOptions}
+          />
+
+          <div className={styles['filter-drawer-label']}>Destination Token</div>
+          <Select
+            size={'large'}
+            value={newFilterToToken}
+            className={clsx(styles['mobile-transfer-select-type'], styles['border-change'])}
+            onChange={setNewFilterToToken}
+            popupClassName={'drop-wrap'}
+            options={toTokenOptions}
+          />
+
+          <div className={styles['filter-drawer-label']}>Destination Chain</div>
+          <Select
+            size={'large'}
+            value={newFilterToChain}
+            className={clsx(styles['mobile-transfer-select-type'], styles['border-change'])}
+            onChange={setNewFilterToChain}
+            popupClassName={'drop-wrap'}
+            options={toChainOptions}
           />
         </div>
       </CommonDrawer>

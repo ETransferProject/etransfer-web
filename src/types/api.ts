@@ -301,15 +301,17 @@ export type TTokenDashboardItemAmount = {
 
 export type TTransferDashboardFilterResult = {
   networkList: TTransferDashboardFilterNetwork[];
-  tokenList: TTransferDashboardFilterToken;
+  tokenList: TTransferDashboardFilterToken[];
 };
 
 export type TTransferDashboardFilterNetwork = {
+  key: number;
   name: string;
   network: string;
 };
 
 export type TTransferDashboardFilterToken = {
+  key: number;
   name: string;
   symbol: string;
   icon: string;

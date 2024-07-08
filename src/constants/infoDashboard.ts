@@ -1,3 +1,4 @@
+import { CHAIN_NAME_ENUM } from 'constants/index';
 import { BusinessType } from 'types/api';
 
 export enum InfoBusinessType {
@@ -33,10 +34,23 @@ export const DefaultTransferDashboardToTokenOptions = {
   label: 'All Destination Token',
 };
 
-export const DefaultTransferDashboardToChainOptions = {
-  value: 0,
-  label: 'All Destination Chain',
-};
+export enum InfoAelfChainType {
+  ALL = 0,
+  MainChain = 1,
+  SideChain = 2,
+}
+
+export enum InfoAelfChainTypeLabel {
+  ALL = 'All Destination Chain',
+  MainChain = CHAIN_NAME_ENUM['MainChain'],
+  SideChain = CHAIN_NAME_ENUM['SideChain'],
+}
+
+export const InfoAelfChainOptions = [
+  { value: InfoAelfChainType.ALL, label: InfoAelfChainTypeLabel.ALL },
+  { value: InfoAelfChainType.MainChain, label: InfoAelfChainTypeLabel.MainChain },
+  { value: InfoAelfChainType.SideChain, label: InfoAelfChainTypeLabel.SideChain },
+];
 
 export const OverviewLegendList = [
   { color: '#916BFF', label: BusinessType.Deposit },
