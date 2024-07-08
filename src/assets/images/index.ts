@@ -25,6 +25,8 @@ import Records from './recordIcon.svg';
 
 import Aelf from './chain/aelf.svg';
 import AelfMedium from './chain/aelfMedium.svg';
+import tDVV from './chain/tDVV.svg';
+import tDVVMedium from './chain/tDVVMedium.svg';
 import Arbitrum from './chain/arbitrum.svg';
 import ArbitrumMedium from './chain/arbitrumMedium.svg';
 import Binance from './chain/binance.svg';
@@ -47,6 +49,7 @@ import Fingerprint from './fingerprint.svg';
 import User from './user.svg';
 import ArrowUp from './arrowUp.svg';
 import ArrowRight from './arrowRight.svg';
+import ToArrow from './toArrow.svg';
 import Reset from './reset.svg';
 import EmptyBox from './emptyBox.svg';
 import CloseFilled from './closeFilled.svg';
@@ -80,6 +83,7 @@ import ContactsIcon from './contacts.svg';
 import NextLineIcon from './nextLineIcon.svg';
 
 import DoubleArrowIcon from './doubleArrow.svg';
+import InfoDashboard from './infoDashboard.svg';
 
 export {
   Logo,
@@ -105,8 +109,12 @@ export {
   QuestionMarkIcon,
   SupportIcon,
   Records,
+
+  // chain
   Aelf,
   AelfMedium,
+  tDVV,
+  tDVVMedium,
   Arbitrum,
   ArbitrumMedium,
   Binance,
@@ -123,11 +131,13 @@ export {
   SolanaMedium,
   Tron,
   TronMedium,
+  //
   FilterIcon,
   Fingerprint,
   User,
   ArrowUp,
   ArrowRight,
+  ToArrow,
   Reset,
   EmptyBox,
   CloseFilled,
@@ -157,4 +167,5 @@ export {
   ContactsIcon,
   NextLineIcon,
   DoubleArrowIcon,
+  InfoDashboard,
 };

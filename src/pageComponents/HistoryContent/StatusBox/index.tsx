@@ -1,7 +1,7 @@
 import styles from './styles.module.scss';
 import { CloseFilled, TimeFilled, QuestionMarkIcon } from 'assets/images';
 import { useCallback, useMemo, useState } from 'react';
-import { TRecordsStatus, TRecordsStatusI18n } from 'types/records';
+import { TOrderStatus, TRecordsStatusI18n } from 'types/records';
 import { useCommonState } from 'store/Provider/hooks';
 import CommonModal from 'components/CommonModal';
 import { Tooltip } from 'antd';
@@ -30,11 +30,11 @@ export default function StatusBox({ status, network }: TStatusBoxProps) {
     }
     // set tip message: Processing  Failed
     switch (status) {
-      case TRecordsStatus.Processing:
+      case TOrderStatus.Processing:
         setTipMessage(ProcessingTipMessage + network);
         setTitle(TRecordsStatusI18n.Processing);
         break;
-      case TRecordsStatus.Failed:
+      case TOrderStatus.Failed:
         setTipMessage(FailedTipMessage);
         setTitle(TRecordsStatusI18n.Failed);
         break;
@@ -48,7 +48,7 @@ export default function StatusBox({ status, network }: TStatusBoxProps) {
 
   const content = useMemo(() => {
     switch (status) {
-      case TRecordsStatus.Processing:
+      case TOrderStatus.Processing:
         return (
           <Tooltip title={!isPadPX && ProcessingTipMessage + network}>
             <div className={styles['status-box']} onClick={() => handleClick()}>
@@ -58,9 +58,9 @@ export default function StatusBox({ status, network }: TStatusBoxProps) {
             </div>
           </Tooltip>
         );
-      case TRecordsStatus.Succeed:
+      case TOrderStatus.Succeed:
         return <div className={styles['status-box']}>{TRecordsStatusI18n.Succeed}</div>;
-      case TRecordsStatus.Failed:
+      case TOrderStatus.Failed:
         return (
           <Tooltip title={!isPadPX && FailedTipMessage} placement="top">
             <div className={styles['status-box']} onClick={() => handleClick()}>

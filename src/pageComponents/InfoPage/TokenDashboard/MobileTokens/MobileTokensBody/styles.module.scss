@@ -1,0 +1,23 @@
+@import 'src/assets/theme/color.scss';
+
+.mobile-tokens-body {
+  .tokens-detail {
+    background-color: $hover-bg;
+    border-radius: 8px;
+  }
+
+  .action {
+    font-size: 14px;
+    color: $brand;
+    padding-top: 12px;
+    border-top: 1px solid $dividers;
+    margin-top: 12px;
+  }
+
+  .action-arrow {
+    margin-left: 4px;
+    svg path {
+      fill: $brand;
+    }
+  }
+}

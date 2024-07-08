@@ -1,0 +1,21 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.networks-container {
+  .networks-3 {
+    gap: 12px;
+  }
+
+  .network-more {
+    gap: 12px;
+
+    .network-more-number {
+      border-radius: 50%;
+      background-color: $dividers;
+
+      font-size: 12px;
+      font-weight: 500;
+      @extend .font-family-medium;
+    }
+  }
+}

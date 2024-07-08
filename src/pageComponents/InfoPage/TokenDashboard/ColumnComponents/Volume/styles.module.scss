@@ -1,0 +1,6 @@
+@import 'src/assets/theme/font.scss';
+
+.volume-container {
+  font-size: 14px;
+  @extend .font-family-medium;
+}

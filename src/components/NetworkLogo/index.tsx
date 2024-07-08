@@ -18,17 +18,27 @@ import {
   PolygonMedium,
   SolanaMedium,
   TronMedium,
+  tDVV as TDVV,
+  tDVVMedium as TDVVMedium,
 } from 'assets/images';
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { useMemo } from 'react';
 
-type TNetworkLogoSize = 'normal' | 'small';
+export type TNetworkLogoSize = 'normal' | 'small';
 
 const NetworkLogoMap: Record<string, Record<TNetworkLogoSize, any>> = {
   [BlockchainNetworkType.AELF]: {
     normal: <AelfMedium />,
     small: <Aelf />,
+  },
+  [BlockchainNetworkType.tDVV]: {
+    normal: <TDVVMedium />,
+    small: <TDVV />,
+  },
+  [BlockchainNetworkType.tDVW]: {
+    normal: <TDVVMedium />,
+    small: <TDVV />,
   },
   [BlockchainNetworkType.Arbitrum]: {
     normal: <ArbitrumMedium />,

@@ -1,0 +1,43 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
+
+.info-page {
+  @include media-mobile {
+    padding: 0 16px;
+  }
+
+  @include media-pad {
+    padding: 0 24px;
+  }
+
+  :global {
+    .ant-table-wrapper {
+      //   border-radius: 8px;
+      //   border: 1px solid $dividers;
+
+      .ant-table-container {
+        .ant-table-content {
+          border-radius: 8px;
+          border: 1px solid $dividers;
+        }
+      }
+
+      .ant-table-thead {
+        th {
+          background-color: $hover-bg;
+          border-bottom: 0px;
+          &::before {
+            width: 0px !important;
+          }
+        }
+        .ant-table-cell {
+          color: $secondary-text;
+        }
+      }
+
+      .ant-table-tbody > tr > td {
+        border-bottom: 0px;
+      }
+    }
+  }
+}

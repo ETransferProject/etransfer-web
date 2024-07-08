@@ -1,0 +1,79 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
+
+.mobile-tokens-header {
+  .title {
+    font-size: 20px;
+    @extend .font-family-medium;
+  }
+}
+
+.filter-icon {
+  float: left;
+  margin: 9px 12px 12px 0;
+}
+
+.filter-title {
+  text-align: left;
+  font-size: 20px;
+  font-weight: $font-family-medium-weight;
+}
+
+.filter-drawer-wrapper {
+  :global {
+    .ant-drawer-content-wrapper {
+      background-color: $page-bg;
+
+      .ant-drawer-content {
+        border-radius: 0 !important;
+      }
+    }
+    .ant-drawer-body {
+      border-top: 1px solid $border;
+    }
+    .ant-drawer-footer {
+      text-align: center;
+      padding: 20px 16px;
+      border: none;
+    }
+  }
+
+  .drawer-button-wrapper {
+    display: flex;
+    align-items: center;
+    .cancel-button {
+      font-size: 16px;
+      flex: 5;
+      margin-right: 12px;
+    }
+    .ok-button {
+      font-size: 16px;
+      flex: 5;
+    }
+  }
+}
+
+.filter-drawer-content {
+  padding: 24px 0px 12px;
+}
+
+.filter-drawer-label {
+  font-size: 14px;
+  color: $secondary-text;
+  margin-bottom: 8px;
+}
+
+.mobile-tokens-select-type {
+  width: 100%;
+  border-radius: 6px;
+  margin-bottom: 24px;
+}
+
+.border-change {
+  :global {
+    .ant-select-selector {
+      border-radius: 6px !important;
+    }
+  }
+}

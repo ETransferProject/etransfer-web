@@ -1,0 +1,15 @@
+@import 'src/assets/theme/color.scss';
+
+.wallet-container {
+  min-width: 190px;
+  justify-content: flex-start;
+}
+
+.address {
+  color: $normal;
+  margin: 0 6px;
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+}

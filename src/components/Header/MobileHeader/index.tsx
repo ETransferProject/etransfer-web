@@ -21,6 +21,7 @@ export default function MobileHeader() {
         {activeMenuKey === SideMenuKey.Deposit && 'Deposit Assets'}
         {activeMenuKey === SideMenuKey.Withdraw && 'Withdraw Assets'}
         {activeMenuKey === SideMenuKey.History && 'History'}
+        {activeMenuKey === SideMenuKey.Info && 'Info'}
       </span>
       <LoginAndProfileEntry />
     </div>

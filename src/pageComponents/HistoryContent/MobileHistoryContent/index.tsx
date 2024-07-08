@@ -1,7 +1,7 @@
 import Filter from 'pageComponents/HistoryContent/MobileHistoryContent/Filter';
 import HistoryCardItem from 'pageComponents/HistoryContent/MobileHistoryContent/HistoryCardItem';
 import { useRecordsState } from 'store/Provider/hooks';
-import EmptyDataBox from 'pageComponents/HistoryContent/EmptyDataBox';
+import EmptyDataBox from 'pageComponents/EmptyDataBox';
 import { Divider } from 'antd';
 import { TRecordsContentProps } from 'pageComponents/HistoryContent';
 import styles from './styles.module.scss';

@@ -1,8 +1,8 @@
 import { ChainId } from '@portkey/provider-types';
 import { PortkeyVersion } from 'constants/wallet';
-import { TFromTransfer, TRecordsStatus, TToTransfer } from './records';
+import { TFromTransfer, TOrderStatus, TToTransfer } from './records';
 import type { Moment } from 'moment';
-import { IChainNameItem } from 'constants/index';
+import { IChainNameItem, TokenType } from 'constants/index';
 
 export enum BusinessType {
   Deposit = 'Deposit',
@@ -195,7 +195,7 @@ export interface TGetRecordsListRequest {
 export type TRecordsListItem = {
   id: string;
   orderType: BusinessType;
-  status: TRecordsStatus;
+  status: TOrderStatus;
   arrivalTime: number;
   fromTransfer: TFromTransfer;
   toTransfer: TToTransfer;
@@ -212,4 +212,156 @@ export type TCheckEOARegistrationRequest = {
 
 export type TCheckEOARegistrationResult = {
   result: boolean;
+};
+
+export type TTransactionOverviewRequest = {
+  type: TOverviewTimeType;
+  maxResultCount?: number;
+};
+
+export enum TOverviewTimeType {
+  Day,
+  Week,
+  Month,
+}
+
+export type TTransactionOverviewResult = {
+  transaction: TTransactionOverviewData;
+};
+
+export type TTransactionOverviewData = {
+  totalTx: number;
+  latest: string;
+  day?: TTransactionOverviewItem[];
+  week?: TTransactionOverviewItem[];
+  month?: TTransactionOverviewItem[];
+};
+
+export type TTransactionOverviewItem = {
+  date: string;
+  depositTx: number;
+  withdrawTx: number;
+};
+
+export type TVolumeOverviewRequest = TTransactionOverviewRequest;
+
+export type TVolumeOverviewResult = {
+  volume: TVolumeOverviewData;
+};
+
+export type TVolumeOverviewData = {
+  totalAmountUsd: string;
+  latest: string;
+  day?: TVolumeOverviewItem[];
+  week?: TVolumeOverviewItem[];
+  month?: TVolumeOverviewItem[];
+};
+
+export type TVolumeOverviewItem = {
+  date: string;
+  depositAmountUsd: number;
+  withdrawAmountUsd: number;
+};
+
+export enum TokensDashboardType {
+  All,
+  Deposit,
+  Withdraw,
+}
+
+export type TTokenDashboardRequest = {
+  type: TokensDashboardType;
+};
+
+export type TTokenDashboardResult = {
+  [token in TokenType]: TTokenDashboardData;
+};
+
+export type TTokenDashboardData = {
+  icon: string;
+  networks: string[];
+  chainIds: ChainId[];
+  general: TTokenDashboardItemAmount;
+  details: TTokenDashboardDataDetail[];
+};
+
+export type TTokenDashboardDataDetail = {
+  name: string;
+  item: TTokenDashboardItemAmount;
+};
+
+export type TTokenDashboardItemAmount = {
+  amount24H: string;
+  amount24HUsd: string;
+  amount7D: string;
+  amount7DUsd: string;
+  amountTotal: string;
+  amountTotalUsd: string;
+};
+
+export type TTransferDashboardFilterResult = {
+  networkList: TTransferDashboardFilterNetwork[];
+  tokenList: TTransferDashboardFilterToken;
+};
+
+export type TTransferDashboardFilterNetwork = {
+  name: string;
+  network: string;
+};
+
+export type TTransferDashboardFilterToken = {
+  name: string;
+  symbol: string;
+  icon: string;
+};
+
+export type TTransferDashboardRequest = {
+  type: TokensDashboardType;
+  fromToken: string;
+  fromChainId: ChainId;
+  toToken: string;
+  ToChainId: ChainId;
+  skipCount?: number;
+  maxResultCount?: number;
+  sorting?: string;
+  limit?: number;
+};
+
+export type TTransferDashboardResult = {
+  totalCount: number;
+  items: TTransferDashboardItem[];
+};
+
+export type TTransferDashboardItem = {
+  orderType: BusinessType;
+  status: TOrderStatus;
+  createTime: number;
+  fromTransfer: TTransferDashboardItemFrom;
+  toTransfer: TTransferDashboardItemTo;
+};
+
+export type TTransferDashboardItemFrom = {
+  network: string;
+  chainId: ChainId;
+  fromAddress: string;
+  amount: string;
+  amountUsd: string;
+  symbol: string;
+  txId: string;
+};
+
+export type TTransferDashboardItemTo = {
+  network: string;
+  chainId: ChainId;
+  toAddress: string;
+  amount: string;
+  amountUsd: string;
+  symbol: string;
+  txId: string;
+  feeInfo: TTransferDashboardItemToFee[];
+};
+
+export type TTransferDashboardItemToFee = {
+  symbol: string;
+  amount: string;
 };
