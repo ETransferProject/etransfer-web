@@ -1,6 +1,3 @@
-import { CHAIN_NAME_ENUM } from 'constants/index';
-import { BusinessType } from 'types/api';
-
 export enum InfoBusinessType {
   ALL = 0,
   Deposit = 1,
@@ -9,8 +6,8 @@ export enum InfoBusinessType {
 
 export enum InfoBusinessTypeLabel {
   ALL = 'ALL',
-  Deposit = BusinessType.Deposit,
-  Withdraw = BusinessType.Withdraw,
+  Deposit = 'Deposit',
+  Withdraw = 'Withdraw',
 }
 
 export const InfoBusinessTypeOptions = [
@@ -42,8 +39,8 @@ export enum InfoAelfChainType {
 
 export enum InfoAelfChainTypeLabel {
   ALL = 'All Destination Chain',
-  MainChain = CHAIN_NAME_ENUM['MainChain'],
-  SideChain = CHAIN_NAME_ENUM['SideChain'],
+  MainChain = 'MainChain',
+  SideChain = 'SideChain',
 }
 
 export const InfoAelfChainOptions = [
@@ -53,8 +50,8 @@ export const InfoAelfChainOptions = [
 ];
 
 export const OverviewLegendList = [
-  { color: '#916BFF', label: BusinessType.Deposit },
-  { color: '#41DAFB', label: BusinessType.Withdraw },
+  { color: '#916BFF', label: 'Deposit' },
+  { color: '#41DAFB', label: 'Withdraw' },
 ];
 
 export enum TransferStatusType {

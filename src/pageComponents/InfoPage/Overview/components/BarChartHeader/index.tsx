@@ -50,7 +50,7 @@ export default function BarChartHeader({
     <div className={clsx('flex-row-between', styles['bar-chart-header'])}>
       <div className={styles['left']}>
         <div className={styles['title']}>{title}</div>
-        <div className={styles['plus-count']}>{`${plusCount} ${countUnit}`}</div>
+        <div className={styles['plus-count']}>{plusCount && `${plusCount} ${countUnit}`}</div>
         <div className={styles['time']}>{time}</div>
       </div>
       <div className={styles['right']}>

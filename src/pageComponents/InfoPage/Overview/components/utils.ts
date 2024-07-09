@@ -1,8 +1,10 @@
 import { EChartsOption, SeriesOption } from 'echarts';
-import { BusinessType, TTransactionOverviewItem } from 'types/api';
+import { BusinessType } from 'types/api';
 
 export interface GenerateStackBarOptionPrams {
-  data: TTransactionOverviewItem[];
+  data: Array<{ date: string } & Record<string, string>>;
+  depositKey: string;
+  withdrawKey: string;
   stackName: string;
   opacity: number;
   emphasisOpacity: number;
@@ -10,17 +12,19 @@ export interface GenerateStackBarOptionPrams {
 
 export const generateStackBarOption = ({
   data,
+  depositKey,
+  withdrawKey,
   stackName,
   opacity,
   emphasisOpacity,
 }: GenerateStackBarOptionPrams): EChartsOption => {
-  const withdrawData: { value: number }[] = [],
-    depositData: { value: number }[] = [],
+  const withdrawData: { value: string }[] = [],
+    depositData: { value: string }[] = [],
     xAxisData: string[] = [];
 
   data.forEach((item) => {
-    withdrawData.push({ value: item.withdrawTx });
-    depositData.push({ value: item.depositTx });
+    withdrawData.push({ value: item[withdrawKey] });
+    depositData.push({ value: item[depositKey] });
     xAxisData.push(item.date);
   });
 
@@ -30,7 +34,7 @@ export const generateStackBarOption = ({
       type: 'bar',
       stack: stackName,
       name: BusinessType.Withdraw,
-      barCategoryGap: 2,
+      // barCategoryGap: 2,
       itemStyle: {
         color: '#41DAFB',
         opacity: opacity,
@@ -48,7 +52,7 @@ export const generateStackBarOption = ({
       type: 'bar',
       stack: stackName,
       name: BusinessType.Deposit,
-      barCategoryGap: 2,
+      // barCategoryGap: 2,
       itemStyle: {
         color: '#916BFF',
         opacity: opacity,
@@ -83,16 +87,16 @@ export const generateStackBarOption = ({
     },
     grid: { top: '0', left: '0', right: '0', bottom: '28px' },
     series: series,
-    //   tooltip: {
-    //     trigger: 'axis',
-    //     showDelay: 0,
-    //     axisPointer: {
-    //       type: 'none',
-    //       //   shadowStyle: {
-    //       //     color: 'rgba(245, 245, 245, 0.15)',
-    //       //     width: '0',
-    //       //   },
-    //     },
-    //   },
+    tooltip: {
+      trigger: 'axis',
+      showDelay: 0,
+      axisPointer: {
+        type: 'shadow',
+        shadowStyle: {
+          shadowBlur: 0,
+        },
+      },
+      showContent: false,
+    },
   };
 };

@@ -57,7 +57,7 @@ const Charts = forwardRef(
           globaloutCallback?.(params);
         });
       }
-    }, [mouseoutCallback, mouseoverCallback, myChart]);
+    }, [globaloutCallback, mouseoutCallback, mouseoverCallback, myChart]);
 
     useEffect(() => {
       if (myChart) {

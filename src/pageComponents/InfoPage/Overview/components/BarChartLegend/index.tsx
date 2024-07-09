@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 
 export interface ChartLegendItem {
   color: string;
-  label: BusinessType;
+  label: string;
 }
 
 export interface BarChartLegendProps {
@@ -24,10 +24,15 @@ export default function BarChartLegend({
   withdrawCount,
 }: BarChartLegendProps) {
   const count = useCallback(
-    (key: BusinessType) => {
-      return key === BusinessType.Deposit
-        ? `${depositCount} ${countUnit}`
-        : `${withdrawCount} ${countUnit}`;
+    (key: string) => {
+      if (key === BusinessType.Deposit && depositCount && countUnit) {
+        return `${depositCount} ${countUnit}`;
+      }
+      if (key === BusinessType.Withdraw && withdrawCount && countUnit) {
+        return `${withdrawCount} ${countUnit}`;
+      }
+
+      return key;
     },
     [countUnit, depositCount, withdrawCount],
   );

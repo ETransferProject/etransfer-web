@@ -1,4 +1,4 @@
-import { BusinessType, TTransferDashboardRequest } from 'types/api';
+import { TTransferDashboardRequest } from 'types/api';
 import { TTransferDashboardData } from 'types/infoDashboard';
 import { geTransfers as getTransferDashboardApi } from 'utils/api/infoDashboard';
 

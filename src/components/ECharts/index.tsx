@@ -1,8 +1,9 @@
 import { forwardRef } from 'react';
-import { Empty, Spin } from 'antd';
+import { Empty } from 'antd';
 import Charts, { eChartsElementEvent } from './Charts';
 import clsx from 'clsx';
 import { EChartsOption } from 'echarts';
+import CircleLoading from 'components/CircleLoading';
 
 const ECharts = forwardRef(
   (
@@ -29,13 +30,15 @@ const ECharts = forwardRef(
   ) => {
     if (loading) {
       return (
-        <div className={clsx('echarts-box', className)}>
-          <Spin className="echarts-loading" size="large" />
+        <div className={clsx('row-center', className)}>
+          <CircleLoading />
         </div>
       );
     }
     if (noData) {
-      return <Empty className={clsx('echarts-box', className)} />;
+      return (
+        <Empty className={clsx('row-center', className)} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      );
     }
 
     return (

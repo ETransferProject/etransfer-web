@@ -240,8 +240,8 @@ export type TTransactionOverviewData = {
 
 export type TTransactionOverviewItem = {
   date: string;
-  depositTx: number;
-  withdrawTx: number;
+  depositTx: string;
+  withdrawTx: string;
 };
 
 export type TVolumeOverviewRequest = TTransactionOverviewRequest;
@@ -260,8 +260,8 @@ export type TVolumeOverviewData = {
 
 export type TVolumeOverviewItem = {
   date: string;
-  depositAmountUsd: number;
-  withdrawAmountUsd: number;
+  depositAmountUsd: string;
+  withdrawAmountUsd: string;
 };
 
 export enum TokensDashboardType {
