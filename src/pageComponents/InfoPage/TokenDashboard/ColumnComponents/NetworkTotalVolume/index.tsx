@@ -1,5 +1,6 @@
 import NetworkLogo, { TNetworkLogoSize } from 'components/NetworkLogo';
 import styles from './styles.module.scss';
+import clsx from 'clsx';
 
 interface NetworkTotalVolumeProps {
   network: string;
@@ -16,7 +17,7 @@ export default function NetworkTotalVolume({
   size,
 }: NetworkTotalVolumeProps) {
   return (
-    <div className={styles['network-total-volume']}>
+    <div className={clsx('flex-row-center-between', styles['network-total-volume'])}>
       <div className="flex-row-center">
         <NetworkLogo network={network} size={size} />
         <div className={styles['network-name']}>{name}</div>

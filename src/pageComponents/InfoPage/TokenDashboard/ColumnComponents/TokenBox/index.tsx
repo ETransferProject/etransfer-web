@@ -26,6 +26,7 @@ export default function TokenBox({
   return (
     <div
       className={clsx(
+        'flex-row-center',
         styles['token-container'],
         isPadPX ? styles['mobil-token-container'] : styles['web-token-container'],
         className,

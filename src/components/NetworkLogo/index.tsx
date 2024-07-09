@@ -87,10 +87,12 @@ export default function NetworkLogo({
   return (
     <>
       {renderNetworkLogo ? (
-        <div className={className}>{renderNetworkLogo}</div>
+        <div className={clsx(styles[`network-${size}`], className)}>{renderNetworkLogo}</div>
       ) : (
         // when not match network's type, display first character and uppercase
-        <div className={clsx(styles['network'], className)}>{network?.charAt(0).toUpperCase()}</div>
+        <div className={clsx(styles['network'], styles[`network-${size}`], className)}>
+          {network?.charAt(0).toUpperCase()}
+        </div>
       )}
     </>
   );

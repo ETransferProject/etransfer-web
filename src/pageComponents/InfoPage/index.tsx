@@ -1,6 +1,6 @@
 import { SideMenuKey } from 'constants/home';
 import { useEffectOnce } from 'react-use';
-import { useAppDispatch, useCommonState } from 'store/Provider/hooks';
+import { useAppDispatch } from 'store/Provider/hooks';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import TokenDashboard from './TokenDashboard';
 import TransferDashboard from './TransferDashboard';

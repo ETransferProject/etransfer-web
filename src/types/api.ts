@@ -3,6 +3,7 @@ import { PortkeyVersion } from 'constants/wallet';
 import { TFromTransfer, TOrderStatus, TToTransfer } from './records';
 import type { Moment } from 'moment';
 import { IChainNameItem, TokenType } from 'constants/index';
+import { TransferStatusType } from 'constants/infoDashboard';
 
 export enum BusinessType {
   Deposit = 'Deposit',
@@ -350,6 +351,7 @@ export type TTransferDashboardItemFrom = {
   amountUsd: string;
   symbol: string;
   txId: string;
+  status: TransferStatusType;
 };
 
 export type TTransferDashboardItemTo = {
@@ -360,6 +362,7 @@ export type TTransferDashboardItemTo = {
   amountUsd: string;
   symbol: string;
   txId: string;
+  status: TransferStatusType;
   feeInfo: TTransferDashboardItemToFee[];
 };
 

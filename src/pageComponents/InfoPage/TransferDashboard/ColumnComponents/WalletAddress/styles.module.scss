@@ -7,8 +7,10 @@
 
 .address {
   color: $normal;
-  margin: 0 6px;
+  margin: 0 4px 0 0;
   cursor: pointer;
+  word-break: break-all;
+
   &:hover {
     text-decoration: underline;
   }

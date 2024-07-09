@@ -6,16 +6,22 @@
     gap: 12px;
   }
 
-  .network-more {
+  .network-more-wrapper {
     gap: 12px;
+  }
 
-    .network-more-number {
-      border-radius: 50%;
-      background-color: $dividers;
+  .network-more-number {
+    border-radius: 50%;
+    background-color: $dividers;
+    cursor: pointer;
 
-      font-size: 12px;
-      font-weight: 500;
-      @extend .font-family-medium;
-    }
+    font-size: 12px;
+    font-weight: 500;
+    @extend .font-family-medium;
+  }
+
+  .network-more-number-small {
+    font-size: 8px;
+    line-height: 16px;
   }
 }

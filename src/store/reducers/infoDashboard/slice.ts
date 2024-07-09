@@ -15,7 +15,7 @@ export const InfoDashboardSlice = createSlice({
   name: 'infoDashboard',
   initialState: InitialInfoDashboardState,
   reducers: {
-    setTokens: (state, action: PayloadAction<any>) => {
+    setTokens: (state, action: PayloadAction<TTokenDashboardItem[]>) => {
       state.tokens = action.payload;
     },
     setTransferList: (state, action: PayloadAction<any>) => {

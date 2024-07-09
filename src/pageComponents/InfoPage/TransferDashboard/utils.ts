@@ -18,6 +18,7 @@ export const getTokenDashboard = async (params: TTransferDashboardRequest) => {
       fromAmount: item.fromTransfer.amount,
       fromAmountUsd: item.fromTransfer.amountUsd,
       fromTxId: item.fromTransfer.txId,
+      fromStatus: item.fromTransfer.status,
       toNetwork: item.toTransfer.network,
       toChainId: item.toTransfer.chainId,
       toSymbol: item.toTransfer.symbol,
@@ -26,6 +27,7 @@ export const getTokenDashboard = async (params: TTransferDashboardRequest) => {
       toAmountUsd: item.toTransfer.amountUsd,
       toTxId: item.toTransfer.txId,
       toFeeInfo: item.toTransfer.feeInfo,
+      toStatus: item.toTransfer.status,
     });
   });
 

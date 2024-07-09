@@ -1,6 +1,7 @@
 import { ChainId } from '@portkey/types';
 import { BusinessType, TTransferDashboardItemToFee } from './api';
 import { TOrderStatus } from './records';
+import { TransferStatusType } from 'constants/infoDashboard';
 
 export type TTokenDashboardItem = TTokenDashboardItemVolume & {
   symbol: string;
@@ -34,6 +35,7 @@ export type TTransferDashboardData = {
   fromAmount: string;
   fromAmountUsd: string;
   fromTxId: string;
+  fromStatus: TransferStatusType;
   toNetwork: string;
   toChainId: ChainId;
   toSymbol: string;
@@ -41,5 +43,6 @@ export type TTransferDashboardData = {
   toAmount: string;
   toAmountUsd: string;
   toTxId: string;
+  toStatus: TransferStatusType;
   toFeeInfo: TTransferDashboardItemToFee[];
 };

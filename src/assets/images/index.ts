@@ -11,8 +11,10 @@ import Deposit from './deposit.svg';
 import Withdraw from './withdraw.svg';
 import Check from './check.svg';
 import CheckSmall from './checkSmall.svg';
+import CheckBig from './checkBig.svg';
 import Copy from './copy.svg';
 import CopySmall from './copySmall.svg';
+import CopyBig from './copyBig.svg';
 import Portkey from './wallet/portkey.svg';
 import Portkey24 from './wallet/portkey24.svg';
 import PortkeyV2 from './wallet/portkeyV2.svg';
@@ -98,11 +100,13 @@ export {
   Withdraw,
   Check,
   CheckSmall,
+  CheckBig,
   Portkey,
   Portkey24,
   PortkeyV2,
   Copy,
   CopySmall,
+  CopyBig,
   qrCodePlaceholder,
   ExclamationFilledSmall,
   OpenLinkIcon,

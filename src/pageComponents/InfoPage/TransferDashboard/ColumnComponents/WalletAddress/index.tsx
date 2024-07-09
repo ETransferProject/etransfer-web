@@ -15,55 +15,63 @@ import { addressFormat } from 'utils/aelfBase';
 import { getOmittedStr } from 'utils/calculate';
 import { getAelfExploreLink, getOtherExploreLink, openWithBlank } from 'utils/common';
 import styles from './styles.module.scss';
+import { AelfChainIdList } from 'constants/chain';
 
-interface WalletProps {
+interface WalletAddressProps {
   address: string;
-  chainId: ChainId;
+  network: string;
+  chainId?: ChainId;
+  isOmitAddress?: boolean;
+  className?: string;
 }
 
-const AelfChain: ChainId[] = [
-  BlockchainNetworkType.AELF,
-  BlockchainNetworkType.tDVV,
-  BlockchainNetworkType.tDVW,
-];
-
-export default function Wallet({ address, chainId }: WalletProps) {
+export default function WalletAddress({
+  address,
+  network,
+  chainId,
+  isOmitAddress = true,
+  className,
+}: WalletAddressProps) {
   const accounts = useAccounts();
 
   const calcAddress = useCallback(() => {
-    if (address && AelfChain.includes(chainId)) {
-      // aelf chain address: add prefix and suffix
-      return addressFormat(address, chainId);
-    }
-    if (!address && AelfChain.includes(chainId)) {
-      // when address is null, need accounts address
-      if (accounts && accounts[chainId] && accounts[chainId]?.[0]) {
-        return accounts[chainId]?.[0] || defaultNullValue;
+    if (chainId && network === BlockchainNetworkType.AELF) {
+      if (address && AelfChainIdList.includes(chainId)) {
+        // aelf chain address: add prefix and suffix
+        return addressFormat(address, chainId);
       }
-      return defaultNullValue;
+      if (!address && AelfChainIdList.includes(chainId)) {
+        // when address is null, need accounts address
+        if (accounts && accounts[chainId] && accounts[chainId]?.[0]) {
+          return accounts[chainId]?.[0] || defaultNullValue;
+        }
+        return defaultNullValue;
+      }
     }
+
     return address || defaultNullValue;
-  }, [address, chainId, accounts]);
+  }, [chainId, network, address, accounts]);
 
   const handleAddressClick = useCallback(() => {
-    if (AelfChain.includes(chainId)) {
+    if (chainId && network === BlockchainNetworkType.AELF && AelfChainIdList.includes(chainId)) {
       openWithBlank(getAelfExploreLink(calcAddress(), AelfExploreType.address, chainId));
       return;
     }
+
     openWithBlank(
       getOtherExploreLink(
         calcAddress(),
         OtherExploreType.address,
-        chainId as keyof typeof ExploreUrlType,
+        network as keyof typeof ExploreUrlType,
       ),
     );
-  }, [chainId, calcAddress]);
+  }, [chainId, network, calcAddress]);
 
   return (
-    <div className={clsx('flex-row-center', styles['wallet-container'])}>
+    <div className={clsx('flex-row-center', styles['wallet-container'], className)}>
       <CommonTooltip title={calcAddress()} trigger={'hover'}>
         <span className={clsx(styles['address'])} onClick={handleAddressClick}>
-          {getOmittedStr(calcAddress(), 8, 9)}
+          {isOmitAddress ? getOmittedStr(calcAddress(), 8, 9) : calcAddress()}
         </span>
       </CommonTooltip>
       <Copy toCopy={calcAddress()} size={CopySize.Small} />

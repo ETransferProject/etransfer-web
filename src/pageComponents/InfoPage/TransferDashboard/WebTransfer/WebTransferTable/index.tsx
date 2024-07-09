@@ -6,7 +6,7 @@ import { TTransferDashboardData } from 'types/infoDashboard';
 import FromToToken from '../../ColumnComponents/FromToToken';
 import FromToChain from '../../ColumnComponents/FromToChain';
 import Amount from '../../ColumnComponents/Amount';
-import Wallet from '../../ColumnComponents/Wallet';
+import WalletAddress from '../../ColumnComponents/WalletAddress';
 import Time from '../../ColumnComponents/Time';
 import { BusinessType } from 'types/api';
 import { ChainId } from '@portkey/types';
@@ -35,7 +35,14 @@ const WebTransferTableColumns = [
     dataIndex: 'fromToChain',
     key: 'fromToChain',
     render: (fromChainId: ChainId, item: TTransferDashboardData) => {
-      return <FromToChain fromChainId={fromChainId} toChainId={item.toChainId} />;
+      return (
+        <FromToChain
+          fromNetwork={item.fromNetwork}
+          fromChainId={fromChainId}
+          toNetwork={item.toNetwork}
+          toChainId={item.toChainId}
+        />
+      );
     },
   },
   {
@@ -51,13 +58,20 @@ const WebTransferTableColumns = [
     dataIndex: 'fromAddress',
     key: 'fromAddress',
     render: (fromAddress: string, item: TTransferDashboardData) => {
-      return <Wallet address={fromAddress} chainId={item.fromChainId} />;
+      return (
+        <WalletAddress
+          address={fromAddress}
+          chainId={item.fromChainId}
+          network={item.fromNetwork}
+        />
+      );
     },
   },
   {
     title: 'Time',
     dataIndex: 'createTime',
     key: 'createTime',
+    align: 'right' as any,
     render: (createTime: string) => {
       return <Time time={createTime} />;
     },

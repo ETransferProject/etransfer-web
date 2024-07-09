@@ -7,7 +7,7 @@ import FromToChain from '../../ColumnComponents/FromToChain';
 import FromToToken from '../../ColumnComponents/FromToToken';
 import Amount from '../../ColumnComponents/Amount';
 import Time from '../../ColumnComponents/Time';
-import Wallet from '../../ColumnComponents/Wallet';
+import WalletAddress from '../../ColumnComponents/WalletAddress';
 
 type TransferDashboardMobileItem = TTransferDashboardData & { isExpand?: boolean };
 
@@ -52,7 +52,12 @@ export default function MobileTransferBody() {
           </div>
           <div>
             <div>From - To</div>
-            <FromToChain fromChainId={item.fromChainId} toChainId={item.toChainId} />
+            <FromToChain
+              fromNetwork={item.fromNetwork}
+              fromChainId={item.fromChainId}
+              toNetwork={item.toNetwork}
+              toChainId={item.toChainId}
+            />
           </div>
           <div>
             <div>Amount</div>
@@ -61,7 +66,11 @@ export default function MobileTransferBody() {
 
           <div>
             <div>Wallet</div>
-            <Wallet address={item.fromAddress} chainId={item.fromChainId} />
+            <WalletAddress
+              address={item.fromAddress}
+              chainId={item.fromChainId}
+              network={item.fromNetwork}
+            />
           </div>
 
           <div>

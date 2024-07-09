@@ -1,6 +1,17 @@
+@import 'src/assets/theme/color.scss';
 @import 'src/assets/theme/font.scss';
 
 .volume-container {
-  font-size: 14px;
-  @extend .font-family-medium;
+  display: flex;
+  flex-direction: column;
+
+  .volume-amount {
+    font-size: 14px;
+    @extend .font-family-medium;
+  }
+
+  .volume-usd {
+    font-size: 12px;
+    color: $secondary-text;
+  }
 }

@@ -56,3 +56,8 @@ export const OverviewLegendList = [
   { color: '#916BFF', label: BusinessType.Deposit },
   { color: '#41DAFB', label: BusinessType.Withdraw },
 ];
+
+export enum TransferStatusType {
+  Pending = 'Pending',
+  Success = 'Success',
+}

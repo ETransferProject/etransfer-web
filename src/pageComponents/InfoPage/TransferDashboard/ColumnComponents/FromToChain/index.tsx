@@ -1,21 +1,37 @@
 import { ToArrow } from 'assets/images';
 import NetworkLogo from 'components/NetworkLogo';
 import Space from 'components/Space';
-import TokenBox from 'pageComponents/InfoPage/TokenDashboard/ColumnComponents/TokenBox';
+import { BlockchainNetworkType } from 'constants/network';
+import { useMemo } from 'react';
 
 export interface FromToChainProps {
-  fromChainId: string;
-  toChainId: string;
+  fromNetwork: string;
+  fromChainId?: string;
+  toNetwork: string;
+  toChainId?: string;
 }
 
-export default function FromToChain({ fromChainId, toChainId }: FromToChainProps) {
+export default function FromToChain({
+  fromNetwork,
+  fromChainId,
+  toNetwork,
+  toChainId,
+}: FromToChainProps) {
+  const currentFrom = useMemo(() => {
+    return fromNetwork === BlockchainNetworkType.AELF ? fromChainId : fromNetwork;
+  }, [fromChainId, fromNetwork]);
+
+  const currentTo = useMemo(() => {
+    return toNetwork === BlockchainNetworkType.AELF ? toChainId : toNetwork;
+  }, [toChainId, toNetwork]);
+
   return (
     <div>
-      <NetworkLogo network={fromChainId} />
+      <NetworkLogo network={currentFrom || ''} />
       <Space direction={'horizontal'} size={6} />
       <ToArrow />
       <Space direction={'horizontal'} size={6} />
-      <NetworkLogo network={toChainId} />
+      <NetworkLogo network={currentTo || ''} />
     </div>
   );
 }
