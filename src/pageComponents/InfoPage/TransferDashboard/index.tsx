@@ -1,7 +1,7 @@
-import { useCommonState } from 'store/Provider/hooks';
+import { useAppDispatch, useCommonState } from 'store/Provider/hooks';
 import MobileTransfer from './MobileTransfer';
 import WebTransfer from './WebTransfer';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getTransferFilterOption } from 'utils/api/infoDashboard';
 import { TTransferDashboardFilterNetwork, TTransferDashboardFilterToken } from 'types/api';
 import { useEffectOnce } from 'react-use';
@@ -13,9 +13,12 @@ import {
   InfoAelfChainType,
   InfoBusinessType,
 } from 'constants/infoDashboard';
+import { setTransferList } from 'store/reducers/infoDashboard/slice';
+import { getTransferDashboard } from './utils';
 
 export default function TransferDashboard() {
   const { isPadPX } = useCommonState();
+  const dispatch = useAppDispatch();
   const [filterNetworkList, setFilterNetworkList] = useState<TTransferDashboardFilterNetwork[]>([]);
   const [filterTokenList, setTokenNetworkList] = useState<TTransferDashboardFilterToken[]>([]);
 
@@ -81,9 +84,27 @@ export default function TransferDashboard() {
     setTokenNetworkList(res.tokenList);
   }, []);
 
+  const getTransferData = useCallback(async () => {
+    const res = await getTransferDashboard({
+      type: 0,
+      fromToken: 0,
+      fromChainId: 0,
+      toToken: 0,
+      ToChainId: 0,
+    });
+
+    dispatch(setTransferList(res));
+  }, [dispatch]);
+
   useEffectOnce(() => {
     getFilterData();
+    getTransferData();
   });
+
+  useEffect(() => {
+    getFilterData();
+    getTransferData();
+  }, [getFilterData, getTransferData]);
 
   return isPadPX ? (
     <MobileTransfer

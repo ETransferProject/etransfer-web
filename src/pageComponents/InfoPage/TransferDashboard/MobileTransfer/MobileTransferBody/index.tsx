@@ -8,29 +8,26 @@ import FromToToken from '../../ColumnComponents/FromToToken';
 import Amount from '../../ColumnComponents/Amount';
 import Time from '../../ColumnComponents/Time';
 import WalletAddress from '../../ColumnComponents/WalletAddress';
+import clsx from 'clsx';
 
 type TransferDashboardMobileItem = TTransferDashboardData & { isExpand?: boolean };
 
 export default function MobileTransferBody() {
-  const { tokens } = useInfoDashboardState();
-  const tokenList = useMemo<TransferDashboardMobileItem[]>(() => {
-    const list = JSON.parse(JSON.stringify(tokens));
-    list.forEach((item: TransferDashboardMobileItem) => {
-      item.isExpand = false;
-    });
-    return list;
-  }, [tokens]);
+  const { transferList: transfers } = useInfoDashboardState();
+  const transferList = useMemo<TransferDashboardMobileItem[]>(() => {
+    return JSON.parse(JSON.stringify(transfers));
+  }, [transfers]);
 
   const switchExpand = useCallback((item: TransferDashboardMobileItem) => {
-    item.isExpand = !item.isExpand;
+    console.log(item);
   }, []);
 
   const renderAction = useCallback(
     (item: TransferDashboardMobileItem) => {
       return (
-        <div className={styles['action']} onClick={() => switchExpand(item)}>
-          {item.isExpand ? 'Fold' : 'Details'}
-          <DynamicArrow isExpand={item.isExpand} className={styles['action-arrow']} />
+        <div className={clsx('row-center', styles['action'])} onClick={() => switchExpand(item)}>
+          {'Details'}
+          <DynamicArrow className={styles['action-arrow']} />
         </div>
       );
     },
@@ -40,17 +37,23 @@ export default function MobileTransferBody() {
   const renderTransferCard = useCallback(
     (item: TransferDashboardMobileItem) => {
       return (
-        <div className={styles['token-card-container']}>
-          <div className="flex-row-between">
+        <div className={styles['transfer-card-container']}>
+          <div
+            className={clsx(
+              'flex-row-between',
+              styles['transfer-card-row'],
+              styles['transfer-card-token'],
+              'flex-row-between',
+            )}>
             <FromToToken
               fromSymbol={item.fromSymbol}
               fromIcon={''}
               toSymbol={item.toSymbol}
               toIcon={''}
             />
-            <div>{item.status}</div>
+            <div className={styles['transfer-card-type']}>{item.orderType}</div>
           </div>
-          <div>
+          <div className={clsx('flex-row-between', styles['transfer-card-row'])}>
             <div>From - To</div>
             <FromToChain
               fromNetwork={item.fromNetwork}
@@ -59,22 +62,24 @@ export default function MobileTransferBody() {
               toChainId={item.toChainId}
             />
           </div>
-          <div>
+          <div className={clsx('flex-row-between', styles['transfer-card-row'])}>
             <div>Amount</div>
             <Amount amount={item.fromAmount} amountUsd={item.fromAmountUsd} />
           </div>
 
-          <div>
+          <div className={clsx('flex-row-between', styles['transfer-card-row'])}>
             <div>Wallet</div>
             <WalletAddress
+              className={styles['transfer-card-wallet-address']}
               address={item.fromAddress}
               chainId={item.fromChainId}
               network={item.fromNetwork}
             />
           </div>
 
-          <div>
+          <div className={clsx('flex-row-between', styles['transfer-card-row'])}>
             <div>Time</div>
+
             <Time time={String(item.createTime)} />
           </div>
 
@@ -87,9 +92,9 @@ export default function MobileTransferBody() {
 
   return (
     <div className={styles['mobile-transfer-body']}>
-      {tokenList?.map((token) => {
+      {transferList?.map((item) => {
         return (
-          <div key={`transferDashboard-mobile-${token.fromTxId}`}>{renderTransferCard(token)}</div>
+          <div key={`transferDashboard-mobile-${item.fromTxId}`}>{renderTransferCard(item)}</div>
         );
       })}
     </div>

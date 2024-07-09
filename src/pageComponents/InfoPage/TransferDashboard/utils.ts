@@ -1,8 +1,8 @@
 import { TTransferDashboardRequest } from 'types/api';
 import { TTransferDashboardData } from 'types/infoDashboard';
-import { geTransfers as getTransferDashboardApi } from 'utils/api/infoDashboard';
+import { getTransferDashboard as getTransferDashboardApi } from 'utils/api/infoDashboard';
 
-export const getTokenDashboard = async (params: TTransferDashboardRequest) => {
+export const getTransferDashboard = async (params: TTransferDashboardRequest) => {
   const data = await getTransferDashboardApi(params);
   const list: TTransferDashboardData[] = [];
 

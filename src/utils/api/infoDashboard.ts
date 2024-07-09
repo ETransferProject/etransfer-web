@@ -54,7 +54,7 @@ export const getTransferFilterOption = async (): Promise<TTransferDashboardFilte
   }
 };
 
-export const geTransfers = async (
+export const getTransferDashboard = async (
   params: TTransferDashboardRequest,
 ): Promise<TTransferDashboardResult> => {
   try {

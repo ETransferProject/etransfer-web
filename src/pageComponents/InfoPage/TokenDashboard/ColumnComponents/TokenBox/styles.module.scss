@@ -1,7 +1,8 @@
+@import 'src/assets/theme/breakpoint.scss';
 @import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
 
 .token-container {
-  min-width: 90px;
   white-space: nowrap;
 }
 
@@ -11,6 +12,11 @@
 
 .mobil-token-container {
   text-align: right;
+
+  .token-symbol {
+    font-size: 16px;
+    @extend .font-family-medium;
+  }
 }
 
 .token-symbol {

@@ -26,7 +26,7 @@ export default function FromToChain({
   }, [toChainId, toNetwork]);
 
   return (
-    <div>
+    <div className="flex-row-center">
       <NetworkLogo network={currentFrom || ''} />
       <Space direction={'horizontal'} size={6} />
       <ToArrow />

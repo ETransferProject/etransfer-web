@@ -56,7 +56,7 @@ export default function DisplayImage({
       )}
       <div
         className={clsx('row-center', 'flex-shrink-0', styles['default-text'])}
-        style={{ width, height }}>
+        style={{ width, height, lineHeight: height }}>
         {name?.charAt(0)}
       </div>
     </div>

@@ -11,7 +11,7 @@ export interface FromToTokenProps {
 
 export default function FromToToken({ fromSymbol, fromIcon, toSymbol, toIcon }: FromToTokenProps) {
   return (
-    <div>
+    <div className="flex-row-center">
       <TokenBox symbol={fromSymbol} icon={fromIcon} />
       <Space direction={'horizontal'} size={6} />
       <ToArrow />

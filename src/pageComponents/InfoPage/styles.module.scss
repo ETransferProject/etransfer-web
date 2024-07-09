@@ -19,6 +19,7 @@
         .ant-table-content {
           border-radius: 8px;
           border: 1px solid $dividers;
+          border-bottom: none;
         }
       }
 
@@ -35,9 +36,12 @@
         }
       }
 
-      .ant-table-tbody > tr > td {
-        border-bottom: 0px;
-      }
+      // .ant-table-tbody > tr > td {
+      // border-bottom: 0px;
+      // &:last-child {
+      //   border-bottom: 0px;
+      // }
+      // }
     }
   }
 }

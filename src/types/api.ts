@@ -320,10 +320,10 @@ export type TTransferDashboardFilterToken = {
 
 export type TTransferDashboardRequest = {
   type: TokensDashboardType;
-  fromToken: string;
-  fromChainId: ChainId;
-  toToken: string;
-  ToChainId: ChainId;
+  fromToken: number;
+  fromChainId: number;
+  toToken: number;
+  ToChainId: number;
   skipCount?: number;
   maxResultCount?: number;
   sorting?: string;

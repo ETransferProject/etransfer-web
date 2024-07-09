@@ -1,6 +1,32 @@
 @import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
 
 .mobile-transfer-body {
+  .transfer-card-container {
+    border-radius: 8px;
+    border: 1px solid $dividers;
+    padding: 12px;
+    margin-bottom: 12px;
+
+    .transfer-card-row {
+      margin-bottom: 12px;
+    }
+
+    .transfer-card-token {
+      padding-bottom: 12px;
+      border-bottom: 1px solid $dividers;
+    }
+
+    .transfer-card-type {
+      font-size: 16px;
+      @extend .font-family-medium;
+    }
+
+    .transfer-card-wallet-address {
+      display: flex;
+      justify-content: end;
+    }
+  }
   .transfer-detail {
     background-color: $hover-bg;
     border-radius: 8px;

@@ -24,10 +24,10 @@ const WebTransferTableColumns = [
   },
   {
     title: 'Type',
-    dataIndex: 'type',
-    key: 'type',
-    render: (type: BusinessType) => {
-      return <div>{type}</div>;
+    dataIndex: 'orderType',
+    key: 'orderType',
+    render: (orderType: BusinessType) => {
+      return <div>{orderType}</div>;
     },
   },
   {
@@ -47,10 +47,10 @@ const WebTransferTableColumns = [
   },
   {
     title: 'Amount',
-    dataIndex: 'amount',
-    key: 'amount',
-    render: (fromAmountUsd: string, item: TTransferDashboardData) => {
-      return <Amount amount={fromAmountUsd} amountUsd={item.fromAmountUsd} />;
+    dataIndex: 'fromAmount',
+    key: 'fromAmount',
+    render: (fromAmount: string, item: TTransferDashboardData) => {
+      return <Amount amount={fromAmount} amountUsd={item.fromAmountUsd} />;
     },
   },
   {
