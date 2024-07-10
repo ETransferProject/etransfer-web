@@ -12,6 +12,8 @@
 .filter-icon {
   float: left;
   margin: 9px 12px 12px 0;
+  z-index: 2;
+  cursor: pointer;
 }
 
 .filter-title {

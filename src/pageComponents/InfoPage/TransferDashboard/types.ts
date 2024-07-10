@@ -1,13 +1,16 @@
 import { ChainId } from '@portkey/types';
-import { InfoBusinessType } from 'constants/infoDashboard';
-import { TTransferDashboardFilterNetwork, TTransferDashboardFilterToken } from 'types/api';
+import {
+  TTransferDashboardFilterNetwork,
+  TTransferDashboardFilterToken,
+  TokensDashboardType,
+} from 'types/api';
 
 export interface TransferDashboardHeaderProps {
   fromTokenList: TTransferDashboardFilterToken[];
   fromChainList: TTransferDashboardFilterNetwork[];
   toTokenList: TTransferDashboardFilterToken[];
   toChainList: ChainId[];
-  type: InfoBusinessType;
+  type: TokensDashboardType;
   fromToken: number;
   fromChain: number;
   toToken: number;
@@ -28,7 +31,7 @@ export interface MobileTransferDashboardHeaderProps extends TransferDashboardHea
 }
 
 export interface HandleApplyFilterParams {
-  type: InfoBusinessType;
+  type: TokensDashboardType;
   fromToken: number;
   fromChain: number;
   toToken: number;
@@ -45,7 +48,7 @@ export interface TransferDashboardProps {
   filterFromChainList: TTransferDashboardFilterNetwork[];
   filterToTokenList: TTransferDashboardFilterToken[];
   filterToChainList: ChainId[];
-  filterType: InfoBusinessType;
+  filterType: TokensDashboardType;
   filterFromToken: number;
   filterFromChain: number;
   filterToToken: number;

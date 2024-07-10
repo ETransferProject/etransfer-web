@@ -1,11 +1,10 @@
 import styles from './styles.module.scss';
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import CommonImage from 'components/CommonImage';
 
 interface DisplayImageProps {
   name: string;
-
   src?: string;
   className?: string;
   width?: number;
@@ -24,13 +23,6 @@ export default function DisplayImage({
   isCircle = true,
 }: DisplayImageProps) {
   const [showIcon, setShowIcon] = useState<boolean>(true);
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!isSuccess) {
-      setShowIcon(true);
-    }
-  }, [isSuccess]);
 
   return (
     <div
@@ -40,7 +32,12 @@ export default function DisplayImage({
         className,
       )}
       style={{ width, height }}>
-      {showIcon && isSuccess && src && (
+      <div
+        className={clsx('row-center', 'flex-shrink-0', styles['default-text'])}
+        style={{ width, height, lineHeight: height }}>
+        {name?.charAt(0)}
+      </div>
+      {showIcon && src && (
         <CommonImage
           loading="eager"
           src={src}
@@ -48,17 +45,12 @@ export default function DisplayImage({
           width={width}
           height={height}
           fill={false}
-          onLoad={() => {
-            setIsSuccess(true);
+          style={{ zIndex: 2 }}
+          onError={() => {
+            setShowIcon(false);
           }}
-          onError={() => setShowIcon(false)}
         />
       )}
-      <div
-        className={clsx('row-center', 'flex-shrink-0', styles['default-text'])}
-        style={{ width, height, lineHeight: height }}>
-        {name?.charAt(0)}
-      </div>
     </div>
   );
 }

@@ -12,7 +12,7 @@ import { OverviewLegendList } from 'constants/infoDashboard';
 import { getTransactionOverview } from 'utils/api/infoDashboard';
 import { useEffectOnce } from 'react-use';
 import { TTransactionOverviewItem, TOverviewTimeType } from 'types/api';
-import { ZERO } from 'constants/calculate';
+import { computePlus } from '../utils';
 
 type TCurrentItem = {
   date: string;
@@ -41,14 +41,12 @@ export default function TransactionOverview() {
   }, [chartData, opacity]);
 
   const mouseoverCallback = useCallback((event: eChartsElementEvent) => {
-    setOpacity(0.6);
+    setOpacity(0.2);
     const dataItem = dataMapRef.current?.[event?.name] || {};
     setCurrentItem({
-      deposit: dataItem.depositTx || '',
-      withdraw: dataItem.withdrawTx || '',
-      plus: ZERO.plus(dataItem.depositTx || '')
-        .plus(dataItem.withdrawTx || '')
-        .toFixed(),
+      deposit: String(dataItem.depositTx) || '',
+      withdraw: String(dataItem.withdrawTx) || '',
+      plus: computePlus(dataItem.depositTx, dataItem.withdrawTx),
       date: event?.name,
     });
   }, []);
@@ -66,9 +64,7 @@ export default function TransactionOverview() {
       setCurrentItem({
         deposit: '',
         withdraw: '',
-        plus: ZERO.plus(lastItem?.depositTx || '')
-          .plus(lastItem?.withdrawTx || '')
-          .toFixed(),
+        plus: computePlus(lastItem?.depositTx, lastItem?.withdrawTx),
         date: lastItem?.date || '',
       });
     },
@@ -115,9 +111,7 @@ export default function TransactionOverview() {
       setCurrentItem({
         deposit: '',
         withdraw: '',
-        plus: ZERO.plus(last?.depositTx || '')
-          .plus(last?.withdrawTx || '')
-          .toFixed(),
+        plus: computePlus(last?.depositTx, last?.withdrawTx),
         date: last?.date || '',
       });
     } catch (error) {
@@ -144,7 +138,7 @@ export default function TransactionOverview() {
         legendList={OverviewLegendList}
         title="Transaction"
         plusCount={currentItem?.plus || ''}
-        countUnit="Txs"
+        countUnit=" Txs"
         depositCount={currentItem?.deposit}
         withdrawCount={currentItem?.withdraw}
         time={currentItem?.date || ''}

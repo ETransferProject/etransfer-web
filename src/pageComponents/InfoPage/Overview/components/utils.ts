@@ -2,7 +2,7 @@ import { EChartsOption, SeriesOption } from 'echarts';
 import { BusinessType } from 'types/api';
 
 export interface GenerateStackBarOptionPrams {
-  data: Array<{ date: string } & Record<string, string>>;
+  data: Array<{ date: string } & Record<string, string | number>>;
   depositKey: string;
   withdrawKey: string;
   stackName: string;
@@ -18,8 +18,8 @@ export const generateStackBarOption = ({
   opacity,
   emphasisOpacity,
 }: GenerateStackBarOptionPrams): EChartsOption => {
-  const withdrawData: { value: string }[] = [],
-    depositData: { value: string }[] = [],
+  const withdrawData: { value: string | number }[] = [],
+    depositData: { value: string | number }[] = [],
     xAxisData: string[] = [];
 
   data.forEach((item) => {
@@ -75,28 +75,32 @@ export const generateStackBarOption = ({
         fontSize: 12,
         color: '#808080',
       },
+      axisLabel: { overflow: 'truncate' },
       splitLine: { show: false },
       axisTick: { show: false },
       axisLine: { show: false },
+      boundaryGap: true,
+      nameLocation: 'middle',
     },
     yAxis: {
-      type: 'value',
-      splitLine: { show: false },
-      axisTick: { show: false },
-      axisLine: { show: false },
+      show: false,
+      // type: 'value',
+      // splitLine: { show: false },
+      // axisTick: { show: false },
+      // axisLine: { show: false },
     },
     grid: { top: '0', left: '0', right: '0', bottom: '28px' },
     series: series,
-    tooltip: {
-      trigger: 'axis',
-      showDelay: 0,
-      axisPointer: {
-        type: 'shadow',
-        shadowStyle: {
-          shadowBlur: 0,
-        },
-      },
-      showContent: false,
-    },
+    // tooltip: {
+    //   trigger: 'axis',
+    //   showDelay: 0,
+    //   axisPointer: {
+    //     type: 'shadow',
+    //     shadowStyle: {
+    //       shadowBlur: 0,
+    //     },
+    //   },
+    //   showContent: false,
+    // },
   };
 };

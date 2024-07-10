@@ -1,4 +1,5 @@
 @import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
 @import 'src/assets/theme/font.scss';
 
 .networks-container {
@@ -13,7 +14,10 @@
   .network-more-number {
     border-radius: 50%;
     background-color: $dividers;
-    cursor: pointer;
+
+    @include media-web {
+      cursor: pointer;
+    }
 
     font-size: 12px;
     font-weight: 500;
@@ -23,5 +27,16 @@
   .network-more-number-small {
     font-size: 8px;
     line-height: 16px;
+  }
+}
+
+.networks-more-tooltip {
+  :global {
+    .ant-tooltip-content {
+      .ant-tooltip-inner {
+        padding: 6px 8px !important;
+        border-radius: 6px !important;
+      }
+    }
   }
 }

@@ -2,12 +2,13 @@ import { FilterIcon } from 'assets/images';
 import styles from './styles.module.scss';
 import CommonDrawer from 'components/CommonDrawer';
 import { useCallback, useState } from 'react';
-import { InfoBusinessType, InfoBusinessTypeOptions } from 'constants/infoDashboard';
+import { InfoBusinessTypeOptions } from 'constants/infoDashboard';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import { Select } from 'antd';
 import clsx from 'clsx';
 import { useFilter } from '../../hooks';
 import { MobileTransferDashboardHeaderProps } from '../../types';
+import { TokensDashboardType } from 'types/api';
 
 export default function MobileTransferHeader({
   fromTokenList,
@@ -24,7 +25,7 @@ export default function MobileTransferHeader({
 }: MobileTransferDashboardHeaderProps) {
   const [isShowFilterDrawer, setIsShowFilterDrawer] = useState(false);
 
-  const [newFilterType, setNewFilterType] = useState<InfoBusinessType>(type);
+  const [newFilterType, setNewFilterType] = useState<TokensDashboardType>(type);
   const [newFilterFromToken, setNewFilterFromToken] = useState<number>(fromToken);
   const [newFilterFromChain, setNewFilterFromChain] = useState<number>(fromChain);
   const [newFilterToToken, setNewFilterToToken] = useState<number>(toToken);

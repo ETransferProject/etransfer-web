@@ -9,6 +9,10 @@
   }
 
   .web-tokens-header-filter {
+    .web-records-select-type {
+      width: 156px;
+    }
+
     :global {
       .ant-select-selector {
         display: flex;

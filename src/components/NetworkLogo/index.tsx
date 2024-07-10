@@ -75,11 +75,13 @@ const NetworkLogoMap: Record<string, Record<TNetworkLogoSize, any>> = {
 };
 
 export default function NetworkLogo({
+  id,
   network,
   className,
   size = 'normal',
 }: {
   network: string;
+  id?: string;
   className?: string;
   size?: TNetworkLogoSize;
 }) {
@@ -87,10 +89,12 @@ export default function NetworkLogo({
   return (
     <>
       {renderNetworkLogo ? (
-        <div className={clsx(styles[`network-${size}`], className)}>{renderNetworkLogo}</div>
+        <div id={id} className={clsx(styles[`network-${size}`], className)}>
+          {renderNetworkLogo}
+        </div>
       ) : (
         // when not match network's type, display first character and uppercase
-        <div className={clsx(styles['network'], styles[`network-${size}`], className)}>
+        <div id={id} className={clsx(styles['network'], styles[`network-${size}`], className)}>
           {network?.charAt(0).toUpperCase()}
         </div>
       )}

@@ -12,7 +12,7 @@ import { OverviewLegendList } from 'constants/infoDashboard';
 import { getVolumeOverview } from 'utils/api/infoDashboard';
 import { useEffectOnce } from 'react-use';
 import { TOverviewTimeType, TVolumeOverviewItem } from 'types/api';
-import { ZERO } from 'utils/format';
+import { computePlus } from '../utils';
 
 type TCurrentItem = {
   date: string;
@@ -41,14 +41,12 @@ export default function VolumeOverview() {
   }, [chartData, opacity]);
 
   const mouseoverCallback = useCallback((event: eChartsElementEvent) => {
-    setOpacity(0.6);
+    setOpacity(0.2);
     const dataItem = dataMapRef.current?.[event?.name] || {};
     setCurrentItem({
       deposit: dataItem.depositAmountUsd || '',
       withdraw: dataItem.withdrawAmountUsd || '',
-      plus: ZERO.plus(dataItem.depositAmountUsd || '')
-        .plus(dataItem.withdrawAmountUsd || '')
-        .toFixed(),
+      plus: computePlus(dataItem.depositAmountUsd, dataItem.withdrawAmountUsd),
       date: event?.name,
     });
   }, []);
@@ -68,9 +66,7 @@ export default function VolumeOverview() {
       setCurrentItem({
         deposit: '',
         withdraw: '',
-        plus: ZERO.plus(lastItem?.depositAmountUsd || '')
-          .plus(lastItem?.withdrawAmountUsd || '')
-          .toFixed(),
+        plus: computePlus(lastItem?.depositAmountUsd, lastItem?.withdrawAmountUsd),
         date: lastItem?.date || '',
       });
     },
@@ -117,9 +113,7 @@ export default function VolumeOverview() {
       setCurrentItem({
         deposit: '',
         withdraw: '',
-        plus: ZERO.plus(last?.depositAmountUsd || '')
-          .plus(last?.withdrawAmountUsd || '')
-          .toFixed(),
+        plus: computePlus(last?.depositAmountUsd, last?.withdrawAmountUsd),
         date: last?.date || '',
       });
     } catch (error) {
@@ -146,7 +140,8 @@ export default function VolumeOverview() {
         legendList={OverviewLegendList}
         title="Volume"
         plusCount={currentItem?.plus || ''}
-        countUnit="M" // TODO
+        countUnit="$"
+        unitPosition="prefix"
         depositCount={currentItem?.deposit}
         withdrawCount={currentItem?.withdraw}
         time={currentItem?.date || ''}

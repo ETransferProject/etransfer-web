@@ -240,8 +240,8 @@ export type TTransactionOverviewData = {
 
 export type TTransactionOverviewItem = {
   date: string;
-  depositTx: string;
-  withdrawTx: string;
+  depositTx: number;
+  withdrawTx: number;
 };
 
 export type TVolumeOverviewRequest = TTransactionOverviewRequest;

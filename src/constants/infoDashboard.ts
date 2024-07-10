@@ -1,19 +1,15 @@
-export enum InfoBusinessType {
-  ALL = 0,
-  Deposit = 1,
-  Withdraw = 2,
-}
+import { TokensDashboardType } from 'types/api';
 
 export enum InfoBusinessTypeLabel {
-  ALL = 'ALL',
+  ALL = 'All',
   Deposit = 'Deposit',
   Withdraw = 'Withdraw',
 }
 
 export const InfoBusinessTypeOptions = [
-  { value: InfoBusinessType.ALL, label: InfoBusinessTypeLabel.ALL },
-  { value: InfoBusinessType.Deposit, label: InfoBusinessTypeLabel.Deposit },
-  { value: InfoBusinessType.Withdraw, label: InfoBusinessTypeLabel.Withdraw },
+  { value: TokensDashboardType.All, label: InfoBusinessTypeLabel.ALL },
+  { value: TokensDashboardType.Deposit, label: InfoBusinessTypeLabel.Deposit },
+  { value: TokensDashboardType.Withdraw, label: InfoBusinessTypeLabel.Withdraw },
 ];
 
 export const DefaultTransferDashboardFromTokenOptions = {
@@ -32,19 +28,19 @@ export const DefaultTransferDashboardToTokenOptions = {
 };
 
 export enum InfoAelfChainType {
-  ALL = 0,
+  All = 0,
   MainChain = 1,
   SideChain = 2,
 }
 
 export enum InfoAelfChainTypeLabel {
-  ALL = 'All Destination Chain',
+  All = 'All Destination Chain',
   MainChain = 'MainChain',
   SideChain = 'SideChain',
 }
 
 export const InfoAelfChainOptions = [
-  { value: InfoAelfChainType.ALL, label: InfoAelfChainTypeLabel.ALL },
+  { value: InfoAelfChainType.All, label: InfoAelfChainTypeLabel.All },
   { value: InfoAelfChainType.MainChain, label: InfoAelfChainTypeLabel.MainChain },
   { value: InfoAelfChainType.SideChain, label: InfoAelfChainTypeLabel.SideChain },
 ];

@@ -12,6 +12,12 @@ export const AelfChainIdList: ChainId[] = [
   AllSupportedELFChainId.tDVW,
 ];
 
+export const AelfChainNetwork: Record<ChainId, string> = {
+  [AllSupportedELFChainId.AELF]: 'MainChain AELF',
+  [AllSupportedELFChainId.tDVV]: 'SideChain tDVV',
+  [AllSupportedELFChainId.tDVW]: 'SideChain tDVW',
+};
+
 export enum ContractType {
   CA = 'CA_CONTRACT',
   TOKEN = 'TOKEN_CONTRACT',

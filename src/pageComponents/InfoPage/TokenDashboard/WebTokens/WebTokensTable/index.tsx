@@ -21,13 +21,13 @@ const WebTokensTableExpandedColumns = [
     title: 'empty',
     dataIndex: 'empty',
     key: 'empty',
-    width: 260,
+    width: 264,
   },
   {
     title: 'Network',
     dataIndex: 'name',
     key: 'name',
-    width: 150,
+    width: 170,
     showSorterTooltip: false,
     render: (name: string) => {
       return <Network network={name} size="normal" />;
@@ -37,7 +37,7 @@ const WebTokensTableExpandedColumns = [
     title: 'Volume 24H',
     dataIndex: 'volume24H',
     key: 'volume24H',
-    width: 150,
+    // width: 150,
     showSorterTooltip: false,
     render: (volume24H: string, item: ExpandedTableData) => {
       return <Volume amount={volume24H} unit={item.symbol} />;
@@ -47,7 +47,7 @@ const WebTokensTableExpandedColumns = [
     title: 'Volume 7D',
     dataIndex: 'volume7D',
     key: 'volume7D',
-    width: 150,
+    // width: 150,
     showSorterTooltip: false,
     render: (volume7D: string, item: ExpandedTableData) => {
       return <Volume amount={volume7D} unit={item.symbol} />;
@@ -57,7 +57,7 @@ const WebTokensTableExpandedColumns = [
     title: 'Volume Total',
     dataIndex: 'volumeTotal',
     key: 'volumeTotal',
-    width: 178,
+    // width: 178,
     showSorterTooltip: false,
     render: (volumeTotal: string, item: ExpandedTableData) => {
       return <Volume amount={volumeTotal} unit={item.symbol} />;
@@ -106,7 +106,7 @@ export default function WebTokensTable() {
         title: 'Multiple Networks',
         dataIndex: 'networks',
         key: 'networks',
-        width: 150,
+        width: 170,
         render: (networks: string[]) => {
           return <Networks list={networks} />;
         },
@@ -115,7 +115,7 @@ export default function WebTokensTable() {
         title: 'Volume 24H',
         dataIndex: 'volume24H',
         key: 'volume24H',
-        width: 150,
+        // width: 150,
         showSorterTooltip: false,
         sorter: (a: { volume24H: string }, b: { volume24H: string }) =>
           a.volume24H.length - b.volume24H.length,
@@ -127,7 +127,7 @@ export default function WebTokensTable() {
         title: 'Volume 7D',
         dataIndex: 'volume7D',
         key: 'volume7D',
-        width: 150,
+        // width: 150,
         showSorterTooltip: false,
         sorter: (a: { volume7D: string }, b: { volume7D: string }) =>
           a.volume7D.length - b.volume7D.length,
@@ -139,7 +139,7 @@ export default function WebTokensTable() {
         title: 'Volume Total',
         dataIndex: 'volumeTotal',
         key: 'volumeTotal',
-        width: 150,
+        // width: 150,
         showSorterTooltip: false,
         sorter: (a: { volumeTotal: string }, b: { volumeTotal: string }) =>
           a.volumeTotal.length - b.volumeTotal.length,
@@ -153,7 +153,7 @@ export default function WebTokensTable() {
         key: 'expand',
         width: 44,
         render: (_expand: any, item: TTokenDashboardItem) => {
-          if (item.networks?.length > 3) {
+          if (item.networks?.length > 1) {
             return (
               <div className={styles['expand-arrow']} onClick={() => handleExpanded(item)}>
                 <DynamicArrow isExpand={expandedRowKeys?.includes(item.symbol)} />

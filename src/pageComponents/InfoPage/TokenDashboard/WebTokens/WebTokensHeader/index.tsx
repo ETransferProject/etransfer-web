@@ -1,18 +1,23 @@
 import { Select } from 'antd';
 import styles from './styles.module.scss';
-import { useCallback, useState } from 'react';
-import { InfoBusinessType, InfoBusinessTypeOptions } from 'constants/infoDashboard';
+import { useCallback } from 'react';
+import { InfoBusinessTypeOptions } from 'constants/infoDashboard';
 import clsx from 'clsx';
+import { TokensDashboardType } from 'types/api';
 
-export default function WebTokensHeader() {
-  const [businessType, setBusinessType] = useState<InfoBusinessType>(InfoBusinessType.ALL);
-
-  const handleTypeChange = useCallback((type: InfoBusinessType) => {
-    setBusinessType(type);
-
-    //   dispatch(setSkipCount(1));
-    //   requestRecordsList();
-  }, []);
+export default function WebTokensHeader({
+  selectType,
+  onTypeChange,
+}: {
+  selectType: TokensDashboardType;
+  onTypeChange: (item: TokensDashboardType) => void;
+}) {
+  const handleTypeChange = useCallback(
+    (type: TokensDashboardType) => {
+      onTypeChange(type);
+    },
+    [onTypeChange],
+  );
 
   return (
     <div className={clsx('flex-row-center-between', styles['web-tokens-header'])}>
@@ -20,7 +25,7 @@ export default function WebTokensHeader() {
       <div className={styles['web-tokens-header-filter']}>
         <Select
           size={'large'}
-          value={businessType}
+          value={selectType}
           className={styles['web-records-select-type']}
           onChange={handleTypeChange}
           popupClassName={'drop-wrap'}

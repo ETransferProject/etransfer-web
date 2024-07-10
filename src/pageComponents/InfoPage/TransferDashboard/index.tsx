@@ -3,7 +3,11 @@ import MobileTransfer from './MobileTransfer';
 import WebTransfer from './WebTransfer';
 import { useCallback, useEffect, useState } from 'react';
 import { getTransferFilterOption } from 'utils/api/infoDashboard';
-import { TTransferDashboardFilterNetwork, TTransferDashboardFilterToken } from 'types/api';
+import {
+  TTransferDashboardFilterNetwork,
+  TTransferDashboardFilterToken,
+  TokensDashboardType,
+} from 'types/api';
 import { useEffectOnce } from 'react-use';
 import { HandleApplyFilterParams } from './types';
 import {
@@ -11,7 +15,6 @@ import {
   DefaultTransferDashboardFromTokenOptions,
   DefaultTransferDashboardToTokenOptions,
   InfoAelfChainType,
-  InfoBusinessType,
 } from 'constants/infoDashboard';
 import { setTransferList } from 'store/reducers/infoDashboard/slice';
 import { getTransferDashboard } from './utils';
@@ -22,7 +25,7 @@ export default function TransferDashboard() {
   const [filterNetworkList, setFilterNetworkList] = useState<TTransferDashboardFilterNetwork[]>([]);
   const [filterTokenList, setTokenNetworkList] = useState<TTransferDashboardFilterToken[]>([]);
 
-  const [filterType, setFilterType] = useState<InfoBusinessType>(InfoBusinessType.ALL);
+  const [filterType, setFilterType] = useState<TokensDashboardType>(TokensDashboardType.All);
   const [filterFromToken, setFilterFromToken] = useState<number>(
     DefaultTransferDashboardFromTokenOptions.value,
   );
@@ -32,9 +35,9 @@ export default function TransferDashboard() {
   const [filterToToken, setFilterToToken] = useState<number>(
     DefaultTransferDashboardToTokenOptions.value,
   );
-  const [filterToChain, setFilterToChain] = useState<InfoAelfChainType>(InfoAelfChainType.ALL);
+  const [filterToChain, setFilterToChain] = useState<InfoAelfChainType>(InfoAelfChainType.All);
 
-  const handleTypeChange = useCallback((type: InfoBusinessType) => {
+  const handleTypeChange = useCallback((type: TokensDashboardType) => {
     setFilterType(type);
   }, []);
 
@@ -58,11 +61,11 @@ export default function TransferDashboard() {
   }, []);
 
   const handleResetFilter = useCallback(() => {
-    setFilterType(InfoBusinessType.ALL);
+    setFilterType(TokensDashboardType.All);
     setFilterFromToken(DefaultTransferDashboardFromTokenOptions.value);
     setFilterFromChain(DefaultTransferDashboardFromChainOptions.value);
     setFilterToToken(DefaultTransferDashboardToTokenOptions.value);
-    setFilterToChain(InfoAelfChainType.ALL);
+    setFilterToChain(InfoAelfChainType.All);
   }, []);
 
   const handleApplyFilter = useCallback((params: HandleApplyFilterParams) => {

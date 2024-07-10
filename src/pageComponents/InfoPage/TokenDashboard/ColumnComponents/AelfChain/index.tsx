@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
 import NetworkLogo, { TNetworkLogoSize } from 'components/NetworkLogo';
+import { AelfChainNetwork } from 'constants/chain';
 
 interface AelfChainProps {
   list: ChainId[];
@@ -14,24 +15,25 @@ interface AelfChainProps {
 
 export default function AelfChain({ list, size, className, iconClassName }: AelfChainProps) {
   const { isPadPX } = useCommonState();
-  // const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
   return (
     <div className={clsx('flex-row-center', styles['aelf-chain-container'], className)}>
-      {list?.map((chainId) => {
+      {list?.map((chainId, index) => {
         return (
-          <CommonTooltip
-            key={`AelfChain-${chainId}`}
-            title={chainId}
-            trigger={isPadPX ? '' : 'hover'}
-            // open={isPadPX ? isTooltipOpen : undefined}
-          >
-            <NetworkLogo
-              className={clsx('flex-center', 'cursor-pointer', iconClassName)}
-              network={chainId}
-              size={size}
-            />
-          </CommonTooltip>
+          <div key={`AelfChain-${chainId}-${index}`}>
+            <CommonTooltip
+              title={AelfChainNetwork[chainId]}
+              trigger={isPadPX ? '' : 'hover'}
+              overlayClassName={styles['aelf-chain-tooltip']}>
+              <div style={{ width: size, height: size }}>
+                <NetworkLogo
+                  className={clsx('flex-center', 'cursor-pointer', iconClassName)}
+                  network={chainId}
+                  size={size}
+                />
+              </div>
+            </CommonTooltip>
+          </div>
         );
       })}
     </div>

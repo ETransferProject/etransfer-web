@@ -2,26 +2,37 @@ import { FilterIcon } from 'assets/images';
 import styles from './styles.module.scss';
 import CommonDrawer from 'components/CommonDrawer';
 import { useCallback, useState } from 'react';
-import { InfoBusinessType, InfoBusinessTypeOptions } from 'constants/infoDashboard';
+import { InfoBusinessTypeOptions } from 'constants/infoDashboard';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import { Select } from 'antd';
 import clsx from 'clsx';
+import { TokensDashboardType } from 'types/api';
 
-export default function MobileTokensHeader() {
+export default function MobileTokensHeader({
+  selectType,
+  onTypeChange,
+}: {
+  selectType: TokensDashboardType;
+  onTypeChange: (item: TokensDashboardType) => void;
+}) {
   const [isShowFilterDrawer, setIsShowFilterDrawer] = useState(false);
-  const [filterType, setFilterType] = useState<InfoBusinessType>(InfoBusinessType.ALL);
+  const [filterType, setFilterType] = useState<TokensDashboardType>(selectType);
 
   const handleOpenFilterDrawer = useCallback(() => {
     setIsShowFilterDrawer(true);
   }, []);
 
   const handleResetFilter = useCallback(() => {
-    setFilterType(InfoBusinessType.ALL);
-  }, []);
+    setFilterType(TokensDashboardType.All);
+    onTypeChange(TokensDashboardType.All);
+
+    setIsShowFilterDrawer(false);
+  }, [onTypeChange]);
 
   const handleApplyFilter = useCallback(() => {
-    console.log('apply', '');
-  }, []);
+    onTypeChange(filterType);
+    setIsShowFilterDrawer(false);
+  }, [filterType, onTypeChange]);
 
   return (
     <div className={styles['mobile-tokens-header']}>

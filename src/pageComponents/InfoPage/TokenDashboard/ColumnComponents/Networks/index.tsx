@@ -29,22 +29,31 @@ export default function Networks({ list, size = 'normal', className }: NetworksP
       </div>
     );
 
-    return (
-      <CommonTooltip title={moreListLogo} trigger={isPadPX ? '' : 'hover'}>
-        <div
-          className={clsx(
-            'row-center',
-            'flex-shrink-0',
-            styles['network-more-number'],
-            size === 'small' && styles['network-more-number-small'],
-          )}
-          style={{
-            width: size === 'normal' ? 24 : 16,
-            height: size === 'normal' ? 24 : 16,
-            lineHeight: size === 'normal' ? 24 : 16,
-          }}>
-          {`+${list.length - 3}`}
-        </div>
+    const renderMore = (
+      <div
+        className={clsx(
+          'row-center',
+          'flex-shrink-0',
+          styles['network-more-number'],
+          size === 'small' && styles['network-more-number-small'],
+        )}
+        style={{
+          width: size === 'normal' ? 24 : 16,
+          height: size === 'normal' ? 24 : 16,
+          lineHeight: size === 'normal' ? 24 : 16,
+        }}>
+        {`+${list.length - 2}`}
+      </div>
+    );
+
+    return isPadPX ? (
+      renderMore
+    ) : (
+      <CommonTooltip
+        title={moreListLogo}
+        trigger={isPadPX ? '' : 'hover'}
+        overlayClassName={styles['networks-more-tooltip']}>
+        {renderMore}
       </CommonTooltip>
     );
   }, [isPadPX, list, size]);
