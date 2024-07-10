@@ -1,6 +1,6 @@
 import { useInfoDashboardState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { TTransferDashboardData } from 'types/infoDashboard';
 import DynamicArrow from 'components/DynamicArrow';
 import FromToChain from '../../ColumnComponents/FromToChain';
@@ -11,8 +11,9 @@ import WalletAddress from '../../ColumnComponents/WalletAddress';
 import clsx from 'clsx';
 import EmptyDataBox from 'pageComponents/EmptyDataBox';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import CommonDrawer from 'components/CommonDrawer';
+import TransferDetail from 'pageComponents/InfoPage/TransferDetail';
 
-type TransferDashboardMobileItem = TTransferDashboardData & { isExpand?: boolean };
 const NoDataText = '-- No Data --';
 
 export interface MobileTransferTableProps {
@@ -25,19 +26,24 @@ export default function MobileTransferBody({
   handleNextPage,
 }: MobileTransferTableProps) {
   const { transferList: transfers } = useInfoDashboardState();
-  const transferList = useMemo<TransferDashboardMobileItem[]>(() => {
+  const transferList = useMemo<TTransferDashboardData[]>(() => {
     return JSON.parse(JSON.stringify(transfers));
   }, [transfers]);
-  const switchExpand = useCallback((item: TransferDashboardMobileItem) => {
-    console.log(item);
+  const [isShowDetailDrawer, setIsShowDetailDrawer] = useState(false);
+  const [detailData, setDetailData] = useState<TTransferDashboardData>(transferList[0]);
+
+  const switchExpand = useCallback((item: TTransferDashboardData) => {
+    setIsShowDetailDrawer(true);
+
+    setDetailData(item);
   }, []);
 
   const renderAction = useCallback(
-    (item: TransferDashboardMobileItem) => {
+    (item: TTransferDashboardData) => {
       return (
         <div className={clsx('row-center', styles['action'])} onClick={() => switchExpand(item)}>
           {'Details'}
-          <DynamicArrow className={styles['action-arrow']} />
+          <DynamicArrow className={styles['action-arrow']} size="Small" />
         </div>
       );
     },
@@ -45,7 +51,7 @@ export default function MobileTransferBody({
   );
 
   const renderTransferCard = useCallback(
-    (item: TransferDashboardMobileItem) => {
+    (item: TTransferDashboardData) => {
       return (
         <div className={styles['transfer-card-container']}>
           <div
@@ -130,6 +136,18 @@ export default function MobileTransferBody({
           })}
         </InfiniteScroll>
       )}
+
+      <CommonDrawer
+        open={isShowDetailDrawer}
+        height={'100%'}
+        title={<div className={styles['detail-title']}>Transfer Detail</div>}
+        id="TransferDashboardDetailMobileDrawer"
+        className={styles['detail-drawer-wrapper']}
+        destroyOnClose
+        placement={'right'}
+        onClose={() => setIsShowDetailDrawer(!isShowDetailDrawer)}>
+        <TransferDetail {...detailData} />
+      </CommonDrawer>
     </div>
   );
 }

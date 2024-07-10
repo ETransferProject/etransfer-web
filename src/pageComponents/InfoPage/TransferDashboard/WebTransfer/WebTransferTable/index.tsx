@@ -9,6 +9,7 @@ import WalletAddress from '../../ColumnComponents/WalletAddress';
 import Time from '../../ColumnComponents/Time';
 import { BusinessType } from 'types/api';
 import { ChainId } from '@portkey/types';
+import myEvents from 'utils/myEvent';
 
 const WebTransferTableColumns = [
   {
@@ -82,6 +83,7 @@ export interface WebTransferTableProps {
   maxResultCount: number;
   skipPageCount: number;
   tableOnChange: (page: number, pageSize: number) => void;
+  showDetail: (item: TTransferDashboardData) => void;
 }
 
 export default function WebTransferTable({
@@ -89,6 +91,7 @@ export default function WebTransferTable({
   maxResultCount,
   skipPageCount,
   tableOnChange,
+  showDetail,
 }: WebTransferTableProps) {
   const { transferList } = useInfoDashboardState();
 
@@ -109,6 +112,14 @@ export default function WebTransferTable({
       scroll={{ x: 1020 }}
       locale={{
         emptyText: <EmptyDataBox emptyText={'No transfer found'} />,
+      }}
+      onRow={(item) => {
+        return {
+          onClick: () => {
+            showDetail(item);
+            myEvents.ShowWebTransferDashboardDetailPage.emit();
+          },
+        };
       }}
       pagination={
         totalCount > maxResultCount

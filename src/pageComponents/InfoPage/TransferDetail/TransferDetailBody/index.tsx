@@ -8,6 +8,7 @@ import FromOrToChain from '../components/FromOrToChain';
 import TokenAmount from '../components/TokenAmount';
 import { useCommonState } from 'store/Provider/hooks';
 import { getOmittedStr } from 'utils/calculate';
+import { formatTime } from 'pageComponents/InfoPage/TransferDashboard/utils';
 
 export default function TransferDetailBody(props: Omit<TTransferDashboardData, 'status'>) {
   const { isMobilePX } = useCommonState();
@@ -24,7 +25,7 @@ export default function TransferDetailBody(props: Omit<TTransferDashboardData, '
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>CreateTime</div>
         <div className={clsx(styles['detail-value'], styles['detail-value-time'])}>
-          {props.createTime}
+          {formatTime(props.createTime)}
         </div>
       </div>
 

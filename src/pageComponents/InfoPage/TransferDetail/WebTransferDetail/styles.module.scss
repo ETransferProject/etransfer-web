@@ -4,7 +4,12 @@
 
 .web-transfer-detail {
   .detail-title {
+    margin-top: 24px;
     font-size: 24px;
     @extend .font-family-medium;
   }
+}
+
+.web-transfer-detail-breadcrumb-info {
+  cursor: pointer;
 }
