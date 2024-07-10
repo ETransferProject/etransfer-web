@@ -9,15 +9,25 @@ import Amount from '../../ColumnComponents/Amount';
 import Time from '../../ColumnComponents/Time';
 import WalletAddress from '../../ColumnComponents/WalletAddress';
 import clsx from 'clsx';
+import EmptyDataBox from 'pageComponents/EmptyDataBox';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 type TransferDashboardMobileItem = TTransferDashboardData & { isExpand?: boolean };
+const NoDataText = '-- No Data --';
 
-export default function MobileTransferBody() {
+export interface MobileTransferTableProps {
+  totalCount: number;
+  handleNextPage: (isRetry?: boolean) => Promise<void>;
+}
+
+export default function MobileTransferBody({
+  totalCount,
+  handleNextPage,
+}: MobileTransferTableProps) {
   const { transferList: transfers } = useInfoDashboardState();
   const transferList = useMemo<TransferDashboardMobileItem[]>(() => {
     return JSON.parse(JSON.stringify(transfers));
   }, [transfers]);
-
   const switchExpand = useCallback((item: TransferDashboardMobileItem) => {
     console.log(item);
   }, []);
@@ -90,13 +100,36 @@ export default function MobileTransferBody() {
     [renderAction],
   );
 
+  const hasMore = useMemo(
+    () => transferList.length < totalCount,
+    [totalCount, transferList.length],
+  );
+
   return (
     <div className={styles['mobile-transfer-body']}>
-      {transferList?.map((item) => {
-        return (
-          <div key={`transferDashboard-mobile-${item.fromTxId}`}>{renderTransferCard(item)}</div>
-        );
-      })}
+      {transferList?.length === 0 && <EmptyDataBox emptyText={'No transfer found'} />}
+
+      {transferList?.length > 0 && (
+        <InfiniteScroll
+          dataLength={transferList.length}
+          next={handleNextPage}
+          hasMore={hasMore}
+          scrollableTarget={'etransferWebWrapper'}
+          loader={
+            <h4 className={clsx(styles['transfer-loader-message'])}>
+              {hasMore ? ' Loading... ' : NoDataText}
+            </h4>
+          }
+          endMessage={<p className={clsx(styles['transfer-end-message'])}>{NoDataText}</p>}>
+          {transferList?.map((item) => {
+            return (
+              <div key={`transferDashboard-mobile-${item.fromTxId}`}>
+                {renderTransferCard(item)}
+              </div>
+            );
+          })}
+        </InfiniteScroll>
+      )}
     </div>
   );
 }

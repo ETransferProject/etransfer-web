@@ -1,7 +1,6 @@
 import { MobileTransferDashboardProps } from '../types';
-import MobileTransferBody from './MobileTransferBody';
+import MobileTransferBody, { MobileTransferTableProps } from './MobileTransferBody';
 import MobileTransferHeader from './MobileTransferHeader';
-import styles from './styles.module.scss';
 
 export default function MobileTransfer({
   filterFromTokenList,
@@ -13,11 +12,13 @@ export default function MobileTransfer({
   filterFromChain,
   filterToToken,
   filterToChain,
+  totalCount,
+  handleNextPage,
   handleResetFilter,
   handleApplyFilter,
-}: MobileTransferDashboardProps) {
+}: MobileTransferDashboardProps & MobileTransferTableProps) {
   return (
-    <div className={styles['mobile-transfer']}>
+    <div>
       <MobileTransferHeader
         fromTokenList={filterFromTokenList}
         fromChainList={filterFromChainList}
@@ -31,7 +32,7 @@ export default function MobileTransfer({
         handleResetFilter={handleResetFilter}
         handleApplyFilter={handleApplyFilter}
       />
-      <MobileTransferBody />
+      <MobileTransferBody totalCount={totalCount} handleNextPage={handleNextPage} />
     </div>
   );
 }

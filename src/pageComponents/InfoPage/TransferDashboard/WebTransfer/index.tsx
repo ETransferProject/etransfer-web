@@ -1,7 +1,6 @@
 import Space from 'components/Space';
 import WebTransferHeader from './WebTransferHeader';
 import WebTransferTable, { WebTransferTableProps } from './WebTransferTable';
-import styles from './styles.module.scss';
 import { WebTransferDashboardProps } from '../types';
 
 export default function WebTransfer({
@@ -23,12 +22,12 @@ export default function WebTransfer({
   // table
   totalCount,
   maxResultCount,
-  skipCount,
+  skipPageCount,
   tableOnChange,
   handleResetFilter,
 }: WebTransferDashboardProps & WebTransferTableProps) {
   return (
-    <div className={styles['web-transfer']}>
+    <div>
       <WebTransferHeader
         fromTokenList={filterFromTokenList}
         fromChainList={filterFromChainList}
@@ -50,7 +49,7 @@ export default function WebTransfer({
       <WebTransferTable
         totalCount={totalCount}
         maxResultCount={maxResultCount}
-        skipCount={skipCount}
+        skipPageCount={skipPageCount}
         tableOnChange={tableOnChange}
       />
     </div>

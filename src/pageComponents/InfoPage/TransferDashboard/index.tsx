@@ -1,4 +1,9 @@
-import { useAppDispatch, useCommonState, useLoading } from 'store/Provider/hooks';
+import {
+  useAppDispatch,
+  useCommonState,
+  useInfoDashboardState,
+  useLoading,
+} from 'store/Provider/hooks';
 import MobileTransfer from './MobileTransfer';
 import WebTransfer from './WebTransfer';
 import { useCallback, useState } from 'react';
@@ -18,11 +23,13 @@ import {
 } from 'constants/infoDashboard';
 import { setTokensInfo, setTransferList } from 'store/reducers/infoDashboard/slice';
 import { getTransferDashboard } from './utils';
+import { useDebounceCallback } from 'hooks/debounce';
 
 export default function TransferDashboard() {
   const { isPadPX } = useCommonState();
   const dispatch = useAppDispatch();
   const { setLoading } = useLoading();
+  const { transferList } = useInfoDashboardState();
   const [filterNetworkList, setFilterNetworkList] = useState<TTransferDashboardFilterNetwork[]>([]);
   const [filterTokenList, setTokenNetworkList] = useState<TTransferDashboardFilterToken[]>([]);
   const [filterType, setFilterType] = useState<TokensDashboardType>(TokensDashboardType.All);
@@ -42,7 +49,7 @@ export default function TransferDashboard() {
   // pagination
   const [skipPageCount, setSkipPageCount] = useState(0);
   const [maxResultCount, setMaxResultCount] = useState(10);
-  const [totalCount, setTotalCount] = useState(50);
+  const [totalCount, setTotalCount] = useState(0);
 
   const getFilterData = useCallback(async () => {
     try {
@@ -97,7 +104,13 @@ export default function TransferDashboard() {
           maxResultCount: currentMaxCount,
         });
 
-        dispatch(setTransferList(res.list));
+        if (isPadPX) {
+          const mobileTransferList = [...transferList, ...res.list];
+          dispatch(setTransferList(mobileTransferList));
+        } else {
+          dispatch(setTransferList(res.list));
+        }
+
         setTotalCount(res.total);
       } catch (error) {
         console.log('transfer dashboard getTransferData error', error);
@@ -112,9 +125,11 @@ export default function TransferDashboard() {
       filterToChain,
       filterToToken,
       filterType,
+      isPadPX,
       maxResultCount,
       setLoading,
       skipPageCount,
+      transferList,
     ],
   );
 
@@ -217,6 +232,7 @@ export default function TransferDashboard() {
     [getTransferData],
   );
 
+  // web get page date
   const tableOnChange = useCallback(
     (page: number, pageSize: number) => {
       let skip = skipPageCount;
@@ -242,6 +258,16 @@ export default function TransferDashboard() {
     [getTransferData, maxResultCount, skipPageCount],
   );
 
+  // mobile get next page
+  const handleNextPage = useDebounceCallback(async () => {
+    if (transferList.length < totalCount) {
+      setSkipPageCount(skipPageCount + 1);
+      await getTransferData({
+        skip: skipPageCount + 1,
+      });
+    }
+  }, []);
+
   const init = useCallback(async () => {
     getFilterData();
     getTransferData({});
@@ -264,6 +290,9 @@ export default function TransferDashboard() {
       filterFromChain={filterFromChain}
       filterToToken={filterToToken}
       filterToChain={filterToChain}
+      // table
+      totalCount={totalCount}
+      handleNextPage={handleNextPage}
     />
   ) : (
     <WebTransfer
@@ -285,7 +314,7 @@ export default function TransferDashboard() {
       // table
       totalCount={totalCount}
       maxResultCount={maxResultCount}
-      skipCount={skipPageCount}
+      skipPageCount={skipPageCount}
       tableOnChange={tableOnChange}
       handleResetFilter={handleResetFilter}
     />

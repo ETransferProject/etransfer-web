@@ -1,5 +1,4 @@
 import { useInfoDashboardState } from 'store/Provider/hooks';
-import styles from './styles.module.scss';
 import { Table } from 'antd';
 import EmptyDataBox from 'pageComponents/EmptyDataBox';
 import { TTransferDashboardData } from 'types/infoDashboard';
@@ -81,14 +80,14 @@ const WebTransferTableColumns = [
 export interface WebTransferTableProps {
   totalCount: number;
   maxResultCount: number;
-  skipCount: number;
+  skipPageCount: number;
   tableOnChange: (page: number, pageSize: number) => void;
 }
 
 export default function WebTransferTable({
   totalCount,
   maxResultCount,
-  skipCount,
+  skipPageCount,
   tableOnChange,
 }: WebTransferTableProps) {
   const { transferList } = useInfoDashboardState();
@@ -102,31 +101,29 @@ export default function WebTransferTable({
   };
 
   return (
-    <div className={styles['web-transfer-table']}>
-      <Table
-        size={'large'}
-        rowKey={'key'}
-        dataSource={handleTransferData(transferList)}
-        columns={WebTransferTableColumns}
-        scroll={{ x: 1020 }}
-        locale={{
-          emptyText: <EmptyDataBox emptyText={'No transfer found'} />,
-        }}
-        pagination={
-          totalCount > maxResultCount
-            ? {
-                current: skipCount + 1,
-                pageSize: maxResultCount,
-                total: totalCount,
-                onChange: tableOnChange,
-                showQuickJumper: true,
-                showSizeChanger: true,
-                showTitle: true,
-                pageSizeOptions: ['10', '20', '50'],
-              }
-            : false
-        }
-      />
-    </div>
+    <Table
+      size={'large'}
+      rowKey={'key'}
+      dataSource={handleTransferData(transferList)}
+      columns={WebTransferTableColumns}
+      scroll={{ x: 1020 }}
+      locale={{
+        emptyText: <EmptyDataBox emptyText={'No transfer found'} />,
+      }}
+      pagination={
+        totalCount > maxResultCount
+          ? {
+              current: skipPageCount + 1,
+              pageSize: maxResultCount,
+              total: totalCount,
+              onChange: tableOnChange,
+              showQuickJumper: true,
+              showSizeChanger: true,
+              showTitle: true,
+              pageSizeOptions: ['10', '20', '50'],
+            }
+          : false
+      }
+    />
   );
 }
