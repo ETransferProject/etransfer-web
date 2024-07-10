@@ -1,6 +1,6 @@
 import { SideMenuKey } from 'constants/home';
 import { useEffectOnce } from 'react-use';
-import { useAppDispatch } from 'store/Provider/hooks';
+import { useAppDispatch, useCommonState } from 'store/Provider/hooks';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import TokenDashboard from './TokenDashboard';
 import TransferDashboard from './TransferDashboard';
@@ -11,6 +11,7 @@ import Overview from './Overview';
 
 export default function InfoPage() {
   const dispatch = useAppDispatch();
+  const { isPadPX } = useCommonState();
 
   useEffectOnce(() => {
     dispatch(setActiveMenuKey(SideMenuKey.Info));
@@ -19,9 +20,9 @@ export default function InfoPage() {
   return (
     <div className={clsx('wide-screen-content-container', styles['info-page'])}>
       <Overview />
-      <Space direction={'vertical'} size={64} />
+      <Space direction={'vertical'} size={isPadPX ? 40 : 64} />
       <TokenDashboard />
-      <Space direction={'vertical'} size={64} />
+      <Space direction={'vertical'} size={isPadPX ? 40 : 64} />
       <TransferDashboard />
     </div>
   );

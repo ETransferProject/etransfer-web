@@ -11,6 +11,10 @@ export default function WebTransfer({
   filterToTokenList,
   filterToChainList,
   filterType,
+  filterFromToken,
+  filterFromChain,
+  filterToToken,
+  filterToChain,
   handleTypeChange,
   handleFromTokenChange,
   handleFromChainChange,
@@ -21,6 +25,7 @@ export default function WebTransfer({
   maxResultCount,
   skipCount,
   tableOnChange,
+  handleResetFilter,
 }: WebTransferDashboardProps & WebTransferTableProps) {
   return (
     <div className={styles['web-transfer']}>
@@ -35,10 +40,11 @@ export default function WebTransfer({
         handleToTokenChange={handleToTokenChange}
         handleToChainChange={handleToChainChange}
         type={filterType}
-        fromToken={0}
-        fromChain={0}
-        toToken={0}
-        toChain={0}
+        fromToken={filterFromToken}
+        fromChain={filterFromChain}
+        toToken={filterToToken}
+        toChain={filterToChain}
+        handleResetFilter={handleResetFilter}
       />
       <Space direction={'vertical'} size={16} />
       <WebTransferTable

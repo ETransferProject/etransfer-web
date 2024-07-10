@@ -1,14 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TTokenDashboardItem } from 'types/infoDashboard';
+import { TTransferDashboardFilterToken } from 'types/api';
+import { TTokenDashboardItem, TTransferDashboardData } from 'types/infoDashboard';
 
 export type TInfoDashboardState = {
   tokens: TTokenDashboardItem[];
-  transferList: any[];
+  transferList: TTransferDashboardData[];
+  tokensInfo: TTransferDashboardFilterToken[];
 };
 
 export const InitialInfoDashboardState: TInfoDashboardState = {
   tokens: [],
   transferList: [],
+  tokensInfo: [],
 };
 
 export const InfoDashboardSlice = createSlice({
@@ -18,8 +21,11 @@ export const InfoDashboardSlice = createSlice({
     setTokens: (state, action: PayloadAction<TTokenDashboardItem[]>) => {
       state.tokens = action.payload;
     },
-    setTransferList: (state, action: PayloadAction<any>) => {
+    setTransferList: (state, action: PayloadAction<TTransferDashboardData[]>) => {
       state.transferList = action.payload;
+    },
+    setTokensInfo: (state, action: PayloadAction<TTransferDashboardFilterToken[]>) => {
+      state.tokensInfo = action.payload;
     },
     resetInfoDashboardState: () => {
       return InitialInfoDashboardState;
@@ -27,6 +33,7 @@ export const InfoDashboardSlice = createSlice({
   },
 });
 
-export const { setTokens, setTransferList, resetInfoDashboardState } = InfoDashboardSlice.actions;
+export const { setTokens, setTransferList, resetInfoDashboardState, setTokensInfo } =
+  InfoDashboardSlice.actions;
 
 export default InfoDashboardSlice;

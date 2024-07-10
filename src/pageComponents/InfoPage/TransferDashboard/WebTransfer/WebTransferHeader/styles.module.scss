@@ -23,12 +23,47 @@
         &:hover {
           border: 1px solid $hover;
         }
+        &:focus {
+          border: 1px solid $hover;
+          box-shadow: none !important;
+        }
 
         .ant-select-selection-item {
           color: $primary-text;
           font-size: 14px;
         }
       }
+    }
+
+    .web-transfer-select {
+      width: 200px;
+    }
+
+    .web-transfer-reset-button {
+      width: 92px;
+      margin-right: 12px;
+      border: none;
+      background: none;
+      color: $normal;
+      border-radius: 6px;
+      &:hover {
+        color: $normal;
+        background: $hover-bg;
+      }
+      &:active {
+        color: $normal;
+        background: $click-bg;
+      }
+    }
+
+    .web-transfer-reset-icon {
+      color: $normal;
+      vertical-align: middle;
+    }
+
+    .web-transfer-reset-word {
+      font-size: 14px;
+      margin-left: 8px;
     }
   }
 }

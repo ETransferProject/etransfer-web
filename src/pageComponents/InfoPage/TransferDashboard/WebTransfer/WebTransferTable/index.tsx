@@ -32,8 +32,8 @@ const WebTransferTableColumns = [
   },
   {
     title: 'From - To',
-    dataIndex: 'fromToChain',
-    key: 'fromToChain',
+    dataIndex: 'fromChainId',
+    key: 'fromChainId',
     render: (fromChainId: ChainId, item: TTransferDashboardData) => {
       return (
         <FromToChain
@@ -72,7 +72,7 @@ const WebTransferTableColumns = [
     dataIndex: 'createTime',
     key: 'createTime',
     align: 'right' as any,
-    render: (createTime: string) => {
+    render: (createTime: number) => {
       return <Time time={createTime} />;
     },
   },
@@ -115,7 +115,7 @@ export default function WebTransferTable({
         pagination={
           totalCount > maxResultCount
             ? {
-                current: skipCount,
+                current: skipCount + 1,
                 pageSize: maxResultCount,
                 total: totalCount,
                 onChange: tableOnChange,

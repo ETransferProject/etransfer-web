@@ -1,4 +1,3 @@
-import { ChainId } from '@portkey/types';
 import {
   TTransferDashboardFilterNetwork,
   TTransferDashboardFilterToken,
@@ -9,7 +8,7 @@ export interface TransferDashboardHeaderProps {
   fromTokenList: TTransferDashboardFilterToken[];
   fromChainList: TTransferDashboardFilterNetwork[];
   toTokenList: TTransferDashboardFilterToken[];
-  toChainList: ChainId[];
+  toChainList: TTransferDashboardFilterNetwork[];
   type: TokensDashboardType;
   fromToken: number;
   fromChain: number;
@@ -23,6 +22,7 @@ export interface WebTransferDashboardHeaderProps extends TransferDashboardHeader
   handleFromChainChange: (type: number) => void;
   handleToTokenChange: (type: number) => void;
   handleToChainChange: (type: number) => void;
+  handleResetFilter: () => void;
 }
 
 export interface MobileTransferDashboardHeaderProps extends TransferDashboardHeaderProps {
@@ -47,7 +47,7 @@ export interface TransferDashboardProps {
   filterFromTokenList: TTransferDashboardFilterToken[];
   filterFromChainList: TTransferDashboardFilterNetwork[];
   filterToTokenList: TTransferDashboardFilterToken[];
-  filterToChainList: ChainId[];
+  filterToChainList: TTransferDashboardFilterNetwork[];
   filterType: TokensDashboardType;
   filterFromToken: number;
   filterFromChain: number;
@@ -61,6 +61,7 @@ export interface WebTransferDashboardProps extends TransferDashboardProps {
   handleFromChainChange: (type: number) => void;
   handleToTokenChange: (type: number) => void;
   handleToChainChange: (type: number) => void;
+  handleResetFilter: () => void;
 }
 
 export interface MobileTransferDashboardProps extends TransferDashboardProps {

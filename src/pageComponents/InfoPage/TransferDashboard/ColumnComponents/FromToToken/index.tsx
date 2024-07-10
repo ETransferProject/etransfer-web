@@ -1,5 +1,6 @@
 import { ToArrow } from 'assets/images';
 import Space from 'components/Space';
+import useGetTokenIcon from 'hooks/infoDashboard';
 import TokenBox from 'pageComponents/InfoPage/TokenDashboard/ColumnComponents/TokenBox';
 
 export interface FromToTokenProps {
@@ -10,13 +11,18 @@ export interface FromToTokenProps {
 }
 
 export default function FromToToken({ fromSymbol, fromIcon, toSymbol, toIcon }: FromToTokenProps) {
+  const getTokenIcon = useGetTokenIcon();
+
+  const fromIconBackup = getTokenIcon(fromSymbol)?.icon || '';
+  const toIconBackup = getTokenIcon(toSymbol)?.icon || '';
+
   return (
     <div className="flex-row-center">
-      <TokenBox symbol={fromSymbol} icon={fromIcon} />
+      <TokenBox symbol={fromSymbol} icon={fromIcon || fromIconBackup} />
       <Space direction={'horizontal'} size={6} />
       <ToArrow />
       <Space direction={'horizontal'} size={6} />
-      <TokenBox symbol={toSymbol} icon={toIcon} />
+      <TokenBox symbol={toSymbol} icon={toIcon || toIconBackup} />
     </div>
   );
 }

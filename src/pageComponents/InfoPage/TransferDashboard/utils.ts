@@ -31,5 +31,5 @@ export const getTransferDashboard = async (params: TTransferDashboardRequest) =>
     });
   });
 
-  return list;
+  return { list, total: data.totalCount };
 };

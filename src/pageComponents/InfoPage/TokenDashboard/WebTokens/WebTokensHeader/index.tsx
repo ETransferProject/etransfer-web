@@ -26,7 +26,7 @@ export default function WebTokensHeader({
         <Select
           size={'large'}
           value={selectType}
-          className={styles['web-records-select-type']}
+          className={styles['web-tokens-select-type']}
           onChange={handleTypeChange}
           popupClassName={'drop-wrap'}
           options={InfoBusinessTypeOptions}

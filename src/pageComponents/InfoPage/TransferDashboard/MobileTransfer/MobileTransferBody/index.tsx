@@ -80,7 +80,7 @@ export default function MobileTransferBody() {
           <div className={clsx('flex-row-between', styles['transfer-card-row'])}>
             <div>Time</div>
 
-            <Time time={String(item.createTime)} />
+            <Time time={item.createTime} />
           </div>
 
           {renderAction(item)}

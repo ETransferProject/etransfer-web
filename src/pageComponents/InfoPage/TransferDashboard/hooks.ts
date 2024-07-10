@@ -1,8 +1,8 @@
-import { ChainId } from '@portkey/types';
 import {
   DefaultTransferDashboardFromTokenOptions,
   DefaultTransferDashboardFromChainOptions,
   DefaultTransferDashboardToTokenOptions,
+  DefaultTransferDashboardToChainOptions,
 } from 'constants/infoDashboard';
 import { useMemo } from 'react';
 import { TTransferDashboardFilterToken, TTransferDashboardFilterNetwork } from 'types/api';
@@ -11,7 +11,7 @@ export interface UseFilterParams {
   fromTokenList: TTransferDashboardFilterToken[];
   fromChainList: TTransferDashboardFilterNetwork[];
   toTokenList: TTransferDashboardFilterToken[];
-  toChainList: ChainId[];
+  toChainList: TTransferDashboardFilterNetwork[];
 }
 
 export function useFilter({
@@ -50,11 +50,12 @@ export function useFilter({
     return list;
   }, [toTokenList]);
 
-  // TODO
   const toChainOptions = useMemo(() => {
-    const list: { value: number | string; label: string }[] = [];
+    const list: { value: number | string; label: string }[] = [
+      DefaultTransferDashboardToChainOptions,
+    ];
     toChainList.forEach((item) => {
-      list.push({ value: item, label: item });
+      list.push({ value: item.key, label: item.network });
     });
     return list;
   }, [toChainList]);

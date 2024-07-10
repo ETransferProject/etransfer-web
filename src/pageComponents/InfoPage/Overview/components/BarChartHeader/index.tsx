@@ -42,7 +42,7 @@ export default function BarChartHeader({
   const [timePeriodSelected, setTimePeriodSelected] = useState(TIME_SELECTOR_OPTIONS[0].time);
 
   const formatDate = useMemo(() => {
-    return moment(time, 'YYYY-MM-DD').format('MMM D');
+    return moment(time, 'YYYY-MM-DD').format('MMM D, YYYY');
   }, [time]);
 
   const formatNumber = useCallback((num?: number | string): string => {
@@ -83,7 +83,10 @@ export default function BarChartHeader({
               unitPosition === 'suffix' ? countUnit : ''
             }`}
         </div>
-        <div className={styles['time']}>{formatDate}</div>
+        <div className={styles['time']}>
+          {formatDate}
+          {' (UTC)'}
+        </div>
       </div>
       <div className={styles['right']}>
         <div className={clsx('flex-row-center', styles['time-period'])}>

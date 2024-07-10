@@ -323,7 +323,7 @@ export type TTransferDashboardRequest = {
   fromToken: number;
   fromChainId: number;
   toToken: number;
-  ToChainId: number;
+  toChainId: number;
   skipCount?: number;
   maxResultCount?: number;
   sorting?: string;

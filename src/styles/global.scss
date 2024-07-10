@@ -52,6 +52,12 @@ input[type='number'] {
   }
 }
 
+.ant-select-focused:not(.ant-select-disable).ant-select:not(.ant-select-customize-input)
+  .ant-select-selector {
+  border: 1px solid $hover !important;
+  box-shadow: none !important;
+}
+
 .etransfer-web-wrapper {
   height: unset;
   display: flex;

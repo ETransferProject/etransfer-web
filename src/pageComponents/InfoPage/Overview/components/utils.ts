@@ -30,7 +30,7 @@ export const generateStackBarOption = ({
 
   const series: SeriesOption[] = [
     {
-      data: withdrawData, // [50, 46, 64, 60, 30, 90, 100, 50, 46, 64, 60, 30, 90, 100],
+      data: withdrawData,
       type: 'bar',
       stack: stackName,
       name: BusinessType.Withdraw,
@@ -48,7 +48,7 @@ export const generateStackBarOption = ({
       },
     },
     {
-      data: depositData, // [50, 100, 150, 80, 70, 110, 130, 50, 100, 150, 80, 70, 110, 130],
+      data: depositData,
       type: 'bar',
       stack: stackName,
       name: BusinessType.Deposit,

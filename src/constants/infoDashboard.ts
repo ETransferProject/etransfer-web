@@ -27,23 +27,10 @@ export const DefaultTransferDashboardToTokenOptions = {
   label: 'All Destination Token',
 };
 
-export enum InfoAelfChainType {
-  All = 0,
-  MainChain = 1,
-  SideChain = 2,
-}
-
-export enum InfoAelfChainTypeLabel {
-  All = 'All Destination Chain',
-  MainChain = 'MainChain',
-  SideChain = 'SideChain',
-}
-
-export const InfoAelfChainOptions = [
-  { value: InfoAelfChainType.All, label: InfoAelfChainTypeLabel.All },
-  { value: InfoAelfChainType.MainChain, label: InfoAelfChainTypeLabel.MainChain },
-  { value: InfoAelfChainType.SideChain, label: InfoAelfChainTypeLabel.SideChain },
-];
+export const DefaultTransferDashboardToChainOptions = {
+  value: 0,
+  label: 'All Destination Chain',
+};
 
 export const OverviewLegendList = [
   { color: '#916BFF', label: 'Deposit' },
