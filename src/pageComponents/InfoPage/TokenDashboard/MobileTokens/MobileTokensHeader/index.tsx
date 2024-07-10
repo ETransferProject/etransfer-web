@@ -7,14 +7,12 @@ import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import { Select } from 'antd';
 import clsx from 'clsx';
 import { TokensDashboardType } from 'types/api';
+import { TokenDashboardFilterProps } from '../../types';
 
 export default function MobileTokensHeader({
   selectType,
   onTypeChange,
-}: {
-  selectType: TokensDashboardType;
-  onTypeChange: (item: TokensDashboardType) => void;
-}) {
+}: TokenDashboardFilterProps) {
   const [isShowFilterDrawer, setIsShowFilterDrawer] = useState(false);
   const [filterType, setFilterType] = useState<TokensDashboardType>(selectType);
 

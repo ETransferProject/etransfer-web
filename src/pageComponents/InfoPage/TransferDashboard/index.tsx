@@ -24,9 +24,10 @@ import {
 import { setTokensInfo, setTransferList } from 'store/reducers/infoDashboard/slice';
 import { getTransferDashboard } from './utils';
 import { useDebounceCallback } from 'hooks/debounce';
+import PadTransfer from './PadTransfer';
 
 export default function TransferDashboard() {
-  const { isPadPX } = useCommonState();
+  const { isMobilePX, isPadPX } = useCommonState();
   const dispatch = useAppDispatch();
   const { setLoading } = useLoading();
   const { transferList } = useInfoDashboardState();
@@ -277,46 +278,73 @@ export default function TransferDashboard() {
     init();
   });
 
-  return isPadPX ? (
-    <MobileTransfer
-      handleResetFilter={handleResetFilter}
-      handleApplyFilter={handleApplyFilter}
-      filterFromTokenList={filterTokenList}
-      filterFromChainList={filterNetworkList}
-      filterToTokenList={filterTokenList}
-      filterToChainList={filterNetworkList}
-      filterType={filterType}
-      filterFromToken={filterFromToken}
-      filterFromChain={filterFromChain}
-      filterToToken={filterToToken}
-      filterToChain={filterToChain}
-      // table
-      totalCount={totalCount}
-      handleNextPage={handleNextPage}
-    />
-  ) : (
-    <WebTransfer
-      // filter
-      filterFromTokenList={filterTokenList}
-      filterFromChainList={filterNetworkList}
-      filterToTokenList={filterTokenList}
-      filterToChainList={filterNetworkList}
-      filterType={filterType}
-      filterFromToken={filterFromToken}
-      filterFromChain={filterFromChain}
-      filterToToken={filterToToken}
-      filterToChain={filterToChain}
-      handleTypeChange={handleTypeChange}
-      handleFromTokenChange={handleFromTokenChange}
-      handleFromChainChange={handleFromChainChange}
-      handleToTokenChange={handleToTokenChange}
-      handleToChainChange={handleToChainChange}
-      // table
-      totalCount={totalCount}
-      maxResultCount={maxResultCount}
-      skipPageCount={skipPageCount}
-      tableOnChange={tableOnChange}
-      handleResetFilter={handleResetFilter}
-    />
-  );
+  if (isMobilePX) {
+    return (
+      <MobileTransfer
+        // filter
+        filterFromTokenList={filterTokenList}
+        filterFromChainList={filterNetworkList}
+        filterToTokenList={filterTokenList}
+        filterToChainList={filterNetworkList}
+        filterType={filterType}
+        filterFromToken={filterFromToken}
+        filterFromChain={filterFromChain}
+        filterToToken={filterToToken}
+        filterToChain={filterToChain}
+        handleResetFilter={handleResetFilter}
+        handleApplyFilter={handleApplyFilter}
+        // table
+        totalCount={totalCount}
+        handleNextPage={handleNextPage}
+      />
+    );
+  } else if (isPadPX) {
+    return (
+      <PadTransfer
+        // filter
+        filterFromTokenList={filterTokenList}
+        filterFromChainList={filterNetworkList}
+        filterToTokenList={filterTokenList}
+        filterToChainList={filterNetworkList}
+        filterType={filterType}
+        filterFromToken={filterFromToken}
+        filterFromChain={filterFromChain}
+        filterToToken={filterToToken}
+        filterToChain={filterToChain}
+        handleResetFilter={handleResetFilter}
+        handleApplyFilter={handleApplyFilter}
+        // table
+        totalCount={totalCount}
+        maxResultCount={maxResultCount}
+        skipPageCount={skipPageCount}
+        tableOnChange={tableOnChange}
+      />
+    );
+  } else {
+    return (
+      <WebTransfer
+        // filter
+        filterFromTokenList={filterTokenList}
+        filterFromChainList={filterNetworkList}
+        filterToTokenList={filterTokenList}
+        filterToChainList={filterNetworkList}
+        filterType={filterType}
+        filterFromToken={filterFromToken}
+        filterFromChain={filterFromChain}
+        filterToToken={filterToToken}
+        filterToChain={filterToChain}
+        handleTypeChange={handleTypeChange}
+        handleFromTokenChange={handleFromTokenChange}
+        handleFromChainChange={handleFromChainChange}
+        handleToTokenChange={handleToTokenChange}
+        handleToChainChange={handleToChainChange}
+        // table
+        totalCount={totalCount}
+        maxResultCount={maxResultCount}
+        skipPageCount={skipPageCount}
+        tableOnChange={tableOnChange}
+        handleResetFilter={handleResetFilter}
+      />
+    );
+  }
 }

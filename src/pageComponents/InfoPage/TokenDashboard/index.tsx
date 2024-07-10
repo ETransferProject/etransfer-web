@@ -6,9 +6,10 @@ import { getTokenDashboard } from './utils';
 import { setTokens } from 'store/reducers/infoDashboard/slice';
 import { useEffectOnce } from 'react-use';
 import { TokensDashboardType } from 'types/api';
+import PadTokens from './PadTokens';
 
 export default function TokenDashboard() {
-  const { isPadPX } = useCommonState();
+  const { isMobilePX, isPadPX } = useCommonState();
   const dispatch = useAppDispatch();
   const { setLoading } = useLoading();
   const [filterType, setFilterType] = useState<TokensDashboardType>(TokensDashboardType.All);
@@ -42,9 +43,11 @@ export default function TokenDashboard() {
     getData(TokensDashboardType.All);
   });
 
-  return isPadPX ? (
-    <MobileTokens selectType={filterType} onTypeChange={handleFilterTypeChange} />
-  ) : (
-    <WebTokens selectType={filterType} onTypeChange={handleFilterTypeChange} />
-  );
+  if (isMobilePX) {
+    return <MobileTokens selectType={filterType} onTypeChange={handleFilterTypeChange} />;
+  } else if (isPadPX) {
+    return <PadTokens selectType={filterType} onTypeChange={handleFilterTypeChange} />;
+  } else {
+    return <WebTokens selectType={filterType} onTypeChange={handleFilterTypeChange} />;
+  }
 }

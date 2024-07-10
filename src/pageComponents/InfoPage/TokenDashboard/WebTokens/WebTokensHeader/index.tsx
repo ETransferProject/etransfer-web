@@ -4,14 +4,9 @@ import { useCallback } from 'react';
 import { InfoBusinessTypeOptions } from 'constants/infoDashboard';
 import clsx from 'clsx';
 import { TokensDashboardType } from 'types/api';
+import { TokenDashboardFilterProps } from '../../types';
 
-export default function WebTokensHeader({
-  selectType,
-  onTypeChange,
-}: {
-  selectType: TokensDashboardType;
-  onTypeChange: (item: TokensDashboardType) => void;
-}) {
+export default function WebTokensHeader({ selectType, onTypeChange }: TokenDashboardFilterProps) {
   const handleTypeChange = useCallback(
     (type: TokensDashboardType) => {
       onTypeChange(type);

@@ -10,18 +10,16 @@ import DynamicArrow from 'components/DynamicArrow';
 import Space from 'components/Space';
 import clsx from 'clsx';
 
-type TokensDashboardMobileItem = TTokenDashboardItem & { isExpand?: boolean };
-
 export default function MobileTokensBody() {
   const { tokens } = useInfoDashboardState();
-  const tokenList = useMemo<TokensDashboardMobileItem[]>(() => {
+  const tokenList = useMemo<TTokenDashboardItem[]>(() => {
     return JSON.parse(JSON.stringify(tokens));
   }, [tokens]);
 
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>();
 
   const switchExpand = useCallback(
-    (item: TokensDashboardMobileItem) => {
+    (item: TTokenDashboardItem) => {
       if (expandedRowKeys?.includes(item.symbol)) {
         setExpandedRowKeys([]);
       } else {
@@ -31,7 +29,7 @@ export default function MobileTokensBody() {
     [expandedRowKeys],
   );
 
-  const renderTokensDetail = useCallback((item: TokensDashboardMobileItem) => {
+  const renderTokensDetail = useCallback((item: TTokenDashboardItem) => {
     return (
       <div className={styles['tokens-detail']}>
         {item.details.map((detail) => {
@@ -50,7 +48,7 @@ export default function MobileTokensBody() {
   }, []);
 
   const renderAction = useCallback(
-    (item: TokensDashboardMobileItem) => {
+    (item: TTokenDashboardItem) => {
       return (
         <div className={clsx('row-center', styles['action'])} onClick={() => switchExpand(item)}>
           {expandedRowKeys?.includes(item.symbol) ? 'Fold' : 'Details'}
@@ -66,7 +64,7 @@ export default function MobileTokensBody() {
   );
 
   const renderTokenCard = useCallback(
-    (item: TokensDashboardMobileItem) => {
+    (item: TTokenDashboardItem) => {
       return (
         <div className={styles['token-card-container']}>
           <div className="flex-row-between">
