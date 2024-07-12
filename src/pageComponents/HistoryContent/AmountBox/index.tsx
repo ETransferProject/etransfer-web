@@ -21,7 +21,7 @@ export default function AmountBox({ amount, token, fromToken, status }: TAmountB
 
   const amountDisplay = useMemo(() => {
     const currentToken = findToken(token);
-    return LargeNumberDisplay(amount, Number(currentToken?.decimals) || 6);
+    return LargeNumberDisplay(amount, Number(currentToken?.decimals));
   }, [amount, findToken, token]);
 
   return (
