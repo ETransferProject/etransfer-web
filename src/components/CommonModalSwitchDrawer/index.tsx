@@ -27,8 +27,8 @@ export default function CommonModalSwitchDrawer({
   onClose,
   ...props
 }: CommonModalSwitchDrawerProps) {
-  const { isMobilePX } = useCommonState();
-  return isMobilePX ? (
+  const { isPadPX } = useCommonState();
+  return isPadPX ? (
     <CommonDrawer
       {...props}
       className={styles['drawer-wrapper']}

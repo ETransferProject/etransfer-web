@@ -12,12 +12,16 @@ import { TOKEN_INFO_USDT } from 'constants/index';
 import { formatSymbolDisplay } from 'utils/format';
 import { MAX_UPDATE_TIME } from 'constants/calculate';
 import { useSearchParams } from 'next/navigation';
+import { isAuthTokenError } from 'utils/api/error';
+import { SIGNATURE_MISSING_TIP } from 'constants/misc';
+import { useEffectOnce } from 'react-use';
+import myEvents from 'utils/myEvent';
 
 const DEFAULT_AMOUNT = '0.00';
 const DEFAULT_PAY_AMOUNT = '100';
 
 export default function Calculator() {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const { fromTokenSymbol, fromTokenList, toChainItem, toTokenSymbol } = useDepositState();
   const searchParams = useSearchParams();
   const [payAmount, setPayAmount] = useState(
@@ -51,7 +55,11 @@ export default function Calculator() {
         setMinReceiveAmount(conversionRate?.minimumReceiveAmount || DEFAULT_AMOUNT);
       }
     } catch (error) {
-      singleMessage.error(handleErrorMessage(error));
+      if (isAuthTokenError(error)) {
+        singleMessage.info(SIGNATURE_MISSING_TIP);
+      } else {
+        singleMessage.error(handleErrorMessage(error));
+      }
     }
   }, [fromTokenSymbol, toChainItem.key, toTokenSymbol]);
 
@@ -133,6 +141,17 @@ export default function Calculator() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromTokenSymbol, toChainItem, toTokenSymbol]);
 
+  // Listener login
+  const getCalculateRef = useRef(getCalculate);
+  getCalculateRef.current = getCalculate;
+  useEffectOnce(() => {
+    const { remove } = myEvents.LoginSuccess.addListener(getCalculateRef.current);
+
+    return () => {
+      remove();
+    };
+  });
+
   const renderHeader = useMemo(() => {
     return (
       <div
@@ -144,7 +163,7 @@ export default function Calculator() {
         }>
         <div className={clsx('flex-row-center', styles['calculator-header-right'])}>
           <CalculatorIcon />
-          <span>Calculator</span>
+          <span className={styles['calculator-header-title']}>Calculator</span>
         </div>
         <DynamicArrow isExpand={isExpand} />
       </div>
@@ -178,7 +197,7 @@ export default function Calculator() {
         <div className={styles['receive-amount']}>{`≈${receiveAmount} ${formatSymbolDisplay(
           toTokenSymbol,
         )}`}</div>
-        <div>
+        <div className={clsx('flex-row-center', styles['min-receive'])}>
           <span className={styles['label']}>Minimum Sum To Receive:</span>
           <span
             className={styles['min-receive-amount']}>{`≈${minReceiveAmount} ${formatSymbolDisplay(
@@ -195,7 +214,7 @@ export default function Calculator() {
       {isExpand && (
         <>
           <Space direction="vertical" size={16} />
-          {isMobilePX ? (
+          {isPadPX ? (
             <div className={styles['calculator-content']}>
               <div>{renderYouPay}</div>
               <Space direction="vertical" size={16} />

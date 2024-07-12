@@ -21,6 +21,11 @@ $font-family-regular-family: Roboto-Regular, PingFangSC-Regular, PingFang SC, sa
   font-family: $font-family-regular-family;
 }
 
+@mixin font-family-regular-important-mixin {
+  font-weight: $font-family-regular-weight !important;
+  font-family: $font-family-regular-family !important;
+}
+
 .font-family-semibold {
   @include font-family-semibold-mixin;
 }
@@ -29,4 +34,7 @@ $font-family-regular-family: Roboto-Regular, PingFangSC-Regular, PingFang SC, sa
 }
 .font-family-regular {
   @include font-family-regular-mixin;
+}
+.font-family-regular-important{
+  @include font-family-regular-important-mixin;
 }

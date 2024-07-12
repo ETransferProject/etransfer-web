@@ -1,4 +1,5 @@
 import { SupportedELFChainId } from 'constants/index';
+import { BusinessType } from './api';
 
 export enum TRecordsRequestType {
   ALL = 0,
@@ -20,6 +21,7 @@ export type TFromTransfer = {
   toAddress: string;
   amount: string;
   symbol: string;
+  txId: string;
 };
 
 export type TFeeInfo = {
@@ -35,6 +37,7 @@ export type TToTransfer = {
   amount: string;
   symbol: string;
   feeInfo: TFeeInfo[];
+  txId: string;
 };
 
 export type TCurrentRecordsStatus = {
@@ -48,8 +51,8 @@ export type TFeeInfoType = {
 
 export interface TRecordsTableListType {
   key: string;
-  orderType: string;
-  status: string;
+  orderType: BusinessType;
+  status: TOrderStatus;
   arrivalTime: number;
   symbol: string;
   sendingAmount: string;
@@ -58,15 +61,17 @@ export interface TRecordsTableListType {
   fromAddress: string;
   fromToAddress: string;
   fromChainId: SupportedELFChainId;
+  fromTxId: string;
   toSymbol: string;
   toNetwork: string;
   toFromAddress: string;
   toAddress: string;
   toChainId: SupportedELFChainId;
+  toTxId: string;
   feeInfo: TFeeInfoType[];
 }
 
-export enum TRecordsStatus {
+export enum TOrderStatus {
   Processing = 'Processing',
   Succeed = 'Succeed',
   Failed = 'Failed',

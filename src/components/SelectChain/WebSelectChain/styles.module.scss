@@ -3,6 +3,7 @@
 
 .chain-dropdown {
   width: 182px;
+  z-index: 1;
   &::before {
     display: none;
   }

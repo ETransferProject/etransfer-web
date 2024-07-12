@@ -1,0 +1,48 @@
+@import 'src/assets/theme/color.scss';
+
+.mobile-tokens-body {
+  .mobile-tokens-body-card {
+    border-radius: 8px;
+    border: 1px solid $dividers;
+    padding: 12px;
+    margin-bottom: 12px;
+
+    .token-wrapper {
+      width: 20px;
+      height: 20px;
+    }
+
+    .chain-wrapper {
+      gap: 4px;
+    }
+  }
+
+  .tokens-detail {
+    background-color: $hover-bg;
+    border-radius: 8px;
+    margin-top: 12px;
+  }
+
+  .action {
+    font-size: 14px;
+    color: $brand;
+    padding-top: 12px;
+    border-top: 1px solid $dividers;
+    margin-top: 12px;
+    cursor: pointer;
+  }
+
+  .action-arrow {
+    margin-left: 4px;
+    svg path {
+      fill: $brand;
+    }
+  }
+
+  .chain-network-divider {
+    margin: 0 8px;
+    height: 16px;
+    width: 1px;
+    background-color: $dividers;
+  }
+}

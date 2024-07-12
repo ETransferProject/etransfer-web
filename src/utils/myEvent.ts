@@ -3,11 +3,14 @@ import EventEmitter from 'events';
 export const eventBus = new EventEmitter();
 
 const EventList = [
-  'DeniedRequest',
+  'Unauthorized',
   'AuthTokenSuccess',
   'UpdateNewRecordStatus',
   'HistoryActive',
   'GoogleReCaptcha',
+  'LoginSuccess',
+  'ShowWebTransferDashboardDetailPage',
+  'HideWebTransferDashboardDetailPage',
 ] as const;
 
 // eslint-disable-next-line no-new-func

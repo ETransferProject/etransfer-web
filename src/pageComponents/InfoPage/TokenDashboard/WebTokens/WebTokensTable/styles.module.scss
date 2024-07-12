@@ -1,0 +1,42 @@
+@import 'src/assets/theme/color.scss';
+
+.web-tokens-table {
+  :global {
+    .ant-table-expanded-row {
+      .ant-table-cell {
+        background-color: #fff;
+      }
+    }
+  }
+  .web-tokens-table-expand {
+    :global {
+      .ant-table {
+        margin: 0 8px 0px 8px !important;
+
+        .ant-table-container {
+          .ant-table-content {
+            background-color: $hover-bg;
+            border-radius: 8px;
+            overflow: hidden;
+            border: none !important;
+
+            .ant-table-cell {
+              background-color: $hover-bg;
+            }
+          }
+        }
+        .ant-table-tbody > tr > td {
+          border-bottom: 0px;
+        }
+      }
+    }
+  }
+
+  .expand-arrow {
+    width: 100%;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+}

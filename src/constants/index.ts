@@ -32,6 +32,7 @@ export enum TokenType {
   USDT = 'USDT',
   SGR = 'SGR-1',
   ELF = 'ELF',
+  ACORNS = 'ACORNS',
 }
 
 export const TOKEN_INFO_USDT = {

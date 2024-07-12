@@ -30,8 +30,7 @@
   gap: 12px;
   height: 56px;
   padding: 16px 12px;
-  border-bottom: 1px solid $dividers;
-  color: $secondary-text;
+  color: $third-text;
 
   &.menu-item-active {
     color: $normal;
@@ -41,7 +40,7 @@
     }
   }
   .menu-item-icon path {
-    fill: $secondary-text;
+    fill: $third-text;
   }
 }
 
@@ -62,6 +61,72 @@
   right: -8px;
 }
 
-.supportEntry {
-  margin-bottom: 69px; // 85-16
+.divider {
+  height: 0px;
+  border-top: 1px solid $dividers;
+  margin: 16px 0;
+}
+
+.footer {
+  color: $third-text;
+  font-size: 16px;
+  line-height: 24px;
+  padding-bottom: 24px;
+  @extend .font-family-medium;
+
+  :global {
+    .ant-collapse-header {
+      padding: 16px 16px 16px 16px !important;
+    }
+    .ant-collapse-content-box {
+      padding: 0 !important;
+    }
+  }
+  .arrow-down {
+    transform: rotate(180deg);
+  }
+}
+
+.footer-item-faq {
+  color: $third-text;
+  padding: 16px 44px 16px 16px;
+}
+
+.footer-item-faq-name {
+  margin-left: 12px;
+  font-size: 16px;
+  line-height: 24px;
+  @extend .font-family-medium;
+}
+
+.footer-item-group-name {
+  color: $third-text;
+  margin-left: 12px;
+  font-size: 16px;
+  line-height: 24px;
+  @extend .font-family-medium;
+}
+
+.footer-secondMenu-wrapper {
+  margin: 0;
+  padding: 0;
+}
+
+.footer-secondMenu-item {
+  cursor: pointer;
+  padding: 12px 16px 12px 32px;
+
+  svg path {
+    fill: $third-text;
+  }
+}
+
+.secondMenu-item-icon {
+  margin-right: 12px;
+}
+
+.secondMenu-item-name {
+  color: $third-text;
+  font-size: 16px;
+  line-height: 24px;
 }

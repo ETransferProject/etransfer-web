@@ -1,6 +1,7 @@
 import { Modal } from 'antd';
 import CloseIcon from 'assets/images/close.svg';
-import { RE_CAPTCHA_SITE_KEY } from 'constants/misc';
+import { RECAPTCHA_SITE_KEY_MAINNET, RECAPTCHA_SITE_KEY_TESTNET } from 'constants/misc';
+import { NETWORK_TYPE_V2 } from 'constants/index';
 import GoogleReCaptcha from 'components/GoogleRecaptcha';
 import { ReCaptchaType } from 'components/GoogleRecaptcha/types';
 
@@ -9,6 +10,8 @@ type TGoogleReCaptchaResult = { type: ReCaptchaType; data: string | any; error?:
 const googleReCaptchaModal = async (
   width?: number,
 ): Promise<TGoogleReCaptchaResult | undefined | any> => {
+  const RECAPTCHA_SITE_KEY =
+    NETWORK_TYPE_V2 === 'TESTNET' ? RECAPTCHA_SITE_KEY_TESTNET : RECAPTCHA_SITE_KEY_MAINNET;
   return new Promise((resolve, reject) => {
     const modal = Modal.info({
       closable: true,
@@ -16,9 +19,9 @@ const googleReCaptchaModal = async (
       wrapClassName: 'reCaptcha-modal-wrapper',
       className: 'reCaptcha-modal-container',
       width: width,
-      content: RE_CAPTCHA_SITE_KEY ? (
+      content: RECAPTCHA_SITE_KEY ? (
         <GoogleReCaptcha
-          siteKey={RE_CAPTCHA_SITE_KEY}
+          siteKey={RECAPTCHA_SITE_KEY}
           theme="light"
           size="normal"
           onSuccess={(res) => {

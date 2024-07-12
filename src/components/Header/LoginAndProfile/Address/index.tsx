@@ -52,7 +52,7 @@ export default function Address({ hideBorder }: AddressProps) {
               label={item.label}
               value={item.value || SynchronizingAddress}
               showCopy={!!item.value && item.value !== SynchronizingAddress}
-              copySize={CopySize.Small}
+              copySize={CopySize.Normal}
             />
           </div>
         ))}

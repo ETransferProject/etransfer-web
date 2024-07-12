@@ -14,6 +14,7 @@ import { setSwitchVersionAction } from 'store/reducers/common/slice';
 import { setToChainItem } from 'store/reducers/deposit/slice';
 import { setDisconnectedAction } from 'store/reducers/portkeyWallet/actions';
 import { setWithdrawChainItem } from 'store/reducers/withdraw/slice';
+import { useRouterPush } from './route';
 
 export function useCurrentVersion() {
   const { currentVersion } = useCommonState();
@@ -46,23 +47,26 @@ export function useSetCurrentChainItem() {
 export function useClearStore() {
   const dispatch = useAppDispatch();
   const resetStore = useResetStore();
+  const routerPush = useRouterPush();
 
   return useCallback(() => {
     dispatch(setDisconnectedAction());
     dispatch(setSwitchVersionAction(undefined));
     resetStore();
     resetLocalJWT();
-  }, [dispatch, resetStore]);
+    routerPush('/', false);
+  }, [dispatch, resetStore, routerPush]);
 }
 
 export function useMixAllTokenList() {
-  const { fromTokenList } = useDepositState();
+  const { fromTokenList, toTokenList } = useDepositState();
   const { tokenList } = useWithdrawState();
 
   const depositTokenList = Array.isArray(fromTokenList) ? fromTokenList : [];
+  const receiveTokenList = Array.isArray(toTokenList) ? toTokenList : [];
   const withdrawTokenList = Array.isArray(tokenList) ? tokenList : [];
 
-  return depositTokenList?.concat(withdrawTokenList);
+  return depositTokenList?.concat(withdrawTokenList).concat(receiveTokenList);
 }
 
 export function useFindToken() {

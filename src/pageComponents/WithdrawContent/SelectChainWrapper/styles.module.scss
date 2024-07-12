@@ -5,12 +5,17 @@
 .select-chain-wrapper {
   display: flex;
   align-items: center;
+  margin-bottom: 24px;
   @include media-mobile-and-pad {
     justify-content: center;
-    margin-bottom: 24px;
   }
   @include media-web {
-    margin-bottom: 48px;
+    min-width: 440px;
+  }
+  @include media-web-2xl {
+    max-width: 614px;
+    min-width: 440px;
+    width: 100%;
   }
 }
 

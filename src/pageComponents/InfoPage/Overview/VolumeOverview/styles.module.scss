@@ -1,0 +1,18 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
+
+.volume-charts-container {
+  border-radius: 8px;
+  border: 1px solid $dividers;
+  padding: 24px;
+
+  @include media-mobile-and-pad {
+    padding: 16px;
+  }
+}
+
+.volume-charts {
+  width: 100%;
+  min-width: 352px;
+  height: 376px;
+}

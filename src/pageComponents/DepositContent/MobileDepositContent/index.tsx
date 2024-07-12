@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import CommonAddress from 'components/CommonAddress';
 import DepositInfo from 'pageComponents/DepositContent/DepositInfo';
@@ -15,7 +15,13 @@ import SelectTokenChain from '../SelectTokenChain';
 import Space from 'components/Space';
 import Calculator from '../Calculator';
 import ExchangeRate from '../ExchangeRate';
-import { useDepositState } from 'store/Provider/hooks';
+import { useCommonState, useDepositState } from 'store/Provider/hooks';
+import FAQ from 'components/FAQ';
+import { FAQ_DEPOSIT } from 'constants/footer';
+import DepositTip from '../DepositTip';
+import CommonDrawer from 'components/CommonDrawer';
+import CommonButton from 'components/CommonButton';
+import { CopySize } from 'components/Copy';
 
 export default function MobileDepositContent({
   fromNetworkSelected,
@@ -33,8 +39,14 @@ export default function MobileDepositContent({
   toChainChanged,
   fromNetworkChanged,
   fromTokenChanged,
-}: TDepositContentProps) {
+  onNext,
+}: TDepositContentProps & { onNext: () => Promise<void> }) {
   const { fromTokenSymbol, toChainItem, toTokenSymbol } = useDepositState();
+  const { isPadPX, isMobilePX } = useCommonState();
+  const nextDisable = useMemo(
+    () => !fromTokenSymbol || !toTokenSymbol || !toChainItem.key || !fromNetworkSelected,
+    [fromNetworkSelected, fromTokenSymbol, toChainItem.key, toTokenSymbol],
+  );
 
   const renderDepositAddress = useMemo(() => {
     return (
@@ -53,7 +65,11 @@ export default function MobileDepositContent({
         <Space direction="vertical" size={16} />
         {showRetry && <DepositRetryForMobile onClick={onRetry} />}
         {!showRetry && depositInfo?.depositAddress && (
-          <CommonAddress label={DEPOSIT_ADDRESS_LABEL} value={depositInfo.depositAddress} />
+          <CommonAddress
+            label={DEPOSIT_ADDRESS_LABEL}
+            value={depositInfo.depositAddress}
+            copySize={CopySize.Big}
+          />
         )}
       </div>
     );
@@ -66,65 +82,131 @@ export default function MobileDepositContent({
     );
   }, [depositInfo.extraNotes]);
 
+  const [isShowDepositInfo, setIsShowDepositInfo] = useState(false);
+  const renderDepositInfoDrawer = useMemo(() => {
+    return (
+      <CommonDrawer
+        id="mobileDepositInfoDrawer"
+        className={styles['deposit-info-drawer']}
+        open={isShowDepositInfo}
+        onClose={() => setIsShowDepositInfo(false)}
+        destroyOnClose
+        placement="bottom"
+        title="Deposit Address"
+        closable={true}
+        height="88%">
+        {fromTokenSymbol && toTokenSymbol && (
+          <DepositTip fromToken={fromTokenSymbol} toToken={toTokenSymbol} isShowIcon={false} />
+        )}
+
+        <Space direction="vertical" size={16} />
+
+        {fromTokenSelected && fromNetworkSelected && renderDepositAddress}
+
+        <Space direction="vertical" size={12} />
+
+        {fromTokenSelected && fromNetworkSelected && depositInfo?.depositAddress && (
+          <>
+            <DepositInfo
+              modalContainer={'#mobileDepositInfoDrawer'}
+              networkName={fromNetworkSelected.name}
+              minimumDeposit={depositInfo.minAmount}
+              contractAddress={contractAddress}
+              contractAddressLink={contractAddressLink}
+              minAmountUsd={depositInfo.minAmountUsd}
+            />
+            <Space direction="vertical" size={24} />
+            {renderDepositDescription}
+          </>
+        )}
+      </CommonDrawer>
+    );
+  }, [
+    contractAddress,
+    contractAddressLink,
+    depositInfo?.depositAddress,
+    depositInfo.minAmount,
+    depositInfo.minAmountUsd,
+    fromNetworkSelected,
+    fromTokenSelected,
+    fromTokenSymbol,
+    isShowDepositInfo,
+    renderDepositAddress,
+    renderDepositDescription,
+    toTokenSymbol,
+  ]);
+
+  const onClickNext = useCallback(async () => {
+    await onNext();
+    setIsShowDepositInfo(true);
+  }, [onNext]);
+
   return (
-    <>
-      <SelectTokenNetwork
-        label={'From'}
-        tokenSelected={fromTokenSelected}
-        tokenSelectCallback={fromTokenChanged}
-        networkSelected={fromNetworkSelected}
-        isShowNetworkLoading={isShowNetworkLoading}
-        networkSelectCallback={fromNetworkChanged}
-      />
+    <div className="main-content-container main-content-container-safe-area">
+      <div className={clsx(styles['main-section'], styles['section'])}>
+        <SelectTokenNetwork
+          label={'From'}
+          tokenSelected={fromTokenSelected}
+          tokenSelectCallback={fromTokenChanged}
+          networkSelected={fromNetworkSelected}
+          isShowNetworkLoading={isShowNetworkLoading}
+          networkSelectCallback={fromNetworkChanged}
+        />
 
-      <Space direction="vertical" size={8} />
+        <Space direction="vertical" size={8} />
 
-      <SelectTokenChain
-        label={'To'}
-        tokenSelected={toTokenSelected}
-        tokenSelectCallback={toTokenSelectCallback}
-        chainChanged={toChainChanged}
-      />
+        <SelectTokenChain
+          label={'To'}
+          tokenSelected={toTokenSelected}
+          tokenSelectCallback={toTokenSelectCallback}
+          chainChanged={toChainChanged}
+        />
 
-      {fromTokenSymbol && toTokenSymbol && toChainItem.key && fromTokenSymbol !== toTokenSymbol && (
+        {fromTokenSymbol &&
+          toTokenSymbol &&
+          toChainItem.key &&
+          fromTokenSymbol !== toTokenSymbol && (
+            <>
+              <Space direction="vertical" size={12} />
+              <ExchangeRate
+                fromSymbol={fromTokenSymbol}
+                toSymbol={toTokenSymbol}
+                toChainId={toChainItem.key}
+                slippage={depositInfo.extraInfo?.slippage}
+              />
+            </>
+          )}
+
+        {fromTokenSymbol !== toTokenSymbol && (
+          <>
+            <Space direction="vertical" size={24} />
+
+            <Calculator />
+          </>
+        )}
+
+        <div
+          className={clsx(styles['next-button-wrapper'], styles['next-button-wrapper-safe-area'])}>
+          <Space direction="vertical" size={24} />
+          <CommonButton
+            className={styles['next-button']}
+            onClick={onClickNext}
+            disabled={nextDisable}>
+            Next
+          </CommonButton>
+        </div>
+      </div>
+      {isPadPX && !isMobilePX && (
         <>
-          <Space direction="vertical" size={12} />
-          <ExchangeRate
-            fromSymbol={fromTokenSymbol}
-            toSymbol={toTokenSymbol}
-            toChainId={toChainItem.key}
-            slippage={depositInfo.extraInfo?.slippage}
+          <div className={styles['divider']} />
+          <FAQ
+            className={clsx(styles['section'], styles['faq'])}
+            title={FAQ_DEPOSIT.title}
+            list={FAQ_DEPOSIT.list}
           />
         </>
       )}
-
-      {fromTokenSymbol !== toTokenSymbol && (
-        <>
-          <Space direction="vertical" size={24} />
-
-          <Calculator />
-        </>
-      )}
-
-      <Space direction="vertical" size={24} />
-
-      {fromTokenSelected && fromNetworkSelected && renderDepositAddress}
-
-      <Space direction="vertical" size={12} />
-
-      {fromTokenSelected && fromNetworkSelected && depositInfo?.depositAddress && (
-        <>
-          <DepositInfo
-            networkName={fromNetworkSelected.name}
-            minimumDeposit={depositInfo.minAmount}
-            contractAddress={contractAddress}
-            contractAddressLink={contractAddressLink}
-            minAmountUsd={depositInfo.minAmountUsd}
-          />
-          <Space direction="vertical" size={24} />
-          {renderDepositDescription}
-        </>
-      )}
-    </>
+      {renderDepositInfoDrawer}
+    </div>
   );
 }

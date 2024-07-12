@@ -9,6 +9,8 @@ import PortkeyWalletSlice from 'store/reducers/portkeyWallet/slice';
 import storage from 'redux-persist/lib/storage';
 import DepositSlice from 'store/reducers/deposit/slice';
 import WithdrawSlice from 'store/reducers/withdraw/slice';
+import InfoDashboardSlice from 'store/reducers/infoDashboard/slice';
+
 interface ThunkOptions<E = any> {
   extraArgument: E;
 }
@@ -38,6 +40,11 @@ export const depositPersistConfig = {
 
 export const withdrawPersistConfig = {
   key: WithdrawSlice.name,
+  storage,
+};
+
+export const infoDashboardPersistConfig = {
+  key: InfoDashboardSlice.name,
   storage,
 };
 

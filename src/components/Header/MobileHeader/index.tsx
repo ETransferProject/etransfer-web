@@ -5,15 +5,15 @@ import SelectMenu from 'components/Header/SelectMenu';
 import LoginAndProfileEntry from 'components/Header/LoginAndProfile';
 import styles from './styles.module.scss';
 import { SideMenuKey } from 'constants/home';
-import { useIsActive } from 'hooks/portkeyWallet';
+// import { useIsActive } from 'hooks/portkeyWallet';
 
 export default function MobileHeader() {
   const { activeMenuKey } = useCommonState();
-  const isActive = useIsActive();
+  // const isActive = useIsActive();
 
-  if (!isActive) {
-    return null;
-  }
+  // if (!isActive) {
+  //   return null;
+  // }
   return (
     <div className={clsx('flex-center', styles['header-wrapper'])}>
       <SelectMenu />
@@ -21,6 +21,7 @@ export default function MobileHeader() {
         {activeMenuKey === SideMenuKey.Deposit && 'Deposit Assets'}
         {activeMenuKey === SideMenuKey.Withdraw && 'Withdraw Assets'}
         {activeMenuKey === SideMenuKey.History && 'History'}
+        {activeMenuKey === SideMenuKey.Info && 'Info'}
       </span>
       <LoginAndProfileEntry />
     </div>

@@ -1,4 +1,5 @@
 @import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/constants.scss';
 @import '/src/assets/theme/font.scss';
 
 .token-card-for-mobile {
@@ -24,7 +25,7 @@
 
 .token-card-for-web {
   display: flex;
-  padding: 16px 24px;
+  padding: 16px 12px;
   align-items: center;
   border-bottom: 1px solid $dividers;
   background: $page-bg;
@@ -39,6 +40,8 @@
     color: $secondary-text;
     line-height: 22px;
     margin-left: 8px;
+    @include text-overflow;
+    word-break: break-all;
   }
 }
 
@@ -46,6 +49,7 @@
   margin-right: 8px;
   border-radius: 50%;
   overflow: hidden;
+  flex-shrink: 0;
 }
 .token-card-defaultIcon {
   font-size: 14px;

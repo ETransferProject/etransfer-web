@@ -13,7 +13,7 @@ export default function MobileSelectChain({
   selectedItem,
   isBorder = true,
   onClick,
-}: DeviceSelectChainProps & { title: string }) {
+}: Omit<DeviceSelectChainProps, 'getContainer'> & { title: string }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   return (
     <>

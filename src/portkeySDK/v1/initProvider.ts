@@ -10,7 +10,7 @@ import {
 import portkeyWallet from './portkeyWallet';
 import { NetworkTypeV1, NetworkTypeText, NETWORK_TYPE_V1 } from 'constants/index';
 import { useEffectOnce } from 'react-use';
-import { useThrottleCallback } from 'hooks';
+import { useThrottleCallback } from 'hooks/debounce';
 import { usePortkeyProvider } from 'portkeySDK/hooks/usePortkeyProvider';
 import myEvents from 'utils/myEvent';
 import { resetLocalJWT } from 'api/utils';
@@ -90,7 +90,7 @@ export default function InitProvider() {
   }, [listener, connectEagerly]);
 
   useEffectOnce(() => {
-    const listener = myEvents.DeniedRequest.addListener(() => {
+    const listener = myEvents.Unauthorized.addListener(() => {
       singleMessage.error(LoginExpiredTip);
       resetLocalJWT();
       store.dispatch(setV1DisconnectedAction());

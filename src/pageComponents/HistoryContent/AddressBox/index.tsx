@@ -18,15 +18,13 @@ import { useCommonState } from 'store/Provider/hooks';
 import { useAccounts } from 'hooks/portkeyWallet';
 import NetworkLogo from 'components/NetworkLogo';
 
-type TAddressBoxProps = {
+export type TAddressBoxProps = {
   type: 'To' | 'From';
   fromAddress: string;
   toAddress: string;
   network: string;
   fromChainId: SupportedELFChainId;
   toChainId: SupportedELFChainId;
-  fromToAddress: string;
-  toFromAddress: string;
 };
 
 export default function AddressBox({
@@ -37,7 +35,7 @@ export default function AddressBox({
   fromChainId,
   toChainId,
 }: TAddressBoxProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const accounts = useAccounts();
 
   const calcAddress = useCallback(() => {
@@ -87,9 +85,9 @@ export default function AddressBox({
     <div
       className={clsx(
         styles['address-box'],
-        isMobilePX ? styles['mobile-address-box'] : styles['web-address-box'],
+        isPadPX ? styles['mobile-address-box'] : styles['web-address-box'],
       )}>
-      <NetworkLogo network={network} />
+      <NetworkLogo network={network} size="small" />
       <CommonTooltip title={calcAddress()} trigger={'hover'}>
         <span className={clsx(styles['address-word'])} onClick={handleAddressClick}>
           {getOmittedStr(calcAddress(), 8, 9)}

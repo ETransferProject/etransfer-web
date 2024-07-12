@@ -9,17 +9,18 @@
 }
 
 .copy-icon-wrapper-small {
+  width: 18px;
+  height: 18px;
+}
+
+.copy-icon-wrapper-normal {
   width: 24px;
   height: 24px;
 }
 
-.copy-icon-wrapper-normal {
+.copy-icon-wrapper-big {
   width: 32px;
   height: 32px;
-  @include media-mobile-and-pad {
-    width: 20px;
-    height: 20px;
-  }
   @include media-mobile-and-pad {
     width: 20px;
     height: 20px;
@@ -29,7 +30,7 @@
 .copy-icon-wrapper-background-color {
   @include media-mobile-and-pad {
     &:active {
-      background-color: $blue-bg;
+      background-color: $brand-bg;
       path {
         fill: $hover;
       }
@@ -37,7 +38,7 @@
   }
   @include media-web {
     &:hover {
-      background-color: $blue-bg;
+      background-color: $brand-bg;
       path {
         fill: $hover;
       }

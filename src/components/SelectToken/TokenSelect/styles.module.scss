@@ -12,18 +12,18 @@
   .token-select-list {
     display: flex;
     flex-direction: column;
-    &:hover{
+    &:hover {
       background-color: $hover-bg;
     }
   }
-  .token-card-selected{
+  .token-card-selected {
     background: $hover-bg;
   }
 }
 
 .token-select-for-web {
   overflow: scroll;
-  min-height: 400px;
+  min-height: 262px;
   max-height: 500px;
   background-color: $page-bg;
   border-radius: 6px;

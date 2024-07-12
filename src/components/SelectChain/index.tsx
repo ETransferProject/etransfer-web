@@ -10,6 +10,8 @@ export default function SelectChain({
   title,
   className,
   childrenClassName,
+  overlayClassName,
+  getContainer,
   isBorder,
   suffixArrowSize,
   hideDownArrow,
@@ -17,7 +19,7 @@ export default function SelectChain({
   selectedItem,
   clickCallback,
 }: SelectChainProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
 
   const [openSynchronizingModal, setOpenSynchronizingModal] = useState(false);
 
@@ -35,7 +37,7 @@ export default function SelectChain({
     },
     [clickCallback, selectedItem.key],
   );
-  const dropdownProps: DeviceSelectChainProps = useMemo(() => {
+  const dropdownProps: Omit<DeviceSelectChainProps, 'getContainer'> = useMemo(() => {
     return {
       menuItems,
       selectedItem,
@@ -45,7 +47,7 @@ export default function SelectChain({
 
   return (
     <>
-      {isMobilePX ? (
+      {isPadPX ? (
         <MobileSelectChain
           {...dropdownProps}
           title={title}
@@ -56,8 +58,10 @@ export default function SelectChain({
       ) : (
         <WebSelectChain
           {...dropdownProps}
+          getContainer={getContainer}
           className={className}
           childrenClassName={childrenClassName}
+          overlayClassName={overlayClassName}
           isBorder={isBorder}
           suffixArrowSize={suffixArrowSize}
           hideDownArrow={hideDownArrow}

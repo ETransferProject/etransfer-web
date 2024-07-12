@@ -25,7 +25,7 @@ export default function SelectNetwork({
   onChange,
   selectCallback,
 }: TSelectNetworkProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const [isShowNetworkSelectDropdown, setIsShowNetworkSelectDropdown] = useState<boolean>(false);
 
   const onSelectNetwork = useCallback(
@@ -53,7 +53,7 @@ export default function SelectNetwork({
           <div className={styles['select-network-value']}>
             {selected?.network ? (
               <span className={clsx('flex-row-center', styles['select-network-value-selected'])}>
-                {isMobilePX ? (
+                {isPadPX ? (
                   <span className={styles['primary']}>{selected.name}</span>
                 ) : (
                   <>
@@ -71,7 +71,7 @@ export default function SelectNetwork({
         </div>
       </div>
 
-      {isMobilePX ? (
+      {isPadPX ? (
         <NetworkSelectDrawer
           open={isShowNetworkSelectDropdown}
           onClose={() => setIsShowNetworkSelectDropdown(false)}

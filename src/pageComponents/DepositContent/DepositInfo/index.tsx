@@ -8,6 +8,7 @@ import { formatStr2Ellipsis, formatSymbolDisplay } from 'utils/format';
 import ViewContractAddressModal from 'pageComponents/Modal/ViewContractAddressModal';
 import { openWithBlank } from 'utils/common';
 import { valueFixed2LessThanMin } from 'utils/calculate';
+import { CommonModalProps } from 'components/CommonModal';
 
 export interface DepositInfoProps {
   networkName?: string;
@@ -15,6 +16,7 @@ export interface DepositInfoProps {
   contractAddress: string;
   contractAddressLink: string;
   minAmountUsd: string;
+  modalContainer?: CommonModalProps['getContainer'];
 }
 
 export default function DepositInfo({
@@ -23,8 +25,9 @@ export default function DepositInfo({
   contractAddress,
   contractAddressLink,
   minAmountUsd,
+  modalContainer,
 }: DepositInfoProps) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
   const { fromTokenSymbol } = useDepositState();
   const [openAddressModal, setOpenAddressModal] = useState(false);
 
@@ -47,7 +50,7 @@ export default function DepositInfo({
         <div className={clsx('flex', styles['info-line'])}>
           <div className={clsx('flex-none', styles['info-title'])}>{CONTRACT_ADDRESS}</div>
           <div className={clsx('flex-1', 'flex-row-content-end')}>
-            {!isMobilePX && (
+            {!isPadPX && (
               <span
                 className={clsx('text-right', styles['info-value'], {
                   'text-link': !!contractAddressLink,
@@ -56,7 +59,7 @@ export default function DepositInfo({
                 {contractAddress || '-'}
               </span>
             )}
-            {isMobilePX && (
+            {isPadPX && (
               <span
                 className={clsx('text-right', styles['info-value'])}
                 onClick={() => setOpenAddressModal(true)}>
@@ -76,6 +79,7 @@ export default function DepositInfo({
 
       <ViewContractAddressModal
         open={openAddressModal}
+        getContainer={modalContainer}
         network={networkName || ''}
         value={contractAddress}
         link={contractAddressLink}

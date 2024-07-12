@@ -8,6 +8,10 @@ import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
 import { ChainId } from '@portkey/provider-types';
 import { formatSymbolDisplay } from 'utils/format';
 import { MAX_UPDATE_TIME } from 'constants/calculate';
+import { isAuthTokenError } from 'utils/api/error';
+import { SIGNATURE_MISSING_TIP } from 'constants/misc';
+import { useEffectOnce } from 'react-use';
+import myEvents from 'utils/myEvent';
 
 type TExchangeRate = {
   fromSymbol: string;
@@ -40,7 +44,11 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
       });
       setExchange(conversionRate?.toAmount || defaultNullValue);
     } catch (error) {
-      singleMessage.error(handleErrorMessage(error));
+      if (isAuthTokenError(error)) {
+        singleMessage.info(SIGNATURE_MISSING_TIP);
+      } else {
+        singleMessage.error(handleErrorMessage(error));
+      }
     }
   }, [fromSymbol, toChainId, toSymbol]);
 
@@ -83,6 +91,17 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromSymbol, toSymbol, toChainId]);
+
+  // Listener login
+  const getCalculateRef = useRef(getCalculate);
+  getCalculateRef.current = getCalculate;
+  useEffectOnce(() => {
+    const { remove } = myEvents.LoginSuccess.addListener(getCalculateRef.current);
+
+    return () => {
+      remove();
+    };
+  });
 
   return (
     <div className={clsx('flex-row-between', 'exchange-rate')}>

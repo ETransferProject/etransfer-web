@@ -5,6 +5,10 @@
 .common-drawer {
   min-width: $page-min-width;
   :global {
+    .ant-drawer-content-wrapper {
+      border-radius: 8px 8px 0px 0px;
+      background-color: $page-bg;
+    }
     .ant-drawer-content {
       border-radius: 8px 8px 0px 0px;
       background-color: $page-bg;

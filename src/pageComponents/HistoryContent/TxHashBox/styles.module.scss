@@ -1,0 +1,29 @@
+@import 'src/assets/theme/color.scss';
+
+.label {
+  color: $secondary-text;
+  margin-left: 6px;
+  margin-right: 6px;
+}
+
+.value {
+  color: $brand;
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.null-value {
+  color: $secondary-text;
+}
+
+.web-font {
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.mobile-font {
+  font-size: 13px;
+  line-height: 22px;
+}

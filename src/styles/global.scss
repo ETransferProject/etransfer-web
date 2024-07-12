@@ -1,4 +1,5 @@
 @import '~antd/dist/antd.variable.min.css';
+@import '/src/assets/theme/breakpoint.scss';
 @import '/src/assets/theme/common-class.scss';
 @import '/src/assets/theme/color.scss';
 @import '/src/assets/theme/constants.scss';
@@ -15,8 +16,11 @@ body {
   background-color: $page-bg;
   min-width: $page-min-width;
   font-size: 14px;
-  @extend .font-family-regular;
+
+  // Solve the font loading error problem caused by the UI framework taking effect in the first place
+  @extend .font-family-regular-important;
 }
+
 body {
   margin: 0;
 
@@ -46,4 +50,104 @@ input[type='number'] {
     color: $normal !important;
     background: none !important;
   }
+}
+
+.ant-select-focused:not(.ant-select-disable).ant-select:not(.ant-select-customize-input)
+  .ant-select-selector {
+  border: 1px solid $hover !important;
+  box-shadow: none !important;
+}
+
+.etransfer-web-wrapper {
+  height: unset;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.etransfer-web-notLogin {
+  width: 100%;
+  height: 100%;
+}
+
+.etransfer-web-content {
+  width: 100%;
+  height: 100%;
+  min-height: $content-min-height;
+
+  @include media-huge-web {
+    max-width: calc($max-width - $sider-width);
+  }
+  @include media-huge-screen {
+    width: calc($max-width + 1px - $sider-width);
+    margin: unset;
+  }
+}
+
+.content-container {
+  padding-right: 40px;
+
+  @include media-mobile-and-pad {
+    padding-right: 0;
+  }
+
+  @include media-huge-screen {
+    padding-right: 40px;
+  }
+}
+
+.main-content-container {
+  width: 100%;
+  height: 100%;
+  @include media-mobile {
+    padding: 0 16px;
+  }
+  @include media-pad {
+    // width: $content-width;
+    margin: auto;
+    margin-bottom: $content-padding-bottom;
+  }
+  @include media-web {
+    padding-top: 40px;
+    margin-bottom: $web-content-padding-bottom;
+  }
+}
+
+// A separate class name is used here to avoid invalidation of the padding style by incorporating the padding property in the production css.
+.main-content-container-safe-area {
+  @include media-mobile {
+    padding-bottom: calc($content-padding-bottom + constant(safe-area-inset-bottom));
+    padding-bottom: calc($content-padding-bottom + env(safe-area-inset-bottom));
+    &.withdraw-content-container {
+      padding-bottom: calc(
+        ($mobile-form-footer-max-height + $content-padding-bottom) +
+          constant(safe-area-inset-bottom)
+      );
+      padding-bottom: calc(
+        ($mobile-form-footer-max-height + $content-padding-bottom) + env(safe-area-inset-bottom)
+      );
+    }
+  }
+}
+
+.wide-screen-content-container {
+  padding: 40px 40px 64px 32px;
+
+  @include media-mobile-and-pad {
+    min-width: $page-min-width;
+    padding: 0;
+  }
+  @include media-huge-web {
+    width: calc(100vw - $sider-width);
+    max-width: calc($max-width - $sider-width);
+  }
+  @include media-huge-screen {
+    width: calc($max-width + 1px - $sider-width);
+    margin: unset;
+  }
+}
+
+.pre-loading {
+  width: 100%;
+  height: 100%;
 }

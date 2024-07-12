@@ -1,0 +1,35 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.web-tokens-header {
+  .title {
+    display: inline-block;
+    font-size: 24px;
+    @extend .font-family-medium;
+  }
+
+  .web-tokens-header-filter {
+    .web-tokens-select-type {
+      width: 156px;
+    }
+
+    :global {
+      .ant-select-selector {
+        display: flex;
+        align-items: center;
+        height: 42px;
+        border: 1px solid $border;
+        border-radius: 6px;
+
+        &:hover {
+          border: 1px solid $hover;
+        }
+
+        .ant-select-selection-item {
+          color: $primary-text;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}

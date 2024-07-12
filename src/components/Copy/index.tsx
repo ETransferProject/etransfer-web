@@ -1,7 +1,14 @@
 import { useMemo, useState, useRef } from 'react';
 import { useCopyToClipboard } from 'react-use';
 import clsx from 'clsx';
-import { Copy as CopyNormal, CopySmall, Check as CheckNormal, CheckSmall } from 'assets/images';
+import {
+  Copy as CopyNormal,
+  CopySmall,
+  CopyBig,
+  Check as CheckNormal,
+  CheckSmall,
+  CheckBig,
+} from 'assets/images';
 import styles from './styles.module.scss';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
@@ -9,6 +16,7 @@ import { useCommonState } from 'store/Provider/hooks';
 export enum CopySize {
   Small = 'small',
   Normal = 'normal',
+  Big = 'big',
 }
 
 export default function Copy({
@@ -22,7 +30,7 @@ export default function Copy({
   className?: string;
   size?: CopySize;
 }) {
-  const { isMobilePX } = useCommonState();
+  const { isPadPX } = useCommonState();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setCopyValue] = useCopyToClipboard();
@@ -31,23 +39,29 @@ export default function Copy({
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const CopyIcon = useMemo(() => (size === CopySize.Small ? CopySmall : CopyNormal), [size]);
-  const CheckIcon = useMemo(() => (size === CopySize.Small ? CheckSmall : CheckNormal), [size]);
+  const CopyIcon = useMemo(
+    () => (size === CopySize.Small ? CopySmall : size === CopySize.Big ? CopyBig : CopyNormal),
+    [size],
+  );
+  const CheckIcon = useMemo(
+    () => (size === CopySize.Small ? CheckSmall : size === CopySize.Big ? CheckBig : CheckNormal),
+    [size],
+  );
 
   const tooltipTitle = useMemo(() => {
-    if (isShowCopyIcon || isMobilePX) {
+    if (isShowCopyIcon || isPadPX) {
       return 'Copied';
-    } else if (!isMobilePX) {
+    } else if (!isPadPX) {
       return 'Copy';
     }
     return '';
-  }, [isShowCopyIcon, isMobilePX]);
+  }, [isPadPX, isShowCopyIcon]);
 
   return (
     <CommonTooltip
       title={tooltipTitle}
-      trigger={isMobilePX ? '' : 'hover'}
-      open={isMobilePX ? isTooltipOpen : undefined}>
+      trigger={isPadPX ? '' : 'hover'}
+      open={isPadPX ? isTooltipOpen : undefined}>
       <span
         onClick={() => {
           if (isShowCopyIcon) {
@@ -55,14 +69,14 @@ export default function Copy({
           }
           setCopyValue(toCopy);
           setIsShowCopyIcon(true);
-          if (isMobilePX) {
+          if (isPadPX) {
             setIsTooltipOpen(true);
           }
           if (timerRef.current) {
             clearTimeout(timerRef.current);
           }
           timerRef.current = setTimeout(() => {
-            if (isMobilePX) {
+            if (isPadPX) {
               setIsTooltipOpen(false);
             }
             setIsShowCopyIcon(false);
