@@ -163,7 +163,7 @@ export default function Calculator() {
         }>
         <div className={clsx('flex-row-center', styles['calculator-header-right'])}>
           <CalculatorIcon />
-          <span>Calculator</span>
+          <span className={styles['calculator-header-title']}>Calculator</span>
         </div>
         <DynamicArrow isExpand={isExpand} />
       </div>
@@ -197,7 +197,7 @@ export default function Calculator() {
         <div className={styles['receive-amount']}>{`≈${receiveAmount} ${formatSymbolDisplay(
           toTokenSymbol,
         )}`}</div>
-        <div>
+        <div className={clsx('flex-row-center', styles['min-receive'])}>
           <span className={styles['label']}>Minimum Sum To Receive:</span>
           <span
             className={styles['min-receive-amount']}>{`≈${minReceiveAmount} ${formatSymbolDisplay(

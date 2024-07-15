@@ -2,7 +2,7 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { EmptyBox } from 'assets/images';
 
-type TEmptyDataBoxProps = {
+export type TEmptyDataBoxProps = {
   emptyText?: string;
 };
 

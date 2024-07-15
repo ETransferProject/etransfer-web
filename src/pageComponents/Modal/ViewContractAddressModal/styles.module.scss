@@ -1,18 +1,19 @@
 @import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
 
 .viewContractAddressModal {
   .viewContractAddressModalBody {
     .viewContractAddressModalTitle {
       color: $secondary-text;
       font-size: 14px;
-      font-weight: 400;
+      @extend .font-family-regular;
     }
     .viewContractAddressModalContent {
       margin-top: 16px;
       .viewContractAddressModalContract {
         color: $primary-text;
         font-size: 16px;
-        font-weight: 400;
+        @extend .font-family-regular;
         overflow-wrap: anywhere;
       }
       .viewContractAddressModalAction {

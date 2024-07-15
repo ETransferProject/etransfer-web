@@ -52,7 +52,7 @@ export type TFeeInfoType = {
 export interface TRecordsTableListType {
   key: string;
   orderType: BusinessType;
-  status: TRecordsStatus;
+  status: TOrderStatus;
   arrivalTime: number;
   symbol: string;
   sendingAmount: string;
@@ -71,7 +71,7 @@ export interface TRecordsTableListType {
   feeInfo: TFeeInfoType[];
 }
 
-export enum TRecordsStatus {
+export enum TOrderStatus {
   Processing = 'Processing',
   Succeed = 'Succeed',
   Failed = 'Failed',

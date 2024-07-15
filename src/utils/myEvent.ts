@@ -9,6 +9,8 @@ const EventList = [
   'HistoryActive',
   'GoogleReCaptcha',
   'LoginSuccess',
+  'ShowWebTransferDashboardDetailPage',
+  'HideWebTransferDashboardDetailPage',
 ] as const;
 
 // eslint-disable-next-line no-new-func

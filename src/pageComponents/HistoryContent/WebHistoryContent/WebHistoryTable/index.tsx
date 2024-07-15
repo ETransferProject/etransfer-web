@@ -7,7 +7,7 @@ import { TRecordsBodyProps } from 'pageComponents/HistoryContent';
 import { TFeeInfoType, TRecordsTableListType } from 'types/records';
 import { setSkipCount, setMaxResultCount } from 'store/reducers/records/slice';
 import FeeInfo from 'pageComponents/HistoryContent/FeeInfo';
-import EmptyDataBox from 'pageComponents/HistoryContent/EmptyDataBox';
+import EmptyDataBox from 'pageComponents/EmptyDataBox';
 import StatusBox from 'pageComponents/HistoryContent/StatusBox';
 import ArrivalTimeBox from 'pageComponents/HistoryContent/ArrivalTimeBox';
 import AmountBox from 'pageComponents/HistoryContent/AmountBox';

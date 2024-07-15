@@ -5,6 +5,7 @@ import { AElfNodes } from 'constants/aelf';
 import { AllSupportedELFChainId } from 'constants/chain';
 import { AelfInstancesKey } from 'types';
 import { isSymbol, isValidBase58 } from './reg';
+import { ChainId } from '@portkey/types';
 
 export function getNodeByChainId(chainId: AllSupportedELFChainId) {
   return AElfNodes[chainId as AelfInstancesKey];
@@ -226,7 +227,7 @@ export const removeELFAddressSuffix = (address: string) => {
  */
 export const addressFormat = (
   address: string,
-  chainId: SupportedELFChainId = SupportedELFChainId.AELF,
+  chainId: ChainId = SupportedELFChainId.AELF,
   chainType: ChainType = 'aelf',
 ): string => {
   if (chainType !== 'aelf') return address;

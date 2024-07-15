@@ -1,6 +1,6 @@
 import { TFeeInfoType } from 'types/records';
 import styles from './styles.module.scss';
-import { TRecordsStatus } from 'types/records';
+import { TOrderStatus } from 'types/records';
 import { useCommonState } from 'store/Provider/hooks';
 import clsx from 'clsx';
 import { BusinessType } from 'types/api';
@@ -16,7 +16,7 @@ type TFeeInfoProps = {
 export default function FeeInfo({ feeInfo, status, orderType }: TFeeInfoProps) {
   const { isPadPX } = useCommonState();
 
-  if (status === TRecordsStatus.Failed) {
+  if (status === TOrderStatus.Failed) {
     return <div className={styles['fee-info-wrapper']}>{defaultNullValue}</div>;
   }
 

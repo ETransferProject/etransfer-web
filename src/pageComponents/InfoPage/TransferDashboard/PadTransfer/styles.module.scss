@@ -1,0 +1,18 @@
+@import '/src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+
+.detail-drawer-wrapper {
+  :global {
+    .ant-drawer-content-wrapper {
+      background-color: $page-bg;
+
+      .ant-drawer-content {
+        border-radius: 0 !important;
+      }
+    }
+
+    .ant-drawer-body {
+      margin-top: 12px;
+    }
+  }
+}

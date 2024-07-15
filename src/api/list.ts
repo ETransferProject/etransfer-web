@@ -42,6 +42,14 @@ const HistoryApiList = {
   getRecordStatus: '/api/etransfer/record/status',
 };
 
+const InfoDashboard = {
+  getTransactionOverview: '/api/etransfer/info/transaction-overview',
+  getVolumeOverview: '/api/etransfer/info/volume-overview',
+  getTokens: '/api/etransfer/info/tokens',
+  getNetworkOption: '/api/etransfer/info/network/option',
+  geTransfers: '/api/etransfer/info/transfers',
+};
+
 const UserApiList = {
   checkEOARegistration: '/api/etransfer/user/check-eoa-registration',
 };
@@ -55,6 +63,7 @@ export const EXPAND_APIS = {
   auth: AuthList,
   records: HistoryApiList,
   user: UserApiList,
+  infoDashboard: InfoDashboard,
 };
 
 export type EXPAND_REQ_TYPES = {

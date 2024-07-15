@@ -7,11 +7,23 @@
 }
 
 .main-wrapper {
-  padding: 0 11.12%;
+  padding: 0 11%;
+
+  @include media-web-2xl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 32px;
+  }
 }
 
 .main-content {
   min-width: 440px;
+
+  @include media-web-2xl {
+    max-width: 614px;
+    min-width: 440px;
+  }
 }
 
 .faq-wrapper {
@@ -32,10 +44,72 @@
 
 .deposit-title {
   font-size: 24px;
-  height: 42px;
-  line-height: 42px;
+  height: 40px;
+  line-height: 40px;
   margin-bottom: 24px;
   @extend .font-family-medium;
+}
+
+.selected-data-wrapper {
+  justify-content: space-between;
+}
+
+.selected-token-wrapper,
+.selected-chain-wrapper {
+  @include media-web-2xl {
+    max-width: 271px;
+    min-width: 200px;
+    width: 100%;
+  }
+  @include media-2xl-and-more {
+    flex: 1;
+  }
+}
+
+.space {
+  flex: 1;
+  max-width: 72px;
+  min-width: 40px;
+}
+
+.label {
+  font-size: 16px;
+  line-height: 24px;
+  margin-bottom: 8px;
+  @extend .font-family-medium;
+}
+
+.circle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: $success;
+  margin-right: 4px;
+}
+.connected {
+  font-size: 14px;
+  line-height: 22px;
+  color: $secondary-text;
+}
+
+.selected-token,
+.selected-chain {
+  padding: 12px;
+  border-radius: 6px;
+  background-color: $normal-bg;
+}
+
+.selected-token {
+  position: relative;
+}
+
+.selected-row-2 {
+  position: relative;
+}
+
+.arrow-right {
+  width: 100%;
+  height: 24px;
 }
 
 .deposit-address-wrapper {

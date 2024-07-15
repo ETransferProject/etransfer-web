@@ -1,8 +1,8 @@
 export const CHAIN_INFO = {
   chainId: 'tDVV',
   exploreUrl: 'https://tdvv-explorer.aelf.io/',
-  // rpcUrl: 'https://tdvv-public-node.aelf.io',
-  rpcUrl: 'https://tdvv-explorer.aelf.io/chain',
+  rpcUrl: 'https://tdvv-public-node.aelf.io',
+  // rpcUrl: 'https://tdvv-explorer.aelf.io/chain',
 };
 
 export const TOKEN_CONTRACT = '7RzVGiuVWkvL4VfVHdZfQF2Tri3sgLe9U991bohHFfSRZXuGX';

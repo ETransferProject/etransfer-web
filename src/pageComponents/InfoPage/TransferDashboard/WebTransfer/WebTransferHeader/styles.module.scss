@@ -1,0 +1,69 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.web-transfer-header {
+  .title {
+    display: inline-block;
+    font-size: 24px;
+    @extend .font-family-medium;
+    margin-bottom: 16px;
+  }
+
+  .web-transfer-header-filter {
+    gap: 12px;
+
+    :global {
+      .ant-select-selector {
+        display: flex;
+        align-items: center;
+        height: 42px;
+        border: 1px solid $border;
+        border-radius: 6px;
+
+        &:hover {
+          border: 1px solid $hover;
+        }
+        &:focus {
+          border: 1px solid $hover;
+          box-shadow: none !important;
+        }
+
+        .ant-select-selection-item {
+          color: $primary-text;
+          font-size: 14px;
+        }
+      }
+    }
+
+    .web-transfer-select {
+      width: 200px;
+    }
+
+    .web-transfer-reset-button {
+      width: 92px;
+      margin-right: 12px;
+      border: none;
+      background: none;
+      color: $normal;
+      border-radius: 6px;
+      &:hover {
+        color: $normal;
+        background: $hover-bg;
+      }
+      &:active {
+        color: $normal;
+        background: $click-bg;
+      }
+    }
+
+    .web-transfer-reset-icon {
+      color: $normal;
+      vertical-align: middle;
+    }
+
+    .web-transfer-reset-word {
+      font-size: 14px;
+      margin-left: 8px;
+    }
+  }
+}

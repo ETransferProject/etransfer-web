@@ -1,0 +1,30 @@
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.token-amount {
+  gap: 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  @include media-mobile {
+    gap: 0;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .token-amount-value {
+    @extend .font-family-medium;
+  }
+
+  .token-amount-symbol {
+    white-space: pre;
+    @extend .font-family-medium;
+  }
+
+  .token-amount-usd {
+    color: $secondary-text;
+    font-size: 12px;
+  }
+}

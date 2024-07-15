@@ -12,7 +12,7 @@ import {
 import { SupportedELFChainId, defaultNullValue } from 'constants/index';
 import clsx from 'clsx';
 import { useCommonState } from 'store/Provider/hooks';
-import { TRecordsStatus, TRecordsStatusI18n } from 'types/records';
+import { TOrderStatus, TRecordsStatusI18n } from 'types/records';
 import { BusinessType } from 'types/api';
 
 export type TTxHashBoxProps = {
@@ -20,7 +20,7 @@ export type TTxHashBoxProps = {
   chainId: SupportedELFChainId;
   network: string;
   txHash: string;
-  orderStatus: TRecordsStatus;
+  orderStatus: TOrderStatus;
   orderType: BusinessType;
   type: 'From' | 'To';
   isShowIcon?: boolean;
@@ -80,11 +80,11 @@ export default function TxHashBox({
   }, []);
 
   const renderTxHash = useMemo(() => {
-    if (orderStatus === TRecordsStatus.Failed && orderType !== BusinessType.Deposit) {
+    if (orderStatus === TOrderStatus.Failed && orderType !== BusinessType.Deposit) {
       return txHashFailed;
     }
 
-    if (orderStatus === TRecordsStatus.Failed && orderType === BusinessType.Deposit) {
+    if (orderStatus === TOrderStatus.Failed && orderType === BusinessType.Deposit) {
       if (type === 'From') {
         return txHash ? txHashSuccess : txHashFailed;
       } else {
@@ -92,7 +92,7 @@ export default function TxHashBox({
       }
     }
 
-    if (orderStatus === TRecordsStatus.Processing) {
+    if (orderStatus === TOrderStatus.Processing) {
       return txHash ? txHashSuccess : txHashPending;
     }
 

@@ -1,0 +1,15 @@
+@import 'src/assets/theme/font.scss';
+
+.network-total-volume {
+  padding: 26px 12px;
+
+  .network-name {
+    font-size: 14px;
+    margin-left: 8px;
+  }
+
+  .network-amount {
+    font-size: 14px;
+    @extend .font-family-medium;
+  }
+}

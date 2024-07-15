@@ -1,0 +1,11 @@
+@import 'src/assets/theme/color.scss';
+
+.transfer-status-pending {
+  font-size: 14px;
+  color: $warning;
+}
+
+.transfer-status-success {
+  font-size: 14px;
+  color: $success;
+}

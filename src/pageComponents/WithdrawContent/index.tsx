@@ -319,13 +319,22 @@ export default function WithdrawContent() {
           currentNetworkRef.current = networkList[0];
           dispatch(setWithdrawCurrentNetwork(networkList[0]));
         } else {
-          const exitNetwork = networkList.filter(
+          const exitNetwork = networkList.find(
             (item) => item.network === currentNetworkRef.current?.network,
           );
-          if (exitNetwork?.length === 0) {
+          if (!exitNetwork?.network) {
             setCurrentNetwork(undefined);
             currentNetworkRef.current = undefined;
             dispatch(setWithdrawCurrentNetwork(undefined));
+          } else {
+            if (exitNetwork.status !== NetworkStatus.Offline) {
+              setCurrentNetwork(exitNetwork);
+              dispatch(setWithdrawCurrentNetwork(exitNetwork));
+            } else {
+              setCurrentNetwork(undefined);
+              currentNetworkRef.current = undefined;
+              dispatch(setWithdrawCurrentNetwork(undefined));
+            }
           }
         }
         const isSolanaNetwork = networkList?.length === 1 && networkList[0].network === 'Solana';

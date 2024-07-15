@@ -1,7 +1,14 @@
 import { useMemo, useState, useRef } from 'react';
 import { useCopyToClipboard } from 'react-use';
 import clsx from 'clsx';
-import { Copy as CopyNormal, CopySmall, Check as CheckNormal, CheckSmall } from 'assets/images';
+import {
+  Copy as CopyNormal,
+  CopySmall,
+  CopyBig,
+  Check as CheckNormal,
+  CheckSmall,
+  CheckBig,
+} from 'assets/images';
 import styles from './styles.module.scss';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
@@ -9,6 +16,7 @@ import { useCommonState } from 'store/Provider/hooks';
 export enum CopySize {
   Small = 'small',
   Normal = 'normal',
+  Big = 'big',
 }
 
 export default function Copy({
@@ -31,8 +39,14 @@ export default function Copy({
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const CopyIcon = useMemo(() => (size === CopySize.Small ? CopySmall : CopyNormal), [size]);
-  const CheckIcon = useMemo(() => (size === CopySize.Small ? CheckSmall : CheckNormal), [size]);
+  const CopyIcon = useMemo(
+    () => (size === CopySize.Small ? CopySmall : size === CopySize.Big ? CopyBig : CopyNormal),
+    [size],
+  );
+  const CheckIcon = useMemo(
+    () => (size === CopySize.Small ? CheckSmall : size === CopySize.Big ? CheckBig : CheckNormal),
+    [size],
+  );
 
   const tooltipTitle = useMemo(() => {
     if (isShowCopyIcon || isPadPX) {

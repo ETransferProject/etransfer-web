@@ -2,7 +2,7 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { LargeNumberDisplay } from 'utils/calculate';
 import { useCommonState } from 'store/Provider/hooks';
-import { TRecordsStatus } from 'types/records';
+import { TOrderStatus } from 'types/records';
 import { defaultNullValue } from 'constants/index';
 import { formatSymbolDisplay } from 'utils/format';
 import { useFindToken } from 'hooks/common';
@@ -21,7 +21,7 @@ export default function AmountBox({ amount, token, fromToken, status }: TAmountB
 
   const amountDisplay = useMemo(() => {
     const currentToken = findToken(token);
-    return LargeNumberDisplay(amount, Number(currentToken?.decimals) || 6);
+    return LargeNumberDisplay(amount, Number(currentToken?.decimals));
   }, [amount, findToken, token]);
 
   return (
@@ -30,13 +30,13 @@ export default function AmountBox({ amount, token, fromToken, status }: TAmountB
         styles['amount-box'],
         isPadPX ? styles['mobile-amount-box'] : styles['web-amount-box'],
       )}>
-      {status !== TRecordsStatus.Failed &&
-        (fromToken && fromToken !== token && status === TRecordsStatus.Processing ? (
+      {status !== TOrderStatus.Failed &&
+        (fromToken && fromToken !== token && status === TOrderStatus.Processing ? (
           <span className={styles['second']}>Swapping</span>
         ) : (
           <span>{`${amountDisplay} ${formatSymbolDisplay(token)}`}</span>
         ))}
-      {status === TRecordsStatus.Failed && <span>{defaultNullValue}</span>}
+      {status === TOrderStatus.Failed && <span>{defaultNullValue}</span>}
     </div>
   );
 }

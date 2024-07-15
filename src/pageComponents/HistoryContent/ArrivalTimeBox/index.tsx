@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
-import { TRecordsStatus } from 'types/records';
+import { TOrderStatus } from 'types/records';
 import moment from 'moment';
 import { useCommonState } from 'store/Provider/hooks';
 import { defaultNullValue } from 'constants/index';
@@ -21,7 +21,7 @@ export default function ArrivalTimeBox({ arrivalTime, status }: TArrivalTimeBoxP
     const targetTime = moment(arrivalTime);
     const minutes = targetTime.diff(now, 'minutes');
     switch (status) {
-      case TRecordsStatus.Processing:
+      case TOrderStatus.Processing:
         return (
           <>
             {minutes > 0 ? (
@@ -31,9 +31,9 @@ export default function ArrivalTimeBox({ arrivalTime, status }: TArrivalTimeBoxP
             )}
           </>
         );
-      case TRecordsStatus.Failed:
+      case TOrderStatus.Failed:
         return defaultNullValue;
-      case TRecordsStatus.Succeed:
+      case TOrderStatus.Succeed:
         return (
           <div className={clsx(styles['year-hour-wrapper'])}>
             <span className={styles['year']}>{yearMonthDay}</span>
