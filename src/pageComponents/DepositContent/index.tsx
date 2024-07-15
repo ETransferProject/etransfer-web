@@ -196,13 +196,19 @@ export default function Content() {
           fromNetworkRef.current = networkList[0].network;
           dispatch(setFromNetwork(networkList[0]));
         } else {
-          const exitNetwork = networkList.filter((item) => item.network === fromNetworkRef.current);
-          if (exitNetwork?.length === 0) {
+          const exitNetwork = networkList.find((item) => item.network === fromNetworkRef.current);
+          if (!exitNetwork?.network) {
             fromNetworkRef.current = undefined;
             dispatch(setFromNetwork(undefined));
             return;
+          } else {
+            if (exitNetwork.status !== NetworkStatus.Offline) {
+              dispatch(setFromNetwork(exitNetwork));
+            } else {
+              fromNetworkRef.current = undefined;
+              dispatch(setFromNetwork(undefined));
+            }
           }
-          dispatch(setFromNetwork(exitNetwork[0]));
         }
         !isPadPX && (await getDepositData(chainId, lastSymbol, lastToSymbol));
       } catch (error: any) {
