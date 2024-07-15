@@ -67,11 +67,13 @@ export function valueFixed2LessThanMin(strValue: string, currency?: string): str
  * @param token token type
  * @returns amount value
  */
-export function LargeNumberDisplay(strNumber: string, decimals: number) {
+export function LargeNumberDisplay(strNumber: string, decimals?: number) {
   let valueBigNumber = new BigNumber(strNumber);
   if (valueBigNumber.isNaN()) {
     return defaultNullValue;
   }
+
+  if (!decimals) return valueBigNumber.toFormat();
 
   valueBigNumber = valueBigNumber.dp(decimals, BigNumber.ROUND_DOWN);
   return valueBigNumber.toFormat();

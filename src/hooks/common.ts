@@ -59,13 +59,14 @@ export function useClearStore() {
 }
 
 export function useMixAllTokenList() {
-  const { fromTokenList } = useDepositState();
+  const { fromTokenList, toTokenList } = useDepositState();
   const { tokenList } = useWithdrawState();
 
   const depositTokenList = Array.isArray(fromTokenList) ? fromTokenList : [];
+  const receiveTokenList = Array.isArray(toTokenList) ? toTokenList : [];
   const withdrawTokenList = Array.isArray(tokenList) ? tokenList : [];
 
-  return depositTokenList?.concat(withdrawTokenList);
+  return depositTokenList?.concat(withdrawTokenList).concat(receiveTokenList);
 }
 
 export function useFindToken() {
