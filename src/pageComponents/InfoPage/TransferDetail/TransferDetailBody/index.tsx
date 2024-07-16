@@ -29,14 +29,14 @@ export default function TransferDetailBody(props: Omit<TTransferDashboardData, '
         </div>
       </div>
 
-      {props.orderType === BusinessType.Withdraw && (
-        <div className={styles['detail-item']}>
-          <div className={styles['detail-label']}>Transaction Fee</div>
-          <div className={clsx(styles['detail-value'], styles['detail-value-fee'])}>
-            {`${props.toFeeInfo[0].amount} ${props.toFeeInfo[0].symbol}`}
-          </div>
+      <div className={styles['detail-item']}>
+        <div className={styles['detail-label']}>Transaction Fee</div>
+        <div className={clsx(styles['detail-value'], styles['detail-value-fee'])}>
+          {props.orderType === BusinessType.Withdraw
+            ? `${props.toFeeInfo[0].amount} ${props.toFeeInfo[0].symbol}`
+            : 'Free'}
         </div>
-      )}
+      </div>
 
       <div className={styles['detail-divider']} />
 
