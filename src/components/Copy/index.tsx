@@ -63,7 +63,8 @@ export default function Copy({
       trigger={isPadPX ? '' : 'hover'}
       open={isPadPX ? isTooltipOpen : undefined}>
       <span
-        onClick={() => {
+        onClick={(event: any) => {
+          event.stopPropagation();
           if (isShowCopyIcon) {
             return;
           }

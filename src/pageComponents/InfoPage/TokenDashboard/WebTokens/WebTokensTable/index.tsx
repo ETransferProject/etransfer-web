@@ -22,7 +22,7 @@ const WebTokensTableExpandedColumns = [
     title: 'empty',
     dataIndex: 'empty',
     key: 'empty',
-    width: 264,
+    width: 256,
   },
   {
     title: 'Network',
@@ -60,6 +60,12 @@ const WebTokensTableExpandedColumns = [
     render: (volumeTotal: string, item: ExpandedTableData) => {
       return <Volume amount={volumeTotal} unit={item.symbol} />;
     },
+  },
+  {
+    title: 'empty',
+    dataIndex: 'empty',
+    key: 'empty',
+    width: 20,
   },
 ];
 

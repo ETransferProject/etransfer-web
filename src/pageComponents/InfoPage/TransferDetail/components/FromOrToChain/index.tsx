@@ -26,7 +26,7 @@ export default function FromOrToChain({
           ? `${ChainNamePrefix.MainChain} ${chainId}`
           : `${ChainNamePrefix.SideChain} ${chainId}`
         : network;
-    return <span>{currentNetworkName}</span>;
+    return <span className={styles['network-name']}>{currentNetworkName}</span>;
   }, [chainId, network]);
 
   return (

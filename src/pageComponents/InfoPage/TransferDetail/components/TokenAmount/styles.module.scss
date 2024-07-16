@@ -15,10 +15,12 @@
   }
 
   .token-amount-value {
+    font-size: 14px;
     @extend .font-family-medium;
   }
 
   .token-amount-symbol {
+    font-size: 14px;
     white-space: pre;
     @extend .font-family-medium;
   }
@@ -26,5 +28,6 @@
   .token-amount-usd {
     color: $secondary-text;
     font-size: 12px;
+    line-height: 20px;
   }
 }

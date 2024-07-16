@@ -1,4 +1,5 @@
 @import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/constants.scss';
 @import 'src/assets/theme/font.scss';
 
 .volume-container {
@@ -8,6 +9,10 @@
   .volume-amount {
     font-size: 14px;
     @extend .font-family-medium;
+
+    display: inline-block;
+    word-break: break-all;
+    @include text-overflow;
   }
 
   .volume-usd {

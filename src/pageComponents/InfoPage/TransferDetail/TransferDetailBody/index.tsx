@@ -70,7 +70,11 @@ export default function TransferDetailBody(props: Omit<TTransferDashboardData, '
           chainId={props.fromChainId}
           network={props.fromNetwork}
           isOmitAddress={isMobilePX ? true : false}
-          className={isMobilePX ? styles['detail-value-wallet-address'] : ''}
+          className={
+            isMobilePX
+              ? styles['detail-value-wallet-address']
+              : styles['detail-value-wallet-address-web']
+          }
         />
       </div>
 
@@ -100,7 +104,7 @@ export default function TransferDetailBody(props: Omit<TTransferDashboardData, '
           icon={''}
           amount={props.toAmount}
           amountUsd={props.toAmountUsd}
-          symbol={props.toAmountUsd}
+          symbol={props.toSymbol}
         />
       </div>
 
@@ -111,7 +115,11 @@ export default function TransferDetailBody(props: Omit<TTransferDashboardData, '
           chainId={props.toChainId}
           network={props.toNetwork}
           isOmitAddress={isMobilePX ? true : false}
-          className={isMobilePX ? styles['detail-value-wallet-address'] : ''}
+          className={
+            isMobilePX
+              ? styles['detail-value-wallet-address']
+              : styles['detail-value-wallet-address-web']
+          }
         />
       </div>
 

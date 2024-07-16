@@ -1,5 +1,6 @@
 @import 'src/assets/theme/breakpoint.scss';
 @import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/constants.scss';
 @import 'src/assets/theme/font.scss';
 
 .token-container {
@@ -22,4 +23,8 @@
 .token-symbol {
   vertical-align: middle;
   margin-left: 6px;
+
+  display: inline-block;
+  word-break: break-all;
+  @include text-overflow;
 }

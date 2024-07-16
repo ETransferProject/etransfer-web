@@ -52,20 +52,24 @@ export default function WalletAddress({
     return address || defaultNullValue;
   }, [chainId, network, address, accounts]);
 
-  const handleAddressClick = useCallback(() => {
-    if (chainId && network === BlockchainNetworkType.AELF && AelfChainIdList.includes(chainId)) {
-      openWithBlank(getAelfExploreLink(calcAddress(), AelfExploreType.address, chainId));
-      return;
-    }
+  const handleAddressClick = useCallback(
+    (event: any) => {
+      event.stopPropagation();
+      if (chainId && network === BlockchainNetworkType.AELF && AelfChainIdList.includes(chainId)) {
+        openWithBlank(getAelfExploreLink(calcAddress(), AelfExploreType.address, chainId));
+        return;
+      }
 
-    openWithBlank(
-      getOtherExploreLink(
-        calcAddress(),
-        OtherExploreType.address,
-        network as keyof typeof ExploreUrlType,
-      ),
-    );
-  }, [chainId, network, calcAddress]);
+      openWithBlank(
+        getOtherExploreLink(
+          calcAddress(),
+          OtherExploreType.address,
+          network as keyof typeof ExploreUrlType,
+        ),
+      );
+    },
+    [chainId, network, calcAddress],
+  );
 
   return (
     <div className={clsx('flex-row-center', styles['wallet-container'], className)}>
