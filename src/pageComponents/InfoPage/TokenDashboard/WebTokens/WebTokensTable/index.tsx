@@ -11,6 +11,7 @@ import { ChainId } from '@portkey/types';
 import DynamicArrow from 'components/DynamicArrow';
 import Network from '../../ColumnComponents/Network';
 import { useCallback, useMemo, useState } from 'react';
+import { ZERO } from 'constants/calculate';
 
 interface ExpandedTableData extends TTokenDashboardItemDetail {
   symbol: string;
@@ -38,7 +39,6 @@ const WebTokensTableExpandedColumns = [
     dataIndex: 'volume24H',
     key: 'volume24H',
     // width: 150,
-    showSorterTooltip: false,
     render: (volume24H: string, item: ExpandedTableData) => {
       return <Volume amount={volume24H} unit={item.symbol} />;
     },
@@ -48,7 +48,6 @@ const WebTokensTableExpandedColumns = [
     dataIndex: 'volume7D',
     key: 'volume7D',
     // width: 150,
-    showSorterTooltip: false,
     render: (volume7D: string, item: ExpandedTableData) => {
       return <Volume amount={volume7D} unit={item.symbol} />;
     },
@@ -58,7 +57,6 @@ const WebTokensTableExpandedColumns = [
     dataIndex: 'volumeTotal',
     key: 'volumeTotal',
     // width: 178,
-    showSorterTooltip: false,
     render: (volumeTotal: string, item: ExpandedTableData) => {
       return <Volume amount={volumeTotal} unit={item.symbol} />;
     },
@@ -118,7 +116,7 @@ export default function WebTokensTable() {
         // width: 150,
         showSorterTooltip: false,
         sorter: (a: { volume24H: string }, b: { volume24H: string }) =>
-          a.volume24H.length - b.volume24H.length,
+          ZERO.plus(a.volume24H).minus(b.volume24H).toNumber(),
         render: (volume24H: string, item: TTokenDashboardItem) => {
           return <Volume amount={volume24H} unit={item.symbol} amountUsd={item.volume24HUsd} />;
         },
@@ -130,7 +128,7 @@ export default function WebTokensTable() {
         // width: 150,
         showSorterTooltip: false,
         sorter: (a: { volume7D: string }, b: { volume7D: string }) =>
-          a.volume7D.length - b.volume7D.length,
+          ZERO.plus(a.volume7D).minus(b.volume7D).toNumber(),
         render: (volume7D: string, item: TTokenDashboardItem) => {
           return <Volume amount={volume7D} unit={item.symbol} amountUsd={item.volume7DUsd} />;
         },
@@ -142,7 +140,7 @@ export default function WebTokensTable() {
         // width: 150,
         showSorterTooltip: false,
         sorter: (a: { volumeTotal: string }, b: { volumeTotal: string }) =>
-          a.volumeTotal.length - b.volumeTotal.length,
+          ZERO.plus(a.volumeTotal).minus(b.volumeTotal).toNumber(),
         render: (volumeTotal: string, item: TTokenDashboardItem) => {
           return <Volume amount={volumeTotal} unit={item.symbol} amountUsd={item.volumeTotalUsd} />;
         },
