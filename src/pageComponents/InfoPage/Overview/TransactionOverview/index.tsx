@@ -21,11 +21,16 @@ type TCurrentItem = {
   plus: string;
 };
 
+type TTotalItem = {
+  date: string;
+  plus: string;
+};
+
 export default function TransactionOverview() {
   const dataMapRef = useRef<Record<string, Partial<TTransactionOverviewItem>>>({});
   const [opacity, setOpacity] = useState(1);
   const [chartData, setChartData] = useState<TTransactionOverviewItem[]>([]);
-  const [lastItem, setLastItem] = useState<TTransactionOverviewItem>();
+  const [totalItem, setTotalItem] = useState<TTotalItem>();
   const [currentItem, setCurrentItem] = useState<TCurrentItem>();
   const [loading, setLoading] = useState(true);
 
@@ -64,8 +69,8 @@ export default function TransactionOverview() {
       setCurrentItem({
         deposit: '',
         withdraw: '',
-        plus: computePlus(lastItem?.depositTx, lastItem?.withdrawTx),
-        date: lastItem?.date || '',
+        plus: totalItem?.plus || '',
+        date: totalItem?.date || '',
       });
     },
     [],
@@ -105,14 +110,16 @@ export default function TransactionOverview() {
 
       dataMapRef.current = Object.fromEntries(list.map((item) => [item.date, item]));
 
-      const last = list[list.length - 1];
       setChartData(list);
-      setLastItem(last);
+      setTotalItem({
+        plus: String(res.transaction.totalTx),
+        date: res.transaction.latest,
+      });
       setCurrentItem({
         deposit: '',
         withdraw: '',
-        plus: computePlus(last?.depositTx, last?.withdrawTx),
-        date: last?.date || '',
+        plus: String(res.transaction.totalTx),
+        date: res.transaction.latest,
       });
     } catch (error) {
       console.log('TransactionOverview get data error', error);

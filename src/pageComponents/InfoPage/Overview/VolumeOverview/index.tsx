@@ -21,11 +21,16 @@ type TCurrentItem = {
   plus: string;
 };
 
+type TTotalItem = {
+  date: string;
+  plus: string;
+};
+
 export default function VolumeOverview() {
   const dataMapRef = useRef<Record<string, Partial<TVolumeOverviewItem>>>({});
   const [opacity, setOpacity] = useState(1);
   const [chartData, setChartData] = useState<TVolumeOverviewItem[]>([]);
-  const [lastItem, setLastItem] = useState<TVolumeOverviewItem>();
+  const [totalItem, setTotalItem] = useState<TTotalItem>();
   const [currentItem, setCurrentItem] = useState<TCurrentItem>();
   const [loading, setLoading] = useState(true);
 
@@ -66,11 +71,11 @@ export default function VolumeOverview() {
       setCurrentItem({
         deposit: '',
         withdraw: '',
-        plus: computePlus(lastItem?.depositAmountUsd, lastItem?.withdrawAmountUsd),
-        date: lastItem?.date || '',
+        plus: totalItem?.plus || '',
+        date: totalItem?.date || '',
       });
     },
-    [lastItem],
+    [totalItem],
     100,
   );
 
@@ -107,14 +112,16 @@ export default function VolumeOverview() {
 
       dataMapRef.current = Object.fromEntries(list.map((item) => [item.date, item]));
 
-      const last = list[list.length - 1];
       setChartData(list);
-      setLastItem(last);
+      setTotalItem({
+        plus: res.volume.totalAmountUsd,
+        date: res.volume.latest,
+      });
       setCurrentItem({
         deposit: '',
         withdraw: '',
-        plus: computePlus(last?.depositAmountUsd, last?.withdrawAmountUsd),
-        date: last?.date || '',
+        plus: res.volume.totalAmountUsd,
+        date: res.volume.latest,
       });
     } catch (error) {
       console.log('VolumeOverview get data error', error);
