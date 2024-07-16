@@ -1,6 +1,6 @@
-import { useInfoDashboardState } from 'store/Provider/hooks';
+import { useAppDispatch, useInfoDashboardState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { TTransferDashboardData } from 'types/infoDashboard';
 import DynamicArrow from 'components/DynamicArrow';
 import FromToChain from '../../ColumnComponents/FromToChain';
@@ -11,8 +11,8 @@ import WalletAddress from '../../ColumnComponents/WalletAddress';
 import clsx from 'clsx';
 import EmptyDataBox from 'pageComponents/EmptyDataBox';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import CommonDrawer from 'components/CommonDrawer';
-import TransferDetail from 'pageComponents/InfoPage/TransferDetail';
+import { setSelectedTransfer } from 'store/reducers/infoDashboard/slice';
+import myEvents from 'utils/myEvent';
 
 const NoDataText = '-- No Data --';
 
@@ -29,14 +29,15 @@ export default function MobileTransferBody({
   const transferList = useMemo<TTransferDashboardData[]>(() => {
     return JSON.parse(JSON.stringify(transfers));
   }, [transfers]);
-  const [isShowDetailDrawer, setIsShowDetailDrawer] = useState(false);
-  const [detailData, setDetailData] = useState<TTransferDashboardData>(transferList[0]);
+  const dispatch = useAppDispatch();
 
-  const switchExpand = useCallback((item: TTransferDashboardData) => {
-    setIsShowDetailDrawer(true);
-
-    setDetailData(item);
-  }, []);
+  const switchExpand = useCallback(
+    (item: TTransferDashboardData) => {
+      dispatch(setSelectedTransfer(item));
+      myEvents.ShowWebTransferDashboardDetailPage.emit();
+    },
+    [dispatch],
+  );
 
   const renderAction = useCallback(
     (item: TTransferDashboardData) => {
@@ -61,12 +62,7 @@ export default function MobileTransferBody({
               styles['transfer-card-token'],
               'flex-row-between',
             )}>
-            <FromToToken
-              fromSymbol={item.fromSymbol}
-              fromIcon={''}
-              toSymbol={item.toSymbol}
-              toIcon={''}
-            />
+            <FromToToken fromSymbol={item.fromSymbol} toSymbol={item.toSymbol} />
             <div className={styles['transfer-card-type']}>{item.orderType}</div>
           </div>
           <div className={clsx('flex-row-between', styles['transfer-card-row'])}>
@@ -136,18 +132,6 @@ export default function MobileTransferBody({
           })}
         </InfiniteScroll>
       )}
-
-      <CommonDrawer
-        open={isShowDetailDrawer}
-        height={'100%'}
-        title={<div className={styles['detail-title']}>Transfer Detail</div>}
-        id="TransferDashboardDetailMobileDrawer"
-        className={styles['detail-drawer-wrapper']}
-        destroyOnClose
-        placement={'right'}
-        onClose={() => setIsShowDetailDrawer(!isShowDetailDrawer)}>
-        <TransferDetail {...detailData} />
-      </CommonDrawer>
     </div>
   );
 }

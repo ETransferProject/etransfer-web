@@ -167,14 +167,6 @@ export default function WebTokensTable() {
     [expandedRowKeys, handleExpanded],
   );
 
-  const handleTokensData = (list: TTokenDashboardItem[]) => {
-    if (list.length === 0) {
-      return;
-    }
-
-    return list;
-  };
-
   const handleExpandedTableData = (select?: TTokenDashboardItem): ExpandedTableData[] => {
     if (!select) return [];
     if (select.details?.length === 0) return [];
@@ -207,7 +199,7 @@ export default function WebTokensTable() {
       <Table
         size={'large'}
         rowKey={(row) => row.symbol}
-        dataSource={handleTokensData(tokens)}
+        dataSource={tokens}
         columns={WebTokensTableColumns}
         scroll={{ x: 1020 }}
         expandable={{

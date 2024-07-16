@@ -1,4 +1,5 @@
 import { EChartsOption, SeriesOption } from 'echarts';
+import moment from 'moment';
 import { BusinessType } from 'types/api';
 
 export interface GenerateStackBarOptionPrams {
@@ -75,7 +76,16 @@ export const generateStackBarOption = ({
         fontSize: 12,
         color: '#808080',
       },
-      axisLabel: { overflow: 'truncate' },
+      axisLabel: {
+        overflow: 'breakAll',
+        // showMinLabel: false,
+        // showMaxLabel: false,
+        alignMinLabel: 'left',
+        alignMaxLabel: 'right',
+        formatter: function (value) {
+          return moment(value, 'YYYY-MM-DD').format('MMM D');
+        },
+      },
       splitLine: { show: false },
       axisTick: { show: false },
       axisLine: { show: false },

@@ -5,6 +5,7 @@ import { TTokenDashboardItem, TTransferDashboardData } from 'types/infoDashboard
 export type TInfoDashboardState = {
   tokens: TTokenDashboardItem[];
   transferList: TTransferDashboardData[];
+  selectedTransfer?: TTransferDashboardData;
   tokensInfo: TTransferDashboardFilterToken[];
 };
 
@@ -24,6 +25,9 @@ export const InfoDashboardSlice = createSlice({
     setTransferList: (state, action: PayloadAction<TTransferDashboardData[]>) => {
       state.transferList = action.payload;
     },
+    setSelectedTransfer: (state, action: PayloadAction<TTransferDashboardData>) => {
+      state.selectedTransfer = action.payload;
+    },
     setTokensInfo: (state, action: PayloadAction<TTransferDashboardFilterToken[]>) => {
       state.tokensInfo = action.payload;
     },
@@ -33,7 +37,12 @@ export const InfoDashboardSlice = createSlice({
   },
 });
 
-export const { setTokens, setTransferList, resetInfoDashboardState, setTokensInfo } =
-  InfoDashboardSlice.actions;
+export const {
+  setTokens,
+  setTransferList,
+  setSelectedTransfer,
+  resetInfoDashboardState,
+  setTokensInfo,
+} = InfoDashboardSlice.actions;
 
 export default InfoDashboardSlice;

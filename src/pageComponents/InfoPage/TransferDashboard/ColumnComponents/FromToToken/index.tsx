@@ -5,9 +5,9 @@ import TokenBox from 'pageComponents/InfoPage/TokenDashboard/ColumnComponents/To
 
 export interface FromToTokenProps {
   fromSymbol: string;
-  fromIcon: string;
+  fromIcon?: string;
   toSymbol: string;
-  toIcon: string;
+  toIcon?: string;
 }
 
 export default function FromToToken({ fromSymbol, fromIcon, toSymbol, toIcon }: FromToTokenProps) {

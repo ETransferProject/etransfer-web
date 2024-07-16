@@ -45,3 +45,28 @@
     }
   }
 }
+
+.detail-drawer-wrapper {
+  :global {
+    .ant-drawer-content-wrapper {
+      background-color: $page-bg;
+
+      .ant-drawer-content {
+        border-radius: 0 !important;
+        .ant-drawer-wrapper-body {
+          .ant-drawer-header {
+            @include media-pad {
+              padding-top: 27px;
+              padding-bottom: 27px;
+              height: 80px;
+            }
+          }
+        }
+      }
+    }
+
+    .ant-drawer-body {
+      margin-top: 12px;
+    }
+  }
+}

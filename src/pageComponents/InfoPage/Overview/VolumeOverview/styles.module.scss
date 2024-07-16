@@ -13,6 +13,10 @@
 
 .volume-charts {
   width: 100%;
-  min-width: 352px;
+  min-width: 307px;
   height: 376px;
+
+  @include media-mobile-and-pad {
+    min-width: 324px;
+  }
 }

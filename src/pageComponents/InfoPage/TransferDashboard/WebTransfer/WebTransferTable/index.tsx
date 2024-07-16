@@ -1,4 +1,4 @@
-import { useInfoDashboardState } from 'store/Provider/hooks';
+import { useAppDispatch, useInfoDashboardState } from 'store/Provider/hooks';
 import { Table } from 'antd';
 import EmptyDataBox from 'pageComponents/EmptyDataBox';
 import { TTransferDashboardData } from 'types/infoDashboard';
@@ -10,6 +10,7 @@ import Time from '../../ColumnComponents/Time';
 import { BusinessType } from 'types/api';
 import { ChainId } from '@portkey/types';
 import myEvents from 'utils/myEvent';
+import { setSelectedTransfer } from 'store/reducers/infoDashboard/slice';
 
 const WebTransferTableColumns = [
   {
@@ -17,9 +18,7 @@ const WebTransferTableColumns = [
     dataIndex: 'fromSymbol',
     key: 'fromSymbol',
     render: (fromSymbol: string, item: TTransferDashboardData) => {
-      return (
-        <FromToToken fromSymbol={fromSymbol} fromIcon={''} toSymbol={item.toSymbol} toIcon={''} />
-      );
+      return <FromToToken fromSymbol={fromSymbol} toSymbol={item.toSymbol} />;
     },
   },
   {
@@ -83,7 +82,6 @@ export interface WebTransferTableProps {
   maxResultCount: number;
   skipPageCount: number;
   tableOnChange: (page: number, pageSize: number) => void;
-  showDetail: (item: TTransferDashboardData) => void;
 }
 
 export default function WebTransferTable({
@@ -91,23 +89,15 @@ export default function WebTransferTable({
   maxResultCount,
   skipPageCount,
   tableOnChange,
-  showDetail,
 }: WebTransferTableProps) {
   const { transferList } = useInfoDashboardState();
-
-  const handleTransferData = (list: TTransferDashboardData[]) => {
-    if (list.length === 0) {
-      return;
-    }
-
-    return list;
-  };
+  const dispatch = useAppDispatch();
 
   return (
     <Table
       size={'large'}
       rowKey={'key'}
-      dataSource={handleTransferData(transferList)}
+      dataSource={transferList}
       columns={WebTransferTableColumns}
       scroll={{ x: 1020 }}
       locale={{
@@ -116,7 +106,7 @@ export default function WebTransferTable({
       onRow={(item) => {
         return {
           onClick: () => {
-            showDetail(item);
+            dispatch(setSelectedTransfer(item));
             myEvents.ShowWebTransferDashboardDetailPage.emit();
           },
         };
