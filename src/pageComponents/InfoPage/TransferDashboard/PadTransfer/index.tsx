@@ -1,13 +1,7 @@
-import TransferDetail from 'pageComponents/InfoPage/TransferDetail';
 import MobileTransferHeader from '../MobileTransfer/MobileTransferHeader';
-import { useCallback, useState } from 'react';
 import WebTransferTable, { WebTransferTableProps } from '../WebTransfer/WebTransferTable';
 import Space from 'components/Space';
-import { useInfoDashboardState } from 'store/Provider/hooks';
-import { TTransferDashboardData } from 'types/infoDashboard';
 import { MobileTransferDashboardProps } from '../types';
-import styles from './styles.module.scss';
-import CommonDrawer from 'components/CommonDrawer';
 
 export default function PadTransfer({
   // filter
@@ -29,16 +23,7 @@ export default function PadTransfer({
 
   handleResetFilter,
   handleApplyFilter,
-}: MobileTransferDashboardProps & Omit<WebTransferTableProps, 'showDetail'>) {
-  const { transferList } = useInfoDashboardState();
-  const [isShowDetailDrawer, setIsShowDetailDrawer] = useState(false);
-  const [detailData, setDetailData] = useState<TTransferDashboardData>(transferList[0]);
-
-  const showDetail = useCallback((item: TTransferDashboardData) => {
-    setIsShowDetailDrawer(true);
-    setDetailData(item);
-  }, []);
-
+}: MobileTransferDashboardProps & WebTransferTableProps) {
   return (
     <div>
       <MobileTransferHeader
@@ -60,20 +45,7 @@ export default function PadTransfer({
         maxResultCount={maxResultCount}
         skipPageCount={skipPageCount}
         tableOnChange={tableOnChange}
-        showDetail={showDetail}
       />
-
-      <CommonDrawer
-        open={isShowDetailDrawer}
-        height={'100%'}
-        title={<div className={styles['detail-title']}>Transfer Detail</div>}
-        id="TransferDashboardDetailPadDrawer"
-        className={styles['detail-drawer-wrapper']}
-        destroyOnClose
-        placement={'right'}
-        onClose={() => setIsShowDetailDrawer(!isShowDetailDrawer)}>
-        <TransferDetail {...detailData} />
-      </CommonDrawer>
     </div>
   );
 }

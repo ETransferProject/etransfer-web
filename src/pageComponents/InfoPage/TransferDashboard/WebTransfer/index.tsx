@@ -25,7 +25,7 @@ export default function WebTransfer({
   skipPageCount,
   tableOnChange,
   handleResetFilter,
-}: WebTransferDashboardProps & Omit<WebTransferTableProps, 'showDetail'>) {
+}: WebTransferDashboardProps & WebTransferTableProps) {
   return (
     <div>
       <WebTransferHeader
