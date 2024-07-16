@@ -517,6 +517,8 @@ export default function WithdrawContent() {
     [currentSymbol, currentVersion, form, handleAmountValidate],
   );
 
+  const [{ wallet, loginState }] = useWalletContext();
+
   useEffect(() => {
     if (
       (currentNetwork?.network === 'SETH' || currentNetwork?.network === 'ETH') &&
@@ -537,9 +539,8 @@ export default function WithdrawContent() {
         },
       });
     }
-  }, [currentNetwork?.network, handleFormValidateDataChange, withdrawInfo.feeUsd]);
+  }, [currentNetwork?.network, handleFormValidateDataChange, loginState, withdrawInfo.feeUsd]);
 
-  const [{ wallet }] = useWalletContext();
   const getMaxBalance = useCallback(
     async (isLoading: boolean, item?: TTokenItem) => {
       try {

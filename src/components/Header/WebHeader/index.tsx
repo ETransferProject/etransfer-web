@@ -1,26 +1,32 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import clsx from 'clsx';
 import LoginAndProfileEntry from 'components/Header/LoginAndProfile';
 import { Logo } from 'assets/images';
 import styles from './styles.module.scss';
-import { useIsActive } from 'hooks/portkeyWallet';
-import { useWebLogin, WalletType } from 'aelf-web-login';
 import { useRouter } from 'next/navigation';
+import { ETRANSFER_WEBSITE_URL } from 'constants/index';
+import { useIsPortkeyLogin } from 'hooks/wallet';
 
 export default function WebHeader() {
-  const isActive = useIsActive();
-  const { walletType } = useWebLogin();
   const router = useRouter();
+  const isPortkeyLogin = useIsPortkeyLogin();
 
   const handleOpenAssets = () => {
     router.push('/assets');
   };
 
+  const goWebsite = useCallback(() => {
+    window.open(ETRANSFER_WEBSITE_URL, '_self');
+  }, []);
+
   return (
     <div className={clsx('flex-row-between', styles['header-container'])}>
-      <Logo />
+      <div className={styles['header-logo']} onClick={goWebsite}>
+        <Logo />
+      </div>
+
       <div className={styles['right-wrapper']}>
-        {isActive && walletType === WalletType.portkey && (
+        {isPortkeyLogin && (
           <span className={styles['assets-wrapper']} onClick={() => handleOpenAssets()}>
             Assets
           </span>

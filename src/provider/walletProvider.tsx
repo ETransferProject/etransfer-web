@@ -30,12 +30,14 @@ import { useRouterPush } from 'hooks/route';
 
 export const DESTROY = 'DESTROY';
 const SET_WALLET = 'SET_WALLET';
+const SET_LOGIN_STATE = 'SET_LOGIN_STATE';
 
 const INITIAL_STATE = {};
 const WalletContext = createContext<any>(INITIAL_STATE);
 
 export type TWalletContextState = {
   wallet?: TWallet;
+  loginState?: WebLoginState;
 };
 
 export function useWalletContext(): [TWalletContextState, React.Dispatch<any>] {
@@ -49,6 +51,12 @@ function reducer(state: any, { type, payload }: any) {
       return {
         ...state,
         wallet: payload,
+      };
+    }
+    case SET_LOGIN_STATE: {
+      return {
+        ...state,
+        loginState: payload,
       };
     }
     case DESTROY: {
@@ -122,21 +130,24 @@ function WalletProvider({ children }: { children: React.ReactNode }) {
     callSideChainSendMethod,
     callSideChainViewMethod,
   ]);
+  const initWalletRef = useRef(onInitWallet);
+  initWalletRef.current = onInitWallet;
+
+  const { getAuth } = useQueryAuthToken();
+  const getAuthRef = useRef(getAuth);
+  getAuthRef.current = getAuth;
 
   // WebLoginEvents.LOGINED - can not get wallet info.
   // Please use webLoginContext.loginState===WebLoginState.logined
   // useWebLoginEvent(WebLoginEvents.LOGINED, onInitWallet);
   useEffect(() => {
+    dispatch({
+      type: SET_LOGIN_STATE,
+      payload: webLoginContext.loginState,
+    });
     if (webLoginContext.loginState !== WebLoginState.logined) return;
-    onInitWallet();
-  }, [onInitWallet, webLoginContext.loginState]);
-
-  const { getAuth } = useQueryAuthToken();
-  useEffect(() => {
-    if (webLoginContext.loginState !== WebLoginState.logined) return;
-    getAuth();
-    // Ignore the impact of the change in getAuth, just watch loginState change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    initWalletRef.current();
+    getAuthRef.current();
   }, [webLoginContext.loginState]);
 
   const { queryAuth } = useQueryAuthToken();
@@ -145,8 +156,8 @@ function WalletProvider({ children }: { children: React.ReactNode }) {
   routerPushRef.current = routerPush;
   const onAuthorizationExpired = useCallback(async () => {
     if (webLoginContext.loginState !== WebLoginState.logined) {
-      console.log('AuthorizationExpired: Not Logined');
-      routerPushRef.current('/', false);
+      console.warn('AuthorizationExpired: Not Logined');
+      // routerPushRef.current('/', false);
       return;
     }
     resetLocalJWT();

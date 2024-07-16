@@ -12,6 +12,7 @@ import StatusBox from 'pageComponents/HistoryContent/StatusBox';
 import ArrivalTimeBox from 'pageComponents/HistoryContent/ArrivalTimeBox';
 import AmountBox from 'pageComponents/HistoryContent/AmountBox';
 import FromAndToBox from 'pageComponents/HistoryContent/FromAndToBox';
+import { useIsLogin } from 'hooks/wallet';
 
 const columns = [
   {
@@ -125,6 +126,7 @@ const columns = [
 export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProps) {
   const { recordsList, totalCount, skipCount, maxResultCount } = useRecordsState();
   const dispatch = useAppDispatch();
+  const isLogin = useIsLogin();
 
   const handleRecordListData = (recordsList: TRecordsListItem[]) => {
     if (recordsList.length === 0) {
@@ -182,7 +184,11 @@ export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProp
         columns={columns}
         scroll={{ x: 1020 }}
         locale={{
-          emptyText: <EmptyDataBox emptyText={'No records found'} />,
+          emptyText: (
+            <EmptyDataBox
+              emptyText={isLogin ? 'No records found' : 'Log in to view transaction history'}
+            />
+          ),
         }}
         pagination={
           totalCount > maxResultCount

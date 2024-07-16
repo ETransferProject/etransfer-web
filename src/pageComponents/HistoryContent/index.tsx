@@ -25,8 +25,8 @@ import queryString from 'query-string';
 import { useWalletContext } from 'provider/walletProvider';
 import { SideMenuKey } from 'constants/home';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
-import { useIsActive } from 'hooks/portkeyWallet';
 import { useRouterPush } from 'hooks/route';
+import { useIsLogin } from 'hooks/wallet';
 
 export type TRecordsContentProps = TRecordsBodyProps & {
   onReset: () => void;
@@ -42,7 +42,8 @@ export default function Content() {
   const { setFilter } = useHistoryFilter();
   const { setLoading } = useLoading();
   const [{ wallet }] = useWalletContext();
-  const isActive = useIsActive();
+  const isLogin = useIsLogin();
+
   const routerPush = useRouterPush();
   const routerPushRef = useRef(routerPush);
   routerPushRef.current = routerPush;
@@ -136,17 +137,8 @@ export default function Content() {
     [searchParams],
   );
 
-  const checkActive = useCallback(async () => {
-    await sleep(100);
-    if (!isActive) {
-      routerPushRef.current('/');
-    }
-  }, [isActive]);
-
   useEffectOnce(() => {
     dispatch(setActiveMenuKey(SideMenuKey.History));
-
-    checkActive();
 
     const search: any = {
       method: routeQuery.method != null ? routeQuery.method : undefined,
@@ -192,8 +184,19 @@ export default function Content() {
   initRef.current = init;
 
   useEffect(() => {
-    initRef.current();
-  }, []);
+    if (isLogin) {
+      initRef.current();
+    } else {
+      setFilter({
+        method: TRecordsRequestType.ALL,
+        status: TRecordsRequestStatus.ALL,
+        timeArray: null,
+      });
+      dispatch(setSkipCount(1));
+
+      dispatch(setRecordsList([]));
+    }
+  }, [dispatch, isLogin, setFilter]);
 
   // Listener login
   const refreshData = useCallback(() => {

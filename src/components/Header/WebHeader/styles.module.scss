@@ -12,6 +12,10 @@
     padding-left: calc((100vw - $max-width) / 2 + 40px);
     padding-right: calc((100vw - $max-width) / 2 + 40px);
   }
+
+  .header-logo {
+    cursor: pointer;
+  }
 }
 
 .right-wrapper {

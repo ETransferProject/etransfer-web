@@ -14,7 +14,6 @@ import { setSwitchVersionAction } from 'store/reducers/common/slice';
 import { setToChainItem } from 'store/reducers/deposit/slice';
 import { setDisconnectedAction } from 'store/reducers/portkeyWallet/actions';
 import { setWithdrawChainItem } from 'store/reducers/withdraw/slice';
-import { useRouterPush } from './route';
 
 export function useCurrentVersion() {
   const { currentVersion } = useCommonState();
@@ -47,15 +46,13 @@ export function useSetCurrentChainItem() {
 export function useClearStore() {
   const dispatch = useAppDispatch();
   const resetStore = useResetStore();
-  const routerPush = useRouterPush();
 
   return useCallback(() => {
     dispatch(setDisconnectedAction());
     dispatch(setSwitchVersionAction(undefined));
     resetStore();
     resetLocalJWT();
-    routerPush('/', false);
-  }, [dispatch, resetStore, routerPush]);
+  }, [dispatch, resetStore]);
 }
 
 export function useMixAllTokenList() {

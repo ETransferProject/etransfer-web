@@ -5,13 +5,13 @@ import MobileUserProfile from './MobileUserProfile';
 import WebUserProfile from './WebUserProfile';
 import { CommonButtonSize } from 'components/CommonButton';
 import styles from './styles.module.scss';
-import { usePathname } from 'next/navigation';
+import { useIsLogin } from 'hooks/wallet';
 
 export default function LoginAndProfileEntry() {
   const { isPadPX } = useCommonState();
-  const pathname = usePathname();
+  const isLogin = useIsLogin();
 
-  if (pathname === '/') {
+  if (!isLogin) {
     return (
       <ConnectWalletButton
         className={styles['connect-wallet-button']}

@@ -1,19 +1,22 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useAppDispatch } from 'store/Provider/hooks';
 import { setIsUnreadHistory } from 'store/reducers/common/slice';
 import { getRecordStatus } from 'utils/api/records';
 import myEvents from 'utils/myEvent';
-import { useIsActive } from './portkeyWallet';
 import { eTransferInstance } from 'utils/etransferInstance';
+import { useWalletContext } from 'provider/walletProvider';
+import { WebLoginState } from 'aelf-web-login';
 
 export const MAX_UPDATE_TIME = 6;
 
 export function useUpdateRecord() {
   const dispatch = useAppDispatch();
-  const isActive = useIsActive();
+
+  const [{ loginState }] = useWalletContext();
+  const isLogin = useMemo(() => loginState === WebLoginState.logined, [loginState]);
 
   const updateRecordStatus = useCallback(async () => {
-    if (!isActive) return;
+    if (!isLogin) return;
     if (eTransferInstance.unauthorized) return;
 
     try {
@@ -22,7 +25,7 @@ export function useUpdateRecord() {
     } catch (error) {
       console.log('update new records error', error);
     }
-  }, [dispatch, isActive]);
+  }, [dispatch, isLogin]);
 
   const updateTimeRef = useRef(MAX_UPDATE_TIME);
   const updateTimerRef = useRef<NodeJS.Timer | number>();
