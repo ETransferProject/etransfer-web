@@ -41,7 +41,7 @@ export const formatTime = (time: number) => {
 
   const timeDaysDiff = moment(currentTimestamp).diff(moment(time), 'days');
   if (timeDaysDiff > 0) {
-    return moment(time).format('MMM D, YYYY hh:mm:ss');
+    return moment(time).format('MMM D, YYYY HH:mm:ss');
   } else {
     const timeHourDiff = moment(currentTimestamp).diff(moment(time), 'hours');
     if (timeHourDiff > 0) {
