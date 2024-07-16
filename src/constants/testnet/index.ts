@@ -70,8 +70,8 @@ export const AELF_NODES = {
 };
 
 // testnet-jenkins
-export const ETransferHost = 'https://test.etransfer.exchange';
-export const ETransferAuthHost = 'https://test.etransfer.exchange';
+export const ETransferHost = 'https://test-app.etransfer.exchange';
+export const ETransferAuthHost = 'https://test-app.etransfer.exchange';
 export const WebLoginGraphqlUrlV1 =
   'https://dapp-portkey-test.portkey.finance/Portkey_DID/PortKeyIndexerCASchema/graphql';
 export const WebLoginGraphqlUrlV2 =
