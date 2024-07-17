@@ -42,10 +42,8 @@ export default function DisplayImage({
           loading="eager"
           src={src}
           alt={alt || `image-${name}`}
-          width={width}
-          height={height}
-          fill={false}
-          style={{ zIndex: 2 }}
+          style={{ width, height, zIndex: 2 }}
+          fill={true}
           onError={() => {
             setShowIcon(false);
           }}

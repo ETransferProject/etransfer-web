@@ -1,6 +1,11 @@
 import { ChainId } from '@portkey/types';
 import { EXPLORE_CONFIG } from 'constants/index';
-import { AelfExploreType, ExploreUrlType, OtherExploreType } from 'constants/network';
+import {
+  AelfExploreType,
+  BlockchainNetworkType,
+  ExploreUrlType,
+  OtherExploreType,
+} from 'constants/network';
 
 export function getAelfExploreLink(data: string, type: AelfExploreType, chainId: ChainId): string {
   const prefix = EXPLORE_CONFIG[chainId];
@@ -50,3 +55,17 @@ export function openWithBlank(url: string): void {
     newWindow.opener = null;
   }
 }
+
+export const viewTxDetailInExplore = (network: string, txHash: string, chainId?: ChainId) => {
+  if (network === BlockchainNetworkType.AELF && chainId) {
+    openWithBlank(getAelfExploreLink(txHash, AelfExploreType.transaction, chainId));
+    return;
+  }
+  openWithBlank(
+    getOtherExploreLink(
+      txHash,
+      OtherExploreType.transaction,
+      network as keyof typeof ExploreUrlType,
+    ),
+  );
+};

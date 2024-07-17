@@ -9,6 +9,7 @@ import TokenAmount from '../components/TokenAmount';
 import { useCommonState } from 'store/Provider/hooks';
 import { getOmittedStr } from 'utils/calculate';
 import { formatTime } from 'pageComponents/InfoPage/TransferDashboard/utils';
+import { viewTxDetailInExplore } from 'utils/common';
 
 export default function TransferDetailBody(props: Omit<TTransferDashboardData, 'status'>) {
   const { isMobilePX } = useCommonState();
@@ -43,7 +44,11 @@ export default function TransferDetailBody(props: Omit<TTransferDashboardData, '
       {/* ======== Source Info ======== */}
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>Source Tx Hash</div>
-        <div className={clsx(styles['detail-value'], styles['detail-value-from-tx-hash'])}>
+        <div
+          className={clsx(styles['detail-value'], styles['detail-value-from-tx-hash'])}
+          onClick={() =>
+            viewTxDetailInExplore(props.fromNetwork, props.fromTxId, props.fromChainId)
+          }>
           {isMobilePX ? getOmittedStr(props.fromTxId, 8, 9) : props.fromTxId}
         </div>
       </div>
@@ -56,7 +61,6 @@ export default function TransferDetailBody(props: Omit<TTransferDashboardData, '
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>{`${props.orderType} Amount`}</div>
         <TokenAmount
-          icon={''}
           amount={props.fromAmount}
           amountUsd={props.fromAmountUsd}
           symbol={props.fromSymbol}
@@ -88,7 +92,9 @@ export default function TransferDetailBody(props: Omit<TTransferDashboardData, '
       {/* ======== Destination Info ======== */}
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>Destination Tx Hash</div>
-        <div className={clsx(styles['detail-value'], styles['detail-value-to-tx-hash'])}>
+        <div
+          className={clsx(styles['detail-value'], styles['detail-value-to-tx-hash'])}
+          onClick={() => viewTxDetailInExplore(props.toNetwork, props.toTxId, props.toChainId)}>
           {isMobilePX ? getOmittedStr(props.toTxId, 8, 9) : props.toTxId}
         </div>
       </div>
@@ -101,7 +107,6 @@ export default function TransferDetailBody(props: Omit<TTransferDashboardData, '
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>Receive</div>
         <TokenAmount
-          icon={''}
           amount={props.toAmount}
           amountUsd={props.toAmountUsd}
           symbol={props.toSymbol}

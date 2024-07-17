@@ -1,14 +1,8 @@
 import { NextLineIcon } from 'assets/images';
 import styles from './styles.module.scss';
 import { getOmittedStr } from 'utils/calculate';
-import { useCallback, useMemo } from 'react';
-import { getAelfExploreLink, getOtherExploreLink, openWithBlank } from 'utils/common';
-import {
-  AelfExploreType,
-  BlockchainNetworkType,
-  ExploreUrlType,
-  OtherExploreType,
-} from 'constants/network';
+import { useMemo } from 'react';
+import { viewTxDetailInExplore } from 'utils/common';
 import { SupportedELFChainId, defaultNullValue } from 'constants/index';
 import clsx from 'clsx';
 import { useCommonState } from 'store/Provider/hooks';
@@ -37,29 +31,16 @@ export default function TxHashBox({
   isShowIcon = true,
 }: TTxHashBoxProps) {
   const { isPadPX } = useCommonState();
-  const viewTxDetail = useCallback(() => {
-    if (network === BlockchainNetworkType.AELF) {
-      openWithBlank(getAelfExploreLink(txHash, AelfExploreType.transaction, chainId));
-      return;
-    }
-    openWithBlank(
-      getOtherExploreLink(
-        txHash,
-        OtherExploreType.transaction,
-        network as keyof typeof ExploreUrlType,
-      ),
-    );
-  }, [chainId, network, txHash]);
 
   const txHashSuccess = useMemo(() => {
     return (
       <span
         className={clsx(styles['value'], isPadPX ? styles['mobile-font'] : styles['web-font'])}
-        onClick={viewTxDetail}>
+        onClick={() => viewTxDetailInExplore(network, txHash, chainId)}>
         {getOmittedStr(txHash, 6, 6)}
       </span>
     );
-  }, [isPadPX, txHash, viewTxDetail]);
+  }, [chainId, isPadPX, network, txHash]);
 
   const txHashPending = useMemo(() => {
     return (
