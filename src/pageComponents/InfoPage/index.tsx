@@ -26,9 +26,12 @@ export default function InfoPage() {
 
   const handleShowDetail = useCallback(() => {
     setIsShowDetailDrawer(true);
-    // scroll to top, and show Breadcrumb
-    document.querySelector('#etransferWebWrapper')?.scrollTo(0, 0);
-  }, []);
+
+    if (!isPadPX) {
+      // scroll to top, and show Breadcrumb
+      document.querySelector('#etransferWebWrapper')?.scrollTo(0, 0);
+    }
+  }, [isPadPX]);
   const handleHideDetail = useCallback(() => {
     setIsShowDetailDrawer(false);
   }, []);

@@ -1,6 +1,7 @@
 import NetworkLogo, { TNetworkLogoSize } from 'components/NetworkLogo';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
+import { formatSymbolDisplay } from 'utils/format';
 
 interface NetworkTotalVolumeProps {
   network: string;
@@ -22,7 +23,7 @@ export default function NetworkTotalVolume({
         <NetworkLogo network={network} size={size} />
         <div className={styles['network-name']}>{name}</div>
       </div>
-      <div className={styles['network-amount']}>{`${amount} ${symbol}`}</div>
+      <div className={styles['network-amount']}>{`${amount} ${formatSymbolDisplay(symbol)}`}</div>
     </div>
   );
 }
