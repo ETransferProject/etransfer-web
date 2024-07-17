@@ -9,13 +9,13 @@ import CommonDrawer from 'components/CommonDrawer';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import { Select, DatePicker } from 'antd';
 import type { Moment } from 'moment';
-import { BusinessType } from 'types/api';
 import { TRecordsContentProps } from 'pageComponents/HistoryContent';
 import { defaultNullValue } from 'constants/index';
 import moment from 'moment';
 import { useHistoryFilter } from 'hooks/history';
 import SimpleTipModal from 'pageComponents/Modal/SimpleTipModal';
 import { END_TIME_FORMAT, START_TIME_FORMAT } from 'constants/records';
+import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
 
 const dateFormat = 'YYYY-MM-DD';
 
@@ -134,8 +134,8 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
         <FilterIcon className={styles['filter-icon']} onClick={handleOpenFilterDrawer} />
         {type !== TRecordsRequestType.ALL && (
           <div className={styles['filter-item']}>
-            {type === TRecordsRequestType.Deposits && BusinessType.Deposit}
-            {type === TRecordsRequestType.Withdraws && BusinessType.Withdraw}
+            {type === TRecordsRequestType.Deposits && InfoBusinessTypeLabel.Deposit}
+            {type === TRecordsRequestType.Withdraws && InfoBusinessTypeLabel.Withdraw}
             <CloseSmall className={styles['filter-close-icon']} onClick={() => closeItem('type')} />
           </div>
         )}
@@ -199,8 +199,8 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
             popupClassName={'drop-wrap'}
             options={[
               { value: TRecordsRequestType.ALL, label: 'All' },
-              { value: TRecordsRequestType.Deposits, label: BusinessType.Deposit },
-              { value: TRecordsRequestType.Withdraws, label: BusinessType.Withdraw },
+              { value: TRecordsRequestType.Deposits, label: InfoBusinessTypeLabel.Deposit },
+              { value: TRecordsRequestType.Withdraws, label: InfoBusinessTypeLabel.Withdraw },
             ]}
           />
           <div className={styles['filter-drawer-label']}>Status</div>

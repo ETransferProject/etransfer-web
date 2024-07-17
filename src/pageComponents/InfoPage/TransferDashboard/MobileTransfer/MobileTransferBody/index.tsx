@@ -13,6 +13,8 @@ import EmptyDataBox from 'pageComponents/EmptyDataBox';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { setSelectedTransfer } from 'store/reducers/infoDashboard/slice';
 import myEvents from 'utils/myEvent';
+import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
+import { BusinessType } from 'types/api';
 
 const NoDataText = '-- No Data --';
 
@@ -63,7 +65,11 @@ export default function MobileTransferBody({
               'flex-row-between',
             )}>
             <FromToToken fromSymbol={item.fromSymbol} toSymbol={item.toSymbol} />
-            <div className={styles['transfer-card-type']}>{item.orderType}</div>
+            <div className={styles['transfer-card-type']}>
+              {item.orderType === BusinessType.Withdraw
+                ? InfoBusinessTypeLabel.Withdraw
+                : item.orderType}
+            </div>
           </div>
           <div className={clsx('flex-row-between', styles['transfer-card-row'])}>
             <div>From - To</div>

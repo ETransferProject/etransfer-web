@@ -38,7 +38,7 @@ export default function BarChartLegend({
         }`;
       }
 
-      return key;
+      return key === BusinessType.Withdraw ? 'Withdrawal' : key;
     },
     [countUnit, depositCount, unitPosition, withdrawCount],
   );

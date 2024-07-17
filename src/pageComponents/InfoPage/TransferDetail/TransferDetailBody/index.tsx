@@ -11,6 +11,7 @@ import { getOmittedStr } from 'utils/calculate';
 import { formatTime } from 'pageComponents/InfoPage/TransferDashboard/utils';
 import { viewTxDetailInExplore } from 'utils/common';
 import { formatSymbolDisplay } from 'utils/format';
+import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
 
 export default function TransferDetailBody(props: Omit<TTransferDashboardData, 'status'>) {
   const { isMobilePX } = useCommonState();
@@ -20,7 +21,9 @@ export default function TransferDetailBody(props: Omit<TTransferDashboardData, '
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>Type</div>
         <div className={clsx(styles['detail-value'], styles['detail-value-type'])}>
-          {props.orderType}
+          {props.orderType === BusinessType.Withdraw
+            ? InfoBusinessTypeLabel.Withdraw
+            : props.orderType}
         </div>
       </div>
 

@@ -72,11 +72,11 @@ const WebTokensTableExpandedColumns = [
 export default function WebTokensTable() {
   const { tokens } = useInfoDashboardState();
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>();
-  const [activeRowData, setActiveRowData] = useState<TTokenDashboardItem>();
+  const [activeRowData, setActiveRowData] = useState<string>();
 
   const handleExpanded = useCallback(
     (item: TTokenDashboardItem) => {
-      setActiveRowData(item);
+      setActiveRowData(item.symbol);
       if (expandedRowKeys?.includes(item.symbol)) {
         setExpandedRowKeys([]);
       } else {
@@ -171,13 +171,17 @@ export default function WebTokensTable() {
     [expandedRowKeys, handleExpanded],
   );
 
-  const handleExpandedTableData = (select?: TTokenDashboardItem): ExpandedTableData[] => {
-    if (!select) return [];
-    if (select.details?.length === 0) return [];
+  const handleExpandedTableData = (selectSymbol?: string): ExpandedTableData[] => {
+    if (!selectSymbol) return [];
+
+    const selectedToken = tokens?.find((item) => item.symbol === selectSymbol);
+    if (!selectedToken) return [];
+
+    if (selectedToken.details?.length === 0) return [];
 
     const newList: ExpandedTableData[] = [];
-    select.details?.forEach((item) => {
-      newList.push({ symbol: select.symbol, ...item });
+    selectedToken.details?.forEach((item) => {
+      newList.push({ symbol: selectedToken.symbol, ...item });
     });
 
     return newList;

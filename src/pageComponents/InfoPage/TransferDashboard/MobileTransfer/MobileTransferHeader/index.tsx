@@ -43,6 +43,12 @@ export default function MobileTransferHeader({
   }, []);
 
   const onResetFilter = useCallback(() => {
+    setNewFilterType(TokensDashboardType.All);
+    setNewFilterFromToken(0);
+    setNewFilterFromChain(0);
+    setNewFilterToToken(0);
+    setNewFilterToChain(0);
+
     handleResetFilter();
     setIsShowFilterDrawer(false);
   }, [handleResetFilter]);

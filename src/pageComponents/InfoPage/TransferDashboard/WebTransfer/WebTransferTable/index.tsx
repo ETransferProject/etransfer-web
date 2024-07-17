@@ -11,6 +11,7 @@ import { BusinessType } from 'types/api';
 import { ChainId } from '@portkey/types';
 import myEvents from 'utils/myEvent';
 import { setSelectedTransfer } from 'store/reducers/infoDashboard/slice';
+import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
 
 const WebTransferTableColumns = [
   {
@@ -26,7 +27,11 @@ const WebTransferTableColumns = [
     dataIndex: 'orderType',
     key: 'orderType',
     render: (orderType: BusinessType) => {
-      return <div>{orderType}</div>;
+      return (
+        <div>
+          {orderType === BusinessType.Withdraw ? InfoBusinessTypeLabel.Withdraw : orderType}
+        </div>
+      );
     },
   },
   {

@@ -3,7 +3,7 @@ import { TokensDashboardType } from 'types/api';
 export enum InfoBusinessTypeLabel {
   ALL = 'All',
   Deposit = 'Deposit',
-  Withdraw = 'Withdraw',
+  Withdraw = 'Withdrawal',
 }
 
 export const InfoBusinessTypeOptions = [

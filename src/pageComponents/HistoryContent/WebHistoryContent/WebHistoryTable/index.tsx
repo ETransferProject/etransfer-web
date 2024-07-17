@@ -2,7 +2,7 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import { Table } from 'antd';
-import { TRecordsListItem } from 'types/api';
+import { BusinessType, TRecordsListItem } from 'types/api';
 import { TRecordsBodyProps } from 'pageComponents/HistoryContent';
 import { TFeeInfoType, TRecordsTableListType } from 'types/records';
 import { setSkipCount, setMaxResultCount } from 'store/reducers/records/slice';
@@ -12,6 +12,7 @@ import StatusBox from 'pageComponents/HistoryContent/StatusBox';
 import ArrivalTimeBox from 'pageComponents/HistoryContent/ArrivalTimeBox';
 import AmountBox from 'pageComponents/HistoryContent/AmountBox';
 import FromAndToBox from 'pageComponents/HistoryContent/FromAndToBox';
+import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
 
 const columns = [
   {
@@ -44,7 +45,11 @@ const columns = [
     dataIndex: 'orderType',
     key: 'orderType',
     render: (orderType: string) => {
-      return <div className={styles['order-type']}>{orderType}</div>;
+      return (
+        <div className={styles['order-type']}>
+          {orderType === BusinessType.Withdraw ? InfoBusinessTypeLabel.Withdraw : orderType}
+        </div>
+      );
     },
   },
   {

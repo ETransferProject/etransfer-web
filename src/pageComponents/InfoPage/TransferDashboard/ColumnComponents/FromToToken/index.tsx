@@ -20,7 +20,9 @@ export default function FromToToken({ fromSymbol, fromIcon, toSymbol, toIcon }: 
     <div className="flex-row-center">
       <TokenBox symbol={fromSymbol} icon={fromIcon || fromIconBackup} />
       <Space direction={'horizontal'} size={6} />
-      <ToArrow />
+      <div className="flex-row-center flex-shrink-0" style={{ width: 14, height: 14 }}>
+        <ToArrow />
+      </div>
       <Space direction={'horizontal'} size={6} />
       <TokenBox symbol={toSymbol} icon={toIcon || toIconBackup} />
     </div>
