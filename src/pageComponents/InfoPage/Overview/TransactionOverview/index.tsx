@@ -56,11 +56,16 @@ export default function TransactionOverview() {
     });
   }, []);
 
-  // const mouseoutCallback = useCallback((event: eChartsElementEvent) => {
-  //   console.log('>>> mouseoutCallback', event);
+  const mouseoutCallback = useCallback(() => {
+    setOpacity(1);
 
-  //   // setOpacity(0.6);
-  // }, []);
+    setCurrentItem({
+      deposit: '',
+      withdraw: '',
+      plus: totalItem?.plus || '',
+      date: totalItem?.date || '',
+    });
+  }, [totalItem?.date, totalItem?.plus]);
 
   const globaloutCallback = useDebounceCallback(
     () => {
@@ -157,7 +162,7 @@ export default function TransactionOverview() {
         className={clsx(styles['transaction-charts'])}
         option={option}
         mouseoverCallback={mouseoverCallback}
-        // mouseoutCallback={mouseoutCallback}
+        mouseoutCallback={mouseoutCallback}
         globaloutCallback={globaloutCallback}
       />
     </div>

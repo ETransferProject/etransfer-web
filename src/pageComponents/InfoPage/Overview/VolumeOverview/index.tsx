@@ -56,14 +56,17 @@ export default function VolumeOverview() {
     });
   }, []);
 
-  //   const mouseoutCallback = useDebounceCallback(
-  //     (event: eChartsElementEvent) => {
-  //       console.log('>>> mouseoutCallback', event);
-  //       //   setOpacity(0.6);
-  //     },
-  //     [],
-  //     100,
-  //   );
+  const mouseoutCallback = useCallback(() => {
+    setOpacity(1);
+
+    setCurrentItem({
+      deposit: '',
+      withdraw: '',
+      plus: totalItem?.plus || '',
+      date: totalItem?.date || '',
+    });
+  }, [totalItem?.date, totalItem?.plus]);
+
   const globaloutCallback = useDebounceCallback(
     () => {
       setOpacity(1);
@@ -160,7 +163,7 @@ export default function VolumeOverview() {
         className={clsx(styles['volume-charts'])}
         option={option}
         mouseoverCallback={mouseoverCallback}
-        // mouseoutCallback={mouseoutCallback}
+        mouseoutCallback={mouseoutCallback}
         globaloutCallback={globaloutCallback}
       />
     </div>
