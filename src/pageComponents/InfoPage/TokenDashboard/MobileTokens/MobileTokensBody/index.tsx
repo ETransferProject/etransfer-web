@@ -66,17 +66,23 @@ export default function MobileTokensBody() {
 
   const renderTokenCard = useCallback(
     (item: TTokenDashboardItem) => {
+      const hiddenChainDivider = item.aelfChain?.length === 0 || item.networks?.length === 0;
+
       return (
         <div className={styles['token-card-container']}>
           <div className="flex-row-between">
-            <TokenBox
-              symbol={item.symbol}
-              icon={item.symbolIcon}
-              className={styles['token-wrapper']}
-            />
+            <div className="flex-row-center flex-shrink-0 flex-1">
+              <TokenBox
+                size={20}
+                symbol={item.symbol}
+                icon={item.symbolIcon}
+                className={clsx('flex-1', styles['token-wrapper'])}
+              />
+            </div>
+
             <div className="flex-row-center">
               <AelfChain list={item.aelfChain} size="small" className={styles['chain-wrapper']} />
-              <div className={styles['chain-network-divider']} />
+              {!hiddenChainDivider && <div className={styles['chain-network-divider']} />}
               <Networks list={item.networks} size="small" className={styles['chain-wrapper']} />
             </div>
           </div>

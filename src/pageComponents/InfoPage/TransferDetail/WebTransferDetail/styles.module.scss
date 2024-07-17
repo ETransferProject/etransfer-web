@@ -13,4 +13,8 @@
 
 .web-transfer-detail-breadcrumb-info {
   cursor: pointer;
+
+  &:hover {
+    color: $brand;
+  }
 }

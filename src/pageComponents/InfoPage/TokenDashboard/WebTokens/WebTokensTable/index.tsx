@@ -22,7 +22,7 @@ const WebTokensTableExpandedColumns = [
     title: 'empty',
     dataIndex: 'empty',
     key: 'empty',
-    width: 256,
+    width: 264,
   },
   {
     title: 'Network',
@@ -38,7 +38,7 @@ const WebTokensTableExpandedColumns = [
     title: 'Volume 24H',
     dataIndex: 'volume24H',
     key: 'volume24H',
-    // width: 150,
+    width: 190,
     render: (volume24H: string, item: ExpandedTableData) => {
       return <Volume amount={volume24H} unit={item.symbol} />;
     },
@@ -47,7 +47,7 @@ const WebTokensTableExpandedColumns = [
     title: 'Volume 7D',
     dataIndex: 'volume7D',
     key: 'volume7D',
-    // width: 150,
+    width: 190,
     render: (volume7D: string, item: ExpandedTableData) => {
       return <Volume amount={volume7D} unit={item.symbol} />;
     },
@@ -56,7 +56,7 @@ const WebTokensTableExpandedColumns = [
     title: 'Volume Total',
     dataIndex: 'volumeTotal',
     key: 'volumeTotal',
-    // width: 178,
+    width: 190,
     render: (volumeTotal: string, item: ExpandedTableData) => {
       return <Volume amount={volumeTotal} unit={item.symbol} />;
     },
@@ -119,7 +119,7 @@ export default function WebTokensTable() {
         title: 'Volume 24H',
         dataIndex: 'volume24HUsd',
         key: 'volume24HUsd',
-        // width: 150,
+        width: 190,
         showSorterTooltip: false,
         sorter: (a: { volume24HUsd: string }, b: { volume24HUsd: string }) =>
           ZERO.plus(a.volume24HUsd).minus(b.volume24HUsd).toNumber(),
@@ -131,7 +131,7 @@ export default function WebTokensTable() {
         title: 'Volume 7D',
         dataIndex: 'volume7DUsd',
         key: 'volume7DUsd',
-        // width: 150,
+        width: 190,
         showSorterTooltip: false,
         sorter: (a: { volume7DUsd: string }, b: { volume7DUsd: string }) =>
           ZERO.plus(a.volume7DUsd).minus(b.volume7DUsd).toNumber(),
@@ -143,7 +143,7 @@ export default function WebTokensTable() {
         title: 'Volume Total',
         dataIndex: 'volumeTotalUsd',
         key: 'volumeTotalUsd',
-        // width: 150,
+        width: 190,
         showSorterTooltip: false,
         sorter: (a: { volumeTotalUsd: string }, b: { volumeTotalUsd: string }) =>
           ZERO.plus(a.volumeTotalUsd).minus(b.volumeTotalUsd).toNumber(),

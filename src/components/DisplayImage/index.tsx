@@ -39,6 +39,7 @@ export default function DisplayImage({
       </div>
       {showIcon && src && (
         <CommonImage
+          className={styles['common-image']}
           loading="eager"
           src={src}
           alt={alt || `image-${name}`}

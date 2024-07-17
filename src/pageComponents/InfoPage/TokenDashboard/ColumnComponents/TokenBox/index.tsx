@@ -11,6 +11,7 @@ type TTokenBoxProps = {
   className?: string;
   iconClassName?: string;
   nameClassName?: string;
+  size?: number;
 };
 
 export default function TokenBox({
@@ -19,10 +20,11 @@ export default function TokenBox({
   className,
   iconClassName,
   nameClassName,
+  size = 24,
 }: TTokenBoxProps) {
   const { isPadPX } = useCommonState();
   const symbolFormat = useMemo(() => formatSymbolDisplay(symbol), [symbol]);
-
+  console.log('🌈 🌈 🌈 🌈 🌈 🌈 symbolFormat', symbolFormat);
   return (
     <div
       className={clsx(
@@ -31,6 +33,8 @@ export default function TokenBox({
         className,
       )}>
       <DisplayImage
+        width={size}
+        height={size}
         name={symbolFormat}
         src={icon}
         alt={`${symbolFormat}-logo`}
