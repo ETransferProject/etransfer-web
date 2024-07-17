@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import * as eCharts from 'echarts';
 import clsx from 'clsx';
 import { useDeepCompareEffect } from 'react-use';
+import { useCommonState } from 'store/Provider/hooks';
 
 export type eChartsElementEvent = eCharts.ECElementEvent;
 
@@ -27,6 +28,7 @@ const Charts = forwardRef(
     const ele = useRef<HTMLElement>();
 
     const [myChart, setMyChart] = useState<eCharts.ECharts>();
+    const { isPadPX } = useCommonState();
 
     useEffect(() => {
       if (!myChart) {
@@ -35,29 +37,31 @@ const Charts = forwardRef(
         });
         setMyChart(chart);
 
-        chart.on('mouseover', function (params) {
-          chart.dispatchAction({
-            type: 'highlight',
-            seriesIndex: [0, 1],
-            dataIndex: params.dataIndex,
+        if (!isPadPX) {
+          chart.on('mouseover', function (params) {
+            chart.dispatchAction({
+              type: 'highlight',
+              seriesIndex: [0, 1],
+              dataIndex: params.dataIndex,
+            });
+            mouseoverCallback?.(params);
           });
-          mouseoverCallback?.(params);
-        });
 
-        chart.on('mouseout', function (params) {
-          chart.dispatchAction({
-            type: 'downplay',
-            seriesIndex: [0, 1],
-            dataIndex: params.dataIndex,
+          chart.on('mouseout', function (params) {
+            chart.dispatchAction({
+              type: 'downplay',
+              seriesIndex: [0, 1],
+              dataIndex: params.dataIndex,
+            });
+            mouseoutCallback?.(params);
           });
-          mouseoutCallback?.(params);
-        });
 
-        chart.on('globalout', function (params) {
-          globaloutCallback?.(params);
-        });
+          chart.on('globalout', function (params) {
+            globaloutCallback?.(params);
+          });
+        }
       }
-    }, [globaloutCallback, mouseoutCallback, mouseoverCallback, myChart]);
+    }, [globaloutCallback, isPadPX, mouseoutCallback, mouseoverCallback, myChart]);
 
     useEffect(() => {
       if (myChart) {
