@@ -117,38 +117,38 @@ export default function WebTokensTable() {
       },
       {
         title: 'Volume 24H',
-        dataIndex: 'volume24H',
-        key: 'volume24H',
+        dataIndex: 'volume24HUsd',
+        key: 'volume24HUsd',
         // width: 150,
         showSorterTooltip: false,
-        sorter: (a: { volume24H: string }, b: { volume24H: string }) =>
-          ZERO.plus(a.volume24H).minus(b.volume24H).toNumber(),
-        render: (volume24H: string, item: TTokenDashboardItem) => {
-          return <Volume amount={volume24H} unit={item.symbol} amountUsd={item.volume24HUsd} />;
+        sorter: (a: { volume24HUsd: string }, b: { volume24HUsd: string }) =>
+          ZERO.plus(a.volume24HUsd).minus(b.volume24HUsd).toNumber(),
+        render: (volume24HUsd: string, item: TTokenDashboardItem) => {
+          return <Volume amount={item.volume24H} unit={item.symbol} amountUsd={volume24HUsd} />;
         },
       },
       {
         title: 'Volume 7D',
-        dataIndex: 'volume7D',
-        key: 'volume7D',
+        dataIndex: 'volume7DUsd',
+        key: 'volume7DUsd',
         // width: 150,
         showSorterTooltip: false,
-        sorter: (a: { volume7D: string }, b: { volume7D: string }) =>
-          ZERO.plus(a.volume7D).minus(b.volume7D).toNumber(),
-        render: (volume7D: string, item: TTokenDashboardItem) => {
-          return <Volume amount={volume7D} unit={item.symbol} amountUsd={item.volume7DUsd} />;
+        sorter: (a: { volume7DUsd: string }, b: { volume7DUsd: string }) =>
+          ZERO.plus(a.volume7DUsd).minus(b.volume7DUsd).toNumber(),
+        render: (volume7DUsd: string, item: TTokenDashboardItem) => {
+          return <Volume amount={item.volume7D} unit={item.symbol} amountUsd={volume7DUsd} />;
         },
       },
       {
         title: 'Volume Total',
-        dataIndex: 'volumeTotal',
-        key: 'volumeTotal',
+        dataIndex: 'volumeTotalUsd',
+        key: 'volumeTotalUsd',
         // width: 150,
         showSorterTooltip: false,
-        sorter: (a: { volumeTotal: string }, b: { volumeTotal: string }) =>
-          ZERO.plus(a.volumeTotal).minus(b.volumeTotal).toNumber(),
-        render: (volumeTotal: string, item: TTokenDashboardItem) => {
-          return <Volume amount={volumeTotal} unit={item.symbol} amountUsd={item.volumeTotalUsd} />;
+        sorter: (a: { volumeTotalUsd: string }, b: { volumeTotalUsd: string }) =>
+          ZERO.plus(a.volumeTotalUsd).minus(b.volumeTotalUsd).toNumber(),
+        render: (volumeTotalUsd: string, item: TTokenDashboardItem) => {
+          return <Volume amount={item.volumeTotal} unit={item.symbol} amountUsd={volumeTotalUsd} />;
         },
       },
       {

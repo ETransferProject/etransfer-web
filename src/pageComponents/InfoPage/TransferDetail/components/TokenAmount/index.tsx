@@ -2,6 +2,8 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import useGetTokenIcon from 'hooks/infoDashboard';
 import DisplayImage from 'components/DisplayImage';
+import { formatSymbolDisplay } from 'utils/format';
+import { useMemo } from 'react';
 
 export default function TokenAmount({
   icon,
@@ -16,6 +18,7 @@ export default function TokenAmount({
 }) {
   const getTokenIcon = useGetTokenIcon();
   const iconBackup = getTokenIcon(symbol)?.icon || '';
+  const formatSymbol = useMemo(() => formatSymbolDisplay(symbol), [symbol]);
 
   return (
     <div className={clsx('flex-row-center', styles['token-amount'])}>
@@ -30,7 +33,7 @@ export default function TokenAmount({
           height={16}
         />
         <span className={styles['token-amount-value']}>{amount}</span>
-        <span className={styles['token-amount-symbol']}>{` ${symbol}`}</span>
+        <span className={styles['token-amount-symbol']}>{` ${formatSymbol}`}</span>
       </div>
       <div className={styles['token-amount-usd']}>{`$${amountUsd}`}</div>
     </div>

@@ -10,6 +10,7 @@ import { useCommonState } from 'store/Provider/hooks';
 import { getOmittedStr } from 'utils/calculate';
 import { formatTime } from 'pageComponents/InfoPage/TransferDashboard/utils';
 import { viewTxDetailInExplore } from 'utils/common';
+import { formatSymbolDisplay } from 'utils/format';
 
 export default function TransferDetailBody(props: Omit<TTransferDashboardData, 'status'>) {
   const { isMobilePX } = useCommonState();
@@ -34,7 +35,7 @@ export default function TransferDetailBody(props: Omit<TTransferDashboardData, '
         <div className={styles['detail-label']}>Transaction Fee</div>
         <div className={clsx(styles['detail-value'], styles['detail-value-fee'])}>
           {props.orderType === BusinessType.Withdraw
-            ? `${props.toFeeInfo[0].amount} ${props.toFeeInfo[0].symbol}`
+            ? `${props.toFeeInfo[0].amount} ${formatSymbolDisplay(props.toFeeInfo[0].symbol)}`
             : 'Free'}
         </div>
       </div>

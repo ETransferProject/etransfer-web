@@ -6,6 +6,7 @@ import {
 } from 'constants/infoDashboard';
 import { useMemo } from 'react';
 import { TTransferDashboardFilterToken, TTransferDashboardFilterNetwork } from 'types/api';
+import { formatSymbolDisplay } from 'utils/format';
 
 export interface UseFilterParams {
   fromTokenList: TTransferDashboardFilterToken[];
@@ -25,7 +26,7 @@ export function useFilter({
       DefaultTransferDashboardFromTokenOptions,
     ];
     fromTokenList.forEach((item) => {
-      list.push({ value: item.key, label: item.symbol });
+      list.push({ value: item.key, label: formatSymbolDisplay(item.symbol) });
     });
     return list;
   }, [fromTokenList]);
@@ -45,7 +46,7 @@ export function useFilter({
       DefaultTransferDashboardToTokenOptions,
     ];
     toTokenList.forEach((item) => {
-      list.push({ value: item.key, label: item.symbol });
+      list.push({ value: item.key, label: formatSymbolDisplay(item.symbol) });
     });
     return list;
   }, [toTokenList]);
