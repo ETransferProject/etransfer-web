@@ -127,6 +127,7 @@ function WalletProvider({ children }: { children: React.ReactNode }) {
   // Please use webLoginContext.loginState===WebLoginState.logined
   // useWebLoginEvent(WebLoginEvents.LOGINED, onInitWallet);
   useEffect(() => {
+    console.warn('>>>>>> loginState', webLoginContext.loginState);
     if (webLoginContext.loginState !== WebLoginState.logined) return;
     onInitWallet();
   }, [onInitWallet, webLoginContext.loginState]);

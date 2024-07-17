@@ -9,6 +9,7 @@ export interface GenerateStackBarOptionPrams {
   stackName: string;
   opacity: number;
   emphasisOpacity: number;
+  dateFormat?: string;
 }
 
 export const generateStackBarOption = ({
@@ -18,6 +19,7 @@ export const generateStackBarOption = ({
   stackName,
   opacity,
   emphasisOpacity,
+  dateFormat = 'MMM D',
 }: GenerateStackBarOptionPrams): EChartsOption => {
   const withdrawData: { value: string | number }[] = [],
     depositData: { value: string | number }[] = [],
@@ -80,10 +82,10 @@ export const generateStackBarOption = ({
         overflow: 'breakAll',
         // showMinLabel: false,
         // showMaxLabel: false,
-        alignMinLabel: 'left',
-        alignMaxLabel: 'right',
+        // alignMinLabel: 'left',
+        // alignMaxLabel: 'right',
         formatter: function (value) {
-          return moment(value, 'YYYY-MM-DD').format('MMM D');
+          return moment(value, 'YYYY-MM-DD').format(dateFormat);
         },
       },
       splitLine: { show: false },
@@ -99,7 +101,7 @@ export const generateStackBarOption = ({
       // axisTick: { show: false },
       // axisLine: { show: false },
     },
-    grid: { top: '0', left: '0', right: '0', bottom: '28px' },
+    grid: { top: '0', left: '16px', right: '16px', bottom: '28px' },
     series: series,
     // tooltip: {
     //   trigger: 'axis',

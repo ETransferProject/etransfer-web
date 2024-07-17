@@ -42,17 +42,29 @@ export default function MobileTransferHeader({
     setIsShowFilterDrawer(true);
   }, []);
 
+  const onResetFilter = useCallback(() => {
+    handleResetFilter();
+    setIsShowFilterDrawer(false);
+  }, [handleResetFilter]);
+
   const onApply = useCallback(() => {
     handleApplyFilter({
       type: newFilterType,
       fromToken: newFilterFromToken,
       fromChain: newFilterFromChain,
-      toToken: newFilterToChain,
+      toToken: newFilterToToken,
       toChain: newFilterToChain,
     });
 
     setIsShowFilterDrawer(false);
-  }, [handleApplyFilter, newFilterFromChain, newFilterFromToken, newFilterToChain, newFilterType]);
+  }, [
+    handleApplyFilter,
+    newFilterFromChain,
+    newFilterFromToken,
+    newFilterToChain,
+    newFilterToToken,
+    newFilterType,
+  ]);
 
   return (
     <div className={styles['mobile-transfer-header']}>
@@ -74,7 +86,7 @@ export default function MobileTransferHeader({
             <CommonButton
               className={styles['cancel-button']}
               type={CommonButtonType.Secondary}
-              onClick={handleResetFilter}>
+              onClick={onResetFilter}>
               {'Reset'}
             </CommonButton>
             <CommonButton className={styles['ok-button']} onClick={onApply}>

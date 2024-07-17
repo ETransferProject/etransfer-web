@@ -6,6 +6,7 @@ import { TOverviewTimeType } from 'types/api';
 import moment from 'moment';
 
 export interface BarChartHeaderProps {
+  className?: string;
   title: string;
   plusCount: string;
   countUnit: string;
@@ -29,6 +30,7 @@ const TIME_SELECTOR_OPTIONS: TimePeriodOption[] = [
 ];
 
 export default function BarChartHeader({
+  className,
   title,
   plusCount,
   depositCount,
@@ -74,7 +76,7 @@ export default function BarChartHeader({
   );
 
   return (
-    <div className={clsx('flex-row-between', styles['bar-chart-header'])}>
+    <div className={clsx('flex-row-between', styles['bar-chart-header'], className)}>
       <div className={styles['left']}>
         <div className={styles['title']}>{title}</div>
         <div className={styles['plus-count']}>

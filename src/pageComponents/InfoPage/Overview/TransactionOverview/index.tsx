@@ -7,7 +7,6 @@ import BarChartHeader from '../components/BarChartHeader';
 import { generateStackBarOption } from '../components/utils';
 import { eChartsElementEvent } from 'components/ECharts/Charts';
 import { useDebounceCallback } from 'hooks/debounce';
-import Space from 'components/Space';
 import { OverviewLegendList } from 'constants/infoDashboard';
 import { getTransactionOverview } from 'utils/api/infoDashboard';
 import { useEffectOnce } from 'react-use';
@@ -33,6 +32,7 @@ export default function TransactionOverview() {
   const [totalItem, setTotalItem] = useState<TTotalItem>();
   const [currentItem, setCurrentItem] = useState<TCurrentItem>();
   const [loading, setLoading] = useState(true);
+  const [timePeriod, setTimePeriod] = useState<TOverviewTimeType>(TOverviewTimeType.Day);
 
   const option = useMemo<EChartsOption>(() => {
     return generateStackBarOption({
@@ -42,8 +42,9 @@ export default function TransactionOverview() {
       stackName: 'transaction',
       opacity: opacity,
       emphasisOpacity: 1,
+      dateFormat: timePeriod === TOverviewTimeType.Month ? 'MMM' : 'MMM D',
     });
-  }, [chartData, opacity]);
+  }, [chartData, opacity, timePeriod]);
 
   const mouseoverCallback = useCallback((event: eChartsElementEvent) => {
     setOpacity(0.2);
@@ -135,18 +136,20 @@ export default function TransactionOverview() {
 
   const onSwitchPeriod = useCallback(
     (time: TOverviewTimeType) => {
+      setTimePeriod(time);
       getData(time);
     },
     [getData],
   );
 
   useEffectOnce(() => {
-    getData(TOverviewTimeType.Day);
+    getData(timePeriod);
   });
 
   return (
     <div className={clsx('flex-1', styles['transaction-charts-container'])}>
       <BarChartHeader
+        className={styles['charts-header-container']}
         legendList={OverviewLegendList}
         title="Transaction"
         plusCount={currentItem?.plus || ''}
@@ -156,7 +159,6 @@ export default function TransactionOverview() {
         time={currentItem?.date || ''}
         switchPeriod={onSwitchPeriod}
       />
-      <Space direction={'vertical'} size={16} />
       <ECharts
         loading={loading}
         className={clsx(styles['transaction-charts'])}

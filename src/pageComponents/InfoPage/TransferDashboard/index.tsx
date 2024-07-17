@@ -84,29 +84,28 @@ export default function TransferDashboard() {
     }) => {
       try {
         setLoading(true);
-        let currentSkipPageCount = typeof type !== 'number' ? skip : skipPageCount;
-        let currentMaxCount = typeof type !== 'number' ? max : maxResultCount;
 
-        if (currentSkipPageCount == undefined) {
-          currentSkipPageCount = skipPageCount;
-        }
-
-        if (currentMaxCount == undefined) {
-          currentMaxCount = maxResultCount;
-        }
-
+        const currentSkipPageCount = typeof skip !== 'number' ? skipPageCount : skip;
+        const currentMaxCount = typeof max !== 'number' ? maxResultCount : max;
+        const currentSkipCount = currentSkipPageCount * currentMaxCount;
         const res = await getTransferDashboard({
           type: typeof type !== 'number' ? filterType : type,
           fromToken: typeof fromToken !== 'number' ? filterFromToken : fromToken,
           fromChainId: typeof fromChainId !== 'number' ? filterFromChain : fromChainId,
           toToken: typeof toToken !== 'number' ? filterToToken : toToken,
           toChainId: typeof toChainId !== 'number' ? filterToChain : toChainId,
-          skipCount: currentSkipPageCount * currentMaxCount,
+          skipCount: currentSkipCount,
           maxResultCount: currentMaxCount,
         });
 
-        if (isPadPX) {
-          const mobileTransferList = [...transferList, ...res.list];
+        if (isMobilePX) {
+          let mobileTransferList = [];
+          if (currentSkipCount === 0) {
+            mobileTransferList = res.list;
+          } else {
+            mobileTransferList = [...transferList, ...res.list];
+          }
+
           dispatch(setTransferList(mobileTransferList));
         } else {
           dispatch(setTransferList(res.list));
@@ -126,7 +125,7 @@ export default function TransferDashboard() {
       filterToChain,
       filterToToken,
       filterType,
-      isPadPX,
+      isMobilePX,
       maxResultCount,
       setLoading,
       skipPageCount,
@@ -205,6 +204,7 @@ export default function TransferDashboard() {
     setFilterFromChain(DefaultTransferDashboardFromChainOptions.value);
     setFilterToToken(DefaultTransferDashboardToTokenOptions.value);
     setFilterToChain(DefaultTransferDashboardToChainOptions.value);
+    setSkipPageCount(0);
 
     getTransferData({
       type: TokensDashboardType.All,
@@ -212,6 +212,7 @@ export default function TransferDashboard() {
       fromChainId: DefaultTransferDashboardFromChainOptions.value,
       toToken: DefaultTransferDashboardToTokenOptions.value,
       toChainId: DefaultTransferDashboardToChainOptions.value,
+      skip: 0,
     });
   }, [getTransferData]);
 
@@ -222,12 +223,14 @@ export default function TransferDashboard() {
       setFilterFromChain(params.fromToken);
       setFilterToToken(params.toToken);
       setFilterToChain(params.toChain);
+      setSkipPageCount(0);
       getTransferData({
         type: params.type,
         fromToken: params.fromToken,
         fromChainId: params.fromChain,
         toToken: params.toToken,
         toChainId: params.toChain,
+        skip: 0,
       });
     },
     [getTransferData],
