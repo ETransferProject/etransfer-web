@@ -219,8 +219,8 @@ export default function TransferDashboard() {
   const handleApplyFilter = useCallback(
     (params: HandleApplyFilterParams) => {
       setFilterType(params.type);
-      setFilterFromToken(params.fromChain);
-      setFilterFromChain(params.fromToken);
+      setFilterFromToken(params.fromToken);
+      setFilterFromChain(params.fromChain);
       setFilterToToken(params.toToken);
       setFilterToChain(params.toChain);
       setSkipPageCount(0);
