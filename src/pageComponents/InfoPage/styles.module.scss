@@ -3,11 +3,11 @@
 
 .info-page {
   @include media-mobile {
-    padding: 0 16px;
+    padding: 16px;
   }
 
   @include media-pad {
-    padding: 0 24px 48px;
+    padding: 16px 24px 48px;
   }
 
   :global {
