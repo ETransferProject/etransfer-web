@@ -20,9 +20,15 @@ interface ExpandedTableData extends TTokenDashboardItemDetail {
 const WebTokensTableExpandedColumns = [
   {
     title: 'empty',
-    dataIndex: 'empty',
-    key: 'empty',
-    width: 264,
+    dataIndex: 'empty1',
+    key: 'empty1',
+    width: 160,
+  },
+  {
+    title: 'empty',
+    dataIndex: 'empty2',
+    key: 'empty2',
+    width: 120,
   },
   {
     title: 'Network',
@@ -62,10 +68,17 @@ const WebTokensTableExpandedColumns = [
     },
   },
   {
-    title: 'empty',
-    dataIndex: 'empty',
-    key: 'empty',
-    width: 20,
+    title: '',
+    dataIndex: 'empty3',
+    key: 'empty3',
+    width: 44,
+    render: () => {
+      return (
+        <div className={styles['expand-arrow']} style={{ visibility: 'hidden' }}>
+          <DynamicArrow />
+        </div>
+      );
+    },
   },
 ];
 

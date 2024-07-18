@@ -6,17 +6,22 @@
       .ant-table-cell {
         background-color: #fff;
       }
+      td {
+        &:first-of-type{
+          padding: 0 !important;
+        }
+      }
     }
   }
   .web-tokens-table-expand {
     :global {
       .ant-table {
-        margin: 0 8px 0px 8px !important;
+        margin: 0 0 16px !important;
 
         .ant-table-container {
           .ant-table-content {
             background-color: $hover-bg;
-            border-radius: 8px;
+            border-radius: 0px;
             overflow: hidden;
             border: none !important;
 

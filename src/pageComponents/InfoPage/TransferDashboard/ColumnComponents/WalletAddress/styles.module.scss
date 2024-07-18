@@ -1,8 +1,13 @@
+@import 'src/assets/theme/breakpoint.scss';
 @import 'src/assets/theme/color.scss';
 
 .wallet-container {
   min-width: 190px;
   justify-content: flex-start;
+
+  @include media-mobile {
+    justify-content: flex-end;
+  }
 }
 
 .address {
