@@ -1,6 +1,6 @@
 // testnet
-const ETransferHost = 'https://test-app.etransfer.exchange';
-const AuthHost = 'https://test-app.etransfer.exchange';
+const ETransferHost = 'https://test-app-2.etransfer.exchange';
+const AuthHost = 'https://test-app-2.etransfer.exchange';
 
 module.exports = [
   {
