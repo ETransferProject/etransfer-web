@@ -4,6 +4,7 @@ import styles from './styles.module.scss';
 import { useCallback, useMemo, useState } from 'react';
 import { TOverviewTimeType } from 'types/api';
 import moment from 'moment';
+import { defaultNullValue } from 'constants/index';
 
 export interface BarChartHeaderProps {
   className?: string;
@@ -44,6 +45,7 @@ export default function BarChartHeader({
   const [timePeriodSelected, setTimePeriodSelected] = useState(TIME_SELECTOR_OPTIONS[0].time);
 
   const formatDate = useMemo(() => {
+    if (!time) return defaultNullValue;
     return moment(time, 'YYYY-MM-DD').format('MMM D, YYYY');
   }, [time]);
 
