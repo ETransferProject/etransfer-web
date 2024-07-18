@@ -59,7 +59,17 @@ export default function Networks({ list, size = 'normal', className }: NetworksP
       return (
         <div className={clsx('flex-row-center', styles['networks-3'], className)}>
           {list?.map((item) => {
-            return <NetworkLogo key={`networks-${item}`} network={item} size={size} />;
+            return (
+              <CommonTooltip
+                key={`networks-${item}`}
+                title={item}
+                trigger={isPadPX ? '' : 'hover'}
+                overlayClassName={styles['networks-more-tooltip']}>
+                <div className={styles['logo-container']}>
+                  <NetworkLogo network={item} size={size} />
+                </div>
+              </CommonTooltip>
+            );
           })}
         </div>
       );
@@ -70,12 +80,22 @@ export default function Networks({ list, size = 'normal', className }: NetworksP
     return (
       <div className={clsx('flex-row-center', styles['network-more-wrapper'], className)}>
         {listSlice?.map((item) => {
-          return <NetworkLogo key={`networks-${item}`} network={item} size={size} />;
+          return (
+            <CommonTooltip
+              key={`networks-${item}`}
+              title={item}
+              trigger={isPadPX ? '' : 'hover'}
+              overlayClassName={styles['networks-more-tooltip']}>
+              <div className={styles['logo-container']}>
+                <NetworkLogo network={item} size={size} />
+              </div>
+            </CommonTooltip>
+          );
         })}
         {renderMore}
       </div>
     );
-  }, [className, list, renderMore, size]);
+  }, [className, isPadPX, list, renderMore, size]);
 
   return <div className={styles['networks-container']}>{renderNetworkList}</div>;
 }
