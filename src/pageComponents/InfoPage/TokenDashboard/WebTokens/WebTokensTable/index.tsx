@@ -15,20 +15,31 @@ import { ZERO } from 'constants/calculate';
 
 interface ExpandedTableData extends TTokenDashboardItemDetail {
   symbol: string;
+  aelfChain: ChainId[];
 }
 
 const WebTokensTableExpandedColumns = [
   {
-    title: 'empty',
-    dataIndex: 'empty1',
-    key: 'empty1',
+    title: 'symbolEmpty',
+    dataIndex: 'symbolEmpty',
+    key: 'symbolEmpty',
     width: 160,
+    render: () => {
+      return <div style={{ padding: 16 }} />;
+    },
   },
   {
-    title: 'empty',
-    dataIndex: 'empty2',
-    key: 'empty2',
+    title: 'aelfChainEmpty',
+    dataIndex: 'aelfChain',
+    key: 'aelfChain',
     width: 120,
+    render: (aelfChain: ChainId[]) => {
+      return (
+        <div style={{ visibility: 'hidden' }}>
+          <AelfChain list={aelfChain} />
+        </div>
+      );
+    },
   },
   {
     title: 'Network',
@@ -194,7 +205,7 @@ export default function WebTokensTable() {
 
     const newList: ExpandedTableData[] = [];
     selectedToken.details?.forEach((item) => {
-      newList.push({ symbol: selectedToken.symbol, ...item });
+      newList.push({ symbol: selectedToken.symbol, ...item, aelfChain: selectedToken.aelfChain });
     });
 
     return newList;

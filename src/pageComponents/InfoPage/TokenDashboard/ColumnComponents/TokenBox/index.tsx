@@ -24,7 +24,7 @@ export default function TokenBox({
 }: TTokenBoxProps) {
   const { isPadPX } = useCommonState();
   const symbolFormat = useMemo(() => formatSymbolDisplay(symbol), [symbol]);
-  console.log('🌈 🌈 🌈 🌈 🌈 🌈 symbolFormat', symbolFormat);
+
   return (
     <div
       className={clsx(
