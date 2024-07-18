@@ -21,6 +21,7 @@ import SelectNetwork from '../SelectNetwork';
 import { CHAIN_LIST } from 'constants/index';
 import SelectChainWrapper from '../SelectChainWrapper';
 import DepositTip from '../DepositTip';
+import { CopySize } from 'components/Copy';
 
 export default function WebContent({
   fromNetworkSelected,
@@ -173,7 +174,11 @@ export default function WebContent({
                   alt="qrCodePlaceholder"
                 />
               )}
-              <CommonAddress label={DEPOSIT_ADDRESS_LABEL} value={depositInfo.depositAddress} />
+              <CommonAddress
+                label={DEPOSIT_ADDRESS_LABEL}
+                value={depositInfo.depositAddress}
+                copySize={CopySize.Big}
+              />
             </div>
             <Space direction="vertical" size={12} />
             <DepositInfo

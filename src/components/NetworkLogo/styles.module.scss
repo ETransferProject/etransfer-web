@@ -2,20 +2,26 @@
 @import 'src/assets/theme/breakpoint.scss';
 
 .network {
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 10px;
   color: $secondary-text;
   border-radius: 50%;
   border: 1px solid $border;
   background: $hover-bg;
+}
 
-  @include media-web {
-    width: 24px;
-    height: 24px;
-    font-size: 14px;
-  }
+.network-small {
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+}
+
+.network-normal {
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
 }

@@ -1,18 +1,12 @@
 import { NextLineIcon } from 'assets/images';
 import styles from './styles.module.scss';
 import { getOmittedStr } from 'utils/calculate';
-import { useCallback, useMemo } from 'react';
-import { getAelfExploreLink, getOtherExploreLink, openWithBlank } from 'utils/common';
-import {
-  AelfExploreType,
-  BlockchainNetworkType,
-  ExploreUrlType,
-  OtherExploreType,
-} from 'constants/network';
+import { useMemo } from 'react';
+import { viewTxDetailInExplore } from 'utils/common';
 import { SupportedELFChainId, defaultNullValue } from 'constants/index';
 import clsx from 'clsx';
 import { useCommonState } from 'store/Provider/hooks';
-import { TRecordsStatus, TRecordsStatusI18n } from 'types/records';
+import { TOrderStatus, TRecordsStatusI18n } from 'types/records';
 import { BusinessType } from 'types/api';
 
 export type TTxHashBoxProps = {
@@ -20,7 +14,7 @@ export type TTxHashBoxProps = {
   chainId: SupportedELFChainId;
   network: string;
   txHash: string;
-  orderStatus: TRecordsStatus;
+  orderStatus: TOrderStatus;
   orderType: BusinessType;
   type: 'From' | 'To';
   isShowIcon?: boolean;
@@ -37,29 +31,16 @@ export default function TxHashBox({
   isShowIcon = true,
 }: TTxHashBoxProps) {
   const { isPadPX } = useCommonState();
-  const viewTxDetail = useCallback(() => {
-    if (network === BlockchainNetworkType.AELF) {
-      openWithBlank(getAelfExploreLink(txHash, AelfExploreType.transaction, chainId));
-      return;
-    }
-    openWithBlank(
-      getOtherExploreLink(
-        txHash,
-        OtherExploreType.transaction,
-        network as keyof typeof ExploreUrlType,
-      ),
-    );
-  }, [chainId, network, txHash]);
 
   const txHashSuccess = useMemo(() => {
     return (
       <span
         className={clsx(styles['value'], isPadPX ? styles['mobile-font'] : styles['web-font'])}
-        onClick={viewTxDetail}>
+        onClick={() => viewTxDetailInExplore(network, txHash, chainId)}>
         {getOmittedStr(txHash, 6, 6)}
       </span>
     );
-  }, [isPadPX, txHash, viewTxDetail]);
+  }, [chainId, isPadPX, network, txHash]);
 
   const txHashPending = useMemo(() => {
     return (
@@ -80,11 +61,11 @@ export default function TxHashBox({
   }, []);
 
   const renderTxHash = useMemo(() => {
-    if (orderStatus === TRecordsStatus.Failed && orderType !== BusinessType.Deposit) {
+    if (orderStatus === TOrderStatus.Failed && orderType !== BusinessType.Deposit) {
       return txHashFailed;
     }
 
-    if (orderStatus === TRecordsStatus.Failed && orderType === BusinessType.Deposit) {
+    if (orderStatus === TOrderStatus.Failed && orderType === BusinessType.Deposit) {
       if (type === 'From') {
         return txHash ? txHashSuccess : txHashFailed;
       } else {
@@ -92,7 +73,7 @@ export default function TxHashBox({
       }
     }
 
-    if (orderStatus === TRecordsStatus.Processing) {
+    if (orderStatus === TOrderStatus.Processing) {
       return txHash ? txHashSuccess : txHashPending;
     }
 

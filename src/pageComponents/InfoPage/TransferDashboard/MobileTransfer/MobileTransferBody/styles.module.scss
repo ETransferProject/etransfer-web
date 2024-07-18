@@ -1,0 +1,59 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.mobile-transfer-body {
+  .transfer-loader-message,
+  .transfer-end-message {
+    color: $secondary-text;
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+    margin-bottom: 20px;
+  }
+
+  .transfer-card-container {
+    border-radius: 8px;
+    border: 1px solid $dividers;
+    padding: 12px;
+    margin-bottom: 12px;
+
+    .transfer-card-row {
+      margin-bottom: 12px;
+    }
+
+    .transfer-card-token {
+      padding-bottom: 12px;
+      border-bottom: 1px solid $dividers;
+    }
+
+    .transfer-card-type {
+      font-size: 16px;
+      @extend .font-family-medium;
+    }
+
+    .transfer-card-wallet-address {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+  .transfer-detail {
+    background-color: $hover-bg;
+    border-radius: 8px;
+  }
+
+  .action {
+    font-size: 14px;
+    color: $brand;
+    padding-top: 12px;
+    border-top: 1px solid $dividers;
+    margin-top: 12px;
+  }
+
+  .action-arrow {
+    margin-left: 4px;
+    transform: rotate(-90deg);
+    svg path {
+      fill: $brand;
+    }
+  }
+}

@@ -1,0 +1,67 @@
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.transfer-detail-body {
+  .detail-divider {
+    width: 100%;
+    height: 1px;
+    background-color: $dividers;
+    margin: 24px 0;
+  }
+
+  .detail-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: $primary-text;
+    margin-bottom: 12px;
+
+    @include media-mobile {
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+  }
+
+  .detail-label {
+    width: 240px;
+    font-size: 14px;
+    color: $secondary-text;
+    flex-shrink: 0;
+
+    @include media-mobile {
+      width: 120px;
+    }
+  }
+
+  .detail-value {
+    font-size: 14px;
+  }
+
+  .detail-value-type {
+    @extend .font-family-medium;
+  }
+
+  .detail-value-from-tx-hash,
+  .detail-value-to-tx-hash {
+    color: $brand;
+    text-decoration: none;
+    cursor: pointer;
+    word-break: break-all;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .detail-value-wallet-address {
+    font-size: 14px;
+    line-height: 22px;
+    justify-content: flex-end;
+    // flex: 1;
+  }
+  .detail-value-wallet-address-web {
+    font-size: 14px;
+    line-height: 22px;
+  }
+}

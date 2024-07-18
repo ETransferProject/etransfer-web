@@ -21,6 +21,7 @@ import { FAQ_DEPOSIT } from 'constants/footer';
 import DepositTip from '../DepositTip';
 import CommonDrawer from 'components/CommonDrawer';
 import CommonButton from 'components/CommonButton';
+import { CopySize } from 'components/Copy';
 
 export default function MobileDepositContent({
   fromNetworkSelected,
@@ -64,7 +65,11 @@ export default function MobileDepositContent({
         <Space direction="vertical" size={16} />
         {showRetry && <DepositRetryForMobile onClick={onRetry} />}
         {!showRetry && depositInfo?.depositAddress && (
-          <CommonAddress label={DEPOSIT_ADDRESS_LABEL} value={depositInfo.depositAddress} />
+          <CommonAddress
+            label={DEPOSIT_ADDRESS_LABEL}
+            value={depositInfo.depositAddress}
+            copySize={CopySize.Big}
+          />
         )}
       </div>
     );

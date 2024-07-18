@@ -1,0 +1,43 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.bar-chart-header {
+  .left {
+    .title {
+      color: $primary-text;
+      font-size: 14px;
+    }
+    .plus-count {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 8px 0;
+      height: 32px;
+    }
+    .time {
+      color: $secondary-text;
+      font-size: 12px;
+    }
+  }
+  .right {
+    .time-period {
+      padding: 4px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      background-color: $normal-bg;
+      cursor: pointer;
+
+      .time-period-item {
+        color: $secondary-text;
+        font-size: 14px;
+        padding: 0 8px;
+        @extend .font-family-medium;
+        border-radius: 4px;
+      }
+
+      .time-period-item-select {
+        color: $primary-text;
+        background-color: #fff;
+      }
+    }
+  }
+}

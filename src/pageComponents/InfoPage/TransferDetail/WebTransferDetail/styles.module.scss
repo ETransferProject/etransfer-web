@@ -1,0 +1,20 @@
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.web-transfer-detail {
+  .detail-title {
+    margin-top: 24px;
+    margin-bottom: 24px;
+    font-size: 24px;
+    @extend .font-family-medium;
+  }
+}
+
+.web-transfer-detail-breadcrumb-info {
+  cursor: pointer;
+
+  &:hover {
+    color: $brand;
+  }
+}

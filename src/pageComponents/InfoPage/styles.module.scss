@@ -1,0 +1,72 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
+
+.info-page {
+  @include media-mobile {
+    padding: 16px;
+  }
+
+  @include media-pad {
+    padding: 16px 24px 48px;
+  }
+
+  :global {
+    .ant-table-wrapper {
+      //   border-radius: 8px;
+      //   border: 1px solid $dividers;
+
+      .ant-table-container {
+        .ant-table-content {
+          border-radius: 8px;
+          border: 1px solid $dividers;
+          border-bottom: none;
+        }
+      }
+
+      .ant-table-thead {
+        th {
+          background-color: $hover-bg;
+          border-bottom: 0px;
+          &::before {
+            width: 0px !important;
+          }
+        }
+        .ant-table-cell {
+          color: $secondary-text;
+        }
+      }
+
+      // .ant-table-tbody > tr > td {
+      // border-bottom: 0px;
+      // &:last-child {
+      //   border-bottom: 0px;
+      // }
+      // }
+    }
+  }
+}
+
+.detail-drawer-wrapper {
+  :global {
+    .ant-drawer-content-wrapper {
+      background-color: $page-bg;
+
+      .ant-drawer-content {
+        border-radius: 0 !important;
+        .ant-drawer-wrapper-body {
+          .ant-drawer-header {
+            @include media-pad {
+              padding-top: 27px;
+              padding-bottom: 27px;
+              height: 80px;
+            }
+          }
+        }
+      }
+    }
+
+    .ant-drawer-body {
+      margin-top: 16px;
+    }
+  }
+}

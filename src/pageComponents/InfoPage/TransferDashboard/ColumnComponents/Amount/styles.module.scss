@@ -1,0 +1,19 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
+
+.amount-container {
+  .amount {
+    font-size: 14px;
+    @extend .font-family-medium;
+  }
+
+  .amount-usd {
+    font-size: 12px;
+    color: $secondary-text;
+  }
+
+  @include media-mobile-and-pad {
+    align-items: end;
+  }
+}

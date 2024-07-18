@@ -1,0 +1,30 @@
+@import 'src/assets/theme/color.scss';
+
+.display-image {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.display-image-circle {
+  border-radius: 50%;
+  overflow: hidden;
+
+  .common-image {
+    border-radius: 50%;
+    overflow: hidden;
+  }
+}
+
+.default-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  border-radius: 50%;
+  overflow: hidden;
+
+  width: 16px;
+  height: 16px;
+  border: 1px solid $border;
+  background: $hover-bg;
+}

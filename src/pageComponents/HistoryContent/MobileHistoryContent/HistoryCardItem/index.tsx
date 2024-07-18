@@ -1,7 +1,7 @@
 import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { Divider } from 'antd';
-import { TRecordsListItem } from 'types/api';
+import { BusinessType, TRecordsListItem } from 'types/api';
 import { TRecordsTableListType } from 'types/records';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import FeeInfo from 'pageComponents/HistoryContent/FeeInfo';
@@ -14,6 +14,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebounceCallback } from 'hooks/debounce';
 import { setSkipCount, setHasMore } from 'store/reducers/records/slice';
 import TxHashBox from 'pageComponents/HistoryContent/TxHashBox';
+import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
 
 const NoDataText = '-- No Data --';
 
@@ -95,7 +96,9 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
                   orderType={recordItem.orderType}
                 />
                 <span className={clsx(styles['records-card-item-order-type'])}>
-                  {recordItem.orderType}
+                  {recordItem.orderType === BusinessType.Withdraw
+                    ? InfoBusinessTypeLabel.Withdraw
+                    : recordItem.orderType}
                 </span>
               </div>
               <Divider />

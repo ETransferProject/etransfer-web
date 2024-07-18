@@ -53,6 +53,9 @@ export function useRouterPush() {
       case `/${SideMenuKey.History.toLocaleLowerCase()}`:
         result = SideMenuKey.History;
         break;
+      case `/${SideMenuKey.Info.toLocaleLowerCase()}`:
+        result = SideMenuKey.Info;
+        break;
 
       default:
         break;

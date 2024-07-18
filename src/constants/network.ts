@@ -6,6 +6,8 @@ export enum NetworkName {
 
 export enum BlockchainNetworkType {
   AELF = 'AELF',
+  tDVV = 'tDVV',
+  tDVW = 'tDVW',
   SETH = 'SETH',
   Ethereum = 'ETH',
   Polygon = 'MATIC',
@@ -14,6 +16,7 @@ export enum BlockchainNetworkType {
   Solana = 'Solana',
   Tron = 'TRX',
   Binance = 'BSC',
+  TBinance = 'TBSC',
   Avax = 'AVAXC',
 }
 
@@ -27,6 +30,7 @@ export enum ExploreUrlType {
   Solana = 'https://explorer.solana.com',
   TRX = 'https://tronscan.io',
   BSC = 'https://bscscan.com',
+  TBSC = 'https://bscscan.com',
   AVAXC = 'https://subnets.avax.network/c-chain',
 }
 

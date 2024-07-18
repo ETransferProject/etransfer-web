@@ -58,6 +58,7 @@ const Layout = ({
 
   return (
     <AntdLayout
+      id="etransferWebWrapper"
       className={clsx(
         'etransfer-web-wrapper',
         styles['layout-wrapper'],

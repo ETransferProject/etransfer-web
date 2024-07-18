@@ -5,13 +5,14 @@ import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import { setSkipCount } from 'store/reducers/records/slice';
 import { TRecordsRequestType, TRecordsRequestStatus, TRecordsStatusI18n } from 'types/records';
 import { useCallback, useMemo } from 'react';
-import { TRangeValue, BusinessType } from 'types/api';
+import { TRangeValue } from 'types/api';
 import { TRecordsContentProps } from 'pageComponents/HistoryContent';
 import { Reset } from 'assets/images';
 import { SwapRightDefault, SwapRightSelected } from 'assets/images';
 import moment from 'moment';
 import { useHistoryFilter } from 'hooks/history';
 import { END_TIME_FORMAT, START_TIME_FORMAT } from 'constants/records';
+import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
 
 const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY-MM-DD';
@@ -83,8 +84,8 @@ export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecor
           popupClassName={'drop-wrap'}
           options={[
             { value: TRecordsRequestType.ALL, label: 'All' },
-            { value: TRecordsRequestType.Deposits, label: BusinessType.Deposit },
-            { value: TRecordsRequestType.Withdraws, label: BusinessType.Withdraw },
+            { value: TRecordsRequestType.Deposits, label: InfoBusinessTypeLabel.Deposit },
+            { value: TRecordsRequestType.Withdraws, label: InfoBusinessTypeLabel.Withdraw },
           ]}
         />
         <Select

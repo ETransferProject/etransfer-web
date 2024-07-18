@@ -18,17 +18,27 @@ import {
   PolygonMedium,
   SolanaMedium,
   TronMedium,
+  tDVV as TDVV,
+  tDVVMedium as TDVVMedium,
 } from 'assets/images';
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { useMemo } from 'react';
 
-type TNetworkLogoSize = 'normal' | 'small';
+export type TNetworkLogoSize = 'normal' | 'small';
 
 const NetworkLogoMap: Record<string, Record<TNetworkLogoSize, any>> = {
   [BlockchainNetworkType.AELF]: {
     normal: <AelfMedium />,
     small: <Aelf />,
+  },
+  [BlockchainNetworkType.tDVV]: {
+    normal: <TDVVMedium />,
+    small: <TDVV />,
+  },
+  [BlockchainNetworkType.tDVW]: {
+    normal: <TDVVMedium />,
+    small: <TDVV />,
   },
   [BlockchainNetworkType.Arbitrum]: {
     normal: <ArbitrumMedium />,
@@ -65,11 +75,13 @@ const NetworkLogoMap: Record<string, Record<TNetworkLogoSize, any>> = {
 };
 
 export default function NetworkLogo({
+  id,
   network,
   className,
   size = 'normal',
 }: {
   network: string;
+  id?: string;
   className?: string;
   size?: TNetworkLogoSize;
 }) {
@@ -77,10 +89,14 @@ export default function NetworkLogo({
   return (
     <>
       {renderNetworkLogo ? (
-        <div className={className}>{renderNetworkLogo}</div>
+        <div id={id} className={clsx(styles[`network-${size}`], className)}>
+          {renderNetworkLogo}
+        </div>
       ) : (
         // when not match network's type, display first character and uppercase
-        <div className={clsx(styles['network'], className)}>{network?.charAt(0).toUpperCase()}</div>
+        <div id={id} className={clsx(styles['network'], styles[`network-${size}`], className)}>
+          {network?.charAt(0).toUpperCase()}
+        </div>
       )}
     </>
   );
