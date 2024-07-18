@@ -25,9 +25,9 @@ export default function AelfChain({ list, size, className, iconClassName }: Aelf
               title={AelfChainNetwork[chainId]}
               trigger={isPadPX ? '' : 'hover'}
               overlayClassName={styles['aelf-chain-tooltip']}>
-              <div style={{ width: size, height: size }}>
+              <div style={{ width: size, height: size }} className={styles['logo-container']}>
                 <NetworkLogo
-                  className={clsx('flex-center', 'cursor-pointer', iconClassName)}
+                  className={clsx('flex-center', iconClassName)}
                   network={chainId}
                   size={size}
                 />

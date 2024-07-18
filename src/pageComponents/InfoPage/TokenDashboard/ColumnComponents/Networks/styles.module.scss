@@ -32,6 +32,14 @@
   .logo-container {
     width: 24px;
     height: 24px;
+    @include media-mobile {
+      width: 16px;
+      height: 16px;
+    }
+
+    @include media-web {
+      cursor: pointer;
+    }
   }
 }
 

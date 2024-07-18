@@ -1,5 +1,11 @@
+@import 'src/assets/theme/breakpoint.scss';
+
 .aelf-chain-container {
   gap: 12px;
+
+  @include media-web {
+    cursor: pointer;
+  }
 }
 
 .aelf-chain-tooltip {
