@@ -1,10 +1,10 @@
 import AElf from 'aelf-sdk';
 import { SupportedELFChainId } from 'constants/index';
-import { ChainType } from '@portkey/provider-types';
+import { ChainType } from '@portkey/types';
 import { AElfNodes } from 'constants/aelf';
 import { AllSupportedELFChainId } from 'constants/chain';
 import { AelfInstancesKey } from 'types';
-import { isSymbol, isValidBase58 } from './reg';
+import { isSymbol, isValidBase58 } from '../reg';
 import { ChainId } from '@portkey/types';
 
 export function getNodeByChainId(chainId: AllSupportedELFChainId) {

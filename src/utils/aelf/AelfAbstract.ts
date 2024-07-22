@@ -1,6 +1,6 @@
-import { AELFInstances, IAelfAbstract } from 'portkeySDK/types/aelf';
+import { AELFInstances, IAelfAbstract } from 'utils/aelf/types';
 import { AllSupportedELFChainId } from 'constants/chain';
-import { getNodeByChainId } from 'utils/aelfBase';
+import { getNodeByChainId } from 'utils/aelf/aelfBase';
 
 abstract class AelfAbstract implements IAelfAbstract {
   public instances: AELFInstances;

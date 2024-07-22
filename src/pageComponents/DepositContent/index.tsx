@@ -27,13 +27,14 @@ import { useEffectOnce } from 'react-use';
 import singleMessage from 'components/SingleMessage';
 import { InitDepositInfo } from 'constants/deposit';
 import { CommonErrorNameType } from 'api/types';
-import { handleErrorMessage } from '@portkey/did-ui-react';
+import { handleErrorMessage } from '@etransfer/utils';
 import myEvents from 'utils/myEvent';
 import { isAuthTokenError } from 'utils/api/error';
 import { SideMenuKey } from 'constants/home';
-import { ChainId } from '@portkey/provider-types';
+import { ChainId } from '@portkey/types';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
+import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 
 export type TDepositContentProps = {
   fromNetworkSelected?: TNetworkItem;
@@ -76,6 +77,24 @@ export default function Content() {
   const fromNetworkRef = useRef<string>();
   const [depositInfo, setDepositInfo] = useState<TDepositInfo>(InitDepositInfo);
   const [showRetry, setShowRetry] = useState(false);
+
+  const { walletInfo, isLocking, isConnected, walletType } = useConnectWallet();
+  console.log('🌈 🌈 🌈 🌈 🌈 🌈 ', walletInfo, isLocking, isConnected, walletType);
+  // const {
+  //   connectWallet,
+  //   disConnectWallet,
+  //   walletInfo,
+  //   lock,
+  //   isLocking,
+  //   isConnected,
+  //   loginError,
+  //   walletType,
+  //   getAccountByChainId,
+  //   getWalletSyncIsCompleted,
+  //   getSignature,
+  //   callSendMethod,
+  //   callViewMethod,
+  // } = useConnectWallet();
 
   const fromTokenSelected = useMemo(() => {
     return fromTokenList?.find((item) => item.symbol === fromTokenSymbol) || fromTokenList?.[0];

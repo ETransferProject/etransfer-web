@@ -22,11 +22,11 @@ import { useEffectOnce } from 'react-use';
 import { useHistoryFilter } from 'hooks/history';
 import { useRouter, useSearchParams } from 'next/navigation';
 import queryString from 'query-string';
-import { useWalletContext } from 'provider/walletProvider';
 import { SideMenuKey } from 'constants/home';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { useIsActive } from 'hooks/portkeyWallet';
 import { useRouterPush } from 'hooks/route';
+import { useSetAuthFromStorage } from 'hooks/authToken';
 
 export type TRecordsContentProps = TRecordsBodyProps & {
   onReset: () => void;
@@ -41,7 +41,6 @@ export default function Content() {
   const dispatch = useAppDispatch();
   const { setFilter } = useHistoryFilter();
   const { setLoading } = useLoading();
-  const [{ wallet }] = useWalletContext();
   const isActive = useIsActive();
   const routerPush = useRouterPush();
   const routerPushRef = useRef(routerPush);
@@ -56,12 +55,13 @@ export default function Content() {
     recordsList,
   } = useRecordsState();
 
+  const setAuthFromStorage = useSetAuthFromStorage();
   const requestRecordsList = useDebounceCallback(async (isLoading = false, isSetAuth = false) => {
     try {
       isLoading && setLoading(true);
       if (isSetAuth) {
-        if (!wallet) return;
-        await wallet?.setAuthFromStorage();
+        const serResult = await setAuthFromStorage();
+        if (!serResult) return;
         await sleep(500);
       }
 

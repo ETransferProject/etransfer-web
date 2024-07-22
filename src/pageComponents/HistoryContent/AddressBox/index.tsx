@@ -11,7 +11,7 @@ import { SupportedChainId, defaultNullValue } from 'constants/index';
 import Copy, { CopySize } from 'components/Copy';
 import { getOmittedStr } from 'utils/calculate';
 import { openWithBlank, getAelfExploreLink, getOtherExploreLink } from 'utils/common';
-import { addressFormat } from 'utils/aelfBase';
+import { addressFormat } from 'utils/aelf/aelfBase';
 import { SupportedELFChainId } from 'constants/index';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';

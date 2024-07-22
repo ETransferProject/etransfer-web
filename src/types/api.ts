@@ -1,4 +1,4 @@
-import { ChainId } from '@portkey/provider-types';
+import { ChainId } from '@portkey/types';
 import { PortkeyVersion } from 'constants/wallet';
 import { TFromTransfer, TOrderStatus, TToTransfer } from './records';
 import type { Moment } from 'moment';

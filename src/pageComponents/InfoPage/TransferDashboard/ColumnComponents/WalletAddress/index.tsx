@@ -11,7 +11,7 @@ import {
 } from 'constants/network';
 import { useAccounts } from 'hooks/portkeyWallet';
 import { useCallback } from 'react';
-import { addressFormat } from 'utils/aelfBase';
+import { addressFormat } from 'utils/aelf/aelfBase';
 import { getOmittedStr } from 'utils/calculate';
 import { getAelfExploreLink, getOtherExploreLink, openWithBlank } from 'utils/common';
 import styles from './styles.module.scss';

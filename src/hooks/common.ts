@@ -1,26 +1,17 @@
 import { resetLocalJWT } from 'api/utils';
 import { SideMenuKey } from 'constants/home';
 import { IChainNameItem } from 'constants/index';
-import { PortkeyVersion } from 'constants/wallet';
 import { useCallback } from 'react';
 import {
   useAppDispatch,
-  useCommonState,
   useDepositState,
   useResetStore,
   useWithdrawState,
 } from 'store/Provider/hooks';
-import { setSwitchVersionAction } from 'store/reducers/common/slice';
 import { setToChainItem } from 'store/reducers/deposit/slice';
 import { setDisconnectedAction } from 'store/reducers/portkeyWallet/actions';
 import { setWithdrawChainItem } from 'store/reducers/withdraw/slice';
 import { useRouterPush } from './route';
-
-export function useCurrentVersion() {
-  const { currentVersion } = useCommonState();
-
-  return currentVersion || PortkeyVersion.v2;
-}
 
 export function useSetCurrentChainItem() {
   const dispatch = useAppDispatch();
@@ -51,7 +42,6 @@ export function useClearStore() {
 
   return useCallback(() => {
     dispatch(setDisconnectedAction());
-    dispatch(setSwitchVersionAction(undefined));
     resetStore();
     resetLocalJWT();
     routerPush('/', false);

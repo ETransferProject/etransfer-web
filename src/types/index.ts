@@ -1,12 +1,9 @@
 import { AElfNodes } from 'constants/aelf';
-import { NetworkType } from '@portkey/provider-types';
 import { SupportedELFChainId } from 'constants/index';
 import { SideMenuKey } from 'constants/home';
 import { BusinessType } from './api';
 import { TRecordsStatusI18n } from './records';
 
-export type TNetworkTypeV1 = 'MAIN' | 'TESTNET';
-export type TNetworkTypeV2 = NetworkType;
 export type ChainType = 'ELF';
 
 export type TEntryConfig = {

@@ -1,14 +1,14 @@
 import { ContractType } from 'constants/chain';
 import * as AELF_Test from '../platform/AELF_Test';
 import * as tDVW_Test from '../platform/tDVW_Test';
-import { TNetworkTypeV1, TNetworkTypeV2 } from 'types/index';
 import { NetworkName } from 'constants/network';
-import { PortkeyVersion } from 'constants/wallet';
+import { NetworkEnum } from '@aelf-web-login/wallet-adapter-base';
+
+export const TELEGRAM_BOT_ID = '';
 
 export const NETWORK_NAME: NetworkName = NetworkName.testnet;
 
-export const NETWORK_TYPE_V1: TNetworkTypeV1 = 'TESTNET';
-export const NETWORK_TYPE_V2: TNetworkTypeV2 = 'TESTNET';
+export const NETWORK_TYPE: NetworkEnum = NetworkEnum.TESTNET;
 
 export enum SupportedELFChainId {
   AELF = 'AELF',
@@ -72,36 +72,20 @@ export const AELF_NODES = {
 // testnet-jenkins
 export const ETransferHost = 'https://test-app.etransfer.exchange';
 export const ETransferAuthHost = 'https://test-app.etransfer.exchange';
-export const WebLoginGraphqlUrlV1 =
-  'https://dapp-portkey-test.portkey.finance/Portkey_DID/PortKeyIndexerCASchema/graphql';
-export const WebLoginGraphqlUrlV2 =
+export const WebLoginGraphqlUrl =
   'https://dapp-aa-portkey-test.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql';
-export const WebLoginRequestDefaultsUrlV1 = 'https://did-portkey-test.portkey.finance';
-export const WebLoginRequestDefaultsUrlV2 = 'https://aa-portkey-test.portkey.finance';
-export const WebLoginServiceUrlV1 = 'https://did-portkey-test.portkey.finance';
-export const WebLoginServiceUrlV2 = 'https://aa-portkey-test.portkey.finance';
-export const WebLoginConnectUrlV2 = 'https://auth-aa-portkey-test.portkey.finance';
+// 'https://dapp-aa-portkey-test.portkey.finance/Portkey_DID/PortKeyIndexerCASchema/graphql';
+export const WebLoginServiceUrl = 'https://aa-portkey-test.portkey.finance';
+export const WebLoginConnectUrl = 'https://auth-aa-portkey-test.portkey.finance';
 
 export const ADDRESS_MAP = {
-  [PortkeyVersion.v1]: {
-    [SupportedELFChainId.AELF]: {
-      [ContractType.CA]: AELF_Test.CA_CONTRACT,
-      [ContractType.TOKEN]: AELF_Test.TOKEN_CONTRACT,
-    },
-    [SupportedELFChainId.tDVW]: {
-      [ContractType.CA]: tDVW_Test.CA_CONTRACT,
-      [ContractType.TOKEN]: tDVW_Test.TOKEN_CONTRACT,
-    },
+  [SupportedELFChainId.AELF]: {
+    [ContractType.CA]: AELF_Test.CA_CONTRACT_V2,
+    [ContractType.TOKEN]: AELF_Test.TOKEN_CONTRACT,
   },
-  [PortkeyVersion.v2]: {
-    [SupportedELFChainId.AELF]: {
-      [ContractType.CA]: AELF_Test.CA_CONTRACT_V2,
-      [ContractType.TOKEN]: AELF_Test.TOKEN_CONTRACT,
-    },
-    [SupportedELFChainId.tDVW]: {
-      [ContractType.CA]: tDVW_Test.CA_CONTRACT_V2,
-      [ContractType.TOKEN]: tDVW_Test.TOKEN_CONTRACT,
-    },
+  [SupportedELFChainId.tDVW]: {
+    [ContractType.CA]: tDVW_Test.CA_CONTRACT_V2,
+    [ContractType.TOKEN]: tDVW_Test.TOKEN_CONTRACT,
   },
 };
 

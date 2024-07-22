@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { Accounts, ChainIds } from '@portkey/provider-types';
 import {
   setDisconnectedAction,
   setV1AccountsAction,
@@ -11,12 +10,13 @@ import {
   setV2ConnectedInfoAction,
   setV2DisconnectedAction,
 } from './actions';
+import { TAelfAccounts, TChainIds } from 'types/wallet';
 
 export interface PortkeyWalletInfo {
   isActive: boolean; // is connected
   name: string;
-  accounts?: Accounts;
-  chainIds?: ChainIds;
+  accounts?: TAelfAccounts;
+  chainIds?: TChainIds;
 }
 
 export interface PortkeyWalletState {
