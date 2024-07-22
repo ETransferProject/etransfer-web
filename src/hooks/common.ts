@@ -9,7 +9,6 @@ import {
   useWithdrawState,
 } from 'store/Provider/hooks';
 import { setToChainItem } from 'store/reducers/deposit/slice';
-import { setDisconnectedAction } from 'store/reducers/portkeyWallet/actions';
 import { setWithdrawChainItem } from 'store/reducers/withdraw/slice';
 import { useRouterPush } from './route';
 
@@ -36,16 +35,14 @@ export function useSetCurrentChainItem() {
 }
 
 export function useClearStore() {
-  const dispatch = useAppDispatch();
   const resetStore = useResetStore();
   const routerPush = useRouterPush();
 
   return useCallback(() => {
-    dispatch(setDisconnectedAction());
     resetStore();
     resetLocalJWT();
     routerPush('/', false);
-  }, [dispatch, resetStore, routerPush]);
+  }, [resetStore, routerPush]);
 }
 
 export function useMixAllTokenList() {

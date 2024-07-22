@@ -7,7 +7,6 @@ import Address from '../Address';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { useRouter } from 'next/navigation';
-import { useIsActive } from 'hooks/portkeyWallet';
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 
@@ -16,8 +15,7 @@ export default function MobileUserProfile() {
   const [isShowAddress, setIsShowAddress] = useState<boolean>(true);
   const { isPadPX } = useCommonState();
   const router = useRouter();
-  const isActive = useIsActive();
-  const { walletType } = useConnectWallet();
+  const { walletType, isConnected } = useConnectWallet();
 
   const handleChangeAddress = () => {
     setIsShowAddress(!isShowAddress);
@@ -55,7 +53,7 @@ export default function MobileUserProfile() {
         onClose={() => setIsDrawerOpen(false)}>
         <div className={styles['user-wrapper']}>
           <div className={styles['top-wrapper']}>
-            {isActive && walletType === WalletTypeEnum.aa && (
+            {isConnected && walletType === WalletTypeEnum.aa && (
               <div className={styles['assets-wrapper']} onClick={() => handleAssets()}>
                 <span className={styles['assets']}>Assets</span>
                 <ArrowRight />

@@ -3,15 +3,15 @@ import type { Accounts, IPortkeyProvider } from '@portkey/provider-types';
 import { DIDWalletInfo } from '@portkey/did-ui-react';
 
 export type TAelfAccounts = {
-  AELF?: string[] | undefined;
-  tDVV?: string[] | undefined;
-  tDVW?: string[] | undefined;
+  AELF?: string;
+  tDVV?: string;
+  tDVW?: string;
 };
 
 export type TChainIds = ChainId[];
 
 export interface WalletInfo {
-  name?: string | undefined;
+  name?: string;
   address: string;
   extraInfo: ExtraInfoForDiscover | ExtraInfoForPortkeyAA | ExtraInfoForNightElf;
 }
@@ -25,7 +25,7 @@ export interface ExtraInfoForDiscover {
 export interface ExtraInfoForPortkeyAA {
   publicKey: string;
   portkeyInfo: DIDWalletInfo & {
-    accounts: Record<ChainId, string>;
+    accounts: TAelfAccounts;
     nickName: string;
   };
 }

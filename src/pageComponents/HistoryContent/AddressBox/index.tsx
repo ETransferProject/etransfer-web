@@ -15,7 +15,7 @@ import { addressFormat } from 'utils/aelf/aelfBase';
 import { SupportedELFChainId } from 'constants/index';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
-import { useAccounts } from 'hooks/portkeyWallet';
+import { useGetAccount } from 'hooks/wallet';
 import NetworkLogo from 'components/NetworkLogo';
 
 export type TAddressBoxProps = {
@@ -36,7 +36,7 @@ export default function AddressBox({
   toChainId,
 }: TAddressBoxProps) {
   const { isPadPX } = useCommonState();
-  const accounts = useAccounts();
+  const accounts = useGetAccount();
 
   const calcAddress = useCallback(() => {
     const address = type === 'To' ? toAddress : fromAddress;
@@ -49,11 +49,9 @@ export default function AddressBox({
       // when fromAddress and toAddress all null, need accounts default address
       let chainId: SupportedELFChainId = type === 'To' ? toChainId : fromChainId;
       chainId = chainId || SupportedChainId.sideChain;
-      if (accounts && accounts[chainId] && accounts[chainId]?.[0]) {
+      if (accounts && accounts[chainId]) {
         // default accounts[chainId]?.[0] , if not exist, use AELF
-        return (
-          accounts[chainId]?.[0] || accounts[SupportedELFChainId.AELF]?.[0] || defaultNullValue
-        );
+        return accounts[chainId] || accounts[SupportedELFChainId.AELF] || defaultNullValue;
       }
       return defaultNullValue;
     }

@@ -1,13 +1,12 @@
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { QueryAuthApiExtraRequest, getLocalJWT, queryAuthApi } from 'api/utils';
-import { SupportedChainId, APP_NAME } from 'constants/index';
+import { APP_NAME } from 'constants/index';
 import { PortkeyVersion } from 'constants/wallet';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAppDispatch, useCommonState, useLoading } from 'store/Provider/hooks';
+import { useCommonState, useLoading } from 'store/Provider/hooks';
 import AElf from 'aelf-sdk';
 import { recoverPubKey } from 'utils/aelf/aelfBase';
-import { setV2ConnectedInfoAction } from 'store/reducers/portkeyWallet/actions';
 import { useDebounceCallback } from 'hooks/debounce';
 import service from 'api/axios';
 import { eTransferInstance } from 'utils/etransferInstance';
@@ -21,10 +20,9 @@ import singleMessage from 'components/SingleMessage';
 import { useRouterPush } from './route';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { SideMenuKey } from 'constants/home';
-import { TAelfAccounts, WalletInfo } from 'types/wallet';
+import { WalletInfo } from 'types/wallet';
 
 export function useQueryAuthToken() {
-  const dispatch = useAppDispatch();
   const { activeMenuKey } = useCommonState();
   const { isConnected, getSignature, walletType, walletInfo, disConnectWallet } =
     useConnectWallet();
@@ -34,33 +32,12 @@ export function useQueryAuthToken() {
   const searchParams = useSearchParams();
   const routeType = useMemo(() => searchParams.get('type') as SideMenuKey, [searchParams]);
 
-  const handleAccount = useCallback(() => {
-    const accounts: TAelfAccounts = {};
-    accounts[SupportedChainId.mainChain] = [
-      'ELF_' + walletInfo?.address + '_' + SupportedChainId.mainChain,
-    ];
-    accounts[SupportedChainId.sideChain] = [
-      'ELF_' + walletInfo?.address + '_' + SupportedChainId.sideChain,
-    ];
-
-    return accounts;
-  }, [walletInfo?.address]);
-
   const loginSuccessActive = useCallback(() => {
-    const accounts = handleAccount();
-    dispatch(
-      setV2ConnectedInfoAction({
-        accounts,
-        name: walletInfo?.name || '',
-        isActive: true,
-      }),
-    );
-
     myEvents.LoginSuccess.emit();
     if (pathname === '/') {
       routerPush('/' + (routeType || activeMenuKey).toLocaleLowerCase());
     }
-  }, [activeMenuKey, dispatch, handleAccount, pathname, routeType, routerPush, walletInfo?.name]);
+  }, [activeMenuKey, pathname, routeType, routerPush]);
 
   const handleGetSignature = useCallback(async () => {
     if (!walletInfo) return;

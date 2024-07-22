@@ -67,7 +67,7 @@ import {
 import { CommonErrorNameType } from 'api/types';
 import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
 import { handleErrorMessage } from '@etransfer/utils';
-import { useAccounts } from 'hooks/portkeyWallet';
+import { useGetAccount } from 'hooks/wallet';
 import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
 import {
   formatSymbolDisplay,
@@ -125,7 +125,7 @@ export default function WithdrawContent() {
   const isAndroid = devices.isMobile().android;
   const { isPadPX, isMobilePX } = useCommonState();
   const withdraw = useWithdrawState();
-  const accounts = useAccounts();
+  const accounts = useGetAccount();
   const { currentSymbol, tokenList, currentChainItem } = useWithdraw();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem || CHAIN_LIST[0]);
   const { setLoading } = useLoading();
@@ -550,7 +550,7 @@ export default function WithdrawContent() {
       try {
         const symbol = item?.symbol || currentSymbol;
         const decimal = item?.decimals || currentTokenDecimal;
-        const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
+        const caAddress = accounts?.[currentChainItemRef.current.key];
         if (!caAddress) return '';
         isLoading && setIsMaxBalanceLoading(true);
         const maxBalance = await getBalance({
@@ -681,7 +681,7 @@ export default function WithdrawContent() {
       throw error;
     }
 
-    const ownerAddress = accounts?.[currentChainItemRef.current.key]?.[0] || '';
+    const ownerAddress = accounts?.[currentChainItemRef.current.key] || '';
 
     const checkRes = await checkTokenAllowanceAndApprove({
       callViewMethod,
@@ -774,7 +774,7 @@ export default function WithdrawContent() {
           walletInfo as WalletInfo,
           walletType,
         );
-        const ownerAddress = accounts?.[currentChainItemRef.current.key]?.[0] || '';
+        const ownerAddress = accounts?.[currentChainItemRef.current.key] || '';
         const transaction = await createTransferTokenTransaction({
           walletType,
           caContractAddress: ADDRESS_MAP[currentChainItemRef.current.key][ContractType.CA],

@@ -24,7 +24,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import queryString from 'query-string';
 import { SideMenuKey } from 'constants/home';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
-import { useIsActive } from 'hooks/portkeyWallet';
+import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { useRouterPush } from 'hooks/route';
 import { useSetAuthFromStorage } from 'hooks/authToken';
 
@@ -41,7 +41,7 @@ export default function Content() {
   const dispatch = useAppDispatch();
   const { setFilter } = useHistoryFilter();
   const { setLoading } = useLoading();
-  const isActive = useIsActive();
+  const { isConnected } = useConnectWallet();
   const routerPush = useRouterPush();
   const routerPushRef = useRef(routerPush);
   routerPushRef.current = routerPush;
@@ -138,10 +138,10 @@ export default function Content() {
 
   const checkActive = useCallback(async () => {
     await sleep(100);
-    if (!isActive) {
+    if (!isConnected) {
       routerPushRef.current('/');
     }
-  }, [isActive]);
+  }, [isConnected]);
 
   useEffectOnce(() => {
     dispatch(setActiveMenuKey(SideMenuKey.History));

@@ -9,7 +9,7 @@ import {
   OtherExploreType,
   ExploreUrlType,
 } from 'constants/network';
-import { useAccounts } from 'hooks/portkeyWallet';
+import { useGetAccount } from 'hooks/wallet';
 import { useCallback } from 'react';
 import { addressFormat } from 'utils/aelf/aelfBase';
 import { getOmittedStr } from 'utils/calculate';
@@ -32,7 +32,7 @@ export default function WalletAddress({
   isOmitAddress = true,
   className,
 }: WalletAddressProps) {
-  const accounts = useAccounts();
+  const accounts = useGetAccount();
 
   const calcAddress = useCallback(() => {
     if (chainId && network === BlockchainNetworkType.AELF) {
@@ -42,8 +42,8 @@ export default function WalletAddress({
       }
       if (!address && AelfChainIdList.includes(chainId)) {
         // when address is null, need accounts address
-        if (accounts && accounts[chainId] && accounts[chainId]?.[0]) {
-          return accounts[chainId]?.[0] || defaultNullValue;
+        if (accounts && accounts[chainId]) {
+          return accounts[chainId] || defaultNullValue;
         }
         return defaultNullValue;
       }

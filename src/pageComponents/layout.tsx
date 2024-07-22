@@ -15,7 +15,7 @@ import { useRouteParamType } from 'hooks/route';
 import { useUpdateRecord } from 'hooks/updateRecord';
 import Footer from 'components/Footer';
 import { usePathname } from 'next/navigation';
-import { useWallet } from 'hooks/wallet';
+import { useInitWallet } from 'hooks/wallet';
 
 const Layout = ({
   children,
@@ -54,7 +54,7 @@ const Layout = ({
   }, []);
   const { isPadPX, isMobilePX } = useCommonState();
 
-  useWallet();
+  useInitWallet();
   useRouteParamType();
   useUpdateRecord();
 

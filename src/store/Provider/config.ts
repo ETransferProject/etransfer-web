@@ -5,7 +5,6 @@ import {
 import { reduxStorageRoot } from 'constants/store';
 import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
 import CommonSlice from 'store/reducers/common/slice';
-import PortkeyWalletSlice from 'store/reducers/portkeyWallet/slice';
 import storage from 'redux-persist/lib/storage';
 import DepositSlice from 'store/reducers/deposit/slice';
 import WithdrawSlice from 'store/reducers/withdraw/slice';
@@ -26,11 +25,6 @@ export const commonPersistConfig = {
   storage,
   // if you need add key for an existing slice, please use createMigrate.
   // migrate: createMigrate(migrations, { debug: false}) // import { createMigrate } from 'redux-persist';
-};
-
-export const portkeyWalletPersistConfig = {
-  key: PortkeyWalletSlice.name,
-  storage,
 };
 
 export const depositPersistConfig = {
