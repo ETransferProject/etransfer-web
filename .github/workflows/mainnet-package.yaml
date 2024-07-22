@@ -1,0 +1,50 @@
+name: Build and Push Image
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+jobs:
+  build-and-push-image:
+    runs-on: etransfer-runner
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Create image tag
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.REPOSITORY_REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.REPOSITORY }}/etransfer-web # change this to your project frontend name
+          tags: |
+            type=ref,event=tag
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        env:
+          NEXT_PUBLIC_FIREBASE_ANALYTICS_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_ANALYTICS_API_KEY }} # testnet   mainnet
+          NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_APP_ID: ${{ secrets.NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_APP_ID }}
+          NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_MEASUREMENT_ID }}
+          NEXT_PUBLIC_TESTNET_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TESTNET_RECAPTCHA_SITE_KEY }}
+          NEXT_PUBLIC_MAINNET_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_MAINNET_RECAPTCHA_SITE_KEY }}
+          NEXT_PUBLIC_MAINNET_FIREBASE_ANALYTICS_APP_ID: ${{ secrets.NEXT_PUBLIC_MAINNET_FIREBASE_ANALYTICS_APP_ID }}
+          NEXT_PUBLIC_MAINNET_FIREBASE_ANALYTICS_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_MAINNET_FIREBASE_ANALYTICS_MEASUREMENT_ID }}
+          ENVIRONMENT: mainnet
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NEXT_PUBLIC_FIREBASE_ANALYTICS_API_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_ANALYTICS_API_KEY }}
+            NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_APP_ID=${{ secrets.NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_APP_ID }}
+            NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_TESTNET_FIREBASE_ANALYTICS_MEASUREMENT_ID }}
+            NEXT_PUBLIC_TESTNET_RECAPTCHA_SITE_KEY=${{ secrets.NEXT_PUBLIC_TESTNET_RECAPTCHA_SITE_KEY }}
+            NEXT_PUBLIC_MAINNET_RECAPTCHA_SITE_KEY=${{ secrets.NEXT_PUBLIC_MAINNET_RECAPTCHA_SITE_KEY }}  
+            NEXT_PUBLIC_MAINNET_FIREBASE_ANALYTICS_APP_ID=${{ secrets.NEXT_PUBLIC_MAINNET_FIREBASE_ANALYTICS_APP_ID }}  
+            NEXT_PUBLIC_MAINNET_FIREBASE_ANALYTICS_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_MAINNET_FIREBASE_ANALYTICS_MEASUREMENT_ID }}
+            ENVIRONMENT=mainnet
