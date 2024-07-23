@@ -4,7 +4,7 @@ import * as tDVW_Test from '../platform/tDVW_Test';
 import { NetworkName } from 'constants/network';
 import { NetworkEnum } from '@aelf-web-login/wallet-adapter-base';
 
-export const TELEGRAM_BOT_ID = '';
+export const TELEGRAM_BOT_ID = '7057631599';
 
 export const NETWORK_NAME: NetworkName = NetworkName.testnet;
 
