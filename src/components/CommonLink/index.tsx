@@ -34,7 +34,7 @@ export default function CommonLink({
       target={target}
       type="link"
       href={href}>
-      {showIcon && <LinkOutlined rev={undefined} />}
+      {showIcon && <LinkOutlined />}
       {children}
     </Button>
   );
