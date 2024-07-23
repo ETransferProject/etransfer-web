@@ -1,5 +1,4 @@
 'use client';
-import { Asset, PortkeyAssetProvider } from '@portkey/did-ui-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
 import { LeftOutlined } from '@ant-design/icons';
@@ -7,6 +6,7 @@ import styles from './styles.module.scss';
 import { useClearStore } from 'hooks/common';
 import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
+import { PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
 
 export default function MyAsset() {
   const router = useRouter();
@@ -30,11 +30,11 @@ export default function MyAsset() {
 
   return (
     <div className={styles['my-asset-wrapper']}>
-      <PortkeyAssetProvider
+      <PortkeyDid.PortkeyAssetProvider
         originChainId="tDVW" // {wallet?.portkeyInfo?.chainId as ChainId}
         pin="111111" // {wallet?.portkeyInfo?.pin}
       >
-        <Asset
+        <PortkeyDid.Asset
           isShowRamp={false}
           isShowRampBuy={false}
           isShowRampSell={false}
@@ -45,7 +45,7 @@ export default function MyAsset() {
           }}
           onDeleteAccount={handleDeleteAccount}
         />
-      </PortkeyAssetProvider>
+      </PortkeyDid.PortkeyAssetProvider>
     </div>
   );
 }

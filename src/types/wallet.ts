@@ -1,6 +1,6 @@
 import { ChainId } from '@portkey/types';
 import type { Accounts, IPortkeyProvider } from '@portkey/provider-types';
-import { DIDWalletInfo } from '@portkey/did-ui-react';
+import { PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
 
 export type TAelfAccounts = {
   AELF?: string;
@@ -24,7 +24,7 @@ export interface ExtraInfoForDiscover {
 
 export interface ExtraInfoForPortkeyAA {
   publicKey: string;
-  portkeyInfo: DIDWalletInfo & {
+  portkeyInfo: PortkeyDid.DIDWalletInfo & {
     accounts: TAelfAccounts;
     nickName: string;
   };

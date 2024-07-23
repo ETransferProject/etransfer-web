@@ -24,7 +24,6 @@
     "@aelf-web-login/wallet-adapter-react": "^0.1.2",
     "@etransfer/utils": "^1.2.1-alpha.1",
     "@portkey/contracts": "^2.7.1-alpha.4",
-    "@portkey/did-ui-react": "^2.7.1-alpha.4",
     "@portkey/utils": "^2.7.1-alpha.4",
     "@reduxjs/toolkit": "^1.8.5",
     "@sentry/nextjs": "^7.19.0",
