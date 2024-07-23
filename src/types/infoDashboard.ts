@@ -1,4 +1,4 @@
-import { ChainId } from '@portkey/types';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { BusinessType, TTransferDashboardItemToFee } from './api';
 import { TOrderStatus } from './records';
 import { TransferStatusType } from 'constants/infoDashboard';
@@ -7,7 +7,7 @@ export type TTokenDashboardItem = TTokenDashboardItemVolume & {
   symbol: string;
   symbolIcon: string;
   networks: string[];
-  aelfChain: ChainId[];
+  aelfChain: TChainId[];
   details: TTokenDashboardItemDetail[];
 };
 
@@ -29,7 +29,7 @@ export type TTransferDashboardData = {
   status: TOrderStatus;
   createTime: number;
   fromNetwork: string;
-  fromChainId: ChainId;
+  fromChainId: TChainId;
   fromSymbol: string;
   fromAddress: string;
   fromAmount: string;
@@ -37,7 +37,7 @@ export type TTransferDashboardData = {
   fromTxId: string;
   fromStatus: TransferStatusType;
   toNetwork: string;
-  toChainId: ChainId;
+  toChainId: TChainId;
   toSymbol: string;
   toAddress: string;
   toAmount: string;

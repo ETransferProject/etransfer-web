@@ -1,4 +1,4 @@
-import { ChainId } from '@portkey/types';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import clsx from 'clsx';
 import CommonTooltip from 'components/CommonTooltip';
 import Copy, { CopySize } from 'components/Copy';
@@ -20,7 +20,7 @@ import { AelfChainIdList } from 'constants/chain';
 interface WalletAddressProps {
   address: string;
   network: string;
-  chainId?: ChainId;
+  chainId?: TChainId;
   isOmitAddress?: boolean;
   className?: string;
 }

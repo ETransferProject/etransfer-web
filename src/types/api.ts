@@ -1,4 +1,4 @@
-import { ChainId } from '@portkey/types';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { PortkeyVersion } from 'constants/wallet';
 import { TFromTransfer, TOrderStatus, TToTransfer } from './records';
 import type { Moment } from 'moment';
@@ -17,7 +17,7 @@ export enum AuthTokenSource {
 
 export type TGetTokenListRequest = {
   type: BusinessType;
-  chainId: ChainId;
+  chainId: TChainId;
 };
 
 export type TGetTokenListResult = {
@@ -45,13 +45,13 @@ export type TDepositTokenItem = TTokenItem & {
 };
 
 export type TToTokenItem = TTokenItem & {
-  chainIdList?: ChainId[];
+  chainIdList?: TChainId[];
   chainList?: IChainNameItem[];
 };
 
 export type TGetNetworkListRequest = {
   type: BusinessType;
-  chainId: ChainId;
+  chainId: TChainId;
   symbol?: string;
   address?: string;
 };
@@ -79,7 +79,7 @@ export enum NetworkStatus {
 }
 
 export type TGetDepositInfoRequest = {
-  chainId: ChainId;
+  chainId: TChainId;
   network: string;
   symbol?: string;
   toSymbol?: string;
@@ -102,7 +102,7 @@ export type TDepositExtraInfo = {
 };
 
 export type TGetDepositCalculateRequest = {
-  toChainId: ChainId;
+  toChainId: TChainId;
   fromSymbol: string;
   toSymbol: string;
   fromAmount: string;
@@ -121,7 +121,7 @@ export type TConversionRate = {
 };
 
 export type TGetWithdrawInfoRequest = {
-  chainId: ChainId;
+  chainId: TChainId;
   network?: string;
   symbol?: string;
   amount?: string;
@@ -171,7 +171,7 @@ export type TCreateWithdrawOrderRequest = {
   network: string;
   symbol: string;
   amount: string;
-  fromChainId: ChainId;
+  fromChainId: TChainId;
   toAddress: string;
   rawTransaction: string;
 };
@@ -281,7 +281,7 @@ export type TTokenDashboardResult = {
 export type TTokenDashboardData = {
   icon: string;
   networks: string[];
-  chainIds: ChainId[];
+  chainIds: TChainId[];
   general: TTokenDashboardItemAmount;
   details: TTokenDashboardDataDetail[];
 };
@@ -345,7 +345,7 @@ export type TTransferDashboardItem = {
 
 export type TTransferDashboardItemFrom = {
   network: string;
-  chainId: ChainId;
+  chainId: TChainId;
   fromAddress: string;
   amount: string;
   amountUsd: string;
@@ -356,7 +356,7 @@ export type TTransferDashboardItemFrom = {
 
 export type TTransferDashboardItemTo = {
   network: string;
-  chainId: ChainId;
+  chainId: TChainId;
   toAddress: string;
   amount: string;
   amountUsd: string;

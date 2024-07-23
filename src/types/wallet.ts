@@ -1,4 +1,4 @@
-import { ChainId } from '@portkey/types';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import type { Accounts, IPortkeyProvider } from '@portkey/provider-types';
 import { PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
 
@@ -8,7 +8,8 @@ export type TAelfAccounts = {
   tDVW?: string;
 };
 
-export type TChainIds = ChainId[];
+export type TChainIds = TChainId[];
+export type TChainType = 'ethereum' | 'aelf';
 
 export interface WalletInfo {
   name?: string;

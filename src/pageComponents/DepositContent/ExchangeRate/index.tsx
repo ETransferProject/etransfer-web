@@ -6,7 +6,7 @@ import { defaultNullValue } from 'constants/index';
 import { getDepositCalculate } from 'utils/api/deposit';
 import { handleErrorMessage } from '@etransfer/utils';
 import singleMessage from 'components/SingleMessage';
-import { ChainId } from '@portkey/types';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { formatSymbolDisplay } from 'utils/format';
 import { MAX_UPDATE_TIME } from 'constants/calculate';
 import { isAuthTokenError } from 'utils/api/error';
@@ -17,7 +17,7 @@ import myEvents from 'utils/myEvent';
 type TExchangeRate = {
   fromSymbol: string;
   toSymbol: string;
-  toChainId: ChainId;
+  toChainId: TChainId;
   slippage?: string;
 };
 

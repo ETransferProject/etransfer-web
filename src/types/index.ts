@@ -4,8 +4,6 @@ import { SideMenuKey } from 'constants/home';
 import { BusinessType } from './api';
 import { TRecordsStatusI18n } from './records';
 
-export type ChainType = 'ELF';
-
 export type TEntryConfig = {
   type?: SideMenuKey;
   chainId?: SupportedELFChainId;

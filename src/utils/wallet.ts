@@ -1,5 +1,5 @@
 import { GetCAHolderByManagerParams } from '@portkey/services';
-import { ChainId } from '@portkey/types';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
 import { SupportedChainId } from 'constants/index';
 import { pubKeyToAddress } from './aelf/aelfBase';
@@ -35,7 +35,7 @@ export const getManagerAddressByWallet = async (
 export const getCaHashAndOriginChainIdByWallet = async (
   walletInfo: WalletInfo,
   walletType: WalletTypeEnum,
-): Promise<{ caHash: string; originChainId: ChainId }> => {
+): Promise<{ caHash: string; originChainId: TChainId }> => {
   let caHash, originChainId;
   if (walletType === WalletTypeEnum.discover) {
     const res = await PortkeyDid.did.services.getHolderInfoByManager({
@@ -43,7 +43,7 @@ export const getCaHashAndOriginChainIdByWallet = async (
     } as unknown as GetCAHolderByManagerParams);
     const caInfo = res[0];
     caHash = caInfo?.caHash;
-    originChainId = caInfo?.chainId as ChainId;
+    originChainId = caInfo?.chainId as TChainId;
   } else if (walletType === WalletTypeEnum.aa) {
     const portkeyAAInfo = walletInfo?.extraInfo as ExtraInfoForPortkeyAA;
     caHash = portkeyAAInfo.portkeyInfo.caInfo.caHash;
