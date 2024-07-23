@@ -81,7 +81,7 @@ import { useWithdraw } from 'hooks/withdraw';
 import { QuestionMarkIcon, Fingerprint } from 'assets/images';
 import RemainingQuota from './RemainingQuota';
 import { useWalletContext } from 'provider/walletProvider';
-import { isAuthTokenError, isHtmlError } from 'utils/api/error';
+import { isAuthTokenError, isHtmlError, isWriteOperationError } from 'utils/api/error';
 import myEvents from 'utils/myEvent';
 import { useCurrentVersion } from 'hooks/common';
 import { AelfExploreType } from 'constants/network';
@@ -380,7 +380,11 @@ export default function WithdrawContent() {
               errorMessage: '',
             },
           });
-          if (error.name !== CommonErrorNameType.CANCEL && !isAuthTokenError(error)) {
+          if (
+            error.name !== CommonErrorNameType.CANCEL &&
+            !isWriteOperationError(error?.code, handleErrorMessage(error)) &&
+            !isAuthTokenError(error)
+          ) {
             singleMessage.error(handleErrorMessage(error));
           }
           setNetworkList([]);
@@ -507,6 +511,7 @@ export default function WithdrawContent() {
         if (
           error.name !== CommonErrorNameType.CANCEL &&
           !isHtmlError(error?.code, handleErrorMessage(error)) &&
+          !isWriteOperationError(error?.code, handleErrorMessage(error)) &&
           !isAuthTokenError(error)
         ) {
           singleMessage.error(handleErrorMessage(error));

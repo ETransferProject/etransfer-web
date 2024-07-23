@@ -29,7 +29,7 @@ import { InitDepositInfo } from 'constants/deposit';
 import { CommonErrorNameType } from 'api/types';
 import { handleErrorMessage } from '@portkey/did-ui-react';
 import myEvents from 'utils/myEvent';
-import { isAuthTokenError } from 'utils/api/error';
+import { isAuthTokenError, isWriteOperationError } from 'utils/api/error';
 import { SideMenuKey } from 'constants/home';
 import { ChainId } from '@portkey/provider-types';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -213,7 +213,11 @@ export default function Content() {
         !isPadPX && (await getDepositData(chainId, lastSymbol, lastToSymbol));
       } catch (error: any) {
         setIsShowNetworkLoading(false);
-        if (error.name !== CommonErrorNameType.CANCEL && !isAuthTokenError(error)) {
+        if (
+          error.name !== CommonErrorNameType.CANCEL &&
+          !isWriteOperationError(error?.code, handleErrorMessage(error)) &&
+          !isAuthTokenError(error)
+        ) {
           singleMessage.error(handleErrorMessage(error));
         }
       } finally {
