@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import { timesDecimals } from './calculate';
 import { AllSupportedELFChainId, ContractType } from 'constants/chain';
 import { sleep } from '@portkey/utils';
-import { GetRawTx, getAElf, getRawTx } from 'utils/aelf/aelfBase';
+import { GetRawTx, getAElf, getRawTx, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
 import aelfInstance from './aelf/aelfInstance';
 import { handleManagerForwardCall, getContractMethods } from '@portkey/contracts';
 import {
@@ -188,10 +188,13 @@ export const handleTransaction = async ({
   }
 
   // signature
-  let signatureStr = '';
-  const signatureRes = await getSignature({ appName: APP_NAME, address: caAddress, signInfo });
+  const signatureRes = await getSignature({
+    appName: APP_NAME,
+    address: removeELFAddressSuffix(caAddress),
+    signInfo,
+  });
 
-  signatureStr = signatureRes?.signature || '';
+  const signatureStr = signatureRes?.signature || '';
   if (!signatureStr) return;
 
   let tx = {
@@ -273,8 +276,8 @@ export const checkTokenAllowanceAndApprove = async ({
   ]);
 
   console.log('first check allowance and tokenInfo:', allowanceResult, tokenInfoResult);
-  const bigA = timesDecimals(amount, tokenInfoResult?.decimals || 8);
-  const allowanceBN = new BigNumber(allowanceResult?.allowance);
+  const bigA = timesDecimals(amount, tokenInfoResult?.data?.decimals || 8);
+  const allowanceBN = new BigNumber(allowanceResult?.data?.allowance);
 
   if (allowanceBN.lt(bigA)) {
     await approveELF({
@@ -297,7 +300,7 @@ export const checkTokenAllowanceAndApprove = async ({
     });
     console.log('second check allowance:', allowanceNew);
 
-    return bigA.lte(allowanceNew?.allowance);
+    return bigA.lte(allowanceNew?.data.allowance);
   }
   return true;
 };
@@ -397,7 +400,9 @@ export type TCallViewMethodForGetBalance = (
   }>,
 ) => Promise<
   | {
-      balance: string;
+      data: {
+        balance: string;
+      };
     }
   | undefined
 >;
@@ -415,7 +420,7 @@ export const getBalance = async ({
   chainId,
   caAddress,
 }: TGetBalancesProps) => {
-  const res: { balance: string } | undefined = await callViewMethod({
+  const res = await callViewMethod({
     contractAddress: ADDRESS_MAP[chainId][ContractType.TOKEN],
     methodName: ContractMethodName.GetBalance,
     chainId,
@@ -425,5 +430,5 @@ export const getBalance = async ({
     },
   });
 
-  return res?.balance;
+  return res?.data?.balance;
 };
