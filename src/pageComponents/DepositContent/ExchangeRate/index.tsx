@@ -8,7 +8,7 @@ import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
 import { ChainId } from '@portkey/provider-types';
 import { formatSymbolDisplay } from 'utils/format';
 import { MAX_UPDATE_TIME } from 'constants/calculate';
-import { isAuthTokenError } from 'utils/api/error';
+import { isAuthTokenError, isWriteOperationError } from 'utils/api/error';
 import { SIGNATURE_MISSING_TIP } from 'constants/misc';
 import { useEffectOnce } from 'react-use';
 import myEvents from 'utils/myEvent';
@@ -43,10 +43,10 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
         fromAmount: EXCHANGE_FROM_AMOUNT,
       });
       setExchange(conversionRate?.toAmount || defaultNullValue);
-    } catch (error) {
+    } catch (error: any) {
       if (isAuthTokenError(error)) {
         singleMessage.info(SIGNATURE_MISSING_TIP);
-      } else {
+      } else if (!isWriteOperationError(error?.code, handleErrorMessage(error))) {
         singleMessage.error(handleErrorMessage(error));
       }
     }
