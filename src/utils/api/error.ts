@@ -1,4 +1,4 @@
-import { handleErrorMessage } from '@portkey/did-ui-react';
+import { handleErrorMessage } from '@etransfer/utils';
 import { CommonErrorNameType } from 'api/types';
 import axios from 'axios';
 
@@ -35,4 +35,16 @@ export const formatApiError = (error: any, defaultMassage: string, isSetCancelNa
   newError.code = error?.code;
 
   return newError;
+};
+
+export const handleWebLoginErrorMessage = (error: any, errorText?: string) => {
+  if (error.nativeError && error.nativeError.code) {
+    error = error.nativeError;
+  }
+
+  if (error?.code === 50000) {
+    return 'Failed to fetch data';
+  }
+
+  return error.message || errorText || '';
 };

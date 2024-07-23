@@ -1,25 +1,27 @@
 import React from 'react';
 import CommonButton, { CommonButtonProps } from 'components/CommonButton';
 import { useCallback } from 'react';
-import { WebLoginState, useWebLogin } from 'aelf-web-login';
+import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { useQueryAuthToken } from 'hooks/authToken';
+import { handleWebLoginErrorMessage } from 'utils/api/error';
+import singleMessage from 'components/SingleMessage';
 
 export default function ConnectWalletButton(props: CommonButtonProps) {
-  const { login, loginState, loginEagerly } = useWebLogin();
+  const { connectWallet, isConnected } = useConnectWallet();
   const { getAuth } = useQueryAuthToken();
 
   const handleLogin = useCallback(async () => {
-    if (loginState === WebLoginState.logining) return;
-    if (loginState === WebLoginState.logined) {
-      getAuth();
+    try {
+      if (isConnected) {
+        await getAuth();
+      }
+      if (!isConnected) {
+        await connectWallet();
+      }
+    } catch (error) {
+      singleMessage.error(handleWebLoginErrorMessage(error));
     }
-    if (loginState === WebLoginState.initial || loginState === WebLoginState.lock) {
-      login();
-    }
-    if (loginState === WebLoginState.eagerly) {
-      loginEagerly();
-    }
-  }, [getAuth, login, loginEagerly, loginState]);
+  }, [connectWallet, getAuth, isConnected]);
 
   return (
     <CommonButton {...props} onClick={handleLogin}>

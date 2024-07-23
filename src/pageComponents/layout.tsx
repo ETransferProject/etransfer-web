@@ -15,6 +15,7 @@ import { useRouteParamType } from 'hooks/route';
 import { useUpdateRecord } from 'hooks/updateRecord';
 import Footer from 'components/Footer';
 import { usePathname } from 'next/navigation';
+import { useInitWallet } from 'hooks/wallet';
 
 const Layout = ({
   children,
@@ -53,6 +54,7 @@ const Layout = ({
   }, []);
   const { isPadPX, isMobilePX } = useCommonState();
 
+  useInitWallet();
   useRouteParamType();
   useUpdateRecord();
 
@@ -77,11 +79,6 @@ const Layout = ({
         </div>
       </div>
       {isShowFooter && !isMobilePX && <Footer />}
-      {/* {isShowFooter && !isMobilePX && (
-        <AntdLayout.Footer className={styles['layout-footer']}>
-          <Footer />
-        </AntdLayout.Footer>
-      )} */}
     </AntdLayout>
   );
 };

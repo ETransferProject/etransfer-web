@@ -66,8 +66,8 @@ import {
 } from 'constants/withdraw';
 import { CommonErrorNameType } from 'api/types';
 import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
-import { handleErrorMessage } from '@portkey/did-ui-react';
-import { useAccounts } from 'hooks/portkeyWallet';
+import { handleErrorMessage } from '@etransfer/utils';
+import { useGetAccount } from 'hooks/wallet';
 import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
 import {
   formatSymbolDisplay,
@@ -80,20 +80,25 @@ import { devices, sleep } from '@portkey/utils';
 import { useWithdraw } from 'hooks/withdraw';
 import { QuestionMarkIcon, Fingerprint } from 'assets/images';
 import RemainingQuota from './RemainingQuota';
-import { useWalletContext } from 'provider/walletProvider';
 import { isAuthTokenError, isHtmlError, isWriteOperationError } from 'utils/api/error';
 import myEvents from 'utils/myEvent';
-import { useCurrentVersion } from 'hooks/common';
 import { AelfExploreType } from 'constants/network';
-import { isDIDAddressSuffix, removeAddressSuffix, removeELFAddressSuffix } from 'utils/aelfBase';
+import {
+  isDIDAddressSuffix,
+  removeAddressSuffix,
+  removeELFAddressSuffix,
+} from 'utils/aelf/aelfBase';
 import { SideMenuKey } from 'constants/home';
 import FeeInfo from './FeeInfo';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
-import { WalletType } from 'aelf-web-login';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import FAQ from 'components/FAQ';
 import { FAQ_WITHDRAW } from 'constants/footer';
+import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
+import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
+import { WalletInfo } from 'types/wallet';
+import { PortkeyVersion } from 'constants/wallet';
 
 enum ValidateStatus {
   Error = 'error',
@@ -119,9 +124,8 @@ export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const isAndroid = devices.isMobile().android;
   const { isPadPX, isMobilePX } = useCommonState();
-  const currentVersion = useCurrentVersion();
   const withdraw = useWithdrawState();
-  const accounts = useAccounts();
+  const accounts = useGetAccount();
   const { currentSymbol, tokenList, currentChainItem } = useWithdraw();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem || CHAIN_LIST[0]);
   const { setLoading } = useLoading();
@@ -476,7 +480,7 @@ export default function WithdrawContent() {
         const params: TGetWithdrawInfoRequest = {
           chainId: currentChainItemRef.current.key,
           symbol,
-          version: currentVersion,
+          version: PortkeyVersion.v2,
         };
         if (currentNetworkRef.current?.network) {
           params.network = currentNetworkRef.current?.network;
@@ -519,7 +523,7 @@ export default function WithdrawContent() {
         }
       }
     },
-    [currentSymbol, currentVersion, form, handleAmountValidate],
+    [currentSymbol, form, handleAmountValidate],
   );
 
   useEffect(() => {
@@ -544,17 +548,18 @@ export default function WithdrawContent() {
     }
   }, [currentNetwork?.network, handleFormValidateDataChange, withdrawInfo.feeUsd]);
 
-  const [{ wallet }] = useWalletContext();
+  const { walletInfo, walletType, callViewMethod, callSendMethod, getSignature } =
+    useConnectWallet();
   const getMaxBalance = useCallback(
     async (isLoading: boolean, item?: TTokenItem) => {
       try {
         const symbol = item?.symbol || currentSymbol;
         const decimal = item?.decimals || currentTokenDecimal;
-        const caAddress = accounts?.[currentChainItemRef.current.key]?.[0];
-        if (!caAddress || !wallet) return '';
+        const caAddress = accounts?.[currentChainItemRef.current.key];
+        if (!caAddress) return '';
         isLoading && setIsMaxBalanceLoading(true);
         const maxBalance = await getBalance({
-          wallet,
+          callViewMethod,
           symbol: symbol,
           chainId: currentChainItemRef.current.key,
           caAddress,
@@ -576,7 +581,14 @@ export default function WithdrawContent() {
         isLoading && setIsMaxBalanceLoading(false);
       }
     },
-    [accounts, currentSymbol, currentTokenDecimal, getWithdrawData, handleAmountValidate, wallet],
+    [
+      accounts,
+      callViewMethod,
+      currentSymbol,
+      currentTokenDecimal,
+      getWithdrawData,
+      handleAmountValidate,
+    ],
   );
 
   const getMaxBalanceRef = useRef(getMaxBalance);
@@ -674,10 +686,11 @@ export default function WithdrawContent() {
       throw error;
     }
 
-    const ownerAddress = accounts?.[currentChainItemRef.current.key]?.[0] || '';
-    if (!wallet) return;
+    const ownerAddress = accounts?.[currentChainItemRef.current.key] || '';
+
     const checkRes = await checkTokenAllowanceAndApprove({
-      wallet,
+      callViewMethod,
+      callSendMethod,
       chainId: currentChainItemRef.current.key,
       symbol: currentSymbol,
       address: ownerAddress,
@@ -686,7 +699,15 @@ export default function WithdrawContent() {
     });
 
     return checkRes;
-  }, [accounts, balance, currentSymbol, currentTokenAddress, getMaxBalance, wallet]);
+  }, [
+    accounts,
+    balance,
+    callSendMethod,
+    callViewMethod,
+    currentSymbol,
+    currentTokenAddress,
+    getMaxBalance,
+  ]);
 
   const handleCreateWithdrawOrder = useCallback(
     async ({ address, rawTransaction }: { address: string; rawTransaction: string }) => {
@@ -749,26 +770,27 @@ export default function WithdrawContent() {
       if (!approveRes) throw new Error(InsufficientAllowanceMessage);
       console.log('>>>>>> sendTransferTokenTransaction approveRes', approveRes);
 
-      if (approveRes && wallet?.getSignature) {
+      if (approveRes) {
         const { caHash } = await getCaHashAndOriginChainIdByWallet(
-          wallet.walletInfo,
-          wallet.walletType,
+          walletInfo as WalletInfo,
+          walletType,
         );
         const managerAddress = await getManagerAddressByWallet(
-          wallet.walletInfo,
-          wallet.walletType,
+          walletInfo as WalletInfo,
+          walletType,
         );
-        const ownerAddress = accounts?.[currentChainItemRef.current.key]?.[0] || '';
+        const ownerAddress = accounts?.[currentChainItemRef.current.key] || '';
         const transaction = await createTransferTokenTransaction({
-          wallet,
-          caContractAddress:
-            ADDRESS_MAP[currentVersion][currentChainItemRef.current.key][ContractType.CA],
+          walletType,
+          caContractAddress: ADDRESS_MAP[currentChainItemRef.current.key][ContractType.CA],
           eTransferContractAddress: currentTokenAddress,
           caHash: caHash,
           symbol: currentSymbol,
           amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
           chainId: currentChainItemRef.current.key,
-          fromManagerAddress: wallet.walletType === WalletType.elf ? ownerAddress : managerAddress,
+          fromManagerAddress: walletType === WalletTypeEnum.elf ? ownerAddress : managerAddress,
+          caAddress: ownerAddress,
+          getSignature,
         });
         console.log(transaction, '=====transaction');
 

@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
 import { getAnalytics, logEvent, Analytics } from 'firebase/analytics';
-import { NETWORK_NAME, NETWORK_TYPE_V1 } from 'constants/index';
+import { NETWORK_NAME, NETWORK_TYPE } from 'constants/index';
 import { NetworkName } from 'constants/network';
 import * as Sentry from '@sentry/nextjs';
 // TODO: Add SDKs for Firebase products that you want to use
@@ -37,7 +37,7 @@ let analytics: Analytics;
 if (NETWORK_NAME === NetworkName.mainnet || NETWORK_NAME === NetworkName.testnet) {
   // Initialize Firebase
   const app = initializeApp(
-    NETWORK_TYPE_V1 === 'MAIN' ? firebaseConfigMainnet : firebaseConfigTestnet,
+    NETWORK_TYPE === 'MAINNET' ? firebaseConfigMainnet : firebaseConfigTestnet,
   );
 
   // only for csr

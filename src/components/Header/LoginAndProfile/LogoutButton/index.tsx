@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import CommonButton, { CommonButtonSize, CommonButtonType } from 'components/CommonButton';
-import { WalletType, useWebLogin } from 'aelf-web-login';
+import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { useClearStore } from 'hooks/common';
 
 type TLogoutButtonType = {
@@ -8,18 +8,15 @@ type TLogoutButtonType = {
 };
 
 export default function LogoutButton({ closeDialog }: TLogoutButtonType) {
-  const { logout, walletType } = useWebLogin();
+  const { disConnectWallet } = useConnectWallet();
   const clearStore = useClearStore();
 
   const handleLogoutWallet = useCallback(async () => {
-    await Promise.resolve(logout()).then(() => {
-      // Fix: The login token is cleared by the SDK, but the SDK returns a logout failure, resulting in the store not being cleared and the page status being incorrect.
-      if (walletType === WalletType.discover) {
-        clearStore();
-      }
-    });
+    await disConnectWallet();
+    clearStore();
+
     closeDialog?.();
-  }, [clearStore, closeDialog, logout, walletType]);
+  }, [clearStore, closeDialog, disConnectWallet]);
 
   return (
     <CommonButton

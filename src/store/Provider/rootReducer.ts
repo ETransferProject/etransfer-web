@@ -3,22 +3,16 @@ import { customCombineReducers } from 'store/utils/customCombineReducers';
 import { persistReducer } from 'redux-persist';
 import {
   commonPersistConfig,
-  portkeyWalletPersistConfig,
   depositPersistConfig,
   withdrawPersistConfig,
   infoDashboardPersistConfig,
 } from './config';
-import PortkeyWalletSlice from 'store/reducers/portkeyWallet/slice';
 import DepositSlice from 'store/reducers/deposit/slice';
 import WithdrawSlice from 'store/reducers/withdraw/slice';
 import RecordsSlice from 'store/reducers/records/slice';
 import InfoDashboardSlice from 'store/reducers/infoDashboard/slice';
 
 export const commonReducer = persistReducer(commonPersistConfig, CommonSlice.reducer);
-export const portkeyWalletReducer = persistReducer(
-  portkeyWalletPersistConfig,
-  PortkeyWalletSlice.reducer,
-);
 export const depositReducer = persistReducer(depositPersistConfig, DepositSlice.reducer);
 export const withdrawReducer = persistReducer(withdrawPersistConfig, WithdrawSlice.reducer);
 export const infoDashboardReducer = persistReducer(
@@ -28,7 +22,6 @@ export const infoDashboardReducer = persistReducer(
 
 const rootReducer = customCombineReducers({
   [CommonSlice.name]: CommonSlice.reducer,
-  [PortkeyWalletSlice.name]: PortkeyWalletSlice.reducer,
   [DepositSlice.name]: DepositSlice.reducer,
   [WithdrawSlice.name]: WithdrawSlice.reducer,
   [RecordsSlice.name]: RecordsSlice.reducer,

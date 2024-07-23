@@ -1,4 +1,4 @@
-import { ChainId } from '@portkey/types';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 
 export enum AllSupportedELFChainId {
   AELF = 'AELF',
@@ -6,13 +6,13 @@ export enum AllSupportedELFChainId {
   tDVW = 'tDVW',
 }
 
-export const AelfChainIdList: ChainId[] = [
+export const AelfChainIdList: TChainId[] = [
   AllSupportedELFChainId.AELF,
   AllSupportedELFChainId.tDVV,
   AllSupportedELFChainId.tDVW,
 ];
 
-export const AelfChainNetwork: Record<ChainId, string> = {
+export const AelfChainNetwork: Record<TChainId, string> = {
   [AllSupportedELFChainId.AELF]: 'MainChain AELF',
   [AllSupportedELFChainId.tDVV]: 'SideChain tDVV',
   [AllSupportedELFChainId.tDVW]: 'SideChain tDVW',

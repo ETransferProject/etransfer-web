@@ -5,7 +5,7 @@ import styles from './styles.module.scss';
 import { CHAIN_LIST, IChainNameItem } from 'constants/index';
 import Space from 'components/Space';
 import { useEffect, useMemo } from 'react';
-import { useAccounts } from 'hooks/portkeyWallet';
+import { useGetAccount } from 'hooks/wallet';
 import { useAppDispatch, useDepositState } from 'store/Provider/hooks';
 import { setToChainItem } from 'store/reducers/deposit/slice';
 
@@ -22,13 +22,13 @@ export default function SelectTokenChain({
   tokenSelectCallback,
 }: TSelectTokenChain) {
   const { toChainItem, toChainList, toTokenList } = useDepositState();
-  const accounts = useAccounts();
+  const accounts = useGetAccount();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     // Default: first one
     // The first one is empty, show the second one
-    if (accounts?.[CHAIN_LIST[0].key]?.[0] && !toChainItem) {
+    if (accounts?.[CHAIN_LIST[0].key] && !toChainItem) {
       dispatch(setToChainItem(CHAIN_LIST[0]));
     }
   }, [accounts, dispatch, toChainItem]);

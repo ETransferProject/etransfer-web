@@ -8,7 +8,7 @@ import Amount from '../../ColumnComponents/Amount';
 import WalletAddress from '../../ColumnComponents/WalletAddress';
 import Time from '../../ColumnComponents/Time';
 import { BusinessType } from 'types/api';
-import { ChainId } from '@portkey/types';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import myEvents from 'utils/myEvent';
 import { setSelectedTransfer } from 'store/reducers/infoDashboard/slice';
 import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
@@ -38,7 +38,7 @@ const WebTransferTableColumns = [
     title: 'From - To',
     dataIndex: 'fromChainId',
     key: 'fromChainId',
-    render: (fromChainId: ChainId, item: TTransferDashboardData) => {
+    render: (fromChainId: TChainId, item: TTransferDashboardData) => {
       return (
         <FromToChain
           fromNetwork={item.fromNetwork}

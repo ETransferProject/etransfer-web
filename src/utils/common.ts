@@ -1,4 +1,4 @@
-import { ChainId } from '@portkey/types';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { EXPLORE_CONFIG } from 'constants/index';
 import {
   AelfExploreType,
@@ -7,7 +7,7 @@ import {
   OtherExploreType,
 } from 'constants/network';
 
-export function getAelfExploreLink(data: string, type: AelfExploreType, chainId: ChainId): string {
+export function getAelfExploreLink(data: string, type: AelfExploreType, chainId: TChainId): string {
   const prefix = EXPLORE_CONFIG[chainId];
   switch (type) {
     case AelfExploreType.transaction: {
@@ -56,7 +56,7 @@ export function openWithBlank(url: string): void {
   }
 }
 
-export const viewTxDetailInExplore = (network: string, txHash: string, chainId?: ChainId) => {
+export const viewTxDetailInExplore = (network: string, txHash: string, chainId?: TChainId) => {
   if (network === BlockchainNetworkType.AELF && chainId) {
     openWithBlank(getAelfExploreLink(txHash, AelfExploreType.transaction, chainId));
     return;

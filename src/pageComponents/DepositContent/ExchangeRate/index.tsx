@@ -4,8 +4,9 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { defaultNullValue } from 'constants/index';
 import { getDepositCalculate } from 'utils/api/deposit';
-import { handleErrorMessage, singleMessage } from '@portkey/did-ui-react';
-import { ChainId } from '@portkey/provider-types';
+import { handleErrorMessage } from '@etransfer/utils';
+import singleMessage from 'components/SingleMessage';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { formatSymbolDisplay } from 'utils/format';
 import { MAX_UPDATE_TIME } from 'constants/calculate';
 import { isAuthTokenError, isWriteOperationError } from 'utils/api/error';
@@ -16,7 +17,7 @@ import myEvents from 'utils/myEvent';
 type TExchangeRate = {
   fromSymbol: string;
   toSymbol: string;
-  toChainId: ChainId;
+  toChainId: TChainId;
   slippage?: string;
 };
 

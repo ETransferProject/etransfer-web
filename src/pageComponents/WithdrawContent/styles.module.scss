@@ -313,7 +313,7 @@
 .form-submit-button {
   @include media-mobile {
     width: 108px;
-    padding: 0;
+    padding: 0 !important;
   }
   @include media-pad {
     width: 120px;

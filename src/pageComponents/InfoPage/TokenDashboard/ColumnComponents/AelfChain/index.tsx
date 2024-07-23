@@ -1,5 +1,5 @@
 import styles from './styles.module.scss';
-import { ChainId } from '@portkey/types';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import clsx from 'clsx';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
@@ -7,7 +7,7 @@ import NetworkLogo, { TNetworkLogoSize } from 'components/NetworkLogo';
 import { AelfChainNetwork } from 'constants/chain';
 
 interface AelfChainProps {
-  list: ChainId[];
+  list: TChainId[];
   size?: TNetworkLogoSize;
   className?: string;
   iconClassName?: string;

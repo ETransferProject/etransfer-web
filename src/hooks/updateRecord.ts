@@ -3,17 +3,17 @@ import { useAppDispatch } from 'store/Provider/hooks';
 import { setIsUnreadHistory } from 'store/reducers/common/slice';
 import { getRecordStatus } from 'utils/api/records';
 import myEvents from 'utils/myEvent';
-import { useIsActive } from './portkeyWallet';
 import { eTransferInstance } from 'utils/etransferInstance';
+import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 
 export const MAX_UPDATE_TIME = 6;
 
 export function useUpdateRecord() {
   const dispatch = useAppDispatch();
-  const isActive = useIsActive();
+  const { isConnected } = useConnectWallet();
 
   const updateRecordStatus = useCallback(async () => {
-    if (!isActive) return;
+    if (!isConnected) return;
     if (eTransferInstance.unauthorized) return;
 
     try {
@@ -22,7 +22,7 @@ export function useUpdateRecord() {
     } catch (error) {
       console.log('update new records error', error);
     }
-  }, [dispatch, isActive]);
+  }, [dispatch, isConnected]);
 
   const updateTimeRef = useRef(MAX_UPDATE_TIME);
   const updateTimerRef = useRef<NodeJS.Timer | number>();

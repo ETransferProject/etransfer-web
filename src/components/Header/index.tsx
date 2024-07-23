@@ -4,7 +4,7 @@ import MobileHeader from './MobileHeader';
 import WebHeader from './WebHeader';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { BrandName } from 'constants/index';
+import { BRAND_NAME } from 'constants/index';
 
 export type DefaultHeadProps = { title?: string; description?: string };
 
@@ -18,7 +18,7 @@ export default function Header(props: DefaultHeadProps) {
   );
 }
 
-export function DefaultHead({ title = BrandName, description }: DefaultHeadProps) {
+export function DefaultHead({ title = BRAND_NAME, description }: DefaultHeadProps) {
   return (
     <Head>
       <title>{title}</title>

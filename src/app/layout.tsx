@@ -1,13 +1,11 @@
-import '@portkey/did-ui-react/dist/assets/index.css';
-import 'aelf-web-login/dist/assets/index.css';
 import 'styles/global.scss';
 
 import Provider from 'provider';
-import { BrandName } from 'constants/index';
+import { BRAND_NAME } from 'constants/index';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: BrandName,
+  title: BRAND_NAME,
 };
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {

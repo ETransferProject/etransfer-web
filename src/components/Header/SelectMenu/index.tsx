@@ -25,7 +25,7 @@ export default function SelectMenu() {
         onClick={() => {
           setIsDrawerOpen(true);
         }}>
-        <MenuOutlined className={styles['header-icon']} rev={undefined} />
+        <MenuOutlined className={styles['header-icon']} />
       </div>
       <CommonDrawer
         zIndex={301}

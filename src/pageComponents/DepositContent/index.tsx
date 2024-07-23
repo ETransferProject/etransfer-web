@@ -27,11 +27,11 @@ import { useEffectOnce } from 'react-use';
 import singleMessage from 'components/SingleMessage';
 import { InitDepositInfo } from 'constants/deposit';
 import { CommonErrorNameType } from 'api/types';
-import { handleErrorMessage } from '@portkey/did-ui-react';
+import { handleErrorMessage } from '@etransfer/utils';
 import myEvents from 'utils/myEvent';
 import { isAuthTokenError, isWriteOperationError } from 'utils/api/error';
 import { SideMenuKey } from 'constants/home';
-import { ChainId } from '@portkey/provider-types';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 
@@ -54,7 +54,7 @@ export type TDepositContentProps = {
 };
 
 type TGetNetworkData = {
-  chainId: ChainId;
+  chainId: TChainId;
   symbol?: string;
   toSymbol?: string;
 };
@@ -86,7 +86,7 @@ export default function Content() {
   }, [toTokenList, toTokenSymbol]);
 
   const getTokenList = useCallback(
-    async (chainId: ChainId, fromSymbol: string, toSymbol: string) => {
+    async (chainId: TChainId, fromSymbol: string, toSymbol: string) => {
       try {
         setLoading(true);
         const { tokenList } = await getDepositTokenList({
@@ -150,7 +150,7 @@ export default function Content() {
   );
 
   const getDepositData = useCallback(
-    async (chainId: ChainId, symbol: string, toSymbol: string) => {
+    async (chainId: TChainId, symbol: string, toSymbol: string) => {
       try {
         if (!fromNetworkRef.current) return;
         setLoading(true);
