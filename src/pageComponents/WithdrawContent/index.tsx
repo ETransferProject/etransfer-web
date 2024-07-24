@@ -1355,7 +1355,7 @@ export default function WithdrawContent() {
       <SuccessModal
         withdrawInfo={withdrawInfoSuccess}
         modalProps={{
-          open: true, // isSuccessModalOpen,
+          open: isSuccessModalOpen,
           onClose: clickSuccessOk,
           onOk: clickSuccessOk,
           footerSlot: (
