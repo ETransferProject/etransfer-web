@@ -5,12 +5,15 @@ import { getRecordStatus } from 'utils/api/records';
 import myEvents from 'utils/myEvent';
 import { eTransferInstance } from 'utils/etransferInstance';
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
+import { useSetAuthFromStorage } from './authToken';
+import { sleep } from '@etransfer/utils';
 
 export const MAX_UPDATE_TIME = 6;
 
 export function useUpdateRecord() {
   const dispatch = useAppDispatch();
   const { isConnected } = useConnectWallet();
+  const setAuthFromStorage = useSetAuthFromStorage();
 
   const updateRecordStatus = useCallback(async () => {
     if (!isConnected) return;
@@ -44,11 +47,18 @@ export function useUpdateRecord() {
     handleSetTimer();
   }, [handleSetTimer]);
 
+  const init = useCallback(async () => {
+    await setAuthFromStorage();
+    await sleep(2000);
+
+    updateRecordStatus();
+  }, []);
+
   useEffect(() => {
     // start 6s countdown
     resetTimer();
     // then, get one-time new record
-    updateRecordStatus();
+    init();
 
     const { remove } = myEvents.UpdateNewRecordStatus.addListener(() => {
       updateRecordStatus();

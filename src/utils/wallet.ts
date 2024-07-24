@@ -11,6 +11,8 @@ export const getManagerAddressByWallet = async (
   walletType: WalletTypeEnum,
   pubkey?: string,
 ): Promise<string> => {
+  if (walletType === WalletTypeEnum.unknown) return '';
+
   let managerAddress;
   if (walletType === WalletTypeEnum.discover) {
     const discoverInfo = walletInfo?.extraInfo as ExtraInfoForDiscover;
@@ -36,6 +38,12 @@ export const getCaHashAndOriginChainIdByWallet = async (
   walletInfo: WalletInfo,
   walletType: WalletTypeEnum,
 ): Promise<{ caHash: string; originChainId: TChainId }> => {
+  if (walletType === WalletTypeEnum.unknown)
+    return {
+      caHash: '',
+      originChainId: SupportedChainId.sideChain,
+    };
+
   let caHash, originChainId;
   if (walletType === WalletTypeEnum.discover) {
     const res = await PortkeyDid.did.services.getHolderInfoByManager({

@@ -76,7 +76,7 @@ import {
 } from 'utils/format';
 import { devices, sleep } from '@portkey/utils';
 import { useWithdraw } from 'hooks/withdraw';
-import { QuestionMarkIcon } from 'assets/images';
+import { Fingerprint, QuestionMarkIcon } from 'assets/images';
 import RemainingQuota from './RemainingQuota';
 import { isAuthTokenError, isHtmlError, isWriteOperationError } from 'utils/api/error';
 import myEvents from 'utils/myEvent';
@@ -96,6 +96,9 @@ import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { WalletInfo } from 'types/wallet';
 import { PortkeyVersion } from 'constants/wallet';
+import CommonLink from 'components/CommonLink';
+import { AelfExploreType } from 'constants/network';
+import { getAelfExploreLink } from 'utils/common';
 
 enum ValidateStatus {
   Error = 'error',
@@ -1358,11 +1361,20 @@ export default function WithdrawContent() {
           open: isSuccessModalOpen,
           onClose: clickSuccessOk,
           onOk: clickSuccessOk,
-          footerSlot: (
-            <div className={styles['link-word']} onClick={() => router.push('/history')}>
-              View Transaction History
-            </div>
-          ),
+          footerSlot: CommonLink({
+            href: getAelfExploreLink(
+              withdrawInfoSuccess.transactionId,
+              AelfExploreType.transaction,
+              currentChainItemRef.current.key,
+            ),
+            isTagA: true,
+            children: (
+              <div className={clsx(styles['link-wrap'], !isPadPX && styles['linkToExplore'])}>
+                <span className={styles['link-word']}>View on aelf Explorer</span>
+                <Fingerprint className={styles['link-explore-icon']} />
+              </div>
+            ),
+          }),
         }}
       />
       <FailModal

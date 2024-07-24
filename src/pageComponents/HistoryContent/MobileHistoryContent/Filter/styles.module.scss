@@ -14,13 +14,13 @@
 
 .filter-icon {
   float: left;
-  margin: 9px 12px 12px 0;
+  margin: 7px 12px 14px 0;
 }
 
 .filter-item {
   padding: 6px 16px;
   height: 34px;
-  line-height: 24px;
+  line-height: 22px;
   font-size: 14px;
   border-radius: 6px;
   background-color: $hover-bg;
@@ -30,8 +30,10 @@
 
 .filter-reset {
   font-size: 14px;
-  margin-top: 7px;
-  margin-bottom: 7px;
+  height: 22px;
+  line-height: 22px;
+  margin-top: 6px;
+  margin-bottom: 6px;
   color: $normal;
   float: left;
 }

@@ -33,6 +33,7 @@ export function useQueryAuthToken() {
   const routeType = useMemo(() => searchParams.get('type') as SideMenuKey, [searchParams]);
 
   const loginSuccessActive = useCallback(() => {
+    console.log('login success and emit event');
     myEvents.LoginSuccess.emit();
     if (pathname === '/') {
       routerPush('/' + (routeType || activeMenuKey).toLocaleLowerCase());
