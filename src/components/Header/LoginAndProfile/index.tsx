@@ -5,13 +5,13 @@ import MobileUserProfile from './MobileUserProfile';
 import WebUserProfile from './WebUserProfile';
 import { CommonButtonSize } from 'components/CommonButton';
 import styles from './styles.module.scss';
-import { usePathname } from 'next/navigation';
+import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 
 export default function LoginAndProfileEntry() {
   const { isPadPX } = useCommonState();
-  const pathname = usePathname();
+  const { isConnected } = useConnectWallet();
 
-  if (pathname === '/') {
+  if (!isConnected) {
     return (
       <ConnectWalletButton
         className={styles['connect-wallet-button']}

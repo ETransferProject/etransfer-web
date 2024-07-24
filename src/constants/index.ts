@@ -42,3 +42,5 @@ export const TOKEN_INFO_USDT = {
   contractAddress: '',
   decimals: USDT_DECIMAL,
 };
+
+export const ETRANSFER_WEBSITE_URL = 'https://etransfer.exchange';

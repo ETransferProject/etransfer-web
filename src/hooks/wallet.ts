@@ -4,7 +4,6 @@ import { eTransferInstance } from 'utils/etransferInstance';
 import myEvents from 'utils/myEvent';
 import { resetLocalJWT } from 'api/utils';
 import { useQueryAuthToken } from 'hooks/authToken';
-import { useRouterPush } from 'hooks/route';
 import { TAelfAccounts } from 'types/wallet';
 import { SupportedChainId } from 'constants/index';
 
@@ -16,21 +15,15 @@ export function useInitWallet() {
   getAuthRef.current = getAuth;
   useEffect(() => {
     console.warn('>>>>>> isConnected', isConnected);
-    if (!isConnected) {
-      routerPushRef.current('/', true);
-    } else {
+    if (isConnected) {
       getAuthRef.current();
     }
   }, [isConnected]);
 
   const { queryAuth } = useQueryAuthToken();
-  const routerPush = useRouterPush();
-  const routerPushRef = useRef(routerPush);
-  routerPushRef.current = routerPush;
   const onAuthorizationExpired = useCallback(async () => {
     if (!isConnected) {
-      console.log('AuthorizationExpired: Not Logined');
-      routerPushRef.current('/', false);
+      console.warn('AuthorizationExpired: Not Logined');
       return;
     }
     resetLocalJWT();

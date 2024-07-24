@@ -3,8 +3,8 @@ import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { QueryAuthApiExtraRequest, getLocalJWT, queryAuthApi } from 'api/utils';
 import { APP_NAME } from 'constants/index';
 import { PortkeyVersion } from 'constants/wallet';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useCommonState, useLoading } from 'store/Provider/hooks';
+import { useCallback, useEffect, useState } from 'react';
+import { useLoading } from 'store/Provider/hooks';
 import AElf from 'aelf-sdk';
 import { recoverPubKey } from 'utils/aelf/aelfBase';
 import { useDebounceCallback } from 'hooks/debounce';
@@ -17,27 +17,16 @@ import { checkEOARegistration } from 'utils/api/user';
 import myEvents from 'utils/myEvent';
 import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
 import singleMessage from 'components/SingleMessage';
-import { useRouterPush } from './route';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { SideMenuKey } from 'constants/home';
 import { WalletInfo } from 'types/wallet';
 
 export function useQueryAuthToken() {
-  const { activeMenuKey } = useCommonState();
   const { isConnected, getSignature, walletType, walletInfo, disConnectWallet } =
     useConnectWallet();
   const { setLoading } = useLoading();
-  const routerPush = useRouterPush();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const routeType = useMemo(() => searchParams.get('type') as SideMenuKey, [searchParams]);
 
   const loginSuccessActive = useCallback(() => {
     myEvents.LoginSuccess.emit();
-    if (pathname === '/') {
-      routerPush('/' + (routeType || activeMenuKey).toLocaleLowerCase());
-    }
-  }, [activeMenuKey, pathname, routeType, routerPush]);
+  }, []);
 
   const handleGetSignature = useCallback(async () => {
     if (!walletInfo) return;

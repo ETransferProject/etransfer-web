@@ -10,7 +10,6 @@ import {
 } from 'store/Provider/hooks';
 import { setToChainItem } from 'store/reducers/deposit/slice';
 import { setWithdrawChainItem } from 'store/reducers/withdraw/slice';
-import { useRouterPush } from './route';
 
 export function useSetCurrentChainItem() {
   const dispatch = useAppDispatch();
@@ -36,13 +35,11 @@ export function useSetCurrentChainItem() {
 
 export function useClearStore() {
   const resetStore = useResetStore();
-  const routerPush = useRouterPush();
 
   return useCallback(() => {
     resetStore();
     resetLocalJWT();
-    routerPush('/', false);
-  }, [resetStore, routerPush]);
+  }, [resetStore]);
 }
 
 export function useMixAllTokenList() {
