@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import CommonDropdown from 'components/CommonDropdown';
 import LogoutButton from 'components/Header/LoginAndProfile/LogoutButton';
 import { User } from 'assets/images';
 import Address from '../Address';
 import styles from './styles.module.scss';
+import { TelegramPlatform } from 'utils/telegram';
 
 export default function WebUserProfile() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isShowLogout, setIsShowLogout] = useState(true);
+
+  useEffect(() => {
+    const res = TelegramPlatform.isTelegramPlatform();
+
+    setIsShowLogout(!res);
+  }, []);
+
   return (
     <div onClick={() => setIsOpen(true)}>
       <CommonDropdown
@@ -17,9 +26,11 @@ export default function WebUserProfile() {
           isOpen ? (
             <div className={styles['dropdown']}>
               <Address hideBorder={false} />
-              <div className={styles['button-wrapper']}>
-                <LogoutButton closeDialog={() => setIsOpen(false)} />
-              </div>
+              {isShowLogout && (
+                <div className={styles['button-wrapper']}>
+                  <LogoutButton closeDialog={() => setIsOpen(false)} />
+                </div>
+              )}
             </div>
           ) : (
             <></>
