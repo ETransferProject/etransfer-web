@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import SelectChainWrapper from 'pageComponents/WithdrawContent/SelectChainWrapper';
 import CommonButton from 'components/CommonButton';
 import FormTextarea from 'components/FormTextarea';
-import CommonLink from 'components/CommonLink';
 import SelectToken from './SelectToken';
 import SelectNetwork from './SelectNetwork';
 import DoubleCheckModal from './DoubleCheckModal';
@@ -75,14 +74,12 @@ import {
   parseWithCommas,
   parseWithStringCommas,
 } from 'utils/format';
-import { getAelfExploreLink } from 'utils/common';
 import { devices, sleep } from '@portkey/utils';
 import { useWithdraw } from 'hooks/withdraw';
-import { QuestionMarkIcon, Fingerprint } from 'assets/images';
+import { QuestionMarkIcon } from 'assets/images';
 import RemainingQuota from './RemainingQuota';
 import { isAuthTokenError, isHtmlError, isWriteOperationError } from 'utils/api/error';
 import myEvents from 'utils/myEvent';
-import { AelfExploreType } from 'constants/network';
 import {
   isDIDAddressSuffix,
   removeAddressSuffix,
@@ -1358,23 +1355,14 @@ export default function WithdrawContent() {
       <SuccessModal
         withdrawInfo={withdrawInfoSuccess}
         modalProps={{
-          open: isSuccessModalOpen,
+          open: true, // isSuccessModalOpen,
           onClose: clickSuccessOk,
           onOk: clickSuccessOk,
-          footerSlot: CommonLink({
-            href: getAelfExploreLink(
-              withdrawInfoSuccess.transactionId,
-              AelfExploreType.transaction,
-              currentChainItemRef.current.key,
-            ),
-            isTagA: true,
-            children: (
-              <div className={clsx(styles['link-wrap'], !isPadPX && styles['linkToExplore'])}>
-                <span className={styles['link-word']}>View on aelf Explorer</span>
-                <Fingerprint className={styles['link-explore-icon']} />
-              </div>
-            ),
-          }),
+          footerSlot: (
+            <div className={styles['link-word']} onClick={() => router.push('/history')}>
+              View Transaction History
+            </div>
+          ),
         }}
       />
       <FailModal

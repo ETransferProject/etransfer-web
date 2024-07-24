@@ -36,7 +36,7 @@ const didConfig = {
 };
 
 const baseConfig = {
-  showVconsole: false,
+  showVconsole: true,
   networkType: NETWORK_TYPE,
   chainId: SupportedChainId.sideChain,
   keyboard: true,

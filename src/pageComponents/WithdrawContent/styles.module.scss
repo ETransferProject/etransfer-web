@@ -337,24 +337,18 @@
   cursor: pointer;
 }
 
-.link-wrap {
-  margin-top: 16px;
-}
-
 .link-word {
   vertical-align: middle;
+  margin-top: 16px;
   margin-right: 8px;
   color: $normal;
   font-size: 14px;
   font-weight: $font-family-medium-weight;
+  text-align: center;
+  cursor: pointer;
 }
 
 .link-explore-icon {
   position: relative;
   top: 5px;
-}
-
-.linkToExplore {
-  margin-top: 16px;
-  text-align: center;
 }
