@@ -40,7 +40,7 @@ const baseConfig = {
   showVconsole: true,
   networkType: NETWORK_TYPE,
   chainId: SupportedChainId.sideChain,
-  keyboard: true,
+  keyboard: false,
   noCommonBaseModal: false,
   design: SignInDesignEnum.SocialDesign,
   titleForSocialDesign: 'Log In to ETransfer',
