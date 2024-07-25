@@ -161,13 +161,24 @@
   .remaining-limit-label {
     color: $secondary-text;
   }
+  @include media-web {
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0;
+    .remaining-limit-label {
+      margin-left: 8px;
+    }
+  }
   @include media-pad {
+    flex-direction: row;
     &::before {
       width: $content-width;
     }
   }
   @include media-mobile-and-pad {
-    flex-direction: row;
     justify-content: flex-start;
     position: relative;
     margin-top: 48px;
@@ -182,26 +193,17 @@
       background-color: $dividers;
     }
   }
-  @include media-web {
-    flex: 1;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    gap: 0;
-    .remaining-limit-label {
-      margin-left: 8px;
-    }
-  }
+
   @include media-mobile {
     flex-direction: column;
-    justify-content: flex-start;
     align-items: flex-start;
     &::before {
       left: -16px;
       width: 100vw;
     }
-    // .remaining-limit-value {
-    //   margin-left: 7px;
-    // }
+    .remaining-limit-value {
+      margin-left: 7px;
+    }
   }
 }
 

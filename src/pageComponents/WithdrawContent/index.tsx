@@ -229,7 +229,7 @@ export default function WithdrawContent() {
     );
     return (
       <div
-        className={clsx('flex-row-center', styles['remaining-limit-wrapper'], {
+        className={clsx('flex', styles['remaining-limit-wrapper'], {
           [styles['remaining-limit-error']]:
             withdrawInfo.remainingLimit !== null &&
             withdrawInfo.remainingLimit !== undefined &&
