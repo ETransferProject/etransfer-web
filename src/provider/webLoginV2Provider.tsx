@@ -1,3 +1,5 @@
+'use client';
+import '../utils/telegram-web-app';
 import { WebLoginProvider, init } from '@aelf-web-login/wallet-adapter-react';
 import { config } from './webLoginV2Config';
 

@@ -15,6 +15,7 @@ import {
   WebLoginServiceUrl,
 } from 'constants/index';
 import { ETRANSFER_LOGO_BASE64 } from 'constants/wallet';
+import { TelegramPlatform } from 'utils/telegram';
 
 const didConfig = {
   graphQLUrl: WebLoginGraphqlUrl,
@@ -46,32 +47,35 @@ const baseConfig = {
   iconSrcForSocialDesign: ETRANSFER_LOGO_BASE64,
 };
 
-const wallets = [
-  new PortkeyAAWallet({
-    appName: APP_NAME,
-    chainId: SupportedChainId.sideChain,
-    autoShowUnlock: false,
-  }),
-  new PortkeyDiscoverWallet({
-    networkType: NETWORK_TYPE,
-    chainId: SupportedChainId.sideChain,
-    autoRequestAccount: true,
-    autoLogoutOnDisconnected: true,
-    autoLogoutOnNetworkMismatch: true,
-    autoLogoutOnAccountMismatch: true,
-    autoLogoutOnChainMismatch: true,
-  }),
-  new NightElfWallet({
-    chainId: SupportedChainId.sideChain,
-    appName: APP_NAME,
-    connectEagerly: true,
-    defaultRpcUrl: AelfReact[SupportedChainId.sideChain].rpcUrl,
-    nodes: AelfReact,
-  }),
-];
+const isTelegramPlatform = TelegramPlatform.isTelegramPlatform();
+const portkeyAAWallet = new PortkeyAAWallet({
+  appName: APP_NAME,
+  chainId: SupportedChainId.sideChain,
+  autoShowUnlock: true,
+});
 
 export const config: IConfigProps = {
   didConfig,
   baseConfig,
-  wallets,
+  wallets: isTelegramPlatform
+    ? [portkeyAAWallet]
+    : [
+        portkeyAAWallet,
+        new PortkeyDiscoverWallet({
+          networkType: NETWORK_TYPE,
+          chainId: SupportedChainId.sideChain,
+          autoRequestAccount: true,
+          autoLogoutOnDisconnected: true,
+          autoLogoutOnNetworkMismatch: true,
+          autoLogoutOnAccountMismatch: true,
+          autoLogoutOnChainMismatch: true,
+        }),
+        new NightElfWallet({
+          chainId: SupportedChainId.sideChain,
+          appName: APP_NAME,
+          connectEagerly: true,
+          defaultRpcUrl: AelfReact[SupportedChainId.sideChain].rpcUrl,
+          nodes: AelfReact,
+        }),
+      ],
 };

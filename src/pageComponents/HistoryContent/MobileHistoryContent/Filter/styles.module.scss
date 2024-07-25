@@ -54,9 +54,20 @@
   :global {
     .ant-drawer-content-wrapper {
       background-color: $page-bg;
+
+      .ant-drawer-content {
+        border-radius: 0 !important;
+      }
     }
     .ant-drawer-body {
       border-top: 1px solid $border;
+
+      .ant-select,
+      .ant-picker {
+        width: 100%;
+        border-radius: 6px;
+        margin-bottom: 24px;
+      }
     }
     .ant-drawer-footer {
       text-align: center;
@@ -90,11 +101,13 @@
   margin-bottom: 8px;
 }
 
-.mobile-records-select-type, .mobile-records-select-status, .mobile-records-range-picker {
-  width: 100%;
-  border-radius: 6px;
-  margin-bottom: 24px;
-}
+// .mobile-records-select-type,
+// .mobile-records-select-status,
+// .mobile-records-range-picker {
+//   width: 100% !important;
+//   border-radius: 6px !important;
+//   margin-bottom: 24px !important;
+// }
 
 .border-change {
   :global {

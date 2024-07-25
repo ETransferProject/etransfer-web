@@ -198,6 +198,35 @@ export default function WithdrawContent() {
   }, [currentNetwork]);
 
   const remainingLimitComponent = useMemo(() => {
+    const label = (
+      <span className={styles['remaining-limit-label']}>
+        {isPadPX && '• 24-Hour Limit:'}
+        {!isPadPX && (
+          <Tooltip
+            className={clsx(styles['question-label'])}
+            placement="top"
+            title={RemainingWithdrawalQuotaTooltip}>
+            24-Hour Limit <QuestionMarkIcon />
+          </Tooltip>
+        )}
+      </span>
+    );
+    const value = (
+      <span className={styles['remaining-limit-value']}>
+        {withdrawInfo.remainingLimit && withdrawInfo.totalLimit ? (
+          <>
+            {`${new BigNumber(withdrawInfo.remainingLimit).toFormat()} /
+       ${new BigNumber(withdrawInfo.totalLimit).toFormat()}`}
+            <span className={styles['remaining-limit-value-limit-currency']}>
+              {withdrawInfo.limitCurrency}
+            </span>
+          </>
+        ) : (
+          defaultNullValue
+        )}
+        <RemainingQuota content={RemainingWithdrawalQuotaTooltip}></RemainingQuota>
+      </span>
+    );
     return (
       <div
         className={clsx('flex-row-center', styles['remaining-limit-wrapper'], {
@@ -207,31 +236,17 @@ export default function WithdrawContent() {
             withdrawInfo.remainingLimit !== '' &&
             new BigNumber(withdrawInfo.remainingLimit).isEqualTo(0),
         })}>
-        <span className={styles['remaining-limit-value']}>
-          {withdrawInfo.remainingLimit && withdrawInfo.totalLimit ? (
-            <>
-              {`${new BigNumber(withdrawInfo.remainingLimit).toFormat()} /
-               ${new BigNumber(withdrawInfo.totalLimit).toFormat()}`}
-              <span className={styles['remaining-limit-value-limit-currency']}>
-                {withdrawInfo.limitCurrency}
-              </span>
-            </>
-          ) : (
-            defaultNullValue
-          )}
-          <RemainingQuota content={RemainingWithdrawalQuotaTooltip}></RemainingQuota>
-        </span>
-        <span className={styles['remaining-limit-label']}>
-          {isPadPX && '• 24-Hour Limit:'}
-          {!isPadPX && (
-            <Tooltip
-              className={clsx(styles['question-label'])}
-              placement="top"
-              title={RemainingWithdrawalQuotaTooltip}>
-              24-Hour Limit <QuestionMarkIcon />
-            </Tooltip>
-          )}
-        </span>
+        {isPadPX ? (
+          <>
+            {label}
+            {value}
+          </>
+        ) : (
+          <>
+            {value}
+            {label}
+          </>
+        )}
       </div>
     );
   }, [withdrawInfo.remainingLimit, withdrawInfo.totalLimit, withdrawInfo.limitCurrency, isPadPX]);

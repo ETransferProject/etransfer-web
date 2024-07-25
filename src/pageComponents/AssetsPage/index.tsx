@@ -28,7 +28,11 @@ export default function MyAsset() {
     }
   }, [walletType, router]);
 
-  if (walletType !== WalletTypeEnum.aa) {
+  if (
+    walletType !== WalletTypeEnum.aa ||
+    !portkeyAAInfo?.portkeyInfo?.pin ||
+    !portkeyAAInfo?.portkeyInfo?.chainId
+  ) {
     return null;
   }
 

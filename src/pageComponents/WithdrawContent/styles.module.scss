@@ -131,7 +131,7 @@
 
 .form-label-wrapper {
   width: 100%;
-  align-items: end;
+  align-items: flex-end;
 }
 
 .form-label {
@@ -167,8 +167,8 @@
     }
   }
   @include media-mobile-and-pad {
-    flex-direction: row-reverse;
-    justify-content: flex-end;
+    flex-direction: row;
+    justify-content: flex-start;
     position: relative;
     margin-top: 48px;
     .remaining-limit-value {
@@ -192,7 +192,7 @@
     }
   }
   @include media-mobile {
-    flex-direction: column-reverse;
+    flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
     &::before {
@@ -257,12 +257,12 @@
     width: 100vw;
     margin-left: -16px;
     padding: 20px 16px;
-    align-items: end;
+    align-items: flex-end;
   }
   @include media-pad {
     width: 100%;
     margin-top: 64px;
-    align-items: end;
+    align-items: flex-end;
   }
   @include media-web {
     width: 100%;
