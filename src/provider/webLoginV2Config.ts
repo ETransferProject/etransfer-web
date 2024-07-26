@@ -34,6 +34,7 @@ const didConfig = {
       botId: TELEGRAM_BOT_ID,
     },
   },
+  networkType: NETWORK_TYPE,
   customNetworkType: (NETWORK_TYPE === 'TESTNET'
     ? 'offline'
     : 'online') as PortkeyDid.TCustomNetworkType,
