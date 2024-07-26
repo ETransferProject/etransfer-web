@@ -1,7 +1,7 @@
 import { PortkeyDiscoverWallet } from '@aelf-web-login/wallet-adapter-portkey-discover';
 import { PortkeyAAWallet } from '@aelf-web-login/wallet-adapter-portkey-aa';
 import { NightElfWallet } from '@aelf-web-login/wallet-adapter-night-elf';
-import { IConfigProps, PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
+import { IConfigProps } from '@aelf-web-login/wallet-adapter-bridge';
 import { SignInDesignEnum } from '@aelf-web-login/wallet-adapter-base';
 import {
   APP_NAME,
