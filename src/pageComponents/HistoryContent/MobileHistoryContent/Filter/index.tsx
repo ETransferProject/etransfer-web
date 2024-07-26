@@ -219,6 +219,7 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
           />
           <div className={styles['filter-drawer-label']}>Start time</div>
           <DatePicker
+            inputReadOnly={true}
             size={'large'}
             allowClear={false}
             value={filterTimestampStart}

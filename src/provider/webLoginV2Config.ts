@@ -1,7 +1,7 @@
 import { PortkeyDiscoverWallet } from '@aelf-web-login/wallet-adapter-portkey-discover';
 import { PortkeyAAWallet } from '@aelf-web-login/wallet-adapter-portkey-aa';
 import { NightElfWallet } from '@aelf-web-login/wallet-adapter-night-elf';
-import { IConfigProps } from '@aelf-web-login/wallet-adapter-bridge';
+import { IConfigProps, PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
 import { SignInDesignEnum } from '@aelf-web-login/wallet-adapter-base';
 import {
   APP_NAME,
@@ -34,13 +34,16 @@ const didConfig = {
       botId: TELEGRAM_BOT_ID,
     },
   },
+  customNetworkType: (NETWORK_TYPE === 'TESTNET'
+    ? 'offline'
+    : 'online') as PortkeyDid.TCustomNetworkType,
 };
 
 const baseConfig = {
   showVconsole: true,
   networkType: NETWORK_TYPE,
   chainId: SupportedChainId.sideChain,
-  keyboard: false,
+  keyboard: true,
   noCommonBaseModal: false,
   design: SignInDesignEnum.SocialDesign,
   titleForSocialDesign: 'Log In to ETransfer',
