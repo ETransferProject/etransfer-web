@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { User, ArrowUp, ArrowRight } from 'assets/images';
 import CommonDrawer from 'components/CommonDrawer';
@@ -7,16 +7,16 @@ import Address from '../Address';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { useRouter } from 'next/navigation';
-import { useIsActive } from 'hooks/portkeyWallet';
-import { useWebLogin, WalletType } from 'aelf-web-login';
+import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
+import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
+import { TelegramPlatform } from 'utils/telegram';
 
 export default function MobileUserProfile() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [isShowAddress, setIsShowAddress] = useState<boolean>(true);
   const { isPadPX } = useCommonState();
   const router = useRouter();
-  const isActive = useIsActive();
-  const { walletType } = useWebLogin();
+  const { walletType, isConnected } = useConnectWallet();
 
   const handleChangeAddress = () => {
     setIsShowAddress(!isShowAddress);
@@ -26,6 +26,14 @@ export default function MobileUserProfile() {
     router.push('/assets');
     setIsDrawerOpen(false);
   };
+
+  const [isTelegramPlatform, setIsTelegramPlatform] = useState(false);
+
+  useEffect(() => {
+    const res = TelegramPlatform.isTelegramPlatform();
+
+    setIsTelegramPlatform(res);
+  }, []);
 
   return (
     <>
@@ -48,13 +56,13 @@ export default function MobileUserProfile() {
             <span className={styles['drawer-title-my']}>My</span>
           </div>
         }
-        height="100%"
+        height={isTelegramPlatform ? '80%' : '100%'}
         zIndex={301}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}>
         <div className={styles['user-wrapper']}>
           <div className={styles['top-wrapper']}>
-            {isActive && walletType === WalletType.portkey && (
+            {isConnected && walletType === WalletTypeEnum.aa && (
               <div className={styles['assets-wrapper']} onClick={() => handleAssets()}>
                 <span className={styles['assets']}>Assets</span>
                 <ArrowRight />
@@ -70,14 +78,20 @@ export default function MobileUserProfile() {
               {isShowAddress ? <ArrowUp /> : <ArrowRight />}
             </div>
             {isShowAddress && (
-              <div className={styles['address-content']}>
+              <div
+                className={clsx(
+                  styles['address-content'],
+                  !isTelegramPlatform && styles['address-content-border'],
+                )}>
                 <Address hideBorder={true} />
               </div>
             )}
           </div>
-          <div className={styles['button-wrapper']}>
-            <LogoutButton />
-          </div>
+          {!isTelegramPlatform && (
+            <div className={styles['button-wrapper']}>
+              <LogoutButton />
+            </div>
+          )}
         </div>
       </CommonDrawer>
     </>

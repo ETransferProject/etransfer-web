@@ -10,6 +10,7 @@ import {
   setType,
   setStatus,
   setTimestamp,
+  resetRecordsState,
 } from 'store/reducers/records/slice';
 import { useDebounceCallback } from 'hooks/debounce';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
@@ -22,11 +23,10 @@ import { useEffectOnce } from 'react-use';
 import { useHistoryFilter } from 'hooks/history';
 import { useRouter, useSearchParams } from 'next/navigation';
 import queryString from 'query-string';
-import { useWalletContext } from 'provider/walletProvider';
 import { SideMenuKey } from 'constants/home';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
-import { useIsActive } from 'hooks/portkeyWallet';
 import { useRouterPush } from 'hooks/route';
+import { useSetAuthFromStorage } from 'hooks/authToken';
 
 export type TRecordsContentProps = TRecordsBodyProps & {
   onReset: () => void;
@@ -41,8 +41,6 @@ export default function Content() {
   const dispatch = useAppDispatch();
   const { setFilter } = useHistoryFilter();
   const { setLoading } = useLoading();
-  const [{ wallet }] = useWalletContext();
-  const isActive = useIsActive();
   const routerPush = useRouterPush();
   const routerPushRef = useRef(routerPush);
   routerPushRef.current = routerPush;
@@ -56,12 +54,13 @@ export default function Content() {
     recordsList,
   } = useRecordsState();
 
+  const setAuthFromStorage = useSetAuthFromStorage();
   const requestRecordsList = useDebounceCallback(async (isLoading = false, isSetAuth = false) => {
     try {
       isLoading && setLoading(true);
       if (isSetAuth) {
-        if (!wallet) return;
-        await wallet?.setAuthFromStorage();
+        const serResult = await setAuthFromStorage();
+        if (!serResult) return;
         await sleep(500);
       }
 
@@ -136,17 +135,8 @@ export default function Content() {
     [searchParams],
   );
 
-  const checkActive = useCallback(async () => {
-    await sleep(100);
-    if (!isActive) {
-      routerPushRef.current('/');
-    }
-  }, [isActive]);
-
   useEffectOnce(() => {
     dispatch(setActiveMenuKey(SideMenuKey.History));
-
-    checkActive();
 
     const search: any = {
       method: routeQuery.method != null ? routeQuery.method : undefined,
@@ -178,6 +168,10 @@ export default function Content() {
 
     const searchStr = queryString.stringify(search);
     router.replace(`/history${searchStr ? '?' + searchStr : ''}`);
+
+    return () => {
+      dispatch(resetRecordsState());
+    };
   });
 
   const init = useCallback(() => {

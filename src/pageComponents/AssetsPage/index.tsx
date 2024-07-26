@@ -1,17 +1,21 @@
 'use client';
-import { Asset, PortkeyAssetProvider } from '@portkey/did-ui-react';
-import { WalletType, useWebLogin } from 'aelf-web-login';
-import { ChainId } from '@portkey/types';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { LeftOutlined } from '@ant-design/icons';
 import styles from './styles.module.scss';
 import { useClearStore } from 'hooks/common';
+import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
+import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
+import { PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
+import { ExtraInfoForPortkeyAA } from 'types/wallet';
 
 export default function MyAsset() {
   const router = useRouter();
-  const { wallet, walletType } = useWebLogin();
+  const { walletType, walletInfo } = useConnectWallet();
   const clearStore = useClearStore();
+  const portkeyAAInfo = useMemo(() => {
+    return walletInfo?.extraInfo as ExtraInfoForPortkeyAA;
+  }, [walletInfo?.extraInfo]);
 
   const handleDeleteAccount = useCallback(() => {
     clearStore();
@@ -19,32 +23,36 @@ export default function MyAsset() {
   }, [clearStore]);
 
   useEffect(() => {
-    if (walletType !== WalletType.portkey) {
+    if (walletType !== WalletTypeEnum.aa) {
       router.push('/');
     }
   }, [walletType, router]);
 
-  if (walletType !== WalletType.portkey) {
+  if (
+    walletType !== WalletTypeEnum.aa ||
+    !portkeyAAInfo?.portkeyInfo?.pin ||
+    !portkeyAAInfo?.portkeyInfo?.chainId
+  ) {
     return null;
   }
 
   return (
     <div className={styles['my-asset-wrapper']}>
-      <PortkeyAssetProvider
-        originChainId={wallet?.portkeyInfo?.chainId as ChainId}
-        pin={wallet?.portkeyInfo?.pin}>
-        <Asset
+      <PortkeyDid.PortkeyAssetProvider
+        originChainId={portkeyAAInfo?.portkeyInfo?.chainId}
+        pin={portkeyAAInfo?.portkeyInfo?.pin}>
+        <PortkeyDid.Asset
           isShowRamp={false}
           isShowRampBuy={false}
           isShowRampSell={false}
-          backIcon={<LeftOutlined rev={undefined} />}
+          backIcon={<LeftOutlined />}
           onOverviewBack={() => router.back()}
           onLifeCycleChange={(lifeCycle) => {
             console.log(lifeCycle, 'onLifeCycleChange');
           }}
           onDeleteAccount={handleDeleteAccount}
         />
-      </PortkeyAssetProvider>
+      </PortkeyDid.PortkeyAssetProvider>
     </div>
   );
 }

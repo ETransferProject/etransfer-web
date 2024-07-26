@@ -7,7 +7,7 @@ import AelfChain from '../../ColumnComponents/AelfChain';
 import Networks from '../../ColumnComponents/Networks';
 import Volume from '../../ColumnComponents/Volume';
 import { TTokenDashboardItem, TTokenDashboardItemDetail } from 'types/infoDashboard';
-import { ChainId } from '@portkey/types';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import DynamicArrow from 'components/DynamicArrow';
 import Network from '../../ColumnComponents/Network';
 import { useCallback, useMemo, useState } from 'react';
@@ -15,7 +15,7 @@ import { ZERO } from 'constants/calculate';
 
 interface ExpandedTableData extends TTokenDashboardItemDetail {
   symbol: string;
-  aelfChain: ChainId[];
+  aelfChain: TChainId[];
 }
 
 const WebTokensTableExpandedColumns = [
@@ -33,7 +33,7 @@ const WebTokensTableExpandedColumns = [
     dataIndex: 'aelfChain',
     key: 'aelfChain',
     width: 120,
-    render: (aelfChain: ChainId[]) => {
+    render: (aelfChain: TChainId[]) => {
       return (
         <div style={{ visibility: 'hidden' }}>
           <AelfChain list={aelfChain} />
@@ -126,7 +126,7 @@ export default function WebTokensTable() {
         dataIndex: 'aelfChain',
         key: 'aelfChain',
         width: 120,
-        render: (aelfChain: ChainId[]) => {
+        render: (aelfChain: TChainId[]) => {
           return <AelfChain list={aelfChain} />;
         },
       },

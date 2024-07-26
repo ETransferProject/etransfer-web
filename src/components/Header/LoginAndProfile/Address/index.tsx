@@ -4,7 +4,7 @@ import styles from './styles.module.scss';
 import { SupportedChainId } from 'constants/index';
 import { CopySize } from 'components/Copy';
 import { SynchronizingAddress } from 'constants/chain';
-import { useAccounts } from 'hooks/portkeyWallet';
+import { useGetAccount } from 'hooks/wallet';
 import clsx from 'clsx';
 
 interface AddressProps {
@@ -12,24 +12,22 @@ interface AddressProps {
 }
 
 export default function Address({ hideBorder }: AddressProps) {
-  const accounts = useAccounts();
+  const accounts = useGetAccount();
 
   const accountsList = useMemo(() => {
     const temp = [];
     if (accounts?.[SupportedChainId.mainChain]) {
       const defaultAddress = accounts?.[SupportedChainId.mainChain];
-      const arrayAddress = accounts?.[SupportedChainId.mainChain]?.[0];
       temp.push({
         label: SupportedChainId.mainChain,
-        value: typeof defaultAddress === 'string' ? defaultAddress : arrayAddress || '',
+        value: defaultAddress || '',
       });
     }
     if (accounts?.[SupportedChainId.sideChain]) {
       const defaultAddress = accounts?.[SupportedChainId.sideChain];
-      const arrayAddress = accounts?.[SupportedChainId.sideChain]?.[0];
       temp.push({
         label: SupportedChainId.sideChain,
-        value: typeof defaultAddress === 'string' ? defaultAddress : arrayAddress || '',
+        value: defaultAddress || '',
       });
     }
     return temp;

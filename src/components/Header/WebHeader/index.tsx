@@ -3,13 +3,12 @@ import clsx from 'clsx';
 import LoginAndProfileEntry from 'components/Header/LoginAndProfile';
 import { Logo } from 'assets/images';
 import styles from './styles.module.scss';
-import { useIsActive } from 'hooks/portkeyWallet';
-import { useWebLogin, WalletType } from 'aelf-web-login';
+import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
+import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { useRouter } from 'next/navigation';
 
 export default function WebHeader() {
-  const isActive = useIsActive();
-  const { walletType } = useWebLogin();
+  const { walletType, isConnected } = useConnectWallet();
   const router = useRouter();
 
   const handleOpenAssets = () => {
@@ -20,7 +19,7 @@ export default function WebHeader() {
     <div className={clsx('flex-row-between', styles['header-container'])}>
       <Logo />
       <div className={styles['right-wrapper']}>
-        {isActive && walletType === WalletType.portkey && (
+        {isConnected && walletType === WalletTypeEnum.aa && (
           <span className={styles['assets-wrapper']} onClick={() => handleOpenAssets()}>
             Assets
           </span>

@@ -1,15 +1,93 @@
 import AElf from 'aelf-sdk';
-import { ADDRESS_MAP, SupportedELFChainId } from 'constants/index';
-import { PortkeyVersion } from 'constants/wallet';
+import { ADDRESS_MAP, APP_NAME, NETWORK_TYPE, SupportedELFChainId } from 'constants/index';
 import { ContractMethodName, ManagerForwardCall } from 'constants/contract';
 import BigNumber from 'bignumber.js';
 import { timesDecimals } from './calculate';
 import { AllSupportedELFChainId, ContractType } from 'constants/chain';
-import { WalletType } from 'aelf-web-login';
-import { TWallet } from 'contract/types';
 import { sleep } from '@portkey/utils';
-import { GetRawTx, getAElf, getRawTx } from 'utils/aelfBase';
-import { createManagerForwardCall, createTokenTransfer } from 'portkeySDK/utils/contract';
+import { GetRawTx, getAElf, getRawTx, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
+import aelfInstance from './aelf/aelfInstance';
+import { handleManagerForwardCall, getContractMethods } from '@portkey/contracts';
+import {
+  ICallContractParams,
+  TSignatureParams,
+  WalletTypeEnum,
+} from '@aelf-web-login/wallet-adapter-base';
+
+type CreateHandleManagerForwardCall = {
+  caContractAddress: string;
+  contractAddress: string;
+  args: any;
+  methodName: string;
+  caHash: string;
+  chainId: SupportedELFChainId;
+};
+
+export const createManagerForwardCall = async ({
+  caContractAddress,
+  contractAddress,
+  args,
+  methodName,
+  caHash,
+  chainId,
+}: CreateHandleManagerForwardCall) => {
+  const instance = aelfInstance.getInstance(chainId as unknown as AllSupportedELFChainId);
+  const res = await handleManagerForwardCall({
+    paramsOption: {
+      contractAddress,
+      methodName,
+      args,
+      caHash,
+    },
+    functionName: ManagerForwardCall,
+    instance,
+  });
+  res.args = Buffer.from(AElf.utils.uint8ArrayToHex(res.args), 'hex').toString('base64');
+  const methods = await getContractMethods(instance, caContractAddress);
+
+  const protoInputType = methods[ManagerForwardCall];
+
+  let input = AElf.utils.transform.transformMapToArray(protoInputType, res);
+
+  input = AElf.utils.transform.transform(
+    protoInputType,
+    input,
+    AElf.utils.transform.INPUT_TRANSFORMERS,
+  );
+
+  const message = protoInputType.fromObject(input);
+
+  return protoInputType.encode(message).finish();
+};
+
+type TCreateTokenTransfer = {
+  contractAddress: string;
+  args: any;
+  chainId: SupportedELFChainId;
+};
+
+export const createTokenTransfer = async ({
+  contractAddress,
+  args,
+  chainId,
+}: TCreateTokenTransfer) => {
+  const instance = aelfInstance.getInstance(chainId as unknown as AllSupportedELFChainId);
+  const methods = await getContractMethods(instance, contractAddress);
+
+  const protoInputType = methods['TransferToken'];
+
+  let input = AElf.utils.transform.transformMapToArray(protoInputType, args);
+
+  input = AElf.utils.transform.transform(
+    protoInputType,
+    input,
+    AElf.utils.transform.INPUT_TRANSFORMERS,
+  );
+
+  const message = protoInputType.fromObject(input);
+
+  return protoInputType.encode(message).finish();
+};
 
 class TXError extends Error {
   public TransactionId?: string;
@@ -73,15 +151,19 @@ export async function getTxResult(
 }
 
 export const handleTransaction = async ({
-  wallet,
+  walletType,
   blockHeightInput,
   blockHashInput,
   packedInput,
   address,
   contractAddress,
   functionName,
+  caAddress,
+  getSignature,
 }: GetRawTx & {
-  wallet: TWallet;
+  walletType: WalletTypeEnum;
+  caAddress: string;
+  getSignature: TGetSignature;
 }) => {
   // Create transaction
   const rawTx = getRawTx({
@@ -97,7 +179,7 @@ export const handleTransaction = async ({
   const ser = AElf.pbUtils.Transaction.encode(rawTx).finish();
 
   let signInfo: string;
-  if (wallet.walletType !== WalletType.portkey) {
+  if (walletType !== WalletTypeEnum.aa) {
     // nightElf or discover
     signInfo = AElf.utils.sha256(ser);
   } else {
@@ -106,10 +188,13 @@ export const handleTransaction = async ({
   }
 
   // signature
-  let signatureStr = '';
-  const signatureRes = await wallet.getSignature({ signInfo });
+  const signatureRes = await getSignature({
+    appName: APP_NAME,
+    address: removeELFAddressSuffix(caAddress),
+    signInfo,
+  });
 
-  signatureStr = signatureRes.signature || '';
+  const signatureStr = signatureRes?.signature || '';
   if (!signatureStr) return;
 
   let tx = {
@@ -125,22 +210,24 @@ export const handleTransaction = async ({
 };
 
 export const approveELF = async ({
-  wallet,
+  callSendMethod,
   chainId,
   address,
   symbol,
   amount,
 }: {
-  wallet: TWallet;
+  callSendMethod: (props: ICallContractParams<any>) => Promise<any>;
   chainId: SupportedELFChainId;
   address: string;
   symbol: string;
   amount: BigNumber | number | string;
 }) => {
-  const approveResult: any = await wallet.callSendMethod(chainId, {
-    contractAddress: ADDRESS_MAP[PortkeyVersion.v2][chainId][ContractType.TOKEN],
+  const approveResult: any = await callSendMethod({
+    chainId,
+    contractAddress: ADDRESS_MAP[chainId][ContractType.TOKEN],
     methodName: ContractMethodName.Approve,
     args: {
+      networkType: NETWORK_TYPE,
       spender: address,
       symbol,
       amount: amount.toString(),
@@ -152,14 +239,16 @@ export const approveELF = async ({
 };
 
 export const checkTokenAllowanceAndApprove = async ({
-  wallet,
+  callViewMethod,
+  callSendMethod,
   chainId,
   symbol,
   address,
   approveTargetAddress,
   amount,
 }: {
-  wallet: TWallet;
+  callViewMethod: (prams: ICallContractParams<any>) => Promise<any>;
+  callSendMethod: (prams: ICallContractParams<any>) => Promise<any>;
   chainId: SupportedELFChainId;
   symbol: string;
   address: string;
@@ -167,8 +256,9 @@ export const checkTokenAllowanceAndApprove = async ({
   amount: string | number;
 }): Promise<boolean> => {
   const [allowanceResult, tokenInfoResult] = await Promise.all([
-    wallet.callViewMethod<any, any>(chainId, {
-      contractAddress: ADDRESS_MAP[PortkeyVersion.v2][chainId][ContractType.TOKEN],
+    callViewMethod({
+      chainId,
+      contractAddress: ADDRESS_MAP[chainId][ContractType.TOKEN],
       methodName: ContractMethodName.GetAllowance,
       args: {
         symbol,
@@ -176,8 +266,9 @@ export const checkTokenAllowanceAndApprove = async ({
         spender: approveTargetAddress,
       },
     }),
-    wallet.callViewMethod<any, any>(chainId, {
-      contractAddress: ADDRESS_MAP[PortkeyVersion.v2][chainId][ContractType.TOKEN],
+    callViewMethod({
+      chainId,
+      contractAddress: ADDRESS_MAP[chainId][ContractType.TOKEN],
       methodName: ContractMethodName.GetTokenInfo,
       args: {
         symbol,
@@ -186,20 +277,21 @@ export const checkTokenAllowanceAndApprove = async ({
   ]);
 
   console.log('first check allowance and tokenInfo:', allowanceResult, tokenInfoResult);
-  const bigA = timesDecimals(amount, tokenInfoResult?.decimals || 8);
-  const allowanceBN = new BigNumber(allowanceResult?.allowance);
+  const bigA = timesDecimals(amount, tokenInfoResult?.data?.decimals || 8);
+  const allowanceBN = new BigNumber(allowanceResult?.data?.allowance);
 
   if (allowanceBN.lt(bigA)) {
     await approveELF({
-      wallet,
+      callSendMethod,
       chainId,
       address: approveTargetAddress,
       symbol,
       amount: bigA.toFixed(0),
     });
 
-    const allowanceNew = await wallet.callViewMethod<any, any>(chainId, {
-      contractAddress: ADDRESS_MAP[PortkeyVersion.v2][chainId][ContractType.TOKEN],
+    const allowanceNew = await callViewMethod({
+      chainId,
+      contractAddress: ADDRESS_MAP[chainId][ContractType.TOKEN],
       methodName: ContractMethodName.GetAllowance,
       args: {
         symbol,
@@ -209,13 +301,22 @@ export const checkTokenAllowanceAndApprove = async ({
     });
     console.log('second check allowance:', allowanceNew);
 
-    return bigA.lte(allowanceNew?.allowance);
+    return bigA.lte(allowanceNew?.data.allowance);
   }
   return true;
 };
 
+export type TGetSignature = (params: TSignatureParams) => Promise<TGetSignatureResult | null>;
+
+export type TGetSignatureResult = {
+  error: number;
+  errorMessage: string;
+  signature: string;
+  from: string;
+};
+
 export interface CreateTransferTokenTransactionParams {
-  wallet: TWallet;
+  walletType: WalletTypeEnum;
   caContractAddress: string;
   eTransferContractAddress: string;
   caHash: string;
@@ -223,10 +324,12 @@ export interface CreateTransferTokenTransactionParams {
   amount: string;
   chainId: SupportedELFChainId;
   fromManagerAddress: string;
+  caAddress: string;
+  getSignature: TGetSignature;
 }
 
 export const createTransferTokenTransaction = async ({
-  wallet,
+  walletType,
   caContractAddress,
   eTransferContractAddress,
   caHash,
@@ -234,9 +337,11 @@ export const createTransferTokenTransaction = async ({
   amount,
   chainId,
   fromManagerAddress,
+  caAddress,
+  getSignature,
 }: CreateTransferTokenTransactionParams) => {
   let transactionParams;
-  if (wallet.walletType === WalletType.elf) {
+  if (walletType === WalletTypeEnum.elf) {
     transactionParams = await createTokenTransfer({
       contractAddress: eTransferContractAddress,
       args: { symbol, amount },
@@ -258,49 +363,73 @@ export const createTransferTokenTransaction = async ({
   const aelf = getAElf(chainId as unknown as AllSupportedELFChainId);
   const { BestChainHeight, BestChainHash } = await aelf.chain.getChainStatus();
 
-  if (wallet.walletType === WalletType.elf) {
+  if (walletType === WalletTypeEnum.elf) {
     const transaction = await handleTransaction({
-      wallet,
+      walletType,
       blockHeightInput: BestChainHeight,
       blockHashInput: BestChainHash,
       packedInput,
       address: fromManagerAddress,
       contractAddress: eTransferContractAddress,
       functionName: 'TransferToken',
+      caAddress,
+      getSignature,
     });
     console.log('>>>>>> createTransferTokenTransaction transaction', transaction);
     return transaction;
   }
 
   const transaction = await handleTransaction({
-    wallet,
+    walletType,
     blockHeightInput: BestChainHeight,
     blockHashInput: BestChainHash,
     packedInput,
     address: fromManagerAddress,
     contractAddress: caContractAddress,
     functionName: ManagerForwardCall,
+    caAddress,
+    getSignature,
   });
   console.log('>>>>>> createTransferTokenTransaction transaction', transaction);
   return transaction;
 };
 
+export type TCallViewMethodForGetBalance = (
+  prams: ICallContractParams<{
+    symbol: string;
+    owner: string;
+  }>,
+) => Promise<
+  | {
+      data: {
+        balance: string;
+      };
+    }
+  | undefined
+>;
+
 export type TGetBalancesProps = {
-  wallet: TWallet;
+  callViewMethod: TCallViewMethodForGetBalance;
   caAddress: string;
   symbol: string;
   chainId: SupportedELFChainId;
 };
-export const getBalance = async ({ wallet, symbol, chainId, caAddress }: TGetBalancesProps) => {
-  if (!wallet.callViewMethod) return;
 
-  const res: { balance: string } | undefined = await wallet.callViewMethod(chainId, {
-    contractAddress: ADDRESS_MAP[PortkeyVersion.v2][chainId][ContractType.TOKEN],
+export const getBalance = async ({
+  callViewMethod,
+  symbol,
+  chainId,
+  caAddress,
+}: TGetBalancesProps) => {
+  const res = await callViewMethod({
+    contractAddress: ADDRESS_MAP[chainId][ContractType.TOKEN],
     methodName: ContractMethodName.GetBalance,
+    chainId,
     args: {
       symbol,
-      owner: caAddress, // caAddress
+      owner: caAddress,
     },
   });
-  return res?.balance;
+
+  return res?.data?.balance;
 };

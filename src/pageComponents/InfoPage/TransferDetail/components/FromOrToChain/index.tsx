@@ -1,4 +1,4 @@
-import { ChainId } from '@portkey/types';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import styles from './styles.module.scss';
 import { BlockchainNetworkType } from 'constants/network';
 import { useMemo } from 'react';
@@ -12,7 +12,7 @@ export default function FromOrToChain({
   chainId,
 }: {
   network: string;
-  chainId?: ChainId;
+  chainId?: TChainId;
 }) {
   const renderNetworkLogo = useMemo(() => {
     const currentNetwork = network === BlockchainNetworkType.AELF ? chainId : network;

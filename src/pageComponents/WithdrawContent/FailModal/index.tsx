@@ -12,7 +12,7 @@ interface FailModalProps {
 
 export default function FailModal({ failReason, modalProps }: FailModalProps) {
   return (
-    <CommonModalSwitchDrawer {...modalProps} hideCancelButton okText="Yes, I know">
+    <CommonModalSwitchDrawer {...modalProps} hideCancelButton okText="Got it">
       <div className={clsx('flex-column', styles['container'])}>
         <div className={clsx('flex-column-center', styles['title-wrapper'])}>
           <div className={clsx('flex-center', styles['title-icon'])}>

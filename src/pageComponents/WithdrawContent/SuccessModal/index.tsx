@@ -46,7 +46,7 @@ export default function SuccessModal({ withdrawInfo, modalProps }: SuccessModalP
   ]);
 
   return (
-    <CommonModalSwitchDrawer {...modalProps} hideCancelButton okText="Yes, I know">
+    <CommonModalSwitchDrawer {...modalProps} hideCancelButton okText="Got it">
       <div className={clsx('flex-column', styles['container'])}>
         <div className={clsx('flex-column-center', styles['title-wrapper'])}>
           <div className={clsx('flex-center', styles['title-icon'])}>

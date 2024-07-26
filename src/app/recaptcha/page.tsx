@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 import { RECAPTCHA_SITE_KEY_MAINNET, RECAPTCHA_SITE_KEY_TESTNET } from 'constants/misc';
 import GoogleReCaptcha from 'components/GoogleRecaptcha';
 import styles from './styles.module.scss';
-import { NETWORK_TYPE_V2 } from 'constants/index';
+import { NETWORK_TYPE } from 'constants/index';
 
 export default function ReCaptcha() {
   const handleSuccess = useCallback((response: string) => {
@@ -39,7 +39,7 @@ export default function ReCaptcha() {
     <div className={styles.reCaptchaContainer}>
       <GoogleReCaptcha
         siteKey={
-          NETWORK_TYPE_V2 === 'TESTNET' ? RECAPTCHA_SITE_KEY_TESTNET : RECAPTCHA_SITE_KEY_MAINNET
+          NETWORK_TYPE === 'TESTNET' ? RECAPTCHA_SITE_KEY_TESTNET : RECAPTCHA_SITE_KEY_MAINNET
         }
         theme="light"
         size="normal"

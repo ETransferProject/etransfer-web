@@ -14,7 +14,6 @@ export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export const useCommonState = () => useAppSelector((state) => state.common);
-export const usePortkeyWalletState = () => useAppSelector((state) => state.portkeyWallet);
 export const useDepositState = () => useAppSelector((state) => state.deposit);
 export const useWithdrawState = () => useAppSelector((state) => state.withdraw);
 export const useRecordsState = () => useAppSelector((state) => state.records);
