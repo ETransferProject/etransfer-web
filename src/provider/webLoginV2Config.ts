@@ -35,9 +35,6 @@ const didConfig = {
     },
   },
   networkType: NETWORK_TYPE,
-  customNetworkType: (NETWORK_TYPE === 'TESTNET'
-    ? 'offline'
-    : 'online') as PortkeyDid.TCustomNetworkType,
 };
 
 const baseConfig = {

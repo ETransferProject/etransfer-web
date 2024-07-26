@@ -231,6 +231,7 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
           />
           <div className={styles['filter-drawer-label']}>End time</div>
           <DatePicker
+            inputReadOnly={true}
             size={'large'}
             allowClear={false}
             value={filterTimestampEnd}
