@@ -10,6 +10,7 @@ import {
   setType,
   setStatus,
   setTimestamp,
+  resetRecordsState,
 } from 'store/reducers/records/slice';
 import { useDebounceCallback } from 'hooks/debounce';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
@@ -167,6 +168,10 @@ export default function Content() {
 
     const searchStr = queryString.stringify(search);
     router.replace(`/history${searchStr ? '?' + searchStr : ''}`);
+
+    return () => {
+      dispatch(resetRecordsState());
+    };
   });
 
   const init = useCallback(() => {

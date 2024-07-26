@@ -97,7 +97,7 @@ export default function DoubleCheckModal({
           </div>
           <div className={clsx(styles['detail-row'], styles['transaction-fee-wrapper'])}>
             <div className={styles['label']}>Estimated Gas Fee</div>
-            <div className={clsx('flex-row-center', styles['value'], styles['fee-usd-box'])}>
+            <div className={clsx('flex-row', styles['value'], styles['fee-usd-box'])}>
               <span className={clsx('flex-1', styles['fee-value'])}>
                 {withdrawInfo.aelfTransactionFee?.amount}
               </span>
@@ -106,7 +106,7 @@ export default function DoubleCheckModal({
           </div>
           <div className={clsx(styles['detail-row'], styles['transaction-fee-wrapper'])}>
             <div className={styles['label']}>Transaction Fee</div>
-            <div className={clsx('flex-column-center', styles['value'], styles['fee-usd-box'])}>
+            <div className={clsx('flex-column', styles['value'], styles['fee-usd-box'])}>
               <div className="flex-row-center">
                 <span className={clsx('flex-1', styles['fee-value'])}>
                   {withdrawInfo.transactionFee?.amount}
