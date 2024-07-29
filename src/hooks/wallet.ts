@@ -9,7 +9,7 @@ import { TAelfAccounts } from 'types/wallet';
 import { SupportedChainId } from 'constants/index';
 
 export function useInitWallet() {
-  const { isConnected } = useConnectWallet();
+  const { isConnected, walletInfo } = useConnectWallet();
 
   const { getAuth } = useQueryAuthToken();
   const getAuthRef = useRef(getAuth);
@@ -18,10 +18,10 @@ export function useInitWallet() {
     console.warn('>>>>>> isConnected', isConnected);
     if (!isConnected) {
       routerPushRef.current('/', true);
-    } else {
+    } else if (isConnected && walletInfo) {
       getAuthRef.current();
     }
-  }, [isConnected]);
+  }, [isConnected, walletInfo]);
 
   const { queryAuth } = useQueryAuthToken();
   const routerPush = useRouterPush();
@@ -32,12 +32,13 @@ export function useInitWallet() {
       console.log('AuthorizationExpired: Not Logined');
       routerPushRef.current('/', false);
       return;
+    } else if (isConnected && walletInfo) {
+      resetLocalJWT();
+      console.log('AuthorizationExpired');
+      eTransferInstance.setUnauthorized(true);
+      await queryAuth();
     }
-    resetLocalJWT();
-    console.log('AuthorizationExpired');
-    eTransferInstance.setUnauthorized(true);
-    await queryAuth();
-  }, [isConnected, queryAuth]);
+  }, [isConnected, queryAuth, walletInfo]);
   const onAuthorizationExpiredRef = useRef(onAuthorizationExpired);
   onAuthorizationExpiredRef.current = onAuthorizationExpired;
 
@@ -58,7 +59,7 @@ export function useGetAccount() {
 
   // WalletInfo TAelfAccounts ExtraInfoForDiscover | ExtraInfoForPortkeyAA | ExtraInfoForNightElf;
   return useMemo(() => {
-    if (!isConnected) return undefined;
+    if (!isConnected || !walletInfo) return undefined;
 
     const accounts: TAelfAccounts = {
       [SupportedChainId.mainChain]: 'ELF_' + walletInfo?.address + '_' + SupportedChainId.mainChain,
@@ -66,5 +67,5 @@ export function useGetAccount() {
     };
 
     return accounts;
-  }, [isConnected, walletInfo?.address]);
+  }, [isConnected, walletInfo]);
 }
