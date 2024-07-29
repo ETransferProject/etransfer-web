@@ -150,6 +150,7 @@ export default function Content() {
     [dispatch, setLoading],
   );
 
+  const is401Ref = useRef(false);
   const getDepositData = useCallback(
     async (chainId: TChainId, symbol: string, toSymbol: string) => {
       try {
@@ -161,11 +162,17 @@ export default function Content() {
           symbol,
           toSymbol,
         });
+        is401Ref.current = false;
         setShowRetry(false);
         setLoading(false);
         setDepositInfo(res.depositInfo);
         dispatch(setDepositAddress(res.depositInfo.depositAddress));
       } catch (error: any) {
+        if (isAuthTokenError(error)) {
+          is401Ref.current = true;
+        } else {
+          is401Ref.current = false;
+        }
         if (error.name !== CommonErrorNameType.CANCEL && error.code === '50000') {
           setShowRetry(true);
         } else {
@@ -192,6 +199,7 @@ export default function Content() {
           chainId: chainId,
           symbol: symbol,
         });
+        is401Ref.current = false;
         dispatch(setFromNetworkList(networkList));
         if (networkList?.length === 1 && networkList[0].status !== NetworkStatus.Offline) {
           fromNetworkRef.current = networkList[0].network;
@@ -214,6 +222,11 @@ export default function Content() {
         !isPadPX && (await getDepositData(chainId, lastSymbol, lastToSymbol));
       } catch (error: any) {
         setIsShowNetworkLoading(false);
+        if (isAuthTokenError(error)) {
+          is401Ref.current = true;
+        } else {
+          is401Ref.current = false;
+        }
         if (
           error.name !== CommonErrorNameType.CANCEL &&
           !isWriteOperationError(error?.code, handleErrorMessage(error)) &&
@@ -425,7 +438,13 @@ export default function Content() {
 
   useEffectOnce(() => {
     const { remove } = myEvents.LoginSuccess.addListener(() => {
-      getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
+      if (is401Ref.current) {
+        getNetworkData({
+          chainId: toChainItem.key,
+          symbol: fromTokenSymbol,
+          toSymbol: toTokenSymbol,
+        });
+      }
     });
 
     return () => {
