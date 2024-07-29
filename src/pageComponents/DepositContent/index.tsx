@@ -424,7 +424,9 @@ export default function Content() {
   // }, [init]);
 
   useEffectOnce(() => {
-    const { remove } = myEvents.LoginSuccess.addListener(init);
+    const { remove } = myEvents.LoginSuccess.addListener(() => {
+      getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
+    });
 
     return () => {
       remove();
