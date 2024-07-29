@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState, useMemo, useEffect } from 'react';
+import React, { useCallback, useRef, useState, useMemo } from 'react';
 import WebDepositContent from './WebDepositContent';
 import MobileDepositContent from './MobileDepositContent';
 import { useAppDispatch, useCommonState, useDepositState, useLoading } from 'store/Provider/hooks';
@@ -413,15 +413,23 @@ export default function Content() {
     router.replace('/deposit');
   });
 
-  useEffect(() => {
-    const { remove } = myEvents.AuthTokenSuccess.addListener(() => {
-      console.log('login success');
-      init();
-    });
+  // useEffect(() => {
+  //   const { remove } = myEvents.AuthTokenSuccess.addListener(() => {
+  //     console.log('login success');
+  //     init();
+  //   });
+  //   return () => {
+  //     remove();
+  //   };
+  // }, [init]);
+
+  useEffectOnce(() => {
+    const { remove } = myEvents.LoginSuccess.addListener(init);
+
     return () => {
       remove();
     };
-  }, [init]);
+  });
 
   return isPadPX ? (
     <MobileDepositContent

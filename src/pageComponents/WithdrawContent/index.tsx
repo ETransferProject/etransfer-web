@@ -1063,15 +1063,23 @@ export default function WithdrawContent() {
     };
   });
 
-  useEffect(() => {
-    const { remove } = myEvents.AuthTokenSuccess.addListener(() => {
-      console.log('login success');
-      init();
-    });
+  // useEffect(() => {
+  //   const { remove } = myEvents.AuthTokenSuccess.addListener(() => {
+  //     console.log('login success');
+  //     init();
+  //   });
+  //   return () => {
+  //     remove();
+  //   };
+  // }, [init]);
+
+  useEffectOnce(() => {
+    const { remove } = myEvents.LoginSuccess.addListener(init);
+
     return () => {
       remove();
     };
-  }, [init]);
+  });
 
   const renderMainContent = useMemo(() => {
     return (
