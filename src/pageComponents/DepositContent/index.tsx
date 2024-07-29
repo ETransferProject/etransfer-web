@@ -27,13 +27,14 @@ import { useEffectOnce } from 'react-use';
 import singleMessage from 'components/SingleMessage';
 import { InitDepositInfo } from 'constants/deposit';
 import { CommonErrorNameType } from 'api/types';
-import { handleErrorMessage } from '@etransfer/utils';
+import { handleErrorMessage, sleep } from '@etransfer/utils';
 import myEvents from 'utils/myEvent';
 import { isAuthTokenError, isWriteOperationError } from 'utils/api/error';
 import { SideMenuKey } from 'constants/home';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
+import { useSetAuthFromStorage } from 'hooks/authToken';
 
 export type TDepositContentProps = {
   fromNetworkSelected?: TNetworkItem;
@@ -343,6 +344,8 @@ export default function Content() {
     }),
     [searchParams],
   );
+
+  const setAuthFromStorage = useSetAuthFromStorage();
   const init = useCallback(async () => {
     let chainId = toChainItem.key;
     let fromSymbol = fromTokenSymbol;
@@ -382,11 +385,13 @@ export default function Content() {
       fromNetworkRef.current = fromNetwork.network;
     }
 
+    await setAuthFromStorage();
+    await sleep(500);
     // get new network data, when refresh page and switch side menu
     await getNetworkData({ chainId, symbol: fromSymbol, toSymbol });
   }, [
     dispatch,
-    fromNetwork,
+    fromNetwork?.network,
     fromNetworkList,
     fromTokenSymbol,
     getNetworkData,
@@ -395,6 +400,7 @@ export default function Content() {
     routeQuery.depositFromNetwork,
     routeQuery.depositToToken,
     routeQuery.tokenSymbol,
+    setAuthFromStorage,
     toChainItem.key,
     toTokenSymbol,
   ]);

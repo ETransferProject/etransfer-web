@@ -100,6 +100,7 @@ import CommonLink from 'components/CommonLink';
 import { AelfExploreType } from 'constants/network';
 import { getAelfExploreLink } from 'utils/common';
 import { TelegramPlatform } from 'utils/telegram';
+import { useSetAuthFromStorage } from 'hooks/authToken';
 
 enum ValidateStatus {
   Error = 'error',
@@ -975,8 +976,12 @@ export default function WithdrawContent() {
     [searchParams],
   );
 
+  const setAuthFromStorage = useSetAuthFromStorage();
   const init = useCallback(async () => {
     try {
+      await setAuthFromStorage();
+      await sleep(500);
+
       let newCurrentSymbol = currentSymbol;
       let newTokenList = tokenList;
       setLoading(true);
@@ -1038,6 +1043,7 @@ export default function WithdrawContent() {
     routeQuery.chainId,
     routeQuery.tokenSymbol,
     routeQuery.withdrawAddress,
+    setAuthFromStorage,
     setLoading,
     tokenList,
     withdraw.address,
