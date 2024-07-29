@@ -40,7 +40,7 @@ export default function WebUserProfile() {
       trigger="click"
       open={isOpen}
       onOpenChange={handleClickChange}>
-      <div className="flex-row-center">
+      <div className={clsx('flex-row-center', styles['main-content'])}>
         <User className={clsx('flex-none', styles['wallet-icon'])} />
         <span className={styles['wallet-text']}>My</span>
       </div>
