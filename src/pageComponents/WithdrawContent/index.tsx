@@ -99,6 +99,7 @@ import { PortkeyVersion } from 'constants/wallet';
 import CommonLink from 'components/CommonLink';
 import { AelfExploreType } from 'constants/network';
 import { getAelfExploreLink } from 'utils/common';
+import { TelegramPlatform } from 'utils/telegram';
 
 enum ValidateStatus {
   Error = 'error',
@@ -1190,7 +1191,7 @@ export default function WithdrawContent() {
                     }
                   }}
                   onFocus={async () => {
-                    if (isAndroid) {
+                    if (!TelegramPlatform.isTelegramPlatform() && isAndroid) {
                       // The keyboard does not block the input box
                       await sleep(200);
                       document.getElementById('inputAmountWrapper')?.scrollIntoView({
