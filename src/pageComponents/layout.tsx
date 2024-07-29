@@ -16,6 +16,7 @@ import { useUpdateRecord } from 'hooks/updateRecord';
 import Footer from 'components/Footer';
 import { usePathname } from 'next/navigation';
 import { useInitWallet } from 'hooks/wallet';
+import { TelegramPlatform } from 'utils/telegram';
 
 const Layout = ({
   children,
@@ -53,6 +54,7 @@ const Layout = ({
     }
   }, []);
   const { isPadPX, isMobilePX } = useCommonState();
+  const isTelegramPlatform = TelegramPlatform.isTelegramPlatform();
 
   useInitWallet();
   useRouteParamType();
@@ -74,7 +76,12 @@ const Layout = ({
           styles['layout-content-wrapper-with-header'],
         )}>
         {isShowSider && !isPadPX && <Sider />}
-        <div className={pathname !== '/' ? 'etransfer-web-content' : 'etransfer-web-notLogin'}>
+        <div
+          className={
+            pathname !== '/'
+              ? clsx('etransfer-web-content', !isTelegramPlatform && 'etransfer-web-content-not-tg')
+              : 'etransfer-web-notLogin'
+          }>
           <Suspense fallback={<Loading />}>{children}</Suspense>
         </div>
       </div>
