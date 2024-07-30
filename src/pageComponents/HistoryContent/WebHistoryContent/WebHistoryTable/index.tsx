@@ -13,7 +13,8 @@ import ArrivalTimeBox from 'pageComponents/HistoryContent/ArrivalTimeBox';
 import AmountBox from 'pageComponents/HistoryContent/AmountBox';
 import FromAndToBox from 'pageComponents/HistoryContent/FromAndToBox';
 import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
-import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
+import { useIsLogin } from 'hooks/wallet';
+import { LOGIN_TO_VIEW_HISTORY, NO_HISTORY_FOUND } from 'constants/records';
 
 const columns = [
   {
@@ -131,7 +132,7 @@ const columns = [
 export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProps) {
   const { recordsList, totalCount, skipCount, maxResultCount } = useRecordsState();
   const dispatch = useAppDispatch();
-  const { isConnected } = useConnectWallet();
+  const isLogin = useIsLogin();
 
   const handleRecordListData = (recordsList: TRecordsListItem[]) => {
     if (recordsList.length === 0) {
@@ -190,9 +191,7 @@ export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProp
         scroll={{ x: 1020 }}
         locale={{
           emptyText: (
-            <EmptyDataBox
-              emptyText={isConnected ? 'No records found' : 'Log in to view transaction history'}
-            />
+            <EmptyDataBox emptyText={isLogin ? NO_HISTORY_FOUND : LOGIN_TO_VIEW_HISTORY} />
           ),
         }}
         pagination={
