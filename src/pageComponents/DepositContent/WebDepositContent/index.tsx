@@ -22,6 +22,8 @@ import { CHAIN_LIST } from 'constants/index';
 import SelectChainWrapper from '../SelectChainWrapper';
 import DepositTip from '../DepositTip';
 import { CopySize } from 'components/Copy';
+import NotLoginTip from '../NotLoginTip';
+import { useIsLogin } from 'hooks/wallet';
 
 export default function WebContent({
   fromNetworkSelected,
@@ -49,6 +51,27 @@ export default function WebContent({
     toTokenList,
     toChainList,
   } = useDepositState();
+  const isLogin = useIsLogin();
+  const isShowDepositAddressLabelForLogin = useMemo(() => {
+    return showRetry || !!depositInfo.depositAddress;
+  }, [depositInfo.depositAddress, showRetry]);
+  const isShowDepositAddressLabelForNotLogin = useMemo(() => {
+    return (
+      !showRetry &&
+      fromTokenSymbol &&
+      toChainItem.key &&
+      toTokenSymbol &&
+      fromNetworkSelected?.network &&
+      !isLogin
+    );
+  }, [
+    fromNetworkSelected?.network,
+    fromTokenSymbol,
+    isLogin,
+    showRetry,
+    toChainItem.key,
+    toTokenSymbol,
+  ]);
 
   const renderDepositDescription = useMemo(() => {
     return (
@@ -155,11 +178,14 @@ export default function WebContent({
         )}
 
         <Space direction="vertical" size={40} />
-        {(showRetry || !!depositInfo.depositAddress) && (
-          <div className={styles['label']}>Deposit address</div>
+        {(isShowDepositAddressLabelForLogin || isShowDepositAddressLabelForNotLogin) && (
+          <div className={clsx(styles['label'], styles['label-deposit-address'])}>
+            Deposit address
+          </div>
         )}
-        {showRetry && <DepositRetryForWeb isShowImage={true} onClick={onRetry} />}
-        {!showRetry && !!depositInfo.depositAddress && (
+        {!isLogin && <NotLoginTip />}
+        {isLogin && showRetry && <DepositRetryForWeb isShowImage={true} onClick={onRetry} />}
+        {isLogin && !showRetry && !!depositInfo.depositAddress && (
           <>
             <Space direction="vertical" size={4} />
             <DepositTip fromToken={fromTokenSymbol} toToken={toTokenSymbol} />
@@ -207,6 +233,9 @@ export default function WebContent({
     fromTokenList,
     fromTokenSelected,
     fromTokenSymbol,
+    isLogin,
+    isShowDepositAddressLabelForLogin,
+    isShowDepositAddressLabelForNotLogin,
     isShowNetworkLoading,
     menuItems,
     onRetry,

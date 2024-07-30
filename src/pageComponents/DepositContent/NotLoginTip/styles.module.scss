@@ -1,0 +1,24 @@
+@import 'src/assets/theme/color.scss';
+
+.not-login-tip-card {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid $disable;
+  background-color: $brand-bg;
+
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.not-login-tip-text {
+  color: $primary-text;
+}
+
+.text {
+  margin-left: 8px;
+}
+
+.action {
+  color: $brand;
+  cursor: pointer;
+}

@@ -6,6 +6,8 @@ import { resetLocalJWT } from 'api/utils';
 import { useQueryAuthToken } from 'hooks/authToken';
 import { TAelfAccounts } from 'types/wallet';
 import { SupportedChainId } from 'constants/index';
+import { handleWebLoginErrorMessage } from 'utils/api/error';
+import singleMessage from 'components/SingleMessage';
 
 export function useInitWallet() {
   const { isConnected, walletInfo } = useConnectWallet();
@@ -49,6 +51,25 @@ export function useInitWallet() {
       remove();
     };
   }, []);
+}
+
+export function useIsLogin() {
+  const { isConnected, walletInfo } = useConnectWallet();
+  return useMemo(() => isConnected && walletInfo, [isConnected, walletInfo]);
+}
+
+export function useLogin() {
+  const { isConnected, connectWallet } = useConnectWallet();
+
+  return useCallback(async () => {
+    if (isConnected) return;
+
+    try {
+      await connectWallet();
+    } catch (error) {
+      singleMessage.error(handleWebLoginErrorMessage(error));
+    }
+  }, [connectWallet, isConnected]);
 }
 
 export function useGetAccount() {
