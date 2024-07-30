@@ -44,6 +44,7 @@ export function useInitWallet() {
 
   useEffect(() => {
     const { remove } = myEvents.Unauthorized.addListener(() => {
+      console.log('Unauthorized listener', eTransferInstance.unauthorized);
       if (eTransferInstance.unauthorized) return;
       eTransferInstance.setUnauthorized(true);
       onAuthorizationExpiredRef.current?.();
