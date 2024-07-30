@@ -36,6 +36,7 @@ axiosInstance.interceptors.response.use(
     return res;
   },
   (error) => {
+    console.log('api error', error, isDeniedRequest(error));
     if (isDeniedRequest(error)) {
       myEvents.Unauthorized.emit();
     }

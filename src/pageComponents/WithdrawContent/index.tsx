@@ -99,6 +99,8 @@ import { PortkeyVersion } from 'constants/wallet';
 import CommonLink from 'components/CommonLink';
 import { AelfExploreType } from 'constants/network';
 import { getAelfExploreLink } from 'utils/common';
+import { TelegramPlatform } from 'utils/telegram';
+import { useSetAuthFromStorage } from 'hooks/authToken';
 
 enum ValidateStatus {
   Error = 'error',
@@ -974,8 +976,12 @@ export default function WithdrawContent() {
     [searchParams],
   );
 
+  const setAuthFromStorage = useSetAuthFromStorage();
   const init = useCallback(async () => {
     try {
+      await setAuthFromStorage();
+      await sleep(500);
+
       let newCurrentSymbol = currentSymbol;
       let newTokenList = tokenList;
       setLoading(true);
@@ -1037,6 +1043,7 @@ export default function WithdrawContent() {
     routeQuery.chainId,
     routeQuery.tokenSymbol,
     routeQuery.withdrawAddress,
+    setAuthFromStorage,
     setLoading,
     tokenList,
     withdraw.address,
@@ -1056,15 +1063,23 @@ export default function WithdrawContent() {
     };
   });
 
-  useEffect(() => {
-    const { remove } = myEvents.AuthTokenSuccess.addListener(() => {
-      console.log('login success');
-      init();
-    });
+  // useEffect(() => {
+  //   const { remove } = myEvents.AuthTokenSuccess.addListener(() => {
+  //     console.log('login success');
+  //     init();
+  //   });
+  //   return () => {
+  //     remove();
+  //   };
+  // }, [init]);
+
+  useEffectOnce(() => {
+    const { remove } = myEvents.LoginSuccess.addListener(init);
+
     return () => {
       remove();
     };
-  }, [init]);
+  });
 
   const renderMainContent = useMemo(() => {
     return (
@@ -1190,7 +1205,7 @@ export default function WithdrawContent() {
                     }
                   }}
                   onFocus={async () => {
-                    if (isAndroid) {
+                    if (!TelegramPlatform.isTelegramPlatform() && isAndroid) {
                       // The keyboard does not block the input box
                       await sleep(200);
                       document.getElementById('inputAmountWrapper')?.scrollIntoView({

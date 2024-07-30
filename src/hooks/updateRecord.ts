@@ -12,11 +12,11 @@ export const MAX_UPDATE_TIME = 6;
 
 export function useUpdateRecord() {
   const dispatch = useAppDispatch();
-  const { isConnected } = useConnectWallet();
+  const { isConnected, walletInfo } = useConnectWallet();
   const setAuthFromStorage = useSetAuthFromStorage();
 
   const updateRecordStatus = useCallback(async () => {
-    if (!isConnected) return;
+    if (!isConnected || !walletInfo) return;
     if (eTransferInstance.unauthorized) return;
 
     try {
@@ -25,7 +25,7 @@ export function useUpdateRecord() {
     } catch (error) {
       console.log('update new records error', error);
     }
-  }, [dispatch, isConnected]);
+  }, [dispatch, isConnected, walletInfo]);
 
   const updateTimeRef = useRef(MAX_UPDATE_TIME);
   const updateTimerRef = useRef<NodeJS.Timer | number>();
@@ -52,9 +52,10 @@ export function useUpdateRecord() {
     await sleep(2000);
 
     updateRecordStatus();
-  }, []);
+  }, [setAuthFromStorage, updateRecordStatus]);
 
   useEffect(() => {
+    if (!isConnected || !walletInfo) return;
     // start 6s countdown
     resetTimer();
     // then, get one-time new record
@@ -68,5 +69,5 @@ export function useUpdateRecord() {
       clearInterval(updateTimerRef.current);
       updateTimerRef.current = undefined;
     };
-  }, [resetTimer, updateRecordStatus]);
+  }, [init, isConnected, resetTimer, updateRecordStatus, walletInfo]);
 }

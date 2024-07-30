@@ -1,6 +1,18 @@
 @import '/src/assets/theme/color.scss';
 @import 'src/assets/theme/font.scss';
 
+.main-content {
+  height: 40px;
+  padding: 0 20px;
+  border: 1px solid $border;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $hover;
+  }
+}
+
 .wallet-icon {
   width: 22px;
   height: 22px;

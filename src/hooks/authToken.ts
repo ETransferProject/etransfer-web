@@ -93,7 +93,7 @@ export function useQueryAuthToken() {
   }, [isReCaptchaLoading, setLoading, walletInfo, walletType]);
 
   const queryAuth = useCallback(async () => {
-    if (!isConnected) return;
+    if (!isConnected || !walletInfo) return;
     if (eTransferInstance.obtainingSignature) return;
     try {
       // Mark: only one signature process can be performed at the same time
@@ -158,7 +158,7 @@ export function useQueryAuthToken() {
   ]);
 
   const getAuth = useDebounceCallback(async () => {
-    if (!isConnected) return;
+    if (!isConnected || !walletInfo) return;
     if (eTransferInstance.obtainingSignature) return;
     try {
       const { caHash } = await getCaHashAndOriginChainIdByWallet(
@@ -183,7 +183,7 @@ export function useQueryAuthToken() {
     } catch (error) {
       console.log('getAuth error:', error);
     }
-  }, [isConnected, walletType]);
+  }, [isConnected, walletInfo, walletType]);
 
   return { getAuth, queryAuth, loginSuccessActive };
 }
