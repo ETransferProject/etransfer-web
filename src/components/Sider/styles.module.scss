@@ -6,13 +6,15 @@
 .menu-container {
   width: $sider-width;
   min-width: $sider-width;
-  min-height: $content-min-height;
   padding-top: 40px;
   background-color: $page-bg;
   @include media-huge-screen {
     position: relative;
     margin-left: calc((100vw - $max-width) / 2);
   }
+}
+.menu-container-not-tg {
+  min-height: $content-min-height;
 }
 .menu-items-wrapper {
   width: 100%;

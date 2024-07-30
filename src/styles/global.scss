@@ -73,7 +73,6 @@ input[type='number'] {
 .etransfer-web-content {
   width: 100%;
   height: 100%;
-  min-height: $content-min-height;
 
   @include media-huge-web {
     max-width: calc($max-width - $sider-width);
@@ -82,6 +81,10 @@ input[type='number'] {
     width: calc($max-width + 1px - $sider-width);
     margin: unset;
   }
+}
+
+.etransfer-web-content-not-tg {
+  min-height: $content-min-height;
 }
 
 .content-container {
@@ -150,14 +153,4 @@ input[type='number'] {
 .pre-loading {
   width: 100%;
   height: 100%;
-}
-
-:global {
-  .popup.popup-web-app.active {
-    .popup-container {
-      .popup-footer {
-        display: none;
-      }
-    }
-  }
 }

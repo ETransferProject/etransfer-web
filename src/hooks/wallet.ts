@@ -8,34 +8,39 @@ import { TAelfAccounts } from 'types/wallet';
 import { SupportedChainId } from 'constants/index';
 
 export function useInitWallet() {
-  const { isConnected } = useConnectWallet();
+  const { isConnected, walletInfo } = useConnectWallet();
 
   const { getAuth } = useQueryAuthToken();
   const getAuthRef = useRef(getAuth);
   getAuthRef.current = getAuth;
   useEffect(() => {
     console.warn('>>>>>> isConnected', isConnected);
-    if (isConnected) {
+    if (isConnected && walletInfo) {
       getAuthRef.current();
     }
-  }, [isConnected]);
+  }, [isConnected, walletInfo]);
 
   const { queryAuth } = useQueryAuthToken();
   const onAuthorizationExpired = useCallback(async () => {
     if (!isConnected) {
       console.warn('AuthorizationExpired: Not Logined');
+      eTransferInstance.setUnauthorized(false);
       return;
+    } else if (isConnected && walletInfo) {
+      resetLocalJWT();
+      console.log('AuthorizationExpired');
+      eTransferInstance.setUnauthorized(true);
+      await queryAuth();
+    } else {
+      eTransferInstance.setUnauthorized(false);
     }
-    resetLocalJWT();
-    console.log('AuthorizationExpired');
-    eTransferInstance.setUnauthorized(true);
-    await queryAuth();
-  }, [isConnected, queryAuth]);
+  }, [isConnected, queryAuth, walletInfo]);
   const onAuthorizationExpiredRef = useRef(onAuthorizationExpired);
   onAuthorizationExpiredRef.current = onAuthorizationExpired;
 
   useEffect(() => {
     const { remove } = myEvents.Unauthorized.addListener(() => {
+      console.log('Unauthorized listener', eTransferInstance.unauthorized);
       if (eTransferInstance.unauthorized) return;
       eTransferInstance.setUnauthorized(true);
       onAuthorizationExpiredRef.current?.();
@@ -51,7 +56,7 @@ export function useGetAccount() {
 
   // WalletInfo TAelfAccounts ExtraInfoForDiscover | ExtraInfoForPortkeyAA | ExtraInfoForNightElf;
   return useMemo(() => {
-    if (!isConnected) return undefined;
+    if (!isConnected || !walletInfo) return undefined;
 
     const accounts: TAelfAccounts = {
       [SupportedChainId.mainChain]: 'ELF_' + walletInfo?.address + '_' + SupportedChainId.mainChain,
@@ -59,5 +64,5 @@ export function useGetAccount() {
     };
 
     return accounts;
-  }, [isConnected, walletInfo?.address]);
+  }, [isConnected, walletInfo]);
 }

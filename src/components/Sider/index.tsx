@@ -6,13 +6,20 @@ import { SideMenuKey, MENU_ITEMS } from 'constants/home';
 import styles from './styles.module.scss';
 import myEvents from 'utils/myEvent';
 import { useChangeSideMenu } from 'hooks/route';
+import { TelegramPlatform } from 'utils/telegram';
 
 export default function Sider() {
   const { activeMenuKey, isUnreadHistory } = useCommonState();
   const changeSideMenu = useChangeSideMenu();
+  const isTelegramPlatform = TelegramPlatform.isTelegramPlatform();
 
   return (
-    <div className={clsx('flex-column-between', styles['menu-container'])}>
+    <div
+      className={clsx(
+        'flex-column-between',
+        styles['menu-container'],
+        !isTelegramPlatform && styles['menu-container-not-tg'],
+      )}>
       <Space className={styles['menu-items-wrapper']} direction="vertical">
         {MENU_ITEMS.map((item) => {
           const MenuIcon = item.icon;

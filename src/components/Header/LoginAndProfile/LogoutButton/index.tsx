@@ -12,9 +12,9 @@ export default function LogoutButton({ closeDialog }: TLogoutButtonType) {
   const clearStore = useClearStore();
 
   const handleLogoutWallet = useCallback(async () => {
-    await disConnectWallet();
-    clearStore();
-
+    Promise.resolve(disConnectWallet()).then(() => {
+      clearStore();
+    });
     closeDialog?.();
   }, [clearStore, closeDialog, disConnectWallet]);
 

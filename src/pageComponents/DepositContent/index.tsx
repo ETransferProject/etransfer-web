@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState, useMemo, useEffect } from 'react';
+import React, { useCallback, useRef, useState, useMemo } from 'react';
 import WebDepositContent from './WebDepositContent';
 import MobileDepositContent from './MobileDepositContent';
 import { useAppDispatch, useCommonState, useDepositState, useLoading } from 'store/Provider/hooks';
@@ -27,13 +27,14 @@ import { useEffectOnce } from 'react-use';
 import singleMessage from 'components/SingleMessage';
 import { InitDepositInfo } from 'constants/deposit';
 import { CommonErrorNameType } from 'api/types';
-import { handleErrorMessage } from '@etransfer/utils';
+import { handleErrorMessage, sleep } from '@etransfer/utils';
 import myEvents from 'utils/myEvent';
 import { isAuthTokenError, isWriteOperationError } from 'utils/api/error';
 import { SideMenuKey } from 'constants/home';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
+import { useSetAuthFromStorage } from 'hooks/authToken';
 
 export type TDepositContentProps = {
   fromNetworkSelected?: TNetworkItem;
@@ -149,6 +150,7 @@ export default function Content() {
     [dispatch, setLoading],
   );
 
+  const is401Ref = useRef(false);
   const getDepositData = useCallback(
     async (chainId: TChainId, symbol: string, toSymbol: string) => {
       try {
@@ -160,11 +162,17 @@ export default function Content() {
           symbol,
           toSymbol,
         });
+        is401Ref.current = false;
         setShowRetry(false);
         setLoading(false);
         setDepositInfo(res.depositInfo);
         dispatch(setDepositAddress(res.depositInfo.depositAddress));
       } catch (error: any) {
+        if (isAuthTokenError(error)) {
+          is401Ref.current = true;
+        } else {
+          is401Ref.current = false;
+        }
         if (error.name !== CommonErrorNameType.CANCEL && error.code === '50000') {
           setShowRetry(true);
         } else {
@@ -191,6 +199,7 @@ export default function Content() {
           chainId: chainId,
           symbol: symbol,
         });
+        is401Ref.current = false;
         dispatch(setFromNetworkList(networkList));
         if (networkList?.length === 1 && networkList[0].status !== NetworkStatus.Offline) {
           fromNetworkRef.current = networkList[0].network;
@@ -213,6 +222,11 @@ export default function Content() {
         !isPadPX && (await getDepositData(chainId, lastSymbol, lastToSymbol));
       } catch (error: any) {
         setIsShowNetworkLoading(false);
+        if (isAuthTokenError(error)) {
+          is401Ref.current = true;
+        } else {
+          is401Ref.current = false;
+        }
         if (
           error.name !== CommonErrorNameType.CANCEL &&
           !isWriteOperationError(error?.code, handleErrorMessage(error)) &&
@@ -343,6 +357,8 @@ export default function Content() {
     }),
     [searchParams],
   );
+
+  const setAuthFromStorage = useSetAuthFromStorage();
   const init = useCallback(async () => {
     let chainId = toChainItem.key;
     let fromSymbol = fromTokenSymbol;
@@ -382,11 +398,13 @@ export default function Content() {
       fromNetworkRef.current = fromNetwork.network;
     }
 
+    await setAuthFromStorage();
+    await sleep(500);
     // get new network data, when refresh page and switch side menu
     await getNetworkData({ chainId, symbol: fromSymbol, toSymbol });
   }, [
     dispatch,
-    fromNetwork,
+    fromNetwork?.network,
     fromNetworkList,
     fromTokenSymbol,
     getNetworkData,
@@ -395,6 +413,7 @@ export default function Content() {
     routeQuery.depositFromNetwork,
     routeQuery.depositToToken,
     routeQuery.tokenSymbol,
+    setAuthFromStorage,
     toChainItem.key,
     toTokenSymbol,
   ]);
@@ -407,15 +426,31 @@ export default function Content() {
     router.replace('/deposit');
   });
 
-  useEffect(() => {
-    const { remove } = myEvents.AuthTokenSuccess.addListener(() => {
-      console.log('login success');
-      init();
+  // useEffect(() => {
+  //   const { remove } = myEvents.AuthTokenSuccess.addListener(() => {
+  //     console.log('login success');
+  //     init();
+  //   });
+  //   return () => {
+  //     remove();
+  //   };
+  // }, [init]);
+
+  useEffectOnce(() => {
+    const { remove } = myEvents.LoginSuccess.addListener(() => {
+      if (is401Ref.current) {
+        getNetworkData({
+          chainId: toChainItem.key,
+          symbol: fromTokenSymbol,
+          toSymbol: toTokenSymbol,
+        });
+      }
     });
+
     return () => {
       remove();
     };
-  }, [init]);
+  });
 
   return isPadPX ? (
     <MobileDepositContent

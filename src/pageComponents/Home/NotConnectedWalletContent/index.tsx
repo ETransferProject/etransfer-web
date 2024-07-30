@@ -6,12 +6,19 @@ import ConnectWalletButton from 'components/Header/LoginAndProfile/ConnectWallet
 import styles from './styles.module.scss';
 import CommonImage from 'components/CommonImage';
 import { LargeLogo, Logo } from 'assets/images';
+import { TelegramPlatform } from 'utils/telegram';
 
 export default function NotConnectedWalletContent() {
   const { isPadPX } = useCommonState();
+  const isTelegramPlatform = TelegramPlatform.isTelegramPlatform();
 
   return (
-    <div className={clsx(styles['container'], styles['container-safe-area'])}>
+    <div
+      className={clsx(
+        styles['container'],
+        !isTelegramPlatform && styles['container-not-tg'],
+        styles['container-safe-area'],
+      )}>
       <div className={clsx('flex-column-center')}>
         {isPadPX && <Logo className={styles['logo']} />}
         <CommonImage className={styles['large-logo']} src={LargeLogo} alt="logo" />

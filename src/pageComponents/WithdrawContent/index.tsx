@@ -76,7 +76,7 @@ import {
 } from 'utils/format';
 import { devices, sleep } from '@portkey/utils';
 import { useWithdraw } from 'hooks/withdraw';
-import { QuestionMarkIcon } from 'assets/images';
+import { Fingerprint, QuestionMarkIcon } from 'assets/images';
 import RemainingQuota from './RemainingQuota';
 import { isAuthTokenError, isHtmlError, isWriteOperationError } from 'utils/api/error';
 import myEvents from 'utils/myEvent';
@@ -96,6 +96,11 @@ import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { WalletInfo } from 'types/wallet';
 import { PortkeyVersion } from 'constants/wallet';
+import CommonLink from 'components/CommonLink';
+import { AelfExploreType } from 'constants/network';
+import { getAelfExploreLink } from 'utils/common';
+import { TelegramPlatform } from 'utils/telegram';
+import { useSetAuthFromStorage } from 'hooks/authToken';
 
 enum ValidateStatus {
   Error = 'error',
@@ -195,40 +200,55 @@ export default function WithdrawContent() {
   }, [currentNetwork]);
 
   const remainingLimitComponent = useMemo(() => {
+    const label = (
+      <span className={styles['remaining-limit-label']}>
+        {isPadPX && '• 24-Hour Limit:'}
+        {!isPadPX && (
+          <Tooltip
+            className={clsx(styles['question-label'])}
+            placement="top"
+            title={RemainingWithdrawalQuotaTooltip}>
+            24-Hour Limit <QuestionMarkIcon />
+          </Tooltip>
+        )}
+      </span>
+    );
+    const value = (
+      <span className={styles['remaining-limit-value']}>
+        {withdrawInfo.remainingLimit && withdrawInfo.totalLimit ? (
+          <>
+            {`${new BigNumber(withdrawInfo.remainingLimit).toFormat()} /
+       ${new BigNumber(withdrawInfo.totalLimit).toFormat()}`}
+            <span className={styles['remaining-limit-value-limit-currency']}>
+              {withdrawInfo.limitCurrency}
+            </span>
+          </>
+        ) : (
+          defaultNullValue
+        )}
+        <RemainingQuota content={RemainingWithdrawalQuotaTooltip}></RemainingQuota>
+      </span>
+    );
     return (
       <div
-        className={clsx('flex-row-center', styles['remaining-limit-wrapper'], {
+        className={clsx('flex', styles['remaining-limit-wrapper'], {
           [styles['remaining-limit-error']]:
             withdrawInfo.remainingLimit !== null &&
             withdrawInfo.remainingLimit !== undefined &&
             withdrawInfo.remainingLimit !== '' &&
             new BigNumber(withdrawInfo.remainingLimit).isEqualTo(0),
         })}>
-        <span className={styles['remaining-limit-value']}>
-          {withdrawInfo.remainingLimit && withdrawInfo.totalLimit ? (
-            <>
-              {`${new BigNumber(withdrawInfo.remainingLimit).toFormat()} /
-               ${new BigNumber(withdrawInfo.totalLimit).toFormat()}`}
-              <span className={styles['remaining-limit-value-limit-currency']}>
-                {withdrawInfo.limitCurrency}
-              </span>
-            </>
-          ) : (
-            defaultNullValue
-          )}
-          <RemainingQuota content={RemainingWithdrawalQuotaTooltip}></RemainingQuota>
-        </span>
-        <span className={styles['remaining-limit-label']}>
-          {isPadPX && '• 24-Hour Limit:'}
-          {!isPadPX && (
-            <Tooltip
-              className={clsx(styles['question-label'])}
-              placement="top"
-              title={RemainingWithdrawalQuotaTooltip}>
-              24-Hour Limit <QuestionMarkIcon />
-            </Tooltip>
-          )}
-        </span>
+        {isPadPX ? (
+          <>
+            {label}
+            {value}
+          </>
+        ) : (
+          <>
+            {value}
+            {label}
+          </>
+        )}
       </div>
     );
   }, [withdrawInfo.remainingLimit, withdrawInfo.totalLimit, withdrawInfo.limitCurrency, isPadPX]);
@@ -956,8 +976,12 @@ export default function WithdrawContent() {
     [searchParams],
   );
 
+  const setAuthFromStorage = useSetAuthFromStorage();
   const init = useCallback(async () => {
     try {
+      await setAuthFromStorage();
+      await sleep(500);
+
       let newCurrentSymbol = currentSymbol;
       let newTokenList = tokenList;
       setLoading(true);
@@ -1019,6 +1043,7 @@ export default function WithdrawContent() {
     routeQuery.chainId,
     routeQuery.tokenSymbol,
     routeQuery.withdrawAddress,
+    setAuthFromStorage,
     setLoading,
     tokenList,
     withdraw.address,
@@ -1038,15 +1063,23 @@ export default function WithdrawContent() {
     };
   });
 
-  useEffect(() => {
-    const { remove } = myEvents.AuthTokenSuccess.addListener(() => {
-      console.log('login success');
-      init();
-    });
+  // useEffect(() => {
+  //   const { remove } = myEvents.AuthTokenSuccess.addListener(() => {
+  //     console.log('login success');
+  //     init();
+  //   });
+  //   return () => {
+  //     remove();
+  //   };
+  // }, [init]);
+
+  useEffectOnce(() => {
+    const { remove } = myEvents.LoginSuccess.addListener(init);
+
     return () => {
       remove();
     };
-  }, [init]);
+  });
 
   const renderMainContent = useMemo(() => {
     return (
@@ -1172,7 +1205,7 @@ export default function WithdrawContent() {
                     }
                   }}
                   onFocus={async () => {
-                    if (isAndroid) {
+                    if (!TelegramPlatform.isTelegramPlatform() && isAndroid) {
                       // The keyboard does not block the input box
                       await sleep(200);
                       document.getElementById('inputAmountWrapper')?.scrollIntoView({
@@ -1358,11 +1391,20 @@ export default function WithdrawContent() {
           open: isSuccessModalOpen,
           onClose: clickSuccessOk,
           onOk: clickSuccessOk,
-          footerSlot: (
-            <div className={styles['link-word']} onClick={() => router.push('/history')}>
-              View Transaction History
-            </div>
-          ),
+          footerSlot: CommonLink({
+            href: getAelfExploreLink(
+              withdrawInfoSuccess.transactionId,
+              AelfExploreType.transaction,
+              currentChainItemRef.current.key,
+            ),
+            isTagA: true,
+            children: (
+              <div className={clsx(styles['link-wrap'], !isPadPX && styles['linkToExplore'])}>
+                <span className={styles['link-word']}>View on aelf Explorer</span>
+                <Fingerprint className={styles['link-explore-icon']} />
+              </div>
+            ),
+          }),
         }}
       />
       <FailModal

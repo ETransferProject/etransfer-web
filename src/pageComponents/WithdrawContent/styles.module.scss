@@ -131,7 +131,7 @@
 
 .form-label-wrapper {
   width: 100%;
-  align-items: end;
+  align-items: flex-end;
 }
 
 .form-label {
@@ -161,14 +161,25 @@
   .remaining-limit-label {
     color: $secondary-text;
   }
+  @include media-web {
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0;
+    .remaining-limit-label {
+      margin-left: 8px;
+    }
+  }
   @include media-pad {
+    flex-direction: row;
     &::before {
       width: $content-width;
     }
   }
   @include media-mobile-and-pad {
-    flex-direction: row-reverse;
-    justify-content: flex-end;
+    justify-content: flex-start;
     position: relative;
     margin-top: 48px;
     .remaining-limit-value {
@@ -182,18 +193,9 @@
       background-color: $dividers;
     }
   }
-  @include media-web {
-    flex: 1;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    gap: 0;
-    .remaining-limit-label {
-      margin-left: 8px;
-    }
-  }
+
   @include media-mobile {
-    flex-direction: column-reverse;
-    justify-content: flex-start;
+    flex-direction: column;
     align-items: flex-start;
     &::before {
       left: -16px;
@@ -257,12 +259,12 @@
     width: 100vw;
     margin-left: -16px;
     padding: 20px 16px;
-    align-items: end;
+    align-items: flex-end;
   }
   @include media-pad {
     width: 100%;
     margin-top: 64px;
-    align-items: end;
+    align-items: flex-end;
   }
   @include media-web {
     width: 100%;
@@ -337,18 +339,24 @@
   cursor: pointer;
 }
 
+.link-wrap {
+  margin-top: 16px;
+}
+
 .link-word {
   vertical-align: middle;
-  margin-top: 16px;
   margin-right: 8px;
   color: $normal;
   font-size: 14px;
   font-weight: $font-family-medium-weight;
-  text-align: center;
-  cursor: pointer;
 }
 
 .link-explore-icon {
   position: relative;
   top: 5px;
+}
+
+.linkToExplore {
+  margin-top: 16px;
+  text-align: center;
 }

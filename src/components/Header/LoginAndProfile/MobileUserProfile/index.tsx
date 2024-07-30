@@ -56,7 +56,7 @@ export default function MobileUserProfile() {
             <span className={styles['drawer-title-my']}>My</span>
           </div>
         }
-        height={isTelegramPlatform ? '50%' : '100%'}
+        height={isTelegramPlatform ? '80%' : '100%'}
         zIndex={301}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}>

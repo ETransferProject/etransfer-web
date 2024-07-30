@@ -1,5 +1,5 @@
 import AElf from 'aelf-sdk';
-import { ADDRESS_MAP, APP_NAME, SupportedELFChainId } from 'constants/index';
+import { ADDRESS_MAP, APP_NAME, NETWORK_TYPE, SupportedELFChainId } from 'constants/index';
 import { ContractMethodName, ManagerForwardCall } from 'constants/contract';
 import BigNumber from 'bignumber.js';
 import { timesDecimals } from './calculate';
@@ -227,6 +227,7 @@ export const approveELF = async ({
     contractAddress: ADDRESS_MAP[chainId][ContractType.TOKEN],
     methodName: ContractMethodName.Approve,
     args: {
+      networkType: NETWORK_TYPE,
       spender: address,
       symbol,
       amount: amount.toString(),

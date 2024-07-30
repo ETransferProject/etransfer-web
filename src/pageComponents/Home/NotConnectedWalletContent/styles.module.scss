@@ -4,9 +4,7 @@
 @import 'src/styles/variable.scss';
 
 $mobile-padding-bottom: 30px;
-$mobile-connect-wallet-button-height: 56px;
 $mobile-connect-wallet-button-padding-top: 16px;
-$mobile-connect-wallet-button-padding-bottom: 30px;
 
 .container {
   @include media-mobile {
@@ -14,8 +12,7 @@ $mobile-connect-wallet-button-padding-bottom: 30px;
     align-items: center;
     justify-content: center;
     height: 100%;
-    min-height: 600px;
-    margin-top: -$mobile-header-height;
+    margin-top: -50px;
   }
   @include media-pad {
     width: $content-width;
@@ -28,21 +25,22 @@ $mobile-connect-wallet-button-padding-bottom: 30px;
     padding-bottom: 24px;
   }
 }
+.container-not-tg {
+  @include media-mobile {
+    min-height: $content-min-height;
+  }
+}
 
 // A separate class name is used here to avoid invalidation of the padding style by incorporating the padding property in the production css.
 .container-safe-area {
   @include media-mobile {
     padding-bottom: calc(
-      (
-          $mobile-connect-wallet-button-height + $mobile-connect-wallet-button-padding-top +
-            $mobile-connect-wallet-button-padding-bottom
-        ) + constant(safe-area-inset-bottom)
+      ($mobile-header-height + $mobile-connect-wallet-button-padding-top + $mobile-padding-bottom) +
+        constant(safe-area-inset-bottom)
     );
     padding-bottom: calc(
-      (
-          $mobile-connect-wallet-button-height + $mobile-connect-wallet-button-padding-top +
-            $mobile-connect-wallet-button-padding-bottom
-        ) + env(safe-area-inset-bottom)
+      ($mobile-header-height + $mobile-connect-wallet-button-padding-top + $mobile-padding-bottom) +
+        env(safe-area-inset-bottom)
     );
   }
 }
@@ -93,12 +91,8 @@ $mobile-connect-wallet-button-padding-bottom: 30px;
 .connect-wallet-button-wrapper-safe-area {
   @include media-mobile {
     padding-top: $mobile-connect-wallet-button-padding-top;
-    padding-bottom: calc(
-      $mobile-connect-wallet-button-padding-bottom + constant(safe-area-inset-bottom)
-    );
-    padding-bottom: calc(
-      $mobile-connect-wallet-button-padding-bottom + env(safe-area-inset-bottom)
-    );
+    padding-bottom: calc($mobile-padding-bottom + constant(safe-area-inset-bottom));
+    padding-bottom: calc($mobile-padding-bottom + env(safe-area-inset-bottom));
   }
 }
 

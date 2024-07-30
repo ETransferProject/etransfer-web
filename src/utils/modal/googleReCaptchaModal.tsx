@@ -16,8 +16,8 @@ const googleReCaptchaModal = async (
     const modal = Modal.info({
       closable: true,
       closeIcon: <CloseIcon />,
-      wrapClassName: 'reCaptcha-modal-wrapper',
-      className: 'reCaptcha-modal-container',
+      wrapClassName: 'etransfer-web-reCaptcha-modal-wrapper',
+      className: 'etransfer-web-reCaptcha-modal-container',
       width: width,
       content: RECAPTCHA_SITE_KEY ? (
         <GoogleReCaptcha
