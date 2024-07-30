@@ -30,13 +30,17 @@ export function useInitWallet() {
   const onAuthorizationExpired = useCallback(async () => {
     if (!isConnected) {
       console.log('AuthorizationExpired: Not Logined');
+      eTransferInstance.setUnauthorized(false);
       routerPushRef.current('/', false);
+
       return;
     } else if (isConnected && walletInfo) {
       resetLocalJWT();
       console.log('AuthorizationExpired');
       eTransferInstance.setUnauthorized(true);
       await queryAuth();
+    } else {
+      eTransferInstance.setUnauthorized(false);
     }
   }, [isConnected, queryAuth, walletInfo]);
   const onAuthorizationExpiredRef = useRef(onAuthorizationExpired);
