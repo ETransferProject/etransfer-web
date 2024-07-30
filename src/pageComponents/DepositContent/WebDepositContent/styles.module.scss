@@ -79,7 +79,7 @@
   @extend .font-family-medium;
 }
 
-.label-deposit-address{
+.label-deposit-address {
   margin-bottom: 12px;
 }
 
@@ -90,10 +90,18 @@
   background-color: $success;
   margin-right: 4px;
 }
+
 .connected {
   font-size: 14px;
   line-height: 22px;
   color: $secondary-text;
+}
+
+.connect {
+  font-size: 14px;
+  line-height: 22px;
+  color: $brand;
+  cursor: pointer;
 }
 
 .selected-token,

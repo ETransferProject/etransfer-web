@@ -1004,11 +1004,15 @@ export default function WithdrawContent() {
                 help={formValidateData[FormKeys.AMOUNT].errorMessage}>
                 <FormInput
                   unit={withdrawInfo.transactionUnit}
-                  maxButtonConfig={{
-                    onClick: () => setMaxToken(),
-                  }}
+                  maxButtonConfig={
+                    isLogin
+                      ? {
+                          onClick: () => setMaxToken(),
+                        }
+                      : undefined
+                  }
                   autoComplete="off"
-                  placeholder={`Minimum: ${minAmount}`}
+                  placeholder={isLogin ? `Minimum: ${minAmount}` : ''}
                   onInput={(event: any) => {
                     const value = event.target?.value?.trim();
                     const oldValue = form.getFieldValue(FormKeys.AMOUNT);

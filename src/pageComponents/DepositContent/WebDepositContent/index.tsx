@@ -23,7 +23,7 @@ import SelectChainWrapper from '../SelectChainWrapper';
 import DepositTip from '../DepositTip';
 import { CopySize } from 'components/Copy';
 import NotLoginTip from '../NotLoginTip';
-import { useIsLogin } from 'hooks/wallet';
+import { useIsLogin, useLogin } from 'hooks/wallet';
 
 export default function WebContent({
   fromNetworkSelected,
@@ -52,6 +52,7 @@ export default function WebContent({
     toChainList,
   } = useDepositState();
   const isLogin = useIsLogin();
+  const handleLogin = useLogin();
   const isShowDepositAddressLabelForLogin = useMemo(() => {
     return showRetry || !!depositInfo.depositAddress;
   }, [depositInfo.depositAddress, showRetry]);
@@ -140,8 +141,16 @@ export default function WebContent({
             <div className={clsx('flex-row-center-between', styles['label'])}>
               <span>To</span>
               <div className="flex-row-center">
-                <div className={styles['circle']} />
-                <span className={styles['connected']}>Connected</span>
+                {isLogin ? (
+                  <>
+                    <div className={styles['circle']} />
+                    <span className={styles['connected']}>Connected</span>
+                  </>
+                ) : (
+                  <span className={styles['connect']} onClick={handleLogin}>
+                    Connect
+                  </span>
+                )}
               </div>
             </div>
 
@@ -233,6 +242,7 @@ export default function WebContent({
     fromTokenList,
     fromTokenSelected,
     fromTokenSymbol,
+    handleLogin,
     isLogin,
     isShowDepositAddressLabelForLogin,
     isShowDepositAddressLabelForNotLogin,
