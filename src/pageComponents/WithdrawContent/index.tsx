@@ -671,6 +671,7 @@ export default function WithdrawContent() {
   );
 
   const onAddressBlur = useCallback(async () => {
+    console.log('onAddressBlur', getAddressInput);
     dispatch(setWithdrawAddress(getAddressInput));
 
     if (!getAddressInput) {
@@ -823,7 +824,11 @@ export default function WithdrawContent() {
 
       const newCurrentToken = newTokenList.find((item) => item.symbol === newCurrentSymbol);
 
-      const address = routeQuery.withdrawAddress || withdraw.address || '';
+      const address =
+        routeQuery.withdrawAddress ||
+        withdraw.address ||
+        form.getFieldValue(FormKeys.ADDRESS) ||
+        '';
       form.setFieldValue(FormKeys.ADDRESS, address);
       dispatch(setWithdrawAddress(address));
 
@@ -870,7 +875,40 @@ export default function WithdrawContent() {
   const initRef = useRef(init);
   initRef.current = init;
 
+  const initForReLogin = useCallback(async () => {
+    setLoading(true);
+    try {
+      const newTokenList = await getToken(true);
+      const newCurrentToken = newTokenList.find((item) => item.symbol === currentSymbol);
+
+      const address = form.getFieldValue(FormKeys.ADDRESS) || '';
+      dispatch(setWithdrawAddress(address));
+
+      await getNetworkData({ symbol: currentSymbol, address });
+      getWithdrawData(currentSymbol);
+
+      getMaxBalanceInterval(newCurrentToken);
+    } catch (error) {
+      console.log('withdraw init error', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [
+    currentSymbol,
+    dispatch,
+    form,
+    getMaxBalanceInterval,
+    getNetworkData,
+    getToken,
+    getWithdrawData,
+    setLoading,
+  ]);
+
+  const initForReLoginRef = useRef(initForReLogin);
+  initForReLoginRef.current = initForReLogin;
+
   const initForLogout = async () => {
+    dispatch(setWithdrawAddress(''));
     form.setFieldValue(FormKeys.TOKEN, InitialWithdrawState.currentSymbol);
     form.setFieldValue(FormKeys.ADDRESS, '');
     form.setFieldValue(FormKeys.NETWORK, '');
@@ -925,7 +963,7 @@ export default function WithdrawContent() {
   // }, [init]);
 
   useEffectOnce(() => {
-    const { remove } = myEvents.LoginSuccess.addListener(initRef.current);
+    const { remove } = myEvents.LoginSuccess.addListener(initForReLoginRef.current);
 
     return () => {
       remove();
