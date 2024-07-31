@@ -383,6 +383,8 @@ export default function WithdrawContent() {
 
   const handleAmountValidate = useCallback(
     (newMinAmount?: string, newTransactionUnit?: string, newMaxBalance?: string) => {
+      if (!isLogin) return;
+
       const amount = form.getFieldValue(FormKeys.AMOUNT);
       if (!amount) {
         handleFormValidateDataChange({
@@ -440,6 +442,7 @@ export default function WithdrawContent() {
     [
       form,
       handleFormValidateDataChange,
+      isLogin,
       maxBalance,
       minAmount,
       withdrawInfo.remainingLimit,
@@ -862,10 +865,10 @@ export default function WithdrawContent() {
     setAuthFromStorage,
     setLoading,
     tokenList,
-    withdraw.address,
-    withdraw.currentNetwork,
-    withdraw.networkList,
+    withdraw,
   ]);
+  const initRef = useRef(init);
+  initRef.current = init;
 
   const initForLogout = async () => {
     form.setFieldValue(FormKeys.TOKEN, InitialWithdrawState.currentSymbol);
@@ -891,10 +894,13 @@ export default function WithdrawContent() {
     await getNetworkData({ symbol: InitialWithdrawState.currentSymbol, address: '' });
   };
 
+  const initForLogoutRef = useRef(initForLogout);
+  initForLogoutRef.current = initForLogout;
+
   const router = useRouter();
   useEffectOnce(() => {
     dispatch(setActiveMenuKey(SideMenuKey.Withdraw));
-    init();
+    initRef.current();
 
     router.replace('/withdraw');
 
@@ -914,7 +920,7 @@ export default function WithdrawContent() {
   // }, [init]);
 
   useEffectOnce(() => {
-    const { remove } = myEvents.LoginSuccess.addListener(init);
+    const { remove } = myEvents.LoginSuccess.addListener(initRef.current);
 
     return () => {
       remove();
@@ -922,7 +928,7 @@ export default function WithdrawContent() {
   });
 
   useEffectOnce(() => {
-    const { remove } = myEvents.LogoutSuccess.addListener(initForLogout);
+    const { remove } = myEvents.LogoutSuccess.addListener(initForLogoutRef.current);
 
     return () => {
       remove();
