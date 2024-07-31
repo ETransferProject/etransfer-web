@@ -65,11 +65,12 @@ export default function WebContent({
 
   const isShowTransferTip = useMemo(() => {
     return (
+      isLogin &&
       SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE.includes(fromTokenSymbol as TokenType) &&
       fromTokenSymbol === toTokenSymbol &&
       AelfChainIdList.includes(fromNetwork?.network as TChainId)
     );
-  }, [fromNetwork?.network, fromTokenSymbol, toTokenSymbol]);
+  }, [fromNetwork?.network, fromTokenSymbol, isLogin, toTokenSymbol]);
 
   const isShowDepositAddressLabelForLogin = useMemo(() => {
     return showRetry || !!depositInfo.depositAddress;

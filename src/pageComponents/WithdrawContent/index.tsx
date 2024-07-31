@@ -867,6 +867,30 @@ export default function WithdrawContent() {
     withdraw.networkList,
   ]);
 
+  const initForLogout = async () => {
+    form.setFieldValue(FormKeys.TOKEN, InitialWithdrawState.currentSymbol);
+    form.setFieldValue(FormKeys.ADDRESS, '');
+    form.setFieldValue(FormKeys.NETWORK, '');
+    form.setFieldValue(FormKeys.AMOUNT, '');
+    setCurrentNetwork(undefined);
+    currentNetworkRef.current = undefined;
+    currentChainItemRef.current = InitialWithdrawState.currentChainItem || CHAIN_LIST[0];
+    setNetworkList([]);
+    setWithdrawInfo(InitialWithdrawInfo);
+    setBalance('0');
+    setMaxBalance('');
+    setFormValidateData({
+      [FormKeys.TOKEN]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
+      [FormKeys.ADDRESS]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
+      [FormKeys.NETWORK]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
+      [FormKeys.AMOUNT]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
+    });
+
+    await sleep(200);
+    await getToken(false);
+    await getNetworkData({ symbol: InitialWithdrawState.currentSymbol, address: '' });
+  };
+
   const router = useRouter();
   useEffectOnce(() => {
     dispatch(setActiveMenuKey(SideMenuKey.Withdraw));
@@ -891,6 +915,14 @@ export default function WithdrawContent() {
 
   useEffectOnce(() => {
     const { remove } = myEvents.LoginSuccess.addListener(init);
+
+    return () => {
+      remove();
+    };
+  });
+
+  useEffectOnce(() => {
+    const { remove } = myEvents.LogoutSuccess.addListener(initForLogout);
 
     return () => {
       remove();

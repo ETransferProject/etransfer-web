@@ -9,6 +9,7 @@ const EventList = [
   'HistoryActive',
   'GoogleReCaptcha',
   'LoginSuccess',
+  'LogoutSuccess',
   'ShowWebTransferDashboardDetailPage',
   'HideWebTransferDashboardDetailPage',
 ] as const;

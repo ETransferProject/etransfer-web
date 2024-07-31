@@ -445,6 +445,24 @@ export default function Content() {
   //   };
   // }, [init]);
 
+  const initForLogout = useCallback(async () => {
+    if (is401Ref.current || !depositInfo.depositAddress) {
+      await getTokenList(toChainItem.key, fromTokenSymbol, toTokenSymbol);
+      getNetworkData({
+        chainId: toChainItem.key,
+        symbol: fromTokenSymbol,
+        toSymbol: toTokenSymbol,
+      });
+    }
+  }, [
+    depositInfo.depositAddress,
+    fromTokenSymbol,
+    getNetworkData,
+    getTokenList,
+    toChainItem.key,
+    toTokenSymbol,
+  ]);
+
   useEffectOnce(() => {
     const { remove } = myEvents.LoginSuccess.addListener(() => {
       if (is401Ref.current || !depositInfo.depositAddress) {
@@ -454,6 +472,19 @@ export default function Content() {
           toSymbol: toTokenSymbol,
         });
       }
+    });
+
+    return () => {
+      remove();
+    };
+  });
+
+  useEffectOnce(() => {
+    const { remove } = myEvents.LogoutSuccess.addListener(() => {
+      dispatch(setFromTokenSymbol('USDT'));
+      dispatch(setToTokenSymbol('USDT'));
+      dispatch(setFromNetwork(undefined));
+      initForLogout();
     });
 
     return () => {

@@ -130,6 +130,7 @@ export function useQueryAuthToken() {
         singleMessage.error(error?.data);
       }
       await disConnectWallet();
+
       return;
     } finally {
       setLoading(false);
