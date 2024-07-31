@@ -118,7 +118,10 @@ export type TConversionRate = {
   fromAmount: string;
   toAmount: string;
   minimumReceiveAmount: string;
+  extraInfo?: TConversionExtraInfo;
 };
+
+export type TConversionExtraInfo = TDepositExtraInfo;
 
 export type TGetWithdrawInfoRequest = {
   chainId: TChainId;
@@ -213,6 +216,19 @@ export type TCheckEOARegistrationRequest = {
 
 export type TCheckEOARegistrationResult = {
   result: boolean;
+};
+
+export type TTokenPricesRequest = {
+  symbols: string;
+};
+
+export type TTokenPricesResult = {
+  items: TTokenPriceItem[];
+};
+
+export type TTokenPriceItem = {
+  symbol: string;
+  priceUsd: number;
 };
 
 export type TTransactionOverviewRequest = {

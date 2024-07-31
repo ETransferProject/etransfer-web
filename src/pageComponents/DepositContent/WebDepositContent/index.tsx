@@ -174,7 +174,6 @@ export default function WebContent({
                 fromSymbol={fromTokenSymbol}
                 toSymbol={toTokenSymbol}
                 toChainId={toChainItem.key}
-                slippage={depositInfo.extraInfo?.slippage}
               />
             </>
           )}
@@ -232,7 +231,6 @@ export default function WebContent({
     contractAddress,
     contractAddressLink,
     depositInfo.depositAddress,
-    depositInfo.extraInfo?.slippage,
     depositInfo.minAmount,
     depositInfo.minAmountUsd,
     fromNetworkChanged,

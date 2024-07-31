@@ -17,6 +17,7 @@ export function useInitWallet() {
   getAuthRef.current = getAuth;
   useEffect(() => {
     console.warn('>>>>>> isConnected', isConnected);
+    console.warn('>>>>>> walletInfo', walletInfo);
     if (isConnected && walletInfo) {
       getAuthRef.current();
     }
@@ -59,25 +60,27 @@ export function useIsLogin() {
 }
 
 export function useLogin() {
-  const { isConnected, connectWallet } = useConnectWallet();
+  const { connectWallet } = useConnectWallet();
+  const isLogin = useIsLogin();
 
   return useCallback(async () => {
-    if (isConnected) return;
+    if (isLogin) return;
 
     try {
       await connectWallet();
     } catch (error) {
       singleMessage.error(handleWebLoginErrorMessage(error));
     }
-  }, [connectWallet, isConnected]);
+  }, [connectWallet, isLogin]);
 }
 
 export function useGetAccount() {
-  const { isConnected, walletInfo } = useConnectWallet();
+  const { walletInfo } = useConnectWallet();
+  const isLogin = useIsLogin();
 
   // WalletInfo TAelfAccounts ExtraInfoForDiscover | ExtraInfoForPortkeyAA | ExtraInfoForNightElf;
   return useMemo(() => {
-    if (!isConnected || !walletInfo) return undefined;
+    if (!isLogin) return undefined;
 
     const accounts: TAelfAccounts = {
       [SupportedChainId.mainChain]: 'ELF_' + walletInfo?.address + '_' + SupportedChainId.mainChain,
@@ -85,5 +88,5 @@ export function useGetAccount() {
     };
 
     return accounts;
-  }, [isConnected, walletInfo]);
+  }, [isLogin, walletInfo]);
 }

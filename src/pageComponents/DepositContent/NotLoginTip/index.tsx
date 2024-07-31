@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { LOGIN, UNLOCK } from 'constants/wallet';
-import { useLogin } from 'hooks/wallet';
+import { useIsLogin, useLogin } from 'hooks/wallet';
 
 export default function NotLoginTip({
   isShowIcon = true,
@@ -12,10 +12,11 @@ export default function NotLoginTip({
   isShowIcon?: boolean;
   isCard?: boolean;
 }) {
-  const { isConnected, isLocking } = useConnectWallet();
+  const { isLocking } = useConnectWallet();
+  const isLogin = useIsLogin();
   const handleLogin = useLogin();
 
-  if (isConnected) return null;
+  if (isLogin) return null;
 
   return (
     <div

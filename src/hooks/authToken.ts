@@ -18,10 +18,11 @@ import myEvents from 'utils/myEvent';
 import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
 import singleMessage from 'components/SingleMessage';
 import { WalletInfo } from 'types/wallet';
+import { useIsLogin } from './wallet';
 
 export function useQueryAuthToken() {
-  const { isConnected, getSignature, walletType, walletInfo, disConnectWallet } =
-    useConnectWallet();
+  const { getSignature, walletType, walletInfo, disConnectWallet } = useConnectWallet();
+  const isLogin = useIsLogin();
   const { setLoading } = useLoading();
 
   const loginSuccessActive = useCallback(() => {
@@ -82,7 +83,7 @@ export function useQueryAuthToken() {
   }, [isReCaptchaLoading, setLoading, walletInfo, walletType]);
 
   const queryAuth = useCallback(async () => {
-    if (!isConnected || !walletInfo) return;
+    if (!isLogin) return;
     if (eTransferInstance.obtainingSignature) return;
     try {
       // Mark: only one signature process can be performed at the same time
@@ -117,7 +118,7 @@ export function useQueryAuthToken() {
 
       await queryAuthApi(apiParams);
       eTransferInstance.setUnauthorized(false);
-      console.log('login status', isConnected);
+      console.log('login status isLogin', isLogin);
       loginSuccessActive();
     } catch (error: any) {
       console.log('queryAuthApi error', error);
@@ -139,7 +140,7 @@ export function useQueryAuthToken() {
     disConnectWallet,
     handleGetSignature,
     handleReCaptcha,
-    isConnected,
+    isLogin,
     loginSuccessActive,
     setLoading,
     walletInfo,
@@ -147,7 +148,7 @@ export function useQueryAuthToken() {
   ]);
 
   const getAuth = useDebounceCallback(async () => {
-    if (!isConnected || !walletInfo) return;
+    if (!isLogin) return;
     if (eTransferInstance.obtainingSignature) return;
     try {
       const { caHash } = await getCaHashAndOriginChainIdByWallet(
@@ -172,7 +173,7 @@ export function useQueryAuthToken() {
     } catch (error) {
       console.log('getAuth error:', error);
     }
-  }, [isConnected, walletInfo, walletType]);
+  }, [isLogin, walletInfo, walletType]);
 
   return { getAuth, queryAuth, loginSuccessActive };
 }

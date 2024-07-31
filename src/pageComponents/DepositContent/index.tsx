@@ -35,7 +35,7 @@ import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { useSetAuthFromStorage } from 'hooks/authToken';
-import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
+import { useIsLogin } from 'hooks/wallet';
 
 export type TDepositContentProps = {
   fromNetworkSelected?: TNetworkItem;
@@ -73,7 +73,7 @@ export default function Content() {
     toTokenList,
     toTokenSymbol,
   } = useDepositState();
-  const { isConnected, walletInfo } = useConnectWallet();
+  const isLogin = useIsLogin();
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const fromNetworkRef = useRef<string>();
@@ -156,7 +156,7 @@ export default function Content() {
   const getDepositData = useCallback(
     async (chainId: TChainId, symbol: string, toSymbol: string) => {
       try {
-        if (!fromNetworkRef.current || !isConnected || !walletInfo) return;
+        if (!fromNetworkRef.current || !isLogin) return;
         setLoading(true);
         const res = await getDepositInfo({
           chainId,
@@ -187,7 +187,7 @@ export default function Content() {
         }
       }
     },
-    [dispatch, isConnected, setLoading, walletInfo],
+    [dispatch, isLogin, setLoading],
   );
 
   const getNetworkData = useCallback(

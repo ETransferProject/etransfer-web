@@ -4,19 +4,19 @@ import { setIsUnreadHistory } from 'store/reducers/common/slice';
 import { getRecordStatus } from 'utils/api/records';
 import myEvents from 'utils/myEvent';
 import { eTransferInstance } from 'utils/etransferInstance';
-import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { useSetAuthFromStorage } from './authToken';
 import { sleep } from '@etransfer/utils';
+import { useIsLogin } from './wallet';
 
 export const MAX_UPDATE_TIME = 6;
 
 export function useUpdateRecord() {
   const dispatch = useAppDispatch();
-  const { isConnected, walletInfo } = useConnectWallet();
+  const isLogin = useIsLogin();
   const setAuthFromStorage = useSetAuthFromStorage();
 
   const updateRecordStatus = useCallback(async () => {
-    if (!isConnected || !walletInfo) return;
+    if (!isLogin) return;
     if (eTransferInstance.unauthorized) return;
 
     try {
@@ -25,7 +25,7 @@ export function useUpdateRecord() {
     } catch (error) {
       console.log('update new records error', error);
     }
-  }, [dispatch, isConnected, walletInfo]);
+  }, [dispatch, isLogin]);
 
   const updateTimeRef = useRef(MAX_UPDATE_TIME);
   const updateTimerRef = useRef<NodeJS.Timer | number>();
@@ -55,7 +55,7 @@ export function useUpdateRecord() {
   }, [setAuthFromStorage, updateRecordStatus]);
 
   useEffect(() => {
-    if (!isConnected || !walletInfo) return;
+    if (!isLogin) return;
     // start 6s countdown
     resetTimer();
     // then, get one-time new record
@@ -69,5 +69,5 @@ export function useUpdateRecord() {
       clearInterval(updateTimerRef.current);
       updateTimerRef.current = undefined;
     };
-  }, [init, isConnected, resetTimer, updateRecordStatus, walletInfo]);
+  }, [init, isLogin, resetTimer, updateRecordStatus]);
 }

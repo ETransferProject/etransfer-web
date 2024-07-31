@@ -161,7 +161,6 @@ export default function MobileDepositContent({
                 fromSymbol={fromTokenSymbol}
                 toSymbol={toTokenSymbol}
                 toChainId={toChainItem.key}
-                slippage={depositInfo.extraInfo?.slippage}
               />
             </>
           )}

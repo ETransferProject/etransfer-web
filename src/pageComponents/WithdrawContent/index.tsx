@@ -947,6 +947,7 @@ export default function WithdrawContent() {
                   selected={currentToken}
                   selectCallback={handleTokenChange}
                   tokenList={tokenList}
+                  chainItem={currentChainItem}
                 />
               </Form.Item>
             </div>
@@ -1096,6 +1097,7 @@ export default function WithdrawContent() {
     balance,
     clickFailedOk,
     clickSuccessOk,
+    currentChainItem,
     currentNetwork,
     currentToken,
     currentTokenDecimal,

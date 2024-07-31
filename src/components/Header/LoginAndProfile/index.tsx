@@ -5,13 +5,13 @@ import MobileUserProfile from './MobileUserProfile';
 import WebUserProfile from './WebUserProfile';
 import { CommonButtonSize } from 'components/CommonButton';
 import styles from './styles.module.scss';
-import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
+import { useIsLogin } from 'hooks/wallet';
 
 export default function LoginAndProfileEntry() {
   const { isPadPX } = useCommonState();
-  const { isConnected } = useConnectWallet();
+  const isLogin = useIsLogin();
 
-  if (!isConnected) {
+  if (!isLogin) {
     return (
       <ConnectWalletButton
         className={styles['connect-wallet-button']}

@@ -4,6 +4,7 @@ import { TokenSelectForWeb, TokenSelectProps } from 'components/SelectToken/Toke
 import { SideMenuKey } from 'constants/home';
 
 interface TokenSelectDropdownProps extends TokenSelectProps {
+  listClassName?: string;
   isFormItemStyle?: boolean;
   type: SideMenuKey;
   open: boolean;
@@ -12,13 +13,17 @@ interface TokenSelectDropdownProps extends TokenSelectProps {
 
 export default function TokenSelectDropdown({
   className,
+  listClassName,
+  itemClassName,
   isFormItemStyle,
   type,
+  chainId,
   open = false,
   tokenList,
   selectedToken,
   isDisabled,
   isShowLoading,
+  isShowBalance,
   onSelect,
   onClose,
 }: TokenSelectDropdownProps) {
@@ -38,13 +43,17 @@ export default function TokenSelectDropdown({
           className,
         )}>
         <TokenSelectForWeb
+          className={listClassName}
+          itemClassName={itemClassName}
           open={open}
           type={type}
+          chainId={chainId}
           tokenList={tokenList}
           selectedToken={selectedToken}
           onSelect={onSelect}
           isDisabled={isDisabled}
           isShowLoading={isShowLoading}
+          isShowBalance={isShowBalance}
         />
       </div>
     </div>

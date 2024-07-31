@@ -52,6 +52,7 @@ const InfoDashboard = {
 
 const UserApiList = {
   checkEOARegistration: '/api/etransfer/user/check-eoa-registration',
+  getTokenPrices: '/api/etransfer/token/price',
 };
 
 /**

@@ -10,13 +10,15 @@ import { useRouter } from 'next/navigation';
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { TelegramPlatform } from 'utils/telegram';
+import { useIsLogin } from 'hooks/wallet';
 
 export default function MobileUserProfile() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [isShowAddress, setIsShowAddress] = useState<boolean>(true);
   const { isPadPX } = useCommonState();
   const router = useRouter();
-  const { walletType, isConnected } = useConnectWallet();
+  const { walletType } = useConnectWallet();
+  const isLogin = useIsLogin();
 
   const handleChangeAddress = () => {
     setIsShowAddress(!isShowAddress);
@@ -62,7 +64,7 @@ export default function MobileUserProfile() {
         onClose={() => setIsDrawerOpen(false)}>
         <div className={styles['user-wrapper']}>
           <div className={styles['top-wrapper']}>
-            {isConnected && walletType === WalletTypeEnum.aa && (
+            {isLogin && walletType === WalletTypeEnum.aa && (
               <div className={styles['assets-wrapper']} onClick={() => handleAssets()}>
                 <span className={styles['assets']}>Assets</span>
                 <ArrowRight />

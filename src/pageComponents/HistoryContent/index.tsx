@@ -25,8 +25,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import queryString from 'query-string';
 import { SideMenuKey } from 'constants/home';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
-import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { useSetAuthFromStorage } from 'hooks/authToken';
+import { useIsLogin } from 'hooks/wallet';
 
 export type TRecordsContentProps = TRecordsBodyProps & {
   onReset: () => void;
@@ -41,7 +41,7 @@ export default function Content() {
   const dispatch = useAppDispatch();
   const { setFilter } = useHistoryFilter();
   const { setLoading } = useLoading();
-  const { isConnected } = useConnectWallet();
+  const isLogin = useIsLogin();
 
   const {
     type = TRecordsRequestType.ALL,
@@ -184,7 +184,7 @@ export default function Content() {
   initRef.current = init;
 
   useEffect(() => {
-    if (isConnected) {
+    if (isLogin) {
       initRef.current();
     } else {
       setFilter({
@@ -196,7 +196,7 @@ export default function Content() {
 
       dispatch(setRecordsList([]));
     }
-  }, [dispatch, isConnected, setFilter]);
+  }, [dispatch, isLogin, setFilter]);
 
   // Listener login
   const refreshData = useCallback(() => {

@@ -7,9 +7,11 @@ import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { useRouter } from 'next/navigation';
 import { ETRANSFER_WEBSITE_URL } from 'constants/index';
+import { useIsLogin } from 'hooks/wallet';
 
 export default function WebHeader() {
-  const { walletType, isConnected } = useConnectWallet();
+  const { walletType } = useConnectWallet();
+  const isLogin = useIsLogin();
   const router = useRouter();
 
   const handleOpenAssets = () => {
@@ -26,7 +28,7 @@ export default function WebHeader() {
         <Logo />
       </div>
       <div className={styles['right-wrapper']}>
-        {isConnected && walletType === WalletTypeEnum.aa && (
+        {isLogin && walletType === WalletTypeEnum.aa && (
           <span className={styles['assets-wrapper']} onClick={() => handleOpenAssets()}>
             Assets
           </span>

@@ -11,13 +11,8 @@ import styles from './styles.module.scss';
 import { ADDRESS_MAP, defaultNullValue } from 'constants/index';
 import { createWithdrawOrder } from 'utils/api/deposit';
 import { TWithdrawInfoSuccess } from 'types/deposit';
-import {
-  checkTokenAllowanceAndApprove,
-  createTransferTokenTransaction,
-  getBalance,
-} from 'utils/contract';
-import singleMessage from 'components/SingleMessage';
-import { divDecimals, timesDecimals } from 'utils/calculate';
+import { checkTokenAllowanceAndApprove, createTransferTokenTransaction } from 'utils/contract';
+import { timesDecimals } from 'utils/calculate';
 import { ZERO } from 'constants/calculate';
 import { ContractType } from 'constants/chain';
 import { InitialWithdrawState } from 'store/reducers/withdraw/slice';
@@ -30,7 +25,6 @@ import {
   InsufficientAllowanceMessage,
   WithdrawSendTxErrorCodeList,
 } from 'constants/withdraw';
-import { handleErrorMessage } from '@etransfer/utils';
 import { useGetAccount, useIsLogin, useLogin } from 'hooks/wallet';
 import { formatSymbolDisplay } from 'utils/format';
 import { sleep } from '@portkey/utils';
@@ -47,6 +41,7 @@ import CommonLink from 'components/CommonLink';
 import { AelfExploreType } from 'constants/network';
 import { getAelfExploreLink } from 'utils/common';
 import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
+import { useGetBalanceDivDecimals } from 'hooks/contract';
 
 export interface WithdrawFooterProps {
   isTransactionFeeLoading: boolean;
@@ -78,6 +73,7 @@ export default function WithdrawFooter({
   const isLogin = useIsLogin();
   const handleLogin = useLogin();
   const accounts = useGetAccount();
+  const getBalanceDivDecimals = useGetBalanceDivDecimals();
   const { currentChainItem, currentSymbol, tokenList } = useWithdraw();
 
   // DoubleCheckModal
@@ -105,28 +101,12 @@ export default function WithdrawFooter({
     [currentToken.contractAddress],
   );
 
-  const getMaxBalance = useCallback(async () => {
-    try {
-      const symbol = currentSymbol;
-      const decimal = currentTokenDecimal;
-      const caAddress = accounts?.[currentChainItem.key];
-      if (!caAddress) return '';
-
-      const maxBalance = await getBalance({
-        callViewMethod,
-        symbol: symbol,
-        chainId: currentChainItem.key,
-        caAddress,
-      });
-      return divDecimals(maxBalance, decimal).toFixed();
-    } catch (error) {
-      singleMessage.error(handleErrorMessage(error));
-      throw new Error('Failed to get balance.');
-    }
-  }, [accounts, callViewMethod, currentChainItem.key, currentSymbol, currentTokenDecimal]);
-
   const handleApproveToken = useCallback(async () => {
-    const newMaxBalance = await getMaxBalance();
+    const newMaxBalance = await getBalanceDivDecimals(
+      currentSymbol,
+      currentTokenDecimal,
+      currentChainItem.key,
+    );
     if (ZERO.plus(newMaxBalance).isLessThan(ZERO.plus(balance))) {
       const error = new Error(
         `Insufficient ${currentSymbol} balance in your account. Please consider transferring a smaller amount or topping up before you try again.`,
@@ -154,7 +134,8 @@ export default function WithdrawFooter({
     currentChainItem.key,
     currentSymbol,
     currentTokenAddress,
-    getMaxBalance,
+    currentTokenDecimal,
+    getBalanceDivDecimals,
   ]);
 
   const handleCreateWithdrawOrder = useCallback(
