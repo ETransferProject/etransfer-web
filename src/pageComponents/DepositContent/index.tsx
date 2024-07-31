@@ -36,6 +36,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { useSetAuthFromStorage } from 'hooks/authToken';
 import { useIsLogin } from 'hooks/wallet';
+import { addAelfNetwork } from 'utils/deposit';
 
 export type TDepositContentProps = {
   fromNetworkSelected?: TNetworkItem;
@@ -205,12 +206,13 @@ export default function Content() {
         setIsShowNetworkLoading(true);
         const lastSymbol = symbol || fromTokenSymbol;
         const lastToSymbol = toSymbol || toTokenSymbol;
-        const { networkList } = await getNetworkList({
+        const { networkList: networkListOrigin } = await getNetworkList({
           type: BusinessType.Deposit,
           chainId: chainId,
           symbol: symbol,
         });
         is401Ref.current = false;
+        const networkList = addAelfNetwork(networkListOrigin, lastSymbol, lastToSymbol, chainId);
         dispatch(setFromNetworkList(networkList));
         if (networkList?.length === 1 && networkList[0].status !== NetworkStatus.Offline) {
           fromNetworkRef.current = networkList[0].network;
