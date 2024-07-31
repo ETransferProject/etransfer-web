@@ -4,7 +4,6 @@ import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { IChainNameItem, SupportedELFChainId } from 'constants/index';
 import { Aelf, AelfMedium, tDVV as TDVV, tDVVMedium as TDVVMedium } from 'assets/images';
-import { useMemo } from 'react';
 import Space from 'components/Space';
 
 interface SelectChainWrapperProps {
@@ -25,9 +24,6 @@ export default function SelectChainWrapper({
   chainChanged,
 }: SelectChainWrapperProps) {
   const { isPadPX } = useCommonState();
-  const isDisabled = useMemo(() => {
-    return menuItems?.length <= 1;
-  }, [menuItems?.length]);
 
   return (
     <div
@@ -40,22 +36,18 @@ export default function SelectChainWrapper({
 
       <Space direction={'horizontal'} size={isPadPX ? 6 : 8} />
 
-      {isDisabled ? (
-        <div className={styles['select-chain']}>{selectedItem.label}</div>
-      ) : (
-        <SelectChain
-          getContainer="webDepositChainWrapper"
-          menuItems={menuItems}
-          selectedItem={selectedItem}
-          isBorder={false}
-          title={mobileTitle}
-          clickCallback={chainChanged}
-          className={styles['select-chain-container']}
-          childrenClassName={styles['select-chain-content']}
-          overlayClassName={styles['select-chain-overlay']}
-          suffixArrowSize={isPadPX ? 'Small' : 'Normal'}
-        />
-      )}
+      <SelectChain
+        getContainer="webDepositChainWrapper"
+        menuItems={menuItems}
+        selectedItem={selectedItem}
+        isBorder={false}
+        title={mobileTitle}
+        clickCallback={chainChanged}
+        className={styles['select-chain-container']}
+        childrenClassName={styles['select-chain-content']}
+        overlayClassName={styles['select-chain-overlay']}
+        suffixArrowSize={isPadPX ? 'Small' : 'Normal'}
+      />
     </div>
   );
 }
