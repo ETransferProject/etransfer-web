@@ -78,7 +78,16 @@ export default function Content() {
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const fromNetworkRef = useRef<string>();
   const [depositInfo, setDepositInfo] = useState<TDepositInfo>(InitDepositInfo);
-  const [showRetry, setShowRetry] = useState(false);
+  const [isGetRetry, setIsGetRetry] = useState(false);
+  const showRetry = useMemo(() => {
+    return (
+      isGetRetry &&
+      !!fromNetwork?.network &&
+      !!fromTokenSymbol &&
+      !!toChainItem.key &&
+      !!toTokenSymbol
+    );
+  }, [fromNetwork?.network, fromTokenSymbol, isGetRetry, toChainItem.key, toTokenSymbol]);
 
   const fromTokenSelected = useMemo(() => {
     return fromTokenList?.find((item) => item.symbol === fromTokenSymbol) || fromTokenList?.[0];
@@ -165,7 +174,7 @@ export default function Content() {
           toSymbol,
         });
         is401Ref.current = false;
-        setShowRetry(false);
+        setIsGetRetry(false);
         setLoading(false);
         setDepositInfo(res.depositInfo);
         dispatch(setDepositAddress(res.depositInfo.depositAddress));
@@ -176,9 +185,9 @@ export default function Content() {
           is401Ref.current = false;
         }
         if (error.name !== CommonErrorNameType.CANCEL && error.code === '50000') {
-          setShowRetry(true);
+          setIsGetRetry(true);
         } else {
-          setShowRetry(false);
+          setIsGetRetry(false);
         }
         if (error.name !== CommonErrorNameType.CANCEL) {
           setDepositInfo(InitDepositInfo);
@@ -282,7 +291,7 @@ export default function Content() {
     // Reset other data
     setDepositInfo(InitDepositInfo);
     dispatch(setDepositAddress(InitDepositInfo.depositAddress));
-    setShowRetry(false);
+    setIsGetRetry(false);
 
     // Refresh network and deposit info
     await getNetworkData({

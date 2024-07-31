@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import clsx from 'clsx';
 import CommonAddress from 'components/CommonAddress';
 import DepositInfo from 'pageComponents/DepositContent/DepositInfo';
@@ -24,6 +24,11 @@ import { CopySize } from 'components/Copy';
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { useIsLogin, useLogin } from 'hooks/wallet';
 import { LOGIN, UNLOCK } from 'constants/wallet';
+import { SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE, TokenType } from 'constants/index';
+import TransferTip from '../TransferTip';
+import { useGoWithdraw } from 'hooks/withdraw';
+import { AelfChainIdList } from 'constants/chain';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 
 export default function MobileDepositContent({
   fromNetworkSelected,
@@ -42,7 +47,7 @@ export default function MobileDepositContent({
   fromNetworkChanged,
   fromTokenChanged,
 }: TDepositContentProps) {
-  const { fromTokenSymbol, toChainItem, toTokenSymbol } = useDepositState();
+  const { fromTokenSymbol, toChainItem, toTokenSymbol, fromNetwork } = useDepositState();
   const { isPadPX, isMobilePX } = useCommonState();
   const { isLocking } = useConnectWallet();
   const isLogin = useIsLogin();
@@ -130,6 +135,19 @@ export default function MobileDepositContent({
     toTokenSymbol,
   ]);
 
+  const isShowTransferTip = useMemo(() => {
+    return (
+      SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE.includes(fromTokenSymbol as TokenType) &&
+      fromTokenSymbol === toTokenSymbol &&
+      AelfChainIdList.includes(fromNetwork?.network as TChainId)
+    );
+  }, [fromNetwork?.network, fromTokenSymbol, toTokenSymbol]);
+
+  const goWithdraw = useGoWithdraw();
+  const handleGoWithdraw = useCallback(async () => {
+    goWithdraw(toChainItem, fromTokenSymbol, fromNetwork);
+  }, [fromNetwork, fromTokenSymbol, goWithdraw, toChainItem]);
+
   return (
     <div className="main-content-container main-content-container-safe-area">
       <div className={clsx(styles['main-section'], styles['section'])}>
@@ -174,7 +192,8 @@ export default function MobileDepositContent({
         )}
 
         <Space direction="vertical" size={24} />
-        {isLogin && renderDepositInfo}
+
+        {!isShowTransferTip && isLogin && renderDepositInfo}
 
         {!isLogin && (
           <div
@@ -188,6 +207,25 @@ export default function MobileDepositContent({
               onClick={handleLogin}
               disabled={nextDisable}>
               {isLocking ? UNLOCK : LOGIN}
+            </CommonButton>
+          </div>
+        )}
+        {isLogin && isShowTransferTip && (
+          <div
+            className={clsx(
+              styles['next-button-wrapper'],
+              styles['next-button-wrapper-safe-area'],
+            )}>
+            <Space direction="vertical" size={24} />
+            <TransferTip
+              isShowIcon={false}
+              toChainItem={toChainItem}
+              symbol={fromTokenSymbol}
+              network={fromNetwork}
+            />
+            <Space direction="vertical" size={24} />
+            <CommonButton className={styles['next-button']} onClick={handleGoWithdraw}>
+              Go to Withdraw Page
             </CommonButton>
           </div>
         )}

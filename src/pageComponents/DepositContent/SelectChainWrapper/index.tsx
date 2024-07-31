@@ -2,8 +2,8 @@ import clsx from 'clsx';
 import SelectChain from 'components/SelectChain';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { IChainNameItem } from 'constants/index';
-import { Aelf, AelfMedium } from 'assets/images';
+import { IChainNameItem, SupportedELFChainId } from 'constants/index';
+import { Aelf, AelfMedium, tDVV as TDVV, tDVVMedium as TDVVMedium } from 'assets/images';
 import { useMemo } from 'react';
 import Space from 'components/Space';
 
@@ -35,7 +35,9 @@ export default function SelectChainWrapper({
       className={clsx('flex-row-center', styles['select-chain-wrapper'], className)}>
       {isPadPX && <span className={styles['select-chain-label']}>{mobileLabel}</span>}
 
-      {isPadPX ? <Aelf /> : <AelfMedium />}
+      {selectedItem.key === SupportedELFChainId.AELF && <>{isPadPX ? <Aelf /> : <AelfMedium />}</>}
+      {selectedItem.key !== SupportedELFChainId.AELF && <>{isPadPX ? <TDVV /> : <TDVVMedium />}</>}
+
       <Space direction={'horizontal'} size={isPadPX ? 6 : 8} />
 
       {isDisabled ? (

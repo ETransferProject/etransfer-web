@@ -21,6 +21,7 @@ export const AelfChainNetwork: Record<TChainId, string> = {
 export enum ContractType {
   CA = 'CA_CONTRACT',
   TOKEN = 'TOKEN_CONTRACT',
+  ETRANSFER = 'ETRANSFER',
 }
 
 export const SynchronizingAddress = 'Synchronising data on the blockchain…';

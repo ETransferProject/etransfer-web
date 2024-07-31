@@ -19,14 +19,13 @@ export function BalanceAndUSD({
   chainId: SupportedELFChainId;
 }) {
   const isLogin = useIsLogin();
-  // const [tokenPrices, setTokenPrices] = useState<TTokenPriceItem[]>([]);
   const getBalanceDivDecimals = useGetBalanceDivDecimals();
   const [balance, setBalance] = useState<string>('');
   const [balanceUsd, setBalanceUsd] = useState<string>('');
 
   const fetchTokenPrices = useCallback(async () => {
     try {
-      const res = await getTokenPrices({ symbols: symbol }); // TODO
+      const res = await getTokenPrices({ symbols: symbol });
       return res.items;
     } catch (error) {
       console.log('fetchTokenPrices error', error);
@@ -86,7 +85,7 @@ export function BalanceAndUSD({
   return (
     <div className={clsx('flex-column-end', styles['balance-and-usd'])}>
       <div className={styles['balance']}>{balance}</div>
-      <div className={styles['usd']}>{`${balanceUsd}` || defaultNullValue}</div>
+      <div className={styles['usd']}>{`$ ${balanceUsd}` || defaultNullValue}</div>
     </div>
   );
 }

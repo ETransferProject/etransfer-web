@@ -4,6 +4,8 @@ import SelectToken from '../SelectToken';
 import styles from './styles.module.scss';
 import Space from 'components/Space';
 import { useDepositState } from 'store/Provider/hooks';
+import { useDepositNetworkList } from 'hooks/deposit';
+import { useMemo } from 'react';
 
 type TSelectTokenNetwork = {
   label: string;
@@ -21,13 +23,18 @@ export default function SelectTokenNetwork({
   networkSelectCallback,
   tokenSelectCallback,
 }: TSelectTokenNetwork) {
-  const { fromTokenList, fromNetworkList } = useDepositState();
+  const { fromTokenList, fromTokenSymbol, toTokenSymbol } = useDepositState();
+
+  const getFromNetworkList = useDepositNetworkList();
+  const newFromNetworkList = useMemo(() => {
+    return getFromNetworkList(fromTokenSymbol, toTokenSymbol);
+  }, [fromTokenSymbol, getFromNetworkList, toTokenSymbol]);
 
   return (
     <div className={styles['deposit-select-token-network']}>
       <SelectNetwork
         label={label}
-        networkList={fromNetworkList || []}
+        networkList={newFromNetworkList || []}
         selected={networkSelected}
         isShowLoading={isShowNetworkLoading}
         selectCallback={networkSelectCallback}
