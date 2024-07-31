@@ -447,7 +447,7 @@ export default function Content() {
 
   useEffectOnce(() => {
     const { remove } = myEvents.LoginSuccess.addListener(() => {
-      if (is401Ref.current) {
+      if (is401Ref.current || !depositInfo.depositAddress) {
         getNetworkData({
           chainId: toChainItem.key,
           symbol: fromTokenSymbol,
