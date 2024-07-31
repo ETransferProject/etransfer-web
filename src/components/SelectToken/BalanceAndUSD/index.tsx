@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import styles from './styles.module.scss';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIsLogin } from 'hooks/wallet';
 import { SupportedELFChainId, defaultNullValue } from 'constants/index';
 import Space from 'components/Space';
@@ -60,9 +60,11 @@ export function BalanceAndUSD({
     [fetchTokenPrices, getBalanceDivDecimals],
   );
 
+  const getBalanceAndUSDRef = useRef(getBalanceAndUSD);
+  getBalanceAndUSDRef.current = getBalanceAndUSD;
   useEffect(() => {
-    getBalanceAndUSD(symbol, decimals, chainId);
-  }, [chainId, decimals, getBalanceAndUSD, symbol]);
+    getBalanceAndUSDRef.current(symbol, decimals, chainId);
+  }, [chainId, decimals, symbol]);
 
   if (!isLogin) {
     return (
@@ -85,7 +87,7 @@ export function BalanceAndUSD({
   return (
     <div className={clsx('flex-column-end', styles['balance-and-usd'])}>
       <div className={styles['balance']}>{balance}</div>
-      <div className={styles['usd']}>{`$ ${balanceUsd}` || defaultNullValue}</div>
+      <div className={styles['usd']}>{balanceUsd ? `$ ${balanceUsd}` : defaultNullValue}</div>
     </div>
   );
 }
