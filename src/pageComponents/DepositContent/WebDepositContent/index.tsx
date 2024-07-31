@@ -63,6 +63,16 @@ export default function WebContent({
     return getFromNetworkList(fromTokenSymbol, toTokenSymbol);
   }, [fromTokenSymbol, getFromNetworkList, toTokenSymbol]);
 
+  const isShowNotLoginTip = useMemo(() => {
+    return (
+      !isLogin &&
+      !!fromTokenSymbol &&
+      !!toTokenSymbol &&
+      !!fromNetwork?.network &&
+      !!toChainItem.key
+    );
+  }, [fromNetwork?.network, fromTokenSymbol, isLogin, toChainItem.key, toTokenSymbol]);
+
   const isShowTransferTip = useMemo(() => {
     return (
       isLogin &&
@@ -225,7 +235,7 @@ export default function WebContent({
                 Deposit address
               </div>
             )}
-            {!isLogin && <NotLoginTip />}
+            {isShowNotLoginTip && <NotLoginTip />}
             {isLogin && showRetry && <DepositRetryForWeb isShowImage={true} onClick={onRetry} />}
             {isLogin && !showRetry && !!depositInfo.depositAddress && (
               <>
@@ -280,6 +290,7 @@ export default function WebContent({
     isShowDepositAddressLabelForLogin,
     isShowDepositAddressLabelForNotLogin,
     isShowNetworkLoading,
+    isShowNotLoginTip,
     isShowTransferTip,
     menuItems,
     newFromNetworkList,

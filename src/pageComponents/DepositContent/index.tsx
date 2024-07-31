@@ -165,6 +165,8 @@ export default function Content() {
   const is401Ref = useRef(false);
   const getDepositData = useCallback(
     async (chainId: TChainId, symbol: string, toSymbol: string) => {
+      console.log('getDepositData >>>>>> fromNetworkRef.current', fromNetworkRef.current);
+      console.log('getDepositData >>>>>> isLogin', isLogin);
       try {
         if (!fromNetworkRef.current || !isLogin) return;
         setLoading(true);
@@ -307,9 +309,9 @@ export default function Content() {
     async (item: TNetworkItem) => {
       fromNetworkRef.current = item.network;
       dispatch(setFromNetwork(item));
-      !isPadPX && (await getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol));
+      await getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
     },
-    [dispatch, fromTokenSymbol, getDepositData, isPadPX, toChainItem.key, toTokenSymbol],
+    [dispatch, fromTokenSymbol, getDepositData, toChainItem.key, toTokenSymbol],
   );
 
   const handleToTokenChange = useCallback(
@@ -332,9 +334,9 @@ export default function Content() {
         });
       }
       // toChain and fromToken not changed, refresh deposit info.
-      return !isPadPX && getDepositData(optionChainId, fromTokenSymbol, newItem.symbol);
+      return getDepositData(optionChainId, fromTokenSymbol, newItem.symbol);
     },
-    [dispatch, fromTokenSymbol, getDepositData, getNetworkData, isPadPX, toChainItem.key],
+    [dispatch, fromTokenSymbol, getDepositData, getNetworkData, toChainItem.key],
   );
 
   const handleToChainChanged = useCallback(
@@ -447,6 +449,11 @@ export default function Content() {
 
   const initForLogout = useCallback(async () => {
     if (is401Ref.current || !depositInfo.depositAddress) {
+      setDepositInfo(InitDepositInfo);
+      setIsGetRetry(false);
+      fromNetworkRef.current = undefined;
+      is401Ref.current = false;
+
       await getTokenList(toChainItem.key, fromTokenSymbol, toTokenSymbol);
       getNetworkData({
         chainId: toChainItem.key,

@@ -889,6 +889,11 @@ export default function WithdrawContent() {
       [FormKeys.AMOUNT]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
     });
 
+    if (getMaxBalanceTimerRef.current) {
+      clearInterval(getMaxBalanceTimerRef.current);
+      getMaxBalanceTimerRef.current = null;
+    }
+
     await sleep(200);
     await getToken(false);
     await getNetworkData({ symbol: InitialWithdrawState.currentSymbol, address: '' });
