@@ -211,7 +211,7 @@ export default function WithdrawContent() {
     );
   }, [withdrawInfo.remainingLimit, withdrawInfo.totalLimit, withdrawInfo.limitCurrency, isPadPX]);
 
-  const getAddressInput = useMemo(() => {
+  const getAddressInput = useCallback(() => {
     return form.getFieldValue(FormKeys.ADDRESS)?.trim();
   }, [form]);
 
@@ -222,7 +222,7 @@ export default function WithdrawContent() {
         currentFormValidateData[FormKeys.ADDRESS].validateStatus === ValidateStatus.Error ||
         currentFormValidateData[FormKeys.NETWORK].validateStatus === ValidateStatus.Error ||
         currentFormValidateData[FormKeys.AMOUNT].validateStatus === ValidateStatus.Error ||
-        isValueUndefined(getAddressInput) ||
+        isValueUndefined(getAddressInput()) ||
         isValueUndefined(currentNetworkRef.current) ||
         isValueUndefined(form.getFieldValue(FormKeys.AMOUNT));
       setIsSubmitDisabled(isDisabled);
@@ -452,6 +452,7 @@ export default function WithdrawContent() {
 
   const getWithdrawData = useCallback(
     async (optionSymbol?: string, newMaxBalance?: string) => {
+      console.log('getWithdrawData >>>>>> isLogin', isLogin);
       if (!isLogin) return;
 
       const symbol = optionSymbol || currentSymbol;
@@ -595,7 +596,7 @@ export default function WithdrawContent() {
         await getToken(true);
         await getNetworkData({
           symbol: token?.symbol || currentSymbol,
-          address: getAddressInput || undefined,
+          address: getAddressInput() || undefined,
         });
         await getWithdrawData(token?.symbol || currentSymbol);
       } catch (error) {
@@ -671,10 +672,10 @@ export default function WithdrawContent() {
   );
 
   const onAddressBlur = useCallback(async () => {
-    console.log('onAddressBlur', getAddressInput);
-    dispatch(setWithdrawAddress(getAddressInput));
+    const addressInput = getAddressInput();
+    dispatch(setWithdrawAddress(addressInput));
 
-    if (!getAddressInput) {
+    if (!addressInput) {
       handleFormValidateDataChange({
         [FormKeys.ADDRESS]: {
           validateStatus: ValidateStatus.Normal,
@@ -683,11 +684,11 @@ export default function WithdrawContent() {
       });
       await getNetworkData({
         symbol: currentSymbol,
-        address: getAddressInput,
+        address: addressInput,
       });
       await getWithdrawData();
       return;
-    } else if (getAddressInput.length < 32 || getAddressInput.length > 59) {
+    } else if (addressInput.length < 32 || addressInput.length > 59) {
       handleFormValidateDataChange({
         [FormKeys.ADDRESS]: {
           validateStatus: ValidateStatus.Error,
@@ -700,14 +701,14 @@ export default function WithdrawContent() {
       return;
     }
 
-    if (isDIDAddressSuffix(getAddressInput)) {
-      form.setFieldValue(FormKeys.ADDRESS, removeELFAddressSuffix(getAddressInput));
-      dispatch(setWithdrawAddress(removeAddressSuffix(getAddressInput)));
+    if (isDIDAddressSuffix(addressInput)) {
+      form.setFieldValue(FormKeys.ADDRESS, removeELFAddressSuffix(addressInput));
+      dispatch(setWithdrawAddress(removeAddressSuffix(addressInput)));
     }
 
     await getNetworkData({
       symbol: currentSymbol,
-      address: getAddressInput,
+      address: addressInput,
     });
 
     await getWithdrawData();
@@ -750,7 +751,7 @@ export default function WithdrawContent() {
 
         await getNetworkData({
           symbol: item.symbol,
-          address: getAddressInput || undefined,
+          address: getAddressInput() || undefined,
         });
         await getWithdrawData(item.symbol);
       } finally {
@@ -824,11 +825,7 @@ export default function WithdrawContent() {
 
       const newCurrentToken = newTokenList.find((item) => item.symbol === newCurrentSymbol);
 
-      const address =
-        routeQuery.withdrawAddress ||
-        withdraw.address ||
-        form.getFieldValue(FormKeys.ADDRESS) ||
-        '';
+      const address = routeQuery.withdrawAddress || withdraw.address || '';
       form.setFieldValue(FormKeys.ADDRESS, address);
       dispatch(setWithdrawAddress(address));
 
@@ -1164,7 +1161,7 @@ export default function WithdrawContent() {
               isSubmitDisabled={isSubmitDisabled}
               currentNetwork={currentNetwork}
               receiveAmount={receiveAmount}
-              address={getAddressInput}
+              address={getAddressInput()}
               balance={balance}
               withdrawInfo={withdrawInfo}
               clickFailedOk={clickFailedOk}

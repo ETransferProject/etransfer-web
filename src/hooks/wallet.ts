@@ -56,7 +56,7 @@ export function useInitWallet() {
 
 export function useIsLogin() {
   const { isConnected, walletInfo } = useConnectWallet();
-  return useMemo(() => isConnected && walletInfo, [isConnected, walletInfo]);
+  return useMemo(() => isConnected && !!walletInfo, [isConnected, walletInfo]);
 }
 
 export function useLogin() {
