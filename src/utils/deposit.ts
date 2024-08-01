@@ -7,7 +7,7 @@ import {
   ADDRESS_MAP,
   EXPLORE_CONFIG,
 } from 'constants/index';
-import { ContractType } from 'constants/chain';
+import { AelfChainIdList, ContractType } from 'constants/chain';
 import { NetworkStatus, TNetworkItem } from 'types/api';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 
@@ -48,5 +48,22 @@ export const addAelfNetwork = (
     }
   }
 
+  return list;
+};
+
+export const deleteAelfNetwork = (
+  fromNetworkList: TNetworkItem[],
+  fromTokenSelectedSymbol: string,
+  toTokenSelectedSymbol: string,
+): TNetworkItem[] => {
+  const list = JSON.parse(JSON.stringify(fromNetworkList));
+  if (
+    !SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE.includes(fromTokenSelectedSymbol as TokenType) ||
+    fromTokenSelectedSymbol !== toTokenSelectedSymbol
+  ) {
+    return list.filter(
+      (item: { network: TNetworkItem }) => !AelfChainIdList.includes(item.network as any),
+    );
+  }
   return list;
 };

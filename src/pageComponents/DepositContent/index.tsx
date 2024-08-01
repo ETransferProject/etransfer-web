@@ -37,7 +37,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { useSetAuthFromStorage } from 'hooks/authToken';
 import { useIsLogin } from 'hooks/wallet';
-import { addAelfNetwork } from 'utils/deposit';
+import { addAelfNetwork, deleteAelfNetwork } from 'utils/deposit';
 
 export type TDepositContentProps = {
   fromNetworkSelected?: TNetworkItem;
@@ -75,6 +75,8 @@ export default function Content() {
     toTokenList,
     toTokenSymbol,
   } = useDepositState();
+  const fromNetworkListRef = useRef(fromNetworkList);
+  fromNetworkListRef.current = fromNetworkList;
   const isLogin = useIsLogin();
   const isLoginRef = useRef(isLogin);
   isLoginRef.current = isLogin;
@@ -336,6 +338,12 @@ export default function Content() {
           toSymbol: newItem.symbol,
         });
       }
+      const networkList = deleteAelfNetwork(
+        fromNetworkListRef.current || [],
+        fromTokenSymbol,
+        newItem.symbol,
+      );
+      dispatch(setFromNetworkList(networkList));
       // toChain and fromToken not changed, refresh deposit info.
       return getDepositData(optionChainId, fromTokenSymbol, newItem.symbol);
     },
