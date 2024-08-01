@@ -39,6 +39,7 @@ export const CommonSlice = createSlice({
     },
     resetCommon: (state) => {
       state.activeMenuKey = SideMenuKey.Deposit;
+      state.isUnreadHistory = false;
     },
   },
 });

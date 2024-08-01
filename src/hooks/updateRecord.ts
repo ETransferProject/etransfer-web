@@ -13,10 +13,12 @@ export const MAX_UPDATE_TIME = 6;
 export function useUpdateRecord() {
   const dispatch = useAppDispatch();
   const isLogin = useIsLogin();
+  const isLoginRef = useRef(isLogin);
+  isLoginRef.current = isLogin;
   const setAuthFromStorage = useSetAuthFromStorage();
 
   const updateRecordStatus = useCallback(async () => {
-    if (!isLogin) return;
+    if (!isLoginRef.current) return;
     if (eTransferInstance.unauthorized) return;
 
     try {
@@ -25,7 +27,7 @@ export function useUpdateRecord() {
     } catch (error) {
       console.log('update new records error', error);
     }
-  }, [dispatch, isLogin]);
+  }, [dispatch]);
 
   const updateTimeRef = useRef(MAX_UPDATE_TIME);
   const updateTimerRef = useRef<NodeJS.Timer | number>();

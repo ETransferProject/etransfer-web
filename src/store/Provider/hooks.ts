@@ -3,7 +3,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from './store';
 import { emitLoading } from 'utils/events';
 import { LoadingProps } from 'components/Loading';
-// import { resetCommon } from 'store/reducers/common/slice';
+import { setIsUnreadHistory } from 'store/reducers/common/slice';
 import { resetDepositState } from 'store/reducers/deposit/slice';
 import { resetWithdrawState } from 'store/reducers/withdraw/slice';
 import { resetRecordsState } from 'store/reducers/records/slice';
@@ -32,6 +32,7 @@ export const useResetStore = () => {
 
   return useCallback(() => {
     // dispatch(resetCommon());
+    dispatch(setIsUnreadHistory(false));
     dispatch(resetDepositState());
     dispatch(resetWithdrawState());
     dispatch(resetRecordsState());
