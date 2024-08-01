@@ -75,6 +75,8 @@ export default function Content() {
     toTokenSymbol,
   } = useDepositState();
   const isLogin = useIsLogin();
+  const isLoginRef = useRef(isLogin);
+  isLoginRef.current = isLogin;
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const fromNetworkRef = useRef<string>();
@@ -166,9 +168,9 @@ export default function Content() {
   const getDepositData = useCallback(
     async (chainId: TChainId, symbol: string, toSymbol: string) => {
       console.log('getDepositData >>>>>> fromNetworkRef.current', fromNetworkRef.current);
-      console.log('getDepositData >>>>>> isLogin', isLogin);
+      console.log('getDepositData >>>>>> isLogin', isLoginRef.current);
       try {
-        if (!fromNetworkRef.current || !isLogin) return;
+        if (!fromNetworkRef.current || !isLoginRef.current) return;
         setLoading(true);
         const res = await getDepositInfo({
           chainId,
@@ -199,7 +201,7 @@ export default function Content() {
         }
       }
     },
-    [dispatch, isLogin, setLoading],
+    [dispatch, setLoading],
   );
 
   const getNetworkData = useCallback(
@@ -462,13 +464,10 @@ export default function Content() {
   }, [fromTokenSymbol, getNetworkData, getTokenList, toChainItem.key, toTokenSymbol]);
 
   useEffectOnce(() => {
+    // log in
     const { remove } = myEvents.LoginSuccess.addListener(() => {
       if (is401Ref.current || !depositInfo.depositAddress) {
-        getNetworkData({
-          chainId: toChainItem.key,
-          symbol: fromTokenSymbol,
-          toSymbol: toTokenSymbol,
-        });
+        getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
       }
     });
 
@@ -478,6 +477,7 @@ export default function Content() {
   });
 
   useEffectOnce(() => {
+    // log out \ exit
     const { remove } = myEvents.LogoutSuccess.addListener(() => {
       dispatch(setFromTokenSymbol('USDT'));
       dispatch(setToTokenSymbol('USDT'));

@@ -101,6 +101,8 @@ export default function WithdrawContent() {
   const { isPadPX, isMobilePX } = useCommonState();
   const { callViewMethod } = useConnectWallet();
   const isLogin = useIsLogin();
+  const isLoginRef = useRef(isLogin);
+  isLoginRef.current = isLogin;
   const withdraw = useWithdrawState();
   const accounts = useGetAccount();
   const { currentSymbol, tokenList, currentChainItem } = useWithdraw();
@@ -383,7 +385,7 @@ export default function WithdrawContent() {
 
   const handleAmountValidate = useCallback(
     (newMinAmount?: string, newTransactionUnit?: string, newMaxBalance?: string) => {
-      if (!isLogin) return;
+      if (!isLoginRef.current) return;
 
       const amount = form.getFieldValue(FormKeys.AMOUNT);
       if (!amount) {
@@ -442,7 +444,6 @@ export default function WithdrawContent() {
     [
       form,
       handleFormValidateDataChange,
-      isLogin,
       maxBalance,
       minAmount,
       withdrawInfo.remainingLimit,
@@ -452,8 +453,8 @@ export default function WithdrawContent() {
 
   const getWithdrawData = useCallback(
     async (optionSymbol?: string, newMaxBalance?: string) => {
-      console.log('getWithdrawData >>>>>> isLogin', isLogin);
-      if (!isLogin) return;
+      console.log('getWithdrawData >>>>>> isLogin', isLoginRef.current);
+      if (!isLoginRef.current) return;
 
       const symbol = optionSymbol || currentSymbol;
       try {
@@ -462,6 +463,7 @@ export default function WithdrawContent() {
           chainId: currentChainItemRef.current.key,
           symbol,
           version: PortkeyVersion.v2,
+          address: getAddressInput(),
         };
         if (currentNetworkRef.current?.network) {
           params.network = currentNetworkRef.current?.network;
@@ -504,7 +506,7 @@ export default function WithdrawContent() {
         }
       }
     },
-    [currentSymbol, form, handleAmountValidate, isLogin],
+    [currentSymbol, form, getAddressInput, handleAmountValidate],
   );
 
   useEffect(() => {
@@ -573,6 +575,7 @@ export default function WithdrawContent() {
   const getMaxBalanceRef = useRef(getMaxBalance);
   getMaxBalanceRef.current = getMaxBalance;
   const getMaxBalanceInterval = useCallback(async (item?: TTokenItem) => {
+    console.log('getMaxBalanceInterval start', item);
     if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
     getMaxBalanceTimerRef.current = setInterval(async () => {
       await getMaxBalanceRef.current(false, item);
@@ -872,17 +875,18 @@ export default function WithdrawContent() {
   const initRef = useRef(init);
   initRef.current = init;
 
+  const getWithdrawDataRef = useRef(getWithdrawData);
+  getWithdrawDataRef.current = getWithdrawData;
   const initForReLogin = useCallback(async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const newTokenList = await getToken(true);
       const newCurrentToken = newTokenList.find((item) => item.symbol === currentSymbol);
 
       const address = form.getFieldValue(FormKeys.ADDRESS) || '';
       dispatch(setWithdrawAddress(address));
 
-      await getNetworkData({ symbol: currentSymbol, address });
-      getWithdrawData(currentSymbol);
+      getWithdrawDataRef.current(currentSymbol);
 
       getMaxBalanceInterval(newCurrentToken);
     } catch (error) {
@@ -890,21 +894,12 @@ export default function WithdrawContent() {
     } finally {
       setLoading(false);
     }
-  }, [
-    currentSymbol,
-    dispatch,
-    form,
-    getMaxBalanceInterval,
-    getNetworkData,
-    getToken,
-    getWithdrawData,
-    setLoading,
-  ]);
+  }, [currentSymbol, dispatch, form, getMaxBalanceInterval, getToken, setLoading]);
 
   const initForReLoginRef = useRef(initForReLogin);
   initForReLoginRef.current = initForReLogin;
 
-  const initForLogout = async () => {
+  const initForLogout = useCallback(async () => {
     dispatch(setWithdrawAddress(''));
     form.setFieldValue(FormKeys.TOKEN, InitialWithdrawState.currentSymbol);
     form.setFieldValue(FormKeys.ADDRESS, '');
@@ -932,13 +927,14 @@ export default function WithdrawContent() {
     await sleep(200);
     await getToken(false);
     await getNetworkData({ symbol: InitialWithdrawState.currentSymbol, address: '' });
-  };
+  }, [dispatch, form, getNetworkData, getToken]);
 
   const initForLogoutRef = useRef(initForLogout);
   initForLogoutRef.current = initForLogout;
 
   const router = useRouter();
   useEffectOnce(() => {
+    // normal init
     dispatch(setActiveMenuKey(SideMenuKey.Withdraw));
     initRef.current();
 
@@ -959,21 +955,22 @@ export default function WithdrawContent() {
   //   };
   // }, [init]);
 
-  useEffectOnce(() => {
-    const { remove } = myEvents.LoginSuccess.addListener(initForReLoginRef.current);
+  useEffect(() => {
+    // log in
+    const { remove: removeLoginSuccess } = myEvents.LoginSuccess.addListener(
+      initForReLoginRef.current,
+    );
+
+    // log out \ exit
+    const { remove: removeLogoutSuccess } = myEvents.LogoutSuccess.addListener(
+      initForLogoutRef.current,
+    );
 
     return () => {
-      remove();
+      removeLoginSuccess();
+      removeLogoutSuccess();
     };
-  });
-
-  useEffectOnce(() => {
-    const { remove } = myEvents.LogoutSuccess.addListener(initForLogoutRef.current);
-
-    return () => {
-      remove();
-    };
-  });
+  }, []);
 
   const renderBalance = useMemo(() => {
     return (
