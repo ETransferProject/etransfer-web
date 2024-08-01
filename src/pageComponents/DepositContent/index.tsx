@@ -448,27 +448,18 @@ export default function Content() {
   // }, [init]);
 
   const initForLogout = useCallback(async () => {
-    if (is401Ref.current || !depositInfo.depositAddress) {
-      setDepositInfo(InitDepositInfo);
-      setIsGetRetry(false);
-      fromNetworkRef.current = undefined;
-      is401Ref.current = false;
+    setDepositInfo(InitDepositInfo);
+    setIsGetRetry(false);
+    fromNetworkRef.current = undefined;
+    is401Ref.current = false;
 
-      await getTokenList(toChainItem.key, fromTokenSymbol, toTokenSymbol);
-      getNetworkData({
-        chainId: toChainItem.key,
-        symbol: fromTokenSymbol,
-        toSymbol: toTokenSymbol,
-      });
-    }
-  }, [
-    depositInfo.depositAddress,
-    fromTokenSymbol,
-    getNetworkData,
-    getTokenList,
-    toChainItem.key,
-    toTokenSymbol,
-  ]);
+    await getTokenList(toChainItem.key, fromTokenSymbol, toTokenSymbol);
+    getNetworkData({
+      chainId: toChainItem.key,
+      symbol: fromTokenSymbol,
+      toSymbol: toTokenSymbol,
+    });
+  }, [fromTokenSymbol, getNetworkData, getTokenList, toChainItem.key, toTokenSymbol]);
 
   useEffectOnce(() => {
     const { remove } = myEvents.LoginSuccess.addListener(() => {
