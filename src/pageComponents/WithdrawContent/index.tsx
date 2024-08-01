@@ -956,6 +956,25 @@ export default function WithdrawContent() {
   // }, [init]);
 
   useEffect(() => {
+    if (!isLogin) {
+      setWithdrawInfo(InitialWithdrawInfo);
+      setBalance('0');
+      setMaxBalance('');
+      setFormValidateData({
+        [FormKeys.TOKEN]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
+        [FormKeys.ADDRESS]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
+        [FormKeys.NETWORK]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
+        [FormKeys.AMOUNT]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
+      });
+
+      if (getMaxBalanceTimerRef.current) {
+        clearInterval(getMaxBalanceTimerRef.current);
+        getMaxBalanceTimerRef.current = null;
+      }
+    }
+  }, [isLogin]);
+
+  useEffect(() => {
     // log in
     const { remove: removeLoginSuccess } = myEvents.LoginSuccess.addListener(
       initForReLoginRef.current,

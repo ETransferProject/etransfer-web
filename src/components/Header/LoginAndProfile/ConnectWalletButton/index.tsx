@@ -5,11 +5,11 @@ import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { useQueryAuthToken } from 'hooks/authToken';
 import { handleWebLoginErrorMessage } from 'utils/api/error';
 import singleMessage from 'components/SingleMessage';
-import { LOGIN } from 'constants/wallet';
+import { LOGIN, UNLOCK } from 'constants/wallet';
 import { useIsLogin } from 'hooks/wallet';
 
 export default function ConnectWalletButton(props: CommonButtonProps) {
-  const { connectWallet } = useConnectWallet();
+  const { connectWallet, isLocking } = useConnectWallet();
   const { getAuth } = useQueryAuthToken();
   const isLogin = useIsLogin();
 
@@ -28,7 +28,7 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
 
   return (
     <CommonButton {...props} onClick={handleLogin}>
-      {LOGIN}
+      {isLocking ? UNLOCK : LOGIN}
     </CommonButton>
   );
 }
