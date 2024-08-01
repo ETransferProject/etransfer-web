@@ -13,6 +13,7 @@ import {
 import { getDepositInfo, getDepositTokenList, getNetworkList } from 'utils/api/deposit';
 import { CHAIN_LIST, IChainNameItem } from 'constants/index';
 import {
+  InitialDepositState,
   setDepositAddress,
   setFromNetwork,
   setFromNetworkList,
@@ -455,13 +456,17 @@ export default function Content() {
     fromNetworkRef.current = undefined;
     is401Ref.current = false;
 
-    await getTokenList(toChainItem.key, fromTokenSymbol, toTokenSymbol);
+    await getTokenList(
+      InitialDepositState.toChainItem.key,
+      InitialDepositState.fromTokenSymbol,
+      InitialDepositState.toTokenSymbol,
+    );
     getNetworkData({
-      chainId: toChainItem.key,
-      symbol: fromTokenSymbol,
-      toSymbol: toTokenSymbol,
+      chainId: InitialDepositState.toChainItem.key,
+      symbol: InitialDepositState.fromTokenSymbol,
+      toSymbol: InitialDepositState.toTokenSymbol,
     });
-  }, [fromTokenSymbol, getNetworkData, getTokenList, toChainItem.key, toTokenSymbol]);
+  }, [getNetworkData, getTokenList]);
 
   useEffectOnce(() => {
     // log in

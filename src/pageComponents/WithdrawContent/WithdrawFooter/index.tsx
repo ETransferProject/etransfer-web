@@ -25,7 +25,7 @@ import {
   InsufficientAllowanceMessage,
   WithdrawSendTxErrorCodeList,
 } from 'constants/withdraw';
-import { useGetAccount, useIsLogin, useLogin } from 'hooks/wallet';
+import { useGetAccount, useIsLogin, useLogin, useShowLoginButtonLoading } from 'hooks/wallet';
 import { formatSymbolDisplay } from 'utils/format';
 import { sleep } from '@portkey/utils';
 import { useWithdraw } from 'hooks/withdraw';
@@ -73,6 +73,8 @@ export default function WithdrawFooter({
   const isLogin = useIsLogin();
   const handleLogin = useLogin();
   const accounts = useGetAccount();
+  // Fix: It takes too long to obtain NightElf walletInfo, and the user mistakenly clicks the login button during this period.
+  const isLoginButtonLoading = useShowLoginButtonLoading();
   const getBalanceDivDecimals = useGetBalanceDivDecimals();
   const { currentChainItem, currentSymbol, tokenList } = useWithdraw();
 
@@ -302,7 +304,10 @@ export default function WithdrawFooter({
             {BusinessType.Withdraw}
           </CommonButton>
         ) : (
-          <CommonButton className={styles['form-submit-button']} onClick={handleLogin}>
+          <CommonButton
+            className={styles['form-submit-button']}
+            onClick={handleLogin}
+            loading={isLoginButtonLoading}>
             {isLocking ? UNLOCK : LOGIN}
           </CommonButton>
         )}

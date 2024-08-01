@@ -6,12 +6,14 @@ import { useQueryAuthToken } from 'hooks/authToken';
 import { handleWebLoginErrorMessage } from 'utils/api/error';
 import singleMessage from 'components/SingleMessage';
 import { LOGIN, UNLOCK } from 'constants/wallet';
-import { useIsLogin } from 'hooks/wallet';
+import { useIsLogin, useShowLoginButtonLoading } from 'hooks/wallet';
 
 export default function ConnectWalletButton(props: CommonButtonProps) {
   const { connectWallet, isLocking } = useConnectWallet();
   const { getAuth } = useQueryAuthToken();
   const isLogin = useIsLogin();
+  // Fix: It takes too long to obtain NightElf walletInfo, and the user mistakenly clicks the login button during this period.
+  const isLoginButtonLoading = useShowLoginButtonLoading();
 
   const handleLogin = useCallback(async () => {
     try {
@@ -27,7 +29,7 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
   }, [connectWallet, getAuth, isLogin]);
 
   return (
-    <CommonButton {...props} onClick={handleLogin}>
+    <CommonButton {...props} onClick={handleLogin} loading={isLoginButtonLoading}>
       {isLocking ? UNLOCK : LOGIN}
     </CommonButton>
   );

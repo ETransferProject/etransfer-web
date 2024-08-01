@@ -12,11 +12,19 @@
   @include media-pad {
     padding: 16px 24px 8px;
   }
+
+  position: relative;
 }
 
 .header-text {
-  height: 24px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+
+  height: 56px;
   font-size: 16px;
-  line-height: 1.5;
+  line-height: 56px;
   @extend .font-family-medium;
 }

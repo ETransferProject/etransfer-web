@@ -22,7 +22,7 @@ import DepositTip from '../DepositTip';
 import CommonButton from 'components/CommonButton';
 import { CopySize } from 'components/Copy';
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
-import { useIsLogin, useLogin } from 'hooks/wallet';
+import { useIsLogin, useLogin, useShowLoginButtonLoading } from 'hooks/wallet';
 import { LOGIN, UNLOCK } from 'constants/wallet';
 import { SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE, TokenType } from 'constants/index';
 import TransferTip from '../TransferTip';
@@ -63,6 +63,8 @@ export default function MobileDepositContent({
   const { isLocking } = useConnectWallet();
   const isLogin = useIsLogin();
   const handleLogin = useLogin();
+  // Fix: It takes too long to obtain NightElf walletInfo, and the user mistakenly clicks the login button during this period.
+  const isLoginButtonLoading = useShowLoginButtonLoading();
 
   const renderDepositAddress = useMemo(() => {
     return (
@@ -227,7 +229,10 @@ export default function MobileDepositContent({
               styles['next-button-wrapper-safe-area'],
             )}>
             <Space direction="vertical" size={24} />
-            <CommonButton className={styles['next-button']} onClick={handleLogin}>
+            <CommonButton
+              className={styles['next-button']}
+              onClick={handleLogin}
+              loading={isLoginButtonLoading}>
               {isLocking ? UNLOCK : LOGIN}
             </CommonButton>
           </div>

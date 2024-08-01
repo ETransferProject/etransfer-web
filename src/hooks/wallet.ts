@@ -1,5 +1,5 @@
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { eTransferInstance } from 'utils/etransferInstance';
 import myEvents from 'utils/myEvent';
 import { resetLocalJWT } from 'api/utils';
@@ -8,6 +8,7 @@ import { TAelfAccounts } from 'types/wallet';
 import { SupportedChainId } from 'constants/index';
 import { handleWebLoginErrorMessage } from 'utils/api/error';
 import singleMessage from 'components/SingleMessage';
+import { useEffectOnce } from 'react-use';
 
 export function useInitWallet() {
   const { isConnected, walletInfo } = useConnectWallet();
@@ -89,4 +90,34 @@ export function useGetAccount() {
 
     return accounts;
   }, [isLogin, walletInfo]);
+}
+
+export function useShowLoginButtonLoading() {
+  const { isConnected, walletInfo } = useConnectWallet();
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const stopLoading = useCallback(() => {
+    timerRef.current = setTimeout(() => {
+      setLoading(false);
+      timerRef.current = null;
+    }, 3000);
+  }, []);
+
+  useEffectOnce(() => {
+    if (isConnected && !walletInfo) {
+      stopLoading();
+    } else {
+      setLoading(false);
+    }
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  });
+
+  return loading;
 }
