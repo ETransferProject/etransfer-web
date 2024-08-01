@@ -47,16 +47,22 @@ export default function MobileDepositContent({
   fromNetworkChanged,
   fromTokenChanged,
 }: TDepositContentProps) {
-  const { fromTokenSymbol, toChainItem, toTokenSymbol, fromNetwork } = useDepositState();
+  // common info
   const { isPadPX, isMobilePX } = useCommonState();
+
+  // deposit info
+  const { toChainItem } = useDepositState();
+  const fromTokenSymbol = useMemo(
+    () => fromTokenSelected?.symbol || '',
+    [fromTokenSelected?.symbol],
+  );
+  const toTokenSymbol = useMemo(() => toTokenSelected?.symbol || '', [toTokenSelected?.symbol]);
+  const fromNetwork = useMemo(() => fromNetworkSelected, [fromNetworkSelected]);
+
+  // login info
   const { isLocking } = useConnectWallet();
   const isLogin = useIsLogin();
   const handleLogin = useLogin();
-
-  const nextDisable = useMemo(
-    () => !fromTokenSymbol || !toTokenSymbol || !toChainItem.key || !fromNetworkSelected,
-    [fromNetworkSelected, fromTokenSymbol, toChainItem.key, toTokenSymbol],
-  );
 
   const renderDepositAddress = useMemo(() => {
     return (
@@ -92,20 +98,37 @@ export default function MobileDepositContent({
     );
   }, [depositInfo.extraNotes]);
 
+  const isShowDepositTip = useMemo(() => {
+    return (
+      !!fromTokenSymbol &&
+      !!toTokenSymbol &&
+      !!fromNetwork?.network &&
+      !!toChainItem.key &&
+      !!depositInfo.depositAddress
+    );
+  }, [
+    depositInfo.depositAddress,
+    fromNetwork?.network,
+    fromTokenSymbol,
+    toChainItem.key,
+    toTokenSymbol,
+  ]);
+
   const renderDepositInfo = useMemo(() => {
     return (
       <div>
-        {fromTokenSymbol && toTokenSymbol && (
-          <DepositTip fromToken={fromTokenSymbol} toToken={toTokenSymbol} isShowIcon={false} />
+        {isShowDepositTip && (
+          <>
+            <DepositTip fromToken={fromTokenSymbol} toToken={toTokenSymbol} isShowIcon={false} />
+            <Space direction="vertical" size={16} />
+          </>
         )}
-
-        <Space direction="vertical" size={16} />
 
         {fromTokenSelected && fromNetworkSelected && renderDepositAddress}
 
         <Space direction="vertical" size={12} />
 
-        {fromTokenSelected && fromNetworkSelected && depositInfo?.depositAddress && (
+        {fromTokenSelected && fromNetworkSelected && !!depositInfo?.depositAddress && (
           <>
             <DepositInfo
               modalContainer={'#mobileDepositInfoDrawer'}
@@ -130,6 +153,7 @@ export default function MobileDepositContent({
     fromNetworkSelected,
     fromTokenSelected,
     fromTokenSymbol,
+    isShowDepositTip,
     renderDepositAddress,
     renderDepositDescription,
     toTokenSymbol,
@@ -203,10 +227,7 @@ export default function MobileDepositContent({
               styles['next-button-wrapper-safe-area'],
             )}>
             <Space direction="vertical" size={24} />
-            <CommonButton
-              className={styles['next-button']}
-              onClick={handleLogin}
-              disabled={nextDisable}>
+            <CommonButton className={styles['next-button']} onClick={handleLogin}>
               {isLocking ? UNLOCK : LOGIN}
             </CommonButton>
           </div>
