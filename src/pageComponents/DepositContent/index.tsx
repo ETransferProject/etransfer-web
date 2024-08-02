@@ -477,14 +477,20 @@ export default function Content() {
       toSymbol: InitialDepositState.toTokenSymbol,
     });
   }, [getNetworkData, getTokenList]);
+  const initLogoutRef = useRef(initForLogout);
+  initLogoutRef.current = initForLogout;
+
+  const initForReLogin = useCallback(() => {
+    if (is401Ref.current || !depositInfo.depositAddress) {
+      getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
+    }
+  }, [depositInfo.depositAddress, fromTokenSymbol, getDepositData, toChainItem.key, toTokenSymbol]);
+  const initForReLoginRef = useRef(initForReLogin);
+  initForReLoginRef.current = initForReLogin;
 
   useEffectOnce(() => {
     // log in
-    const { remove } = myEvents.LoginSuccess.addListener(() => {
-      if (is401Ref.current || !depositInfo.depositAddress) {
-        getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
-      }
-    });
+    const { remove } = myEvents.LoginSuccess.addListener(() => initForReLoginRef.current());
 
     return () => {
       remove();
@@ -497,7 +503,7 @@ export default function Content() {
       dispatch(setFromTokenSymbol('USDT'));
       dispatch(setToTokenSymbol('USDT'));
       dispatch(setFromNetwork(undefined));
-      initForLogout();
+      initLogoutRef.current();
     });
 
     return () => {
