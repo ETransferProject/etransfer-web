@@ -99,7 +99,7 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId }: TExcha
   const getCalculateRef = useRef(getCalculate);
   getCalculateRef.current = getCalculate;
   useEffectOnce(() => {
-    const { remove } = myEvents.LoginSuccess.addListener(getCalculateRef.current);
+    const { remove } = myEvents.LoginSuccess.addListener(() => getCalculateRef.current());
 
     return () => {
       remove();
@@ -107,7 +107,7 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId }: TExcha
   });
 
   return (
-    <div className={clsx('flex-row-between', 'exchange-rate')}>
+    <div className={clsx('flex-row-between', styles['exchange-rate'])}>
       <div className="flex-row-center">
         <span className={styles['value']}>{`1 ${fromSymbol} ≈ ${exchange} ${formatSymbolDisplay(
           toSymbol,

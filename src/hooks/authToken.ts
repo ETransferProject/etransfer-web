@@ -26,7 +26,7 @@ export function useQueryAuthToken() {
   const { setLoading } = useLoading();
 
   const loginSuccessActive = useCallback(() => {
-    console.log('login success and emit event');
+    console.log('%c login success and emit event', 'color: green');
     myEvents.LoginSuccess.emit();
   }, []);
 

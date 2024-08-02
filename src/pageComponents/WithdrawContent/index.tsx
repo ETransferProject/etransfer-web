@@ -534,6 +534,7 @@ export default function WithdrawContent() {
   const getMaxBalance = useCallback(
     async (isLoading: boolean, item?: TTokenItem) => {
       try {
+        console.log('>>>>>> getMaxBalance', item?.symbol);
         const symbol = item?.symbol || currentSymbol;
         const decimal = item?.decimals || currentTokenDecimal;
         const caAddress = accounts?.[currentChainItemRef.current.key];
@@ -575,9 +576,10 @@ export default function WithdrawContent() {
   const getMaxBalanceRef = useRef(getMaxBalance);
   getMaxBalanceRef.current = getMaxBalance;
   const getMaxBalanceInterval = useCallback(async (item?: TTokenItem) => {
-    console.log('getMaxBalanceInterval start', item);
+    console.log('>>>>>> getMaxBalanceInterval start', item?.symbol);
     if (getMaxBalanceTimerRef.current) clearInterval(getMaxBalanceTimerRef.current);
     getMaxBalanceTimerRef.current = setInterval(async () => {
+      console.log('>>>>>> getMaxBalanceInterval interval', item?.symbol);
       await getMaxBalanceRef.current(false, item);
     }, 8000);
   }, []);
@@ -849,6 +851,7 @@ export default function WithdrawContent() {
         handleChainChanged(currentChainItemRef.current, newCurrentToken);
       }
 
+      console.log('>>>>>> init', newCurrentToken?.symbol);
       getMaxBalanceInterval(newCurrentToken);
     } catch (error) {
       console.log('withdraw init error', error);
@@ -888,6 +891,7 @@ export default function WithdrawContent() {
 
       getWithdrawDataRef.current(currentSymbol);
 
+      console.log('>>>>>> initForReLogin', currentSymbol, newCurrentToken?.symbol);
       getMaxBalanceInterval(newCurrentToken);
     } catch (error) {
       console.log('withdraw init error', error);
@@ -977,12 +981,12 @@ export default function WithdrawContent() {
   useEffect(() => {
     // log in
     const { remove: removeLoginSuccess } = myEvents.LoginSuccess.addListener(
-      initForReLoginRef.current,
+      () => initForReLoginRef.current,
     );
 
     // log out \ exit
     const { remove: removeLogoutSuccess } = myEvents.LogoutSuccess.addListener(
-      initForLogoutRef.current,
+      () => initForLogoutRef.current,
     );
 
     return () => {

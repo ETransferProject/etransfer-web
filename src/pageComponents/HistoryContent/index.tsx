@@ -203,7 +203,7 @@ export default function Content() {
     requestRecordsList(true, true);
   }, [requestRecordsList]);
   useEffectOnce(() => {
-    const { remove } = myEvents.LoginSuccess.addListener(refreshData);
+    const { remove } = myEvents.LoginSuccess.addListener(() => refreshData());
 
     return () => {
       remove();
@@ -212,7 +212,7 @@ export default function Content() {
 
   // Listener unread records
   useEffectOnce(() => {
-    const { remove } = myEvents.HistoryActive.addListener(handleReset);
+    const { remove } = myEvents.HistoryActive.addListener(() => handleReset());
 
     return () => {
       remove();
