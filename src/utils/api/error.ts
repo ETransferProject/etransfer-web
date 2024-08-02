@@ -38,13 +38,9 @@ export const formatApiError = (error: any, defaultMassage: string, isSetCancelNa
 };
 
 export const handleWebLoginErrorMessage = (error: any, errorText?: string) => {
-  if (error.nativeError && error.nativeError.code) {
+  if (error.nativeError && error.nativeError.message) {
     error = error.nativeError;
   }
 
-  if (error?.code === 50000) {
-    return 'Failed to fetch data';
-  }
-
-  return error.message || errorText || '';
+  return handleErrorMessage(error, errorText);
 };

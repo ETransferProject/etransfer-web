@@ -13,6 +13,7 @@ import {
 import { getDepositInfo, getDepositTokenList, getNetworkList } from 'utils/api/deposit';
 import { CHAIN_LIST, IChainNameItem } from 'constants/index';
 import {
+  InitialDepositState,
   setDepositAddress,
   setFromNetwork,
   setFromNetworkList,
@@ -35,6 +36,9 @@ import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { useSetAuthFromStorage } from 'hooks/authToken';
+import { useIsLogin } from 'hooks/wallet';
+import { addAelfNetwork, deleteAelfNetwork } from 'utils/deposit';
+import { AelfChainIdList } from 'constants/chain';
 
 export type TDepositContentProps = {
   fromNetworkSelected?: TNetworkItem;
@@ -72,11 +76,25 @@ export default function Content() {
     toTokenList,
     toTokenSymbol,
   } = useDepositState();
+  const fromNetworkListRef = useRef(fromNetworkList);
+  fromNetworkListRef.current = fromNetworkList;
+  const isLogin = useIsLogin();
+  const isLoginRef = useRef(isLogin);
+  isLoginRef.current = isLogin;
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const fromNetworkRef = useRef<string>();
   const [depositInfo, setDepositInfo] = useState<TDepositInfo>(InitDepositInfo);
-  const [showRetry, setShowRetry] = useState(false);
+  const [isGetRetry, setIsGetRetry] = useState(false);
+  const showRetry = useMemo(() => {
+    return (
+      isGetRetry &&
+      !!fromNetwork?.network &&
+      !!fromTokenSymbol &&
+      !!toChainItem.key &&
+      !!toTokenSymbol
+    );
+  }, [fromNetwork?.network, fromTokenSymbol, isGetRetry, toChainItem.key, toTokenSymbol]);
 
   const fromTokenSelected = useMemo(() => {
     return fromTokenList?.find((item) => item.symbol === fromTokenSymbol) || fromTokenList?.[0];
@@ -153,8 +171,11 @@ export default function Content() {
   const is401Ref = useRef(false);
   const getDepositData = useCallback(
     async (chainId: TChainId, symbol: string, toSymbol: string) => {
+      console.log('getDepositData >>>>>> fromNetworkRef.current', fromNetworkRef.current);
+      console.log('getDepositData >>>>>> isLogin', isLoginRef.current);
       try {
-        if (!fromNetworkRef.current) return;
+        if (!fromNetworkRef.current || !isLoginRef.current) return;
+        if (AelfChainIdList.includes(fromNetworkRef.current as any)) return;
         setLoading(true);
         const res = await getDepositInfo({
           chainId,
@@ -163,7 +184,7 @@ export default function Content() {
           toSymbol,
         });
         is401Ref.current = false;
-        setShowRetry(false);
+        setIsGetRetry(false);
         setLoading(false);
         setDepositInfo(res.depositInfo);
         dispatch(setDepositAddress(res.depositInfo.depositAddress));
@@ -174,9 +195,9 @@ export default function Content() {
           is401Ref.current = false;
         }
         if (error.name !== CommonErrorNameType.CANCEL && error.code === '50000') {
-          setShowRetry(true);
+          setIsGetRetry(true);
         } else {
-          setShowRetry(false);
+          setIsGetRetry(false);
         }
         if (error.name !== CommonErrorNameType.CANCEL) {
           setDepositInfo(InitDepositInfo);
@@ -194,12 +215,13 @@ export default function Content() {
         setIsShowNetworkLoading(true);
         const lastSymbol = symbol || fromTokenSymbol;
         const lastToSymbol = toSymbol || toTokenSymbol;
-        const { networkList } = await getNetworkList({
+        const { networkList: networkListOrigin } = await getNetworkList({
           type: BusinessType.Deposit,
           chainId: chainId,
           symbol: symbol,
         });
         is401Ref.current = false;
+        const networkList = addAelfNetwork(networkListOrigin, lastSymbol, lastToSymbol, chainId);
         dispatch(setFromNetworkList(networkList));
         if (networkList?.length === 1 && networkList[0].status !== NetworkStatus.Offline) {
           fromNetworkRef.current = networkList[0].network;
@@ -219,7 +241,7 @@ export default function Content() {
             }
           }
         }
-        !isPadPX && (await getDepositData(chainId, lastSymbol, lastToSymbol));
+        await getDepositData(chainId, lastSymbol, lastToSymbol);
       } catch (error: any) {
         setIsShowNetworkLoading(false);
         if (isAuthTokenError(error)) {
@@ -238,7 +260,7 @@ export default function Content() {
         setIsShowNetworkLoading(false);
       }
     },
-    [dispatch, fromTokenSymbol, getDepositData, isPadPX, toTokenSymbol],
+    [dispatch, fromTokenSymbol, getDepositData, toTokenSymbol],
   );
 
   const handleFromTokenChange = async (newItem: TDepositTokenItem) => {
@@ -280,7 +302,7 @@ export default function Content() {
     // Reset other data
     setDepositInfo(InitDepositInfo);
     dispatch(setDepositAddress(InitDepositInfo.depositAddress));
-    setShowRetry(false);
+    setIsGetRetry(false);
 
     // Refresh network and deposit info
     await getNetworkData({
@@ -294,9 +316,9 @@ export default function Content() {
     async (item: TNetworkItem) => {
       fromNetworkRef.current = item.network;
       dispatch(setFromNetwork(item));
-      !isPadPX && (await getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol));
+      await getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
     },
-    [dispatch, fromTokenSymbol, getDepositData, isPadPX, toChainItem.key, toTokenSymbol],
+    [dispatch, fromTokenSymbol, getDepositData, toChainItem.key, toTokenSymbol],
   );
 
   const handleToTokenChange = useCallback(
@@ -318,10 +340,16 @@ export default function Content() {
           toSymbol: newItem.symbol,
         });
       }
+      const networkList = deleteAelfNetwork(
+        fromNetworkListRef.current || [],
+        fromTokenSymbol,
+        newItem.symbol,
+      );
+      dispatch(setFromNetworkList(networkList));
       // toChain and fromToken not changed, refresh deposit info.
-      return !isPadPX && getDepositData(optionChainId, fromTokenSymbol, newItem.symbol);
+      return getDepositData(optionChainId, fromTokenSymbol, newItem.symbol);
     },
-    [dispatch, fromTokenSymbol, getDepositData, getNetworkData, isPadPX, toChainItem.key],
+    [dispatch, fromTokenSymbol, getDepositData, getNetworkData, toChainItem.key],
   );
 
   const handleToChainChanged = useCallback(
@@ -337,10 +365,6 @@ export default function Content() {
     },
     [dispatch, fromTokenSymbol, getNetworkData],
   );
-
-  const handleNext = useCallback(async () => {
-    await getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
-  }, [fromTokenSymbol, getDepositData, toChainItem.key, toTokenSymbol]);
 
   const handleRetry = useCallback(async () => {
     await getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
@@ -436,15 +460,44 @@ export default function Content() {
   //   };
   // }, [init]);
 
+  const initForLogout = useCallback(async () => {
+    setDepositInfo(InitDepositInfo);
+    setIsGetRetry(false);
+    fromNetworkRef.current = undefined;
+    is401Ref.current = false;
+
+    await getTokenList(
+      InitialDepositState.toChainItem.key,
+      InitialDepositState.fromTokenSymbol,
+      InitialDepositState.toTokenSymbol,
+    );
+    getNetworkData({
+      chainId: InitialDepositState.toChainItem.key,
+      symbol: InitialDepositState.fromTokenSymbol,
+      toSymbol: InitialDepositState.toTokenSymbol,
+    });
+  }, [getNetworkData, getTokenList]);
+
   useEffectOnce(() => {
+    // log in
     const { remove } = myEvents.LoginSuccess.addListener(() => {
-      if (is401Ref.current) {
-        getNetworkData({
-          chainId: toChainItem.key,
-          symbol: fromTokenSymbol,
-          toSymbol: toTokenSymbol,
-        });
+      if (is401Ref.current || !depositInfo.depositAddress) {
+        getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
       }
+    });
+
+    return () => {
+      remove();
+    };
+  });
+
+  useEffectOnce(() => {
+    // log out \ exit
+    const { remove } = myEvents.LogoutSuccess.addListener(() => {
+      dispatch(setFromTokenSymbol('USDT'));
+      dispatch(setToTokenSymbol('USDT'));
+      dispatch(setFromNetwork(undefined));
+      initForLogout();
     });
 
     return () => {
@@ -469,7 +522,6 @@ export default function Content() {
       fromTokenChanged={handleFromTokenChange}
       toTokenSelectCallback={handleToTokenChange}
       toChainChanged={handleToChainChanged}
-      onNext={handleNext}
     />
   ) : (
     <WebDepositContent

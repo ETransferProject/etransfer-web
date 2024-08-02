@@ -18,10 +18,16 @@ import FAQ from 'components/FAQ';
 import { FAQ_DEPOSIT } from 'constants/footer';
 import SelectToken from '../SelectToken';
 import SelectNetwork from '../SelectNetwork';
-import { CHAIN_LIST } from 'constants/index';
+import { CHAIN_LIST, SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE, TokenType } from 'constants/index';
 import SelectChainWrapper from '../SelectChainWrapper';
 import DepositTip from '../DepositTip';
 import { CopySize } from 'components/Copy';
+import NotLoginTip from '../NotLoginTip';
+import { useIsLogin, useLogin } from 'hooks/wallet';
+import { useDepositNetworkList } from 'hooks/deposit';
+import TransferTip from '../TransferTip';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
+import { AelfChainIdList } from 'constants/chain';
 
 export default function WebContent({
   fromNetworkSelected,
@@ -40,15 +46,62 @@ export default function WebContent({
   fromNetworkChanged,
   fromTokenChanged,
 }: TDepositContentProps) {
+  const isLogin = useIsLogin();
+  const handleLogin = useLogin();
+
   const {
     fromTokenSymbol,
     toChainItem,
     toTokenSymbol,
     fromTokenList,
-    fromNetworkList,
     toTokenList,
     toChainList,
+    fromNetwork,
   } = useDepositState();
+  const getFromNetworkList = useDepositNetworkList();
+  const newFromNetworkList = useMemo(() => {
+    return getFromNetworkList(fromTokenSymbol, toTokenSymbol);
+  }, [fromTokenSymbol, getFromNetworkList, toTokenSymbol]);
+
+  const isShowNotLoginTip = useMemo(() => {
+    return (
+      !isLogin &&
+      !!fromTokenSymbol &&
+      !!toTokenSymbol &&
+      !!fromNetwork?.network &&
+      !!toChainItem.key
+    );
+  }, [fromNetwork?.network, fromTokenSymbol, isLogin, toChainItem.key, toTokenSymbol]);
+
+  const isShowTransferTip = useMemo(() => {
+    return (
+      isLogin &&
+      SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE.includes(fromTokenSymbol as TokenType) &&
+      fromTokenSymbol === toTokenSymbol &&
+      AelfChainIdList.includes(fromNetwork?.network as TChainId)
+    );
+  }, [fromNetwork?.network, fromTokenSymbol, isLogin, toTokenSymbol]);
+
+  const isShowDepositAddressLabelForLogin = useMemo(() => {
+    return showRetry || !!depositInfo.depositAddress;
+  }, [depositInfo.depositAddress, showRetry]);
+  const isShowDepositAddressLabelForNotLogin = useMemo(() => {
+    return (
+      !showRetry &&
+      fromTokenSymbol &&
+      toChainItem.key &&
+      toTokenSymbol &&
+      fromNetworkSelected?.network &&
+      !isLogin
+    );
+  }, [
+    fromNetworkSelected?.network,
+    fromTokenSymbol,
+    isLogin,
+    showRetry,
+    toChainItem.key,
+    toTokenSymbol,
+  ]);
 
   const renderDepositDescription = useMemo(() => {
     return (
@@ -104,7 +157,7 @@ export default function WebContent({
             <div className={styles['label']}>From</div>
             <SelectNetwork
               className={styles['selected-chain']}
-              networkList={fromNetworkList || []}
+              networkList={newFromNetworkList || []}
               selected={fromNetworkSelected}
               isShowLoading={isShowNetworkLoading}
               selectCallback={fromNetworkChanged}
@@ -117,8 +170,16 @@ export default function WebContent({
             <div className={clsx('flex-row-center-between', styles['label'])}>
               <span>To</span>
               <div className="flex-row-center">
-                <div className={styles['circle']} />
-                <span className={styles['connected']}>Connected</span>
+                {isLogin ? (
+                  <>
+                    <div className={styles['circle']} />
+                    <span className={styles['connected']}>Connected</span>
+                  </>
+                ) : (
+                  <span className={styles['connect']} onClick={handleLogin}>
+                    Connect
+                  </span>
+                )}
               </div>
             </div>
 
@@ -142,7 +203,6 @@ export default function WebContent({
                 fromSymbol={fromTokenSymbol}
                 toSymbol={toTokenSymbol}
                 toChainId={toChainItem.key}
-                slippage={depositInfo.extraInfo?.slippage}
               />
             </>
           )}
@@ -155,40 +215,60 @@ export default function WebContent({
         )}
 
         <Space direction="vertical" size={40} />
-        {(showRetry || !!depositInfo.depositAddress) && (
-          <div className={styles['label']}>Deposit address</div>
-        )}
-        {showRetry && <DepositRetryForWeb isShowImage={true} onClick={onRetry} />}
-        {!showRetry && !!depositInfo.depositAddress && (
+
+        {isShowTransferTip && (
           <>
-            <Space direction="vertical" size={4} />
-            <DepositTip fromToken={fromTokenSymbol} toToken={toTokenSymbol} />
-            <Space direction="vertical" size={12} />
-            <div className={clsx('flex-row-center', styles['deposit-address-wrapper'])}>
-              {qrCodeValue ? (
-                <CommonQRCode value={qrCodeValue} logoUrl={tokenLogoUrl} logoSize={20} />
-              ) : (
-                <CommonImage
-                  className={clsx('flex-none', styles['qr-code-placeholder'])}
-                  src={qrCodePlaceholder}
-                  alt="qrCodePlaceholder"
-                />
-              )}
-              <CommonAddress
-                label={DEPOSIT_ADDRESS_LABEL}
-                value={depositInfo.depositAddress}
-                copySize={CopySize.Big}
-              />
-            </div>
-            <Space direction="vertical" size={12} />
-            <DepositInfo
-              minimumDeposit={depositInfo.minAmount}
-              contractAddress={contractAddress}
-              contractAddressLink={contractAddressLink}
-              minAmountUsd={depositInfo.minAmountUsd || ''}
+            <div className={clsx(styles['label'], styles['label-deposit-address'])}>Transfer</div>
+            <TransferTip
+              toChainItem={toChainItem}
+              symbol={fromTokenSymbol}
+              network={fromNetworkSelected}
             />
             <Space direction="vertical" size={24} />
-            {renderDepositDescription}
+          </>
+        )}
+
+        {!isShowTransferTip && (
+          <>
+            {(isShowDepositAddressLabelForLogin || isShowDepositAddressLabelForNotLogin) && (
+              <div className={clsx(styles['label'], styles['label-deposit-address'])}>
+                Deposit address
+              </div>
+            )}
+            {isShowNotLoginTip && <NotLoginTip />}
+            {isLogin && showRetry && <DepositRetryForWeb isShowImage={true} onClick={onRetry} />}
+            {isLogin && !showRetry && !!depositInfo.depositAddress && (
+              <>
+                <Space direction="vertical" size={4} />
+                <DepositTip fromToken={fromTokenSymbol} toToken={toTokenSymbol} />
+                <Space direction="vertical" size={12} />
+                <div className={clsx('flex-row-center', styles['deposit-address-wrapper'])}>
+                  {qrCodeValue ? (
+                    <CommonQRCode value={qrCodeValue} logoUrl={tokenLogoUrl} logoSize={20} />
+                  ) : (
+                    <CommonImage
+                      className={clsx('flex-none', styles['qr-code-placeholder'])}
+                      src={qrCodePlaceholder}
+                      alt="qrCodePlaceholder"
+                    />
+                  )}
+                  <CommonAddress
+                    label={DEPOSIT_ADDRESS_LABEL}
+                    value={depositInfo.depositAddress}
+                    copySize={CopySize.Big}
+                  />
+                </div>
+                <Space direction="vertical" size={12} />
+                <DepositInfo
+                  minimumDeposit={depositInfo.minAmount}
+                  contractAddress={contractAddress}
+                  contractAddressLink={contractAddressLink}
+                  minAmountUsd={depositInfo.minAmountUsd || ''}
+                />
+                <Space direction="vertical" size={24} />
+                {renderDepositDescription}
+              </>
+            )}
           </>
         )}
       </div>
@@ -197,18 +277,23 @@ export default function WebContent({
     contractAddress,
     contractAddressLink,
     depositInfo.depositAddress,
-    depositInfo.extraInfo?.slippage,
     depositInfo.minAmount,
     depositInfo.minAmountUsd,
     fromNetworkChanged,
-    fromNetworkList,
     fromNetworkSelected,
     fromTokenChanged,
     fromTokenList,
     fromTokenSelected,
     fromTokenSymbol,
+    handleLogin,
+    isLogin,
+    isShowDepositAddressLabelForLogin,
+    isShowDepositAddressLabelForNotLogin,
     isShowNetworkLoading,
+    isShowNotLoginTip,
+    isShowTransferTip,
     menuItems,
+    newFromNetworkList,
     onRetry,
     qrCodeValue,
     renderDepositDescription,

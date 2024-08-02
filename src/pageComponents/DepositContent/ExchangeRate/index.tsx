@@ -18,14 +18,14 @@ type TExchangeRate = {
   fromSymbol: string;
   toSymbol: string;
   toChainId: TChainId;
-  slippage?: string;
 };
 
 const EXCHANGE_FROM_AMOUNT = '1';
 
-export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage }: TExchangeRate) {
+export default function ExchangeRate({ fromSymbol, toSymbol, toChainId }: TExchangeRate) {
   // const { fromTokenSymbol, toChainItem, toTokenSymbol } = useDepositState();
   const [exchange, setExchange] = useState(defaultNullValue);
+  const [slippage, setSlippage] = useState('');
   const [updateTime, setUpdateTime] = useState(MAX_UPDATE_TIME);
   const updateTimeRef = useRef(MAX_UPDATE_TIME);
   const updateTimerRef = useRef<NodeJS.Timer | number>();
@@ -44,6 +44,7 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
         fromAmount: EXCHANGE_FROM_AMOUNT,
       });
       setExchange(conversionRate?.toAmount || defaultNullValue);
+      setSlippage(conversionRate.extraInfo?.slippage || '');
     } catch (error: any) {
       if (isAuthTokenError(error)) {
         singleMessage.info(SIGNATURE_MISSING_TIP);
@@ -70,6 +71,7 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
     clearInterval(updateTimerRef.current);
     updateTimerRef.current = undefined;
     setExchange(defaultNullValue);
+    setSlippage('');
   }, []);
 
   const resetTimer = useCallback(() => {
@@ -97,7 +99,7 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
   const getCalculateRef = useRef(getCalculate);
   getCalculateRef.current = getCalculate;
   useEffectOnce(() => {
-    const { remove } = myEvents.LoginSuccess.addListener(getCalculateRef.current);
+    const { remove } = myEvents.LoginSuccess.addListener(() => getCalculateRef.current());
 
     return () => {
       remove();
@@ -105,7 +107,7 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId, slippage
   });
 
   return (
-    <div className={clsx('flex-row-between', 'exchange-rate')}>
+    <div className={clsx('flex-row-between', styles['exchange-rate'])}>
       <div className="flex-row-center">
         <span className={styles['value']}>{`1 ${fromSymbol} ≈ ${exchange} ${formatSymbolDisplay(
           toSymbol,

@@ -47,12 +47,12 @@
             font-size: 14px;
             line-height: 22px;
           }
-          .icon{
+          .icon {
             width: 24px;
             height: 24px;
             margin-right: 8px;
           }
-          .default{
+          .default {
             border-radius: 50%;
             border: 1px solid $border;
             text-align: center;
@@ -68,4 +68,9 @@
       }
     }
   }
+}
+
+.token-item-for-withdraw{
+  height: 64px;
+  padding: 10px 12px !important;
 }

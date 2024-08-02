@@ -3,6 +3,9 @@ import styles from './styles.module.scss';
 import CommonImage from 'components/CommonImage';
 import { useEffect, useState } from 'react';
 import { formatSymbolDisplay } from 'utils/format';
+import { SupportedELFChainId } from 'constants/index';
+import { BalanceAndUSD } from '../BalanceAndUSD';
+
 interface TokenCardProps {
   icon: string;
   name: string;
@@ -11,6 +14,9 @@ interface TokenCardProps {
   symbol: string;
   type?: string;
   open: boolean;
+  isShowBalance?: boolean;
+  decimals?: string | number;
+  chainId?: SupportedELFChainId;
   onClick: () => void;
 }
 
@@ -21,20 +27,29 @@ export function TokenCardForMobile({
   icon,
   isDisabled = false,
   open,
+  isShowBalance,
+  decimals,
+  chainId,
   onClick,
 }: TokenCardProps) {
   return (
     <div
       className={clsx(
+        'flex-row-center-between',
         styles['token-card-for-mobile'],
         styles['token-card-for-web-hover'],
         isDisabled && styles['token-card-disabled'],
         className,
       )}
       onClick={onClick}>
-      <SelectImage icon={icon} open={open} symbol={formatSymbolDisplay(symbol)} />
-      <span className={styles['token-card-name']}>{formatSymbolDisplay(symbol)}</span>
-      <span className={styles['token-card-symbol']}>{name}</span>
+      <div className="flex-row-center">
+        <SelectImage icon={icon} open={open} symbol={formatSymbolDisplay(symbol)} />
+        <span className={styles['token-card-name']}>{formatSymbolDisplay(symbol)}</span>
+        <span className={styles['token-card-symbol']}>{name}</span>
+      </div>
+      {open && isShowBalance && decimals && chainId && (
+        <BalanceAndUSD symbol={symbol} decimals={decimals} chainId={chainId} />
+      )}
     </div>
   );
 }
@@ -46,21 +61,29 @@ export function TokenCardForWeb({
   symbol,
   isDisabled = false,
   open,
+  isShowBalance,
+  decimals,
+  chainId,
   onClick,
 }: TokenCardProps) {
   return (
     <div
       className={clsx(
-        'flex',
+        'flex-row-center-between',
         styles['token-card-for-web'],
         styles['token-card-for-web-hover'],
         isDisabled && styles['token-card-disabled'],
         className,
       )}
       onClick={onClick}>
-      <SelectImage icon={icon} open={open} symbol={formatSymbolDisplay(symbol)} />
-      <span className={styles['token-card-name']}>{formatSymbolDisplay(symbol)}</span>
-      <span className={styles['token-card-symbol']}>{name}</span>
+      <div className="flex-row-center">
+        <SelectImage icon={icon} open={open} symbol={formatSymbolDisplay(symbol)} />
+        <span className={styles['token-card-name']}>{formatSymbolDisplay(symbol)}</span>
+        <span className={styles['token-card-symbol']}>{name}</span>
+      </div>
+      {open && isShowBalance && decimals && chainId && (
+        <BalanceAndUSD symbol={symbol} decimals={decimals} chainId={chainId} />
+      )}
     </div>
   );
 }

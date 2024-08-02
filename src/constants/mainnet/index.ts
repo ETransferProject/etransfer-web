@@ -80,10 +80,12 @@ export const ADDRESS_MAP = {
   [SupportedELFChainId.AELF]: {
     [ContractType.CA]: AELF.CA_CONTRACT_V2,
     [ContractType.TOKEN]: AELF.TOKEN_CONTRACT,
+    [ContractType.ETRANSFER]: AELF.ETRANSFER_CONTRACT,
   },
   [SupportedELFChainId.tDVV]: {
     [ContractType.CA]: tDVV.CA_CONTRACT_V2,
     [ContractType.TOKEN]: tDVV.TOKEN_CONTRACT,
+    [ContractType.ETRANSFER]: tDVV.ETRANSFER_CONTRACT,
   },
 };
 

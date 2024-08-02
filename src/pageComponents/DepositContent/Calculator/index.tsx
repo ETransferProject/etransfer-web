@@ -146,7 +146,7 @@ export default function Calculator() {
   const getCalculateRef = useRef(getCalculate);
   getCalculateRef.current = getCalculate;
   useEffectOnce(() => {
-    const { remove } = myEvents.LoginSuccess.addListener(getCalculateRef.current);
+    const { remove } = myEvents.LoginSuccess.addListener(() => getCalculateRef.current());
 
     return () => {
       remove();

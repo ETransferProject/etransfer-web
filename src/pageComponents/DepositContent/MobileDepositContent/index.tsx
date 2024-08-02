@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import clsx from 'clsx';
 import CommonAddress from 'components/CommonAddress';
 import DepositInfo from 'pageComponents/DepositContent/DepositInfo';
@@ -19,9 +19,16 @@ import { useCommonState, useDepositState } from 'store/Provider/hooks';
 import FAQ from 'components/FAQ';
 import { FAQ_DEPOSIT } from 'constants/footer';
 import DepositTip from '../DepositTip';
-import CommonDrawer from 'components/CommonDrawer';
 import CommonButton from 'components/CommonButton';
 import { CopySize } from 'components/Copy';
+import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
+import { useIsLogin, useLogin, useShowLoginButtonLoading } from 'hooks/wallet';
+import { LOGIN, UNLOCK } from 'constants/wallet';
+import { SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE, TokenType } from 'constants/index';
+import TransferTip from '../TransferTip';
+import { useGoWithdraw } from 'hooks/withdraw';
+import { AelfChainIdList } from 'constants/chain';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 
 export default function MobileDepositContent({
   fromNetworkSelected,
@@ -39,14 +46,25 @@ export default function MobileDepositContent({
   toChainChanged,
   fromNetworkChanged,
   fromTokenChanged,
-  onNext,
-}: TDepositContentProps & { onNext: () => Promise<void> }) {
-  const { fromTokenSymbol, toChainItem, toTokenSymbol } = useDepositState();
+}: TDepositContentProps) {
+  // common info
   const { isPadPX, isMobilePX } = useCommonState();
-  const nextDisable = useMemo(
-    () => !fromTokenSymbol || !toTokenSymbol || !toChainItem.key || !fromNetworkSelected,
-    [fromNetworkSelected, fromTokenSymbol, toChainItem.key, toTokenSymbol],
+
+  // deposit info
+  const { toChainItem } = useDepositState();
+  const fromTokenSymbol = useMemo(
+    () => fromTokenSelected?.symbol || '',
+    [fromTokenSelected?.symbol],
   );
+  const toTokenSymbol = useMemo(() => toTokenSelected?.symbol || '', [toTokenSelected?.symbol]);
+  const fromNetwork = useMemo(() => fromNetworkSelected, [fromNetworkSelected]);
+
+  // login info
+  const { isLocking } = useConnectWallet();
+  const isLogin = useIsLogin();
+  const handleLogin = useLogin();
+  // Fix: It takes too long to obtain NightElf walletInfo, and the user mistakenly clicks the login button during this period.
+  const isLoginButtonLoading = useShowLoginButtonLoading();
 
   const renderDepositAddress = useMemo(() => {
     return (
@@ -63,8 +81,8 @@ export default function MobileDepositContent({
           )}
         </div>
         <Space direction="vertical" size={16} />
-        {showRetry && <DepositRetryForMobile onClick={onRetry} />}
-        {!showRetry && depositInfo?.depositAddress && (
+        {isLogin && showRetry && <DepositRetryForMobile onClick={onRetry} />}
+        {isLogin && !showRetry && depositInfo?.depositAddress && (
           <CommonAddress
             label={DEPOSIT_ADDRESS_LABEL}
             value={depositInfo.depositAddress}
@@ -73,7 +91,7 @@ export default function MobileDepositContent({
         )}
       </div>
     );
-  }, [depositInfo.depositAddress, onRetry, qrCodeValue, showRetry, tokenLogoUrl]);
+  }, [depositInfo.depositAddress, isLogin, onRetry, qrCodeValue, showRetry, tokenLogoUrl]);
 
   const renderDepositDescription = useMemo(() => {
     return (
@@ -82,30 +100,37 @@ export default function MobileDepositContent({
     );
   }, [depositInfo.extraNotes]);
 
-  const [isShowDepositInfo, setIsShowDepositInfo] = useState(false);
-  const renderDepositInfoDrawer = useMemo(() => {
+  const isShowDepositTip = useMemo(() => {
     return (
-      <CommonDrawer
-        id="mobileDepositInfoDrawer"
-        className={styles['deposit-info-drawer']}
-        open={isShowDepositInfo}
-        onClose={() => setIsShowDepositInfo(false)}
-        destroyOnClose
-        placement="bottom"
-        title="Deposit Address"
-        closable={true}
-        height="88%">
-        {fromTokenSymbol && toTokenSymbol && (
-          <DepositTip fromToken={fromTokenSymbol} toToken={toTokenSymbol} isShowIcon={false} />
-        )}
+      !!fromTokenSymbol &&
+      !!toTokenSymbol &&
+      !!fromNetwork?.network &&
+      !!toChainItem.key &&
+      !!depositInfo.depositAddress
+    );
+  }, [
+    depositInfo.depositAddress,
+    fromNetwork?.network,
+    fromTokenSymbol,
+    toChainItem.key,
+    toTokenSymbol,
+  ]);
 
-        <Space direction="vertical" size={16} />
+  const renderDepositInfo = useMemo(() => {
+    return (
+      <div>
+        {isShowDepositTip && (
+          <>
+            <DepositTip fromToken={fromTokenSymbol} toToken={toTokenSymbol} isShowIcon={false} />
+            <Space direction="vertical" size={16} />
+          </>
+        )}
 
         {fromTokenSelected && fromNetworkSelected && renderDepositAddress}
 
         <Space direction="vertical" size={12} />
 
-        {fromTokenSelected && fromNetworkSelected && depositInfo?.depositAddress && (
+        {fromTokenSelected && fromNetworkSelected && !!depositInfo?.depositAddress && (
           <>
             <DepositInfo
               modalContainer={'#mobileDepositInfoDrawer'}
@@ -119,7 +144,7 @@ export default function MobileDepositContent({
             {renderDepositDescription}
           </>
         )}
-      </CommonDrawer>
+      </div>
     );
   }, [
     contractAddress,
@@ -130,16 +155,25 @@ export default function MobileDepositContent({
     fromNetworkSelected,
     fromTokenSelected,
     fromTokenSymbol,
-    isShowDepositInfo,
+    isShowDepositTip,
     renderDepositAddress,
     renderDepositDescription,
     toTokenSymbol,
   ]);
 
-  const onClickNext = useCallback(async () => {
-    await onNext();
-    setIsShowDepositInfo(true);
-  }, [onNext]);
+  const isShowTransferTip = useMemo(() => {
+    return (
+      isLogin &&
+      SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE.includes(fromTokenSymbol as TokenType) &&
+      fromTokenSymbol === toTokenSymbol &&
+      AelfChainIdList.includes(fromNetwork?.network as TChainId)
+    );
+  }, [fromNetwork?.network, fromTokenSymbol, isLogin, toTokenSymbol]);
+
+  const goWithdraw = useGoWithdraw();
+  const handleGoWithdraw = useCallback(async () => {
+    goWithdraw(toChainItem, fromTokenSymbol, fromNetwork);
+  }, [fromNetwork, fromTokenSymbol, goWithdraw, toChainItem]);
 
   return (
     <div className="main-content-container main-content-container-safe-area">
@@ -172,7 +206,6 @@ export default function MobileDepositContent({
                 fromSymbol={fromTokenSymbol}
                 toSymbol={toTokenSymbol}
                 toChainId={toChainItem.key}
-                slippage={depositInfo.extraInfo?.slippage}
               />
             </>
           )}
@@ -185,16 +218,44 @@ export default function MobileDepositContent({
           </>
         )}
 
-        <div
-          className={clsx(styles['next-button-wrapper'], styles['next-button-wrapper-safe-area'])}>
-          <Space direction="vertical" size={24} />
-          <CommonButton
-            className={styles['next-button']}
-            onClick={onClickNext}
-            disabled={nextDisable}>
-            Next
-          </CommonButton>
-        </div>
+        <Space direction="vertical" size={24} />
+
+        {!isShowTransferTip && isLogin && renderDepositInfo}
+
+        {!isLogin && (
+          <div
+            className={clsx(
+              styles['next-button-wrapper'],
+              styles['next-button-wrapper-safe-area'],
+            )}>
+            <Space direction="vertical" size={24} />
+            <CommonButton
+              className={styles['next-button']}
+              onClick={handleLogin}
+              loading={isLoginButtonLoading}>
+              {isLocking ? UNLOCK : LOGIN}
+            </CommonButton>
+          </div>
+        )}
+        {isLogin && isShowTransferTip && (
+          <div
+            className={clsx(
+              styles['next-button-wrapper'],
+              styles['next-button-wrapper-safe-area'],
+            )}>
+            <Space direction="vertical" size={24} />
+            <TransferTip
+              isShowIcon={false}
+              toChainItem={toChainItem}
+              symbol={fromTokenSymbol}
+              network={fromNetwork}
+            />
+            <Space direction="vertical" size={24} />
+            <CommonButton className={styles['next-button']} onClick={handleGoWithdraw}>
+              Go to Withdraw Page
+            </CommonButton>
+          </div>
+        )}
       </div>
       {isPadPX && !isMobilePX && (
         <>
@@ -206,7 +267,6 @@ export default function MobileDepositContent({
           />
         </>
       )}
-      {renderDepositInfoDrawer}
     </div>
   );
 }

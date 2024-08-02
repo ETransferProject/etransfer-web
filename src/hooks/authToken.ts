@@ -3,8 +3,8 @@ import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { QueryAuthApiExtraRequest, getLocalJWT, queryAuthApi } from 'api/utils';
 import { APP_NAME } from 'constants/index';
 import { PortkeyVersion } from 'constants/wallet';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useCommonState, useLoading } from 'store/Provider/hooks';
+import { useCallback, useEffect, useState } from 'react';
+import { useLoading } from 'store/Provider/hooks';
 import AElf from 'aelf-sdk';
 import { recoverPubKey } from 'utils/aelf/aelfBase';
 import { useDebounceCallback } from 'hooks/debounce';
@@ -17,28 +17,18 @@ import { checkEOARegistration } from 'utils/api/user';
 import myEvents from 'utils/myEvent';
 import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
 import singleMessage from 'components/SingleMessage';
-import { useRouterPush } from './route';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { SideMenuKey } from 'constants/home';
 import { WalletInfo } from 'types/wallet';
+import { useIsLogin } from './wallet';
 
 export function useQueryAuthToken() {
-  const { activeMenuKey } = useCommonState();
-  const { isConnected, getSignature, walletType, walletInfo, disConnectWallet } =
-    useConnectWallet();
+  const { getSignature, walletType, walletInfo, disConnectWallet } = useConnectWallet();
+  const isLogin = useIsLogin();
   const { setLoading } = useLoading();
-  const routerPush = useRouterPush();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const routeType = useMemo(() => searchParams.get('type') as SideMenuKey, [searchParams]);
 
   const loginSuccessActive = useCallback(() => {
-    console.log('login success and emit event');
+    console.log('%c login success and emit event', 'color: green');
     myEvents.LoginSuccess.emit();
-    if (pathname === '/') {
-      routerPush('/' + (routeType || activeMenuKey).toLocaleLowerCase());
-    }
-  }, [activeMenuKey, pathname, routeType, routerPush]);
+  }, []);
 
   const handleGetSignature = useCallback(async () => {
     if (!walletInfo) return;
@@ -93,7 +83,7 @@ export function useQueryAuthToken() {
   }, [isReCaptchaLoading, setLoading, walletInfo, walletType]);
 
   const queryAuth = useCallback(async () => {
-    if (!isConnected || !walletInfo) return;
+    if (!isLogin) return;
     if (eTransferInstance.obtainingSignature) return;
     try {
       // Mark: only one signature process can be performed at the same time
@@ -128,7 +118,7 @@ export function useQueryAuthToken() {
 
       await queryAuthApi(apiParams);
       eTransferInstance.setUnauthorized(false);
-      console.log('login status', isConnected);
+      console.log('login status isLogin', isLogin);
       loginSuccessActive();
     } catch (error: any) {
       console.log('queryAuthApi error', error);
@@ -140,6 +130,7 @@ export function useQueryAuthToken() {
         singleMessage.error(error?.data);
       }
       await disConnectWallet();
+
       return;
     } finally {
       setLoading(false);
@@ -150,7 +141,7 @@ export function useQueryAuthToken() {
     disConnectWallet,
     handleGetSignature,
     handleReCaptcha,
-    isConnected,
+    isLogin,
     loginSuccessActive,
     setLoading,
     walletInfo,
@@ -158,7 +149,7 @@ export function useQueryAuthToken() {
   ]);
 
   const getAuth = useDebounceCallback(async () => {
-    if (!isConnected || !walletInfo) return;
+    if (!isLogin) return;
     if (eTransferInstance.obtainingSignature) return;
     try {
       const { caHash } = await getCaHashAndOriginChainIdByWallet(
@@ -183,7 +174,7 @@ export function useQueryAuthToken() {
     } catch (error) {
       console.log('getAuth error:', error);
     }
-  }, [isConnected, walletInfo, walletType]);
+  }, [isLogin, walletInfo, walletType]);
 
   return { getAuth, queryAuth, loginSuccessActive };
 }

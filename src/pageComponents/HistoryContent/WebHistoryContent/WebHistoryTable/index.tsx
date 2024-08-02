@@ -13,6 +13,8 @@ import ArrivalTimeBox from 'pageComponents/HistoryContent/ArrivalTimeBox';
 import AmountBox from 'pageComponents/HistoryContent/AmountBox';
 import FromAndToBox from 'pageComponents/HistoryContent/FromAndToBox';
 import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
+import { useIsLogin } from 'hooks/wallet';
+import { LOGIN_TO_VIEW_HISTORY, NO_HISTORY_FOUND } from 'constants/records';
 
 const columns = [
   {
@@ -130,6 +132,7 @@ const columns = [
 export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProps) {
   const { recordsList, totalCount, skipCount, maxResultCount } = useRecordsState();
   const dispatch = useAppDispatch();
+  const isLogin = useIsLogin();
 
   const handleRecordListData = (recordsList: TRecordsListItem[]) => {
     if (recordsList.length === 0) {
@@ -187,7 +190,9 @@ export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProp
         columns={columns}
         scroll={{ x: 1020 }}
         locale={{
-          emptyText: <EmptyDataBox emptyText={'No records found'} />,
+          emptyText: (
+            <EmptyDataBox emptyText={isLogin ? NO_HISTORY_FOUND : LOGIN_TO_VIEW_HISTORY} />
+          ),
         }}
         pagination={
           totalCount > maxResultCount

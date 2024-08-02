@@ -10,9 +10,9 @@ export default function MobileHeader() {
   const { activeMenuKey } = useCommonState();
 
   return (
-    <div className={clsx('flex-center', styles['header-wrapper'])}>
+    <div className={clsx('flex-row-center-between', styles['header-wrapper'])}>
       <SelectMenu />
-      <span className={clsx('flex-1', 'text-center', styles['header-text'])}>
+      <span className={clsx('text-center', styles['header-text'])}>
         {activeMenuKey === SideMenuKey.Deposit && 'Deposit Assets'}
         {activeMenuKey === SideMenuKey.Withdraw && 'Withdraw Assets'}
         {activeMenuKey === SideMenuKey.History && 'History'}

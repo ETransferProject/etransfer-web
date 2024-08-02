@@ -4,6 +4,7 @@ import { SideMenuKey } from 'constants/home';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { stringifyUrl } from 'query-string';
+import { TWithdrawEntryConfig } from 'types';
 
 export function useRouteParamType(): { type: SideMenuKey } {
   const pathname = usePathname();
@@ -163,4 +164,18 @@ export function useChangeSideMenu() {
     },
     [dispatch],
   );
+}
+
+export function useWithdrawRouter() {
+  const router = useRouter();
+  const routerRef = useRef(router.push);
+  routerRef.current = router.push;
+
+  return useCallback((search: TWithdrawEntryConfig) => {
+    const href = stringifyUrl({
+      url: '/withdraw',
+      query: Object.keys(search).length > 0 ? search : undefined,
+    });
+    routerRef.current(href);
+  }, []);
 }

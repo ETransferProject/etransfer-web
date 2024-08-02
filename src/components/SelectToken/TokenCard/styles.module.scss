@@ -3,9 +3,7 @@
 @import '/src/assets/theme/font.scss';
 
 .token-card-for-mobile {
-  display: flex;
   padding: 16px;
-  align-items: center;
   gap: 2px;
   border-bottom: 1px solid $dividers;
   background: $page-bg;
@@ -24,9 +22,7 @@
 }
 
 .token-card-for-web {
-  display: flex;
   padding: 16px 12px;
-  align-items: center;
   border-bottom: 1px solid $dividers;
   background: $page-bg;
   cursor: pointer;
@@ -50,6 +46,9 @@
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
+  img {
+    border-radius: 50%;
+  }
 }
 .token-card-defaultIcon {
   font-size: 14px;

@@ -1,12 +1,14 @@
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { eTransferInstance } from 'utils/etransferInstance';
 import myEvents from 'utils/myEvent';
 import { resetLocalJWT } from 'api/utils';
 import { useQueryAuthToken } from 'hooks/authToken';
-import { useRouterPush } from 'hooks/route';
 import { TAelfAccounts } from 'types/wallet';
 import { SupportedChainId } from 'constants/index';
+import { handleWebLoginErrorMessage } from 'utils/api/error';
+import singleMessage from 'components/SingleMessage';
+import { useEffectOnce } from 'react-use';
 
 export function useInitWallet() {
   const { isConnected, walletInfo } = useConnectWallet();
@@ -16,23 +18,17 @@ export function useInitWallet() {
   getAuthRef.current = getAuth;
   useEffect(() => {
     console.warn('>>>>>> isConnected', isConnected);
-    if (!isConnected) {
-      routerPushRef.current('/', true);
-    } else if (isConnected && walletInfo) {
+    console.warn('>>>>>> walletInfo', walletInfo);
+    if (isConnected && walletInfo) {
       getAuthRef.current();
     }
   }, [isConnected, walletInfo]);
 
   const { queryAuth } = useQueryAuthToken();
-  const routerPush = useRouterPush();
-  const routerPushRef = useRef(routerPush);
-  routerPushRef.current = routerPush;
   const onAuthorizationExpired = useCallback(async () => {
     if (!isConnected) {
-      console.log('AuthorizationExpired: Not Logined');
+      console.warn('AuthorizationExpired: Not Logined');
       eTransferInstance.setUnauthorized(false);
-      routerPushRef.current('/', false);
-
       return;
     } else if (isConnected && walletInfo) {
       resetLocalJWT();
@@ -59,12 +55,33 @@ export function useInitWallet() {
   }, []);
 }
 
-export function useGetAccount() {
+export function useIsLogin() {
   const { isConnected, walletInfo } = useConnectWallet();
+  return useMemo(() => isConnected && !!walletInfo, [isConnected, walletInfo]);
+}
+
+export function useLogin() {
+  const { connectWallet } = useConnectWallet();
+  const isLogin = useIsLogin();
+
+  return useCallback(async () => {
+    if (isLogin) return;
+
+    try {
+      await connectWallet();
+    } catch (error) {
+      singleMessage.error(handleWebLoginErrorMessage(error));
+    }
+  }, [connectWallet, isLogin]);
+}
+
+export function useGetAccount() {
+  const { walletInfo } = useConnectWallet();
+  const isLogin = useIsLogin();
 
   // WalletInfo TAelfAccounts ExtraInfoForDiscover | ExtraInfoForPortkeyAA | ExtraInfoForNightElf;
   return useMemo(() => {
-    if (!isConnected || !walletInfo) return undefined;
+    if (!isLogin) return undefined;
 
     const accounts: TAelfAccounts = {
       [SupportedChainId.mainChain]: 'ELF_' + walletInfo?.address + '_' + SupportedChainId.mainChain,
@@ -72,5 +89,35 @@ export function useGetAccount() {
     };
 
     return accounts;
-  }, [isConnected, walletInfo]);
+  }, [isLogin, walletInfo]);
+}
+
+export function useShowLoginButtonLoading() {
+  const { isConnected, walletInfo } = useConnectWallet();
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const stopLoading = useCallback(() => {
+    timerRef.current = setTimeout(() => {
+      setLoading(false);
+      timerRef.current = null;
+    }, 3000);
+  }, []);
+
+  useEffectOnce(() => {
+    if (isConnected && !walletInfo) {
+      stopLoading();
+    } else {
+      setLoading(false);
+    }
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  });
+
+  return loading;
 }

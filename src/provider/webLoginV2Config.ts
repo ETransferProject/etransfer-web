@@ -16,6 +16,7 @@ import {
 } from 'constants/index';
 import { ETRANSFER_LOGO_BASE64 } from 'constants/wallet';
 import { TelegramPlatform } from 'utils/telegram';
+import { devices } from '@portkey/utils';
 
 const didConfig = {
   graphQLUrl: WebLoginGraphqlUrl,
@@ -55,11 +56,26 @@ const portkeyAAWallet = new PortkeyAAWallet({
   autoShowUnlock: true,
 });
 
+const isMobileDevices = devices.isMobileDevices();
+
 export const config: IConfigProps = {
   didConfig,
   baseConfig,
   wallets: isTelegramPlatform
     ? [portkeyAAWallet]
+    : isMobileDevices
+    ? [
+        portkeyAAWallet,
+        new PortkeyDiscoverWallet({
+          networkType: NETWORK_TYPE,
+          chainId: SupportedChainId.sideChain,
+          autoRequestAccount: true,
+          autoLogoutOnDisconnected: true,
+          autoLogoutOnNetworkMismatch: true,
+          autoLogoutOnAccountMismatch: true,
+          autoLogoutOnChainMismatch: true,
+        }),
+      ]
     : [
         portkeyAAWallet,
         new PortkeyDiscoverWallet({

@@ -35,10 +35,14 @@ export enum TokenType {
   ACORNS = 'ACORNS',
 }
 
+export const SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE = [TokenType.USDT, TokenType.ELF];
+
 export const TOKEN_INFO_USDT = {
   name: 'Tether USD',
   symbol: TokenType.USDT,
-  icon: '',
+  icon: 'https://d.cobo.com/public/logos/USDT%403x.png',
   contractAddress: '',
   decimals: USDT_DECIMAL,
 };
+
+export const ETRANSFER_WEBSITE_URL = 'https://etransfer.exchange';

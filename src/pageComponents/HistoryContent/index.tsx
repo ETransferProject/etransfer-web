@@ -25,8 +25,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import queryString from 'query-string';
 import { SideMenuKey } from 'constants/home';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
-import { useRouterPush } from 'hooks/route';
 import { useSetAuthFromStorage } from 'hooks/authToken';
+import { useIsLogin } from 'hooks/wallet';
 
 export type TRecordsContentProps = TRecordsBodyProps & {
   onReset: () => void;
@@ -41,9 +41,9 @@ export default function Content() {
   const dispatch = useAppDispatch();
   const { setFilter } = useHistoryFilter();
   const { setLoading } = useLoading();
-  const routerPush = useRouterPush();
-  const routerPushRef = useRef(routerPush);
-  routerPushRef.current = routerPush;
+  const isLogin = useIsLogin();
+  const isLoginRef = useRef(isLogin);
+  isLoginRef.current = isLogin;
 
   const {
     type = TRecordsRequestType.ALL,
@@ -57,6 +57,8 @@ export default function Content() {
   const setAuthFromStorage = useSetAuthFromStorage();
   const requestRecordsList = useDebounceCallback(async (isLoading = false, isSetAuth = false) => {
     try {
+      if (!isLoginRef.current) return;
+
       isLoading && setLoading(true);
       if (isSetAuth) {
         const serResult = await setAuthFromStorage();
@@ -186,15 +188,26 @@ export default function Content() {
   initRef.current = init;
 
   useEffect(() => {
-    initRef.current();
-  }, []);
+    if (isLogin) {
+      initRef.current();
+    } else {
+      // setFilter({
+      //   method: TRecordsRequestType.ALL,
+      //   status: TRecordsRequestStatus.ALL,
+      //   timeArray: null,
+      // });
+      dispatch(setSkipCount(1));
+
+      dispatch(setRecordsList([]));
+    }
+  }, [dispatch, isLogin, setFilter]);
 
   // Listener login
   const refreshData = useCallback(() => {
     requestRecordsList(true, true);
   }, [requestRecordsList]);
   useEffectOnce(() => {
-    const { remove } = myEvents.LoginSuccess.addListener(refreshData);
+    const { remove } = myEvents.LoginSuccess.addListener(() => refreshData());
 
     return () => {
       remove();
@@ -203,7 +216,7 @@ export default function Content() {
 
   // Listener unread records
   useEffectOnce(() => {
-    const { remove } = myEvents.HistoryActive.addListener(handleReset);
+    const { remove } = myEvents.HistoryActive.addListener(() => handleReset());
 
     return () => {
       remove();

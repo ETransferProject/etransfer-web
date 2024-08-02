@@ -40,7 +40,7 @@ export const WithdrawSlice = createSlice({
       state.networkList = action.payload;
     },
     resetWithdrawState: () => {
-      return JSON.parse(JSON.stringify(InitialWithdrawState));
+      return InitialWithdrawState;
     },
   },
 });

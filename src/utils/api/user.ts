@@ -1,5 +1,10 @@
 import { request } from 'api';
-import { TCheckEOARegistrationRequest, TCheckEOARegistrationResult } from 'types/api';
+import {
+  TCheckEOARegistrationRequest,
+  TCheckEOARegistrationResult,
+  TTokenPricesRequest,
+  TTokenPricesResult,
+} from 'types/api';
 import { formatApiError } from './error';
 
 export const checkEOARegistration = async (
@@ -12,5 +17,16 @@ export const checkEOARegistration = async (
     return res.data;
   } catch (error: any) {
     throw formatApiError(error, 'checkEOARegistration error', false);
+  }
+};
+
+export const getTokenPrices = async (params: TTokenPricesRequest): Promise<TTokenPricesResult> => {
+  try {
+    const res = await request.user.getTokenPrices({
+      params,
+    });
+    return res.data;
+  } catch (error: any) {
+    throw formatApiError(error, 'getTokenPrices error', false);
   }
 };
