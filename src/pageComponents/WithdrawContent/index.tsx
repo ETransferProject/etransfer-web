@@ -980,13 +980,13 @@ export default function WithdrawContent() {
 
   useEffect(() => {
     // log in
-    const { remove: removeLoginSuccess } = myEvents.LoginSuccess.addListener(
-      () => initForReLoginRef.current,
+    const { remove: removeLoginSuccess } = myEvents.LoginSuccess.addListener(() =>
+      initForReLoginRef.current(),
     );
 
     // log out \ exit
-    const { remove: removeLogoutSuccess } = myEvents.LogoutSuccess.addListener(
-      () => initForLogoutRef.current,
+    const { remove: removeLogoutSuccess } = myEvents.LogoutSuccess.addListener(() =>
+      initForLogoutRef.current(),
     );
 
     return () => {
