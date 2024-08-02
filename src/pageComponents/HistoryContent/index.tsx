@@ -42,6 +42,8 @@ export default function Content() {
   const { setFilter } = useHistoryFilter();
   const { setLoading } = useLoading();
   const isLogin = useIsLogin();
+  const isLoginRef = useRef(isLogin);
+  isLoginRef.current = isLogin;
 
   const {
     type = TRecordsRequestType.ALL,
@@ -55,6 +57,8 @@ export default function Content() {
   const setAuthFromStorage = useSetAuthFromStorage();
   const requestRecordsList = useDebounceCallback(async (isLoading = false, isSetAuth = false) => {
     try {
+      if (!isLoginRef.current) return;
+
       isLoading && setLoading(true);
       if (isSetAuth) {
         const serResult = await setAuthFromStorage();
@@ -187,11 +191,11 @@ export default function Content() {
     if (isLogin) {
       initRef.current();
     } else {
-      setFilter({
-        method: TRecordsRequestType.ALL,
-        status: TRecordsRequestStatus.ALL,
-        timeArray: null,
-      });
+      // setFilter({
+      //   method: TRecordsRequestType.ALL,
+      //   status: TRecordsRequestStatus.ALL,
+      //   timeArray: null,
+      // });
       dispatch(setSkipCount(1));
 
       dispatch(setRecordsList([]));

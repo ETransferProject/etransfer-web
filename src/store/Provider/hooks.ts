@@ -6,7 +6,7 @@ import { LoadingProps } from 'components/Loading';
 import { setIsUnreadHistory } from 'store/reducers/common/slice';
 import { resetDepositState } from 'store/reducers/deposit/slice';
 import { resetWithdrawState } from 'store/reducers/withdraw/slice';
-import { resetRecordsState } from 'store/reducers/records/slice';
+import { resetRecordsWithoutFilter } from 'store/reducers/records/slice';
 // import { resetInfoDashboardState } from 'store/reducers/infoDashboard/slice';
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
@@ -35,7 +35,7 @@ export const useResetStore = () => {
     dispatch(setIsUnreadHistory(false));
     dispatch(resetDepositState());
     dispatch(resetWithdrawState());
-    dispatch(resetRecordsState());
+    dispatch(resetRecordsWithoutFilter());
     // dispatch(resetInfoDashboardState());
   }, [dispatch]);
 };
