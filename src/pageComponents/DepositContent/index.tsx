@@ -38,6 +38,7 @@ import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { useSetAuthFromStorage } from 'hooks/authToken';
 import { useIsLogin } from 'hooks/wallet';
 import { addAelfNetwork, deleteAelfNetwork } from 'utils/deposit';
+import { AelfChainIdList } from 'constants/chain';
 
 export type TDepositContentProps = {
   fromNetworkSelected?: TNetworkItem;
@@ -174,6 +175,7 @@ export default function Content() {
       console.log('getDepositData >>>>>> isLogin', isLoginRef.current);
       try {
         if (!fromNetworkRef.current || !isLoginRef.current) return;
+        if (AelfChainIdList.includes(fromNetworkRef.current as any)) return;
         setLoading(true);
         const res = await getDepositInfo({
           chainId,
