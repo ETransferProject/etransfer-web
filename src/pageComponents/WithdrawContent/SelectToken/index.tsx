@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import styles from './styles.module.scss';
 import { useAppDispatch, useCommonState } from 'store/Provider/hooks';
 import TokenSelectDrawer from 'components/SelectToken/TokenSelectDrawer';
@@ -10,7 +10,6 @@ import { SelectImage } from 'components/SelectToken/TokenCard';
 import { TTokenItem } from 'types/api';
 import { setCurrentSymbol } from 'store/reducers/withdraw/slice';
 import { formatSymbolDisplay } from 'utils/format';
-import { useGetBalanceDivDecimals } from 'hooks/contract';
 import { IChainNameItem } from 'constants/index';
 
 type TSelectTokenProps = {
@@ -35,9 +34,6 @@ export default function SelectToken({
   const { isPadPX } = useCommonState();
   const dispatch = useAppDispatch();
   const [isShowTokenSelectDropdown, setIsShowTokenSelectDropdown] = useState<boolean>(false);
-  const getBalanceDivDecimals = useGetBalanceDivDecimals();
-  const getBalanceDivDecimalsRef = useRef(getBalanceDivDecimals);
-  getBalanceDivDecimalsRef.current = getBalanceDivDecimals;
 
   const onSelectToken = useCallback(
     async (item: TTokenItem) => {

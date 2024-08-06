@@ -18,6 +18,7 @@ export enum BlockchainNetworkType {
   Binance = 'BSC',
   TBinance = 'TBSC',
   Avax = 'AVAXC',
+  Ton = 'TON',
 }
 
 export enum ExploreUrlType {
@@ -32,6 +33,7 @@ export enum ExploreUrlType {
   BSC = 'https://bscscan.com',
   TBSC = 'https://bscscan.com',
   AVAXC = 'https://subnets.avax.network/c-chain',
+  Ton = 'https://tonscan.org',
 }
 
 export enum AelfExploreType {

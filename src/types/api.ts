@@ -129,6 +129,7 @@ export type TGetWithdrawInfoRequest = {
   symbol?: string;
   amount?: string;
   address?: string;
+  memo?: string;
   version?: PortkeyVersion;
 };
 
@@ -176,6 +177,7 @@ export type TCreateWithdrawOrderRequest = {
   amount: string;
   fromChainId: TChainId;
   toAddress: string;
+  memo?: string;
   rawTransaction: string;
 };
 
