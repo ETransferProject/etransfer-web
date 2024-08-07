@@ -843,6 +843,8 @@ export default function WithdrawContent() {
   const initRef = useRef(init);
   initRef.current = init;
 
+  const getNetworkDataRef = useRef(getNetworkData);
+  getNetworkDataRef.current = getNetworkData;
   const getWithdrawDataRef = useRef(getWithdrawData);
   getWithdrawDataRef.current = getWithdrawData;
   const initForReLogin = useCallback(async () => {
@@ -854,6 +856,8 @@ export default function WithdrawContent() {
       const address = form.getFieldValue(FormKeys.ADDRESS) || '';
       dispatch(setWithdrawAddress(address));
 
+      // get new network data
+      await getNetworkDataRef.current({ symbol: currentSymbol, address });
       getWithdrawDataRef.current(currentSymbol);
 
       console.log('>>>>>> initForReLogin', currentSymbol, newCurrentToken?.symbol);
