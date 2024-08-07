@@ -1045,7 +1045,7 @@ export default function WithdrawContent() {
                 />
               )}
             </div>
-            {currentNetwork?.network === BlockchainNetworkType.Ton && (
+            {currentNetwork?.network === BlockchainNetworkType.TON && (
               <div className={styles['form-item-wrapper']}>
                 <Form.Item
                   className={styles['form-item']}

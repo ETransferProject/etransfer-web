@@ -74,7 +74,7 @@ const NetworkLogoMap: Record<string, Record<TNetworkLogoSize, any>> = {
     normal: <TronMedium />,
     small: <Tron />,
   },
-  [BlockchainNetworkType.Ton]: {
+  [BlockchainNetworkType.TON]: {
     normal: <TonMedium />,
     small: <Ton />,
   },
