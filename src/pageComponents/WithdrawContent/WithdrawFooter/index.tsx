@@ -264,7 +264,7 @@ export default function WithdrawFooter({
   }, [clickSuccessOk]);
 
   const onClickFailed = useCallback(() => {
-    setIsSuccessModalOpen(false);
+    setIsFailModalOpen(false);
     clickFailedOk();
   }, [clickFailedOk]);
 
