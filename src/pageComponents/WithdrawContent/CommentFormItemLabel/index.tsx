@@ -12,7 +12,7 @@ export default function CommentFormItemLabel() {
 
   return (
     <div className={clsx('flex-row-center')}>
-      <span className={styles['form-label']}>Withdrawal Comment</span>
+      <span className={styles['form-label']}>Comment</span>
       <Space direction={'horizontal'} size={4} />
       {isPadPX ? (
         <RemainingTip title="Please confirm the Memo/Tag" content={WithdrawTonCommentTip} />

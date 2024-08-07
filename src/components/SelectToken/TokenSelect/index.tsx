@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import styles from './styles.module.scss';
-import { SideMenuKey } from 'constants/home';
 import { TokenCardForMobile, TokenCardForWeb } from 'components/SelectToken/TokenCard';
 import { TDepositTokenItem } from 'types/api';
 import { SupportedELFChainId } from 'constants/index';
@@ -12,7 +11,6 @@ export type TTokenListAndBalance = Array<
 export interface TokenSelectProps {
   className?: string;
   itemClassName?: string;
-  type: SideMenuKey;
   chainId?: SupportedELFChainId;
   tokenList?: TTokenListAndBalance;
   selectedToken?: string;
@@ -26,7 +24,6 @@ export interface TokenSelectProps {
 export function TokenSelectForMobile({
   className,
   itemClassName,
-  type,
   chainId,
   tokenList,
   selectedToken,
@@ -46,7 +43,6 @@ export function TokenSelectForMobile({
                 selectedToken == item.symbol && styles['token-card-selected'],
                 itemClassName,
               )}
-              type={type}
               isDisabled={isDisabled}
               name={item?.name || ''}
               icon={item.icon}

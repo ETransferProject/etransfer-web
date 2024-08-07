@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { QuestionMarkIcon } from 'assets/images';
 import { useCommonState } from 'store/Provider/hooks';
 import CommonModalTips from 'components/CommonModalTips';
+import { GOT_IT } from 'constants/misc';
 
 export default function RemainingTip({ title, content }: { title: string; content: string }) {
   const { isPadPX } = useCommonState();
@@ -24,7 +25,7 @@ export default function RemainingTip({ title, content }: { title: string; conten
         title={title}
         open={openModal}
         closable={false}
-        okText="OK"
+        okText={GOT_IT}
         onOk={handleOk}>
         <div className="text-center">{content}</div>
       </CommonModalTips>

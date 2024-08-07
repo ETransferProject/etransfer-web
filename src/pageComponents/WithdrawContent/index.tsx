@@ -75,7 +75,6 @@ import WithdrawFooter from './WithdrawFooter';
 import RemainingLimit from './RemainingLimit';
 import CommentFormItemLabel from './CommentFormItemLabel';
 import { BlockchainNetworkType } from 'constants/network';
-import Space from 'components/Space';
 import { MEMO_REG } from 'utils/reg';
 
 enum ValidateStatus {
@@ -994,7 +993,7 @@ export default function WithdrawContent() {
             <div className={styles['form-item-wrapper']}>
               <Form.Item
                 className={styles['form-item']}
-                label="Withdrawal Assets"
+                label="Withdrawal Token"
                 name={FormKeys.TOKEN}
                 validateStatus={formValidateData[FormKeys.TOKEN].validateStatus}
                 help={formValidateData[FormKeys.TOKEN].errorMessage}>
@@ -1046,7 +1045,7 @@ export default function WithdrawContent() {
                 />
               )}
             </div>
-            {currentNetwork?.network !== BlockchainNetworkType.Ton && (
+            {currentNetwork?.network === BlockchainNetworkType.Ton && (
               <div className={styles['form-item-wrapper']}>
                 <Form.Item
                   className={styles['form-item']}
@@ -1076,7 +1075,6 @@ export default function WithdrawContent() {
                     }}
                   />
                 </Form.Item>
-                <Space direction={'vertical'} size={24} />
               </div>
             )}
             <div className={clsx(styles['form-item-wrapper'], styles['amount-form-item-wrapper'])}>

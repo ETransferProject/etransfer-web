@@ -271,7 +271,7 @@ export default function WithdrawFooter({
   }, [clickSuccessOk]);
 
   const onClickFailed = useCallback(() => {
-    setIsSuccessModalOpen(false);
+    setIsFailModalOpen(false);
     clickFailedOk();
   }, [clickFailedOk]);
 
@@ -326,6 +326,7 @@ export default function WithdrawFooter({
           address,
           network: currentNetwork,
           amount: balance,
+          memo,
           transactionFee: {
             amount: withdrawInfo.transactionFee,
             currency: withdrawInfo.transactionUnit,

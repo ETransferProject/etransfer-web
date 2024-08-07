@@ -17,6 +17,8 @@ import Footer from 'components/Footer';
 import { usePathname } from 'next/navigation';
 import { useInitWallet } from 'hooks/wallet';
 import { TelegramPlatform } from 'utils/telegram';
+import service from 'api/axios';
+import { API_VERSION } from 'constants/misc';
 
 const Layout = ({
   children,
@@ -31,6 +33,10 @@ const Layout = ({
 }) => {
   const pathname = usePathname();
   useEffect((): any => {
+    // init service
+    service.defaults.headers.common['version'] = API_VERSION;
+
+    // resize listener
     if (typeof window !== 'undefined') {
       const resize = () => {
         const mobileType = devices.isMobile();

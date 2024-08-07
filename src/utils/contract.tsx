@@ -361,7 +361,7 @@ export const createTransferTokenTransaction = async ({
       contractAddress: eTransferContractAddress,
       caHash,
       methodName: ContractMethodName.TransferToken,
-      args: { symbol, amount },
+      args: { symbol, amount, memo },
       chainId,
     });
   }

@@ -5,7 +5,6 @@ import TokenSelectDrawer from 'components/SelectToken/TokenSelectDrawer';
 import TokenSelectDropdown from 'components/SelectToken/TokenSelectDropdown';
 import DynamicArrow from 'components/DynamicArrow';
 import clsx from 'clsx';
-import { SideMenuKey } from 'constants/home';
 import { SelectImage } from 'components/SelectToken/TokenCard';
 import { TTokenItem } from 'types/api';
 import { setCurrentSymbol } from 'store/reducers/withdraw/slice';
@@ -80,7 +79,7 @@ export default function SelectToken({
         <TokenSelectDrawer
           open={isShowTokenSelectDropdown}
           onClose={() => setIsShowTokenSelectDropdown(false)}
-          type={SideMenuKey.Withdraw}
+          title="Withdraw Token"
           tokenList={tokenList}
           selectedToken={selected?.symbol}
           isDisabled={isDisabled}
@@ -94,7 +93,6 @@ export default function SelectToken({
         <TokenSelectDropdown
           isFormItemStyle
           open={isShowTokenSelectDropdown}
-          type={SideMenuKey.Withdraw}
           tokenList={tokenList}
           selectedToken={selected?.symbol}
           isDisabled={isDisabled}
