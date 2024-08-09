@@ -41,6 +41,7 @@ export default function SelectTokenNetwork({
       />
       <Space direction="vertical" size={20} />
       <SelectToken
+        title="Deposit Token"
         tokenList={fromTokenList}
         selected={tokenSelected}
         selectCallback={tokenSelectCallback}

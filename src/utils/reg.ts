@@ -29,6 +29,7 @@ export function isUrl(string: string) {
 }
 
 const SYMBOL_REG = /^[A-Za-z0-9]+$/;
+export const MEMO_REG = /^[A-Za-z0-9]+$/;
 export function isSymbol(symbol?: string) {
   if (!symbol) return false;
   return SYMBOL_REG.test(symbol);

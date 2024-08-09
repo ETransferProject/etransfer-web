@@ -10,6 +10,7 @@ import { TokenType, defaultNullValue } from 'constants/index';
 import { useMemo } from 'react';
 import { ARRIVAL_TIME_CONFIG } from 'constants/withdraw';
 import { AllSupportedELFChainId } from 'constants/chain';
+import { GOT_IT } from 'constants/misc';
 
 interface SuccessModalProps {
   withdrawInfo: TWithdrawInfoSuccess;
@@ -46,7 +47,7 @@ export default function SuccessModal({ withdrawInfo, modalProps }: SuccessModalP
   ]);
 
   return (
-    <CommonModalSwitchDrawer {...modalProps} hideCancelButton okText="Got it">
+    <CommonModalSwitchDrawer {...modalProps} hideCancelButton okText={GOT_IT}>
       <div className={clsx('flex-column', styles['container'])}>
         <div className={clsx('flex-column-center', styles['title-wrapper'])}>
           <div className={clsx('flex-center', styles['title-icon'])}>

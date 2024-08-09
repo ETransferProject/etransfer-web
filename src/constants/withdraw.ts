@@ -37,6 +37,12 @@ export const InsufficientAllowanceMessage =
 
 export const RemainingWithdrawalQuotaTooltip = `Withdrawals are subject to a 24-hour limit, determined by the real-time USD value of the asset. You can withdraw assets up to the available withdrawal limit.`;
 
+export const WithdrawTonCommentTip =
+  'Check if the receiving platform requires you to include a tag/memo. If required, ensure the tag/memo is correct to avoid losing your assets.';
+
+export const CommentCheckTip =
+  'Check that the Comment is correct, otherwise your funds will be lost.';
+
 export const InitialWithdrawInfo: TWithdrawInfo = {
   maxAmount: '',
   minAmount: '',

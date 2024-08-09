@@ -482,9 +482,13 @@ export default function Content() {
 
   const initForReLogin = useCallback(() => {
     if (is401Ref.current || !depositInfo.depositAddress) {
-      getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
+      getNetworkData({
+        chainId: toChainItem.key,
+        symbol: fromTokenSymbol,
+        toSymbol: toTokenSymbol,
+      });
     }
-  }, [depositInfo.depositAddress, fromTokenSymbol, getDepositData, toChainItem.key, toTokenSymbol]);
+  }, [depositInfo.depositAddress, fromTokenSymbol, getNetworkData, toChainItem.key, toTokenSymbol]);
   const initForReLoginRef = useRef(initForReLogin);
   initForReLoginRef.current = initForReLogin;
 

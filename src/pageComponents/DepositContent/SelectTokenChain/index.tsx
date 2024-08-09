@@ -46,6 +46,7 @@ export default function SelectTokenChain({
       />
       <Space direction="vertical" size={20} />
       <SelectToken
+        title="Receive Token"
         tokenList={toTokenList}
         selected={tokenSelected}
         selectCallback={tokenSelectCallback}

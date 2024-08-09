@@ -5,7 +5,6 @@ import TokenSelectDrawer from 'components/SelectToken/TokenSelectDrawer';
 import TokenSelectDropdown from 'components/SelectToken/TokenSelectDropdown';
 import { AddBigIcon } from 'assets/images';
 import clsx from 'clsx';
-import { SideMenuKey } from 'constants/home';
 import { SelectImage } from 'components/SelectToken/TokenCard';
 import { TDepositTokenItem } from 'types/api';
 import { setAddInitOpenTokenModalCount } from 'store/reducers/deposit/slice';
@@ -13,6 +12,7 @@ import DynamicArrow from 'components/DynamicArrow';
 import { formatSymbolDisplay } from 'utils/format';
 
 type TSelectTokenProps = {
+  title?: string;
   tokenList?: TDepositTokenItem[];
   selected?: TDepositTokenItem;
   isDisabled?: boolean;
@@ -23,6 +23,7 @@ type TSelectTokenProps = {
 };
 
 export default function SelectToken({
+  title,
   tokenList,
   selected,
   isDisabled,
@@ -105,7 +106,7 @@ export default function SelectToken({
         <TokenSelectDrawer
           open={isShowTokenSelectDropdown}
           onClose={() => setIsShowTokenSelectDropdown(false)}
-          type={SideMenuKey.Deposit}
+          title={title}
           tokenList={tokenList}
           selectedToken={selected?.symbol}
           isDisabled={isDisabled}
@@ -116,7 +117,6 @@ export default function SelectToken({
         <TokenSelectDropdown
           className={styles['deposit-token-select-dropdown']}
           open={isShowTokenSelectDropdown}
-          type={SideMenuKey.Deposit}
           tokenList={tokenList}
           selectedToken={selected?.symbol}
           isDisabled={isDisabled}

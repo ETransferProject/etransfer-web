@@ -1,0 +1,14 @@
+@import 'src/assets/theme/color.scss';
+
+.form-label {
+  font-size: 14px;
+  line-height: 22px;
+  color: $secondary-text;
+}
+
+.question-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}

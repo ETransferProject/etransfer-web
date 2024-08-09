@@ -12,7 +12,6 @@ interface TokenCardProps {
   className?: string;
   isDisabled?: boolean;
   symbol: string;
-  type?: string;
   open: boolean;
   isShowBalance?: boolean;
   decimals?: string | number;

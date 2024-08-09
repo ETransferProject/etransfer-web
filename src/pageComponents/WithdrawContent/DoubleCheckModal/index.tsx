@@ -16,6 +16,7 @@ export interface DoubleCheckModalProps {
     address?: string;
     network?: TNetworkItem;
     amount: string;
+    memo?: string;
     transactionFee: TFeeItem;
     aelfTransactionFee: TFeeItem;
     symbol: string;
@@ -67,6 +68,12 @@ export default function DoubleCheckModal({
             <div className={styles['label']}>Withdrawal Address</div>
             <div className={styles['value']}>{withdrawInfo.address || defaultNullValue}</div>
           </div>
+          {withdrawInfo.memo && (
+            <div className={styles['detail-row']}>
+              <div className={styles['label']}>Comment</div>
+              <div className={styles['value']}>{withdrawInfo.memo}</div>
+            </div>
+          )}
           <div className={clsx(styles['detail-row'], styles['withdrawal-network-wrapper'])}>
             <div className={styles['label']}>Withdrawal Network</div>
             <div className={clsx('flex-row-center', styles['value'])}>

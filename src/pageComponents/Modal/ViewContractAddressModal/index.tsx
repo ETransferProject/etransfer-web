@@ -4,6 +4,7 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import CommonModalTips from 'components/CommonModalTips';
 import { CommonModalProps } from 'components/CommonModal';
+import { GOT_IT } from 'constants/misc';
 
 export type TViewContractAddressModal = {
   open?: boolean;
@@ -31,7 +32,7 @@ export default function ViewContractAddressModal({
       getContainer={getContainer}
       open={open}
       closable={false}
-      okText="OK"
+      okText={GOT_IT}
       onOk={onOk}>
       <div className={styles.viewContractAddressModalBody}>
         <div className={styles.viewContractAddressModalTitle}>

@@ -49,6 +49,7 @@ export interface WithdrawFooterProps {
   currentNetwork?: TNetworkItem;
   receiveAmount: string;
   address: string;
+  memo?: string;
   balance: string;
   withdrawInfo: TWithdrawInfo;
   clickFailedOk: () => void;
@@ -60,6 +61,7 @@ export default function WithdrawFooter({
   currentNetwork,
   receiveAmount,
   address,
+  memo,
   balance,
   withdrawInfo,
   isSubmitDisabled,
@@ -125,6 +127,7 @@ export default function WithdrawFooter({
       address: accounts?.[currentChainItem.key] || '',
       approveTargetAddress: currentTokenAddress,
       amount: balance,
+      memo,
     });
 
     return checkRes;
@@ -138,6 +141,7 @@ export default function WithdrawFooter({
     currentTokenAddress,
     currentTokenDecimal,
     getBalanceDivDecimals,
+    memo,
   ]);
 
   const handleCreateWithdrawOrder = useCallback(
@@ -149,6 +153,7 @@ export default function WithdrawFooter({
           network: currentNetwork.network,
           symbol: currentSymbol,
           amount: balance,
+          memo,
           fromChainId: currentChainItem.key,
           toAddress: isDIDAddressSuffix(address) ? removeELFAddressSuffix(address) : address,
           rawTransaction: rawTransaction,
@@ -193,6 +198,7 @@ export default function WithdrawFooter({
       currentChainItem,
       currentNetwork,
       currentSymbol,
+      memo,
       receiveAmount,
       setLoading,
       withdrawInfo.receiveAmountUsd,
@@ -225,6 +231,7 @@ export default function WithdrawFooter({
           caHash: caHash,
           symbol: currentSymbol,
           amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
+          memo,
           chainId: currentChainItem.key,
           fromManagerAddress: walletType === WalletTypeEnum.elf ? ownerAddress : managerAddress,
           caAddress: ownerAddress,
@@ -319,6 +326,7 @@ export default function WithdrawFooter({
           address,
           network: currentNetwork,
           amount: balance,
+          memo,
           transactionFee: {
             amount: withdrawInfo.transactionFee,
             currency: withdrawInfo.transactionUnit,

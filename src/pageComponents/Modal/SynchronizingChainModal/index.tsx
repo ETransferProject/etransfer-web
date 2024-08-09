@@ -1,3 +1,4 @@
+import { GOT_IT } from 'constants/misc';
 import styles from './styles.module.scss';
 import CommonModalTips from 'components/CommonModalTips';
 
@@ -23,7 +24,7 @@ export default function SynchronizingChainModal({
       open={open}
       closable={true}
       title="Tips"
-      okText="OK"
+      okText={GOT_IT}
       onOk={onOk}
       onCancel={onCancel}>
       <div className={styles.synchronizingChainModalBody}>{SynchronizingChainModalTitle}</div>

@@ -8,6 +8,7 @@ import { Tooltip } from 'antd';
 import { ProcessingTipMessage, FailedTipMessage } from 'constants/records';
 import { SupportedELFChainId } from 'constants/index';
 import { BusinessType } from 'types/api';
+import { GOT_IT } from 'constants/misc';
 
 type TStatusBoxProps = {
   status: string;
@@ -81,7 +82,7 @@ export default function StatusBox({ status, network }: TStatusBoxProps) {
       <CommonModal
         width={'300px'}
         hideCancelButton={true}
-        okText={'OK'}
+        okText={GOT_IT}
         onOk={() => setIsMobileOpenModal(false)}
         title={title}
         open={isMobileOpenModal}
