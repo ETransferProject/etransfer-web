@@ -107,7 +107,7 @@ export default function Content() {
   const getTokenList = useCallback(
     async (chainId: TChainId, fromSymbol: string, toSymbol: string) => {
       try {
-        setLoading(true);
+        // setLoading(true);
         const { tokenList } = await getDepositTokenList({
           type: BusinessType.Deposit,
         });
@@ -161,9 +161,10 @@ export default function Content() {
         }
       } catch (error) {
         console.log('getTokenList error', error);
-      } finally {
-        setLoading(false);
       }
+      // finally {
+      //   setLoading(false);
+      // }
     },
     [dispatch, setLoading],
   );
@@ -176,7 +177,7 @@ export default function Content() {
       try {
         if (!fromNetworkRef.current || !isLoginRef.current) return;
         if (AelfChainIdList.includes(fromNetworkRef.current as any)) return;
-        setLoading(true);
+        // setLoading(true);
         const res = await getDepositInfo({
           chainId,
           network: fromNetworkRef.current || '',
@@ -185,7 +186,7 @@ export default function Content() {
         });
         is401Ref.current = false;
         setIsGetRetry(false);
-        setLoading(false);
+        // setLoading(false);
         setDepositInfo(res.depositInfo);
         dispatch(setDepositAddress(res.depositInfo.depositAddress));
       } catch (error: any) {
@@ -202,7 +203,7 @@ export default function Content() {
         if (error.name !== CommonErrorNameType.CANCEL) {
           setDepositInfo(InitDepositInfo);
           dispatch(setDepositAddress(InitDepositInfo.depositAddress));
-          setLoading(false);
+          // setLoading(false);
         }
       }
     },
@@ -264,90 +265,117 @@ export default function Content() {
   );
 
   const handleFromTokenChange = async (newItem: TDepositTokenItem) => {
-    // Set fromToken
-    dispatch(setFromTokenSymbol(newItem.symbol));
-    dispatch(setToTokenList(newItem.toTokenList || []));
+    try {
+      setLoading(true);
 
-    let toSymbol = toTokenSymbol;
-    let toChain = toChainItem;
-    // Check 1 - toToken
-    const isExitToToken = newItem.toTokenList?.find((item) => item.symbol === toTokenSymbol);
-    // toToken not exist, toToken = fromToken
-    if (!isExitToToken) {
-      toSymbol = newItem.symbol;
-      dispatch(setToTokenSymbol(newItem.symbol));
-      // Check 2 - toChain
-      const isExitToChain = newItem?.toTokenList?.find((item) =>
-        item.chainIdList?.includes(toChainItem.key),
-      );
-      if (!isExitToChain) {
-        toChain = newItem?.toTokenList?.[0]?.chainList?.[0] || CHAIN_LIST[0];
-      }
-      dispatch(setToChainItem(toChain));
-      dispatch(setToChainList(newItem?.toTokenList?.[0]?.chainList || []));
-    }
-    // toToken exist, next check
-    if (isExitToToken) {
-      // Check 2 - toChain
-      const isExitToChain = isExitToToken.chainList?.find((item) => item.key === toChainItem.key);
-      // toChain not exist, set toChain and toChainList
-      if (!isExitToChain) {
-        toChain = isExitToToken.chainList?.[0] || CHAIN_LIST[0];
+      // Set fromToken
+      dispatch(setFromTokenSymbol(newItem.symbol));
+      dispatch(setToTokenList(newItem.toTokenList || []));
+
+      let toSymbol = toTokenSymbol;
+      let toChain = toChainItem;
+      // Check 1 - toToken
+      const isExitToToken = newItem.toTokenList?.find((item) => item.symbol === toTokenSymbol);
+      // toToken not exist, toToken = fromToken
+      if (!isExitToToken) {
+        toSymbol = newItem.symbol;
+        dispatch(setToTokenSymbol(newItem.symbol));
+        // Check 2 - toChain
+        const isExitToChain = newItem?.toTokenList?.find((item) =>
+          item.chainIdList?.includes(toChainItem.key),
+        );
+        if (!isExitToChain) {
+          toChain = newItem?.toTokenList?.[0]?.chainList?.[0] || CHAIN_LIST[0];
+        }
         dispatch(setToChainItem(toChain));
+        dispatch(setToChainList(newItem?.toTokenList?.[0]?.chainList || []));
       }
-      // toChain exist, set and toChainList
-      dispatch(setToChainList(isExitToToken.chainList || []));
+      // toToken exist, next check
+      if (isExitToToken) {
+        // Check 2 - toChain
+        const isExitToChain = isExitToToken.chainList?.find((item) => item.key === toChainItem.key);
+        // toChain not exist, set toChain and toChainList
+        if (!isExitToChain) {
+          toChain = isExitToToken.chainList?.[0] || CHAIN_LIST[0];
+          dispatch(setToChainItem(toChain));
+        }
+        // toChain exist, set and toChainList
+        dispatch(setToChainList(isExitToToken.chainList || []));
+      }
+
+      // Reset other data
+      setDepositInfo(InitDepositInfo);
+      dispatch(setDepositAddress(InitDepositInfo.depositAddress));
+      setIsGetRetry(false);
+
+      // Refresh network and deposit info
+      await getNetworkData({
+        chainId: toChain.key,
+        symbol: newItem.symbol,
+        toSymbol,
+      });
+    } catch (error) {
+      console.log('handleFromTokenChange error', error);
+    } finally {
+      setLoading(false);
     }
-
-    // Reset other data
-    setDepositInfo(InitDepositInfo);
-    dispatch(setDepositAddress(InitDepositInfo.depositAddress));
-    setIsGetRetry(false);
-
-    // Refresh network and deposit info
-    await getNetworkData({
-      chainId: toChain.key,
-      symbol: newItem.symbol,
-      toSymbol,
-    });
   };
 
   const handleFromNetworkChanged = useCallback(
     async (item: TNetworkItem) => {
-      fromNetworkRef.current = item.network;
-      dispatch(setFromNetwork(item));
-      await getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
+      try {
+        setLoading(true);
+
+        fromNetworkRef.current = item.network;
+        dispatch(setFromNetwork(item));
+
+        await getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
+      } catch (error) {
+        console.log('handleFromNetworkChanged error', error);
+      } finally {
+        setLoading(false);
+      }
     },
     [dispatch, fromTokenSymbol, getDepositData, toChainItem.key, toTokenSymbol],
   );
 
   const handleToTokenChange = useCallback(
     async (newItem: TToTokenItem) => {
-      dispatch(setToTokenSymbol(newItem.symbol));
-      dispatch(setToChainList(newItem.chainList || []));
+      try {
+        dispatch(setToTokenSymbol(newItem.symbol));
+        dispatch(setToChainList(newItem.chainList || []));
 
-      // Check - to chain
-      let optionChainId = toChainItem.key;
-      const isExitChain = newItem?.chainList?.find((item) => item.key === toChainItem.key);
-      if (!isExitChain) {
-        const chainItem = newItem?.chainList?.[0] || CHAIN_LIST[0];
-        dispatch(setToChainItem(chainItem));
-        optionChainId = chainItem.key;
-        // toChain changed, need refresh network and deposit info.
-        return getNetworkData({
-          chainId: optionChainId,
-          symbol: fromTokenSymbol,
-          toSymbol: newItem.symbol,
-        });
+        // Check - to chain
+        let optionChainId = toChainItem.key;
+        const isExitChain = newItem?.chainList?.find((item) => item.key === toChainItem.key);
+        if (!isExitChain) {
+          const chainItem = newItem?.chainList?.[0] || CHAIN_LIST[0];
+          dispatch(setToChainItem(chainItem));
+          optionChainId = chainItem.key;
+          // toChain changed, need refresh network and deposit info.
+          setLoading(true);
+          await getNetworkData({
+            chainId: optionChainId,
+            symbol: fromTokenSymbol,
+            toSymbol: newItem.symbol,
+          });
+          setLoading(false);
+          return;
+        }
+        const networkList = deleteAelfNetwork(
+          fromNetworkListRef.current || [],
+          fromTokenSymbol,
+          newItem.symbol,
+        );
+        dispatch(setFromNetworkList(networkList));
+        // toChain and fromToken not changed, refresh deposit info.
+        setLoading(true);
+        await getDepositData(optionChainId, fromTokenSymbol, newItem.symbol);
+        setLoading(false);
+        return;
+      } finally {
+        setLoading(false);
       }
-      const networkList = deleteAelfNetwork(
-        fromNetworkListRef.current || [],
-        fromTokenSymbol,
-        newItem.symbol,
-      );
-      dispatch(setFromNetworkList(networkList));
-      // toChain and fromToken not changed, refresh deposit info.
-      return getDepositData(optionChainId, fromTokenSymbol, newItem.symbol);
     },
     [dispatch, fromTokenSymbol, getDepositData, getNetworkData, toChainItem.key],
   );
@@ -357,17 +385,29 @@ export default function Content() {
       // if currentSymbol is empty, don't send request
       dispatch(setToChainItem(item));
       if (fromTokenSymbol) {
-        await getNetworkData({
-          chainId: item.key,
-          symbol: fromTokenSymbol,
-        });
+        try {
+          setLoading(true);
+          await getNetworkData({
+            chainId: item.key,
+            symbol: fromTokenSymbol,
+          });
+        } finally {
+          setLoading(false);
+        }
       }
     },
     [dispatch, fromTokenSymbol, getNetworkData],
   );
 
   const handleRetry = useCallback(async () => {
-    await getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
+    try {
+      setLoading(true);
+      await getDepositData(toChainItem.key, fromTokenSymbol, toTokenSymbol);
+    } catch (error) {
+      console.log('handleRetry error', error);
+    } finally {
+      setLoading(false);
+    }
   }, [fromTokenSymbol, getDepositData, toChainItem.key, toTokenSymbol]);
 
   const searchParams = useSearchParams();
@@ -389,43 +429,53 @@ export default function Content() {
     let toSymbol = toTokenSymbol;
     let routeNetworkRef = '';
 
-    if (routeQuery.chainId) {
-      const chainItem = CHAIN_LIST.find((item) => item.key === routeQuery.chainId);
-      if (chainItem) {
-        chainId = chainItem.key;
-        dispatch(setToChainItem(chainItem));
+    try {
+      setLoading(true);
+
+      if (routeQuery.chainId) {
+        const chainItem = CHAIN_LIST.find((item) => item.key === routeQuery.chainId);
+        if (chainItem) {
+          chainId = chainItem.key;
+          dispatch(setToChainItem(chainItem));
+        }
       }
-    }
-    if (routeQuery.tokenSymbol) {
-      fromSymbol = routeQuery.tokenSymbol;
-      dispatch(setFromTokenSymbol(routeQuery.tokenSymbol));
-    }
-    if (routeQuery.depositToToken) {
-      toSymbol = routeQuery.depositToToken;
-      dispatch(setToTokenSymbol(routeQuery.depositToToken));
-    }
-    if (routeQuery.depositFromNetwork) {
-      routeNetworkRef = routeQuery.depositFromNetwork;
-      fromNetworkRef.current = routeQuery.depositFromNetwork;
-      dispatch(setFromNetwork(undefined));
-      dispatch(setFromNetworkList([]));
-    }
+      if (routeQuery.tokenSymbol) {
+        fromSymbol = routeQuery.tokenSymbol;
+        dispatch(setFromTokenSymbol(routeQuery.tokenSymbol));
+      }
+      if (routeQuery.depositToToken) {
+        toSymbol = routeQuery.depositToToken;
+        dispatch(setToTokenSymbol(routeQuery.depositToToken));
+      }
+      if (routeQuery.depositFromNetwork) {
+        routeNetworkRef = routeQuery.depositFromNetwork;
+        fromNetworkRef.current = routeQuery.depositFromNetwork;
+        dispatch(setFromNetwork(undefined));
+        dispatch(setFromNetworkList([]));
+      }
 
-    await getTokenList(chainId, fromSymbol, toSymbol);
+      await getTokenList(chainId, fromSymbol, toSymbol);
 
-    if (
-      !routeNetworkRef &&
-      fromNetwork?.network &&
-      fromNetworkList &&
-      fromNetworkList?.length > 0
-    ) {
-      fromNetworkRef.current = fromNetwork.network;
+      if (
+        !routeNetworkRef &&
+        fromNetwork?.network &&
+        fromNetworkList &&
+        fromNetworkList?.length > 0
+      ) {
+        fromNetworkRef.current = fromNetwork.network;
+      }
+
+      await setAuthFromStorage();
+      await sleep(500);
+      // get new network data, when refresh page and switch side menu
+      await getNetworkData({ chainId, symbol: fromSymbol, toSymbol });
+
+      setLoading(false);
+    } catch (error) {
+      console.log('init error', error);
+    } finally {
+      setLoading(false);
     }
-
-    await setAuthFromStorage();
-    await sleep(500);
-    // get new network data, when refresh page and switch side menu
-    await getNetworkData({ chainId, symbol: fromSymbol, toSymbol });
   }, [
     dispatch,
     fromNetwork?.network,
@@ -466,33 +516,45 @@ export default function Content() {
     fromNetworkRef.current = undefined;
     is401Ref.current = false;
 
-    await getTokenList(
-      InitialDepositState.toChainItem.key,
-      InitialDepositState.fromTokenSymbol,
-      InitialDepositState.toTokenSymbol,
-    );
-    getNetworkData({
-      chainId: InitialDepositState.toChainItem.key,
-      symbol: InitialDepositState.fromTokenSymbol,
-      toSymbol: InitialDepositState.toTokenSymbol,
-    });
+    try {
+      setLoading(true);
+      await getTokenList(
+        InitialDepositState.toChainItem.key,
+        InitialDepositState.fromTokenSymbol,
+        InitialDepositState.toTokenSymbol,
+      );
+      await getNetworkData({
+        chainId: InitialDepositState.toChainItem.key,
+        symbol: InitialDepositState.fromTokenSymbol,
+        toSymbol: InitialDepositState.toTokenSymbol,
+      });
+    } finally {
+      setLoading(false);
+    }
   }, [getNetworkData, getTokenList]);
   const initLogoutRef = useRef(initForLogout);
   initLogoutRef.current = initForLogout;
 
-  const initForReLogin = useCallback(() => {
-    if (is401Ref.current || !depositInfo.depositAddress) {
-      getNetworkData({
-        chainId: toChainItem.key,
-        symbol: fromTokenSymbol,
-        toSymbol: toTokenSymbol,
-      });
+  const isPreLoginRef = useRef<boolean>(isLogin);
+  const initForReLogin = useCallback(async () => {
+    if (is401Ref.current || (!isPreLoginRef.current && !depositInfo.depositAddress)) {
+      try {
+        setLoading(true);
+        await getNetworkData({
+          chainId: toChainItem.key,
+          symbol: fromTokenSymbol,
+          toSymbol: toTokenSymbol,
+        });
+      } finally {
+        setLoading(false);
+      }
     }
   }, [depositInfo.depositAddress, fromTokenSymbol, getNetworkData, toChainItem.key, toTokenSymbol]);
   const initForReLoginRef = useRef(initForReLogin);
   initForReLoginRef.current = initForReLogin;
 
   useEffectOnce(() => {
+    isPreLoginRef.current = isLogin;
     // log in
     const { remove } = myEvents.LoginSuccess.addListener(() => initForReLoginRef.current());
 

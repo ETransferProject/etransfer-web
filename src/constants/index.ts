@@ -1,19 +1,5 @@
 export * from './testnet';
 
-export enum NetworkTypeV1 {
-  MAIN = 'MAIN',
-  TESTNET = 'TESTNET',
-}
-export enum NetworkTypeV2 {
-  MAINNET = 'MAINNET',
-  TESTNET = 'TESTNET',
-}
-
-export enum NetworkTypeText {
-  MAINNET = 'Mainnet',
-  TESTNET = 'Testnet',
-}
-
 export const ChainNamePrefix = {
   MainChain: 'MainChain',
   SideChain: 'SideChain',
