@@ -1,6 +1,6 @@
 {
   "name": "etransfer-web",
-  "version": "1.4.0",
+  "version": "2.12.0",
   "private": true,
   "scripts": {
     "dev-https": "NEXT_PUBLIC_NODE_ENV=development next dev --experimental-https",
