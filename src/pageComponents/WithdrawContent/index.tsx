@@ -67,7 +67,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import FAQ from 'components/FAQ';
 import { FAQ_WITHDRAW } from 'constants/footer';
-import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { PortkeyVersion } from 'constants/wallet';
 import { TelegramPlatform } from 'utils/telegram';
 import { useSetAuthFromStorage } from 'hooks/authToken';
@@ -110,7 +109,6 @@ export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const isAndroid = devices.isMobile().android;
   const { isPadPX, isMobilePX } = useCommonState();
-  const { callViewMethod } = useConnectWallet();
   const isLogin = useIsLogin();
   const isLoginRef = useRef(isLogin);
   isLoginRef.current = isLogin;
@@ -501,7 +499,6 @@ export default function WithdrawContent() {
         if (!caAddress) return '';
         isLoading && setIsMaxBalanceLoading(true);
         const maxBalance = await getBalance({
-          callViewMethod,
           symbol: symbol,
           chainId: currentChainItemRef.current.key,
           caAddress,
@@ -523,14 +520,7 @@ export default function WithdrawContent() {
         isLoading && setIsMaxBalanceLoading(false);
       }
     },
-    [
-      accounts,
-      callViewMethod,
-      currentSymbol,
-      currentTokenDecimal,
-      getWithdrawData,
-      handleAmountValidate,
-    ],
+    [accounts, currentSymbol, currentTokenDecimal, getWithdrawData, handleAmountValidate],
   );
 
   const getMaxBalanceRef = useRef(getMaxBalance);

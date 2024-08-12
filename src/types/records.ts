@@ -82,8 +82,3 @@ export enum TRecordsStatusI18n {
   Succeed = 'Completed',
   Failed = 'Failed',
 }
-
-export enum TAddressType {
-  Sender = 'Sender',
-  Receiver = 'Receiver',
-}

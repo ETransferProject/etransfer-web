@@ -1,4 +1,3 @@
-import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import singleMessage from 'components/SingleMessage';
 import { SupportedELFChainId } from 'constants/index';
 import { useCallback } from 'react';
@@ -8,7 +7,6 @@ import { getBalance } from 'utils/contract';
 import { useGetAccount } from './wallet';
 
 export function useGetBalanceDivDecimals() {
-  const { callViewMethod } = useConnectWallet();
   const accounts = useGetAccount();
 
   return useCallback(
@@ -18,7 +16,6 @@ export function useGetBalanceDivDecimals() {
         if (!caAddress) return '';
 
         const maxBalance = await getBalance({
-          callViewMethod,
           symbol,
           chainId,
           caAddress,
@@ -29,6 +26,6 @@ export function useGetBalanceDivDecimals() {
         throw new Error('Failed to get balance.');
       }
     },
-    [accounts, callViewMethod],
+    [accounts],
   );
 }
