@@ -1059,6 +1059,7 @@ export default function WithdrawContent() {
                   help={formValidateData[FormKeys.COMMENT].errorMessage}>
                   <FormInput
                     placeholder="Enter comment"
+                    autoComplete="off"
                     onChange={(e) => onCommentChange(e.target.value)}
                     onInput={(event: any) => {
                       const value = event.target?.value?.trim();
