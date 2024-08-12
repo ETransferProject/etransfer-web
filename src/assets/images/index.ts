@@ -45,6 +45,8 @@ import Solana from './chain/solana.svg';
 import SolanaMedium from './chain/solanaMedium.svg';
 import Tron from './chain/tron.svg';
 import TronMedium from './chain/tronMedium.svg';
+import Ton from './chain/ton.svg';
+import TonMedium from './chain/tonMedium.svg';
 
 import FilterIcon from './filterIcon.svg';
 import Fingerprint from './fingerprint.svg';
@@ -135,6 +137,8 @@ export {
   SolanaMedium,
   Tron,
   TronMedium,
+  Ton,
+  TonMedium,
   //
   FilterIcon,
   Fingerprint,

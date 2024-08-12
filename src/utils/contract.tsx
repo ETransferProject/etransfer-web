@@ -215,12 +215,14 @@ export const approveELF = async ({
   address,
   symbol,
   amount,
+  memo,
 }: {
   callSendMethod: (props: ICallContractParams<any>) => Promise<any>;
   chainId: SupportedELFChainId;
   address: string;
   symbol: string;
   amount: BigNumber | number | string;
+  memo?: string;
 }) => {
   const approveResult: any = await callSendMethod({
     chainId,
@@ -231,6 +233,7 @@ export const approveELF = async ({
       spender: address,
       symbol,
       amount: amount.toString(),
+      memo,
     },
   });
   const txRes = await getTxResult(approveResult.transactionId, chainId);
@@ -246,6 +249,7 @@ export const checkTokenAllowanceAndApprove = async ({
   address,
   approveTargetAddress,
   amount,
+  memo,
 }: {
   callViewMethod: (prams: ICallContractParams<any>) => Promise<any>;
   callSendMethod: (prams: ICallContractParams<any>) => Promise<any>;
@@ -254,6 +258,7 @@ export const checkTokenAllowanceAndApprove = async ({
   address: string;
   approveTargetAddress: string;
   amount: string | number;
+  memo?: string;
 }): Promise<boolean> => {
   const [allowanceResult, tokenInfoResult] = await Promise.all([
     callViewMethod({
@@ -287,6 +292,7 @@ export const checkTokenAllowanceAndApprove = async ({
       address: approveTargetAddress,
       symbol,
       amount: bigA.toFixed(0),
+      memo,
     });
 
     const allowanceNew = await callViewMethod({
@@ -322,6 +328,7 @@ export interface CreateTransferTokenTransactionParams {
   caHash: string;
   symbol: string;
   amount: string;
+  memo?: string;
   chainId: SupportedELFChainId;
   fromManagerAddress: string;
   caAddress: string;
@@ -335,6 +342,7 @@ export const createTransferTokenTransaction = async ({
   caHash,
   symbol,
   amount,
+  memo,
   chainId,
   fromManagerAddress,
   caAddress,
@@ -344,7 +352,7 @@ export const createTransferTokenTransaction = async ({
   if (walletType === WalletTypeEnum.elf) {
     transactionParams = await createTokenTransfer({
       contractAddress: eTransferContractAddress,
-      args: { symbol, amount },
+      args: { symbol, amount, memo },
       chainId,
     });
   } else {
@@ -353,7 +361,7 @@ export const createTransferTokenTransaction = async ({
       contractAddress: eTransferContractAddress,
       caHash,
       methodName: ContractMethodName.TransferToken,
-      args: { symbol, amount },
+      args: { symbol, amount, memo },
       chainId,
     });
   }

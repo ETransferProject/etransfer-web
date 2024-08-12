@@ -1,16 +1,14 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import styles from './styles.module.scss';
 import { useAppDispatch, useCommonState } from 'store/Provider/hooks';
 import TokenSelectDrawer from 'components/SelectToken/TokenSelectDrawer';
 import TokenSelectDropdown from 'components/SelectToken/TokenSelectDropdown';
 import DynamicArrow from 'components/DynamicArrow';
 import clsx from 'clsx';
-import { SideMenuKey } from 'constants/home';
 import { SelectImage } from 'components/SelectToken/TokenCard';
 import { TTokenItem } from 'types/api';
 import { setCurrentSymbol } from 'store/reducers/withdraw/slice';
 import { formatSymbolDisplay } from 'utils/format';
-import { useGetBalanceDivDecimals } from 'hooks/contract';
 import { IChainNameItem } from 'constants/index';
 
 type TSelectTokenProps = {
@@ -35,9 +33,6 @@ export default function SelectToken({
   const { isPadPX } = useCommonState();
   const dispatch = useAppDispatch();
   const [isShowTokenSelectDropdown, setIsShowTokenSelectDropdown] = useState<boolean>(false);
-  const getBalanceDivDecimals = useGetBalanceDivDecimals();
-  const getBalanceDivDecimalsRef = useRef(getBalanceDivDecimals);
-  getBalanceDivDecimalsRef.current = getBalanceDivDecimals;
 
   const onSelectToken = useCallback(
     async (item: TTokenItem) => {
@@ -84,7 +79,7 @@ export default function SelectToken({
         <TokenSelectDrawer
           open={isShowTokenSelectDropdown}
           onClose={() => setIsShowTokenSelectDropdown(false)}
-          type={SideMenuKey.Withdraw}
+          title="Withdraw Token"
           tokenList={tokenList}
           selectedToken={selected?.symbol}
           isDisabled={isDisabled}
@@ -98,7 +93,6 @@ export default function SelectToken({
         <TokenSelectDropdown
           isFormItemStyle
           open={isShowTokenSelectDropdown}
-          type={SideMenuKey.Withdraw}
           tokenList={tokenList}
           selectedToken={selected?.symbol}
           isDisabled={isDisabled}

@@ -3,8 +3,8 @@ module.exports = {
   ...commonConfig,
   swcMinify: true,
   compiler: {
-    // removeConsole: {
-    //   exclude: ['error'],
-    // },
+    removeConsole: {
+      exclude: ['error'],
+    },
   },
 };

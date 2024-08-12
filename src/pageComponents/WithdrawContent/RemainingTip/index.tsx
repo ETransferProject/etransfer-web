@@ -1,11 +1,10 @@
 import { useCallback, useState } from 'react';
 import { QuestionMarkIcon } from 'assets/images';
-import clsx from 'clsx';
-import styles from '../styles.module.scss';
 import { useCommonState } from 'store/Provider/hooks';
 import CommonModalTips from 'components/CommonModalTips';
+import { GOT_IT } from 'constants/misc';
 
-export default function RemainingQuota({ content }: { content: string }) {
+export default function RemainingTip({ title, content }: { title: string; content: string }) {
   const { isPadPX } = useCommonState();
   const [openModal, setOpenModal] = useState(false);
 
@@ -19,16 +18,14 @@ export default function RemainingQuota({ content }: { content: string }) {
 
   return (
     <>
-      {isPadPX && (
-        <QuestionMarkIcon onClick={handleView} className={clsx(styles['question-mark'])} />
-      )}
+      {isPadPX && <QuestionMarkIcon onClick={handleView} />}
 
       <CommonModalTips
         getContainer="body"
-        title="24-Hour Limit"
+        title={title}
         open={openModal}
         closable={false}
-        okText="OK"
+        okText={GOT_IT}
         onOk={handleOk}>
         <div className="text-center">{content}</div>
       </CommonModalTips>

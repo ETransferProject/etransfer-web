@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { Form, Tooltip } from 'antd';
+import { Form } from 'antd';
 import clsx from 'clsx';
 import SelectChainWrapper from 'pageComponents/WithdrawContent/SelectChainWrapper';
 import FormTextarea from 'components/FormTextarea';
@@ -38,9 +38,9 @@ import { useEffectOnce } from 'react-use';
 import PartialLoading from 'components/PartialLoading';
 import {
   AmountGreaterThanBalanceMessage,
+  CommentCheckTip,
   InitialWithdrawInfo,
   WithdrawAddressErrorCodeList,
-  RemainingWithdrawalQuotaTooltip,
 } from 'constants/withdraw';
 import { CommonErrorNameType } from 'api/types';
 import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
@@ -55,8 +55,6 @@ import {
 } from 'utils/format';
 import { devices, sleep } from '@portkey/utils';
 import { useWithdraw } from 'hooks/withdraw';
-import { QuestionMarkIcon } from 'assets/images';
-import RemainingQuota from './RemainingQuota';
 import { isAuthTokenError, isHtmlError, isWriteOperationError } from 'utils/api/error';
 import myEvents from 'utils/myEvent';
 import {
@@ -74,6 +72,10 @@ import { PortkeyVersion } from 'constants/wallet';
 import { TelegramPlatform } from 'utils/telegram';
 import { useSetAuthFromStorage } from 'hooks/authToken';
 import WithdrawFooter from './WithdrawFooter';
+import RemainingLimit from './RemainingLimit';
+import CommentFormItemLabel from './CommentFormItemLabel';
+import { BlockchainNetworkType } from 'constants/network';
+import { MEMO_REG } from 'utils/reg';
 
 enum ValidateStatus {
   Error = 'error',
@@ -84,6 +86,7 @@ enum ValidateStatus {
 enum FormKeys {
   TOKEN = 'token',
   ADDRESS = 'address',
+  COMMENT = 'comment',
   NETWORK = 'network',
   AMOUNT = 'amount',
 }
@@ -93,6 +96,14 @@ type TFormValues = {
   [FormKeys.ADDRESS]: string;
   [FormKeys.NETWORK]: TNetworkItem;
   [FormKeys.AMOUNT]: string;
+};
+
+const FORM_VALIDATE_DATA = {
+  [FormKeys.TOKEN]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
+  [FormKeys.ADDRESS]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
+  [FormKeys.NETWORK]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
+  [FormKeys.AMOUNT]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
+  [FormKeys.COMMENT]: { validateStatus: ValidateStatus.Warning, errorMessage: CommentCheckTip },
 };
 
 export default function WithdrawContent() {
@@ -121,12 +132,7 @@ export default function WithdrawContent() {
   const [isNetworkDisable, setIsNetworkDisable] = useState(false);
   const [formValidateData, setFormValidateData] = useState<{
     [key in FormKeys]: { validateStatus: ValidateStatus; errorMessage: string };
-  }>({
-    [FormKeys.TOKEN]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
-    [FormKeys.ADDRESS]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
-    [FormKeys.NETWORK]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
-    [FormKeys.AMOUNT]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
-  });
+  }>(JSON.parse(JSON.stringify(FORM_VALIDATE_DATA)));
   const [isTransactionFeeLoading, setIsTransactionFeeLoading] = useState(false);
 
   const getTransactionFeeTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -159,62 +165,12 @@ export default function WithdrawContent() {
 
   const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
 
-  const remainingLimitComponent = useMemo(() => {
-    const label = (
-      <span className={styles['remaining-limit-label']}>
-        {isPadPX && '• 24-Hour Limit:'}
-        {!isPadPX && (
-          <Tooltip
-            className={clsx(styles['question-label'])}
-            placement="top"
-            title={RemainingWithdrawalQuotaTooltip}>
-            24-Hour Limit <QuestionMarkIcon />
-          </Tooltip>
-        )}
-      </span>
-    );
-    const value = (
-      <span className={styles['remaining-limit-value']}>
-        {withdrawInfo.remainingLimit && withdrawInfo.totalLimit ? (
-          <>
-            {`${new BigNumber(withdrawInfo.remainingLimit).toFormat()} /
-       ${new BigNumber(withdrawInfo.totalLimit).toFormat()}`}
-            <span className={styles['remaining-limit-value-limit-currency']}>
-              {withdrawInfo.limitCurrency}
-            </span>
-          </>
-        ) : (
-          defaultNullValue
-        )}
-        <RemainingQuota content={RemainingWithdrawalQuotaTooltip}></RemainingQuota>
-      </span>
-    );
-    return (
-      <div
-        className={clsx('flex', styles['remaining-limit-wrapper'], {
-          [styles['remaining-limit-error']]:
-            withdrawInfo.remainingLimit !== null &&
-            withdrawInfo.remainingLimit !== undefined &&
-            withdrawInfo.remainingLimit !== '' &&
-            new BigNumber(withdrawInfo.remainingLimit).isEqualTo(0),
-        })}>
-        {isPadPX ? (
-          <>
-            {label}
-            {value}
-          </>
-        ) : (
-          <>
-            {value}
-            {label}
-          </>
-        )}
-      </div>
-    );
-  }, [withdrawInfo.remainingLimit, withdrawInfo.totalLimit, withdrawInfo.limitCurrency, isPadPX]);
-
   const getAddressInput = useCallback(() => {
     return form.getFieldValue(FormKeys.ADDRESS)?.trim();
+  }, [form]);
+
+  const getCommentInput = useCallback(() => {
+    return form.getFieldValue(FormKeys.COMMENT)?.trim();
   }, [form]);
 
   const judgeIsSubmitDisabled = useCallback(
@@ -473,6 +429,10 @@ export default function WithdrawContent() {
         if (amount) {
           params.amount = amount;
         }
+        // params add memo to check memo
+        if (getCommentInput()) {
+          params.memo = getCommentInput();
+        }
 
         const res = await getWithdrawInfo(params);
 
@@ -506,7 +466,7 @@ export default function WithdrawContent() {
         }
       }
     },
-    [currentSymbol, form, getAddressInput, handleAmountValidate],
+    [currentSymbol, form, getAddressInput, getCommentInput, handleAmountValidate],
   );
 
   useEffect(() => {
@@ -728,6 +688,10 @@ export default function WithdrawContent() {
     handleFormValidateDataChange,
   ]);
 
+  const onCommentChange = useCallback((value: string | null) => {
+    console.log(value);
+  }, []);
+
   const handleTokenChange = useCallback(
     async (item: TTokenItem) => {
       // when network failed, transactionUnit should show as symbol
@@ -745,6 +709,7 @@ export default function WithdrawContent() {
         form.setFieldValue(FormKeys.AMOUNT, '');
         form.setFieldValue(FormKeys.ADDRESS, '');
         form.setFieldValue(FormKeys.NETWORK, '');
+        form.setFieldValue(FormKeys.COMMENT, '');
         handleAmountValidate();
         dispatch(setWithdrawAddress(''));
         currentNetworkRef.current = undefined;
@@ -878,6 +843,8 @@ export default function WithdrawContent() {
   const initRef = useRef(init);
   initRef.current = init;
 
+  const getNetworkDataRef = useRef(getNetworkData);
+  getNetworkDataRef.current = getNetworkData;
   const getWithdrawDataRef = useRef(getWithdrawData);
   getWithdrawDataRef.current = getWithdrawData;
   const initForReLogin = useCallback(async () => {
@@ -889,6 +856,8 @@ export default function WithdrawContent() {
       const address = form.getFieldValue(FormKeys.ADDRESS) || '';
       dispatch(setWithdrawAddress(address));
 
+      // get new network data
+      await getNetworkDataRef.current({ symbol: currentSymbol, address });
       getWithdrawDataRef.current(currentSymbol);
 
       console.log('>>>>>> initForReLogin', currentSymbol, newCurrentToken?.symbol);
@@ -909,6 +878,7 @@ export default function WithdrawContent() {
     form.setFieldValue(FormKeys.ADDRESS, '');
     form.setFieldValue(FormKeys.NETWORK, '');
     form.setFieldValue(FormKeys.AMOUNT, '');
+    form.setFieldValue(FormKeys.COMMENT, '');
     setCurrentNetwork(undefined);
     currentNetworkRef.current = undefined;
     currentChainItemRef.current = InitialWithdrawState.currentChainItem || CHAIN_LIST[0];
@@ -916,12 +886,7 @@ export default function WithdrawContent() {
     setWithdrawInfo(InitialWithdrawInfo);
     setBalance('0');
     setMaxBalance('');
-    setFormValidateData({
-      [FormKeys.TOKEN]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
-      [FormKeys.ADDRESS]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
-      [FormKeys.NETWORK]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
-      [FormKeys.AMOUNT]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
-    });
+    setFormValidateData(JSON.parse(JSON.stringify(FORM_VALIDATE_DATA)));
 
     if (getMaxBalanceTimerRef.current) {
       clearInterval(getMaxBalanceTimerRef.current);
@@ -964,12 +929,7 @@ export default function WithdrawContent() {
       setWithdrawInfo(InitialWithdrawInfo);
       setBalance('0');
       setMaxBalance('');
-      setFormValidateData({
-        [FormKeys.TOKEN]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
-        [FormKeys.ADDRESS]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
-        [FormKeys.NETWORK]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
-        [FormKeys.AMOUNT]: { validateStatus: ValidateStatus.Normal, errorMessage: '' },
-      });
+      setFormValidateData(JSON.parse(JSON.stringify(FORM_VALIDATE_DATA)));
 
       if (getMaxBalanceTimerRef.current) {
         clearInterval(getMaxBalanceTimerRef.current);
@@ -1037,7 +997,7 @@ export default function WithdrawContent() {
             <div className={styles['form-item-wrapper']}>
               <Form.Item
                 className={styles['form-item']}
-                label="Withdrawal Assets"
+                label="Withdrawal Token"
                 name={FormKeys.TOKEN}
                 validateStatus={formValidateData[FormKeys.TOKEN].validateStatus}
                 help={formValidateData[FormKeys.TOKEN].errorMessage}>
@@ -1089,13 +1049,52 @@ export default function WithdrawContent() {
                 />
               )}
             </div>
+            {currentNetwork?.network === BlockchainNetworkType.TON && (
+              <div className={styles['form-item-wrapper']}>
+                <Form.Item
+                  className={styles['form-item']}
+                  label={<CommentFormItemLabel />}
+                  name={FormKeys.COMMENT}
+                  validateStatus={formValidateData[FormKeys.COMMENT].validateStatus}
+                  help={formValidateData[FormKeys.COMMENT].errorMessage}>
+                  <FormInput
+                    placeholder="Enter comment"
+                    autoComplete="off"
+                    onChange={(e) => onCommentChange(e.target.value)}
+                    onInput={(event: any) => {
+                      const value = event.target?.value?.trim();
+                      const oldValue = form.getFieldValue(FormKeys.COMMENT);
+
+                      // CHECK1: not empty
+                      if (!value) return (event.target.value = '');
+
+                      // CHECK2: memo reg
+                      const CheckMemoReg = new RegExp(MEMO_REG);
+                      if (!CheckMemoReg.exec(value)) {
+                        event.target.value = oldValue;
+                        return;
+                      } else {
+                        event.target.value = value;
+                        return;
+                      }
+                    }}
+                  />
+                </Form.Item>
+              </div>
+            )}
             <div className={clsx(styles['form-item-wrapper'], styles['amount-form-item-wrapper'])}>
               <Form.Item
                 className={styles['form-item']}
                 label={
                   <div className={clsx('flex-row-between', styles['form-label-wrapper'])}>
                     <span className={styles['form-label']}>Withdrawal Amount</span>
-                    {isLogin && !isPadPX && remainingLimitComponent}
+                    {isLogin && !isPadPX && (
+                      <RemainingLimit
+                        limitCurrency={withdrawInfo.limitCurrency}
+                        totalLimit={withdrawInfo.totalLimit}
+                        remainingLimit={withdrawInfo.remainingLimit}
+                      />
+                    )}
                   </div>
                 }
                 name={FormKeys.AMOUNT}
@@ -1167,7 +1166,13 @@ export default function WithdrawContent() {
 
             {renderBalance}
 
-            {isLogin && isPadPX && remainingLimitComponent}
+            {isLogin && isPadPX && (
+              <RemainingLimit
+                limitCurrency={withdrawInfo.limitCurrency}
+                totalLimit={withdrawInfo.totalLimit}
+                remainingLimit={withdrawInfo.remainingLimit}
+              />
+            )}
             {isPadPX && currentNetwork?.contractAddress && (
               <ContractAddressForMobile
                 label={CONTRACT_ADDRESS}
@@ -1182,6 +1187,7 @@ export default function WithdrawContent() {
               currentNetwork={currentNetwork}
               receiveAmount={receiveAmount}
               address={getAddressInput()}
+              memo={getCommentInput()}
               balance={balance}
               withdrawInfo={withdrawInfo}
               clickFailedOk={clickFailedOk}
@@ -1202,6 +1208,7 @@ export default function WithdrawContent() {
     form,
     formValidateData,
     getAddressInput,
+    getCommentInput,
     getWithdrawData,
     handleAmountValidate,
     handleChainChanged,
@@ -1218,8 +1225,8 @@ export default function WithdrawContent() {
     networkList,
     onAddressBlur,
     onAddressChange,
+    onCommentChange,
     receiveAmount,
-    remainingLimitComponent,
     renderBalance,
     setMaxToken,
     tokenList,
