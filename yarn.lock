@@ -1473,6 +1473,15 @@
   resolved "https://registry.npmjs.org/@eslint/js/-/js-8.57.0.tgz#a5417ae8427873f1dd08b70b3574b453e67b5f7f"
   integrity sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==
 
+"@etransfer/core@^1.3.0-alpha.0":
+  version "1.3.0-alpha.0"
+  resolved "https://registry.npmjs.org/@etransfer/core/-/core-1.3.0-alpha.0.tgz#a6aa0134e2926f88bffbcce9edb71ca41faecd3a"
+  integrity sha512-mwCoNwQgTIyHaw9SJyF+/b7h6Snd0Wn9aR19ZzlyGxi5kdUnSmD9vm4JHlq4Urq8LzUpsF0VUEUzTSROaGTQPw==
+  dependencies:
+    "@etransfer/services" "^1.3.0-alpha.0"
+    "@etransfer/types" "^1.3.0-alpha.0"
+    "@etransfer/utils" "^1.3.0-alpha.0"
+
 "@etransfer/request@^1.3.0-alpha.0":
   version "1.3.0-alpha.0"
   resolved "https://registry.npmjs.org/@etransfer/request/-/request-1.3.0-alpha.0.tgz#7269f8f275d0b3d532a23257fcbcedf17c764248"
@@ -1496,6 +1505,26 @@
   version "1.3.0-alpha.0"
   resolved "https://registry.npmjs.org/@etransfer/types/-/types-1.3.0-alpha.0.tgz#f912b84a580d86e9e308cf067fc2be6f1df542b7"
   integrity sha512-0mKTosdov2QmdBIanfLyE/bom+4I9Y1vIUTCB5LAMs1pu2gMjOx51jxFihoW55KC6k0zqR+U0t8kQNOzBLKKlg==
+
+"@etransfer/ui-react@^1.3.0-alpha.0":
+  version "1.3.0-alpha.0"
+  resolved "https://registry.npmjs.org/@etransfer/ui-react/-/ui-react-1.3.0-alpha.0.tgz#0f5cc9a8c3632dc02de3df34fd7ea96ddfedb8c5"
+  integrity sha512-1yIvpsRV/Eg/Y2m/u1NgOHPVQoy5ytQkXyDm45ojnyQSUcKrZEa844yMEmx2zt7gbSKlU3MIsMmv5FigWRftgA==
+  dependencies:
+    "@etransfer/core" "^1.3.0-alpha.0"
+    "@etransfer/types" "^1.3.0-alpha.0"
+    "@etransfer/utils" "^1.3.0-alpha.0"
+    "@portkey/types" "2.6.6"
+    "@portkey/utils" "2.6.6"
+    antd "4.24.14"
+    bignumber.js "^9.1.0"
+    clsx "^1.2.1"
+    lottie-web "5.9.6"
+    moment "^2.29.4"
+    query-string "^7.1.1"
+    react-qrcode-logo "2.9.0"
+    react-use "^17.4.0"
+    uuid "^8.3.2"
 
 "@etransfer/utils@^1.3.0-alpha.0":
   version "1.3.0-alpha.0"
@@ -2267,6 +2296,11 @@
   version "2.8.0"
   resolved "https://registry.npmjs.org/@portkey/types/-/types-2.8.0.tgz#9772f546cb5e174378280621f344932561a5bacc"
   integrity sha512-TEklTHe6qe9krbDzBYt30AJ+yUC6+ZgSnmwoFC7TXc6nYKehZIz9opW9966JoF5EnVRKWNflH0D+kvB6/cj3MA==
+
+"@portkey/utils@2.6.6":
+  version "2.6.6"
+  resolved "https://registry.npmjs.org/@portkey/utils/-/utils-2.6.6.tgz#8fa5eb93a4ca43baa14345a75876a8701de2c1f6"
+  integrity sha512-1hooVcRxGafEyyD/TGqx9vsGwsl50RElCBz5hqTJ1mUDy3Q5OWFtSPU0dnTPpUwJlzJHUJCZMvO+wI2dCJHncA==
 
 "@portkey/utils@^2.4.5", "@portkey/utils@^2.7.1-alpha.0", "@portkey/utils@^2.7.1-alpha.4", "@portkey/utils@^2.7.2", "@portkey/utils@^2.8.0":
   version "2.8.0"

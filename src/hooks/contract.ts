@@ -1,4 +1,4 @@
-import singleMessage from 'components/SingleMessage';
+import { SingleMessage } from '@etransfer/ui-react';
 import { SupportedELFChainId } from 'constants/index';
 import { useCallback } from 'react';
 import { handleWebLoginErrorMessage } from 'utils/api/error';
@@ -22,7 +22,7 @@ export function useGetBalanceDivDecimals() {
         });
         return divDecimals(maxBalance, decimals).toFixed();
       } catch (error) {
-        singleMessage.error(handleWebLoginErrorMessage(error));
+        SingleMessage.error(handleWebLoginErrorMessage(error));
         throw new Error('Failed to get balance.');
       }
     },

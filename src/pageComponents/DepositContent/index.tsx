@@ -25,7 +25,7 @@ import {
   setToTokenSymbol,
 } from 'store/reducers/deposit/slice';
 import { useEffectOnce } from 'react-use';
-import singleMessage from 'components/SingleMessage';
+import { SingleMessage } from '@etransfer/ui-react';
 import { InitDepositInfo } from 'constants/deposit';
 import { CommonErrorNameType } from 'api/types';
 import { handleErrorMessage, sleep } from '@etransfer/utils';
@@ -166,7 +166,7 @@ export default function Content() {
       //   setLoading(false);
       // }
     },
-    [dispatch, setLoading],
+    [dispatch],
   );
 
   const is401Ref = useRef(false);
@@ -207,7 +207,7 @@ export default function Content() {
         }
       }
     },
-    [dispatch, setLoading],
+    [dispatch],
   );
 
   const getNetworkData = useCallback(
@@ -255,7 +255,7 @@ export default function Content() {
           !isWriteOperationError(error?.code, handleErrorMessage(error)) &&
           !isAuthTokenError(error)
         ) {
-          singleMessage.error(handleErrorMessage(error));
+          SingleMessage.error(handleErrorMessage(error));
         }
       } finally {
         setIsShowNetworkLoading(false);
@@ -336,7 +336,7 @@ export default function Content() {
         setLoading(false);
       }
     },
-    [dispatch, fromTokenSymbol, getDepositData, toChainItem.key, toTokenSymbol],
+    [dispatch, fromTokenSymbol, getDepositData, setLoading, toChainItem.key, toTokenSymbol],
   );
 
   const handleToTokenChange = useCallback(
@@ -377,7 +377,7 @@ export default function Content() {
         setLoading(false);
       }
     },
-    [dispatch, fromTokenSymbol, getDepositData, getNetworkData, toChainItem.key],
+    [dispatch, fromTokenSymbol, getDepositData, getNetworkData, setLoading, toChainItem.key],
   );
 
   const handleToChainChanged = useCallback(
@@ -396,7 +396,7 @@ export default function Content() {
         }
       }
     },
-    [dispatch, fromTokenSymbol, getNetworkData],
+    [dispatch, fromTokenSymbol, getNetworkData, setLoading],
   );
 
   const handleRetry = useCallback(async () => {
@@ -408,7 +408,7 @@ export default function Content() {
     } finally {
       setLoading(false);
     }
-  }, [fromTokenSymbol, getDepositData, toChainItem.key, toTokenSymbol]);
+  }, [fromTokenSymbol, getDepositData, setLoading, toChainItem.key, toTokenSymbol]);
 
   const searchParams = useSearchParams();
   const routeQuery = useMemo(
@@ -488,6 +488,7 @@ export default function Content() {
     routeQuery.depositToToken,
     routeQuery.tokenSymbol,
     setAuthFromStorage,
+    setLoading,
     toChainItem.key,
     toTokenSymbol,
   ]);
@@ -529,9 +530,10 @@ export default function Content() {
         toSymbol: InitialDepositState.toTokenSymbol,
       });
     } finally {
+      isPreLoginRef.current = false;
       setLoading(false);
     }
-  }, [getNetworkData, getTokenList]);
+  }, [getNetworkData, getTokenList, setLoading]);
   const initLogoutRef = useRef(initForLogout);
   initLogoutRef.current = initForLogout;
 
@@ -546,10 +548,11 @@ export default function Content() {
           toSymbol: toTokenSymbol,
         });
       } finally {
+        isPreLoginRef.current = true;
         setLoading(false);
       }
     }
-  }, [depositInfo.depositAddress, fromTokenSymbol, getNetworkData, toChainItem.key, toTokenSymbol]);
+  }, [depositInfo, fromTokenSymbol, getNetworkData, setLoading, toChainItem.key, toTokenSymbol]);
   const initForReLoginRef = useRef(initForReLogin);
   initForReLoginRef.current = initForReLogin;
 

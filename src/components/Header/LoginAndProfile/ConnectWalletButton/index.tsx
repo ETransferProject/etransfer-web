@@ -4,9 +4,9 @@ import { useCallback } from 'react';
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { useQueryAuthToken } from 'hooks/authToken';
 import { handleWebLoginErrorMessage } from 'utils/api/error';
-import singleMessage from 'components/SingleMessage';
 import { LOGIN, UNLOCK } from 'constants/wallet';
 import { useIsLogin, useShowLoginButtonLoading } from 'hooks/wallet';
+import { SingleMessage } from '@etransfer/ui-react';
 
 export default function ConnectWalletButton(props: CommonButtonProps) {
   const { connectWallet, isLocking } = useConnectWallet();
@@ -24,7 +24,7 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
         await connectWallet();
       }
     } catch (error) {
-      singleMessage.error(handleWebLoginErrorMessage(error));
+      SingleMessage.error(handleWebLoginErrorMessage(error));
     }
   }, [connectWallet, getAuth, isLogin]);
 

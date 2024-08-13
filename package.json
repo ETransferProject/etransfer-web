@@ -22,6 +22,7 @@
     "@aelf-web-login/wallet-adapter-portkey-aa": "^0.1.3-alpha.14",
     "@aelf-web-login/wallet-adapter-portkey-discover": "^0.1.3-alpha.14",
     "@aelf-web-login/wallet-adapter-react": "^0.1.3-alpha.14",
+    "@etransfer/ui-react": "^1.3.0-alpha.0",
     "@etransfer/utils": "^1.3.0-alpha.0",
     "@portkey/contracts": "^2.7.1-alpha.4",
     "@portkey/utils": "^2.7.1-alpha.4",

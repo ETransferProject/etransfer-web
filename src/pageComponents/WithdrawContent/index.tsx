@@ -21,7 +21,7 @@ import { CHAIN_LIST, IChainNameItem, defaultNullValue } from 'constants/index';
 import { getNetworkList, getTokenList, getWithdrawInfo } from 'utils/api/deposit';
 import { CONTRACT_ADDRESS } from 'constants/deposit';
 import { getBalance } from 'utils/contract';
-import singleMessage from 'components/SingleMessage';
+import { SingleMessage } from '@etransfer/ui-react';
 import { divDecimals } from 'utils/calculate';
 import { ZERO } from 'constants/calculate';
 import BigNumber from 'bignumber.js';
@@ -320,7 +320,7 @@ export default function WithdrawContent() {
             !isWriteOperationError(error?.code, handleErrorMessage(error)) &&
             !isAuthTokenError(error)
           ) {
-            singleMessage.error(handleErrorMessage(error));
+            SingleMessage.error(handleErrorMessage(error));
           }
           setNetworkList([]);
         }
@@ -459,7 +459,7 @@ export default function WithdrawContent() {
           !isWriteOperationError(error?.code, handleErrorMessage(error)) &&
           !isAuthTokenError(error)
         ) {
-          singleMessage.error(handleErrorMessage(error));
+          SingleMessage.error(handleErrorMessage(error));
           setIsTransactionFeeLoading(false);
         }
       }
@@ -514,7 +514,7 @@ export default function WithdrawContent() {
         });
         return tempMaxBalance;
       } catch (error) {
-        singleMessage.error(handleErrorMessage(error));
+        SingleMessage.error(handleErrorMessage(error));
         throw new Error('Failed to get balance.');
       } finally {
         isLoading && setIsMaxBalanceLoading(false);
