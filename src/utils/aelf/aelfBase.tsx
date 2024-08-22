@@ -11,11 +11,11 @@ export function getNodeByChainId(chainId: AllSupportedELFChainId) {
   return AElfNodes[chainId as AelfInstancesKey];
 }
 
-// const httpProviders: any = {};
+const httpProviders: any = {};
 export function getAElf(chainId: AllSupportedELFChainId) {
   const rpc = getNodeByChainId(chainId).rpcUrl;
-  // if (!httpProviders[rpc]) httpProviders[rpc] = new AElf(new AElf.providers.HttpProvider(rpc));
-  return new AElf(new AElf.providers.HttpProvider(rpc));
+  if (!httpProviders[rpc]) httpProviders[rpc] = new AElf(new AElf.providers.HttpProvider(rpc));
+  return httpProviders[rpc];
 }
 
 export const recoverPubKey = (msg: any, signature: string) => {

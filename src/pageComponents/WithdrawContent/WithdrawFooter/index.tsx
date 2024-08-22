@@ -70,8 +70,7 @@ export default function WithdrawFooter({
 }: WithdrawFooterProps) {
   const { isPadPX } = useCommonState();
   const { setLoading } = useLoading();
-  const { walletInfo, walletType, isLocking, callViewMethod, callSendMethod, getSignature } =
-    useConnectWallet();
+  const { walletInfo, walletType, isLocking, callSendMethod, getSignature } = useConnectWallet();
   const isLogin = useIsLogin();
   const handleLogin = useLogin();
   const accounts = useGetAccount();
@@ -120,7 +119,6 @@ export default function WithdrawFooter({
     }
 
     const checkRes = await checkTokenAllowanceAndApprove({
-      callViewMethod,
       callSendMethod,
       chainId: currentChainItem.key,
       symbol: currentSymbol,
@@ -135,7 +133,6 @@ export default function WithdrawFooter({
     accounts,
     balance,
     callSendMethod,
-    callViewMethod,
     currentChainItem.key,
     currentSymbol,
     currentTokenAddress,

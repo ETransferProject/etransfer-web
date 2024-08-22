@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { defaultNullValue } from 'constants/index';
 import { getDepositCalculate } from 'utils/api/deposit';
 import { handleErrorMessage } from '@etransfer/utils';
-import singleMessage from 'components/SingleMessage';
+import { SingleMessage } from '@etransfer/ui-react';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { formatSymbolDisplay } from 'utils/format';
 import { MAX_UPDATE_TIME } from 'constants/calculate';
@@ -47,9 +47,9 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId }: TExcha
       setSlippage(conversionRate.extraInfo?.slippage || '');
     } catch (error: any) {
       if (isAuthTokenError(error)) {
-        singleMessage.info(SIGNATURE_MISSING_TIP);
+        SingleMessage.info(SIGNATURE_MISSING_TIP);
       } else if (!isWriteOperationError(error?.code, handleErrorMessage(error))) {
-        singleMessage.error(handleErrorMessage(error));
+        SingleMessage.error(handleErrorMessage(error));
       }
     }
   }, [fromSymbol, toChainId, toSymbol]);

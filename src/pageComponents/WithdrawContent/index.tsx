@@ -21,7 +21,7 @@ import { CHAIN_LIST, IChainNameItem, defaultNullValue } from 'constants/index';
 import { getNetworkList, getTokenList, getWithdrawInfo } from 'utils/api/deposit';
 import { CONTRACT_ADDRESS } from 'constants/deposit';
 import { getBalance } from 'utils/contract';
-import singleMessage from 'components/SingleMessage';
+import { SingleMessage } from '@etransfer/ui-react';
 import { divDecimals } from 'utils/calculate';
 import { ZERO } from 'constants/calculate';
 import BigNumber from 'bignumber.js';
@@ -67,7 +67,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import FAQ from 'components/FAQ';
 import { FAQ_WITHDRAW } from 'constants/footer';
-import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { PortkeyVersion } from 'constants/wallet';
 import { TelegramPlatform } from 'utils/telegram';
 import { useSetAuthFromStorage } from 'hooks/authToken';
@@ -110,7 +109,6 @@ export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const isAndroid = devices.isMobile().android;
   const { isPadPX, isMobilePX } = useCommonState();
-  const { callViewMethod } = useConnectWallet();
   const isLogin = useIsLogin();
   const isLoginRef = useRef(isLogin);
   isLoginRef.current = isLogin;
@@ -322,7 +320,7 @@ export default function WithdrawContent() {
             !isWriteOperationError(error?.code, handleErrorMessage(error)) &&
             !isAuthTokenError(error)
           ) {
-            singleMessage.error(handleErrorMessage(error));
+            SingleMessage.error(handleErrorMessage(error));
           }
           setNetworkList([]);
         }
@@ -461,7 +459,7 @@ export default function WithdrawContent() {
           !isWriteOperationError(error?.code, handleErrorMessage(error)) &&
           !isAuthTokenError(error)
         ) {
-          singleMessage.error(handleErrorMessage(error));
+          SingleMessage.error(handleErrorMessage(error));
           setIsTransactionFeeLoading(false);
         }
       }
@@ -501,7 +499,6 @@ export default function WithdrawContent() {
         if (!caAddress) return '';
         isLoading && setIsMaxBalanceLoading(true);
         const maxBalance = await getBalance({
-          callViewMethod,
           symbol: symbol,
           chainId: currentChainItemRef.current.key,
           caAddress,
@@ -517,20 +514,13 @@ export default function WithdrawContent() {
         });
         return tempMaxBalance;
       } catch (error) {
-        singleMessage.error(handleErrorMessage(error));
+        SingleMessage.error(handleErrorMessage(error));
         throw new Error('Failed to get balance.');
       } finally {
         isLoading && setIsMaxBalanceLoading(false);
       }
     },
-    [
-      accounts,
-      callViewMethod,
-      currentSymbol,
-      currentTokenDecimal,
-      getWithdrawData,
-      handleAmountValidate,
-    ],
+    [accounts, currentSymbol, currentTokenDecimal, getWithdrawData, handleAmountValidate],
   );
 
   const getMaxBalanceRef = useRef(getMaxBalance);

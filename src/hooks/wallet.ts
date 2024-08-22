@@ -7,7 +7,7 @@ import { useQueryAuthToken } from 'hooks/authToken';
 import { TAelfAccounts } from 'types/wallet';
 import { SupportedChainId } from 'constants/index';
 import { handleWebLoginErrorMessage } from 'utils/api/error';
-import singleMessage from 'components/SingleMessage';
+import { SingleMessage } from '@etransfer/ui-react';
 import { useEffectOnce } from 'react-use';
 
 export function useInitWallet() {
@@ -70,7 +70,7 @@ export function useLogin() {
     try {
       await connectWallet();
     } catch (error) {
-      singleMessage.error(handleWebLoginErrorMessage(error));
+      SingleMessage.error(handleWebLoginErrorMessage(error));
     }
   }, [connectWallet, isLogin]);
 }

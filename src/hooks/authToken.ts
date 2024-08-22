@@ -16,7 +16,7 @@ import { ReCaptchaType } from 'components/GoogleRecaptcha/types';
 import { checkEOARegistration } from 'utils/api/user';
 import myEvents from 'utils/myEvent';
 import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
-import singleMessage from 'components/SingleMessage';
+import { SingleMessage } from '@etransfer/ui-react';
 import { WalletInfo } from 'types/wallet';
 import { useIsLogin } from './wallet';
 
@@ -127,7 +127,7 @@ export function useQueryAuthToken() {
         error?.type === ReCaptchaType.error ||
         error?.type === ReCaptchaType.expire
       ) {
-        singleMessage.error(error?.data);
+        SingleMessage.error(error?.data);
       }
       await disConnectWallet();
 

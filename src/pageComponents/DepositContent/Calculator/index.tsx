@@ -8,7 +8,7 @@ import Space from 'components/Space';
 import { useCommonState, useDepositState } from 'store/Provider/hooks';
 import { getDepositCalculate } from 'utils/api/deposit';
 import { handleErrorMessage } from '@etransfer/utils';
-import singleMessage from 'components/SingleMessage';
+import { SingleMessage } from '@etransfer/ui-react';
 import { TOKEN_INFO_USDT } from 'constants/index';
 import { formatSymbolDisplay } from 'utils/format';
 import { MAX_UPDATE_TIME } from 'constants/calculate';
@@ -57,9 +57,9 @@ export default function Calculator() {
       }
     } catch (error: any) {
       if (isAuthTokenError(error)) {
-        singleMessage.info(SIGNATURE_MISSING_TIP);
+        SingleMessage.info(SIGNATURE_MISSING_TIP);
       } else if (!isWriteOperationError(error?.code, handleErrorMessage(error))) {
-        singleMessage.error(handleErrorMessage(error));
+        SingleMessage.error(handleErrorMessage(error));
       }
     }
   }, [fromTokenSymbol, toChainItem.key, toTokenSymbol]);

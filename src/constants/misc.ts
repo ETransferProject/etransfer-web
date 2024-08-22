@@ -6,4 +6,4 @@ export const SIGNATURE_MISSING_TIP = 'Signature missing/expired, please log in a
 
 export const GOT_IT = 'Got it';
 
-export const API_VERSION = 'v2.11.0';
+export const API_VERSION = 'v2.12.0';
