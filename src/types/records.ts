@@ -20,7 +20,9 @@ export type TFromTransfer = {
   fromAddress: string;
   toAddress: string;
   amount: string;
+  amountUsd?: string;
   symbol: string;
+  status: string; // TODO
   txId: string;
 };
 
@@ -35,7 +37,9 @@ export type TToTransfer = {
   fromAddress: string;
   toAddress: string;
   amount: string;
+  amountUsd?: string;
   symbol: string;
+  status: string; // TODO
   feeInfo: TFeeInfo[];
   txId: string;
 };
@@ -82,3 +86,32 @@ export enum TRecordsStatusI18n {
   Succeed = 'Completed',
   Failed = 'Failed',
 }
+
+export enum TAddressType {
+  Sender = 'Sender',
+  Receiver = 'Receiver',
+}
+
+export type TOrderRecordsNoticeRequest = {
+  address: string;
+  minTimestamp?: number;
+};
+export type TOrderRecordsNoticeResponse = {
+  address: string;
+  processing: TRecordsNoticeDetail;
+  succeed: TRecordsNoticeDetail;
+  failed: TRecordsNoticeDetail;
+};
+
+export type TRecordsNoticeDetail = {
+  depositCount: number;
+  withdrawCount: number;
+  deposit: TRecordsNoticeDetailItem;
+  withdraw: TRecordsNoticeDetailItem;
+};
+
+export type TRecordsNoticeDetailItem = {
+  id: string;
+  amount: string;
+  symbol: string;
+};

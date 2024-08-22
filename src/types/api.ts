@@ -203,6 +203,7 @@ export type TRecordsListItem = {
   orderType: BusinessType;
   status: TOrderStatus;
   arrivalTime: number;
+  createTime: number;
   fromTransfer: TFromTransfer;
   toTransfer: TToTransfer;
 };
@@ -388,3 +389,26 @@ export type TTransferDashboardItemToFee = {
   symbol: string;
   amount: string;
 };
+
+export type TGetRecordDetailResult = TRecordsListItem & {
+  step: TRecordDetailStep;
+};
+
+export type TRecordDetailStep = {
+  currentStep: TransactionRecordStep;
+  fromTransfer: {
+    thirdPartConfirmingThreshold: number;
+    thirdPartConfirmedNum: number;
+  };
+  toTransfer: {
+    thirdPartConfirmingThreshold: number;
+    thirdPartConfirmedNum: number;
+  };
+};
+
+export enum TransactionRecordStep {
+  Submitted,
+  FromTransfer,
+  ToTransfer,
+  ReceivedOrSent,
+}

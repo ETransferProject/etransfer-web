@@ -118,7 +118,7 @@ export default function TransferDetailBody(props: Omit<TTransferDashboardData, '
       </div>
 
       <div className={styles['detail-item']}>
-        <div className={styles['detail-label']}>Receive From</div>
+        <div className={styles['detail-label']}>Receive Address</div>
         <WalletAddress
           address={props.toAddress}
           chainId={props.toChainId}
