@@ -11,9 +11,18 @@ import { getOmittedStr } from 'utils/calculate';
 import { formatTime } from 'pageComponents/InfoPage/TransferDashboard/utils';
 import { viewTxDetailInExplore } from 'utils/common';
 import { formatSymbolDisplay } from 'utils/format';
-import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
+import { InfoBusinessTypeLabel, TransferStatusType } from 'constants/infoDashboard';
+import { TOrderStatus } from 'types/records';
 
-export default function TransferDetailBody(props: Omit<TTransferDashboardData, 'status'>) {
+export type TTransferDetailBody = Omit<
+  TTransferDashboardData,
+  'status' | 'fromStatus' | 'toStatus'
+> & {
+  fromStatus: TransferStatusType | TOrderStatus;
+  toStatus: TransferStatusType | TOrderStatus;
+};
+
+export default function TransferDetailBody(props: TTransferDetailBody) {
   const { isMobilePX } = useCommonState();
 
   return (

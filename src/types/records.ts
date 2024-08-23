@@ -22,7 +22,7 @@ export type TFromTransfer = {
   amount: string;
   amountUsd?: string;
   symbol: string;
-  status: string; // TODO
+  status: TOrderStatus;
   txId: string;
 };
 
@@ -39,7 +39,7 @@ export type TToTransfer = {
   amount: string;
   amountUsd?: string;
   symbol: string;
-  status: string; // TODO
+  status: TOrderStatus;
   feeInfo: TFeeInfo[];
   txId: string;
 };

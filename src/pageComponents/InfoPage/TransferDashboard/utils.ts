@@ -9,6 +9,7 @@ export const getTransferDashboard = async (params: TTransferDashboardRequest) =>
 
   data?.items?.forEach((item) => {
     list.push({
+      id: item.id,
       orderType: item.orderType,
       status: item.status,
       createTime: item.createTime,

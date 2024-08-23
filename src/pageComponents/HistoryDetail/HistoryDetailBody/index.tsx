@@ -2,13 +2,13 @@ import TransferDetailBody from 'pageComponents/InfoPage/TransferDetail/TransferD
 import HistoryDetailStep from '../HistoryDetailStep';
 import styles from './styles.module.scss';
 import { TGetRecordDetailResult } from 'types/api';
-import { TransferStatusType } from 'constants/infoDashboard';
 
 export default function HistoryDetailBody(props: TGetRecordDetailResult) {
   return (
     <div className={styles['history-detail-body']}>
       <HistoryDetailStep {...props.step} />
       <TransferDetailBody
+        id={props.id}
         orderType={props.orderType}
         createTime={props.createTime}
         fromNetwork={props.fromTransfer.network}
@@ -18,7 +18,7 @@ export default function HistoryDetailBody(props: TGetRecordDetailResult) {
         fromAmount={props.fromTransfer.amount}
         fromAmountUsd={props.fromTransfer?.amountUsd || ''}
         fromTxId={props.fromTransfer.txId}
-        fromStatus={props.fromTransfer.status as TransferStatusType} // TODO
+        fromStatus={props.fromTransfer.status}
         toNetwork={props.toTransfer.network}
         toChainId={props.toTransfer.chainId}
         toSymbol={props.toTransfer.symbol}
@@ -26,7 +26,7 @@ export default function HistoryDetailBody(props: TGetRecordDetailResult) {
         toAmount={props.toTransfer.amount}
         toAmountUsd={props.toTransfer.amountUsd || ''}
         toTxId={props.toTransfer.txId}
-        toStatus={props.toTransfer.status as TransferStatusType} // TODO
+        toStatus={props.toTransfer.status}
         toFeeInfo={props.toTransfer.feeInfo}
       />
     </div>

@@ -355,9 +355,11 @@ export type TTransferDashboardResult = {
 };
 
 export type TTransferDashboardItem = {
+  id: string;
   orderType: BusinessType;
   status: TOrderStatus;
   createTime: number;
+  arrivalTime: number;
   fromTransfer: TTransferDashboardItemFrom;
   toTransfer: TTransferDashboardItemTo;
 };
