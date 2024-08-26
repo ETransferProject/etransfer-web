@@ -62,10 +62,21 @@
   }
 }
 
+.extraSmall {
+  height: 32px;
+  padding: 0 16px;
+  span {
+    display: inline-flex;
+    font-size: 12px;
+    line-height: 20px;
+  }
+}
+
 .small {
   height: 40px;
   padding: 0 20px;
   span {
+    display: inline-flex;
     font-size: 14px;
     line-height: 22px;
   }
@@ -75,6 +86,7 @@
   height: 48px;
   padding: 0 28px;
   span {
+    display: inline-flex;
     font-size: 16px;
     line-height: 24px;
   }
@@ -84,6 +96,7 @@
   height: 56px;
   padding: 0 32px;
   span {
+    display: inline-flex;
     font-size: 16px;
     line-height: 24px;
   }

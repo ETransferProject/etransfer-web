@@ -1,4 +1,4 @@
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 import MobileTokensHeader from '../MobileTokens/MobileTokensHeader';
 import WebTokensTable from '../WebTokens/WebTokensTable';
 import { TokenDashboardFilterProps } from '../types';
@@ -7,7 +7,7 @@ export default function PadTokens({ selectType, onTypeChange }: TokenDashboardFi
   return (
     <div>
       <MobileTokensHeader selectType={selectType} onTypeChange={onTypeChange} />
-      <Space direction={'vertical'} size={16} />
+      <CommonSpace direction={'vertical'} size={16} />
       <WebTokensTable />
     </div>
   );

@@ -2,7 +2,7 @@ import { TNetworkItem, TDepositTokenItem } from 'types/api';
 import SelectNetwork from '../SelectNetwork';
 import SelectToken from '../SelectToken';
 import styles from './styles.module.scss';
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 import { useDepositState } from 'store/Provider/hooks';
 import { useDepositNetworkList } from 'hooks/deposit';
 import { useMemo } from 'react';
@@ -39,7 +39,7 @@ export default function SelectTokenNetwork({
         isShowLoading={isShowNetworkLoading}
         selectCallback={networkSelectCallback}
       />
-      <Space direction="vertical" size={20} />
+      <CommonSpace direction="vertical" size={20} />
       <SelectToken
         title="Deposit Token"
         tokenList={fromTokenList}

@@ -7,7 +7,7 @@ import Networks from '../../ColumnComponents/Networks';
 import { TTokenDashboardItem } from 'types/infoDashboard';
 import NetworkTotalVolume from '../../ColumnComponents/NetworkTotalVolume';
 import DynamicArrow from 'components/DynamicArrow';
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 import clsx from 'clsx';
 import { formatSymbolDisplay } from 'utils/format';
 
@@ -86,7 +86,7 @@ export default function MobileTokensBody() {
               <Networks list={item.networks} size="small" className={styles['chain-wrapper']} />
             </div>
           </div>
-          <Space direction={'vertical'} size={12} />
+          <CommonSpace direction={'vertical'} size={12} />
           <div className="flex-row-between">
             <div>Total Volume</div>
             <div>{`${item.volumeTotal} ${formatSymbolDisplay(item.symbol)}`}</div>

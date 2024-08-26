@@ -3,7 +3,7 @@ import { defaultNullValue } from 'constants/index';
 import styles from './styles.module.scss';
 import { useMemo } from 'react';
 import clsx from 'clsx';
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 
 type TFeeInfo = {
   isTransactionFeeLoading?: boolean;
@@ -75,7 +75,7 @@ export default function FeeInfo({
   return (
     <div>
       {estimatedGasFeeElement}
-      <Space direction={'vertical'} size={2} />
+      <CommonSpace direction={'vertical'} size={2} />
       {transactionFeeElement}
     </div>
   );

@@ -4,7 +4,9 @@ import FooterLogo from './logo/footerLogo.svg';
 
 import Info from './info.svg';
 import InfoBrandIcon from './infoBrand.svg';
+import InfoLineIcon from './infoLine.svg';
 import Close from './close.svg';
+import CloseMedium from './closeMedium.svg';
 import CloseSmall from './closeSmall.svg';
 import Swap from './swap.svg';
 import Deposit from './deposit.svg';
@@ -12,6 +14,8 @@ import Withdraw from './withdraw.svg';
 import Check from './check.svg';
 import CheckSmall from './checkSmall.svg';
 import CheckBig from './checkBig.svg';
+import CheckFilled from './checkFilled.svg';
+import CheckNoticeIcon from './checkNotice.svg';
 import Copy from './copy.svg';
 import CopySmall from './copySmall.svg';
 import CopyBig from './copyBig.svg';
@@ -97,7 +101,9 @@ export {
   FooterLogo,
   Info,
   InfoBrandIcon,
+  InfoLineIcon,
   Close,
+  CloseMedium,
   CloseSmall,
   Swap,
   Deposit,
@@ -105,6 +111,8 @@ export {
   Check,
   CheckSmall,
   CheckBig,
+  CheckFilled,
+  CheckNoticeIcon,
   Portkey,
   Portkey24,
   PortkeyV2,

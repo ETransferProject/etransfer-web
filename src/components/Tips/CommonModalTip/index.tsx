@@ -2,7 +2,7 @@ import CommonModal, { CommonModalProps } from 'components/CommonModal';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
 
-export default function CommonModalTips({
+export default function CommonModalTip({
   open = false,
   getContainer = 'body',
   ...props

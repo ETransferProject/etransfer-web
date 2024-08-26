@@ -6,11 +6,11 @@ import DepositDescription from 'pageComponents/DepositContent/DepositDescription
 import styles from './styles.module.scss';
 import { TDepositContentProps } from '..';
 import CommonQRCode from 'components/CommonQRCode';
-import { DEPOSIT_ADDRESS_LABEL } from 'constants/deposit';
+import { CHECK_TXN_BUTTON, CHECKING_TXN_BUTTON, DEPOSIT_ADDRESS_LABEL } from 'constants/deposit';
 import CommonImage from 'components/CommonImage';
 import { DoubleArrowIcon, qrCodePlaceholder } from 'assets/images';
 import { DepositRetryForWeb } from 'pageComponents/DepositContent/DepositRetry';
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 import ExchangeRate from '../ExchangeRate';
 import Calculator from '../Calculator';
 import { useDepositState } from 'store/Provider/hooks';
@@ -28,6 +28,8 @@ import { useDepositNetworkList } from 'hooks/deposit';
 import TransferTip from '../TransferTip';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { AelfChainIdList } from 'constants/chain';
+import CommonButton, { CommonButtonSize } from 'components/CommonButton';
+import { ProcessingTip } from 'components/Tips/ProcessingTip';
 
 export default function WebContent({
   fromNetworkSelected,
@@ -40,7 +42,12 @@ export default function WebContent({
   isShowNetworkLoading = false,
   fromTokenSelected,
   toTokenSelected,
+  isCheckTxnLoading = false,
+  depositProcessingCount,
+  withdrawProcessingCount,
   onRetry,
+  onCheckTxnClick,
+  onClickProcessingTip,
   toTokenSelectCallback,
   toChainChanged,
   fromNetworkChanged,
@@ -111,94 +118,121 @@ export default function WebContent({
   }, [depositInfo.extraNotes]);
 
   const menuItems = useMemo(() => toChainList || CHAIN_LIST, [toChainList]);
-  const renderDepositMainContent = useMemo(() => {
+
+  const renderSelectTokens = useMemo(() => {
+    return (
+      <div className={clsx('flex-row-center', styles['selected-data-wrapper'])}>
+        <div className={clsx(styles['selected-token-wrapper'])}>
+          <div className={styles['label']}>Deposit Token</div>
+          <SelectToken
+            className={styles['selected-token']}
+            tokenList={fromTokenList}
+            selected={fromTokenSelected}
+            selectCallback={fromTokenChanged}
+          />
+        </div>
+        <div className={styles['space']}></div>
+        <div className={clsx(styles['selected-token-wrapper'])}>
+          <div className={styles['label']}>Receive Token</div>
+          <SelectToken
+            className={styles['selected-token']}
+            tokenList={toTokenList}
+            selected={toTokenSelected}
+            selectCallback={toTokenSelectCallback}
+          />
+        </div>
+      </div>
+    );
+  }, [
+    fromTokenChanged,
+    fromTokenList,
+    fromTokenSelected,
+    toTokenList,
+    toTokenSelectCallback,
+    toTokenSelected,
+  ]);
+
+  const renderSelectNetworks = useMemo(() => {
     return (
       <div
         className={clsx(
-          'main-content-container',
-          'main-content-container-safe-area',
-          styles['main-content'],
+          'flex-row-center',
+          styles['selected-data-wrapper'],
+          styles['selected-row-2'],
         )}>
-        <div className={styles['deposit-title']}>Deposit Assets</div>
-
-        <div className={clsx('flex-row-center', styles['selected-data-wrapper'])}>
-          <div className={clsx(styles['selected-token-wrapper'])}>
-            <div className={styles['label']}>Deposit Token</div>
-            <SelectToken
-              className={styles['selected-token']}
-              tokenList={fromTokenList}
-              selected={fromTokenSelected}
-              selectCallback={fromTokenChanged}
-            />
-          </div>
-          <div className={styles['space']}></div>
-          <div className={clsx(styles['selected-token-wrapper'])}>
-            <div className={styles['label']}>Receive Token</div>
-            <SelectToken
-              className={styles['selected-token']}
-              tokenList={toTokenList}
-              selected={toTokenSelected}
-              selectCallback={toTokenSelectCallback}
-            />
-          </div>
+        <div className={clsx(styles['selected-chain-wrapper'])}>
+          <div className={styles['label']}>From</div>
+          <SelectNetwork
+            className={styles['selected-chain']}
+            networkList={newFromNetworkList || []}
+            selected={fromNetworkSelected}
+            isShowLoading={isShowNetworkLoading}
+            selectCallback={fromNetworkChanged}
+          />
         </div>
+        <div className={styles['space']}></div>
+        <div
+          className={clsx('position-relative', styles['selected-chain-wrapper'])}
+          id="webDepositChainWrapper">
+          <div className={clsx('flex-row-center-between', styles['label'])}>
+            <span>To</span>
+            <div className="flex-row-center">
+              {isLogin ? (
+                <>
+                  <div className={styles['circle']} />
+                  <span className={styles['connected']}>Connected</span>
+                </>
+              ) : (
+                <span className={styles['connect']} onClick={handleLogin}>
+                  Connect
+                </span>
+              )}
+            </div>
+          </div>
 
+          <SelectChainWrapper
+            className={styles['selected-chain']}
+            menuItems={menuItems}
+            selectedItem={toChainItem}
+            mobileTitle={`Deposit ${'To'}`}
+            chainChanged={toChainChanged}
+          />
+        </div>
+      </div>
+    );
+  }, [
+    fromNetworkChanged,
+    fromNetworkSelected,
+    handleLogin,
+    isLogin,
+    isShowNetworkLoading,
+    menuItems,
+    newFromNetworkList,
+    toChainChanged,
+    toChainItem,
+  ]);
+
+  const renderSelectSection = useMemo(() => {
+    return (
+      <>
+        {renderSelectTokens}
         <div className={clsx('row-center', styles['arrow-right'])}>
           <DoubleArrowIcon />
         </div>
+        {renderSelectNetworks}
+      </>
+    );
+  }, [renderSelectNetworks, renderSelectTokens]);
 
-        <div
-          className={clsx(
-            'flex-row-center',
-            styles['selected-data-wrapper'],
-            styles['selected-row-2'],
-          )}>
-          <div className={clsx(styles['selected-chain-wrapper'])}>
-            <div className={styles['label']}>From</div>
-            <SelectNetwork
-              className={styles['selected-chain']}
-              networkList={newFromNetworkList || []}
-              selected={fromNetworkSelected}
-              isShowLoading={isShowNetworkLoading}
-              selectCallback={fromNetworkChanged}
-            />
-          </div>
-          <div className={styles['space']}></div>
-          <div
-            className={clsx('position-relative', styles['selected-chain-wrapper'])}
-            id="webDepositChainWrapper">
-            <div className={clsx('flex-row-center-between', styles['label'])}>
-              <span>To</span>
-              <div className="flex-row-center">
-                {isLogin ? (
-                  <>
-                    <div className={styles['circle']} />
-                    <span className={styles['connected']}>Connected</span>
-                  </>
-                ) : (
-                  <span className={styles['connect']} onClick={handleLogin}>
-                    Connect
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <SelectChainWrapper
-              className={styles['selected-chain']}
-              menuItems={menuItems}
-              selectedItem={toChainItem}
-              mobileTitle={`Deposit ${'To'}`}
-              chainChanged={toChainChanged}
-            />
-          </div>
-        </div>
-
+  const renderCalculationSection = useMemo(() => {
+    return (
+      <>
         {fromTokenSymbol &&
           toTokenSymbol &&
           toChainItem.key &&
           fromTokenSymbol !== toTokenSymbol && (
             <>
-              <Space direction="vertical" size={12} />
+              <CommonSpace direction="vertical" size={12} />
               <ExchangeRate
                 fromSymbol={fromTokenSymbol}
                 toSymbol={toTokenSymbol}
@@ -209,12 +243,95 @@ export default function WebContent({
 
         {fromTokenSymbol !== toTokenSymbol && (
           <>
-            <Space direction="vertical" size={24} />
+            <CommonSpace direction="vertical" size={24} />
             <Calculator />
           </>
         )}
+      </>
+    );
+  }, [fromTokenSymbol, toChainItem.key, toTokenSymbol]);
 
-        <Space direction="vertical" size={40} />
+  const renderDepositInfo = useMemo(() => {
+    return (
+      <>
+        <CommonSpace direction="vertical" size={4} />
+        <DepositTip fromToken={fromTokenSymbol} toToken={toTokenSymbol} />
+        <CommonSpace direction="vertical" size={12} />
+        <div className={clsx('flex-row-center', styles['deposit-address-wrapper'])}>
+          {qrCodeValue ? (
+            <CommonQRCode value={qrCodeValue} logoUrl={tokenLogoUrl} logoSize={20} />
+          ) : (
+            <CommonImage
+              className={clsx('flex-none', styles['qr-code-placeholder'])}
+              src={qrCodePlaceholder}
+              alt="qrCodePlaceholder"
+            />
+          )}
+          <div>
+            <CommonAddress
+              label={DEPOSIT_ADDRESS_LABEL}
+              value={depositInfo.depositAddress}
+              copySize={CopySize.Big}
+            />
+
+            <CommonButton
+              className={styles['check-txn-btn']}
+              size={CommonButtonSize.ExtraSmall}
+              onClick={onCheckTxnClick}
+              loading={isCheckTxnLoading}>
+              {isCheckTxnLoading ? CHECKING_TXN_BUTTON : CHECK_TXN_BUTTON}
+            </CommonButton>
+          </div>
+        </div>
+        <CommonSpace direction="vertical" size={12} />
+        <DepositInfo
+          minimumDeposit={depositInfo.minAmount}
+          contractAddress={contractAddress}
+          contractAddressLink={contractAddressLink}
+          minAmountUsd={depositInfo.minAmountUsd || ''}
+        />
+        <CommonSpace direction="vertical" size={24} />
+        {renderDepositDescription}
+      </>
+    );
+  }, [
+    contractAddress,
+    contractAddressLink,
+    depositInfo.depositAddress,
+    depositInfo.minAmount,
+    depositInfo.minAmountUsd,
+    fromTokenSymbol,
+    isCheckTxnLoading,
+    onCheckTxnClick,
+    qrCodeValue,
+    renderDepositDescription,
+    toTokenSymbol,
+    tokenLogoUrl,
+  ]);
+
+  const renderDepositMainContent = useMemo(() => {
+    return (
+      <div
+        className={clsx(
+          'main-content-container',
+          'main-content-container-safe-area',
+          styles['main-content'],
+        )}>
+        {isLogin && (
+          <ProcessingTip
+            depositProcessingCount={depositProcessingCount}
+            withdrawProcessingCount={withdrawProcessingCount}
+            onClick={onClickProcessingTip}
+          />
+        )}
+
+        <div className={styles['deposit-title']}>Deposit Assets</div>
+
+        {renderSelectSection}
+
+        {renderCalculationSection}
+
+        <CommonSpace direction="vertical" size={40} />
 
         {isShowTransferTip && (
           <>
@@ -224,7 +341,7 @@ export default function WebContent({
               symbol={fromTokenSymbol}
               network={fromNetworkSelected}
             />
-            <Space direction="vertical" size={24} />
+            <CommonSpace direction="vertical" size={24} />
           </>
         )}
 
@@ -237,74 +354,26 @@ export default function WebContent({
             )}
             {isShowNotLoginTip && <NotLoginTip />}
             {isLogin && showRetry && <DepositRetryForWeb isShowImage={true} onClick={onRetry} />}
-            {isLogin && !showRetry && !!depositInfo.depositAddress && (
-              <>
-                <Space direction="vertical" size={4} />
-                <DepositTip fromToken={fromTokenSymbol} toToken={toTokenSymbol} />
-                <Space direction="vertical" size={12} />
-                <div className={clsx('flex-row-center', styles['deposit-address-wrapper'])}>
-                  {qrCodeValue ? (
-                    <CommonQRCode value={qrCodeValue} logoUrl={tokenLogoUrl} logoSize={20} />
-                  ) : (
-                    <CommonImage
-                      className={clsx('flex-none', styles['qr-code-placeholder'])}
-                      src={qrCodePlaceholder}
-                      alt="qrCodePlaceholder"
-                    />
-                  )}
-                  <CommonAddress
-                    label={DEPOSIT_ADDRESS_LABEL}
-                    value={depositInfo.depositAddress}
-                    copySize={CopySize.Big}
-                  />
-                </div>
-                <Space direction="vertical" size={12} />
-                <DepositInfo
-                  minimumDeposit={depositInfo.minAmount}
-                  contractAddress={contractAddress}
-                  contractAddressLink={contractAddressLink}
-                  minAmountUsd={depositInfo.minAmountUsd || ''}
-                />
-                <Space direction="vertical" size={24} />
-                {renderDepositDescription}
-              </>
-            )}
+            {isLogin && !showRetry && !!depositInfo.depositAddress && renderDepositInfo}
           </>
         )}
       </div>
     );
   }, [
-    contractAddress,
-    contractAddressLink,
     depositInfo.depositAddress,
-    depositInfo.minAmount,
-    depositInfo.minAmountUsd,
-    fromNetworkChanged,
     fromNetworkSelected,
-    fromTokenChanged,
-    fromTokenList,
-    fromTokenSelected,
     fromTokenSymbol,
-    handleLogin,
     isLogin,
     isShowDepositAddressLabelForLogin,
     isShowDepositAddressLabelForNotLogin,
-    isShowNetworkLoading,
     isShowNotLoginTip,
     isShowTransferTip,
-    menuItems,
-    newFromNetworkList,
     onRetry,
-    qrCodeValue,
-    renderDepositDescription,
+    renderCalculationSection,
+    renderDepositInfo,
+    renderSelectSection,
     showRetry,
-    toChainChanged,
     toChainItem,
-    toTokenList,
-    toTokenSelectCallback,
-    toTokenSelected,
-    toTokenSymbol,
-    tokenLogoUrl,
   ]);
 
   return (

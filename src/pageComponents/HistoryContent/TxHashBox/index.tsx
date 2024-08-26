@@ -36,7 +36,10 @@ export default function TxHashBox({
     return (
       <span
         className={clsx(styles['value'], isPadPX ? styles['mobile-font'] : styles['web-font'])}
-        onClick={() => viewTxDetailInExplore(network, txHash, chainId)}>
+        onClick={(event: any) => {
+          event.stopPropagation();
+          viewTxDetailInExplore(network, txHash, chainId);
+        }}>
         {getOmittedStr(txHash, 6, 6)}
       </span>
     );

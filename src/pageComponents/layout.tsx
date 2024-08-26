@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, Suspense } from 'react';
+import React, { useEffect, Suspense, useRef } from 'react';
 import { Layout as AntdLayout } from 'antd';
 import Header from 'components/Header';
 import Sider from 'components/Sider';
@@ -19,6 +19,8 @@ import { useInitWallet } from 'hooks/wallet';
 import { TelegramPlatform } from 'utils/telegram';
 import service from 'api/axios';
 import { API_VERSION } from 'constants/misc';
+import { useTxnNotice } from 'hooks/notice';
+import { useEffectOnce } from 'react-use';
 
 const Layout = ({
   children,
@@ -65,6 +67,14 @@ const Layout = ({
   useInitWallet();
   useRouteParamType();
   useUpdateRecord();
+
+  const { openNotification } = useTxnNotice();
+  const openNotificationRef = useRef(openNotification);
+  openNotificationRef.current = openNotification;
+  useEffectOnce(() => {
+    // myEvents.GlobalTxnNotice
+    // openNotificationRef.current();
+  });
 
   return (
     <AntdLayout

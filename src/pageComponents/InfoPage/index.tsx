@@ -4,7 +4,7 @@ import { useAppDispatch, useCommonState, useInfoDashboardState } from 'store/Pro
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import TokenDashboard from './TokenDashboard';
 import TransferDashboard from './TransferDashboard';
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
 import Overview from './Overview';
@@ -74,9 +74,9 @@ export default function InfoPage() {
     <div className={clsx('wide-screen-content-container', styles['info-page'])}>
       <div style={{ display: !isPadPX && isShowDetailDrawer ? 'none' : 'block' }}>
         <Overview />
-        <Space direction={'vertical'} size={isPadPX ? 40 : 64} />
+        <CommonSpace direction={'vertical'} size={isPadPX ? 40 : 64} />
         <TokenDashboard />
-        <Space direction={'vertical'} size={isPadPX ? 40 : 64} />
+        <CommonSpace direction={'vertical'} size={isPadPX ? 40 : 64} />
 
         {hasTransferDashboard && <TransferDashboard />}
       </div>

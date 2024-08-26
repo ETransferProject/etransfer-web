@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { TGetRecordDetailResult } from 'types/api';
+import { TGetRecordDetailResult, TransactionRecordStep } from 'types/api';
 import { useAppDispatch, useCommonState, useLoading } from 'store/Provider/hooks';
 import MobileHistoryDetail from './MobileHistoryDetail';
 import WebHistoryDetail from './WebHistoryDetail';

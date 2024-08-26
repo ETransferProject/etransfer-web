@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import styles from './styles.module.scss';
 
 export enum CommonButtonSize {
+  ExtraSmall = 'extraSmall',
   Small = 'small',
   Middle = 'middle',
   Large = 'large',

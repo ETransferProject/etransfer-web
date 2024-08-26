@@ -1,7 +1,7 @@
 import { ToArrow } from 'assets/images';
 import CommonTooltip from 'components/CommonTooltip';
 import NetworkLogo from 'components/NetworkLogo';
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 import { BlockchainNetworkType } from 'constants/network';
 import { useCallback, useMemo } from 'react';
 import { useCommonState } from 'store/Provider/hooks';
@@ -56,9 +56,9 @@ export default function FromToChain({
         </div>
       </CommonTooltip>
 
-      <Space direction={'horizontal'} size={6} />
+      <CommonSpace direction={'horizontal'} size={6} />
       <ToArrow />
-      <Space direction={'horizontal'} size={6} />
+      <CommonSpace direction={'horizontal'} size={6} />
 
       <CommonTooltip
         title={formatTip(currentTo)}

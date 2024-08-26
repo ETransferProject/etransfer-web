@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIsLogin } from 'hooks/wallet';
 import { SupportedELFChainId, defaultNullValue } from 'constants/index';
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 import PartialLoading from 'components/PartialLoading';
 import BigNumber from 'bignumber.js';
 import { useGetBalanceDivDecimals } from 'hooks/contract';
@@ -78,9 +78,9 @@ export function BalanceAndUSD({
   if (!balance)
     return (
       <div className="flex-column-end">
-        <Space direction="vertical" size={15} />
+        <CommonSpace direction="vertical" size={15} />
         <PartialLoading />
-        <Space direction="vertical" size={15} />
+        <CommonSpace direction="vertical" size={15} />
       </div>
     );
 

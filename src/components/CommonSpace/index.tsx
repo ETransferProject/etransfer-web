@@ -1,9 +1,9 @@
-type TSpace = {
+type TCommonSpace = {
   direction: 'vertical' | 'horizontal';
   size: number;
 };
 
-export default function Space({ direction, size }: TSpace) {
+export default function CommonSpace({ direction, size }: TCommonSpace) {
   return (
     <div
       style={{

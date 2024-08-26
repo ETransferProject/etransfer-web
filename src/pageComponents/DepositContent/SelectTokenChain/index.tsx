@@ -3,7 +3,7 @@ import SelectChainWrapper from '../SelectChainWrapper';
 import SelectToken from '../SelectToken';
 import styles from './styles.module.scss';
 import { CHAIN_LIST, IChainNameItem } from 'constants/index';
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 import { useEffect, useMemo } from 'react';
 import { useGetAccount } from 'hooks/wallet';
 import { useAppDispatch, useDepositState } from 'store/Provider/hooks';
@@ -44,7 +44,7 @@ export default function SelectTokenChain({
         mobileTitle={`Deposit ${label}`}
         chainChanged={chainChanged}
       />
-      <Space direction="vertical" size={20} />
+      <CommonSpace direction="vertical" size={20} />
       <SelectToken
         title="Receive Token"
         tokenList={toTokenList}

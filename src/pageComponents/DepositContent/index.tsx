@@ -26,7 +26,7 @@ import {
 } from 'store/reducers/deposit/slice';
 import { useEffectOnce } from 'react-use';
 import { SingleMessage } from '@etransfer/ui-react';
-import { InitDepositInfo } from 'constants/deposit';
+import { INIT_DEPOSIT_INFO } from 'constants/deposit';
 import { CommonErrorNameType } from 'api/types';
 import { handleErrorMessage, sleep } from '@etransfer/utils';
 import myEvents from 'utils/myEvent';
@@ -39,6 +39,7 @@ import { useSetAuthFromStorage } from 'hooks/authToken';
 import { useIsLogin } from 'hooks/wallet';
 import { addAelfNetwork, deleteAelfNetwork } from 'utils/deposit';
 import { AelfChainIdList } from 'constants/chain';
+import { useCheckTxn } from 'hooks/deposit';
 
 export type TDepositContentProps = {
   fromNetworkSelected?: TNetworkItem;
@@ -51,7 +52,12 @@ export type TDepositContentProps = {
   showRetry?: boolean;
   isShowNetworkLoading?: boolean;
   toTokenSelected?: TToTokenItem;
+  isCheckTxnLoading?: boolean;
+  depositProcessingCount?: number;
+  withdrawProcessingCount?: number;
   onRetry?: () => void;
+  onCheckTxnClick?: () => void;
+  onClickProcessingTip: () => void;
   fromNetworkChanged: (item: TNetworkItem) => Promise<void>;
   fromTokenChanged: (item: TDepositTokenItem) => void;
   toChainChanged: (item: IChainNameItem) => void;
@@ -84,7 +90,7 @@ export default function Content() {
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const fromNetworkRef = useRef<string>();
-  const [depositInfo, setDepositInfo] = useState<TDepositInfo>(InitDepositInfo);
+  const [depositInfo, setDepositInfo] = useState<TDepositInfo>(INIT_DEPOSIT_INFO);
   const [isGetRetry, setIsGetRetry] = useState(false);
   const showRetry = useMemo(() => {
     return (
@@ -201,8 +207,8 @@ export default function Content() {
           setIsGetRetry(false);
         }
         if (error.name !== CommonErrorNameType.CANCEL) {
-          setDepositInfo(InitDepositInfo);
-          dispatch(setDepositAddress(InitDepositInfo.depositAddress));
+          setDepositInfo(INIT_DEPOSIT_INFO);
+          dispatch(setDepositAddress(INIT_DEPOSIT_INFO.depositAddress));
           // setLoading(false);
         }
       }
@@ -304,8 +310,8 @@ export default function Content() {
       }
 
       // Reset other data
-      setDepositInfo(InitDepositInfo);
-      dispatch(setDepositAddress(InitDepositInfo.depositAddress));
+      setDepositInfo(INIT_DEPOSIT_INFO);
+      dispatch(setDepositAddress(INIT_DEPOSIT_INFO.depositAddress));
       setIsGetRetry(false);
 
       // Refresh network and deposit info
@@ -410,6 +416,12 @@ export default function Content() {
     }
   }, [fromTokenSymbol, getDepositData, setLoading, toChainItem.key, toTokenSymbol]);
 
+  const { isCheckTxnLoading, handleCheckTxnClick } = useCheckTxn();
+
+  const handleClickProcessingTip = useCallback(() => {
+    // router.push('/history');
+  }, []);
+
   const searchParams = useSearchParams();
   const routeQuery = useMemo(
     () => ({
@@ -512,7 +524,7 @@ export default function Content() {
   // }, [init]);
 
   const initForLogout = useCallback(async () => {
-    setDepositInfo(InitDepositInfo);
+    setDepositInfo(INIT_DEPOSIT_INFO);
     setIsGetRetry(false);
     fromNetworkRef.current = undefined;
     is401Ref.current = false;
@@ -592,7 +604,12 @@ export default function Content() {
       qrCodeValue={depositInfo.depositAddress}
       showRetry={showRetry}
       isShowNetworkLoading={isShowNetworkLoading}
+      isCheckTxnLoading={isCheckTxnLoading}
+      depositProcessingCount={1} // TODO
+      withdrawProcessingCount={2} // TODO
       onRetry={handleRetry}
+      onCheckTxnClick={handleCheckTxnClick}
+      onClickProcessingTip={handleClickProcessingTip}
       fromNetworkChanged={handleFromNetworkChanged}
       fromTokenChanged={handleFromTokenChange}
       toTokenSelectCallback={handleToTokenChange}
@@ -610,7 +627,12 @@ export default function Content() {
       qrCodeValue={depositInfo.depositAddress}
       showRetry={showRetry}
       isShowNetworkLoading={isShowNetworkLoading}
+      isCheckTxnLoading={isCheckTxnLoading}
+      depositProcessingCount={1} // TODO
+      withdrawProcessingCount={2} // TODO
       onRetry={handleRetry}
+      onCheckTxnClick={handleCheckTxnClick}
+      onClickProcessingTip={handleClickProcessingTip}
       fromNetworkChanged={handleFromNetworkChanged}
       fromTokenChanged={handleFromTokenChange}
       toTokenSelectCallback={handleToTokenChange}
