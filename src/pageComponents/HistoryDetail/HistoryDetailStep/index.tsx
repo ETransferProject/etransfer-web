@@ -1,7 +1,9 @@
 import { BusinessType, TransactionRecordStep } from 'types/api';
 import styles from './styles.module.scss';
 import { Steps } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import { useMemo } from 'react';
+import { useCommonState } from 'store/Provider/hooks';
 
 export interface HistoryDetailStepProps {
   orderType: BusinessType;
@@ -23,8 +25,9 @@ export interface HistoryDetailStepProps {
 }
 
 export default function HistoryDetailStep(props: HistoryDetailStepProps) {
-  const items = useMemo(() => {
-    return [
+  const { isPadPX } = useCommonState();
+  const stepItems = useMemo(() => {
+    const items = [
       {
         title: `${props.orderType} submitted`,
         description: `${props.fromTransfer.amount} ${props.fromTransfer.symbol}`,
@@ -41,7 +44,14 @@ export default function HistoryDetailStep(props: HistoryDetailStepProps) {
         description: `${props.toTransfer.amount} ${props.toTransfer.symbol}`,
       },
     ];
+    items.forEach((item: any, index) => {
+      if (index + 1 === props.currentStep) {
+        item.icon = <LoadingOutlined />;
+      }
+    });
+    return items;
   }, [
+    props.currentStep,
     props.fromTransfer.amount,
     props.fromTransfer.chainId,
     props.fromTransfer.symbol,
@@ -55,7 +65,18 @@ export default function HistoryDetailStep(props: HistoryDetailStepProps) {
 
   return (
     <div className={styles['history-detail-step']}>
-      <Steps current={props.currentStep} size="small" labelPlacement="vertical" items={items} />
+      <Steps
+        className={
+          isPadPX
+            ? styles['history-detail-step-vertical']
+            : styles['history-detail-step-horizontal']
+        }
+        direction={isPadPX ? 'vertical' : 'horizontal'}
+        labelPlacement={isPadPX ? 'horizontal' : 'vertical'}
+        items={stepItems}
+        current={props.currentStep - 1}
+        size="small"
+      />
     </div>
   );
 }

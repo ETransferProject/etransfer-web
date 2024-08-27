@@ -72,6 +72,7 @@ const Layout = ({
   const openNotificationRef = useRef(openNotification);
   openNotificationRef.current = openNotification;
   useEffectOnce(() => {
+    // TODO Chrome notify
     // myEvents.GlobalTxnNotice
     // openNotificationRef.current();
   });

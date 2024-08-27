@@ -361,6 +361,7 @@ export default function WebContent({
     );
   }, [
     depositInfo.depositAddress,
+    depositProcessingCount,
     fromNetworkSelected,
     fromTokenSymbol,
     isLogin,
@@ -368,12 +369,14 @@ export default function WebContent({
     isShowDepositAddressLabelForNotLogin,
     isShowNotLoginTip,
     isShowTransferTip,
+    onClickProcessingTip,
     onRetry,
     renderCalculationSection,
     renderDepositInfo,
     renderSelectSection,
     showRetry,
     toChainItem,
+    withdrawProcessingCount,
   ]);
 
   return (

@@ -24,6 +24,7 @@ export default function HistoryDetailBody(props: TGetRecordDetailResult) {
           chainId: props.toTransfer.chainId || props.toTransfer.network,
         }}
       />
+      <div className={styles['detail-divider']} />
       <TransferDetailBody
         id={props.id}
         orderType={props.orderType}

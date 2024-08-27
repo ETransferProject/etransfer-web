@@ -75,6 +75,7 @@ import RemainingLimit from './RemainingLimit';
 import CommentFormItemLabel from './CommentFormItemLabel';
 import { BlockchainNetworkType } from 'constants/network';
 import { MEMO_REG } from 'utils/reg';
+import { ProcessingTip } from 'components/Tips/ProcessingTip';
 
 enum ValidateStatus {
   Error = 'error',
@@ -963,6 +964,9 @@ export default function WithdrawContent() {
     );
   }, [currentSymbol, isLogin, isMaxBalanceLoading, maxBalance]);
 
+  const handleClickProcessingTip = useCallback(() => {
+    router.push('/history');
+  }, [router]);
   const renderMainContent = useMemo(() => {
     return (
       <div
@@ -972,6 +976,13 @@ export default function WithdrawContent() {
           'withdraw-content-container',
           !isPadPX && styles['main-content'],
         )}>
+        {!isPadPX && isLogin && (
+          <ProcessingTip
+            depositProcessingCount={1}
+            withdrawProcessingCount={2}
+            onClick={handleClickProcessingTip}
+          />
+        )}
         <SelectChainWrapper
           mobileTitle="Withdraw from"
           mobileLabel="from"
@@ -1202,6 +1213,7 @@ export default function WithdrawContent() {
     getWithdrawData,
     handleAmountValidate,
     handleChainChanged,
+    handleClickProcessingTip,
     handleNetworkChanged,
     handleTokenChange,
     isAndroid,
@@ -1225,6 +1237,15 @@ export default function WithdrawContent() {
 
   return (
     <>
+      {isPadPX && isLogin && (
+        <ProcessingTip
+          depositProcessingCount={1}
+          withdrawProcessingCount={2}
+          marginBottom={isPadPX && !isMobilePX ? 24 : 16}
+          borderRadius={0}
+          onClick={handleClickProcessingTip}
+        />
+      )}
       <div className={clsx('content-container', !isPadPX && 'flex-row')}>
         <div className={clsx(styles['section'], !isMobilePX && styles['main-wrapper'])}>
           {renderMainContent}

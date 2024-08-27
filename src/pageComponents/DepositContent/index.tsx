@@ -418,9 +418,10 @@ export default function Content() {
 
   const { isCheckTxnLoading, handleCheckTxnClick } = useCheckTxn();
 
+  const router = useRouter();
   const handleClickProcessingTip = useCallback(() => {
-    // router.push('/history');
-  }, []);
+    router.push('/history');
+  }, [router]);
 
   const searchParams = useSearchParams();
   const routeQuery = useMemo(
@@ -505,7 +506,6 @@ export default function Content() {
     toTokenSymbol,
   ]);
 
-  const router = useRouter();
   useEffectOnce(() => {
     dispatch(setActiveMenuKey(SideMenuKey.Deposit));
     init();

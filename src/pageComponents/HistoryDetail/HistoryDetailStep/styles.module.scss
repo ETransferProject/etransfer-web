@@ -1,0 +1,123 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.history-detail-step {
+  display: flex;
+  justify-content: center;
+
+  .history-detail-step-horizontal {
+    :global {
+      .ant-steps-item {
+        .ant-steps-item-tail {
+          margin-left: 12px;
+          padding: 3.5px 20px;
+        }
+        .ant-steps-item-icon {
+          margin-left: 0;
+        }
+
+        .ant-steps-item-content {
+          width: 100%;
+          margin-right: 24px;
+          text-align: left;
+
+          .ant-steps-item-title {
+            font-weight: $font-family-medium-weight;
+            font-family: $font-family-medium-family;
+          }
+          .ant-steps-item-description {
+            color: $secondary-text;
+          }
+        }
+      }
+
+      .ant-steps-item-process {
+        .ant-steps-item-tail {
+          &::after {
+            background-color: $border;
+          }
+        }
+      }
+
+      .ant-steps-item-wait {
+        .ant-steps-item-icon {
+          border-color: $secondary-text;
+          .ant-steps-icon {
+            color: $secondary-text;
+          }
+        }
+        .ant-steps-item-tail {
+          &::after {
+            background-color: $border;
+          }
+        }
+        .ant-steps-item-title {
+          color: $primary-text;
+        }
+      }
+    }
+  }
+
+  .history-detail-step-vertical {
+    width: auto;
+    height: 240px;
+
+    :global {
+      .ant-steps-item {
+        .ant-steps-item-tail {
+          left: 10px;
+        }
+        .ant-steps-item-icon {
+          width: 20px;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          .ant-steps-icon {
+            font-size: 10px;
+          }
+        }
+        .ant-steps-item-content {
+          .ant-steps-item-title {
+            font-weight: $font-family-medium-weight;
+            font-family: $font-family-medium-family;
+          }
+          .ant-steps-item-description {
+            color: $secondary-text;
+          }
+        }
+      }
+
+      .ant-steps-item-process {
+        .ant-steps-item-icon {
+          .ant-steps-icon {
+            font-size: 18px;
+            line-height: 36px;
+          }
+        }
+        .ant-steps-item-tail {
+          &::after {
+            background-color: $border;
+          }
+        }
+      }
+
+      .ant-steps-item-wait {
+        .ant-steps-item-icon {
+          border-color: $secondary-text;
+          .ant-steps-icon {
+            color: $secondary-text;
+          }
+        }
+        .ant-steps-item-tail {
+          &::after {
+            background-color: $border;
+          }
+        }
+        .ant-steps-item-title {
+          color: $primary-text;
+        }
+      }
+    }
+  }
+}

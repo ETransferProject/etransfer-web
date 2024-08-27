@@ -11,6 +11,7 @@ import { useEffectOnce } from 'react-use';
 import { useIsLogin } from 'hooks/wallet';
 import { sleep } from '@etransfer/utils';
 import { useSetAuthFromStorage } from 'hooks/authToken';
+import { TOrderStatus } from 'types/records';
 
 export default function HistoryDetail() {
   const { isPadPX } = useCommonState();
@@ -29,7 +30,7 @@ export default function HistoryDetail() {
     try {
       const id = searchParams.get('id');
       if (!id || !isLoginRef.current) {
-        router.back();
+        router.push('/history');
         return;
       }
 
