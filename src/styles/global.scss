@@ -184,3 +184,23 @@ input[type='number'] {
     right: 12px;
   }
 }
+
+.etransfer-txn-notification-success {
+  border: 1px solid #96e2b0;
+  background-color: #e6f8ec;
+}
+
+.etransfer-txn-notification-error {
+  border: 1px solid #fbb0b0;
+  background-color: #feecec;
+
+  .ant-notification-notice-content {
+    .ant-notification-notice-with-icon {
+      .ant-notification-notice-icon {
+        svg path {
+          fill: $error;
+        }
+      }
+    }
+  }
+}

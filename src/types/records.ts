@@ -106,11 +106,19 @@ export type TOrderRecordsNoticeResponse = {
 export type TRecordsNoticeDetail = {
   depositCount: number;
   withdrawCount: number;
-  deposit: TRecordsNoticeDetailItem;
-  withdraw: TRecordsNoticeDetailItem;
+  deposit: TDepositRecordsNoticeDetailItem;
+  withdraw: TWithdrawRecordsNoticeDetailItem;
 };
 
-export type TRecordsNoticeDetailItem = {
+export type TDepositRecordsNoticeDetailItem = {
+  id: string;
+  amount: string;
+  symbol: string;
+  isSwap: boolean;
+  isSwapFail: boolean;
+};
+
+export type TWithdrawRecordsNoticeDetailItem = {
   id: string;
   amount: string;
   symbol: string;

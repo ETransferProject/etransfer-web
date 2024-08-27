@@ -186,7 +186,7 @@ export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProp
   const router = useRouter();
   const handleClick = useCallback(
     (id: string) => {
-      router.push(`/history/detail?id=${id}`);
+      router.push(`/transfer-detail?id=${id}`);
     },
     [router],
   );

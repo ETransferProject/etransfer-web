@@ -78,7 +78,9 @@ export default function WalletAddress({
           {isOmitAddress ? getOmittedStr(calcAddress(), 8, 9) : calcAddress()}
         </span>
       </CommonTooltip>
-      <Copy toCopy={calcAddress()} size={CopySize.Small} />
+      {!!calcAddress() && calcAddress() !== defaultNullValue && (
+        <Copy toCopy={calcAddress()} size={CopySize.Small} />
+      )}
     </div>
   );
 }

@@ -72,7 +72,7 @@ type TGetNetworkData = {
 
 export default function Content() {
   const dispatch = useAppDispatch();
-  const { isPadPX } = useCommonState();
+  const { isPadPX, depositProcessingCount, withdrawProcessingCount } = useCommonState();
   const {
     fromNetwork,
     fromNetworkList,
@@ -416,7 +416,17 @@ export default function Content() {
     }
   }, [fromTokenSymbol, getDepositData, setLoading, toChainItem.key, toTokenSymbol]);
 
-  const { isCheckTxnLoading, handleCheckTxnClick } = useCheckTxn();
+  const { isCheckTxnLoading, handleCheckTxnClick, stopTimer } = useCheckTxn();
+  const stopTimerRef = useRef(stopTimer);
+  stopTimerRef.current = stopTimer;
+  useEffectOnce(() => {
+    const { remove } = myEvents.GlobalTxnNotice.addListener(() => {
+      stopTimerRef.current();
+    });
+    return () => {
+      remove();
+    };
+  });
 
   const router = useRouter();
   const handleClickProcessingTip = useCallback(() => {
@@ -605,8 +615,8 @@ export default function Content() {
       showRetry={showRetry}
       isShowNetworkLoading={isShowNetworkLoading}
       isCheckTxnLoading={isCheckTxnLoading}
-      depositProcessingCount={1} // TODO
-      withdrawProcessingCount={2} // TODO
+      depositProcessingCount={depositProcessingCount}
+      withdrawProcessingCount={withdrawProcessingCount}
       onRetry={handleRetry}
       onCheckTxnClick={handleCheckTxnClick}
       onClickProcessingTip={handleClickProcessingTip}
@@ -628,8 +638,8 @@ export default function Content() {
       showRetry={showRetry}
       isShowNetworkLoading={isShowNetworkLoading}
       isCheckTxnLoading={isCheckTxnLoading}
-      depositProcessingCount={1} // TODO
-      withdrawProcessingCount={2} // TODO
+      depositProcessingCount={depositProcessingCount}
+      withdrawProcessingCount={withdrawProcessingCount}
       onRetry={handleRetry}
       onCheckTxnClick={handleCheckTxnClick}
       onClickProcessingTip={handleClickProcessingTip}

@@ -19,6 +19,7 @@ export default function LogoutButton({ closeDialog }: TLogoutButtonType) {
       service.defaults.headers.common['Authorization'] = '';
       myEvents.LogoutSuccess.emit();
       console.warn('>>>>>> logout');
+      // TODO websocket stop
     });
     closeDialog?.();
   }, [clearStore, closeDialog, disConnectWallet]);

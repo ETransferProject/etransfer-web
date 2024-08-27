@@ -71,7 +71,7 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
   const router = useRouter();
   const handleClick = useCallback(
     (id: string) => {
-      router.push(`/history/detail?id=${id}`);
+      router.push(`/transfer-detail?id=${id}`);
     },
     [router],
   );

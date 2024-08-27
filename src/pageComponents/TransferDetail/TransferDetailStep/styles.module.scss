@@ -1,11 +1,12 @@
 @import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
 @import 'src/assets/theme/font.scss';
 
-.history-detail-step {
+.transfer-detail-step {
   display: flex;
   justify-content: center;
 
-  .history-detail-step-horizontal {
+  .transfer-detail-step-horizontal {
     :global {
       .ant-steps-item {
         .ant-steps-item-tail {
@@ -58,8 +59,7 @@
     }
   }
 
-  .history-detail-step-vertical {
-    width: auto;
+  .transfer-detail-step-vertical {
     height: 240px;
 
     :global {
@@ -118,6 +118,11 @@
           color: $primary-text;
         }
       }
+    }
+
+
+    @include media-mobile{
+      width: auto;
     }
   }
 }

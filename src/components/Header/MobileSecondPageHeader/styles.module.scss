@@ -1,0 +1,32 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/styles/variable.scss';
+
+.mobile-second-page-header {
+  position: fixed;
+  top: 0;
+  z-index: 10;
+
+  min-width: $page-min-width;
+  width: 100%;
+  height: $mobile-header-height;
+  @include media-mobile {
+    padding: 12px 10px 12px 16px;
+  }
+  @include media-pad {
+    padding: 16px 24px 8px;
+  }
+
+  .header-back {
+    transform: rotate(90deg);
+    path {
+      fill: $primary-text;
+    }
+  }
+
+  .header-title {
+    font-size: 16px;
+    @extend .font-family-medium;
+  }
+}

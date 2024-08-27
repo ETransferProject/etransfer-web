@@ -7,6 +7,8 @@ export interface CommonState {
   isPadPX: boolean;
   activeMenuKey: SideMenuKey;
   isUnreadHistory?: boolean;
+  depositProcessingCount?: number;
+  withdrawProcessingCount?: number;
 }
 
 export const initialState: CommonState = {
@@ -15,6 +17,8 @@ export const initialState: CommonState = {
   isPadPX: false,
   activeMenuKey: SideMenuKey.Deposit,
   isUnreadHistory: false,
+  depositProcessingCount: 0,
+  withdrawProcessingCount: 0,
 };
 
 //it automatically uses the immer library to let you write simpler immutable updates with normal mutative code
@@ -36,6 +40,12 @@ export const CommonSlice = createSlice({
     },
     setIsUnreadHistory: (state, action) => {
       state.isUnreadHistory = action.payload;
+    },
+    setDepositProcessingCount: (state, action: PayloadAction<number>) => {
+      state.depositProcessingCount = action.payload;
+    },
+    setWithdrawProcessingCount: (state, action: PayloadAction<number>) => {
+      state.withdrawProcessingCount = action.payload;
     },
     resetCommon: (state) => {
       state.activeMenuKey = SideMenuKey.Deposit;

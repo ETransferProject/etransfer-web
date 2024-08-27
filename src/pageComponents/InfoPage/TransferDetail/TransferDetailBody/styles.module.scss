@@ -28,6 +28,7 @@
     font-size: 14px;
     color: $secondary-text;
     flex-shrink: 0;
+    height: 20px;
 
     @include media-mobile {
       width: 120px;

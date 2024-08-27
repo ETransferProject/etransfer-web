@@ -94,6 +94,7 @@ import NextLineIcon from './nextLineIcon.svg';
 
 import DoubleArrowIcon from './doubleArrow.svg';
 import InfoDashboard from './infoDashboard.svg';
+import ErrorIcon from './error.svg';
 
 export {
   Logo,
@@ -188,4 +189,5 @@ export {
   NextLineIcon,
   DoubleArrowIcon,
   InfoDashboard,
+  ErrorIcon,
 };

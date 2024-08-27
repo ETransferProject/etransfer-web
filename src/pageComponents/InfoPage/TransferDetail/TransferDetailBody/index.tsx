@@ -13,11 +13,9 @@ import { viewTxDetailInExplore } from 'utils/common';
 import { formatSymbolDisplay } from 'utils/format';
 import { InfoBusinessTypeLabel, TransferStatusType } from 'constants/infoDashboard';
 import { TOrderStatus } from 'types/records';
+import { defaultNullValue } from 'constants/index';
 
-export type TTransferDetailBody = Omit<
-  TTransferDashboardData,
-  'status' | 'fromStatus' | 'toStatus'
-> & {
+export type TTransferDetailBody = Omit<TTransferDashboardData, 'fromStatus' | 'toStatus'> & {
   fromStatus: TransferStatusType | TOrderStatus;
   toStatus: TransferStatusType | TOrderStatus;
 };
@@ -46,7 +44,9 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>Transaction Fee</div>
         <div className={clsx(styles['detail-value'], styles['detail-value-fee'])}>
-          {props.orderType === BusinessType.Withdraw
+          {props.status === TOrderStatus.Failed
+            ? defaultNullValue
+            : props.orderType === BusinessType.Withdraw
             ? `${props.toFeeInfo[0].amount} ${formatSymbolDisplay(props.toFeeInfo[0].symbol)}`
             : 'Free'}
         </div>
@@ -57,13 +57,17 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
       {/* ======== Source Info ======== */}
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>Source Tx Hash</div>
-        <div
-          className={clsx(styles['detail-value'], styles['detail-value-from-tx-hash'])}
-          onClick={() =>
-            viewTxDetailInExplore(props.fromNetwork, props.fromTxId, props.fromChainId)
-          }>
-          {isMobilePX ? getOmittedStr(props.fromTxId, 8, 9) : props.fromTxId}
-        </div>
+        {props.fromTxId ? (
+          <div
+            className={clsx(styles['detail-value'], styles['detail-value-from-tx-hash'])}
+            onClick={() =>
+              viewTxDetailInExplore(props.fromNetwork, props.fromTxId, props.fromChainId)
+            }>
+            {isMobilePX ? getOmittedStr(props.fromTxId, 8, 9) : props.fromTxId}
+          </div>
+        ) : (
+          defaultNullValue
+        )}
       </div>
 
       <div className={styles['detail-item']}>
@@ -74,9 +78,11 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>{`${props.orderType} Amount`}</div>
         <TokenAmount
+          status={props.fromStatus}
           amount={props.fromAmount}
           amountUsd={props.fromAmountUsd}
           symbol={props.fromSymbol}
+          icon={props?.fromIcon}
         />
       </div>
 
@@ -105,11 +111,15 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
       {/* ======== Destination Info ======== */}
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>Destination Tx Hash</div>
-        <div
-          className={clsx(styles['detail-value'], styles['detail-value-to-tx-hash'])}
-          onClick={() => viewTxDetailInExplore(props.toNetwork, props.toTxId, props.toChainId)}>
-          {isMobilePX ? getOmittedStr(props.toTxId, 8, 9) : props.toTxId}
-        </div>
+        {props.toTxId ? (
+          <div
+            className={clsx(styles['detail-value'], styles['detail-value-to-tx-hash'])}
+            onClick={() => viewTxDetailInExplore(props.toNetwork, props.toTxId, props.toChainId)}>
+            {isMobilePX ? getOmittedStr(props.toTxId, 8, 9) : props.toTxId}
+          </div>
+        ) : (
+          defaultNullValue
+        )}
       </div>
 
       <div className={styles['detail-item']}>
@@ -120,9 +130,12 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>Receive</div>
         <TokenAmount
+          status={props.toStatus}
           amount={props.toAmount}
           amountUsd={props.toAmountUsd}
           symbol={props.toSymbol}
+          fromSymbol={props.fromSymbol}
+          icon={props?.toIcon}
         />
       </div>
 

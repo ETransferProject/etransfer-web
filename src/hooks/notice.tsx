@@ -1,8 +1,10 @@
 import { notification } from 'antd';
 import { ArgsProps } from 'antd/lib/notification';
 import { CheckNoticeIcon, CloseMedium } from 'assets/images';
+import clsx from 'clsx';
 import { useState } from 'react';
 import { BusinessType } from 'types/api';
+import { formatSymbolDisplay } from 'utils/format';
 
 const enum TTxnStatus {
   Success = 'Success',
@@ -18,16 +20,27 @@ export function useTxnNotice() {
     if (!type || !status || !info.amount || !info.unit) return;
     notification.info({
       ...props,
-      className: 'etransfer-txn-notification',
+      className: clsx(
+        'etransfer-txn-notification',
+        status === TTxnStatus.Success
+          ? 'etransfer-txn-notification-success'
+          : 'etransfer-txn-notification-error',
+      ),
       icon: <CheckNoticeIcon />,
-      message: `${type} ${status}`,
+      message: `${type === BusinessType.Withdraw ? 'Withdrawal' : type} ${status}`,
       closeIcon: <CloseMedium />,
       description:
         status === TTxnStatus.Success
-          ? `The ${type} of ${info.amount} ${info.unit} has been received.`
-          : `The ${type} of ${info.amount} ${info.unit} failed; please check the Txn and contact customer service.`,
+          ? `The ${type === BusinessType.Withdraw ? 'withdrawal' : type.toLowerCase()} of ${
+              info.amount
+            } ${formatSymbolDisplay(info.unit)} has been received.`
+          : `The ${type === BusinessType.Withdraw ? 'withdrawal' : type.toLowerCase()} of ${
+              info.amount
+            } ${formatSymbolDisplay(
+              info.unit,
+            )} failed; please check the transaction and contact customer service.`,
       placement: 'top',
-      duration: props?.duration || 5,
+      duration: props?.duration || 3,
     });
   };
 
