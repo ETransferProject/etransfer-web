@@ -4,7 +4,7 @@ import { TOrderStatus } from 'types/records';
 import { useCommonState } from 'store/Provider/hooks';
 import clsx from 'clsx';
 import { BusinessType } from 'types/api';
-import { defaultNullValue } from 'constants/index';
+import { DEFAULT_NULL_VALUE } from 'constants/index';
 import { formatSymbolDisplay } from 'utils/format';
 
 type TFeeInfoProps = {
@@ -17,7 +17,7 @@ export default function FeeInfo({ feeInfo, status, orderType }: TFeeInfoProps) {
   const { isPadPX } = useCommonState();
 
   if (status === TOrderStatus.Failed) {
-    return <div className={styles['fee-info-wrapper']}>{defaultNullValue}</div>;
+    return <div className={styles['fee-info-wrapper']}>{DEFAULT_NULL_VALUE}</div>;
   }
 
   if (orderType === BusinessType.Deposit) {

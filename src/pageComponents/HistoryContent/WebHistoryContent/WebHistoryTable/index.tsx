@@ -196,6 +196,7 @@ export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProp
       <Table
         size={'large'}
         rowKey={'key'}
+        rowClassName={styles['web-records-table-row']}
         onRow={(record) => {
           return {
             onClick: () => handleClick(record.key),

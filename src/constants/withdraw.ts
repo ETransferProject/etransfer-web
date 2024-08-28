@@ -1,4 +1,4 @@
-import { CHAIN_LIST, TokenType, defaultNullValue } from 'constants/index';
+import { CHAIN_LIST, TokenType, DEFAULT_NULL_VALUE } from 'constants/index';
 import { NetworkStatus, TWithdrawInfo } from 'types/api';
 import { TArrivalTimeConfig, TWithdrawInfoSuccess } from 'types/deposit';
 import { AllSupportedELFChainId } from './chain';
@@ -56,9 +56,9 @@ export const InitialWithdrawInfo: TWithdrawInfo = {
   aelfTransactionUnit: 'ELF',
   receiveAmount: '',
   feeList: [],
-  receiveAmountUsd: defaultNullValue,
-  amountUsd: defaultNullValue,
-  feeUsd: defaultNullValue,
+  receiveAmountUsd: DEFAULT_NULL_VALUE,
+  amountUsd: DEFAULT_NULL_VALUE,
+  feeUsd: DEFAULT_NULL_VALUE,
 };
 
 export const InitialNetwork = {
@@ -78,7 +78,7 @@ export const InitialWithdrawSuccessCheck: TWithdrawInfoSuccess = {
   chainItem: CHAIN_LIST[0],
   network: InitialNetwork,
   arriveTime: '',
-  receiveAmountUsd: defaultNullValue,
+  receiveAmountUsd: DEFAULT_NULL_VALUE,
   transactionId: '',
 };
 

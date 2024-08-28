@@ -4,7 +4,7 @@ import useGetTokenIcon from 'hooks/infoDashboard';
 import DisplayImage from 'components/DisplayImage';
 import { ZERO, formatSymbolDisplay } from 'utils/format';
 import { useMemo } from 'react';
-import { defaultNullValue } from 'constants/index';
+import { DEFAULT_NULL_VALUE } from 'constants/index';
 import { TOrderStatus } from 'types/records';
 import { TransferStatusType } from 'constants/infoDashboard';
 
@@ -64,7 +64,7 @@ export default function TokenAmount({
         </>
       );
     }
-    return defaultNullValue;
+    return DEFAULT_NULL_VALUE;
   }, [formatAmount, formatSymbol, formatUsd, icon, iconBackup, symbol]);
 
   const renderProcessing = useMemo(() => {
@@ -79,7 +79,7 @@ export default function TokenAmount({
     <div className={clsx('flex-row-center', styles['token-amount'])}>
       {(status === TOrderStatus.Processing || status === TransferStatusType.Pending) &&
         renderProcessing}
-      {status === TOrderStatus.Failed && defaultNullValue}
+      {status === TOrderStatus.Failed && DEFAULT_NULL_VALUE}
       {(status === TOrderStatus.Succeed || status === TransferStatusType.Success) && renderFinished}
     </div>
   );

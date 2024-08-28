@@ -7,11 +7,11 @@ import {
   ExploreUrlType,
   OtherExploreType,
 } from 'constants/network';
-import { SupportedChainId, defaultNullValue } from 'constants/index';
+import { SupportedChainId, DEFAULT_NULL_VALUE } from 'constants/index';
 import Copy, { CopySize } from 'components/Copy';
 import { getOmittedStr } from 'utils/calculate';
 import { openWithBlank, getAelfExploreLink, getOtherExploreLink } from 'utils/common';
-import { addressFormat } from 'utils/aelf/aelfBase';
+import { formatDIDAddress } from 'utils/aelf/aelfBase';
 import { SupportedELFChainId } from 'constants/index';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
@@ -43,7 +43,7 @@ export default function AddressBox({
     if (address && network === BlockchainNetworkType.AELF) {
       // format address: add suffix
       const chainId: SupportedELFChainId = type === 'To' ? toChainId : fromChainId;
-      return addressFormat(address, chainId || SupportedChainId.sideChain);
+      return formatDIDAddress(address, chainId || SupportedChainId.sideChain);
     }
     if (!address && network === BlockchainNetworkType.AELF) {
       // when fromAddress and toAddress all null, need accounts default address
@@ -51,11 +51,11 @@ export default function AddressBox({
       chainId = chainId || SupportedChainId.sideChain;
       if (accounts && accounts[chainId]) {
         // default accounts[chainId]?.[0] , if not exist, use AELF
-        return accounts[chainId] || accounts[SupportedELFChainId.AELF] || defaultNullValue;
+        return accounts[chainId] || accounts[SupportedELFChainId.AELF] || DEFAULT_NULL_VALUE;
       }
-      return defaultNullValue;
+      return DEFAULT_NULL_VALUE;
     }
-    return address || defaultNullValue;
+    return address || DEFAULT_NULL_VALUE;
   }, [type, network, accounts, toChainId, fromChainId, fromAddress, toAddress]);
 
   const handleAddressClick = useCallback(

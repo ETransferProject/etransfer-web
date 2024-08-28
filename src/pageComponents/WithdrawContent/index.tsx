@@ -15,9 +15,15 @@ import {
   TTokenItem,
   NetworkStatus,
 } from 'types/api';
-import { useAppDispatch, useCommonState, useLoading, useWithdrawState } from 'store/Provider/hooks';
+import {
+  useAppDispatch,
+  useCommonState,
+  useLoading,
+  useRecordsState,
+  useWithdrawState,
+} from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { CHAIN_LIST, IChainNameItem, defaultNullValue } from 'constants/index';
+import { CHAIN_LIST, IChainNameItem, DEFAULT_NULL_VALUE } from 'constants/index';
 import { getNetworkList, getTokenList, getWithdrawInfo } from 'utils/api/deposit';
 import { CONTRACT_ADDRESS } from 'constants/deposit';
 import { getBalance } from 'utils/contract';
@@ -110,6 +116,7 @@ export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const isAndroid = devices.isMobile().android;
   const { isPadPX, isMobilePX } = useCommonState();
+  const { depositProcessingCount, withdrawProcessingCount } = useRecordsState();
   const isLogin = useIsLogin();
   const isLoginRef = useRef(isLogin);
   isLoginRef.current = isLogin;
@@ -953,7 +960,7 @@ export default function WithdrawContent() {
         <div className={styles['info-label']}>Balance</div>
         <div className={styles['info-value']}>
           {!isLogin ? (
-            defaultNullValue
+            DEFAULT_NULL_VALUE
           ) : !maxBalance || isMaxBalanceLoading ? (
             <PartialLoading />
           ) : (
@@ -978,8 +985,8 @@ export default function WithdrawContent() {
         )}>
         {!isPadPX && isLogin && (
           <ProcessingTip
-            depositProcessingCount={1}
-            withdrawProcessingCount={2}
+            depositProcessingCount={depositProcessingCount}
+            withdrawProcessingCount={withdrawProcessingCount}
             onClick={handleClickProcessingTip}
           />
         )}
@@ -1206,6 +1213,7 @@ export default function WithdrawContent() {
     currentNetwork,
     currentToken,
     currentTokenDecimal,
+    depositProcessingCount,
     form,
     formValidateData,
     getAddressInput,
@@ -1233,14 +1241,15 @@ export default function WithdrawContent() {
     setMaxToken,
     tokenList,
     withdrawInfo,
+    withdrawProcessingCount,
   ]);
 
   return (
     <>
       {isPadPX && isLogin && (
         <ProcessingTip
-          depositProcessingCount={1}
-          withdrawProcessingCount={2}
+          depositProcessingCount={depositProcessingCount}
+          withdrawProcessingCount={withdrawProcessingCount}
           marginBottom={isPadPX && !isMobilePX ? 24 : 16}
           borderRadius={0}
           onClick={handleClickProcessingTip}

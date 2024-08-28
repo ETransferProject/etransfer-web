@@ -1,7 +1,13 @@
 import React, { useCallback, useRef, useState, useMemo } from 'react';
 import WebDepositContent from './WebDepositContent';
 import MobileDepositContent from './MobileDepositContent';
-import { useAppDispatch, useCommonState, useDepositState, useLoading } from 'store/Provider/hooks';
+import {
+  useAppDispatch,
+  useCommonState,
+  useDepositState,
+  useLoading,
+  useRecordsState,
+} from 'store/Provider/hooks';
 import {
   BusinessType,
   TDepositInfo,
@@ -72,7 +78,8 @@ type TGetNetworkData = {
 
 export default function Content() {
   const dispatch = useAppDispatch();
-  const { isPadPX, depositProcessingCount, withdrawProcessingCount } = useCommonState();
+  const { isPadPX } = useCommonState();
+  const { depositProcessingCount, withdrawProcessingCount } = useRecordsState();
   const {
     fromNetwork,
     fromNetworkList,

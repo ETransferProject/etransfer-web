@@ -225,7 +225,7 @@ export const removeELFAddressSuffix = (address: string) => {
  * @param chainType
  * @returns
  */
-export const addressFormat = (
+export const formatDIDAddress = (
   address: string,
   chainId: TChainId = SupportedELFChainId.AELF,
   chainType: TChainType = 'aelf',

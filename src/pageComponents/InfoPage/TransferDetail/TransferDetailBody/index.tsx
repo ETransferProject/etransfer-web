@@ -13,7 +13,7 @@ import { viewTxDetailInExplore } from 'utils/common';
 import { formatSymbolDisplay } from 'utils/format';
 import { InfoBusinessTypeLabel, TransferStatusType } from 'constants/infoDashboard';
 import { TOrderStatus } from 'types/records';
-import { defaultNullValue } from 'constants/index';
+import { DEFAULT_NULL_VALUE } from 'constants/index';
 
 export type TTransferDetailBody = Omit<TTransferDashboardData, 'fromStatus' | 'toStatus'> & {
   fromStatus: TransferStatusType | TOrderStatus;
@@ -45,7 +45,7 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
         <div className={styles['detail-label']}>Transaction Fee</div>
         <div className={clsx(styles['detail-value'], styles['detail-value-fee'])}>
           {props.status === TOrderStatus.Failed
-            ? defaultNullValue
+            ? DEFAULT_NULL_VALUE
             : props.orderType === BusinessType.Withdraw
             ? `${props.toFeeInfo[0].amount} ${formatSymbolDisplay(props.toFeeInfo[0].symbol)}`
             : 'Free'}
@@ -66,7 +66,7 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
             {isMobilePX ? getOmittedStr(props.fromTxId, 8, 9) : props.fromTxId}
           </div>
         ) : (
-          defaultNullValue
+          DEFAULT_NULL_VALUE
         )}
       </div>
 
@@ -118,7 +118,7 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
             {isMobilePX ? getOmittedStr(props.toTxId, 8, 9) : props.toTxId}
           </div>
         ) : (
-          defaultNullValue
+          DEFAULT_NULL_VALUE
         )}
       </div>
 

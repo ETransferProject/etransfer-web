@@ -1,4 +1,4 @@
-import { defaultNullValue } from 'constants/index';
+import { DEFAULT_NULL_VALUE } from 'constants/index';
 
 export const DEPOSIT_ADDRESS_LABEL = 'Deposit Address';
 
@@ -13,7 +13,7 @@ export const DEPOSIT_RETRY_BUTTON_TEXT = 'Retry';
 export const INIT_DEPOSIT_INFO = {
   depositAddress: '',
   minAmount: '',
-  minAmountUsd: defaultNullValue,
+  minAmountUsd: DEFAULT_NULL_VALUE,
 };
 
 export const CHECK_TXN_DURATION = 5 * 60 * 1000;

@@ -1,5 +1,5 @@
 import PartialLoading from 'components/PartialLoading';
-import { defaultNullValue } from 'constants/index';
+import { DEFAULT_NULL_VALUE } from 'constants/index';
 import styles from './styles.module.scss';
 import { useMemo } from 'react';
 import clsx from 'clsx';
@@ -32,13 +32,13 @@ export default function FeeInfo({
             {aelfTransactionFee && aelfTransactionUnit ? (
               <>
                 <span className={styles['fee-value']}>
-                  {`${(!isSuccessModalOpen && aelfTransactionFee) || defaultNullValue}`}
+                  {`${(!isSuccessModalOpen && aelfTransactionFee) || DEFAULT_NULL_VALUE}`}
                 </span>
                 <span className={styles['fee-unit']}>&nbsp;{`${aelfTransactionUnit}`}</span>
               </>
             ) : (
               <>
-                <span className={styles['fee-value']}>{defaultNullValue}</span>
+                <span className={styles['fee-value']}>{DEFAULT_NULL_VALUE}</span>
               </>
             )}
           </>
@@ -57,13 +57,13 @@ export default function FeeInfo({
             {transactionFee && transactionUnit ? (
               <>
                 <span className={styles['fee-value']}>
-                  {`${(!isSuccessModalOpen && transactionFee) || defaultNullValue}`}
+                  {`${(!isSuccessModalOpen && transactionFee) || DEFAULT_NULL_VALUE}`}
                 </span>
                 <span className={styles['fee-unit']}>&nbsp;{`${transactionUnit}`}</span>
               </>
             ) : (
               <>
-                <span className={styles['fee-value']}>{defaultNullValue}</span>
+                <span className={styles['fee-value']}>{DEFAULT_NULL_VALUE}</span>
               </>
             )}
           </>

@@ -2,7 +2,7 @@ import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { QuestionMarkIcon } from 'assets/images';
 import clsx from 'clsx';
-import { defaultNullValue } from 'constants/index';
+import { DEFAULT_NULL_VALUE } from 'constants/index';
 import { RemainingWithdrawalQuotaTooltip } from 'constants/withdraw';
 import RemainingTip from '../RemainingTip';
 import BigNumber from 'bignumber.js';
@@ -48,7 +48,7 @@ export default function RemainingLimit({
             <span className={styles['remaining-limit-value-limit-currency']}>{limitCurrency}</span>
           </>
         ) : (
-          defaultNullValue
+          DEFAULT_NULL_VALUE
         )}
         <RemainingTip title="24-Hour Limit" content={RemainingWithdrawalQuotaTooltip} />
       </span>

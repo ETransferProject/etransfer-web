@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import { getOmittedStr } from 'utils/calculate';
 import { useMemo } from 'react';
 import { viewTxDetailInExplore } from 'utils/common';
-import { SupportedELFChainId, defaultNullValue } from 'constants/index';
+import { SupportedELFChainId, DEFAULT_NULL_VALUE } from 'constants/index';
 import clsx from 'clsx';
 import { useCommonState } from 'store/Provider/hooks';
 import { TOrderStatus, TRecordsStatusI18n } from 'types/records';
@@ -60,7 +60,7 @@ export default function TxHashBox({
   }, []);
 
   const txHashNull = useMemo(() => {
-    return <span className={styles['null-value']}>{defaultNullValue}</span>;
+    return <span className={styles['null-value']}>{DEFAULT_NULL_VALUE}</span>;
   }, []);
 
   const renderTxHash = useMemo(() => {

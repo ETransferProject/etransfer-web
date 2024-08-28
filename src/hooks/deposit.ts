@@ -1,7 +1,7 @@
 import { SingleMessage } from '@etransfer/ui-react';
 import { CHECK_TXN_DURATION, NO_TXN_FOUND } from 'constants/deposit';
-import { useCallback, useRef, useState } from 'react';
-import { useCommonState, useDepositState } from 'store/Provider/hooks';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useDepositState, useRecordsState } from 'store/Provider/hooks';
 import { addAelfNetwork } from 'utils/deposit';
 
 export function useDepositNetworkList() {
@@ -23,7 +23,7 @@ export function useDepositNetworkList() {
 
 export function useCheckTxn() {
   const [isCheckTxnLoading, setIsCheckTxnLoading] = useState(false);
-  const { depositProcessingCount, withdrawProcessingCount } = useCommonState();
+  const { depositProcessingCount, withdrawProcessingCount } = useRecordsState();
 
   const timerRef = useRef<NodeJS.Timer | number>();
 
@@ -46,6 +46,12 @@ export function useCheckTxn() {
     setIsCheckTxnLoading(true);
     resetTimer();
   }, [resetTimer]);
+
+  useEffect(() => {
+    return () => {
+      stopTimer;
+    };
+  });
 
   return { isCheckTxnLoading, resetTimer, stopTimer, handleCheckTxnClick };
 }

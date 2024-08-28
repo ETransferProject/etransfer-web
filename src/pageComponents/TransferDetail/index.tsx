@@ -29,7 +29,7 @@ export default function TransferDetail() {
 
   const getDetailRef = useRef<(isLoading?: boolean) => Promise<void>>();
   const updateTimerRef = useRef<NodeJS.Timer | number>();
-  const { getDetail } = useMemo(() => {
+  const { getDetail, stopTimer } = useMemo(() => {
     const getDetail = async (isLoading = true) => {
       try {
         const id = searchParams.get('id');
@@ -80,7 +80,7 @@ export default function TransferDetail() {
       updateTimerRef.current = undefined;
     };
 
-    return { getDetail };
+    return { getDetail, stopTimer };
   }, [router, searchParams, setAuthFromStorage, setLoading]);
 
   useEffectOnce(() => {
@@ -93,7 +93,11 @@ export default function TransferDetail() {
     } else {
       router.push('/history');
     }
-  }, [getDetail, isLogin, router]);
+
+    return () => {
+      stopTimer();
+    };
+  }, [getDetail, isLogin, router, stopTimer]);
 
   if (detailData?.id) {
     return isPadPX ? (

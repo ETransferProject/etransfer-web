@@ -2,7 +2,7 @@ import { TimeIcon } from 'assets/images';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
-import { defaultNullValue } from 'constants/index';
+import { DEFAULT_NULL_VALUE } from 'constants/index';
 import { getDepositCalculate } from 'utils/api/deposit';
 import { handleErrorMessage } from '@etransfer/utils';
 import { SingleMessage } from '@etransfer/ui-react';
@@ -24,7 +24,7 @@ const EXCHANGE_FROM_AMOUNT = '1';
 
 export default function ExchangeRate({ fromSymbol, toSymbol, toChainId }: TExchangeRate) {
   // const { fromTokenSymbol, toChainItem, toTokenSymbol } = useDepositState();
-  const [exchange, setExchange] = useState(defaultNullValue);
+  const [exchange, setExchange] = useState(DEFAULT_NULL_VALUE);
   const [slippage, setSlippage] = useState('');
   const [updateTime, setUpdateTime] = useState(MAX_UPDATE_TIME);
   const updateTimeRef = useRef(MAX_UPDATE_TIME);
@@ -43,7 +43,7 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId }: TExcha
         toSymbol,
         fromAmount: EXCHANGE_FROM_AMOUNT,
       });
-      setExchange(conversionRate?.toAmount || defaultNullValue);
+      setExchange(conversionRate?.toAmount || DEFAULT_NULL_VALUE);
       setSlippage(conversionRate.extraInfo?.slippage || '');
     } catch (error: any) {
       if (isAuthTokenError(error)) {
@@ -70,7 +70,7 @@ export default function ExchangeRate({ fromSymbol, toSymbol, toChainId }: TExcha
   const stopInterval = useCallback(() => {
     clearInterval(updateTimerRef.current);
     updateTimerRef.current = undefined;
-    setExchange(defaultNullValue);
+    setExchange(DEFAULT_NULL_VALUE);
     setSlippage('');
   }, []);
 

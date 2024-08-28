@@ -6,7 +6,7 @@ import { TOrderStatus } from 'types/records';
 import { CheckNoticeIcon, ErrorIcon } from 'assets/images';
 import clsx from 'clsx';
 import { formatSymbolDisplay } from 'utils/format';
-import { defaultNullValue } from 'constants/index';
+import { DEFAULT_NULL_VALUE } from 'constants/index';
 
 export default function TransferDetailMain(props: TGetRecordDetailResult) {
   return (
@@ -41,7 +41,7 @@ export default function TransferDetailMain(props: TGetRecordDetailResult) {
               props.toTransfer.amount
             } ${formatSymbolDisplay(props.toTransfer.symbol)}`}</div>
           ) : (
-            <div>{defaultNullValue}</div>
+            <div>{DEFAULT_NULL_VALUE}</div>
           )}
         </div>
       )}
@@ -57,7 +57,7 @@ export default function TransferDetailMain(props: TGetRecordDetailResult) {
               props.fromTransfer.amount
             } ${formatSymbolDisplay(props.fromTransfer.symbol)}`}</div>
           ) : (
-            <div>{defaultNullValue}</div>
+            <div>{DEFAULT_NULL_VALUE}</div>
           )}
         </div>
       )}
