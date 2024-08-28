@@ -1,7 +1,3 @@
-declare interface ICallSendResponse {
-  TransactionId: string;
-}
-
 declare interface File extends Blob {
   /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/File/lastModified) */
   readonly lastModified: number;

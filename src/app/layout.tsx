@@ -1,4 +1,5 @@
 import 'styles/global.scss';
+import '@etransfer/ui-react/dist/assets/index.css';
 
 import Provider from 'provider';
 import { BRAND_NAME } from 'constants/index';

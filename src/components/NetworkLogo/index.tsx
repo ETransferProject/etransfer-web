@@ -22,6 +22,8 @@ import {
   tDVVMedium as TDVVMedium,
   TonMedium,
   Ton,
+  BaseMedium,
+  Base,
 } from 'assets/images';
 import clsx from 'clsx';
 import styles from './styles.module.scss';
@@ -77,6 +79,10 @@ const NetworkLogoMap: Record<string, Record<TNetworkLogoSize, any>> = {
   [BlockchainNetworkType.TON]: {
     normal: <TonMedium />,
     small: <Ton />,
+  },
+  [BlockchainNetworkType.BASE]: {
+    normal: <BaseMedium />,
+    small: <Base />,
   },
 };
 

@@ -47,6 +47,8 @@ import Tron from './chain/tron.svg';
 import TronMedium from './chain/tronMedium.svg';
 import Ton from './chain/ton.svg';
 import TonMedium from './chain/tonMedium.svg';
+import Base from './chain/base.svg';
+import BaseMedium from './chain/baseMedium.svg';
 
 import FilterIcon from './filterIcon.svg';
 import Fingerprint from './fingerprint.svg';
@@ -139,6 +141,8 @@ export {
   TronMedium,
   Ton,
   TonMedium,
+  Base,
+  BaseMedium,
   //
   FilterIcon,
   Fingerprint,

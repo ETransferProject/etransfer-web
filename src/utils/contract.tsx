@@ -5,7 +5,13 @@ import BigNumber from 'bignumber.js';
 import { timesDecimals } from './calculate';
 import { AllSupportedELFChainId, ContractType } from 'constants/chain';
 import { sleep } from '@portkey/utils';
-import { GetRawTx, getAElf, getRawTx, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
+import {
+  GetRawTx,
+  getAElf,
+  getNodeByChainId,
+  getRawTx,
+  removeELFAddressSuffix,
+} from 'utils/aelf/aelfBase';
 import aelfInstance from './aelf/aelfInstance';
 import { handleManagerForwardCall, getContractMethods } from '@portkey/contracts';
 import {
@@ -13,6 +19,12 @@ import {
   TSignatureParams,
   WalletTypeEnum,
 } from '@aelf-web-login/wallet-adapter-base';
+import {
+  getTokenContract,
+  getBalance as getBalanceOrigin,
+  getAllowance,
+  getTokenInfo,
+} from '@etransfer/utils';
 
 type CreateHandleManagerForwardCall = {
   caContractAddress: string;
@@ -242,7 +254,6 @@ export const approveELF = async ({
 };
 
 export const checkTokenAllowanceAndApprove = async ({
-  callViewMethod,
   callSendMethod,
   chainId,
   symbol,
@@ -251,7 +262,6 @@ export const checkTokenAllowanceAndApprove = async ({
   amount,
   memo,
 }: {
-  callViewMethod: (prams: ICallContractParams<any>) => Promise<any>;
   callSendMethod: (prams: ICallContractParams<any>) => Promise<any>;
   chainId: SupportedELFChainId;
   symbol: string;
@@ -260,30 +270,18 @@ export const checkTokenAllowanceAndApprove = async ({
   amount: string | number;
   memo?: string;
 }): Promise<boolean> => {
+  const endPoint = getNodeByChainId(chainId as unknown as AllSupportedELFChainId).rpcUrl;
+  const tokenContractAddress = ADDRESS_MAP[chainId][ContractType.TOKEN];
+  const tokenContractOrigin = await getTokenContract(endPoint, tokenContractAddress);
+
   const [allowanceResult, tokenInfoResult] = await Promise.all([
-    callViewMethod({
-      chainId,
-      contractAddress: ADDRESS_MAP[chainId][ContractType.TOKEN],
-      methodName: ContractMethodName.GetAllowance,
-      args: {
-        symbol,
-        owner: address, // owner caAddress
-        spender: approveTargetAddress,
-      },
-    }),
-    callViewMethod({
-      chainId,
-      contractAddress: ADDRESS_MAP[chainId][ContractType.TOKEN],
-      methodName: ContractMethodName.GetTokenInfo,
-      args: {
-        symbol,
-      },
-    }),
+    getAllowance(tokenContractOrigin, symbol, address, approveTargetAddress),
+    getTokenInfo(tokenContractOrigin, symbol),
   ]);
 
   console.log('first check allowance and tokenInfo:', allowanceResult, tokenInfoResult);
-  const bigA = timesDecimals(amount, tokenInfoResult?.data?.decimals || 8);
-  const allowanceBN = new BigNumber(allowanceResult?.data?.allowance);
+  const bigA = timesDecimals(amount, tokenInfoResult?.decimals || 8);
+  const allowanceBN = new BigNumber(allowanceResult);
 
   if (allowanceBN.lt(bigA)) {
     await approveELF({
@@ -295,19 +293,15 @@ export const checkTokenAllowanceAndApprove = async ({
       memo,
     });
 
-    const allowanceNew = await callViewMethod({
-      chainId,
-      contractAddress: ADDRESS_MAP[chainId][ContractType.TOKEN],
-      methodName: ContractMethodName.GetAllowance,
-      args: {
-        symbol,
-        owner: address, // owner caAddress
-        spender: approveTargetAddress,
-      },
-    });
+    const allowanceNew = await getAllowance(
+      tokenContractOrigin,
+      symbol,
+      address,
+      approveTargetAddress,
+    );
     console.log('second check allowance:', allowanceNew);
 
-    return bigA.lte(allowanceNew?.data.allowance);
+    return bigA.lte(allowanceNew);
   }
   return true;
 };
@@ -402,42 +396,17 @@ export const createTransferTokenTransaction = async ({
   return transaction;
 };
 
-export type TCallViewMethodForGetBalance = (
-  prams: ICallContractParams<{
-    symbol: string;
-    owner: string;
-  }>,
-) => Promise<
-  | {
-      data: {
-        balance: string;
-      };
-    }
-  | undefined
->;
-
 export type TGetBalancesProps = {
-  callViewMethod: TCallViewMethodForGetBalance;
   caAddress: string;
   symbol: string;
   chainId: SupportedELFChainId;
 };
 
-export const getBalance = async ({
-  callViewMethod,
-  symbol,
-  chainId,
-  caAddress,
-}: TGetBalancesProps) => {
-  const res = await callViewMethod({
-    contractAddress: ADDRESS_MAP[chainId][ContractType.TOKEN],
-    methodName: ContractMethodName.GetBalance,
-    chainId,
-    args: {
-      symbol,
-      owner: caAddress,
-    },
-  });
+export const getBalance = async ({ symbol, chainId, caAddress }: TGetBalancesProps) => {
+  const endPoint = getNodeByChainId(chainId as unknown as AllSupportedELFChainId).rpcUrl;
+  const tokenContractAddress = ADDRESS_MAP[chainId][ContractType.TOKEN];
+  const tokenContractOrigin = await getTokenContract(endPoint, tokenContractAddress);
+  const res = await getBalanceOrigin(tokenContractOrigin, symbol, caAddress);
 
-  return res?.data?.balance;
+  return res;
 };
