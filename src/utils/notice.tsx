@@ -2,7 +2,7 @@ import { notification } from 'antd';
 import { ArgsProps } from 'antd/lib/notification';
 import { CheckNoticeIcon, CloseMedium } from 'assets/images';
 import { eTransferInstance } from './etransferInstance';
-import { formatSymbolDisplay } from '@etransfer/ui-react';
+import { etransferCore, formatSymbolDisplay } from '@etransfer/ui-react';
 import clsx from 'clsx';
 import { BusinessType } from 'types/api';
 import { ETRANSFER_LOGO_BASE64 } from 'constants/wallet';
@@ -86,7 +86,7 @@ export const showNotice = ({
     closeIcon: <CloseMedium />,
     description: content,
     placement: 'top',
-    duration: noticeProps?.duration || 3,
+    duration: noticeProps?.duration || 5,
   });
 
   if (isShowBrowserNotice) {
@@ -94,35 +94,22 @@ export const showNotice = ({
   }
 };
 
-// TODO any and item type
-type TDepositNoticeItem = {
-  id: string;
-  amount: string;
-  symbol: string;
-  isSwap: boolean;
-  isSwapFail: boolean;
-};
-type TWithdrawNoticeItem = {
-  id: string;
-  amount: string;
-  symbol: string;
-};
 export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse) => {
   // >>>>>> save processing
-  noticeData.processing?.deposit?.forEach((item: TDepositNoticeItem) => {
+  noticeData.processing?.deposit?.forEach((item) => {
     if (!eTransferInstance.processingIds.includes(item.id)) {
       eTransferInstance.processingIds.push(item.id);
     }
   });
 
-  noticeData.processing.withdraw?.forEach((item: TWithdrawNoticeItem) => {
+  noticeData.processing.withdraw?.forEach((item) => {
     if (!eTransferInstance.processingIds.includes(item.id)) {
       eTransferInstance.processingIds.push(item.id);
     }
   });
 
   // >>>>>> succeed notice
-  noticeData.succeed?.deposit?.forEach((item: TDepositNoticeItem) => {
+  noticeData.succeed?.deposit?.forEach((item) => {
     if (
       eTransferInstance.processingIds.includes(item.id) &&
       !eTransferInstance.showNoticeIds.includes(item.id)
@@ -136,7 +123,7 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
       eTransferInstance.showNoticeIds.push(item.id);
     }
   });
-  noticeData.succeed?.withdraw?.forEach((item: TWithdrawNoticeItem) => {
+  noticeData.succeed?.withdraw?.forEach((item) => {
     if (
       eTransferInstance.processingIds.includes(item.id) &&
       !eTransferInstance.showNoticeIds.includes(item.id)
@@ -152,7 +139,7 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
   });
 
   // >>>>>> failed notice
-  noticeData.failed?.deposit?.forEach((item: TDepositNoticeItem) => {
+  noticeData.failed?.deposit?.forEach((item) => {
     if (
       eTransferInstance.processingIds.includes(item.id) &&
       !eTransferInstance.showNoticeIds.includes(item.id)
@@ -167,7 +154,7 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
       eTransferInstance.showNoticeIds.push(item.id);
     }
   });
-  noticeData.failed?.withdraw?.forEach((item: TWithdrawNoticeItem) => {
+  noticeData.failed?.withdraw?.forEach((item) => {
     if (
       eTransferInstance.processingIds.includes(item.id) &&
       !eTransferInstance.showNoticeIds.includes(item.id)
@@ -181,4 +168,9 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
       eTransferInstance.showNoticeIds.push(item.id);
     }
   });
+};
+
+export const unsubscribeUserOrderRecord = async (address: string) => {
+  await etransferCore.noticeSocket?.UnsubscribeUserOrderRecord(address);
+  await etransferCore.noticeSocket?.destroy();
 };

@@ -128,7 +128,7 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
       </div>
 
       <div className={styles['detail-item']}>
-        <div className={styles['detail-label']}>Receive</div>
+        <div className={styles['detail-label']}>Receive Amount</div>
         <TokenAmount
           status={props.toStatus}
           amount={props.toAmount}

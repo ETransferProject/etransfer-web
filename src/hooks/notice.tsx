@@ -43,17 +43,10 @@ export function useNoticeSocket() {
   const handleNoticeRef = useRef(handleNotice);
   handleNoticeRef.current = handleNotice;
 
-  const destroyNoticeSocket = useCallback(async () => {
-    await etransferCore.noticeSocket?.UnsubscribeUserOrderRecord(address);
-    await etransferCore.noticeSocket?.destroy();
-  }, [address]);
-  const destroyNoticeSocketRef = useRef(destroyNoticeSocket);
-  destroyNoticeSocketRef.current = destroyNoticeSocket;
-
   useEffect(() => {
     etransferCore.setSocketUrl(ETransferHost);
 
-    if (address) {
+    if (address && !etransferCore.noticeSocket?.signalr?.connectionId) {
       etransferCore.noticeSocket
         ?.doOpen()
         .then((res) => {
@@ -74,8 +67,5 @@ export function useNoticeSocket() {
           console.log('NoticeSocket doOpen error', error);
         });
     }
-    return () => {
-      destroyNoticeSocketRef.current();
-    };
   }, [address]);
 }

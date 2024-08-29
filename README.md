@@ -125,5 +125,5 @@ Once your codespace is created, the repository will be automatically cloned into
 
 We provide two chains which allow you to interact with a remote aelf node. You can load a wallet, get a system contract address, or get a contract instance by contract address etc.
 
-- MainChain Aelf: https://explorer-test.aelf.io/
-- SideChain Aelf: https://explorer-test-side02.aelf.io/
+- MainChain Aelf: https://aelfscan.io
+- SideChain Aelf: https://aelfscan.io/tDVV

@@ -28,7 +28,6 @@ export function useQueryAuthToken() {
   const loginSuccessActive = useCallback(() => {
     console.log('%c login success and emit event', 'color: green');
     myEvents.LoginSuccess.emit();
-    // TODO websocket open
   }, []);
 
   const handleGetSignature = useCallback(async () => {

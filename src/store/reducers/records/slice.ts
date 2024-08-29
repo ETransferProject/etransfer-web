@@ -74,6 +74,20 @@ export const RecordsSlice = createSlice({
         hasMore: true,
       };
     },
+    resetRecordsStateNotNotice: (state) => {
+      return {
+        ...state,
+        recordsList: [],
+        totalCount: 0,
+        type: TRecordsRequestType.ALL,
+        status: TRecordsRequestStatus.ALL,
+        timestamp: null,
+        skipCount: 1,
+        maxResultCount: 10,
+        search: '',
+        hasMore: true,
+      };
+    },
     resetRecordsState: () => {
       return initialRecordState;
     },
@@ -92,6 +106,7 @@ export const {
   setDepositProcessingCount,
   setWithdrawProcessingCount,
   resetRecordsWithoutFilter,
+  resetRecordsStateNotNotice,
   resetRecordsState,
 } = RecordsSlice.actions;
 
