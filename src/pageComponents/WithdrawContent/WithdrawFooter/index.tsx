@@ -8,7 +8,7 @@ import FailModal from '../FailModal';
 import { TNetworkItem, TWithdrawInfo, BusinessType } from 'types/api';
 import { useCommonState, useLoading } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { ADDRESS_MAP, defaultNullValue } from 'constants/index';
+import { ADDRESS_MAP, DEFAULT_NULL_VALUE } from 'constants/index';
 import { createWithdrawOrder } from 'utils/api/deposit';
 import { TWithdrawInfoSuccess } from 'types/deposit';
 import { checkTokenAllowanceAndApprove, createTransferTokenTransaction } from 'utils/contract';
@@ -285,7 +285,7 @@ export default function WithdrawFooter({
             )}>
             {isTransactionFeeLoading && <PartialLoading />}
             {!isTransactionFeeLoading &&
-              `${(!isSuccessModalOpen && receiveAmount) || defaultNullValue} `}
+              `${(!isSuccessModalOpen && receiveAmount) || DEFAULT_NULL_VALUE} `}
             <span className={clsx(styles['info-unit'])}>{withdrawInfo.transactionUnit}</span>
           </div>
         </div>

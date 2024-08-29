@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import clsx from 'clsx';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 
 interface NetworksProps {
   list: string[];
@@ -22,7 +22,7 @@ export default function Networks({ list, size = 'normal', className }: NetworksP
           return (
             <div className="flex-row" key={`tooltip-networks-${item}`}>
               <NetworkLogo network={item} size={size} className={styles['network-more-icon']} />
-              {index < moreList.length - 1 && <Space direction={'horizontal'} size={12} />}
+              {index < moreList.length - 1 && <CommonSpace direction={'horizontal'} size={12} />}
             </div>
           );
         })}

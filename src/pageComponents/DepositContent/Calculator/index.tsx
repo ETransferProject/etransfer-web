@@ -4,7 +4,7 @@ import styles from './styles.module.scss';
 import { CalculatorIcon } from 'assets/images';
 import DynamicArrow from 'components/DynamicArrow';
 import clsx from 'clsx';
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 import { useCommonState, useDepositState } from 'store/Provider/hooks';
 import { getDepositCalculate } from 'utils/api/deposit';
 import { handleErrorMessage } from '@etransfer/utils';
@@ -175,7 +175,7 @@ export default function Calculator() {
     return (
       <div>
         <div className={styles['label']}>You Pay</div>
-        <Space direction="vertical" size={6} />
+        <CommonSpace direction="vertical" size={6} />
         <div className={clsx('flex-row-center', styles['you-pay-main'])}>
           <Input
             className={styles['pay-input']}
@@ -194,7 +194,7 @@ export default function Calculator() {
     return (
       <div>
         <div className={styles['label']}>You Receive</div>
-        <Space direction="vertical" size={8} />
+        <CommonSpace direction="vertical" size={8} />
         <div className={styles['receive-amount']}>{`≈${receiveAmount} ${formatSymbolDisplay(
           toTokenSymbol,
         )}`}</div>
@@ -214,11 +214,11 @@ export default function Calculator() {
       {renderHeader}
       {isExpand && (
         <>
-          <Space direction="vertical" size={16} />
+          <CommonSpace direction="vertical" size={16} />
           {isPadPX ? (
             <div className={styles['calculator-content']}>
               <div>{renderYouPay}</div>
-              <Space direction="vertical" size={16} />
+              <CommonSpace direction="vertical" size={16} />
               <div>{renderReceive}</div>
             </div>
           ) : (

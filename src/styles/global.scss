@@ -8,6 +8,7 @@
 @import '/src/assets/theme/theme.scss';
 @import './components.scss';
 @import './variable.scss';
+@import './antd.css';
 
 html,
 body {
@@ -153,4 +154,53 @@ input[type='number'] {
 .pre-loading {
   width: 100%;
   height: 100%;
+}
+
+.etransfer-txn-notification {
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: none;
+  border: 1px solid #96e2b0;
+  background-color: #e6f8ec;
+
+  .ant-notification-notice-content {
+    .ant-notification-notice-with-icon {
+      .ant-notification-notice-icon {
+        margin-top: 2px;
+        margin-left: 0;
+      }
+      .ant-notification-notice-message {
+        margin-left: 28px;
+        font-size: 16px;
+        @extend .font-family-medium;
+      }
+      .ant-notification-notice-description {
+        margin-left: 28px;
+      }
+    }
+  }
+  .ant-notification-notice-close {
+    top: 12px;
+    right: 12px;
+  }
+}
+
+.etransfer-txn-notification-success {
+  border: 1px solid #96e2b0;
+  background-color: #e6f8ec;
+}
+
+.etransfer-txn-notification-error {
+  border: 1px solid #fbb0b0;
+  background-color: #feecec;
+
+  .ant-notification-notice-content {
+    .ant-notification-notice-with-icon {
+      .ant-notification-notice-icon {
+        svg path {
+          fill: $error;
+        }
+      }
+    }
+  }
 }

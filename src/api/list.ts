@@ -40,6 +40,7 @@ const DepositApiList = {
 const HistoryApiList = {
   getRecordsList: '/api/etransfer/record/list',
   getRecordStatus: '/api/etransfer/record/status',
+  getRecordDetail: '/api/etransfer/record',
 };
 
 const InfoDashboard = {

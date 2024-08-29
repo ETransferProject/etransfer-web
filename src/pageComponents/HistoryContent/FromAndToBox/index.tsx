@@ -1,4 +1,4 @@
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 import AddressBox, { TAddressBoxProps } from '../AddressBox';
 import TxHashBox, { TTxHashBoxProps } from '../TxHashBox';
 
@@ -24,7 +24,7 @@ export default function FromAndToBox({
         fromChainId={fromChainId}
         toChainId={toChainId}
       />
-      <Space direction={'vertical'} size={2} />
+      <CommonSpace direction={'vertical'} size={2} />
       <TxHashBox
         txHashLabel={txHashLabel}
         txHash={txHash}

@@ -1,6 +1,6 @@
 import { GOT_IT } from 'constants/misc';
 import styles from './styles.module.scss';
-import CommonModalTips from 'components/CommonModalTips';
+import CommonModalTip from 'components/Tips/CommonModalTip';
 
 export type TSynchronizingChainModal = {
   open?: boolean;
@@ -17,7 +17,7 @@ export default function SynchronizingChainModal({
   onCancel,
 }: TSynchronizingChainModal) {
   return (
-    <CommonModalTips
+    <CommonModalTip
       className={styles.synchronizingChainModal}
       footerClassName={styles.synchronizingChainModalFooter}
       getContainer="body"
@@ -28,6 +28,6 @@ export default function SynchronizingChainModal({
       onOk={onOk}
       onCancel={onCancel}>
       <div className={styles.synchronizingChainModalBody}>{SynchronizingChainModalTitle}</div>
-    </CommonModalTips>
+    </CommonModalTip>
   );
 }

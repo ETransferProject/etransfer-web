@@ -19,6 +19,7 @@ import { useInitWallet } from 'hooks/wallet';
 import { TelegramPlatform } from 'utils/telegram';
 import service from 'api/axios';
 import { API_VERSION } from 'constants/misc';
+import { useNoticeSocket } from 'hooks/notice';
 
 const Layout = ({
   children,
@@ -65,6 +66,7 @@ const Layout = ({
   useInitWallet();
   useRouteParamType();
   useUpdateRecord();
+  useNoticeSocket();
 
   return (
     <AntdLayout

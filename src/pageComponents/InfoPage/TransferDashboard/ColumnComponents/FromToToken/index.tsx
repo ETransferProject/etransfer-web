@@ -1,5 +1,5 @@
 import { ToArrow } from 'assets/images';
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 import useGetTokenIcon from 'hooks/infoDashboard';
 import TokenBox from 'pageComponents/InfoPage/TokenDashboard/ColumnComponents/TokenBox';
 
@@ -19,11 +19,11 @@ export default function FromToToken({ fromSymbol, fromIcon, toSymbol, toIcon }: 
   return (
     <div className="flex-row-center">
       <TokenBox symbol={fromSymbol} icon={fromIcon || fromIconBackup} />
-      <Space direction={'horizontal'} size={6} />
+      <CommonSpace direction={'horizontal'} size={6} />
       <div className="flex-row-center flex-shrink-0" style={{ width: 14, height: 14 }}>
         <ToArrow />
       </div>
-      <Space direction={'horizontal'} size={6} />
+      <CommonSpace direction={'horizontal'} size={6} />
       <TokenBox symbol={toSymbol} icon={toIcon || toIconBackup} />
     </div>
   );

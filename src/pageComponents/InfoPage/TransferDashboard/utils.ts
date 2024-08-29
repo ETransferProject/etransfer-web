@@ -9,12 +9,14 @@ export const getTransferDashboard = async (params: TTransferDashboardRequest) =>
 
   data?.items?.forEach((item) => {
     list.push({
+      id: item.id,
       orderType: item.orderType,
       status: item.status,
       createTime: item.createTime,
       fromNetwork: item.fromTransfer.network,
       fromChainId: item.fromTransfer.chainId,
       fromSymbol: item.fromTransfer.symbol,
+      fromIcon: item.fromTransfer.icon,
       fromAddress: item.fromTransfer.fromAddress,
       fromAmount: item.fromTransfer.amount,
       fromAmountUsd: item.fromTransfer.amountUsd,
@@ -23,6 +25,7 @@ export const getTransferDashboard = async (params: TTransferDashboardRequest) =>
       toNetwork: item.toTransfer.network,
       toChainId: item.toTransfer.chainId,
       toSymbol: item.toTransfer.symbol,
+      toIcon: item.toTransfer.icon,
       toAddress: item.toTransfer.toAddress,
       toAmount: item.toTransfer.amount,
       toAmountUsd: item.toTransfer.amountUsd,

@@ -12,7 +12,7 @@ export const prefixCls = 'etransfer-web';
 export const APP_NAME = 'ETransfer-Web';
 export const BRAND_NAME = 'ETransfer';
 
-export const defaultNullValue = '--';
+export const DEFAULT_NULL_VALUE = '--';
 
 export enum TokenType {
   USDT = 'USDT',

@@ -2,8 +2,8 @@ import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIsLogin } from 'hooks/wallet';
-import { SupportedELFChainId, defaultNullValue } from 'constants/index';
-import Space from 'components/Space';
+import { SupportedELFChainId, DEFAULT_NULL_VALUE } from 'constants/index';
+import CommonSpace from 'components/CommonSpace';
 import PartialLoading from 'components/PartialLoading';
 import BigNumber from 'bignumber.js';
 import { useGetBalanceDivDecimals } from 'hooks/contract';
@@ -69,8 +69,8 @@ export function BalanceAndUSD({
   if (!isLogin) {
     return (
       <div className={clsx('flex-column-end', styles['balance-and-usd'])}>
-        <div className={styles['balance']}>{defaultNullValue}</div>
-        <div className={styles['usd']}>{defaultNullValue}</div>
+        <div className={styles['balance']}>{DEFAULT_NULL_VALUE}</div>
+        <div className={styles['usd']}>{DEFAULT_NULL_VALUE}</div>
       </div>
     );
   }
@@ -78,16 +78,16 @@ export function BalanceAndUSD({
   if (!balance)
     return (
       <div className="flex-column-end">
-        <Space direction="vertical" size={15} />
+        <CommonSpace direction="vertical" size={15} />
         <PartialLoading />
-        <Space direction="vertical" size={15} />
+        <CommonSpace direction="vertical" size={15} />
       </div>
     );
 
   return (
     <div className={clsx('flex-column-end', styles['balance-and-usd'])}>
       <div className={styles['balance']}>{balance}</div>
-      <div className={styles['usd']}>{balanceUsd ? `$ ${balanceUsd}` : defaultNullValue}</div>
+      <div className={styles['usd']}>{balanceUsd ? `$ ${balanceUsd}` : DEFAULT_NULL_VALUE}</div>
     </div>
   );
 }

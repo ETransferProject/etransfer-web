@@ -17,7 +17,7 @@ export const getManagerAddressByWallet = async (
   if (walletType === WalletTypeEnum.discover) {
     const discoverInfo = walletInfo?.extraInfo as ExtraInfoForDiscover;
     managerAddress = await discoverInfo?.provider?.request({
-      method: 'wallet_getCurrentManagerAddress', // TODO
+      method: 'wallet_getCurrentManagerAddress',
     });
   } else if (walletType === WalletTypeEnum.aa) {
     const portkeyAAInfo = walletInfo?.extraInfo as ExtraInfoForPortkeyAA;
