@@ -1,6 +1,6 @@
 import styles from './styles.module.scss';
 import clsx from 'clsx';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   AelfExploreType,
   BlockchainNetworkType,
@@ -37,21 +37,22 @@ export default function AddressBox({
 }: TAddressBoxProps) {
   const { isPadPX } = useCommonState();
   const accounts = useGetAccount();
+  const chainId = useMemo(() => {
+    return type === 'To' ? toChainId : fromChainId;
+  }, []);
 
   const calcAddress = useCallback(() => {
     const address = type === 'To' ? toAddress : fromAddress;
     if (address && network === BlockchainNetworkType.AELF) {
       // format address: add suffix
-      const chainId: SupportedELFChainId = type === 'To' ? toChainId : fromChainId;
       return formatDIDAddress(address, chainId || SupportedChainId.sideChain);
     }
     if (!address && network === BlockchainNetworkType.AELF) {
       // when fromAddress and toAddress all null, need accounts default address
-      let chainId: SupportedELFChainId = type === 'To' ? toChainId : fromChainId;
-      chainId = chainId || SupportedChainId.sideChain;
-      if (accounts && accounts[chainId]) {
-        // default accounts[chainId]?.[0] , if not exist, use AELF
-        return accounts[chainId] || accounts[SupportedELFChainId.AELF] || DEFAULT_NULL_VALUE;
+      const currentChainId = chainId || SupportedChainId.sideChain;
+      if (accounts && accounts[currentChainId]) {
+        // default accounts[currentChainId]?.[0] , if not exist, use AELF
+        return accounts[currentChainId] || accounts[SupportedELFChainId.AELF] || DEFAULT_NULL_VALUE;
       }
       return DEFAULT_NULL_VALUE;
     }
@@ -89,7 +90,10 @@ export default function AddressBox({
         styles['address-box'],
         isPadPX ? styles['mobile-address-box'] : styles['web-address-box'],
       )}>
-      <NetworkLogo network={network} size="small" />
+      <NetworkLogo
+        network={network === BlockchainNetworkType.AELF ? chainId : network}
+        size="small"
+      />
       <CommonTooltip title={calcAddress()} trigger={'hover'}>
         <span className={clsx(styles['address-word'])} onClick={handleAddressClick}>
           {getOmittedStr(calcAddress(), 8, 9)}
