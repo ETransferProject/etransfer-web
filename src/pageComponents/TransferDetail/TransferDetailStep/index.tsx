@@ -23,45 +23,51 @@ export interface TransferDetailStepProps {
   };
 }
 
-export default function TransferDetailStep(props: TransferDetailStepProps) {
+export default function TransferDetailStep({
+  orderType,
+  currentStep,
+  fromTransfer,
+  toTransfer,
+}: TransferDetailStepProps) {
   const { isPadPX } = useCommonState();
   const stepItems = useMemo(() => {
     const items = [
       {
-        title: `${props.orderType} submitted`,
-        description: `${props.fromTransfer.amount} ${formatSymbolDisplay(
-          props.fromTransfer.symbol,
-        )}`,
+        title: `${orderType} submitted`,
+        description: `${fromTransfer.amount} ${formatSymbolDisplay(fromTransfer.symbol)}`,
       },
       {
-        title: `${props.fromTransfer.chainId} Chain in progress(${props.fromTransfer.confirmedNum}/${props.fromTransfer.confirmingThreshold})`,
-        description: `Requires ${props.fromTransfer.confirmedNum} confirmations`,
+        title: `${fromTransfer.chainId} Chain in progress(${fromTransfer.confirmedNum}/${fromTransfer.confirmingThreshold})`,
+        description: `Requires ${fromTransfer.confirmedNum} confirmations`,
       },
       {
-        title: `${props.toTransfer.chainId} Chain in progress`,
+        title: `${toTransfer.chainId} Chain in progress`,
       },
       {
         title: 'Received',
-        description: `${props.toTransfer.amount} ${formatSymbolDisplay(props.toTransfer.symbol)}`,
+        description:
+          fromTransfer.symbol !== toTransfer.symbol
+            ? `You will receive ${toTransfer.symbol}`
+            : `${toTransfer.amount} ${formatSymbolDisplay(toTransfer.symbol)}`,
       },
     ];
     items.forEach((item: any, index) => {
-      if (index === props.currentStep) {
+      if (index === currentStep) {
         item.icon = <LoadingOutlined />;
       }
     });
     return items;
   }, [
-    props.currentStep,
-    props.fromTransfer.amount,
-    props.fromTransfer.chainId,
-    props.fromTransfer.confirmedNum,
-    props.fromTransfer.confirmingThreshold,
-    props.fromTransfer.symbol,
-    props.orderType,
-    props.toTransfer.amount,
-    props.toTransfer.chainId,
-    props.toTransfer.symbol,
+    currentStep,
+    fromTransfer.amount,
+    fromTransfer.chainId,
+    fromTransfer.confirmedNum,
+    fromTransfer.confirmingThreshold,
+    fromTransfer.symbol,
+    orderType,
+    toTransfer.amount,
+    toTransfer.chainId,
+    toTransfer.symbol,
   ]);
 
   return (
@@ -75,7 +81,7 @@ export default function TransferDetailStep(props: TransferDetailStepProps) {
         direction={isPadPX ? 'vertical' : 'horizontal'}
         labelPlacement={isPadPX ? 'horizontal' : 'vertical'}
         items={stepItems}
-        current={props.currentStep}
+        current={currentStep}
         size="small"
       />
     </div>
