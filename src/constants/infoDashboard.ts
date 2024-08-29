@@ -40,4 +40,5 @@ export const OverviewLegendList = [
 export enum TransferStatusType {
   Pending = 'Pending',
   Success = 'Success',
+  Failed = 'Failed',
 }

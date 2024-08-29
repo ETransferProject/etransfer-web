@@ -20,12 +20,12 @@ export default function TransferDetailMain(props: TGetRecordDetailResult) {
             confirmedNum: props.step.fromTransfer.confirmedNum,
             amount: props.fromTransfer.amount,
             symbol: props.fromTransfer.symbol,
-            chainId: props.fromTransfer.chainId || props.fromTransfer.network,
+            network: props.fromTransfer.network,
           }}
           toTransfer={{
             amount: props.toTransfer.amount,
             symbol: props.toTransfer.symbol,
-            chainId: props.toTransfer.chainId || props.toTransfer.network,
+            network: props.toTransfer.network,
           }}
         />
       )}

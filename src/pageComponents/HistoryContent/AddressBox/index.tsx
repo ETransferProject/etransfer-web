@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 import {
   AelfExploreType,
   BlockchainNetworkType,
-  ExploreUrlType,
+  ExploreUrlNotAelf,
   OtherExploreType,
 } from 'constants/network';
 import { SupportedChainId, DEFAULT_NULL_VALUE } from 'constants/index';
@@ -39,7 +39,7 @@ export default function AddressBox({
   const accounts = useGetAccount();
   const chainId = useMemo(() => {
     return type === 'To' ? toChainId : fromChainId;
-  }, []);
+  }, [fromChainId, toChainId, type]);
 
   const calcAddress = useCallback(() => {
     const address = type === 'To' ? toAddress : fromAddress;
@@ -57,7 +57,7 @@ export default function AddressBox({
       return DEFAULT_NULL_VALUE;
     }
     return address || DEFAULT_NULL_VALUE;
-  }, [type, network, accounts, toChainId, fromChainId, fromAddress, toAddress]);
+  }, [type, toAddress, fromAddress, network, chainId, accounts]);
 
   const handleAddressClick = useCallback(
     (event: any) => {
@@ -77,7 +77,7 @@ export default function AddressBox({
         getOtherExploreLink(
           calcAddress(),
           OtherExploreType.address,
-          network as keyof typeof ExploreUrlType,
+          network as keyof typeof ExploreUrlNotAelf,
         ),
       );
     },

@@ -5,6 +5,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { useMemo } from 'react';
 import { useCommonState } from 'store/Provider/hooks';
 import { formatSymbolDisplay } from 'utils/format';
+import { BlockchainNetworkType } from 'constants/network';
 
 export interface TransferDetailStepProps {
   orderType: BusinessType;
@@ -14,12 +15,12 @@ export interface TransferDetailStepProps {
     confirmedNum: number;
     amount: string;
     symbol: string;
-    chainId: string;
+    network: string;
   };
   toTransfer: {
     amount: string;
     symbol: string;
-    chainId: string;
+    network: string;
   };
 }
 
@@ -37,14 +38,18 @@ export default function TransferDetailStep({
         description: `${fromTransfer.amount} ${formatSymbolDisplay(fromTransfer.symbol)}`,
       },
       {
-        title: `${fromTransfer.chainId} Chain in progress(${fromTransfer.confirmedNum}/${fromTransfer.confirmingThreshold})`,
+        title: `${
+          fromTransfer.network === BlockchainNetworkType.AELF ? 'aelf' : fromTransfer.network
+        } Chain in progress(${fromTransfer.confirmedNum}/${fromTransfer.confirmingThreshold})`,
         description: `Requires ${fromTransfer.confirmedNum} confirmations`,
       },
       {
-        title: `${toTransfer.chainId} Chain in progress`,
+        title: `${
+          toTransfer.network === BlockchainNetworkType.AELF ? 'aelf' : toTransfer.network
+        } Chain in progress`,
       },
       {
-        title: 'Received',
+        title: orderType === BusinessType.Deposit ? 'Received' : 'Sent',
         description:
           fromTransfer.symbol !== toTransfer.symbol
             ? `You will receive ${toTransfer.symbol}`
@@ -60,13 +65,13 @@ export default function TransferDetailStep({
   }, [
     currentStep,
     fromTransfer.amount,
-    fromTransfer.chainId,
     fromTransfer.confirmedNum,
     fromTransfer.confirmingThreshold,
+    fromTransfer.network,
     fromTransfer.symbol,
     orderType,
     toTransfer.amount,
-    toTransfer.chainId,
+    toTransfer.network,
     toTransfer.symbol,
   ]);
 

@@ -10,6 +10,7 @@ import { handleNoticeDataAndShow } from 'utils/notice';
 import { useGetAccount } from './wallet';
 import { removeAddressSuffix } from '@etransfer/utils';
 import { TOrderRecordsNoticeResponse } from '@etransfer/socket';
+import myEvents from 'utils/myEvent';
 
 export function useNoticeSocket() {
   const dispatch = useAppDispatch();
@@ -33,6 +34,7 @@ export function useNoticeSocket() {
           dispatch(setWithdrawProcessingCount(0));
         }
 
+        myEvents.GlobalTxnNotice.emit();
         // handle order data and show notice
         handleNoticeDataAndShow(res);
       }

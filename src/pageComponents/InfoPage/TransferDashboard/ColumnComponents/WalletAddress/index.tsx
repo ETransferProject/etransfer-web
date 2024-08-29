@@ -7,7 +7,7 @@ import {
   BlockchainNetworkType,
   AelfExploreType,
   OtherExploreType,
-  ExploreUrlType,
+  ExploreUrlNotAelf,
 } from 'constants/network';
 import { useGetAccount } from 'hooks/wallet';
 import { useCallback } from 'react';
@@ -64,7 +64,7 @@ export default function WalletAddress({
         getOtherExploreLink(
           calcAddress(),
           OtherExploreType.address,
-          network as keyof typeof ExploreUrlType,
+          network as keyof typeof ExploreUrlNotAelf,
         ),
       );
     },
