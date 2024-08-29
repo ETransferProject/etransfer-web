@@ -5,7 +5,7 @@ import { eTransferInstance } from './etransferInstance';
 import { etransferCore, formatSymbolDisplay } from '@etransfer/ui-react';
 import clsx from 'clsx';
 import { BusinessType } from 'types/api';
-import { ETRANSFER_LOGO_BASE64 } from 'constants/wallet';
+import { ETRANSFER_LOGO } from 'constants/misc';
 import { TOrderRecordsNoticeResponse } from '@etransfer/socket';
 
 export const browserNotification = ({ title, content }: { title: string; content: string }) => {
@@ -17,7 +17,7 @@ export const browserNotification = ({ title, content }: { title: string; content
   function sendNotification() {
     new Notification(title, {
       body: content,
-      icon: ETRANSFER_LOGO_BASE64,
+      icon: ETRANSFER_LOGO,
     });
   }
   if (window.Notification.permission === 'granted') {
@@ -171,6 +171,8 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
 };
 
 export const unsubscribeUserOrderRecord = async (address: string) => {
+  eTransferInstance.setProcessingIds([]);
+  eTransferInstance.setShowNoticeIds([]);
   await etransferCore.noticeSocket?.UnsubscribeUserOrderRecord(address);
   await etransferCore.noticeSocket?.destroy();
 };

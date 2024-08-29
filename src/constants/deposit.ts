@@ -22,4 +22,4 @@ export const CHECK_TXN_BUTTON = 'Check Transaction';
 
 export const CHECKING_TXN_BUTTON = 'Checking Transaction...';
 
-export const NO_TXN_FOUND = 'No transactions found. Please wait or verify the deposit address';
+export const NO_TXN_FOUND = 'No transactions found. Please wait or verify the deposit address.';

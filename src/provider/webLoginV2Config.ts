@@ -14,7 +14,7 @@ import {
   WebLoginGraphqlUrl,
   WebLoginServiceUrl,
 } from 'constants/index';
-import { ETRANSFER_LOGO_BASE64 } from 'constants/wallet';
+import { ETRANSFER_LOGO_BASE64 } from 'constants/misc';
 import { TelegramPlatform } from 'utils/telegram';
 import { devices } from '@portkey/utils';
 
