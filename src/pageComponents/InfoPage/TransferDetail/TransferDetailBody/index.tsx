@@ -14,6 +14,7 @@ import { formatSymbolDisplay } from 'utils/format';
 import { InfoBusinessTypeLabel, TransferStatusType } from 'constants/infoDashboard';
 import { TOrderStatus } from 'types/records';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
+import { useMemo } from 'react';
 
 export type TTransferDetailBody = Omit<TTransferDashboardData, 'fromStatus' | 'toStatus'> & {
   fromStatus: TransferStatusType | TOrderStatus;
@@ -22,24 +23,44 @@ export type TTransferDetailBody = Omit<TTransferDashboardData, 'fromStatus' | 't
 
 export default function TransferDetailBody(props: TTransferDetailBody) {
   const { isMobilePX } = useCommonState();
+  const orderType = useMemo(() => {
+    return props.orderType === BusinessType.Withdraw
+      ? InfoBusinessTypeLabel.Withdraw
+      : props.orderType;
+  }, [props.orderType]);
 
   return (
     <div className={styles['transfer-detail-body']}>
-      <div className={styles['detail-item']}>
-        <div className={styles['detail-label']}>Type</div>
-        <div className={clsx(styles['detail-value'], styles['detail-value-type'])}>
-          {props.orderType === BusinessType.Withdraw
-            ? InfoBusinessTypeLabel.Withdraw
-            : props.orderType}
-        </div>
-      </div>
+      {isMobilePX ? (
+        <>
+          <div className={styles['detail-item']}>
+            <div className={clsx(styles['detail-label'], styles['detail-value-type'])}>
+              {orderType}
+            </div>
+            <div className={clsx(styles['detail-value'], styles['detail-value-time'])}>
+              {formatTime(props.createTime)}
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className={styles['detail-item']}>
+            <div className={styles['detail-label']}>Type</div>
+            <div className={clsx(styles['detail-value'], styles['detail-value-type'])}>
+              {props.orderType === BusinessType.Withdraw
+                ? InfoBusinessTypeLabel.Withdraw
+                : props.orderType}
+            </div>
+          </div>
 
-      <div className={styles['detail-item']}>
-        <div className={styles['detail-label']}>CreateTime</div>
-        <div className={clsx(styles['detail-value'], styles['detail-value-time'])}>
-          {formatTime(props.createTime)}
-        </div>
-      </div>
+          <div className={styles['detail-item']}>
+            <div className={styles['detail-label']}>CreateTime</div>
+            <div className={clsx(styles['detail-value'], styles['detail-value-time'])}>
+              {formatTime(props.createTime)}
+            </div>
+          </div>
+        </>
+      )}
 
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>Transaction Fee</div>
@@ -128,7 +149,9 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
       </div>
 
       <div className={styles['detail-item']}>
-        <div className={styles['detail-label']}>Receive Amount</div>
+        <div className={styles['detail-label']}>
+          {`${props.orderType === BusinessType.Withdraw ? 'Sent' : 'Receive'} Amount`}
+        </div>
         <TokenAmount
           status={props.toStatus}
           amount={props.toAmount}

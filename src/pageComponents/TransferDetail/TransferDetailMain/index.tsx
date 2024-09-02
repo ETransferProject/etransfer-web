@@ -1,92 +1,146 @@
 import TransferDetailBody from 'pageComponents/InfoPage/TransferDetail/TransferDetailBody';
 import TransferDetailStep from '../TransferDetailStep';
 import styles from './styles.module.scss';
-import { TGetRecordDetailResult } from 'types/api';
+import { BusinessType, TGetRecordDetailResult } from 'types/api';
 import { TOrderStatus } from 'types/records';
 import { CheckNoticeIcon, ErrorIcon } from 'assets/images';
 import clsx from 'clsx';
 import { formatSymbolDisplay } from 'utils/format';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
+import { useMemo } from 'react';
 
-export default function TransferDetailMain(props: TGetRecordDetailResult) {
-  return (
-    <div className={styles['transfer-detail-main']}>
-      {props.status === TOrderStatus.Processing && (
+export default function TransferDetailMain({
+  id,
+  orderType,
+  status,
+  createTime,
+  fromTransfer,
+  toTransfer,
+  step,
+}: TGetRecordDetailResult) {
+  const renderTransferDetailStep = useMemo(() => {
+    if (status === TOrderStatus.Processing) {
+      return (
         <TransferDetailStep
-          orderType={props.orderType}
-          currentStep={props.step.currentStep}
+          orderType={orderType}
+          currentStep={step.currentStep}
           fromTransfer={{
-            confirmingThreshold: props.step.fromTransfer.confirmingThreshold,
-            confirmedNum: props.step.fromTransfer.confirmedNum,
-            amount: props.fromTransfer.amount,
-            symbol: props.fromTransfer.symbol,
-            network: props.fromTransfer.network,
+            confirmingThreshold: step.fromTransfer.confirmingThreshold,
+            confirmedNum: step.fromTransfer.confirmedNum,
+            amount: fromTransfer.amount,
+            symbol: fromTransfer.symbol,
+            network: fromTransfer.network,
           }}
           toTransfer={{
-            amount: props.toTransfer.amount,
-            symbol: props.toTransfer.symbol,
-            network: props.toTransfer.network,
+            amount: toTransfer.amount,
+            symbol: toTransfer.symbol,
+            network: toTransfer.network,
           }}
         />
-      )}
+      );
+    } else {
+      return null;
+    }
+  }, [
+    fromTransfer.amount,
+    fromTransfer.network,
+    fromTransfer.symbol,
+    orderType,
+    status,
+    step.currentStep,
+    step.fromTransfer.confirmedNum,
+    step.fromTransfer.confirmingThreshold,
+    toTransfer.amount,
+    toTransfer.network,
+    toTransfer.symbol,
+  ]);
 
-      {props.status === TOrderStatus.Succeed && (
+  const renderTopSucceed = useMemo(() => {
+    if (status === TOrderStatus.Succeed) {
+      return (
         <div className={clsx('flex-row-center', styles['transfer-detail-received'])}>
           <div className={clsx('flex-row-center', styles['detail-label'])}>
             <CheckNoticeIcon />
-            <span>Received</span>
+            <span>{orderType === BusinessType.Withdraw ? 'Sent' : 'Received'}</span>
           </div>
-          {props.toTransfer.amount && props.toTransfer.symbol ? (
+          {toTransfer.amount && toTransfer.symbol ? (
             <div className={styles['detail-value-amount']}>{`${
-              props.toTransfer.amount
-            } ${formatSymbolDisplay(props.toTransfer.symbol)}`}</div>
+              toTransfer.amount
+            } ${formatSymbolDisplay(toTransfer.symbol)}`}</div>
           ) : (
             <div>{DEFAULT_NULL_VALUE}</div>
           )}
         </div>
-      )}
+      );
+    } else {
+      return null;
+    }
+  }, [orderType, status, toTransfer.amount, toTransfer.symbol]);
 
-      {props.status === TOrderStatus.Failed && (
+  const renderTopFailed = useMemo(() => {
+    const value = () => {
+      if (fromTransfer.status === TOrderStatus.Failed) {
+        return <div>{DEFAULT_NULL_VALUE}</div>;
+      } else if (
+        toTransfer.status === TOrderStatus.Failed &&
+        fromTransfer.amount &&
+        fromTransfer.symbol
+      ) {
+        return (
+          <div className={styles['detail-value-amount']}>{`${
+            fromTransfer.amount
+          } ${formatSymbolDisplay(fromTransfer.symbol)}`}</div>
+        );
+      } else {
+        return <div>{DEFAULT_NULL_VALUE}</div>;
+      }
+    };
+    if (status === TOrderStatus.Failed) {
+      return (
         <div className={clsx('flex-row-center', styles['transfer-detail-failed'])}>
           <div className={clsx('flex-row-center', styles['detail-label'])}>
             <ErrorIcon />
             <span>Failed</span>
           </div>
-          {props.fromTransfer.amount && props.fromTransfer.symbol ? (
-            <div className={styles['detail-value-amount']}>{`${
-              props.fromTransfer.amount
-            } ${formatSymbolDisplay(props.fromTransfer.symbol)}`}</div>
-          ) : (
-            <div>{DEFAULT_NULL_VALUE}</div>
-          )}
+          {value()}
         </div>
-      )}
+      );
+    } else {
+      return null;
+    }
+  }, [fromTransfer.amount, fromTransfer.status, fromTransfer.symbol, status, toTransfer.status]);
+
+  return (
+    <div className={styles['transfer-detail-main']}>
+      {renderTransferDetailStep}
+      {renderTopSucceed}
+      {renderTopFailed}
 
       <div className={styles['detail-divider']} />
       <TransferDetailBody
-        id={props.id}
-        status={props.status}
-        orderType={props.orderType}
-        createTime={props.createTime}
-        fromNetwork={props.fromTransfer.network}
-        fromChainId={props.fromTransfer.chainId}
-        fromSymbol={props.fromTransfer.symbol}
-        fromIcon={props.fromTransfer?.icon}
-        fromAddress={props.fromTransfer.fromAddress}
-        fromAmount={props.fromTransfer.amount}
-        fromAmountUsd={props.fromTransfer?.amountUsd || ''}
-        fromTxId={props.fromTransfer.txId}
-        fromStatus={props.fromTransfer.status}
-        toNetwork={props.toTransfer.network}
-        toChainId={props.toTransfer.chainId}
-        toSymbol={props.toTransfer.symbol}
-        toIcon={props.toTransfer?.icon}
-        toAddress={props.toTransfer.toAddress}
-        toAmount={props.toTransfer.amount}
-        toAmountUsd={props.toTransfer.amountUsd || ''}
-        toTxId={props.toTransfer.txId}
-        toStatus={props.toTransfer.status}
-        toFeeInfo={props.toTransfer.feeInfo}
+        id={id}
+        status={status}
+        orderType={orderType}
+        createTime={createTime}
+        fromNetwork={fromTransfer.network}
+        fromChainId={fromTransfer.chainId}
+        fromSymbol={fromTransfer.symbol}
+        fromIcon={fromTransfer?.icon}
+        fromAddress={fromTransfer.fromAddress}
+        fromAmount={fromTransfer.amount}
+        fromAmountUsd={fromTransfer?.amountUsd || ''}
+        fromTxId={fromTransfer.txId}
+        fromStatus={fromTransfer.status}
+        toNetwork={toTransfer.network}
+        toChainId={toTransfer.chainId}
+        toSymbol={toTransfer.symbol}
+        toIcon={toTransfer?.icon}
+        toAddress={toTransfer.toAddress}
+        toAmount={toTransfer.amount}
+        toAmountUsd={toTransfer.amountUsd || ''}
+        toTxId={toTransfer.txId}
+        toStatus={toTransfer.status}
+        toFeeInfo={toTransfer.feeInfo}
       />
     </div>
   );

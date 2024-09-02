@@ -6,8 +6,8 @@ import { DEFAULT_NULL_VALUE } from 'constants/index';
 import { formatSymbolDisplay } from 'utils/format';
 
 type TAmountBoxProps = {
-  amount: string;
-  token: string;
+  amount?: string;
+  token?: string;
   fromToken?: string;
   status?: string;
 };
@@ -21,13 +21,19 @@ export default function AmountBox({ amount, token, fromToken, status }: TAmountB
         styles['amount-box'],
         isPadPX ? styles['mobile-amount-box'] : styles['web-amount-box'],
       )}>
-      {status !== TOrderStatus.Failed &&
-        (fromToken && fromToken !== token && status === TOrderStatus.Processing ? (
-          <span className={styles['second']}>Swapping</span>
-        ) : (
-          <span>{`${amount} ${formatSymbolDisplay(token)}`}</span>
-        ))}
-      {status === TOrderStatus.Failed && <span>{DEFAULT_NULL_VALUE}</span>}
+      {!amount || !token ? (
+        <span>{DEFAULT_NULL_VALUE}</span>
+      ) : (
+        <>
+          {status !== TOrderStatus.Failed &&
+            (fromToken && fromToken !== token && status === TOrderStatus.Processing ? (
+              <span className={styles['second']}>Swapping</span>
+            ) : (
+              <span>{`${amount} ${formatSymbolDisplay(token)}`}</span>
+            ))}
+          {status === TOrderStatus.Failed && <span>{DEFAULT_NULL_VALUE}</span>}
+        </>
+      )}
     </div>
   );
 }

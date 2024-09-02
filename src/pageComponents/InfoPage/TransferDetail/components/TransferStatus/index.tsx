@@ -1,6 +1,7 @@
 import { TransferStatusType } from 'constants/infoDashboard';
 import styles from './styles.module.scss';
 import { TOrderStatus } from 'types/records';
+import { DEFAULT_NULL_VALUE } from 'constants/index';
 
 export function TransferStatus({ status }: { status: TransferStatusType | TOrderStatus }) {
   if (status === TransferStatusType.Pending || status === TOrderStatus.Processing) {
@@ -15,5 +16,5 @@ export function TransferStatus({ status }: { status: TransferStatusType | TOrder
     return <div className={styles['transfer-status-failed']}>{TransferStatusType.Failed}</div>;
   }
 
-  return null;
+  return <span>{DEFAULT_NULL_VALUE}</span>;
 }

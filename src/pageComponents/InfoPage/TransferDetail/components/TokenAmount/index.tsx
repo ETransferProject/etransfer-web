@@ -77,9 +77,10 @@ export default function TokenAmount({
 
   return (
     <div className={clsx('flex-row-center', styles['token-amount'])}>
-      {(status === TOrderStatus.Processing || status === TransferStatusType.Pending) &&
+      {(!status || status === TOrderStatus.Processing || status === TransferStatusType.Pending) &&
         renderProcessing}
-      {status === TOrderStatus.Failed && DEFAULT_NULL_VALUE}
+      {(status === TOrderStatus.Failed || status === TransferStatusType.Failed) &&
+        DEFAULT_NULL_VALUE}
       {(status === TOrderStatus.Succeed || status === TransferStatusType.Success) && renderFinished}
     </div>
   );
