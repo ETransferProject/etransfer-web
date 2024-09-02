@@ -62,9 +62,11 @@ export const showNotice = ({
 
   const typeText = type === BusinessType.Withdraw ? 'withdrawal' : type.toLowerCase();
 
+  const action = type === BusinessType.Withdraw ? 'sent' : 'received';
+
   const content =
     status === TTxnStatus.Successful
-      ? `The ${typeText} of ${amount} ${formatSymbolDisplay(symbol)} has been received.`
+      ? `The ${typeText} of ${amount} ${formatSymbolDisplay(symbol)} has been ${action}.`
       : isSwapFail
       ? `Swap ${formatSymbolDisplay(
           symbol,

@@ -12,6 +12,7 @@ import { useIsLogin } from 'hooks/wallet';
 import { sleep } from '@etransfer/utils';
 import { useSetAuthFromStorage } from 'hooks/authToken';
 import { TOrderStatus } from 'types/records';
+import { DEFAULT_NULL_ORDER_ID } from 'constants/records';
 
 export default function TransferDetail() {
   const { isPadPX } = useCommonState();
@@ -45,6 +46,14 @@ export default function TransferDetail() {
         isLoading && setLoading(true);
 
         const data = await getRecordDetail(id);
+        // No data found
+        if (data?.id === DEFAULT_NULL_ORDER_ID || !data?.createTime) {
+          stopTimer();
+          router.push('/history');
+          return;
+        }
+
+        // Have the correct data
         setDetailData(data);
 
         if (data.status === TOrderStatus.Processing) {
@@ -99,7 +108,7 @@ export default function TransferDetail() {
     };
   }, [getDetail, isLogin, router, stopTimer]);
 
-  if (detailData?.id) {
+  if (detailData?.id && detailData?.id !== DEFAULT_NULL_ORDER_ID && detailData?.createTime) {
     return isPadPX ? (
       <MobileTransferDetail {...detailData} />
     ) : (
