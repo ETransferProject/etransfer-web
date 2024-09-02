@@ -61,6 +61,7 @@ export function useNoticeSocket() {
               address: address,
             },
             (res) => {
+              console.log('NoticeSocket ReceiveUserOrderRecords res', res);
               handleNoticeRef.current(res);
             },
           );

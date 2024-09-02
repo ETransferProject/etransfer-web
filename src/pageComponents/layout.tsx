@@ -20,6 +20,8 @@ import { TelegramPlatform } from 'utils/telegram';
 import service from 'api/axios';
 import { API_VERSION } from 'constants/misc';
 import { useNoticeSocket } from 'hooks/notice';
+import VConsole from 'vconsole';
+import { SHOW_V_CONSOLE } from 'constants/index';
 
 const Layout = ({
   children,
@@ -34,6 +36,7 @@ const Layout = ({
 }) => {
   const pathname = usePathname();
   useEffect((): any => {
+    if (SHOW_V_CONSOLE) new VConsole();
     // init service
     service.defaults.headers.common['version'] = API_VERSION;
 
