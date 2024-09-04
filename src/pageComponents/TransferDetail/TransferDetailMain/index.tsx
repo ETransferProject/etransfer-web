@@ -1,7 +1,7 @@
 import TransferDetailBody from 'pageComponents/InfoPage/TransferDetail/TransferDetailBody';
 import TransferDetailStep from '../TransferDetailStep';
 import styles from './styles.module.scss';
-import { BusinessType, TGetRecordDetailResult } from 'types/api';
+import { TGetRecordDetailResult } from 'types/api';
 import { TOrderStatus } from 'types/records';
 import { CheckNoticeIcon, ErrorIcon } from 'assets/images';
 import clsx from 'clsx';
@@ -61,7 +61,7 @@ export default function TransferDetailMain({
         <div className={clsx('flex-row-center', styles['transfer-detail-received'])}>
           <div className={clsx('flex-row-center', styles['detail-label'])}>
             <CheckNoticeIcon />
-            <span>{orderType === BusinessType.Withdraw ? 'Sent' : 'Received'}</span>
+            <span>Received</span>
           </div>
           {toTransfer.amount && toTransfer.symbol ? (
             <div className={styles['detail-value-amount']}>{`${
@@ -75,7 +75,7 @@ export default function TransferDetailMain({
     } else {
       return null;
     }
-  }, [orderType, status, toTransfer.amount, toTransfer.symbol]);
+  }, [status, toTransfer.amount, toTransfer.symbol]);
 
   const renderTopFailed = useMemo(() => {
     const value = () => {

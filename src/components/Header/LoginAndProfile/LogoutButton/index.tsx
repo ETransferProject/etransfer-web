@@ -24,7 +24,7 @@ export default function LogoutButton({ closeDialog }: TLogoutButtonType) {
       unsubscribeUserOrderRecord(walletInfo?.address || '');
     });
     closeDialog?.();
-  }, [clearStore, closeDialog, disConnectWallet]);
+  }, [clearStore, closeDialog, disConnectWallet, walletInfo?.address]);
 
   return (
     <CommonButton
