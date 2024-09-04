@@ -63,9 +63,7 @@ export const showNotice = ({
 
   const content =
     type === BusinessType.Deposit && status === TTxnStatus.Successful && isSwapFail
-      ? `Swap ${formatSymbolDisplay(
-          symbol,
-        )} failed, the ${typeText} of ${amount} USDT has been received.`
+      ? `Swap failed, the ${typeText} of ${amount} USDT has been received.`
       : status === TTxnStatus.Successful
       ? `The ${typeText} of ${amount} ${formatSymbolDisplay(symbol)} has been ${action}.`
       : `The ${typeText} of ${amount} ${formatSymbolDisplay(
