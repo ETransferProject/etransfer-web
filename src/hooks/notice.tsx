@@ -52,7 +52,7 @@ export function useNoticeSocket() {
       etransferCore.noticeSocket
         ?.doOpen()
         .then((res) => {
-          console.log('NoticeSocket doOpen res', res);
+          console.log('NoticeSocket doOpen res:', res);
           etransferCore.noticeSocket?.RequestUserOrderRecord({
             address: address,
           });
@@ -61,10 +61,20 @@ export function useNoticeSocket() {
               address: address,
             },
             (res) => {
-              console.log('NoticeSocket ReceiveUserOrderRecords res', res);
+              console.log(
+                'NoticeSocket ReceiveUserOrderRecords res:',
+                res,
+                etransferCore.noticeSocket?.signalr?.connectionId,
+              );
               handleNoticeRef.current(res);
             },
           );
+          etransferCore.noticeSocket?.signalr?.onreconnected((id?: string) => {
+            console.log('NoticeSocket onreconnected:', id);
+            etransferCore.noticeSocket?.RequestUserOrderRecord({
+              address: address,
+            });
+          });
         })
         .catch((error) => {
           console.log('NoticeSocket doOpen error', error);
