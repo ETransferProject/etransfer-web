@@ -55,10 +55,7 @@ export const showNotice = ({
 }) => {
   if (!type || !status || !amount || !symbol) return;
 
-  const title =
-    type === BusinessType.Deposit && status === TTxnStatus.Successful && isSwapFail
-      ? 'Swap Failed'
-      : `${type === BusinessType.Withdraw ? 'Withdrawal' : type} ${status}`;
+  const title = `${type === BusinessType.Withdraw ? 'Withdrawal' : type} ${status}`;
 
   const typeText = type === BusinessType.Withdraw ? 'withdrawal' : type.toLowerCase();
 
@@ -121,6 +118,7 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
         type: BusinessType.Deposit,
         amount: item.amount,
         symbol: item.symbol,
+        isSwapFail: item.isSwap && item.isSwapFail,
       });
       eTransferInstance.showNoticeIds.push(item.id);
     }
@@ -151,7 +149,6 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
         type: BusinessType.Deposit,
         amount: item.amount,
         symbol: item.symbol,
-        isSwapFail: item.isSwap && item.isSwapFail,
       });
       eTransferInstance.showNoticeIds.push(item.id);
     }
