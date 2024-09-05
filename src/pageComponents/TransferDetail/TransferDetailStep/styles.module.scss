@@ -6,6 +6,10 @@
   display: flex;
   justify-content: center;
 
+  @include media-web {
+    width: 744px;
+  }
+
   .transfer-detail-step-horizontal {
     :global {
       .ant-steps-item {
@@ -25,9 +29,16 @@
           .ant-steps-item-title {
             font-weight: $font-family-medium-weight;
             font-family: $font-family-medium-family;
+
+            font-size: 12px;
+            height: 20px;
+            line-height: 20px;
           }
           .ant-steps-item-description {
             color: $secondary-text;
+
+            font-size: 12px;
+            line-height: 20px;
           }
         }
       }
@@ -81,9 +92,16 @@
           .ant-steps-item-title {
             font-weight: $font-family-medium-weight;
             font-family: $font-family-medium-family;
+
+            font-size: 12px;
+            height: 20px;
+            line-height: 20px;
           }
           .ant-steps-item-description {
             color: $secondary-text;
+
+            font-size: 12px;
+            line-height: 20px;
           }
         }
       }
@@ -120,8 +138,7 @@
       }
     }
 
-
-    @include media-mobile{
+    @include media-mobile {
       width: auto;
     }
   }

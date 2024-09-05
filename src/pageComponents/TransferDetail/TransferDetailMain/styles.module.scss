@@ -4,7 +4,7 @@
 
 .transfer-detail-main {
   @include media-web {
-    padding: 0 32px;
+    padding: 0 40px 0 32px;
   }
   @include media-pad {
     padding: 16px 24px 24px;

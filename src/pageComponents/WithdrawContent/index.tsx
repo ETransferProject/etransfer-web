@@ -984,11 +984,13 @@ export default function WithdrawContent() {
           !isPadPX && styles['main-content'],
         )}>
         {!isPadPX && isLogin && (
-          <ProcessingTip
-            depositProcessingCount={depositProcessingCount}
-            withdrawProcessingCount={withdrawProcessingCount}
-            onClick={handleClickProcessingTip}
-          />
+          <div className={styles['withdraw-processing-container']}>
+            <ProcessingTip
+              depositProcessingCount={depositProcessingCount}
+              withdrawProcessingCount={withdrawProcessingCount}
+              onClick={handleClickProcessingTip}
+            />
+          </div>
         )}
         <SelectChainWrapper
           mobileTitle="Withdraw from"
