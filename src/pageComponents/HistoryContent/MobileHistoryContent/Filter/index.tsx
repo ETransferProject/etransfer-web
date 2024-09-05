@@ -10,7 +10,7 @@ import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import { Select, DatePicker } from 'antd';
 import type { Moment } from 'moment';
 import { TRecordsContentProps } from 'pageComponents/HistoryContent';
-import { defaultNullValue } from 'constants/index';
+import { DEFAULT_NULL_VALUE } from 'constants/index';
 import moment from 'moment';
 import { useHistoryFilter } from 'hooks/history';
 import SimpleTipModal from 'pageComponents/Modal/SimpleTipModal';
@@ -152,9 +152,9 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
         )}
         {isShowTimestamp() && (
           <div className={styles['filter-item']}>
-            {(timestamp?.[0] && moment(timestamp[0]).format(dateFormat)) || `${defaultNullValue}`}
+            {(timestamp?.[0] && moment(timestamp[0]).format(dateFormat)) || `${DEFAULT_NULL_VALUE}`}
             {' - '}
-            {(timestamp?.[1] && moment(timestamp[1]).format(dateFormat)) || `${defaultNullValue}`}
+            {(timestamp?.[1] && moment(timestamp[1]).format(dateFormat)) || `${DEFAULT_NULL_VALUE}`}
             <CloseSmall
               className={styles['filter-close-icon']}
               onClick={() => closeItem('timestamp')}

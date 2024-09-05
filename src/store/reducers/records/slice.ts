@@ -7,6 +7,8 @@ export type TRecordsState = TGetRecordsListRequest & {
   totalCount: number;
   timestamp: number[] | null;
   hasMore: boolean;
+  depositProcessingCount?: number;
+  withdrawProcessingCount?: number;
 };
 
 export const initialRecordState: TRecordsState = {
@@ -19,6 +21,8 @@ export const initialRecordState: TRecordsState = {
   maxResultCount: 10,
   search: '',
   hasMore: true,
+  depositProcessingCount: 0,
+  withdrawProcessingCount: 0,
 };
 
 export const RecordsSlice = createSlice({
@@ -53,11 +57,31 @@ export const RecordsSlice = createSlice({
     setHasMore: (state, action) => {
       state.hasMore = action.payload;
     },
+    setDepositProcessingCount: (state, action: PayloadAction<number>) => {
+      state.depositProcessingCount = action.payload;
+    },
+    setWithdrawProcessingCount: (state, action: PayloadAction<number>) => {
+      state.withdrawProcessingCount = action.payload;
+    },
     resetRecordsWithoutFilter: (state) => {
       return {
         ...state,
         recordsList: [],
         totalCount: 0,
+        skipCount: 1,
+        maxResultCount: 10,
+        search: '',
+        hasMore: true,
+      };
+    },
+    resetRecordsStateNotNotice: (state) => {
+      return {
+        ...state,
+        recordsList: [],
+        totalCount: 0,
+        type: TRecordsRequestType.ALL,
+        status: TRecordsRequestStatus.ALL,
+        timestamp: null,
         skipCount: 1,
         maxResultCount: 10,
         search: '',
@@ -79,7 +103,10 @@ export const {
   setSkipCount,
   setMaxResultCount,
   setHasMore,
+  setDepositProcessingCount,
+  setWithdrawProcessingCount,
   resetRecordsWithoutFilter,
+  resetRecordsStateNotNotice,
   resetRecordsState,
 } = RecordsSlice.actions;
 

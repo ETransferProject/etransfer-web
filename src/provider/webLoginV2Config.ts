@@ -14,7 +14,7 @@ import {
   WebLoginGraphqlUrl,
   WebLoginServiceUrl,
 } from 'constants/index';
-import { ETRANSFER_LOGO_BASE64 } from 'constants/wallet';
+import { ETRANSFER_LOGO_BASE64, ETRANSFER_PORTKEY_PROJECT_CODE } from 'constants/misc';
 import { TelegramPlatform } from 'utils/telegram';
 import { devices } from '@portkey/utils';
 
@@ -36,6 +36,10 @@ const didConfig = {
     },
   },
   networkType: NETWORK_TYPE,
+  referralInfo: {
+    referralCode: '',
+    projectCode: ETRANSFER_PORTKEY_PROJECT_CODE,
+  },
 };
 
 const baseConfig = {

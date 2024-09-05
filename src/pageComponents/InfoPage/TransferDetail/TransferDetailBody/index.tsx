@@ -11,33 +11,63 @@ import { getOmittedStr } from 'utils/calculate';
 import { formatTime } from 'pageComponents/InfoPage/TransferDashboard/utils';
 import { viewTxDetailInExplore } from 'utils/common';
 import { formatSymbolDisplay } from 'utils/format';
-import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
+import { InfoBusinessTypeLabel, TransferStatusType } from 'constants/infoDashboard';
+import { TOrderStatus } from 'types/records';
+import { DEFAULT_NULL_VALUE } from 'constants/index';
+import { useMemo } from 'react';
 
-export default function TransferDetailBody(props: Omit<TTransferDashboardData, 'status'>) {
+export type TTransferDetailBody = Omit<TTransferDashboardData, 'fromStatus' | 'toStatus'> & {
+  fromStatus: TransferStatusType | TOrderStatus;
+  toStatus: TransferStatusType | TOrderStatus;
+};
+
+export default function TransferDetailBody(props: TTransferDetailBody) {
   const { isMobilePX } = useCommonState();
+  const orderType = useMemo(() => {
+    return props.orderType === BusinessType.Withdraw
+      ? InfoBusinessTypeLabel.Withdraw
+      : props.orderType;
+  }, [props.orderType]);
 
   return (
     <div className={styles['transfer-detail-body']}>
-      <div className={styles['detail-item']}>
-        <div className={styles['detail-label']}>Type</div>
-        <div className={clsx(styles['detail-value'], styles['detail-value-type'])}>
-          {props.orderType === BusinessType.Withdraw
-            ? InfoBusinessTypeLabel.Withdraw
-            : props.orderType}
-        </div>
-      </div>
+      {isMobilePX ? (
+        <>
+          <div className={styles['detail-item']}>
+            <div className={clsx(styles['detail-label'], styles['detail-value-type'])}>
+              {orderType}
+            </div>
+            <div className={clsx(styles['detail-value'], styles['detail-value-time'])}>
+              {formatTime(props.createTime)}
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className={styles['detail-item']}>
+            <div className={styles['detail-label']}>Type</div>
+            <div className={clsx(styles['detail-value'], styles['detail-value-type'])}>
+              {props.orderType === BusinessType.Withdraw
+                ? InfoBusinessTypeLabel.Withdraw
+                : props.orderType}
+            </div>
+          </div>
 
-      <div className={styles['detail-item']}>
-        <div className={styles['detail-label']}>CreateTime</div>
-        <div className={clsx(styles['detail-value'], styles['detail-value-time'])}>
-          {formatTime(props.createTime)}
-        </div>
-      </div>
+          <div className={styles['detail-item']}>
+            <div className={styles['detail-label']}>CreateTime</div>
+            <div className={clsx(styles['detail-value'], styles['detail-value-time'])}>
+              {formatTime(props.createTime)}
+            </div>
+          </div>
+        </>
+      )}
 
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>Transaction Fee</div>
         <div className={clsx(styles['detail-value'], styles['detail-value-fee'])}>
-          {props.orderType === BusinessType.Withdraw
+          {props.status === TOrderStatus.Failed
+            ? DEFAULT_NULL_VALUE
+            : props.orderType === BusinessType.Withdraw
             ? `${props.toFeeInfo[0].amount} ${formatSymbolDisplay(props.toFeeInfo[0].symbol)}`
             : 'Free'}
         </div>
@@ -48,13 +78,17 @@ export default function TransferDetailBody(props: Omit<TTransferDashboardData, '
       {/* ======== Source Info ======== */}
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>Source Tx Hash</div>
-        <div
-          className={clsx(styles['detail-value'], styles['detail-value-from-tx-hash'])}
-          onClick={() =>
-            viewTxDetailInExplore(props.fromNetwork, props.fromTxId, props.fromChainId)
-          }>
-          {isMobilePX ? getOmittedStr(props.fromTxId, 8, 9) : props.fromTxId}
-        </div>
+        {props.fromTxId ? (
+          <div
+            className={clsx(styles['detail-value'], styles['detail-value-from-tx-hash'])}
+            onClick={() =>
+              viewTxDetailInExplore(props.fromNetwork, props.fromTxId, props.fromChainId)
+            }>
+            {isMobilePX ? getOmittedStr(props.fromTxId, 8, 9) : props.fromTxId}
+          </div>
+        ) : (
+          DEFAULT_NULL_VALUE
+        )}
       </div>
 
       <div className={styles['detail-item']}>
@@ -65,9 +99,11 @@ export default function TransferDetailBody(props: Omit<TTransferDashboardData, '
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>{`${props.orderType} Amount`}</div>
         <TokenAmount
+          status={props.fromStatus}
           amount={props.fromAmount}
           amountUsd={props.fromAmountUsd}
           symbol={props.fromSymbol}
+          icon={props?.fromIcon}
         />
       </div>
 
@@ -96,11 +132,15 @@ export default function TransferDetailBody(props: Omit<TTransferDashboardData, '
       {/* ======== Destination Info ======== */}
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>Destination Tx Hash</div>
-        <div
-          className={clsx(styles['detail-value'], styles['detail-value-to-tx-hash'])}
-          onClick={() => viewTxDetailInExplore(props.toNetwork, props.toTxId, props.toChainId)}>
-          {isMobilePX ? getOmittedStr(props.toTxId, 8, 9) : props.toTxId}
-        </div>
+        {props.toTxId ? (
+          <div
+            className={clsx(styles['detail-value'], styles['detail-value-to-tx-hash'])}
+            onClick={() => viewTxDetailInExplore(props.toNetwork, props.toTxId, props.toChainId)}>
+            {isMobilePX ? getOmittedStr(props.toTxId, 8, 9) : props.toTxId}
+          </div>
+        ) : (
+          DEFAULT_NULL_VALUE
+        )}
       </div>
 
       <div className={styles['detail-item']}>
@@ -109,16 +149,19 @@ export default function TransferDetailBody(props: Omit<TTransferDashboardData, '
       </div>
 
       <div className={styles['detail-item']}>
-        <div className={styles['detail-label']}>Receive</div>
+        <div className={styles['detail-label']}>Receive Amount</div>
         <TokenAmount
+          status={props.toStatus}
           amount={props.toAmount}
           amountUsd={props.toAmountUsd}
           symbol={props.toSymbol}
+          fromSymbol={props.fromSymbol}
+          icon={props?.toIcon}
         />
       </div>
 
       <div className={styles['detail-item']}>
-        <div className={styles['detail-label']}>Receive From</div>
+        <div className={styles['detail-label']}>Receive Address</div>
         <WalletAddress
           address={props.toAddress}
           chainId={props.toChainId}

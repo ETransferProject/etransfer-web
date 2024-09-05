@@ -1,6 +1,6 @@
 import { CommonModalProps } from 'components/CommonModal';
 import styles from './styles.module.scss';
-import CommonModalTips from 'components/CommonModalTips';
+import CommonModalTip from 'components/Tips/CommonModalTip';
 import { GOT_IT } from 'constants/misc';
 
 export type TSimpleTipModalProps = {
@@ -17,7 +17,7 @@ export default function SimpleTipModal({
   onOk,
 }: TSimpleTipModalProps) {
   return (
-    <CommonModalTips
+    <CommonModalTip
       className={styles.simpleTipModal}
       footerClassName={styles.simpleTipModalFooter}
       getContainer={getContainer}
@@ -26,6 +26,6 @@ export default function SimpleTipModal({
       okText={GOT_IT}
       onOk={onOk}>
       <div className={styles.simpleTipModalBody}>{content}</div>
-    </CommonModalTips>
+    </CommonModalTip>
   );
 }

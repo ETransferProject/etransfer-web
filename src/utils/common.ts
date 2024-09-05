@@ -3,7 +3,7 @@ import { EXPLORE_CONFIG } from 'constants/index';
 import {
   AelfExploreType,
   BlockchainNetworkType,
-  ExploreUrlType,
+  ExploreUrlNotAelf,
   OtherExploreType,
 } from 'constants/network';
 
@@ -29,9 +29,9 @@ export function getAelfExploreLink(data: string, type: AelfExploreType, chainId:
 export function getOtherExploreLink(
   data: string,
   type: OtherExploreType,
-  network: keyof typeof ExploreUrlType,
+  network: keyof typeof ExploreUrlNotAelf,
 ): string {
-  const prefix = ExploreUrlType[network];
+  const prefix = ExploreUrlNotAelf[network];
   switch (type) {
     case OtherExploreType.transaction: {
       if (network === 'TRX') {
@@ -65,7 +65,7 @@ export const viewTxDetailInExplore = (network: string, txHash: string, chainId?:
     getOtherExploreLink(
       txHash,
       OtherExploreType.transaction,
-      network as keyof typeof ExploreUrlType,
+      network as keyof typeof ExploreUrlNotAelf,
     ),
   );
 };

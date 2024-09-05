@@ -1,17 +1,17 @@
 import styles from './styles.module.scss';
 import clsx from 'clsx';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   AelfExploreType,
   BlockchainNetworkType,
-  ExploreUrlType,
+  ExploreUrlNotAelf,
   OtherExploreType,
 } from 'constants/network';
-import { SupportedChainId, defaultNullValue } from 'constants/index';
+import { SupportedChainId, DEFAULT_NULL_VALUE } from 'constants/index';
 import Copy, { CopySize } from 'components/Copy';
 import { getOmittedStr } from 'utils/calculate';
 import { openWithBlank, getAelfExploreLink, getOtherExploreLink } from 'utils/common';
-import { addressFormat } from 'utils/aelf/aelfBase';
+import { formatDIDAddress } from 'utils/aelf/aelfBase';
 import { SupportedELFChainId } from 'constants/index';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
@@ -37,47 +37,52 @@ export default function AddressBox({
 }: TAddressBoxProps) {
   const { isPadPX } = useCommonState();
   const accounts = useGetAccount();
+  const chainId = useMemo(() => {
+    return type === 'To' ? toChainId : fromChainId;
+  }, [fromChainId, toChainId, type]);
 
   const calcAddress = useCallback(() => {
     const address = type === 'To' ? toAddress : fromAddress;
     if (address && network === BlockchainNetworkType.AELF) {
       // format address: add suffix
-      const chainId: SupportedELFChainId = type === 'To' ? toChainId : fromChainId;
-      return addressFormat(address, chainId || SupportedChainId.sideChain);
+      return formatDIDAddress(address, chainId || SupportedChainId.sideChain);
     }
     if (!address && network === BlockchainNetworkType.AELF) {
       // when fromAddress and toAddress all null, need accounts default address
-      let chainId: SupportedELFChainId = type === 'To' ? toChainId : fromChainId;
-      chainId = chainId || SupportedChainId.sideChain;
-      if (accounts && accounts[chainId]) {
-        // default accounts[chainId]?.[0] , if not exist, use AELF
-        return accounts[chainId] || accounts[SupportedELFChainId.AELF] || defaultNullValue;
+      const currentChainId = chainId || SupportedChainId.sideChain;
+      if (accounts && accounts[currentChainId]) {
+        // default accounts[currentChainId]?.[0] , if not exist, use AELF
+        return accounts[currentChainId] || accounts[SupportedELFChainId.AELF] || DEFAULT_NULL_VALUE;
       }
-      return defaultNullValue;
+      return DEFAULT_NULL_VALUE;
     }
-    return address || defaultNullValue;
-  }, [type, network, accounts, toChainId, fromChainId, fromAddress, toAddress]);
+    return address || DEFAULT_NULL_VALUE;
+  }, [type, toAddress, fromAddress, network, chainId, accounts]);
 
-  const handleAddressClick = useCallback(() => {
-    // link to Deposit: toTransfer.chainId and Withdraw: fromTransfer.chainId
-    if (network === BlockchainNetworkType.AELF) {
+  const handleAddressClick = useCallback(
+    (event: any) => {
+      event.stopPropagation();
+      // link to Deposit: toTransfer.chainId and Withdraw: fromTransfer.chainId
+      if (network === BlockchainNetworkType.AELF) {
+        openWithBlank(
+          getAelfExploreLink(
+            calcAddress(),
+            AelfExploreType.address,
+            type === 'To' ? toChainId : fromChainId,
+          ),
+        );
+        return;
+      }
       openWithBlank(
-        getAelfExploreLink(
+        getOtherExploreLink(
           calcAddress(),
-          AelfExploreType.address,
-          type === 'To' ? toChainId : fromChainId,
+          OtherExploreType.address,
+          network as keyof typeof ExploreUrlNotAelf,
         ),
       );
-      return;
-    }
-    openWithBlank(
-      getOtherExploreLink(
-        calcAddress(),
-        OtherExploreType.address,
-        network as keyof typeof ExploreUrlType,
-      ),
-    );
-  }, [network, calcAddress, type, toChainId, fromChainId]);
+    },
+    [network, calcAddress, type, toChainId, fromChainId],
+  );
 
   return (
     <div
@@ -85,7 +90,10 @@ export default function AddressBox({
         styles['address-box'],
         isPadPX ? styles['mobile-address-box'] : styles['web-address-box'],
       )}>
-      <NetworkLogo network={network} size="small" />
+      <NetworkLogo
+        network={network === BlockchainNetworkType.AELF ? chainId : network}
+        size="small"
+      />
       <CommonTooltip title={calcAddress()} trigger={'hover'}>
         <span className={clsx(styles['address-word'])} onClick={handleAddressClick}>
           {getOmittedStr(calcAddress(), 8, 9)}

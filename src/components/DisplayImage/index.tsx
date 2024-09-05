@@ -34,7 +34,7 @@ export default function DisplayImage({
       style={{ width, height }}>
       <div
         className={clsx('row-center', 'flex-shrink-0', styles['default-text'])}
-        style={{ width, height, lineHeight: height }}>
+        style={{ width, height, lineHeight: height + 'px' }}>
         {name?.charAt(0)}
       </div>
       {showIcon && src && (

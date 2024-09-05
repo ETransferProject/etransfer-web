@@ -1,0 +1,23 @@
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/assets/theme/color.scss';
+
+.common-warning-tip {
+  width: 100%;
+  padding: 9px 12px;
+  background-color: $warning-bg;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 22px;
+  gap: 16px;
+
+  @include media-pad {
+    padding: 9px 24px;
+  }
+  @include media-mobile {
+    padding: 9px 16px;
+  }
+}
+
+.common-warning-tip-content {
+  margin-left: 8px;
+}

@@ -1,0 +1,26 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.detail-title {
+  margin-top: 24px;
+  margin-left: 32px;
+  margin-bottom: 24px;
+  font-size: 24px;
+  @extend .font-family-medium;
+}
+
+.web-transfer-detail-breadcrumb {
+  margin-left: 32px;
+}
+
+.web-transfer-detail-breadcrumb-first {
+  cursor: pointer;
+
+  &:hover {
+    color: $brand;
+  }
+}
+
+.web-transfer-detail-breadcrumb-second {
+  @extend .font-family-medium;
+}

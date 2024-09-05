@@ -2,7 +2,7 @@ import Copy, { CopySize } from 'components/Copy';
 import OpenLink from 'components/OpenLink';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
-import CommonModalTips from 'components/CommonModalTips';
+import CommonModalTip from 'components/Tips/CommonModalTip';
 import { CommonModalProps } from 'components/CommonModal';
 import { GOT_IT } from 'constants/misc';
 
@@ -26,7 +26,7 @@ export default function ViewContractAddressModal({
   onOk,
 }: TViewContractAddressModal) {
   return (
-    <CommonModalTips
+    <CommonModalTip
       className={styles.viewContractAddressModal}
       footerClassName={styles.viewContractAddressModalFooter}
       getContainer={getContainer}
@@ -53,6 +53,6 @@ export default function ViewContractAddressModal({
           </div>
         </div>
       </div>
-    </CommonModalTips>
+    </CommonModalTip>
   );
 }

@@ -6,7 +6,7 @@ import CommonModalSwitchDrawer, {
 import styles from './styles.module.scss';
 import { TWithdrawInfoSuccess } from 'types/deposit';
 import { valueFixed2LessThanMin } from 'utils/calculate';
-import { TokenType, defaultNullValue } from 'constants/index';
+import { TokenType, DEFAULT_NULL_VALUE } from 'constants/index';
 import { useMemo } from 'react';
 import { ARRIVAL_TIME_CONFIG } from 'constants/withdraw';
 import { AllSupportedELFChainId } from 'constants/chain';
@@ -61,7 +61,7 @@ export default function SuccessModal({ withdrawInfo, modalProps }: SuccessModalP
           </div>
           <div className={styles['value']}>
             <span className={styles['value-center']}>
-              {withdrawInfo.receiveAmount || defaultNullValue} {withdrawInfo.symbol}
+              {withdrawInfo.receiveAmount || DEFAULT_NULL_VALUE} {withdrawInfo.symbol}
             </span>
             <div className={clsx(styles['receive-amount-usd'])}>
               {valueFixed2LessThanMin(withdrawInfo.receiveAmountUsd, '$ ')}

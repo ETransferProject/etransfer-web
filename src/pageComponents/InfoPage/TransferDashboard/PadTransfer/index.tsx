@@ -1,6 +1,6 @@
 import MobileTransferHeader from '../MobileTransfer/MobileTransferHeader';
 import WebTransferTable, { WebTransferTableProps } from '../WebTransfer/WebTransferTable';
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 import { MobileTransferDashboardProps } from '../types';
 
 export default function PadTransfer({
@@ -39,7 +39,7 @@ export default function PadTransfer({
         handleResetFilter={handleResetFilter}
         handleApplyFilter={handleApplyFilter}
       />
-      <Space direction={'vertical'} size={16} />
+      <CommonSpace direction={'vertical'} size={16} />
       <WebTransferTable
         totalCount={totalCount}
         maxResultCount={maxResultCount}

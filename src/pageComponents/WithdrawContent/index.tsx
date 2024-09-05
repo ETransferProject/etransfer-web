@@ -15,9 +15,15 @@ import {
   TTokenItem,
   NetworkStatus,
 } from 'types/api';
-import { useAppDispatch, useCommonState, useLoading, useWithdrawState } from 'store/Provider/hooks';
+import {
+  useAppDispatch,
+  useCommonState,
+  useLoading,
+  useRecordsState,
+  useWithdrawState,
+} from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { CHAIN_LIST, IChainNameItem, defaultNullValue } from 'constants/index';
+import { CHAIN_LIST, IChainNameItem, DEFAULT_NULL_VALUE } from 'constants/index';
 import { getNetworkList, getTokenList, getWithdrawInfo } from 'utils/api/deposit';
 import { CONTRACT_ADDRESS } from 'constants/deposit';
 import { getBalance } from 'utils/contract';
@@ -75,6 +81,7 @@ import RemainingLimit from './RemainingLimit';
 import CommentFormItemLabel from './CommentFormItemLabel';
 import { BlockchainNetworkType } from 'constants/network';
 import { MEMO_REG } from 'utils/reg';
+import { ProcessingTip } from 'components/Tips/ProcessingTip';
 
 enum ValidateStatus {
   Error = 'error',
@@ -109,6 +116,7 @@ export default function WithdrawContent() {
   const dispatch = useAppDispatch();
   const isAndroid = devices.isMobile().android;
   const { isPadPX, isMobilePX } = useCommonState();
+  const { depositProcessingCount, withdrawProcessingCount } = useRecordsState();
   const isLogin = useIsLogin();
   const isLoginRef = useRef(isLogin);
   isLoginRef.current = isLogin;
@@ -952,7 +960,7 @@ export default function WithdrawContent() {
         <div className={styles['info-label']}>Balance</div>
         <div className={styles['info-value']}>
           {!isLogin ? (
-            defaultNullValue
+            DEFAULT_NULL_VALUE
           ) : !maxBalance || isMaxBalanceLoading ? (
             <PartialLoading />
           ) : (
@@ -963,6 +971,9 @@ export default function WithdrawContent() {
     );
   }, [currentSymbol, isLogin, isMaxBalanceLoading, maxBalance]);
 
+  const handleClickProcessingTip = useCallback(() => {
+    router.push('/history');
+  }, [router]);
   const renderMainContent = useMemo(() => {
     return (
       <div
@@ -972,6 +983,15 @@ export default function WithdrawContent() {
           'withdraw-content-container',
           !isPadPX && styles['main-content'],
         )}>
+        {!isPadPX && isLogin && (
+          <div className={styles['withdraw-processing-container']}>
+            <ProcessingTip
+              depositProcessingCount={depositProcessingCount}
+              withdrawProcessingCount={withdrawProcessingCount}
+              onClick={handleClickProcessingTip}
+            />
+          </div>
+        )}
         <SelectChainWrapper
           mobileTitle="Withdraw from"
           mobileLabel="from"
@@ -1195,6 +1215,7 @@ export default function WithdrawContent() {
     currentNetwork,
     currentToken,
     currentTokenDecimal,
+    depositProcessingCount,
     form,
     formValidateData,
     getAddressInput,
@@ -1202,6 +1223,7 @@ export default function WithdrawContent() {
     getWithdrawData,
     handleAmountValidate,
     handleChainChanged,
+    handleClickProcessingTip,
     handleNetworkChanged,
     handleTokenChange,
     isAndroid,
@@ -1221,10 +1243,20 @@ export default function WithdrawContent() {
     setMaxToken,
     tokenList,
     withdrawInfo,
+    withdrawProcessingCount,
   ]);
 
   return (
     <>
+      {isPadPX && isLogin && (
+        <ProcessingTip
+          depositProcessingCount={depositProcessingCount}
+          withdrawProcessingCount={withdrawProcessingCount}
+          marginBottom={isPadPX && !isMobilePX ? 24 : 16}
+          borderRadius={0}
+          onClick={handleClickProcessingTip}
+        />
+      )}
       <div className={clsx('content-container', !isPadPX && 'flex-row')}>
         <div className={clsx(styles['section'], !isMobilePX && styles['main-wrapper'])}>
           {renderMainContent}

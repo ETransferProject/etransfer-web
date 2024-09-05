@@ -2,16 +2,16 @@ import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import clsx from 'clsx';
 import CommonTooltip from 'components/CommonTooltip';
 import Copy, { CopySize } from 'components/Copy';
-import { defaultNullValue } from 'constants/index';
+import { DEFAULT_NULL_VALUE } from 'constants/index';
 import {
   BlockchainNetworkType,
   AelfExploreType,
   OtherExploreType,
-  ExploreUrlType,
+  ExploreUrlNotAelf,
 } from 'constants/network';
 import { useGetAccount } from 'hooks/wallet';
 import { useCallback } from 'react';
-import { addressFormat } from 'utils/aelf/aelfBase';
+import { formatDIDAddress } from 'utils/aelf/aelfBase';
 import { getOmittedStr } from 'utils/calculate';
 import { getAelfExploreLink, getOtherExploreLink, openWithBlank } from 'utils/common';
 import styles from './styles.module.scss';
@@ -38,18 +38,18 @@ export default function WalletAddress({
     if (chainId && network === BlockchainNetworkType.AELF) {
       if (address && AelfChainIdList.includes(chainId)) {
         // aelf chain address: add prefix and suffix
-        return addressFormat(address, chainId);
+        return formatDIDAddress(address, chainId);
       }
       if (!address && AelfChainIdList.includes(chainId)) {
         // when address is null, need accounts address
         if (accounts && accounts[chainId]) {
-          return accounts[chainId] || defaultNullValue;
+          return accounts[chainId] || DEFAULT_NULL_VALUE;
         }
-        return defaultNullValue;
+        return DEFAULT_NULL_VALUE;
       }
     }
 
-    return address || defaultNullValue;
+    return address || DEFAULT_NULL_VALUE;
   }, [chainId, network, address, accounts]);
 
   const handleAddressClick = useCallback(
@@ -64,7 +64,7 @@ export default function WalletAddress({
         getOtherExploreLink(
           calcAddress(),
           OtherExploreType.address,
-          network as keyof typeof ExploreUrlType,
+          network as keyof typeof ExploreUrlNotAelf,
         ),
       );
     },
@@ -78,7 +78,9 @@ export default function WalletAddress({
           {isOmitAddress ? getOmittedStr(calcAddress(), 8, 9) : calcAddress()}
         </span>
       </CommonTooltip>
-      <Copy toCopy={calcAddress()} size={CopySize.Small} />
+      {!!calcAddress() && calcAddress() !== DEFAULT_NULL_VALUE && (
+        <Copy toCopy={calcAddress()} size={CopySize.Small} />
+      )}
     </div>
   );
 }

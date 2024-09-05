@@ -7,7 +7,7 @@ import { useCommonState } from 'store/Provider/hooks';
 import { TFeeItem, TNetworkItem } from 'types/api';
 import styles from './styles.module.scss';
 import { valueFixed2LessThanMin } from 'utils/calculate';
-import { defaultNullValue } from 'constants/index';
+import { DEFAULT_NULL_VALUE } from 'constants/index';
 import { formatSymbolDisplay } from 'utils/format';
 
 export interface DoubleCheckModalProps {
@@ -40,7 +40,7 @@ export default function DoubleCheckModal({
       <>
         {isTransactionFeeLoading && <PartialLoading />}
         <span className={clsx(styles['receive-amount-center'])}>
-          {!isTransactionFeeLoading && `${withdrawInfo.receiveAmount || defaultNullValue} `}
+          {!isTransactionFeeLoading && `${withdrawInfo.receiveAmount || DEFAULT_NULL_VALUE} `}
           {formatSymbolDisplay(withdrawInfo.symbol)}
         </span>
       </>
@@ -66,7 +66,7 @@ export default function DoubleCheckModal({
         <div className={clsx('flex-column', styles['detail-wrapper'])}>
           <div className={styles['detail-row']}>
             <div className={styles['label']}>Withdrawal Address</div>
-            <div className={styles['value']}>{withdrawInfo.address || defaultNullValue}</div>
+            <div className={styles['value']}>{withdrawInfo.address || DEFAULT_NULL_VALUE}</div>
           </div>
           {withdrawInfo.memo && (
             <div className={styles['detail-row']}>
@@ -91,7 +91,7 @@ export default function DoubleCheckModal({
             <div className={styles['label']}>Withdraw Amount</div>
             <div className={styles['value']}>
               <div className={styles['value-content']}>
-                {`${withdrawInfo.amount || defaultNullValue}`}
+                {`${withdrawInfo.amount || DEFAULT_NULL_VALUE}`}
                 <span className={styles['value-symbol']}>
                   {formatSymbolDisplay(withdrawInfo.symbol)}
                 </span>

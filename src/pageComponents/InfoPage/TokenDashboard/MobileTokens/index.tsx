@@ -1,4 +1,4 @@
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 import MobileTokensHeader from './MobileTokensHeader';
 import MobileTokensBody from './MobileTokensBody';
 import { TokensDashboardType } from 'types/api';
@@ -13,7 +13,7 @@ export default function MobileTokens({
   return (
     <div>
       <MobileTokensHeader selectType={selectType} onTypeChange={onTypeChange} />
-      <Space direction={'vertical'} size={12} />
+      <CommonSpace direction={'vertical'} size={12} />
       <MobileTokensBody />
     </div>
   );

@@ -15,6 +15,8 @@ import { useDebounceCallback } from 'hooks/debounce';
 import { setSkipCount, setHasMore } from 'store/reducers/records/slice';
 import TxHashBox from 'pageComponents/HistoryContent/TxHashBox';
 import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
+import { useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 
 const NoDataText = '-- No Data --';
 
@@ -66,6 +68,14 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
     }
   }, []);
 
+  const router = useRouter();
+  const handleClick = useCallback(
+    (id: string) => {
+      router.push(`/transfer-detail?id=${id}`);
+    },
+    [router],
+  );
+
   return (
     <div className={clsx(styles['records-scroll-container'])} id={'scrollableDiv'}>
       <InfiniteScroll
@@ -85,7 +95,10 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
         }>
         {handleRecordListData(recordsList).map((recordItem: TRecordsTableListType) => {
           return (
-            <div className={clsx(styles['records-card-item-wrapper'])} key={recordItem.key}>
+            <div
+              className={clsx(styles['records-card-item-wrapper'])}
+              key={recordItem.key}
+              onClick={() => handleClick(recordItem.key)}>
               <div className={clsx(styles['records-card-item-header'])}>
                 <StatusBox
                   status={recordItem.status}

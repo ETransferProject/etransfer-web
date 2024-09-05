@@ -20,7 +20,9 @@ export type TFromTransfer = {
   fromAddress: string;
   toAddress: string;
   amount: string;
+  amountUsd?: string;
   symbol: string;
+  status: TOrderStatus;
   txId: string;
 };
 
@@ -35,7 +37,9 @@ export type TToTransfer = {
   fromAddress: string;
   toAddress: string;
   amount: string;
+  amountUsd?: string;
   symbol: string;
+  status: TOrderStatus;
   feeInfo: TFeeInfo[];
   txId: string;
 };

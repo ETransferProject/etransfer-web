@@ -1,4 +1,4 @@
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 import WebTransferHeader from './WebTransferHeader';
 import WebTransferTable, { WebTransferTableProps } from './WebTransferTable';
 import { WebTransferDashboardProps } from '../types';
@@ -45,7 +45,7 @@ export default function WebTransfer({
         toChain={filterToChain}
         handleResetFilter={handleResetFilter}
       />
-      <Space direction={'vertical'} size={16} />
+      <CommonSpace direction={'vertical'} size={16} />
       <WebTransferTable
         totalCount={totalCount}
         maxResultCount={maxResultCount}

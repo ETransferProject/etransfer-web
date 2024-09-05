@@ -4,15 +4,16 @@ import { useAppDispatch, useCommonState, useInfoDashboardState } from 'store/Pro
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import TokenDashboard from './TokenDashboard';
 import TransferDashboard from './TransferDashboard';
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
 import Overview from './Overview';
 import myEvents from 'utils/myEvent';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import CommonDrawer from 'components/CommonDrawer';
 import TransferDetail from './TransferDetail';
 import { LocalStorageKey } from 'constants/localStorage';
+import { useRouter } from 'next/navigation';
 
 export default function InfoPage() {
   const dispatch = useAppDispatch();
@@ -36,10 +37,6 @@ export default function InfoPage() {
     setIsShowDetailDrawer(false);
   }, []);
 
-  useEffectOnce(() => {
-    dispatch(setActiveMenuKey(SideMenuKey.Info));
-  });
-
   const [hasTransferDashboard, setHasTransferDashboard] = useState(false);
   const showTransferDashboard = useCallback(() => {
     const isSHowTransferDashboard = localStorage.getItem(
@@ -49,7 +46,17 @@ export default function InfoPage() {
     setHasTransferDashboard(isSHowTransferDashboard === 'show');
   }, []);
 
+  const router = useRouter();
+  useEffect(() => {
+    if (isShowDetailDrawer) {
+      router.replace(`/info?id=${currentTransferDetail?.id}`);
+    } else {
+      router.replace(`/info`);
+    }
+  }, [currentTransferDetail?.id, isShowDetailDrawer, router]);
+
   useEffectOnce(() => {
+    dispatch(setActiveMenuKey(SideMenuKey.Info));
     showTransferDashboard();
 
     const { remove: removeShow } =
@@ -67,9 +74,9 @@ export default function InfoPage() {
     <div className={clsx('wide-screen-content-container', styles['info-page'])}>
       <div style={{ display: !isPadPX && isShowDetailDrawer ? 'none' : 'block' }}>
         <Overview />
-        <Space direction={'vertical'} size={isPadPX ? 40 : 64} />
+        <CommonSpace direction={'vertical'} size={isPadPX ? 40 : 64} />
         <TokenDashboard />
-        <Space direction={'vertical'} size={isPadPX ? 40 : 64} />
+        <CommonSpace direction={'vertical'} size={isPadPX ? 40 : 64} />
 
         {hasTransferDashboard && <TransferDashboard />}
       </div>

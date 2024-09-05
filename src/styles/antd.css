@@ -1,0 +1,11 @@
+html {
+  --ant-primary-color: #285eff;
+  --ant-primary-color-hover: #3b6cff;
+  --ant-primary-color-active: #1e52f0;
+  --ant-success-color: #00b73e;
+  --ant-error-color: #f53f3f;
+  --ant-error-color-hover: #fc7373;
+  --ant-warning-color-active: #cf3737;
+  --ant-warning-color: #f90;
+  --ant-info-color: #285eff;
+}

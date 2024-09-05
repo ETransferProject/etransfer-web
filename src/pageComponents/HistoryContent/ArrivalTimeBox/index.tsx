@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { TOrderStatus } from 'types/records';
 import moment from 'moment';
 import { useCommonState } from 'store/Provider/hooks';
-import { defaultNullValue } from 'constants/index';
+import { DEFAULT_NULL_VALUE } from 'constants/index';
 
 type TArrivalTimeBoxProps = {
   arrivalTime: number;
@@ -32,7 +32,7 @@ export default function ArrivalTimeBox({ arrivalTime, status }: TArrivalTimeBoxP
           </>
         );
       case TOrderStatus.Failed:
-        return defaultNullValue;
+        return DEFAULT_NULL_VALUE;
       case TOrderStatus.Succeed:
         return (
           <div className={clsx(styles['year-hour-wrapper'])}>

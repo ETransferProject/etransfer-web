@@ -4,7 +4,7 @@ import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { IChainNameItem, SupportedELFChainId } from 'constants/index';
 import { Aelf, AelfMedium, tDVV as TDVV, tDVVMedium as TDVVMedium } from 'assets/images';
-import Space from 'components/Space';
+import CommonSpace from 'components/CommonSpace';
 
 interface SelectChainWrapperProps {
   menuItems: IChainNameItem[];
@@ -34,7 +34,7 @@ export default function SelectChainWrapper({
       {selectedItem.key === SupportedELFChainId.AELF && <>{isPadPX ? <Aelf /> : <AelfMedium />}</>}
       {selectedItem.key !== SupportedELFChainId.AELF && <>{isPadPX ? <TDVV /> : <TDVVMedium />}</>}
 
-      <Space direction={'horizontal'} size={isPadPX ? 6 : 8} />
+      <CommonSpace direction={'horizontal'} size={isPadPX ? 6 : 8} />
 
       <SelectChain
         getContainer="webDepositChainWrapper"

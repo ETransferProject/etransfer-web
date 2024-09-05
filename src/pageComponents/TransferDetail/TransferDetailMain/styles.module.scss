@@ -1,0 +1,50 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/assets/theme/font.scss';
+
+.transfer-detail-main {
+  @include media-web {
+    padding: 0 40px 0 32px;
+  }
+  @include media-pad {
+    padding: 16px 24px 24px;
+  }
+  @include media-mobile {
+    padding-top: 16px;
+  }
+}
+
+.transfer-detail-received,
+.transfer-detail-failed {
+  @extend .font-family-medium;
+  @include media-pad {
+    margin-bottom: 24px;
+    justify-content: flex-start;
+  }
+  @include media-mobile {
+    margin-bottom: 24px;
+    justify-content: space-between;
+  }
+
+  .detail-label {
+    width: 240px;
+    font-size: 14px;
+    flex-shrink: 0;
+    gap: 8px;
+
+    @include media-mobile {
+      width: 130px;
+    }
+  }
+}
+
+.detail-divider {
+  width: 100%;
+  height: 1px;
+  background-color: $dividers;
+  margin: 24px 0;
+
+  @include media-mobile-and-pad {
+    margin: 8px 0 24px;
+  }
+}

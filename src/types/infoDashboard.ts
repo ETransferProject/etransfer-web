@@ -25,12 +25,14 @@ export type TTokenDashboardItemDetail = TTokenDashboardItemVolume & {
 };
 
 export type TTransferDashboardData = {
+  id: string;
   orderType: BusinessType;
   status: TOrderStatus;
   createTime: number;
   fromNetwork: string;
   fromChainId: TChainId;
   fromSymbol: string;
+  fromIcon?: string;
   fromAddress: string;
   fromAmount: string;
   fromAmountUsd: string;
@@ -39,6 +41,7 @@ export type TTransferDashboardData = {
   toNetwork: string;
   toChainId: TChainId;
   toSymbol: string;
+  toIcon?: string;
   toAddress: string;
   toAmount: string;
   toAmountUsd: string;

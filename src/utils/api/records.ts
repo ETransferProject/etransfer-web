@@ -1,4 +1,4 @@
-import { TGetRecordsListRequest, TGetRecordsListResult } from 'types/api';
+import { TGetRecordDetailResult, TGetRecordsListRequest, TGetRecordsListResult } from 'types/api';
 import { TCurrentRecordsStatus } from 'types/records';
 import { request } from 'api';
 import { formatApiError } from './error';
@@ -20,5 +20,14 @@ export const getRecordStatus = async (): Promise<TCurrentRecordsStatus> => {
     return res.data;
   } catch (error: any) {
     throw formatApiError(error, 'getRecordStatus error', false);
+  }
+};
+
+export const getRecordDetail = async (id: string): Promise<TGetRecordDetailResult> => {
+  try {
+    const res = await request.records.getRecordDetail({ query: id });
+    return res.data;
+  } catch (error: any) {
+    throw formatApiError(error, 'getRecordDetail error', false);
   }
 };

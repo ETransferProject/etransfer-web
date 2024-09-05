@@ -100,3 +100,5 @@ export const EXPLORE_CONFIG = {
   [SupportedChainId.mainChain]: AELF_NODES.AELF.exploreUrl,
   [SupportedChainId.sideChain]: AELF_NODES.tDVV.exploreUrl,
 };
+
+export const SHOW_V_CONSOLE = true;

@@ -15,6 +15,8 @@ import FromAndToBox from 'pageComponents/HistoryContent/FromAndToBox';
 import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
 import { useIsLogin } from 'hooks/wallet';
 import { LOGIN_TO_VIEW_HISTORY, NO_HISTORY_FOUND } from 'constants/records';
+import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
 
 const columns = [
   {
@@ -181,11 +183,25 @@ export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProp
     requestRecordsList();
   };
 
+  const router = useRouter();
+  const handleClick = useCallback(
+    (id: string) => {
+      router.push(`/transfer-detail?id=${id}`);
+    },
+    [router],
+  );
+
   return (
     <div className={clsx(styles['web-records-table-wrapper'])}>
       <Table
         size={'large'}
         rowKey={'key'}
+        rowClassName={styles['web-records-table-row']}
+        onRow={(record) => {
+          return {
+            onClick: () => handleClick(record.key),
+          };
+        }}
         dataSource={handleRecordListData(recordsList)}
         columns={columns}
         scroll={{ x: 1020 }}

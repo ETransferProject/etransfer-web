@@ -1,6 +1,6 @@
 @import 'src/assets/theme/breakpoint.scss';
 
-.commonModalTips {
+.commonModalTip {
   @include media-web {
     width: 480px !important;
   }
