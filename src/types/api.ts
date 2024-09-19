@@ -368,6 +368,7 @@ export type TTransferDashboardItemFrom = {
   network: string;
   chainId: TChainId;
   fromAddress: string;
+  toAddress: string;
   amount: string;
   amountUsd: string;
   symbol: string;
@@ -380,6 +381,7 @@ export type TTransferDashboardItemTo = {
   network: string;
   chainId: TChainId;
   toAddress: string;
+  fromAddress: string;
   amount: string;
   amountUsd: string;
   symbol: string;
