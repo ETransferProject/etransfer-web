@@ -153,6 +153,7 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
                   chainId={recordItem.fromChainId}
                   txHash={recordItem.fromTxId}
                   network={recordItem.fromNetwork}
+                  address={recordItem.fromAddress}
                 />
               </div>
               <div className={styles['records-card-item-line']}>
@@ -176,6 +177,7 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
                   chainId={recordItem.toChainId}
                   txHash={recordItem.toTxId}
                   network={recordItem.toNetwork}
+                  address={recordItem.toAddress}
                 />
               </div>
               <div className={styles['records-card-item-Fee']}>

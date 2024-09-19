@@ -14,6 +14,7 @@ export type TTxHashBoxProps = {
   chainId: SupportedELFChainId;
   network: string;
   txHash: string;
+  address: string;
   orderStatus: TOrderStatus;
   orderType: BusinessType;
   type: 'From' | 'To';
@@ -25,6 +26,7 @@ export default function TxHashBox({
   chainId,
   network,
   txHash,
+  address,
   orderStatus,
   orderType,
   type,
@@ -38,12 +40,12 @@ export default function TxHashBox({
         className={clsx(styles['value'], isPadPX ? styles['mobile-font'] : styles['web-font'])}
         onClick={(event: any) => {
           event.stopPropagation();
-          viewTxDetailInExplore(network, txHash, chainId);
+          viewTxDetailInExplore(network, txHash, address, chainId);
         }}>
         {getOmittedStr(txHash, 6, 6)}
       </span>
     );
-  }, [chainId, isPadPX, network, txHash]);
+  }, [address, chainId, isPadPX, network, txHash]);
 
   const txHashPending = useMemo(() => {
     return (

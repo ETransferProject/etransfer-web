@@ -56,6 +56,21 @@
     }
   }
 
+  .cobo-address-text {
+    color: $primary-text;
+
+    font-size: 14px;
+    line-height: 22px; 
+  }
+
+  .cobo-address-text-mobile{
+    justify-content: flex-end;
+  }
+
+  .cobo-address-text-web{
+    justify-content: flex-start;
+  }
+
   .detail-value-wallet-address {
     font-size: 14px;
     line-height: 22px;

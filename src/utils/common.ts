@@ -1,9 +1,11 @@
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { EXPLORE_CONFIG } from 'constants/index';
+import { COBO_CUSTODY } from 'constants/misc';
 import {
   AelfExploreType,
   BlockchainNetworkType,
   ExploreUrlNotAelf,
+  LOOP_TOP_TX_URL,
   OtherExploreType,
 } from 'constants/network';
 
@@ -56,7 +58,16 @@ export function openWithBlank(url: string): void {
   }
 }
 
-export const viewTxDetailInExplore = (network: string, txHash: string, chainId?: TChainId) => {
+export const viewTxDetailInExplore = (
+  network: string,
+  txHash: string,
+  address: string,
+  chainId?: TChainId,
+) => {
+  if (address === COBO_CUSTODY) {
+    openWithBlank(LOOP_TOP_TX_URL + txHash);
+    return;
+  }
   if (network === BlockchainNetworkType.AELF && chainId) {
     openWithBlank(getAelfExploreLink(txHash, AelfExploreType.transaction, chainId));
     return;

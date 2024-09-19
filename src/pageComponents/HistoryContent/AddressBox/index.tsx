@@ -17,6 +17,7 @@ import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
 import { useGetAccount } from 'hooks/wallet';
 import NetworkLogo from 'components/NetworkLogo';
+import { COBO_CUSTODY } from 'constants/misc';
 
 export type TAddressBoxProps = {
   type: 'To' | 'From';
@@ -94,12 +95,18 @@ export default function AddressBox({
         network={network === BlockchainNetworkType.AELF ? chainId : network}
         size="small"
       />
-      <CommonTooltip title={calcAddress()} trigger={'hover'}>
-        <span className={clsx(styles['address-word'])} onClick={handleAddressClick}>
-          {getOmittedStr(calcAddress(), 8, 9)}
-        </span>
-      </CommonTooltip>
-      <Copy toCopy={calcAddress()} size={CopySize.Small} />
+      {calcAddress() === COBO_CUSTODY ? (
+        <span className={clsx(styles['address-word-static'])}>{calcAddress()}</span>
+      ) : (
+        <>
+          <CommonTooltip title={calcAddress()} trigger={'hover'}>
+            <span className={clsx(styles['address-word'])} onClick={handleAddressClick}>
+              {getOmittedStr(calcAddress(), 8, 9)}
+            </span>
+          </CommonTooltip>
+          <Copy toCopy={calcAddress()} size={CopySize.Small} />
+        </>
+      )}
     </div>
   );
 }
