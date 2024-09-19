@@ -86,7 +86,7 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
               viewTxDetailInExplore(
                 props.fromNetwork,
                 props.fromTxId,
-                props.fromAddress,
+                props.fromAddress === COBO_CUSTODY || props.fromToAddress === COBO_CUSTODY,
                 props.fromChainId,
               )
             }>
@@ -152,7 +152,12 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
           <div
             className={clsx(styles['detail-value'], styles['detail-value-to-tx-hash'])}
             onClick={() =>
-              viewTxDetailInExplore(props.toNetwork, props.toTxId, props.toAddress, props.toChainId)
+              viewTxDetailInExplore(
+                props.toNetwork,
+                props.toTxId,
+                props.toFromAddress === COBO_CUSTODY || props.toAddress === COBO_CUSTODY,
+                props.toChainId,
+              )
             }>
             {isMobilePX ? getOmittedStr(props.toTxId, 8, 9) : props.toTxId}
           </div>

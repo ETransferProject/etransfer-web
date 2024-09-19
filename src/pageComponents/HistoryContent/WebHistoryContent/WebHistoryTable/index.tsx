@@ -17,6 +17,7 @@ import { useIsLogin } from 'hooks/wallet';
 import { LOGIN_TO_VIEW_HISTORY, NO_HISTORY_FOUND } from 'constants/records';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
+import { COBO_CUSTODY } from 'constants/misc';
 
 const columns = [
   {
@@ -96,6 +97,7 @@ const columns = [
           orderStatus={record.status}
           txHashLabel="Tx Hash"
           txHash={record.fromTxId}
+          isCoboHash={record.fromAddress === COBO_CUSTODY || record.fromToAddress === COBO_CUSTODY}
         />
       );
     },
@@ -117,6 +119,7 @@ const columns = [
           orderStatus={record.status}
           txHashLabel="Tx Hash"
           txHash={record.toTxId}
+          isCoboHash={record.toAddress === COBO_CUSTODY || record.toFromAddress === COBO_CUSTODY}
         />
       );
     },

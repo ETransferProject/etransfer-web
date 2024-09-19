@@ -1,6 +1,5 @@
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { EXPLORE_CONFIG } from 'constants/index';
-import { COBO_CUSTODY } from 'constants/misc';
 import {
   AelfExploreType,
   BlockchainNetworkType,
@@ -61,10 +60,10 @@ export function openWithBlank(url: string): void {
 export const viewTxDetailInExplore = (
   network: string,
   txHash: string,
-  address: string,
+  isCoboHash: boolean,
   chainId?: TChainId,
 ) => {
-  if (address === COBO_CUSTODY) {
+  if (isCoboHash) {
     openWithBlank(LOOP_TOP_TX_URL + txHash);
     return;
   }

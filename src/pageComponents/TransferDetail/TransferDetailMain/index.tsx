@@ -127,6 +127,7 @@ export default function TransferDetailMain({
         fromSymbol={fromTransfer.symbol}
         fromIcon={fromTransfer?.icon}
         fromAddress={fromTransfer.fromAddress}
+        fromToAddress={fromTransfer.toAddress}
         fromAmount={fromTransfer.amount}
         fromAmountUsd={fromTransfer?.amountUsd || ''}
         fromTxId={fromTransfer.txId}
@@ -136,6 +137,7 @@ export default function TransferDetailMain({
         toSymbol={toTransfer.symbol}
         toIcon={toTransfer?.icon}
         toAddress={toTransfer.toAddress}
+        toFromAddress={toTransfer.fromAddress}
         toAmount={toTransfer.amount}
         toAmountUsd={toTransfer.amountUsd || ''}
         toTxId={toTransfer.txId}

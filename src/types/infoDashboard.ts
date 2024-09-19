@@ -34,6 +34,7 @@ export type TTransferDashboardData = {
   fromSymbol: string;
   fromIcon?: string;
   fromAddress: string;
+  fromToAddress: string;
   fromAmount: string;
   fromAmountUsd: string;
   fromTxId: string;
@@ -43,6 +44,7 @@ export type TTransferDashboardData = {
   toSymbol: string;
   toIcon?: string;
   toAddress: string;
+  toFromAddress: string;
   toAmount: string;
   toAmountUsd: string;
   toTxId: string;
