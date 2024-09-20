@@ -16,6 +16,7 @@ import { getOmittedStr } from 'utils/calculate';
 import { getAelfExploreLink, getOtherExploreLink, openWithBlank } from 'utils/common';
 import styles from './styles.module.scss';
 import { AelfChainIdList } from 'constants/chain';
+import { COBO_CUSTODY } from 'constants/misc';
 
 interface WalletAddressProps {
   address: string;
@@ -73,13 +74,19 @@ export default function WalletAddress({
 
   return (
     <div className={clsx('flex-row-center', styles['wallet-container'], className)}>
-      <CommonTooltip title={calcAddress()} trigger={'hover'}>
-        <span className={clsx(styles['address'])} onClick={handleAddressClick}>
-          {isOmitAddress ? getOmittedStr(calcAddress(), 8, 9) : calcAddress()}
-        </span>
-      </CommonTooltip>
-      {!!calcAddress() && calcAddress() !== DEFAULT_NULL_VALUE && (
-        <Copy toCopy={calcAddress()} size={CopySize.Small} />
+      {calcAddress() === COBO_CUSTODY ? (
+        <span className={clsx(styles['address-cobo'])}>{COBO_CUSTODY}</span>
+      ) : (
+        <>
+          <CommonTooltip title={calcAddress()} trigger={'hover'}>
+            <span className={clsx(styles['address'])} onClick={handleAddressClick}>
+              {isOmitAddress ? getOmittedStr(calcAddress(), 8, 9) : calcAddress()}
+            </span>
+          </CommonTooltip>
+          {!!calcAddress() && calcAddress() !== DEFAULT_NULL_VALUE && (
+            <Copy toCopy={calcAddress()} size={CopySize.Small} />
+          )}
+        </>
       )}
     </div>
   );
