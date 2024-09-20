@@ -48,9 +48,7 @@ const baseConfig = {
   chainId: SupportedChainId.sideChain,
   keyboard: true,
   noCommonBaseModal: false,
-  design: SignInDesignEnum.SocialDesign,
-  titleForSocialDesign: 'Log In to ETransfer',
-  iconSrcForSocialDesign: ETRANSFER_LOGO_BASE64,
+  design: SignInDesignEnum.CryptoDesign,
 };
 
 const isTelegramPlatform = TelegramPlatform.isTelegramPlatform();

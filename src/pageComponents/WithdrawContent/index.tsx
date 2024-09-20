@@ -14,6 +14,7 @@ import {
   TGetWithdrawInfoRequest,
   TTokenItem,
   NetworkStatus,
+  TGetWithdrawInfoResult,
 } from 'types/api';
 import {
   useAppDispatch,
@@ -414,7 +415,7 @@ export default function WithdrawContent() {
   );
 
   const getWithdrawData = useCallback(
-    async (optionSymbol?: string, newMaxBalance?: string) => {
+    async (optionSymbol?: string, newMaxBalance?: string): Promise<any> => {
       console.log('getWithdrawData >>>>>> isLogin', isLoginRef.current);
       if (!isLoginRef.current) return;
 
@@ -454,6 +455,7 @@ export default function WithdrawContent() {
           res.withdrawInfo?.transactionUnit,
           newMaxBalance,
         );
+        return res;
       } catch (error: any) {
         // when network error, transactionUnit should as the same with symbol
         setWithdrawInfo({
@@ -619,13 +621,28 @@ export default function WithdrawContent() {
   );
 
   const setMaxToken = useCallback(async () => {
-    setBalance(maxBalance);
-    form.setFieldValue(FormKeys.AMOUNT, maxBalance);
+    if (maxBalance && currentSymbol === 'ELF') {
+      try {
+        setLoading(true);
+        const res: TGetWithdrawInfoResult = await getWithdrawData();
+        let _maxBalance = maxBalance;
+        if (res?.withdrawInfo?.aelfTransactionFee) {
+          _maxBalance = ZERO.plus(maxBalance).minus(res.withdrawInfo.aelfTransactionFee).toFixed();
+        }
+        setBalance(_maxBalance);
+        form.setFieldValue(FormKeys.AMOUNT, _maxBalance);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setBalance(maxBalance);
+      form.setFieldValue(FormKeys.AMOUNT, maxBalance);
 
-    if (handleAmountValidate()) {
-      await getWithdrawData();
+      if (handleAmountValidate()) {
+        await getWithdrawData();
+      }
     }
-  }, [maxBalance, form, handleAmountValidate, getWithdrawData]);
+  }, [maxBalance, currentSymbol, setLoading, getWithdrawData, form, handleAmountValidate]);
 
   const onAddressChange = useCallback(
     (value: string | null) => {

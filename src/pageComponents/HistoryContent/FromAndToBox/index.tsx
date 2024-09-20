@@ -13,7 +13,8 @@ export default function FromAndToBox({
   orderType,
   txHashLabel,
   txHash,
-}: Omit<TAddressBoxProps & TTxHashBoxProps, 'chainId'>) {
+  isCoboHash,
+}: Omit<TAddressBoxProps & TTxHashBoxProps, 'chainId' | 'address'>) {
   return (
     <div>
       <AddressBox
@@ -33,6 +34,7 @@ export default function FromAndToBox({
         orderStatus={orderStatus}
         chainId={type === 'From' ? fromChainId : toChainId}
         network={network}
+        isCoboHash={isCoboHash}
       />
     </div>
   );

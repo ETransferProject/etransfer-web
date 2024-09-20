@@ -15,6 +15,7 @@ import { InfoBusinessTypeLabel, TransferStatusType } from 'constants/infoDashboa
 import { TOrderStatus } from 'types/records';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
 import { useMemo } from 'react';
+import { COBO_CUSTODY } from 'constants/misc';
 
 export type TTransferDetailBody = Omit<TTransferDashboardData, 'fromStatus' | 'toStatus'> & {
   fromStatus: TransferStatusType | TOrderStatus;
@@ -82,7 +83,12 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
           <div
             className={clsx(styles['detail-value'], styles['detail-value-from-tx-hash'])}
             onClick={() =>
-              viewTxDetailInExplore(props.fromNetwork, props.fromTxId, props.fromChainId)
+              viewTxDetailInExplore(
+                props.fromNetwork,
+                props.fromTxId,
+                props.fromAddress === COBO_CUSTODY || props.fromToAddress === COBO_CUSTODY,
+                props.fromChainId,
+              )
             }>
             {isMobilePX ? getOmittedStr(props.fromTxId, 8, 9) : props.fromTxId}
           </div>
@@ -109,17 +115,27 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
 
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>{`${props.orderType} Address`}</div>
-        <WalletAddress
-          address={props.fromAddress}
-          chainId={props.fromChainId}
-          network={props.fromNetwork}
-          isOmitAddress={isMobilePX ? true : false}
-          className={
-            isMobilePX
-              ? styles['detail-value-wallet-address']
-              : styles['detail-value-wallet-address-web']
-          }
-        />
+        {props.fromAddress === COBO_CUSTODY ? (
+          <span
+            className={clsx(
+              styles['cobo-address-text'],
+              isMobilePX ? styles['cobo-address-text-mobile'] : styles['cobo-address-text-web'],
+            )}>
+            {props.fromAddress}
+          </span>
+        ) : (
+          <WalletAddress
+            address={props.fromAddress}
+            chainId={props.fromChainId}
+            network={props.fromNetwork}
+            isOmitAddress={isMobilePX ? true : false}
+            className={
+              isMobilePX
+                ? styles['detail-value-wallet-address']
+                : styles['detail-value-wallet-address-web']
+            }
+          />
+        )}
       </div>
 
       <div className={styles['detail-item']}>
@@ -135,7 +151,14 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
         {props.toTxId ? (
           <div
             className={clsx(styles['detail-value'], styles['detail-value-to-tx-hash'])}
-            onClick={() => viewTxDetailInExplore(props.toNetwork, props.toTxId, props.toChainId)}>
+            onClick={() =>
+              viewTxDetailInExplore(
+                props.toNetwork,
+                props.toTxId,
+                props.toFromAddress === COBO_CUSTODY || props.toAddress === COBO_CUSTODY,
+                props.toChainId,
+              )
+            }>
             {isMobilePX ? getOmittedStr(props.toTxId, 8, 9) : props.toTxId}
           </div>
         ) : (
@@ -162,17 +185,27 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
 
       <div className={styles['detail-item']}>
         <div className={styles['detail-label']}>Receive Address</div>
-        <WalletAddress
-          address={props.toAddress}
-          chainId={props.toChainId}
-          network={props.toNetwork}
-          isOmitAddress={isMobilePX ? true : false}
-          className={
-            isMobilePX
-              ? styles['detail-value-wallet-address']
-              : styles['detail-value-wallet-address-web']
-          }
-        />
+        {props.toAddress === COBO_CUSTODY ? (
+          <span
+            className={clsx(
+              styles['cobo-address-text'],
+              isMobilePX ? styles['cobo-address-text-mobile'] : styles['cobo-address-text-web'],
+            )}>
+            {props.toAddress}
+          </span>
+        ) : (
+          <WalletAddress
+            address={props.toAddress}
+            chainId={props.toChainId}
+            network={props.toNetwork}
+            isOmitAddress={isMobilePX ? true : false}
+            className={
+              isMobilePX
+                ? styles['detail-value-wallet-address']
+                : styles['detail-value-wallet-address-web']
+            }
+          />
+        )}
       </div>
 
       <div className={styles['detail-item']}>

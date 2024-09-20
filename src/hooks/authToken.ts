@@ -17,7 +17,7 @@ import { checkEOARegistration } from 'utils/api/user';
 import myEvents from 'utils/myEvent';
 import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
 import { SingleMessage } from '@etransfer/ui-react';
-import { WalletInfo } from 'types/wallet';
+import { ExtraInfoForDiscover, WalletInfo } from 'types/wallet';
 import { useIsLogin } from './wallet';
 
 export function useQueryAuthToken() {
@@ -32,25 +32,70 @@ export function useQueryAuthToken() {
 
   const handleGetSignature = useCallback(async () => {
     if (!walletInfo) return;
-    const plainTextOrigin = `Nonce:${Date.now()}`;
+    const plainTextOrigin = `Welcome to ETransfer!
+
+Click to sign in and accept the ETransfer Terms of Service (https://etransfer.gitbook.io/docs/more-information/terms-of-service) and Privacy Policy (https://etransfer.gitbook.io/docs/more-information/privacy-policy).
+
+This request will not trigger a blockchain transaction or cost any gas fees.
+
+Nonce:
+${Date.now()}`;
     const plainText: any = Buffer.from(plainTextOrigin).toString('hex').replace('0x', '');
-    let signInfo: string;
-    if (walletType !== WalletTypeEnum.aa) {
-      // nightElf or discover
-      signInfo = AElf.utils.sha256(plainText);
+    let signResult: {
+      error: number;
+      errorMessage: string;
+      signature: string;
+      from: string;
+    } | null;
+
+    if (walletType === WalletTypeEnum.discover) {
+      // discover
+      const discoverInfo = walletInfo?.extraInfo as ExtraInfoForDiscover;
+      if ((discoverInfo?.provider as any).methodCheck('wallet_getManagerSignature')) {
+        const sin = await discoverInfo?.provider?.request({
+          method: 'wallet_getManagerSignature',
+          payload: { hexData: plainText },
+        });
+        const signInfo = [
+          sin.r.toString('hex', 32),
+          sin.s.toString('hex', 32),
+          `0${sin.recoveryParam.toString()}`,
+        ].join('');
+        signResult = {
+          error: 0,
+          errorMessage: '',
+          signature: signInfo,
+          from: WalletTypeEnum.discover,
+        };
+      } else {
+        const signInfo = AElf.utils.sha256(plainText);
+        signResult = await getSignature({
+          appName: APP_NAME,
+          address: walletInfo.address,
+          signInfo,
+        });
+      }
+    } else if (walletType === WalletTypeEnum.elf) {
+      // nightElf
+      const signInfo = AElf.utils.sha256(plainText);
+      signResult = await getSignature({
+        appName: APP_NAME,
+        address: walletInfo.address,
+        signInfo,
+      });
     } else {
       // portkey sdk
-      signInfo = Buffer.from(plainText).toString('hex');
+      const signInfo = Buffer.from(plainText).toString('hex');
+      signResult = await getSignature({
+        appName: APP_NAME,
+        address: walletInfo.address,
+        signInfo,
+      });
     }
-    console.log('getSignature');
-    const result = await getSignature({
-      appName: APP_NAME,
-      address: walletInfo.address,
-      signInfo,
-    });
-    if (result?.error) throw result.errorMessage;
 
-    return { signature: result?.signature || '', plainText };
+    if (signResult?.error) throw signResult.errorMessage;
+
+    return { signature: signResult?.signature || '', plainText };
   }, [getSignature, walletInfo, walletType]);
 
   const [isReCaptchaLoading, setIsReCaptchaLoading] = useState(true);

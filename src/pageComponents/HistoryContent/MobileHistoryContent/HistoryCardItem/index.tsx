@@ -17,6 +17,7 @@ import TxHashBox from 'pageComponents/HistoryContent/TxHashBox';
 import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { COBO_CUSTODY } from 'constants/misc';
 
 const NoDataText = '-- No Data --';
 
@@ -153,6 +154,10 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
                   chainId={recordItem.fromChainId}
                   txHash={recordItem.fromTxId}
                   network={recordItem.fromNetwork}
+                  isCoboHash={
+                    recordItem.fromAddress === COBO_CUSTODY ||
+                    recordItem.fromToAddress === COBO_CUSTODY
+                  }
                 />
               </div>
               <div className={styles['records-card-item-line']}>
@@ -176,6 +181,10 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
                   chainId={recordItem.toChainId}
                   txHash={recordItem.toTxId}
                   network={recordItem.toNetwork}
+                  isCoboHash={
+                    recordItem.toAddress === COBO_CUSTODY ||
+                    recordItem.toFromAddress === COBO_CUSTODY
+                  }
                 />
               </div>
               <div className={styles['records-card-item-Fee']}>

@@ -37,6 +37,8 @@ export enum ExploreUrlNotAelf {
   BASE = 'https://basescan.org',
 }
 
+export const LOOP_TOP_TX_URL = 'https://loop.top/tx/';
+
 export enum AelfExploreType {
   transaction = 'transaction',
   token = 'token',

@@ -4,6 +4,7 @@ import {
   AelfExploreType,
   BlockchainNetworkType,
   ExploreUrlNotAelf,
+  LOOP_TOP_TX_URL,
   OtherExploreType,
 } from 'constants/network';
 
@@ -56,7 +57,16 @@ export function openWithBlank(url: string): void {
   }
 }
 
-export const viewTxDetailInExplore = (network: string, txHash: string, chainId?: TChainId) => {
+export const viewTxDetailInExplore = (
+  network: string,
+  txHash: string,
+  isCoboHash: boolean,
+  chainId?: TChainId,
+) => {
+  if (isCoboHash) {
+    openWithBlank(LOOP_TOP_TX_URL + txHash);
+    return;
+  }
   if (network === BlockchainNetworkType.AELF && chainId) {
     openWithBlank(getAelfExploreLink(txHash, AelfExploreType.transaction, chainId));
     return;
