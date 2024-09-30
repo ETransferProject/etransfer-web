@@ -4,6 +4,7 @@ import CommonDrawer from 'components/CommonDrawer';
 import DynamicArrow from 'components/DynamicArrow';
 import { DeviceSelectChainProps } from '../types';
 import styles from './styles.module.scss';
+import NetworkLogo from 'components/NetworkLogo';
 
 export default function MobileSelectChain({
   title,
@@ -33,13 +34,14 @@ export default function MobileSelectChain({
           {menuItems?.map((item) => (
             <div
               key={item.key}
-              className={clsx(styles['drawer-item'], {
+              className={clsx('flex-row-center', styles['drawer-item'], {
                 [styles['drawer-item-selected']]: item.key === selectedItem?.key,
               })}
               onClick={() => {
                 onClick?.(item);
                 setIsDrawerOpen(false);
               }}>
+              <NetworkLogo network={item.key} size="big" />
               {item.label}
             </div>
           ))}
