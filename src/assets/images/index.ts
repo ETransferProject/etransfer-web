@@ -31,28 +31,40 @@ import Records from './recordIcon.svg';
 
 import Aelf from './chain/aelf.svg';
 import AelfMedium from './chain/aelfMedium.svg';
+import AelfBig from './chain/aelfBig.svg';
 import tDVV from './chain/tDVV.svg';
 import tDVVMedium from './chain/tDVVMedium.svg';
+import tDVVBig from './chain/tDVVBig.svg';
 import Arbitrum from './chain/arbitrum.svg';
 import ArbitrumMedium from './chain/arbitrumMedium.svg';
+import ArbitrumBig from './chain/arbitrumBig.svg';
 import Binance from './chain/binance.svg';
 import BinanceMedium from './chain/binanceMedium.svg';
+import BinanceBig from './chain/binanceBig.svg';
 import Avax from './chain/avax.svg';
 import AvaxMedium from './chain/avaxMedium.svg';
+import AvaxBig from './chain/avaxBig.svg';
 import Ethereum from './chain/ethereum.svg';
 import EthereumMedium from './chain/ethereumMedium.svg';
+import EthereumBig from './chain/ethereumBig.svg';
 import Optimism from './chain/optimism.svg';
 import OptimismMedium from './chain/optimismMedium.svg';
+import OptimismBig from './chain/optimismBig.svg';
 import Polygon from './chain/polygon.svg';
 import PolygonMedium from './chain/polygonMedium.svg';
+import PolygonBig from './chain/polygonBig.svg';
 import Solana from './chain/solana.svg';
 import SolanaMedium from './chain/solanaMedium.svg';
+import SolanaBig from './chain/solanaBig.svg';
 import Tron from './chain/tron.svg';
 import TronMedium from './chain/tronMedium.svg';
+import TronBig from './chain/tronBig.svg';
 import Ton from './chain/ton.svg';
 import TonMedium from './chain/tonMedium.svg';
+import TonBig from './chain/tonBig.svg';
 import Base from './chain/base.svg';
 import BaseMedium from './chain/baseMedium.svg';
+import BaseBig from './chain/baseBig.svg';
 
 import FilterIcon from './filterIcon.svg';
 import Fingerprint from './fingerprint.svg';
@@ -130,28 +142,41 @@ export {
   // chain
   Aelf,
   AelfMedium,
+  AelfBig,
   tDVV,
   tDVVMedium,
+  tDVVBig,
   Arbitrum,
   ArbitrumMedium,
+  ArbitrumBig,
   Binance,
   BinanceMedium,
+  BinanceBig,
   Avax,
   AvaxMedium,
+  AvaxBig,
   Ethereum,
   EthereumMedium,
+  EthereumBig,
   Optimism,
   OptimismMedium,
+  OptimismBig,
   Polygon,
   PolygonMedium,
+  PolygonBig,
   Solana,
   SolanaMedium,
+  SolanaBig,
   Tron,
   TronMedium,
+  TronBig,
   Ton,
   TonMedium,
+  TonBig,
   Base,
   BaseMedium,
+  BaseBig,
+
   //
   FilterIcon,
   Fingerprint,

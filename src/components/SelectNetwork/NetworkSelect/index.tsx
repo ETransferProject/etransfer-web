@@ -78,6 +78,7 @@ export function NetworkSelectForMobile({
         )}
         {!isShowLoading &&
           networkList.map((item, idx) => {
+            console.log('🌈 🌈 🌈 🌈 🌈 🌈 item', item);
             return (
               <NetworkCardForMobile
                 key={'network-select' + item.network + idx}
@@ -85,6 +86,7 @@ export function NetworkSelectForMobile({
                   selectedNetwork == item.network ? styles['network-card-selected'] : undefined
                 }
                 isDisabled={isDisabled}
+                network={item.network} // item.network === BlockchainNetworkType.AELF ? item.chainId :
                 name={item.name}
                 type={type}
                 transactionFee={item.withdrawFee}

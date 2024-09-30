@@ -80,7 +80,7 @@ export default function SelectNetwork({
         <NetworkLogo
           className="flex-shrink-0 flex"
           network={selected?.network}
-          size={isPadPX ? 'small' : 'normal'}
+          size={isPadPX ? 'small' : 'big'}
         />
       )
     );

@@ -7,6 +7,7 @@ import NetworkSelectDropdown from 'components/SelectNetwork/NetworkSelectDropdow
 import DynamicArrow from 'components/DynamicArrow';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
+import NetworkLogo from 'components/NetworkLogo';
 
 type TSelectNetworkProps = {
   networkList: TNetworkItem[];
@@ -54,9 +55,13 @@ export default function SelectNetwork({
             {selected?.network ? (
               <span className={clsx('flex-row-center', styles['select-network-value-selected'])}>
                 {isPadPX ? (
-                  <span className={styles['primary']}>{selected.name}</span>
+                  <>
+                    <NetworkLogo network={selected.network} size="big" />
+                    <span className={styles['primary']}>{selected.name}</span>
+                  </>
                 ) : (
                   <>
+                    <NetworkLogo network={selected.network} size="big" />
                     <span className={styles['primary']}>{selected.network}</span>
                     <span className={styles['secondary']}>{selected.name}</span>
                   </>

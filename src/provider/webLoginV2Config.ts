@@ -6,7 +6,6 @@ import { SignInDesignEnum } from '@aelf-web-login/wallet-adapter-base';
 import {
   APP_NAME,
   AelfReact,
-  BRAND_NAME,
   NETWORK_TYPE,
   SupportedChainId,
   TELEGRAM_BOT_ID,
@@ -14,7 +13,7 @@ import {
   WebLoginGraphqlUrl,
   WebLoginServiceUrl,
 } from 'constants/index';
-import { ETRANSFER_LOGO_BASE64, ETRANSFER_PORTKEY_PROJECT_CODE } from 'constants/misc';
+import { ETRANSFER_PORTKEY_PROJECT_CODE } from 'constants/misc';
 import { TelegramPlatform } from 'utils/telegram';
 import { devices } from '@portkey/utils';
 
@@ -27,10 +26,6 @@ const didConfig = {
     timeout: 20000,
   },
   socialLogin: {
-    Portkey: {
-      websiteName: BRAND_NAME,
-      websiteIcon: ETRANSFER_LOGO_BASE64,
-    },
     Telegram: {
       botId: TELEGRAM_BOT_ID,
     },
