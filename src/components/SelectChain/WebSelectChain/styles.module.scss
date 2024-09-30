@@ -28,6 +28,9 @@
       }
     }
     :global {
+      .ant-dropdown-menu-item{
+        padding: 12px;
+      }
       .ant-dropdown-menu-item-selected {
         background-color: $hover-bg;
         color: $normal;

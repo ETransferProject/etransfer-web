@@ -12,7 +12,7 @@ interface NetworksProps {
   className?: string;
 }
 
-export default function Networks({ list, size = 'normal', className }: NetworksProps) {
+export default function Networks({ list, size = 'big', className }: NetworksProps) {
   const { isPadPX } = useCommonState();
   const renderMore = useMemo(() => {
     const moreList = list.slice(2, list.length);
@@ -42,8 +42,8 @@ export default function Networks({ list, size = 'normal', className }: NetworksP
             size === 'small' && styles['network-more-number-small'],
           )}
           style={{
-            width: size === 'normal' ? 24 : 16,
-            height: size === 'normal' ? 24 : 16,
+            width: size === 'big' ? 24 : 16,
+            height: size === 'big' ? 24 : 16,
           }}>
           {`+${list.length - 2}`}
         </div>

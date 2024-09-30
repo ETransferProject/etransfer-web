@@ -12,6 +12,9 @@
   background: $page-bg;
   cursor: pointer;
 
+  .network-card-name-row {
+    gap: 8px;
+  }
   .network-card-name {
     color: $primary-text;
     font-size: 14px;
@@ -29,10 +32,10 @@
 .network-card-for-web {
   display: flex;
   padding: 13px 24px;
-  align-items: flex-start;
   border-bottom: 1px solid $dividers;
   background: $page-bg;
   cursor: pointer;
+  gap: 8px;
 
   &:nth-last-child(1) {
     border-bottom: none;

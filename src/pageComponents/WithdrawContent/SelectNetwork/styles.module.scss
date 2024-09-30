@@ -35,12 +35,12 @@
       @extend .font-family-medium;
       .select-network-value {
         .select-network-value-selected {
+          gap: 8px;
           .primary {
             color: $primary-text;
             font-size: 16px;
             line-height: 1.5;
             @extend .font-family-medium;
-            margin-right: 8px;
           }
           .secondary {
             color: $secondary-text;

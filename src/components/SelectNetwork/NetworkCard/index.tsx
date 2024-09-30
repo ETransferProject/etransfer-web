@@ -3,6 +3,7 @@ import styles from './styles.module.scss';
 import { SideMenuKey } from 'constants/home';
 import { NetworkStatus } from 'types/api';
 import { formatSymbolDisplay } from 'utils/format';
+import NetworkLogo from 'components/NetworkLogo';
 
 interface NetworkCardProps {
   type: SideMenuKey;
@@ -15,6 +16,7 @@ interface NetworkCardProps {
   isDisabled?: boolean;
   onClick: () => void;
   status: string;
+  network: string;
 }
 
 interface NetworkCardForWebProps extends NetworkCardProps {
@@ -32,6 +34,7 @@ export function NetworkCardForMobile({
   transactionFee,
   transactionFeeUnit,
   className,
+  network,
   name,
   multiConfirmTime,
   multiConfirm,
@@ -47,11 +50,14 @@ export function NetworkCardForMobile({
         className,
       )}
       onClick={onClick}>
-      <div className={styles['network-card-name']}>
-        {name}
-        {status === NetworkStatus.Offline && (
-          <span className={styles['network-card-network-suspended']}>Suspended</span>
-        )}
+      <div className={clsx('flex-row', styles['network-card-name-row'])}>
+        <NetworkLogo network={network} size={'normal'} />
+        <div className={styles['network-card-name']}>
+          {name}
+          {status === NetworkStatus.Offline && (
+            <span className={styles['network-card-network-suspended']}>Suspended</span>
+          )}
+        </div>
       </div>
 
       <div className={styles['network-card-arrival-time']}>
@@ -83,29 +89,32 @@ export function NetworkCardForWeb({
   return (
     <div
       className={clsx(
-        'flex-column',
+        'flex-row-center',
         styles['network-card-for-web'],
         styles['network-card-for-web-hover'],
         (isDisabled || status === NetworkStatus.Offline) && styles['network-card-disabled'],
         className,
       )}
       onClick={onClick}>
-      <div className={clsx('flex-row-center-between', styles['network-card-row'])}>
-        <span className={styles['network-card-network']}>
-          {network}
-          {status === NetworkStatus.Offline && (
-            <span className={styles['network-card-network-suspended']}>Suspended</span>
-          )}
-        </span>
-        <span className={styles['network-card-arrival-time']}>≈ {multiConfirmTime}</span>
-      </div>
-      <div className={clsx('flex-row-center-between', styles['network-card-row'])}>
-        <span className={styles['network-card-name']}>{name}</span>
-        <span className={styles['network-card-confirm-time']}>
-          {type === SideMenuKey.Deposit
-            ? multiConfirm
-            : feeContent(transactionFee, transactionFeeUnit)}
-        </span>
+      <NetworkLogo network={network} size="big" />
+      <div className="flex-column flex-1">
+        <div className={clsx('flex-row-center-between', styles['network-card-row'])}>
+          <span className={styles['network-card-network']}>
+            {network}
+            {status === NetworkStatus.Offline && (
+              <span className={styles['network-card-network-suspended']}>Suspended</span>
+            )}
+          </span>
+          <span className={styles['network-card-arrival-time']}>≈ {multiConfirmTime}</span>
+        </div>
+        <div className={clsx('flex-row-center-between', styles['network-card-row'])}>
+          <span className={styles['network-card-name']}>{name}</span>
+          <span className={styles['network-card-confirm-time']}>
+            {type === SideMenuKey.Deposit
+              ? multiConfirm
+              : feeContent(transactionFee, transactionFeeUnit)}
+          </span>
+        </div>
       </div>
     </div>
   );

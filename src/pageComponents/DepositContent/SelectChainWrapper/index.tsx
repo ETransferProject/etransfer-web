@@ -3,7 +3,7 @@ import SelectChain from 'components/SelectChain';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { IChainNameItem, SupportedELFChainId } from 'constants/index';
-import { Aelf, AelfMedium, tDVV as TDVV, tDVVMedium as TDVVMedium } from 'assets/images';
+import { Aelf, AelfBig, tDVV as TDVV, tDVVBig as TDVVBig } from 'assets/images';
 import CommonSpace from 'components/CommonSpace';
 
 interface SelectChainWrapperProps {
@@ -31,8 +31,8 @@ export default function SelectChainWrapper({
       className={clsx('flex-row-center', styles['select-chain-wrapper'], className)}>
       {isPadPX && <span className={styles['select-chain-label']}>{mobileLabel}</span>}
 
-      {selectedItem.key === SupportedELFChainId.AELF && <>{isPadPX ? <Aelf /> : <AelfMedium />}</>}
-      {selectedItem.key !== SupportedELFChainId.AELF && <>{isPadPX ? <TDVV /> : <TDVVMedium />}</>}
+      {selectedItem.key === SupportedELFChainId.AELF && <>{isPadPX ? <Aelf /> : <AelfBig />}</>}
+      {selectedItem.key !== SupportedELFChainId.AELF && <>{isPadPX ? <TDVV /> : <TDVVBig />}</>}
 
       <CommonSpace direction={'horizontal'} size={isPadPX ? 6 : 8} />
 

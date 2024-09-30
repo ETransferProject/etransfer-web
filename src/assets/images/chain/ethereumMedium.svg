@@ -1,9 +1,11 @@
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M11.9953 0C18.6257 0 24 5.37426 24 12.0047C24 18.6352 18.6257 24.0047 12 24.0047C5.36954 24.0047 3.11002e-06 18.6305 3.11002e-06 12.0047C-0.00471944 5.37426 5.36954 0 11.9953 0Z" fill="#627EEA"/>
-<path d="M11.9987 3.60004V9.81029L17.2465 12.1558L11.9987 3.60004Z" fill="white" fill-opacity="0.602"/>
-<path d="M11.9986 3.60004L6.75 12.1558L11.9986 9.81029V3.60004Z" fill="white"/>
-<path d="M11.9987 16.1802V20.3999L17.25 13.1332L11.9987 16.1802Z" fill="white" fill-opacity="0.602"/>
-<path d="M11.9986 20.3999V16.1795L6.75 13.1332L11.9986 20.3999Z" fill="white"/>
-<path d="M11.9987 15.2035L17.2465 12.1558L11.9987 9.81171V15.2035Z" fill="white" fill-opacity="0.3"/>
-<path d="M6.75 12.1558L11.9986 15.2035V9.81171L6.75 12.1558Z" fill="white" fill-opacity="0.7"/>
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Icons/Network">
+<path id="Vector" d="M9.99607 0C15.5214 0 20 4.47855 20 10.0039C20 15.5293 15.5214 20.0039 10 20.0039C4.47462 20.0039 2.59168e-06 15.5254 2.59168e-06 10.0039C-0.00393287 4.47855 4.47462 0 9.99607 0Z" fill="#627EEA"/>
+<path id="Shape" d="M9.9989 3.00005V8.17525L14.3721 10.1298L9.9989 3.00005Z" fill="white" fill-opacity="0.602"/>
+<path id="Shape_2" d="M9.9988 3.00005L5.625 10.1298L9.9988 8.17525V3.00005Z" fill="white"/>
+<path id="Shape_3" d="M9.9989 13.4835V17L14.375 10.9443L9.9989 13.4835Z" fill="white" fill-opacity="0.602"/>
+<path id="Shape_4" d="M9.9988 17V13.4829L5.625 10.9443L9.9988 17Z" fill="white"/>
+<path id="Shape_5" d="M9.9989 12.6696L14.3721 10.1298L9.9989 8.17642V12.6696Z" fill="white" fill-opacity="0.3"/>
+<path id="Shape_6" d="M5.625 10.1298L9.9988 12.6696V8.17642L5.625 10.1298Z" fill="white" fill-opacity="0.7"/>
+</g>
 </svg>

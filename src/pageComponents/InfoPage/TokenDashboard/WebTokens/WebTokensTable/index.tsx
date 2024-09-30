@@ -48,7 +48,7 @@ const WebTokensTableExpandedColumns = [
     width: 170,
     showSorterTooltip: false,
     render: (name: string) => {
-      return <Network network={name} size="normal" />;
+      return <Network network={name} size="big" />;
     },
   },
   {
