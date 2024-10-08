@@ -631,7 +631,7 @@ export default function WithdrawContent() {
           symbol: currentSymbol,
           address: accounts?.[currentChainItem.key] || '',
           approveTargetAddress: currentToken.contractAddress,
-          amount: balance,
+          amount: _maxBalance,
         });
         if (res?.withdrawInfo?.aelfTransactionFee && isEnoughAllowance) {
           _maxBalance = ZERO.plus(maxBalance).minus(res.withdrawInfo.aelfTransactionFee).toFixed();
