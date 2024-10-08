@@ -27,7 +27,7 @@ import styles from './styles.module.scss';
 import { CHAIN_LIST, IChainNameItem, DEFAULT_NULL_VALUE } from 'constants/index';
 import { getNetworkList, getTokenList, getWithdrawInfo } from 'utils/api/deposit';
 import { CONTRACT_ADDRESS } from 'constants/deposit';
-import { getBalance } from 'utils/contract';
+import { checkIsEnoughAllowance, getBalance } from 'utils/contract';
 import { SingleMessage } from '@etransfer/ui-react';
 import { divDecimals } from 'utils/calculate';
 import { ZERO } from 'constants/calculate';
@@ -626,9 +626,22 @@ export default function WithdrawContent() {
         setLoading(true);
         const res: TGetWithdrawInfoResult = await getWithdrawData();
         let _maxBalance = maxBalance;
-        if (res?.withdrawInfo?.aelfTransactionFee) {
+        const isEnoughAllowance = await checkIsEnoughAllowance({
+          chainId: currentChainItemRef.current.key,
+          symbol: currentSymbol,
+          address: accounts?.[currentChainItem.key] || '',
+          approveTargetAddress: currentToken.contractAddress,
+          amount: balance,
+        });
+        if (res?.withdrawInfo?.aelfTransactionFee && isEnoughAllowance) {
           _maxBalance = ZERO.plus(maxBalance).minus(res.withdrawInfo.aelfTransactionFee).toFixed();
+        } else if (res?.withdrawInfo?.aelfTransactionFee && !isEnoughAllowance) {
+          _maxBalance = ZERO.plus(maxBalance)
+            .minus(res.withdrawInfo.aelfTransactionFee)
+            .minus(res.withdrawInfo.aelfTransactionFee)
+            .toFixed();
         }
+
         setBalance(_maxBalance);
         form.setFieldValue(FormKeys.AMOUNT, _maxBalance);
       } finally {
@@ -642,7 +655,18 @@ export default function WithdrawContent() {
         await getWithdrawData();
       }
     }
-  }, [maxBalance, currentSymbol, setLoading, getWithdrawData, form, handleAmountValidate]);
+  }, [
+    maxBalance,
+    currentSymbol,
+    setLoading,
+    getWithdrawData,
+    accounts,
+    currentChainItem.key,
+    currentToken.contractAddress,
+    balance,
+    form,
+    handleAmountValidate,
+  ]);
 
   const onAddressChange = useCallback(
     (value: string | null) => {
