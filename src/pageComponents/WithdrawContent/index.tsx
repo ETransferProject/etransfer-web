@@ -634,12 +634,16 @@ export default function WithdrawContent() {
           amount: _maxBalance,
         });
         if (res?.withdrawInfo?.aelfTransactionFee && isEnoughAllowance) {
-          _maxBalance = ZERO.plus(maxBalance).minus(res.withdrawInfo.aelfTransactionFee).toFixed();
+          const _maxBalanceBignumber = ZERO.plus(maxBalance).minus(
+            res.withdrawInfo.aelfTransactionFee,
+          );
+          _maxBalance = _maxBalanceBignumber.lt(0) ? '0' : _maxBalanceBignumber.toFixed();
         } else if (res?.withdrawInfo?.aelfTransactionFee && !isEnoughAllowance) {
-          _maxBalance = ZERO.plus(maxBalance)
+          const _maxBalanceBignumber = ZERO.plus(maxBalance)
             .minus(res.withdrawInfo.aelfTransactionFee)
-            .minus(res.withdrawInfo.aelfTransactionFee)
-            .toFixed();
+            .minus(res.withdrawInfo.aelfTransactionFee);
+
+          _maxBalance = _maxBalanceBignumber.lt(0) ? '0' : _maxBalanceBignumber.toFixed();
         }
 
         setBalance(_maxBalance);
@@ -663,7 +667,6 @@ export default function WithdrawContent() {
     accounts,
     currentChainItem.key,
     currentToken.contractAddress,
-    balance,
     form,
     handleAmountValidate,
   ]);
