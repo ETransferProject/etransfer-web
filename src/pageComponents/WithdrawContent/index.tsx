@@ -45,6 +45,7 @@ import { useEffectOnce } from 'react-use';
 import PartialLoading from 'components/PartialLoading';
 import {
   AmountGreaterThanBalanceMessage,
+  APPROVE_ELF_FEE,
   CommentCheckTip,
   InitialWithdrawInfo,
   WithdrawAddressErrorCodeList,
@@ -641,7 +642,7 @@ export default function WithdrawContent() {
         } else if (res?.withdrawInfo?.aelfTransactionFee && !isEnoughAllowance) {
           const _maxBalanceBignumber = ZERO.plus(maxBalance)
             .minus(res.withdrawInfo.aelfTransactionFee)
-            .minus(res.withdrawInfo.aelfTransactionFee);
+            .minus(APPROVE_ELF_FEE);
 
           _maxBalance = _maxBalanceBignumber.lt(0) ? '0' : _maxBalanceBignumber.toFixed();
         }
