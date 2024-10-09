@@ -8,6 +8,7 @@ import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
 import { ExtraInfoForPortkeyAA } from 'types/wallet';
+import { LoginStatusEnum } from '@portkey/types';
 
 export default function MyAsset() {
   const router = useRouter();
@@ -40,7 +41,8 @@ export default function MyAsset() {
     <div className={styles['my-asset-wrapper']}>
       <PortkeyDid.PortkeyAssetProvider
         originChainId={portkeyAAInfo?.portkeyInfo?.chainId}
-        pin={portkeyAAInfo?.portkeyInfo?.pin}>
+        pin={portkeyAAInfo?.portkeyInfo?.pin}
+        isLoginOnChain={PortkeyDid.did.didWallet.isLoginStatus === LoginStatusEnum.SUCCESS}>
         <PortkeyDid.Asset
           isShowRamp={false}
           isShowRampBuy={false}
