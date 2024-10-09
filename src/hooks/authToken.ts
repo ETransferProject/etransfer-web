@@ -31,7 +31,7 @@ export function useQueryAuthToken() {
   }, []);
 
   const handleGetSignature = useCallback(async () => {
-    if (!walletInfo) return;
+    if (!walletInfo || !walletInfo.address) return;
     const plainTextOrigin = `Welcome to ETransfer!
 
 Click to sign in and accept the ETransfer Terms of Service (https://etransfer.gitbook.io/docs/more-information/terms-of-service) and Privacy Policy (https://etransfer.gitbook.io/docs/more-information/privacy-policy).
@@ -111,7 +111,7 @@ ${Date.now()}`;
   }, [setLoading]);
 
   const handleReCaptcha = useCallback(async (): Promise<string | undefined> => {
-    if (!walletInfo) return;
+    if (!walletInfo || !walletInfo.address) return;
     if (walletType === WalletTypeEnum.elf) {
       const isRegistered = await checkEOARegistration({ address: walletInfo.address });
       if (!isRegistered.result) {
