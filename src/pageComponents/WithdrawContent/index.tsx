@@ -27,7 +27,7 @@ import styles from './styles.module.scss';
 import { CHAIN_LIST, IChainNameItem, DEFAULT_NULL_VALUE } from 'constants/index';
 import { getNetworkList, getTokenList, getWithdrawInfo } from 'utils/api/deposit';
 import { CONTRACT_ADDRESS } from 'constants/deposit';
-import { getBalance } from 'utils/contract';
+import { checkIsEnoughAllowance, getBalance } from 'utils/contract';
 import { SingleMessage } from '@etransfer/ui-react';
 import { divDecimals } from 'utils/calculate';
 import { ZERO } from 'constants/calculate';
@@ -45,6 +45,7 @@ import { useEffectOnce } from 'react-use';
 import PartialLoading from 'components/PartialLoading';
 import {
   AmountGreaterThanBalanceMessage,
+  APPROVE_ELF_FEE,
   CommentCheckTip,
   InitialWithdrawInfo,
   WithdrawAddressErrorCodeList,
@@ -626,9 +627,25 @@ export default function WithdrawContent() {
         setLoading(true);
         const res: TGetWithdrawInfoResult = await getWithdrawData();
         let _maxBalance = maxBalance;
-        if (res?.withdrawInfo?.aelfTransactionFee) {
-          _maxBalance = ZERO.plus(maxBalance).minus(res.withdrawInfo.aelfTransactionFee).toFixed();
+
+        const aelfFee = res?.withdrawInfo?.aelfTransactionFee;
+        if (aelfFee && ZERO.plus(aelfFee).gt(0)) {
+          const isEnoughAllowance = await checkIsEnoughAllowance({
+            chainId: currentChainItemRef.current.key,
+            symbol: currentSymbol,
+            address: accounts?.[currentChainItem.key] || '',
+            approveTargetAddress: currentToken.contractAddress,
+            amount: _maxBalance,
+          });
+          let _maxBalanceBignumber;
+          if (isEnoughAllowance) {
+            _maxBalanceBignumber = ZERO.plus(maxBalance).minus(aelfFee);
+          } else {
+            _maxBalanceBignumber = ZERO.plus(maxBalance).minus(aelfFee).minus(APPROVE_ELF_FEE);
+          }
+          _maxBalance = _maxBalanceBignumber.lt(0) ? '0' : _maxBalanceBignumber.toFixed();
         }
+
         setBalance(_maxBalance);
         form.setFieldValue(FormKeys.AMOUNT, _maxBalance);
       } finally {
@@ -642,7 +659,17 @@ export default function WithdrawContent() {
         await getWithdrawData();
       }
     }
-  }, [maxBalance, currentSymbol, setLoading, getWithdrawData, form, handleAmountValidate]);
+  }, [
+    maxBalance,
+    currentSymbol,
+    setLoading,
+    getWithdrawData,
+    accounts,
+    currentChainItem.key,
+    currentToken.contractAddress,
+    form,
+    handleAmountValidate,
+  ]);
 
   const onAddressChange = useCallback(
     (value: string | null) => {

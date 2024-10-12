@@ -306,6 +306,37 @@ export const checkTokenAllowanceAndApprove = async ({
   return true;
 };
 
+export const checkIsEnoughAllowance = async ({
+  chainId,
+  symbol,
+  address,
+  approveTargetAddress,
+  amount,
+}: {
+  chainId: SupportedELFChainId;
+  symbol: string;
+  address: string;
+  approveTargetAddress: string;
+  amount: string | number;
+}) => {
+  const endPoint = getNodeByChainId(chainId as unknown as AllSupportedELFChainId).rpcUrl;
+  const tokenContractAddress = ADDRESS_MAP[chainId][ContractType.TOKEN];
+  const tokenContractOrigin = await getTokenContract(endPoint, tokenContractAddress);
+
+  const [allowanceResult, tokenInfoResult] = await Promise.all([
+    getAllowance(tokenContractOrigin, symbol, address, approveTargetAddress),
+    getTokenInfo(tokenContractOrigin, symbol),
+  ]);
+
+  console.log('first check allowance and tokenInfo:', allowanceResult, tokenInfoResult);
+  const bigA = timesDecimals(amount, tokenInfoResult?.decimals || 8);
+  const allowanceBN = new BigNumber(allowanceResult);
+  if (allowanceBN.lt(bigA)) {
+    return false;
+  }
+  return true;
+};
+
 export type TGetSignature = (params: TSignatureParams) => Promise<TGetSignatureResult | null>;
 
 export type TGetSignatureResult = {

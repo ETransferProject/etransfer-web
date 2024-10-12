@@ -52,7 +52,7 @@ export default function TransferDetailStep({
         title: 'Received',
         description:
           fromTransfer.symbol !== toTransfer.symbol
-            ? `You will receive ${toTransfer.symbol}`
+            ? `You will receive ${formatSymbolDisplay(toTransfer.symbol)}`
             : `${toTransfer.amount} ${formatSymbolDisplay(toTransfer.symbol)}`,
       },
     ];
