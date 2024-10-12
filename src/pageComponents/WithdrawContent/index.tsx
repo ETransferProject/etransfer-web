@@ -627,21 +627,22 @@ export default function WithdrawContent() {
         setLoading(true);
         const res: TGetWithdrawInfoResult = await getWithdrawData();
         let _maxBalance = maxBalance;
-        const isEnoughAllowance = await checkIsEnoughAllowance({
-          chainId: currentChainItemRef.current.key,
-          symbol: currentSymbol,
-          address: accounts?.[currentChainItem.key] || '',
-          approveTargetAddress: currentToken.contractAddress,
-          amount: _maxBalance,
-        });
 
         const aelfFee = res?.withdrawInfo?.aelfTransactionFee;
-        if (aelfFee && ZERO.plus(aelfFee).gt(0) && isEnoughAllowance) {
-          const _maxBalanceBignumber = ZERO.plus(maxBalance).minus(aelfFee);
-          _maxBalance = _maxBalanceBignumber.lt(0) ? '0' : _maxBalanceBignumber.toFixed();
-        } else if (aelfFee && ZERO.plus(aelfFee).gt(0) && !isEnoughAllowance) {
-          const _maxBalanceBignumber = ZERO.plus(maxBalance).minus(aelfFee).minus(APPROVE_ELF_FEE);
-
+        if (aelfFee && ZERO.plus(aelfFee).gt(0)) {
+          const isEnoughAllowance = await checkIsEnoughAllowance({
+            chainId: currentChainItemRef.current.key,
+            symbol: currentSymbol,
+            address: accounts?.[currentChainItem.key] || '',
+            approveTargetAddress: currentToken.contractAddress,
+            amount: _maxBalance,
+          });
+          let _maxBalanceBignumber;
+          if (isEnoughAllowance) {
+            _maxBalanceBignumber = ZERO.plus(maxBalance).minus(aelfFee);
+          } else {
+            _maxBalanceBignumber = ZERO.plus(maxBalance).minus(aelfFee).minus(APPROVE_ELF_FEE);
+          }
           _maxBalance = _maxBalanceBignumber.lt(0) ? '0' : _maxBalanceBignumber.toFixed();
         }
 
