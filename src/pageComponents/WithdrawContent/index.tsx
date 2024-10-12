@@ -634,15 +634,13 @@ export default function WithdrawContent() {
           approveTargetAddress: currentToken.contractAddress,
           amount: _maxBalance,
         });
-        if (res?.withdrawInfo?.aelfTransactionFee && isEnoughAllowance) {
-          const _maxBalanceBignumber = ZERO.plus(maxBalance).minus(
-            res.withdrawInfo.aelfTransactionFee,
-          );
+
+        const aelfFee = res?.withdrawInfo?.aelfTransactionFee;
+        if (aelfFee && ZERO.plus(aelfFee).gt(0) && isEnoughAllowance) {
+          const _maxBalanceBignumber = ZERO.plus(maxBalance).minus(aelfFee);
           _maxBalance = _maxBalanceBignumber.lt(0) ? '0' : _maxBalanceBignumber.toFixed();
-        } else if (res?.withdrawInfo?.aelfTransactionFee && !isEnoughAllowance) {
-          const _maxBalanceBignumber = ZERO.plus(maxBalance)
-            .minus(res.withdrawInfo.aelfTransactionFee)
-            .minus(APPROVE_ELF_FEE);
+        } else if (aelfFee && ZERO.plus(aelfFee).gt(0) && !isEnoughAllowance) {
+          const _maxBalanceBignumber = ZERO.plus(maxBalance).minus(aelfFee).minus(APPROVE_ELF_FEE);
 
           _maxBalance = _maxBalanceBignumber.lt(0) ? '0' : _maxBalanceBignumber.toFixed();
         }
