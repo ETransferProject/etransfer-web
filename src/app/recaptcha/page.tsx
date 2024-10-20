@@ -1,11 +1,16 @@
 'use client';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { RECAPTCHA_SITE_KEY_MAINNET, RECAPTCHA_SITE_KEY_TESTNET } from 'constants/misc';
 import GoogleReCaptcha from 'components/GoogleRecaptcha';
 import styles from './styles.module.scss';
 import { NETWORK_TYPE } from 'constants/index';
+import { TSearch } from 'types';
+import { BaseReCaptcha } from 'components/GoogleRecaptcha/types';
 
-export default function ReCaptcha() {
+export default function ReCaptcha({ searchParams = {} }: { searchParams: TSearch }) {
+  const { theme = 'light', size = 'normal' } = useMemo(() => {
+    return searchParams as Omit<BaseReCaptcha, 'customReCaptchaHandler' | 'siteKey'>;
+  }, [searchParams]);
   const handleSuccess = useCallback((response: string) => {
     console.warn('Google reCaptcha response:', response);
     window.opener.postMessage(
@@ -41,8 +46,8 @@ export default function ReCaptcha() {
         siteKey={
           NETWORK_TYPE === 'TESTNET' ? RECAPTCHA_SITE_KEY_TESTNET : RECAPTCHA_SITE_KEY_MAINNET
         }
-        theme="light"
-        size="normal"
+        theme={theme}
+        size={size}
         onSuccess={handleSuccess}
         onError={handleError}
         onExpired={handleExpired}
