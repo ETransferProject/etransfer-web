@@ -5,40 +5,90 @@ import GoogleReCaptcha from 'components/GoogleRecaptcha';
 import styles from './styles.module.scss';
 import { NETWORK_TYPE } from 'constants/index';
 import { TSearch } from 'types';
-import { BaseReCaptcha } from 'components/GoogleRecaptcha/types';
+
+export type ReCaptchaProps = {
+  theme?: 'light' | 'dark';
+  size?: 'normal' | 'compact';
+  type?: 'iframe' | 'page';
+};
 
 export default function ReCaptcha({ searchParams = {} }: { searchParams: TSearch }) {
-  const { theme = 'light', size = 'normal' } = useMemo(() => {
-    return searchParams as Omit<BaseReCaptcha, 'customReCaptchaHandler' | 'siteKey'>;
+  const {
+    theme = 'light',
+    size = 'normal',
+    type = 'page',
+  } = useMemo(() => {
+    return searchParams as ReCaptchaProps;
   }, [searchParams]);
-  const handleSuccess = useCallback((response: string) => {
-    console.warn('Google reCaptcha response:', response);
-    window.opener.postMessage(
-      {
-        type: 'GOOGLE_RECAPTCHA_RESULT',
-        data: response,
-      },
-      '*',
-    );
-  }, []);
-  const handleError = useCallback((error: any) => {
-    window.opener.postMessage(
-      {
-        type: 'GOOGLE_RECAPTCHA_ERROR',
-        data: error,
-      },
-      '*',
-    );
-  }, []);
-  const handleExpired = useCallback((value: any) => {
-    window.opener.postMessage(
-      {
-        type: 'GOOGLE_RECAPTCHA_EXPIRED',
-        data: value,
-      },
-      '*',
-    );
-  }, []);
+
+  const handleSuccess = useCallback(
+    (response: string) => {
+      console.warn('🌟 Google reCaptcha response:', response);
+      if (type === 'iframe') {
+        window.parent.postMessage(
+          {
+            type: 'GOOGLE_RECAPTCHA_RESULT',
+            data: response,
+          },
+          '*',
+        );
+      } else {
+        window.opener.postMessage(
+          {
+            type: 'GOOGLE_RECAPTCHA_RESULT',
+            data: response,
+          },
+          '*',
+        );
+      }
+      window.close();
+    },
+    [type],
+  );
+  const handleError = useCallback(
+    (error: any) => {
+      if (type === 'iframe') {
+        window.parent.postMessage(
+          {
+            type: 'GOOGLE_RECAPTCHA_ERROR',
+            data: error,
+          },
+          '*',
+        );
+      } else {
+        window.opener.postMessage(
+          {
+            type: 'GOOGLE_RECAPTCHA_ERROR',
+            data: error,
+          },
+          '*',
+        );
+      }
+    },
+    [type],
+  );
+  const handleExpired = useCallback(
+    (value: any) => {
+      if (type === 'iframe') {
+        window.parent.postMessage(
+          {
+            type: 'GOOGLE_RECAPTCHA_EXPIRED',
+            data: value,
+          },
+          '*',
+        );
+      } else {
+        window.opener.postMessage(
+          {
+            type: 'GOOGLE_RECAPTCHA_EXPIRED',
+            data: value,
+          },
+          '*',
+        );
+      }
+    },
+    [type],
+  );
 
   return (
     <div className={styles.reCaptchaContainer}>
