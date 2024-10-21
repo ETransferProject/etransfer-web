@@ -40,5 +40,3 @@ export type THistoryEntryConfig = {
 };
 
 export type AelfInstancesKey = keyof typeof AElfNodes;
-
-export type TSearch = { [key: string]: string | undefined };

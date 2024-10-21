@@ -4,21 +4,14 @@ import { RECAPTCHA_SITE_KEY_MAINNET, RECAPTCHA_SITE_KEY_TESTNET } from 'constant
 import GoogleReCaptcha from 'components/GoogleRecaptcha';
 import styles from './styles.module.scss';
 import { NETWORK_TYPE } from 'constants/index';
-import { TSearch } from 'types';
+import { useSearchParams } from 'next/navigation';
+import { BaseReCaptcha } from 'components/GoogleRecaptcha/types';
 
-export type ReCaptchaProps = {
-  theme?: 'light' | 'dark';
-  size?: 'normal' | 'compact';
-  type?: 'iframe' | 'page';
-};
+export default function ReCaptcha() {
+  const searchParams = useSearchParams();
 
-export default function ReCaptcha({ searchParams = {} }: { searchParams: TSearch }) {
-  const {
-    theme = 'light',
-    size = 'normal',
-    type = 'page',
-  } = useMemo(() => {
-    return searchParams as ReCaptchaProps;
+  const type = useMemo(() => {
+    return searchParams.get('type') || 'page';
   }, [searchParams]);
 
   const handleSuccess = useCallback(
@@ -96,8 +89,8 @@ export default function ReCaptcha({ searchParams = {} }: { searchParams: TSearch
         siteKey={
           NETWORK_TYPE === 'TESTNET' ? RECAPTCHA_SITE_KEY_TESTNET : RECAPTCHA_SITE_KEY_MAINNET
         }
-        theme={theme}
-        size={size}
+        theme={(searchParams.get('theme') as BaseReCaptcha['theme']) || 'light'}
+        size={(searchParams.get('size') as BaseReCaptcha['size']) || 'normal'}
         onSuccess={handleSuccess}
         onError={handleError}
         onExpired={handleExpired}
