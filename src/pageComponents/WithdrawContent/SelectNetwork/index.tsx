@@ -8,6 +8,7 @@ import DynamicArrow from 'components/DynamicArrow';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
 import NetworkLogo from 'components/NetworkLogo';
+import { formatNetworkKey } from 'utils/format';
 
 type TSelectNetworkProps = {
   networkList: TNetworkItem[];
@@ -62,7 +63,7 @@ export default function SelectNetwork({
                 ) : (
                   <>
                     <NetworkLogo network={selected.network} size="big" />
-                    <span className={styles['primary']}>{selected.network}</span>
+                    <span className={styles['primary']}>{formatNetworkKey(selected.network)}</span>
                     <span className={styles['secondary']}>{selected.name}</span>
                   </>
                 )}
