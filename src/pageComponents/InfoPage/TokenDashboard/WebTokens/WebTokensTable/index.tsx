@@ -12,6 +12,7 @@ import DynamicArrow from 'components/DynamicArrow';
 import Network from '../../ColumnComponents/Network';
 import { useCallback, useMemo, useState } from 'react';
 import { ZERO } from 'constants/calculate';
+import { formatNetworkName, isAelfChain } from 'utils/format';
 
 interface ExpandedTableData extends TTokenDashboardItemDetail {
   symbol: string;
@@ -48,7 +49,13 @@ const WebTokensTableExpandedColumns = [
     width: 170,
     showSorterTooltip: false,
     render: (name: string) => {
-      return <Network network={name} size="big" />;
+      return (
+        <Network
+          network={name}
+          size="big"
+          name={isAelfChain(name) ? formatNetworkName(name) : ''}
+        />
+      );
     },
   },
   {

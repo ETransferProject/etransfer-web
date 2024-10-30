@@ -23,8 +23,8 @@ export default function FromOrToChain({
     const currentNetworkName =
       network === BlockchainNetworkType.AELF
         ? chainId === AllSupportedELFChainId.AELF
-          ? `${ChainNamePrefix.MainChain} ${chainId}`
-          : `${ChainNamePrefix.SideChain} ${chainId}`
+          ? ChainNamePrefix.MainChain
+          : ChainNamePrefix.SideChain
         : network;
     return <span className={styles['network-name']}>{currentNetworkName}</span>;
   }, [chainId, network]);

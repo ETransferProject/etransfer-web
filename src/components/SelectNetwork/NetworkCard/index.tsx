@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { SideMenuKey } from 'constants/home';
 import { NetworkStatus } from 'types/api';
-import { formatSymbolDisplay } from 'utils/format';
+import { formatNetworkKey, formatSymbolDisplay } from 'utils/format';
 import NetworkLogo from 'components/NetworkLogo';
 
 interface NetworkCardProps {
@@ -100,7 +100,7 @@ export function NetworkCardForWeb({
       <div className="flex-column flex-1">
         <div className={clsx('flex-row-center-between', styles['network-card-row'])}>
           <span className={styles['network-card-network']}>
-            {network}
+            {formatNetworkKey(network)}
             {status === NetworkStatus.Offline && (
               <span className={styles['network-card-network-suspended']}>Suspended</span>
             )}

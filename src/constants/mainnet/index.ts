@@ -21,13 +21,13 @@ export const SupportedChainId = {
 };
 
 export const CHAIN_NAME: { [chainId in SupportedELFChainId]: string } = {
-  [SupportedELFChainId.AELF]: 'MainChain AELF',
-  [SupportedELFChainId.tDVV]: 'SideChain tDVV',
+  [SupportedELFChainId.AELF]: 'aelf MainChain',
+  [SupportedELFChainId.tDVV]: 'aelf dAppChain',
 };
 
 export enum CHAIN_NAME_ENUM {
-  'MainChain' = 'MainChain AELF',
-  'SideChain' = 'SideChain tDVV',
+  'MainChain' = 'aelf MainChain',
+  'SideChain' = 'aelf dAppChain',
 }
 
 export interface IChainNameItem {

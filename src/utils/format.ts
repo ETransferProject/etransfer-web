@@ -1,5 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { divDecimals } from './calculate';
+import { BlockchainNetworkType } from 'constants/network';
+import { ChainNamePrefix } from 'constants/index';
 
 /**
  * this function is to format address,just like "formatStr2EllipsisStr" ---> "for...Str"
@@ -80,4 +82,39 @@ export const replaceCharacter = (str: string, replaced: string, replacedBy: stri
 
 export const formatSymbolDisplay = (str: string) => {
   return replaceCharacter(str, '-1', '');
+};
+
+export const formatNetworkName = (item: string) => {
+  switch (item) {
+    case BlockchainNetworkType.AELF:
+      return ChainNamePrefix.MainChain;
+    case BlockchainNetworkType.tDVV:
+      return ChainNamePrefix.SideChain;
+    case BlockchainNetworkType.tDVW:
+      return ChainNamePrefix.SideChain;
+    default:
+      return item;
+  }
+};
+
+export const formatNetworkKey = (network: string) => {
+  switch (network) {
+    case BlockchainNetworkType.tDVV:
+      return BlockchainNetworkType.AELF;
+    case BlockchainNetworkType.tDVW:
+      return BlockchainNetworkType.AELF;
+    default:
+      return network;
+  }
+};
+
+export const isAelfChain = (network: string) => {
+  if (
+    network === BlockchainNetworkType.tDVV ||
+    network === BlockchainNetworkType.tDVW ||
+    network === BlockchainNetworkType.AELF
+  ) {
+    return true;
+  }
+  return false;
 };

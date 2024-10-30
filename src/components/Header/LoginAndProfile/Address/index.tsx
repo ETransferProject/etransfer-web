@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import CommonAddress from 'components/CommonAddress';
 import styles from './styles.module.scss';
-import { SupportedChainId } from 'constants/index';
+import { CHAIN_NAME_ENUM, SupportedChainId } from 'constants/index';
 import { CopySize } from 'components/Copy';
 import { SynchronizingAddress } from 'constants/chain';
 import { useGetAccount } from 'hooks/wallet';
@@ -19,14 +19,14 @@ export default function Address({ hideBorder }: AddressProps) {
     if (accounts?.[SupportedChainId.mainChain]) {
       const defaultAddress = accounts?.[SupportedChainId.mainChain];
       temp.push({
-        label: SupportedChainId.mainChain,
+        label: CHAIN_NAME_ENUM.MainChain,
         value: defaultAddress || '',
       });
     }
     if (accounts?.[SupportedChainId.sideChain]) {
       const defaultAddress = accounts?.[SupportedChainId.sideChain];
       temp.push({
-        label: SupportedChainId.sideChain,
+        label: CHAIN_NAME_ENUM.SideChain,
         value: defaultAddress || '',
       });
     }
