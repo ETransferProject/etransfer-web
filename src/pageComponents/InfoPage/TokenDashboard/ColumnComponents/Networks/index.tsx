@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
 import CommonSpace from 'components/CommonSpace';
+import { formatNetworkName } from 'utils/format';
 
 interface NetworksProps {
   list: string[];
@@ -62,7 +63,7 @@ export default function Networks({ list, size = 'big', className }: NetworksProp
             return (
               <CommonTooltip
                 key={`networks-${item}`}
-                title={item}
+                title={formatNetworkName(item)}
                 trigger={isPadPX ? '' : 'hover'}
                 overlayClassName={styles['networks-more-tooltip']}>
                 <div className={styles['logo-container']}>

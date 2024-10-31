@@ -1,8 +1,8 @@
 export * from './testnet';
 
 export const ChainNamePrefix = {
-  MainChain: 'MainChain',
-  SideChain: 'SideChain',
+  MainChain: 'aelf MainChain',
+  SideChain: 'aelf dAppChain',
 };
 
 export const USDT_DECIMAL = 6;

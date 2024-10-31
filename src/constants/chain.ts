@@ -13,9 +13,9 @@ export const AelfChainIdList: TChainId[] = [
 ];
 
 export const AelfChainNetwork: Record<TChainId, string> = {
-  [AllSupportedELFChainId.AELF]: 'MainChain AELF',
-  [AllSupportedELFChainId.tDVV]: 'SideChain tDVV',
-  [AllSupportedELFChainId.tDVW]: 'SideChain tDVW',
+  [AllSupportedELFChainId.AELF]: 'aelf MainChain',
+  [AllSupportedELFChainId.tDVV]: 'aelf dAppChain',
+  [AllSupportedELFChainId.tDVW]: 'aelf dAppChain',
 };
 
 export enum ContractType {
