@@ -4,7 +4,7 @@ import { DeviceSelectChainProps } from '../types';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { AelfBig, tDVVBig as TDVVBig } from 'assets/images';
-import { SupportedELFChainId } from 'constants/index';
+import { CHAIN_NAME_ENUM, SupportedELFChainId } from 'constants/index';
 
 export default function WebSelectChain({
   className,
@@ -46,7 +46,13 @@ export default function WebSelectChain({
       }}
       suffixArrowSize={suffixArrowSize}
       hideDownArrow={hideDownArrow}>
-      <div className={styles['trigger-text']}>{selectedItem?.label}</div>
+      <div className={styles['trigger-text']}>
+        {selectedItem?.label.includes('AELF')
+          ? CHAIN_NAME_ENUM.MainChain
+          : selectedItem?.label.includes('SideChain')
+          ? CHAIN_NAME_ENUM.SideChain
+          : selectedItem?.label}
+      </div>
     </CommonDropdown>
   );
 }

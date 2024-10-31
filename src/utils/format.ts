@@ -97,7 +97,8 @@ export const formatNetworkName = (item: string) => {
   }
 };
 
-export const formatNetworkKey = (network: string) => {
+export const formatNetworkKey = (network?: string) => {
+  if (!network) return '';
   switch (network) {
     case BlockchainNetworkType.tDVV:
       return BlockchainNetworkType.AELF;
