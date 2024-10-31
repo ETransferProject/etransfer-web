@@ -8,7 +8,7 @@ import { TFeeItem, TNetworkItem } from 'types/api';
 import styles from './styles.module.scss';
 import { valueFixed2LessThanMin } from 'utils/calculate';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
-import { formatNetworkKey, formatSymbolDisplay } from 'utils/format';
+import { formatSymbolDisplay } from 'utils/format';
 
 export interface DoubleCheckModalProps {
   withdrawInfo: {
@@ -81,7 +81,7 @@ export default function DoubleCheckModal({
                 withdrawInfo.network?.name
               ) : (
                 <>
-                  <span>{formatNetworkKey(withdrawInfo.network?.network)}</span>
+                  <span>{withdrawInfo.network?.network}</span>
                   <span className={styles['secondary-value']}>{withdrawInfo.network?.name}</span>
                 </>
               )}
