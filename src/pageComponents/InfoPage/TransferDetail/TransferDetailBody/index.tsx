@@ -69,7 +69,7 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
           {props.status === TOrderStatus.Failed
             ? DEFAULT_NULL_VALUE
             : props.orderType === BusinessType.Withdraw
-            ? `${props.toFeeInfo[0].amount} ${formatSymbolDisplay(props.toFeeInfo[0].symbol)}`
+            ? `${props.toFeeInfo[0]?.amount} ${formatSymbolDisplay(props.toFeeInfo[0]?.symbol)}`
             : 'Free'}
         </div>
       </div>
