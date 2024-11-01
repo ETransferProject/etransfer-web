@@ -37,12 +37,14 @@ export default function MyAsset() {
     return null;
   }
 
+  const isLoginOnChain = PortkeyDid.did.didWallet.isLoginStatus === LoginStatusEnum.SUCCESS;
+  console.log('>>>>>> isLoginOnChain', isLoginOnChain);
   return (
     <div className={styles['my-asset-wrapper']}>
       <PortkeyDid.PortkeyAssetProvider
         originChainId={portkeyAAInfo?.portkeyInfo?.chainId}
         pin={portkeyAAInfo?.portkeyInfo?.pin}
-        isLoginOnChain={PortkeyDid.did.didWallet.isLoginStatus === LoginStatusEnum.SUCCESS}>
+        isLoginOnChain={isLoginOnChain}>
         <PortkeyDid.Asset
           isShowRamp={false}
           isShowRampBuy={false}
