@@ -44,7 +44,7 @@ const baseConfig = {
   keyboard: true,
   noCommonBaseModal: false,
   design: SignInDesignEnum.CryptoDesign,
-  enableAcceleration: true,
+  enableAcceleration: false,
 };
 
 const isTelegramPlatform = TelegramPlatform.isTelegramPlatform();

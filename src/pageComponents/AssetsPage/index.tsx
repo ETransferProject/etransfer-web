@@ -8,8 +8,8 @@ import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
 import { ExtraInfoForPortkeyAA } from 'types/wallet';
-import { LoginStatusEnum } from '@portkey/types';
-import { SingleMessage } from '@etransfer/ui-react';
+// import { LoginStatusEnum } from '@portkey/types';
+// import { SingleMessage } from '@etransfer/ui-react';
 
 export default function MyAsset() {
   const router = useRouter();
@@ -30,16 +30,16 @@ export default function MyAsset() {
     }
   }, [walletType, router]);
 
-  const loginOnChainStatus = PortkeyDid.did.didWallet.isLoginStatus;
-  console.log('>>>>>> loginOnChainStatus', loginOnChainStatus === LoginStatusEnum.SUCCESS);
+  // const loginOnChainStatus = PortkeyDid.did.didWallet.isLoginStatus;
+  // console.log('>>>>>> loginOnChainStatus', loginOnChainStatus === LoginStatusEnum.SUCCESS);
 
-  useEffect(() => {
-    if (loginOnChainStatus === LoginStatusEnum.FAIL) {
-      SingleMessage.error(
-        'Synchronization failed. Please check your connection status or log in again.',
-      );
-    }
-  }, [loginOnChainStatus]);
+  // useEffect(() => {
+  //   if (loginOnChainStatus === LoginStatusEnum.FAIL) {
+  //     SingleMessage.error(
+  //       'Synchronization failed. Please check your connection status or log in again.',
+  //     );
+  //   }
+  // }, [loginOnChainStatus]);
 
   if (
     walletType !== WalletTypeEnum.aa ||
@@ -53,8 +53,7 @@ export default function MyAsset() {
     <div className={styles['my-asset-wrapper']}>
       <PortkeyDid.PortkeyAssetProvider
         originChainId={portkeyAAInfo?.portkeyInfo?.chainId}
-        pin={portkeyAAInfo?.portkeyInfo?.pin}
-        isLoginOnChain={loginOnChainStatus === LoginStatusEnum.SUCCESS}>
+        pin={portkeyAAInfo?.portkeyInfo?.pin}>
         <PortkeyDid.Asset
           isShowRamp={false}
           isShowRampBuy={false}
