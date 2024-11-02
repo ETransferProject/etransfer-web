@@ -53,7 +53,8 @@ export default function MyAsset() {
     <div className={styles['my-asset-wrapper']}>
       <PortkeyDid.PortkeyAssetProvider
         originChainId={portkeyAAInfo?.portkeyInfo?.chainId}
-        pin={portkeyAAInfo?.portkeyInfo?.pin}>
+        pin={portkeyAAInfo?.portkeyInfo?.pin}
+        isLoginOnChain={true}>
         <PortkeyDid.Asset
           isShowRamp={false}
           isShowRampBuy={false}
