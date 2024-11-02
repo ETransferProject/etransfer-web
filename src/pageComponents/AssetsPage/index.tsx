@@ -8,7 +8,8 @@ import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
 import { ExtraInfoForPortkeyAA } from 'types/wallet';
-import { LoginStatusEnum } from '@portkey/types';
+// import { LoginStatusEnum } from '@portkey/types';
+// import { SingleMessage } from '@etransfer/ui-react';
 
 export default function MyAsset() {
   const router = useRouter();
@@ -29,6 +30,17 @@ export default function MyAsset() {
     }
   }, [walletType, router]);
 
+  // const loginOnChainStatus = PortkeyDid.did.didWallet.isLoginStatus;
+  // console.log('>>>>>> loginOnChainStatus', loginOnChainStatus === LoginStatusEnum.SUCCESS);
+
+  // useEffect(() => {
+  //   if (loginOnChainStatus === LoginStatusEnum.FAIL) {
+  //     SingleMessage.error(
+  //       'Synchronization failed. Please check your connection status or log in again.',
+  //     );
+  //   }
+  // }, [loginOnChainStatus]);
+
   if (
     walletType !== WalletTypeEnum.aa ||
     !portkeyAAInfo?.portkeyInfo?.pin ||
@@ -42,7 +54,7 @@ export default function MyAsset() {
       <PortkeyDid.PortkeyAssetProvider
         originChainId={portkeyAAInfo?.portkeyInfo?.chainId}
         pin={portkeyAAInfo?.portkeyInfo?.pin}
-        isLoginOnChain={PortkeyDid.did.didWallet.isLoginStatus === LoginStatusEnum.SUCCESS}>
+        isLoginOnChain={true}>
         <PortkeyDid.Asset
           isShowRamp={false}
           isShowRampBuy={false}
