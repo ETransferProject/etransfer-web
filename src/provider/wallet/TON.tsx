@@ -3,9 +3,10 @@
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
 
 export default function TONProvider({ children }: { children: React.ReactNode }) {
-  // ${window.location.origin}
+  const domain = typeof window != undefined ? window.location.origin : '';
+
   return (
-    <TonConnectUIProvider manifestUrl="https://localhost:3000/tonconnect-manifest.json">
+    <TonConnectUIProvider manifestUrl={`${domain}/tonconnect-manifest.json`}>
       {children}
     </TonConnectUIProvider>
   );

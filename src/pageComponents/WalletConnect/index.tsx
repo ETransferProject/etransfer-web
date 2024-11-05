@@ -5,7 +5,7 @@ import TRONWallet from './TRONWallet';
 
 export default function WalletConnect() {
   return (
-    <div>
+    <div style={{ padding: 50 }}>
       <h2 style={{ marginTop: 24, marginBottom: 12 }}>EVM</h2>
       <EVMWallet />
 
