@@ -1,62 +1,63 @@
 import { Button } from 'antd';
 import { useCallback } from 'react';
-import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks';
-
-// const TRON_COBO_ADDRESS = 'TQjkrizqkRAGBUC1rGWsrSHi13d8KKoh1E';
-const TRON_TO_ADDRESS = 'TWMND3GoXuJkuLBvHAjChgSGoB8yqiZDkj';
-const USDT_CONTRACT_ADDRESS_TRC20 = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'; // 'TXYZ9Kxg8AFhA4TvnYFZgDmdxyTtbpaK8Y'; // USDT contractAddress (TRC20)
+import useTRON from 'hooks/wallet/useTRON';
+import { TRON_TO_ADDRESS, TRON_USDT_CONTRACT_ADDRESS_TRC20 } from 'constants/wallet/TRON';
 
 export default function TRONWallet() {
-  const { address, wallet, connected, select, disconnect } = useWallet();
+  const { account, isConnected, connect, disconnect, getBalance, signMessage, sendTransaction } =
+    useTRON();
 
   const onDisConnectTRON = useCallback(() => {
     disconnect();
   }, [disconnect]);
 
-  const onCreateRawTransaction = useCallback(async () => {
-    // const transaction = {
-    //   to: TRON_TO_ADDRESS,
-    //   amount: 0.001,
-    //   visible: true,
-    //   txID: '',
-    //   raw_data: '',
-    //   raw_data_hex: '',
-    // };
-    // await signTransaction(transaction);
-  }, []);
-
-  const onSendTransaction = useCallback(async () => {
+  const onGetBalance = useCallback(async () => {
     try {
-      if (window.tronLink) {
-        const tronWeb = window.tronLink.tronWeb;
-        const amount = 0.1; // unit is SUN，1 TRX = 1,000,000 SUN
-        const contract = await tronWeb.contract().at(USDT_CONTRACT_ADDRESS_TRC20);
-        const tx = await contract.transfer(TRON_TO_ADDRESS, tronWeb.toSun(amount)).send();
-        // send({ feeLimit: 10000000 })
-
-        // const tx = await tronWeb.trx.sendTransaction(TRON_TO_ADDRESS, amount);
-
-        console.log('>>>>>> TRON tx', tx);
-      }
+      const balance = await getBalance({ tokenContractAddress: TRON_USDT_CONTRACT_ADDRESS_TRC20 });
+      console.log('>>>>>> TRON balance', balance);
     } catch (error) {
       console.log('>>>>>> TRON error', error);
     }
-  }, []);
+  }, [getBalance]);
+
+  const onSignMessage = useCallback(async () => {
+    try {
+      const res = await signMessage();
+      console.log('>>>>>> TRON onSignMessage res', res);
+    } catch (error) {
+      console.log('>>>>>> TRON onSignMessage error', error);
+    }
+  }, [signMessage]);
+
+  const onSendTransaction = useCallback(async () => {
+    try {
+      const tx = await sendTransaction({
+        tokenContractAddress: TRON_USDT_CONTRACT_ADDRESS_TRC20,
+        toAddress: TRON_TO_ADDRESS,
+        amount: 0.1,
+      });
+
+      console.log('>>>>>> TRON tx', tx);
+    } catch (error) {
+      console.log('>>>>>> TRON error', error);
+    }
+  }, [sendTransaction]);
 
   return (
     <div>
-      {connected ? (
+      {isConnected ? (
         <>
-          <p>Current Address: {address}</p>
-          <p>Connection Status: {wallet?.state}</p>
+          <p>Current Address: {account}</p>
+          {/* <p>Connection Status: {wallet?.state}</p> */}
 
-          <Button onClick={onDisConnectTRON}>DisConnect TRON</Button>
-          <Button onClick={onCreateRawTransaction}>Raw Transaction</Button>
+          <Button onClick={onDisConnectTRON}>DisConnect</Button>
+          <Button onClick={onGetBalance}>Get Balance</Button>
+          <Button onClick={onSignMessage}>Sign Message</Button>
           <Button onClick={onSendTransaction}>Send Transaction</Button>
         </>
       ) : (
         <>
-          <Button onClick={() => select('TronLink')}>Select Wallet</Button>
+          <Button onClick={() => connect('TronLink' as any)}>Select Wallet</Button>
         </>
       )}
     </div>
