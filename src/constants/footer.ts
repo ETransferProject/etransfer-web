@@ -63,7 +63,7 @@ export const FOOTER_CONFIG: TFooterConfig = {
           link: 'https://doc.portkey.finance/docs/How-to-download-Portkey',
         },
         {
-          name: 'Explorer',
+          name: 'aelfscan',
           link: 'https://aelfscan.io',
         },
       ],
