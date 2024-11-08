@@ -4,6 +4,7 @@ import CommonWarningTip from 'components/Tips/CommonWarningTip';
 export interface ProcessingTipProps {
   depositProcessingCount?: number;
   withdrawProcessingCount?: number;
+  transferProcessingCount?: number;
   marginBottom?: number;
   borderRadius?: number;
   className?: string;
@@ -12,6 +13,7 @@ export interface ProcessingTipProps {
 export function ProcessingTip({
   depositProcessingCount,
   withdrawProcessingCount,
+  transferProcessingCount, // TODO
   marginBottom = 16,
   borderRadius,
   className,

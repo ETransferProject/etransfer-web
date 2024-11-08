@@ -57,6 +57,9 @@ export function useRouterPush() {
       case `/${SideMenuKey.Info.toLocaleLowerCase()}`:
         result = SideMenuKey.Info;
         break;
+      case `/cross-chain-transfer`:
+        result = SideMenuKey.CrossChainTransfer;
+        break;
 
       default:
         break;
@@ -157,10 +160,10 @@ export function useChangeSideMenu() {
   routerRef.current = router.push;
 
   return useCallback(
-    (key: SideMenuKey) => {
+    (key: SideMenuKey, pathname: string) => {
       console.log('>>>useChangeSideMenu', key);
       dispatch(setActiveMenuKey(key));
-      routerRef.current(`/${key.toLocaleLowerCase()}`);
+      routerRef.current(pathname);
     },
     [dispatch],
   );

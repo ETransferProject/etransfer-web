@@ -16,7 +16,6 @@ export function useWallet(): [WalletState, BasicActions<WalletActions>] {
   return useContext(WalletContext);
 }
 
-//reducer
 function reducer(state: WalletState, { type, payload }: { type: WalletActions; payload: any }) {
   switch (type) {
     case WalletActions.destroy: {

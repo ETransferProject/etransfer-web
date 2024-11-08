@@ -141,3 +141,12 @@ export const FAQ_WITHDRAW: TFrequentlyAskedQuestionsSection = {
     DOCUMENTATION_LINK.completedTime,
   ],
 };
+
+export const FAQ_CROSS_CHAIN_TRANSFER: TFrequentlyAskedQuestionsSection = {
+  title: 'FAQ',
+  list: [
+    DOCUMENTATION_LINK.aboutETransfer,
+    DOCUMENTATION_LINK.notArrived,
+    DOCUMENTATION_LINK.completedTime,
+  ],
+};

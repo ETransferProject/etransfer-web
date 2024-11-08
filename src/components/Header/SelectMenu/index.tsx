@@ -48,7 +48,7 @@ export default function SelectMenu() {
                     if (item.key === SideMenuKey.History && isUnreadHistory) {
                       myEvents.HistoryActive.emit();
                     }
-                    changeSideMenu(item.key);
+                    changeSideMenu(item.key, item.pathname);
                   }}>
                   <MenuIcon className={styles['menu-item-icon']} />
                   <div className={styles['menu-item-label']}>
