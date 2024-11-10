@@ -22,6 +22,14 @@ import CopyBig from './copyBig.svg';
 import Portkey from './wallet/portkey.svg';
 import Portkey24 from './wallet/portkey24.svg';
 import PortkeyV2 from './wallet/portkeyV2.svg';
+import Metamask from './wallet/metamask.svg';
+import Coinbase from './wallet/coinbase.svg';
+import WalletConnect from './wallet/walletConnect.svg';
+import Phantom from './wallet/phantom.svg';
+import Tonkeeper from './wallet/Tonkeeper.svg';
+import TronLink from './wallet/tronLink.svg';
+import Logout from './logout.svg';
+
 import qrCodePlaceholder from './qrCodePlaceholder.png';
 import ExclamationFilledSmall from './exclamationFilledSmall.svg';
 import OpenLinkIcon from './openLink.svg';
@@ -32,9 +40,11 @@ import Records from './recordIcon.svg';
 import Aelf from './chain/aelf.svg';
 import AelfMedium from './chain/aelfMedium.svg';
 import AelfBig from './chain/aelfBig.svg';
+import AelfSmall from './chain/aelfSmall.svg';
 import tDVV from './chain/tDVV.svg';
 import tDVVMedium from './chain/tDVVMedium.svg';
 import tDVVBig from './chain/tDVVBig.svg';
+import tDVVSmall from './chain/tDVVSmall.svg';
 import Arbitrum from './chain/arbitrum.svg';
 import ArbitrumMedium from './chain/arbitrumMedium.svg';
 import ArbitrumBig from './chain/arbitrumBig.svg';
@@ -129,6 +139,13 @@ export {
   Portkey,
   Portkey24,
   PortkeyV2,
+  Metamask,
+  Coinbase,
+  WalletConnect,
+  Phantom,
+  Tonkeeper,
+  TronLink,
+  Logout,
   Copy,
   CopySmall,
   CopyBig,
@@ -143,9 +160,11 @@ export {
   Aelf,
   AelfMedium,
   AelfBig,
+  AelfSmall,
   tDVV,
   tDVVMedium,
   tDVVBig,
+  tDVVSmall,
   Arbitrum,
   ArbitrumMedium,
   ArbitrumBig,

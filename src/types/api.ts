@@ -8,6 +8,7 @@ import { TransferStatusType } from 'constants/infoDashboard';
 export enum BusinessType {
   Deposit = 'Deposit',
   Withdraw = 'Withdraw',
+  Transfer = 'Transfer',
 }
 
 export enum AuthTokenSource {
@@ -17,7 +18,7 @@ export enum AuthTokenSource {
 
 export type TGetTokenListRequest = {
   type: BusinessType;
-  chainId: TChainId;
+  chainId?: TChainId;
 };
 
 export type TGetTokenListResult = {
@@ -51,7 +52,7 @@ export type TToTokenItem = TTokenItem & {
 
 export type TGetNetworkListRequest = {
   type: BusinessType;
-  chainId: TChainId;
+  chainId?: TChainId;
   symbol?: string;
   address?: string;
 };

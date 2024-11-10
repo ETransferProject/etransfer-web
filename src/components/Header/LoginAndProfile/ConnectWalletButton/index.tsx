@@ -1,36 +1,29 @@
-import React from 'react';
-import CommonButton, { CommonButtonProps } from 'components/CommonButton';
-import { useCallback } from 'react';
-import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
-import { useQueryAuthToken } from 'hooks/authToken';
-import { handleWebLoginErrorMessage } from 'utils/api/error';
-import { LOGIN, UNLOCK } from 'constants/wallet';
-import { useIsLogin, useShowLoginButtonLoading } from 'hooks/wallet';
-import { SingleMessage } from '@etransfer/ui-react';
+import { CommonButtonProps } from 'components/CommonButton';
+import { usePathname } from 'next/navigation';
+import ConnectOtherWalletButton from './ConnectOtherWallet';
+import ConnectAelfWalletButton from './ConnectAelfWallet';
+import { useMemo, useState } from 'react';
+import ConnectWalletModal from '../ConnectWalletModal';
 
 export default function ConnectWalletButton(props: CommonButtonProps) {
-  const { connectWallet, isLocking } = useConnectWallet();
-  const { getAuth } = useQueryAuthToken();
-  const isLogin = useIsLogin();
-  // Fix: It takes too long to obtain NightElf walletInfo, and the user mistakenly clicks the login button during this period.
-  const isLoginButtonLoading = useShowLoginButtonLoading();
+  const pathname = usePathname();
+  const [openConnectWalletModal, setOpenConnectWalletModal] = useState(false);
 
-  const handleLogin = useCallback(async () => {
-    try {
-      if (isLogin) {
-        await getAuth();
-      }
-      if (!isLogin) {
-        await connectWallet();
-      }
-    } catch (error) {
-      SingleMessage.error(handleWebLoginErrorMessage(error));
+  const connectButton = useMemo(() => {
+    if (pathname === '/deposit') {
+      return <ConnectAelfWalletButton {...props} onClick={() => setOpenConnectWalletModal(true)} />;
     }
-  }, [connectWallet, getAuth, isLogin]);
+
+    return <ConnectOtherWalletButton {...props} onClick={() => setOpenConnectWalletModal(true)} />;
+  }, []);
 
   return (
-    <CommonButton {...props} onClick={handleLogin} loading={isLoginButtonLoading}>
-      {isLocking ? UNLOCK : LOGIN}
-    </CommonButton>
+    <>
+      {connectButton}
+      <ConnectWalletModal
+        open={openConnectWalletModal}
+        onCancel={() => setOpenConnectWalletModal(false)}
+      />
+    </>
   );
 }

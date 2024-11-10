@@ -1,3 +1,5 @@
+import { Coinbase, Metamask, WalletConnect } from 'assets/images';
+
 export const EVM_TO_ADDRESS = '0x08915f275100dfEc26f63624EEACdD41E4040CC0';
 // export const EVM_USDT_CONTRACT_ADDRESS_MAINNET = '0xdac17f958d2ee523a2206206994597c13d831ec7';
 export const EVM_USDT_CONTRACT_ADDRESS_SEPOLIA = '0x60eeCc4d19f65B9EaDe628F2711C543eD1cE6679';
@@ -14,3 +16,24 @@ export const EVM_USDT_ABI = [
     type: 'function',
   },
 ];
+
+export const CONNECT_EVM_LIST_CONFIG = {
+  section: 'EVM',
+  list: [
+    {
+      name: 'Metamask',
+      key: 'MetaMask',
+      icon: Metamask,
+    },
+    {
+      name: 'Coinbase Wallet',
+      key: 'Coinbase Wallet',
+      icon: Coinbase,
+    },
+    {
+      name: 'WalletConnect',
+      key: 'WalletConnect',
+      icon: WalletConnect,
+    },
+  ],
+};
