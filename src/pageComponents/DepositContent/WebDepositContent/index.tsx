@@ -23,7 +23,7 @@ import SelectChainWrapper from '../SelectChainWrapper';
 import DepositTip from '../DepositTip';
 import { CopySize } from 'components/Copy';
 import NotLoginTip from '../NotLoginTip';
-import { useIsLogin, useLogin } from 'hooks/wallet';
+import useAelf, { useLogin } from 'hooks/wallet/useAelf';
 import { useDepositNetworkList } from 'hooks/deposit';
 import TransferTip from '../TransferTip';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
@@ -44,7 +44,7 @@ export default function WebContent({
   toTokenSelected,
   isCheckTxnLoading = false,
   depositProcessingCount,
-  withdrawProcessingCount,
+  transferProcessingCount,
   onRetry,
   onCheckTxnClick,
   onClickProcessingTip,
@@ -53,7 +53,7 @@ export default function WebContent({
   fromNetworkChanged,
   fromTokenChanged,
 }: TDepositContentProps) {
-  const isLogin = useIsLogin();
+  const { isConnected } = useAelf();
   const handleLogin = useLogin();
 
   const {
@@ -72,22 +72,22 @@ export default function WebContent({
 
   const isShowNotLoginTip = useMemo(() => {
     return (
-      !isLogin &&
+      !isConnected &&
       !!fromTokenSymbol &&
       !!toTokenSymbol &&
       !!fromNetwork?.network &&
       !!toChainItem.key
     );
-  }, [fromNetwork?.network, fromTokenSymbol, isLogin, toChainItem.key, toTokenSymbol]);
+  }, [fromNetwork?.network, fromTokenSymbol, isConnected, toChainItem.key, toTokenSymbol]);
 
   const isShowTransferTip = useMemo(() => {
     return (
-      isLogin &&
+      isConnected &&
       SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE.includes(fromTokenSymbol as TokenType) &&
       fromTokenSymbol === toTokenSymbol &&
       AelfChainIdList.includes(fromNetwork?.network as TChainId)
     );
-  }, [fromNetwork?.network, fromTokenSymbol, isLogin, toTokenSymbol]);
+  }, [fromNetwork?.network, fromTokenSymbol, isConnected, toTokenSymbol]);
 
   const isShowDepositAddressLabelForLogin = useMemo(() => {
     return showRetry || !!depositInfo.depositAddress;
@@ -99,12 +99,12 @@ export default function WebContent({
       toChainItem.key &&
       toTokenSymbol &&
       fromNetworkSelected?.network &&
-      !isLogin
+      !isConnected
     );
   }, [
     fromNetworkSelected?.network,
     fromTokenSymbol,
-    isLogin,
+    isConnected,
     showRetry,
     toChainItem.key,
     toTokenSymbol,
@@ -177,7 +177,7 @@ export default function WebContent({
           <div className={clsx('flex-row-center-between', styles['label'])}>
             <span>To</span>
             <div className="flex-row-center">
-              {isLogin ? (
+              {isConnected ? (
                 <>
                   <div className={styles['circle']} />
                   <span className={styles['connected']}>Connected</span>
@@ -204,7 +204,7 @@ export default function WebContent({
     fromNetworkChanged,
     fromNetworkSelected,
     handleLogin,
-    isLogin,
+    isConnected,
     isShowNetworkLoading,
     menuItems,
     newFromNetworkList,
@@ -317,10 +317,10 @@ export default function WebContent({
           'main-content-container-safe-area',
           styles['main-content'],
         )}>
-        {isLogin && (
+        {isConnected && (
           <ProcessingTip
             depositProcessingCount={depositProcessingCount}
-            withdrawProcessingCount={withdrawProcessingCount}
+            transferProcessingCount={transferProcessingCount}
             onClick={onClickProcessingTip}
           />
         )}
@@ -353,8 +353,10 @@ export default function WebContent({
               </div>
             )}
             {isShowNotLoginTip && <NotLoginTip />}
-            {isLogin && showRetry && <DepositRetryForWeb isShowImage={true} onClick={onRetry} />}
-            {isLogin && !showRetry && !!depositInfo.depositAddress && renderDepositInfo}
+            {isConnected && showRetry && (
+              <DepositRetryForWeb isShowImage={true} onClick={onRetry} />
+            )}
+            {isConnected && !showRetry && !!depositInfo.depositAddress && renderDepositInfo}
           </>
         )}
       </div>
@@ -364,7 +366,7 @@ export default function WebContent({
     depositProcessingCount,
     fromNetworkSelected,
     fromTokenSymbol,
-    isLogin,
+    isConnected,
     isShowDepositAddressLabelForLogin,
     isShowDepositAddressLabelForNotLogin,
     isShowNotLoginTip,
@@ -376,7 +378,7 @@ export default function WebContent({
     renderSelectSection,
     showRetry,
     toChainItem,
-    withdrawProcessingCount,
+    transferProcessingCount,
   ]);
 
   return (

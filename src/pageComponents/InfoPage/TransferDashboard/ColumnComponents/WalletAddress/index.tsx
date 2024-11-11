@@ -9,7 +9,7 @@ import {
   OtherExploreType,
   ExploreUrlNotAelf,
 } from 'constants/network';
-import { useGetAccount } from 'hooks/wallet';
+import { useGetAccount } from 'hooks/wallet/useAelf';
 import { useCallback } from 'react';
 import { formatDIDAddress } from 'utils/aelf/aelfBase';
 import { getOmittedStr } from 'utils/calculate';

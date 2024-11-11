@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import CommonButton, { CommonButtonSize, CommonButtonType } from 'components/CommonButton';
-import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
+import useAelf from 'hooks/wallet/useAelf';
 import { useClearStore } from 'hooks/common';
 import myEvents from 'utils/myEvent';
 import service from 'api/axios';
@@ -11,20 +11,20 @@ type TLogoutButtonType = {
 };
 
 export default function LogoutButton({ closeDialog }: TLogoutButtonType) {
-  const { disConnectWallet, walletInfo } = useConnectWallet();
+  const { account, disconnect } = useAelf();
   const clearStore = useClearStore();
 
   const handleLogoutWallet = useCallback(async () => {
-    Promise.resolve(disConnectWallet()).then(() => {
+    Promise.resolve(disconnect()).then(() => {
       clearStore();
       service.defaults.headers.common['Authorization'] = '';
       myEvents.LogoutSuccess.emit();
       console.warn('>>>>>> logout');
       // stop notice socket
-      unsubscribeUserOrderRecord(walletInfo?.address || '');
+      unsubscribeUserOrderRecord(account || '');
     });
     closeDialog?.();
-  }, [clearStore, closeDialog, disConnectWallet, walletInfo?.address]);
+  }, [account, clearStore, closeDialog, disconnect]);
 
   return (
     <CommonButton

@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { handleWebLoginErrorMessage } from 'utils/api/error';
 import { divDecimals } from 'utils/calculate';
 import { getBalance } from 'utils/contract';
-import { useGetAccount } from './wallet';
+import { useGetAccount } from './wallet/useAelf';
 
 export function useGetBalanceDivDecimals() {
   const accounts = useGetAccount();

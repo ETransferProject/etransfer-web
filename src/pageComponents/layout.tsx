@@ -15,7 +15,7 @@ import { useRouteParamType } from 'hooks/route';
 import { useUpdateRecord } from 'hooks/updateRecord';
 import Footer from 'components/Footer';
 import { usePathname } from 'next/navigation';
-import { useInitWallet } from 'hooks/wallet';
+import { useInitWallet } from 'hooks/wallet/useAelf';
 import { TelegramPlatform } from 'utils/telegram';
 import service from 'api/axios';
 import { API_VERSION } from 'constants/misc';

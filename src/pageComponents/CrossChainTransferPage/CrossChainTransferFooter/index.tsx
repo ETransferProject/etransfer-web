@@ -1,6 +1,6 @@
 import CommonButton from 'components/CommonButton';
 import styles from './styles.module.scss';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
 import { useWallet } from 'context/Wallet';
 import {
@@ -24,10 +24,14 @@ export default function CrossChainTransferFooter({
   fromInput,
   fromBalance,
 }: CrossChainTransferFooterProps) {
-  const [{ fromWalletType, toWalletType }, { dispatch }] = useWallet();
-  const [estimateReceive, setEstimateReceive] = useState<string>(DEFAULT_NULL_VALUE);
-  const [transactionFee, setTransactionFee] = useState<string>(DEFAULT_NULL_VALUE);
-  const [isShowTxnFeeEnoughTip, setIsShowTxnFeeEnoughTip] = useState<boolean>(false);
+  const [{ fromWalletType, toWalletType }] = useWallet();
+
+  // const [estimateReceive, setEstimateReceive] = useState<string>(DEFAULT_NULL_VALUE);
+  // const [transactionFee, setTransactionFee] = useState<string>(DEFAULT_NULL_VALUE);
+  // const [isShowTxnFeeEnoughTip, setIsShowTxnFeeEnoughTip] = useState<boolean>(false);
+  const estimateReceive = DEFAULT_NULL_VALUE;
+  const transactionFee = DEFAULT_NULL_VALUE;
+  const isShowTxnFeeEnoughTip = false;
 
   const onConnectWallet = useCallback(() => {
     console.log('onConnectWallet');

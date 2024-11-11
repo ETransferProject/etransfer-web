@@ -53,7 +53,7 @@ import {
 import { CommonErrorNameType } from 'api/types';
 import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
 import { handleErrorMessage } from '@etransfer/utils';
-import { useGetAccount, useIsLogin } from 'hooks/wallet';
+import useAelf, { useGetAccount } from 'hooks/wallet/useAelf';
 import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
 import {
   formatSymbolDisplay,
@@ -119,9 +119,9 @@ export default function WithdrawContent() {
   const isAndroid = devices.isMobile().android;
   const { isPadPX, isMobilePX } = useCommonState();
   const { depositProcessingCount, withdrawProcessingCount } = useRecordsState();
-  const isLogin = useIsLogin();
-  const isLoginRef = useRef(isLogin);
-  isLoginRef.current = isLogin;
+  const { isConnected } = useAelf();
+  const isConnectedRef = useRef(isConnected);
+  isConnectedRef.current = isConnected;
   const withdraw = useWithdrawState();
   const accounts = useGetAccount();
   const { currentSymbol, tokenList, currentChainItem } = useWithdraw();
@@ -349,7 +349,7 @@ export default function WithdrawContent() {
 
   const handleAmountValidate = useCallback(
     (newMinAmount?: string, newTransactionUnit?: string, newMaxBalance?: string) => {
-      if (!isLoginRef.current) return;
+      if (!isConnectedRef.current) return;
 
       const amount = form.getFieldValue(FormKeys.AMOUNT);
       if (!amount) {
@@ -417,8 +417,8 @@ export default function WithdrawContent() {
 
   const getWithdrawData = useCallback(
     async (optionSymbol?: string, newMaxBalance?: string): Promise<any> => {
-      console.log('getWithdrawData >>>>>> isLogin', isLoginRef.current);
-      if (!isLoginRef.current) return;
+      console.log('getWithdrawData >>>>>> isConnectedRef', isConnectedRef.current);
+      if (!isConnectedRef.current) return;
 
       const symbol = optionSymbol || currentSymbol;
       try {
@@ -967,7 +967,7 @@ export default function WithdrawContent() {
   // }, [init]);
 
   useEffect(() => {
-    if (!isLogin) {
+    if (!isConnected) {
       setWithdrawInfo(InitialWithdrawInfo);
       setBalance('0');
       setMaxBalance('');
@@ -978,7 +978,7 @@ export default function WithdrawContent() {
         getMaxBalanceTimerRef.current = null;
       }
     }
-  }, [isLogin]);
+  }, [isConnected]);
 
   useEffect(() => {
     // log in
@@ -1003,7 +1003,7 @@ export default function WithdrawContent() {
         className={clsx('flex-row-center', styles['info-wrapper'], styles['balance-info-wrapper'])}>
         <div className={styles['info-label']}>Balance</div>
         <div className={styles['info-value']}>
-          {!isLogin ? (
+          {!isConnected ? (
             DEFAULT_NULL_VALUE
           ) : !maxBalance || isMaxBalanceLoading ? (
             <PartialLoading />
@@ -1013,7 +1013,7 @@ export default function WithdrawContent() {
         </div>
       </div>
     );
-  }, [currentSymbol, isLogin, isMaxBalanceLoading, maxBalance]);
+  }, [currentSymbol, isConnected, isMaxBalanceLoading, maxBalance]);
 
   const handleClickProcessingTip = useCallback(() => {
     router.push('/history');
@@ -1027,11 +1027,11 @@ export default function WithdrawContent() {
           'withdraw-content-container',
           !isPadPX && styles['main-content'],
         )}>
-        {!isPadPX && isLogin && (
+        {!isPadPX && isConnected && (
           <div className={styles['withdraw-processing-container']}>
             <ProcessingTip
               depositProcessingCount={depositProcessingCount}
-              withdrawProcessingCount={withdrawProcessingCount}
+              transferProcessingCount={withdrawProcessingCount}
               onClick={handleClickProcessingTip}
             />
           </div>
@@ -1142,7 +1142,7 @@ export default function WithdrawContent() {
                 label={
                   <div className={clsx('flex-row-between', styles['form-label-wrapper'])}>
                     <span className={styles['form-label']}>Withdrawal Amount</span>
-                    {isLogin && !isPadPX && (
+                    {isConnected && !isPadPX && (
                       <RemainingLimit
                         limitCurrency={withdrawInfo.limitCurrency}
                         totalLimit={withdrawInfo.totalLimit}
@@ -1157,14 +1157,14 @@ export default function WithdrawContent() {
                 <FormInput
                   unit={withdrawInfo.transactionUnit}
                   maxButtonConfig={
-                    isLogin
+                    isConnected
                       ? {
                           onClick: () => setMaxToken(),
                         }
                       : undefined
                   }
                   autoComplete="off"
-                  placeholder={isLogin ? `Minimum: ${minAmount}` : ''}
+                  placeholder={isConnected ? `Minimum: ${minAmount}` : ''}
                   onInput={(event: any) => {
                     const value = event.target?.value?.trim();
                     const oldValue = form.getFieldValue(FormKeys.AMOUNT);
@@ -1220,7 +1220,7 @@ export default function WithdrawContent() {
 
             {renderBalance}
 
-            {isLogin && isPadPX && (
+            {isConnected && isPadPX && (
               <RemainingLimit
                 limitCurrency={withdrawInfo.limitCurrency}
                 totalLimit={withdrawInfo.totalLimit}
@@ -1271,7 +1271,7 @@ export default function WithdrawContent() {
     handleNetworkChanged,
     handleTokenChange,
     isAndroid,
-    isLogin,
+    isConnected,
     isNetworkDisable,
     isPadPX,
     isShowNetworkLoading,
@@ -1292,10 +1292,10 @@ export default function WithdrawContent() {
 
   return (
     <>
-      {isPadPX && isLogin && (
+      {isPadPX && isConnected && (
         <ProcessingTip
           depositProcessingCount={depositProcessingCount}
-          withdrawProcessingCount={withdrawProcessingCount}
+          transferProcessingCount={withdrawProcessingCount}
           marginBottom={isPadPX && !isMobilePX ? 24 : 16}
           borderRadius={0}
           onClick={handleClickProcessingTip}

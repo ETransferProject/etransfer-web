@@ -60,6 +60,14 @@
   margin-bottom: 4px;
 }
 
+.wallet-list-item-show {
+  display: block;
+}
+
+.wallet-list-item-hidden {
+  display: none;
+}
+
 .wallet-list-item:nth-child(2) {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
@@ -114,6 +122,10 @@
       fill: $error;
     }
   }
+}
+
+.wallet-connect-loading {
+  font-size: 14px;
 }
 
 .wallet-aelf-account-list-show {

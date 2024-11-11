@@ -15,7 +15,7 @@ import { formatDIDAddress } from 'utils/aelf/aelfBase';
 import { SupportedELFChainId } from 'constants/index';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
-import { useGetAccount } from 'hooks/wallet';
+import { useGetAccount } from 'hooks/wallet/useAelf';
 import NetworkLogo from 'components/NetworkLogo';
 import { COBO_CUSTODY } from 'constants/misc';
 

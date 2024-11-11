@@ -107,30 +107,18 @@ export default function useTON() {
     return {
       isConnected: tonConnectUI.connected,
       walletType: WalletTypeEnum.TON,
-      chain: tonConnectUI.account?.chain,
       account: address,
       accounts: [address],
       connector: tonConnectUI.connector,
       provider: wallet?.provider,
-      connect: tonConnectUI.openSingleWalletModal,
+      connect: (name: string) => tonConnectUI.openSingleWalletModal(name),
       disconnect: tonConnectUI.disconnect,
       getAccountInfo: () => tonConnectUI.account,
       getBalance,
       signMessage,
       sendTransaction,
     };
-  }, [
-    address,
-    getBalance,
-    sendTransaction,
-    signMessage,
-    tonConnectUI.account,
-    tonConnectUI.connected,
-    tonConnectUI.connector,
-    tonConnectUI.disconnect,
-    tonConnectUI.openSingleWalletModal,
-    wallet?.provider,
-  ]);
+  }, [address, getBalance, sendTransaction, signMessage, tonConnectUI, wallet?.provider]);
 
   return tonContext;
 }

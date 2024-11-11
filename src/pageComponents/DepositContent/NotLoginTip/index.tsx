@@ -1,9 +1,8 @@
 import { InfoBrandIcon } from 'assets/images';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
-import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { LOGIN, UNLOCK } from 'constants/wallet';
-import { useIsLogin, useLogin } from 'hooks/wallet';
+import useAelf, { useLogin } from 'hooks/wallet/useAelf';
 
 export default function NotLoginTip({
   isShowIcon = true,
@@ -12,11 +11,10 @@ export default function NotLoginTip({
   isShowIcon?: boolean;
   isCard?: boolean;
 }) {
-  const { isLocking } = useConnectWallet();
-  const isLogin = useIsLogin();
+  const { isConnected, isLocking } = useAelf();
   const handleLogin = useLogin();
 
-  if (isLogin) return null;
+  if (isConnected) return null;
 
   return (
     <div

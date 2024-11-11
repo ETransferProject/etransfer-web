@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { SideMenuKey } from 'constants/home';
 import { useEffectOnce } from 'react-use';
-import { useIsLogin } from 'hooks/wallet';
+import useAelf from 'hooks/wallet/useAelf';
 import { sleep } from '@etransfer/utils';
 import { useSetAuthFromStorage } from 'hooks/authToken';
 import { TOrderStatus } from 'types/records';
@@ -20,9 +20,9 @@ export default function TransferDetail() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const isLogin = useIsLogin();
-  const isLoginRef = useRef(isLogin);
-  isLoginRef.current = isLogin;
+  const { isConnected } = useAelf();
+  const isConnectedRef = useRef(isConnected);
+  isConnectedRef.current = isConnected;
 
   const [detailData, setDetailData] = useState<TGetRecordDetailResult>();
 
@@ -34,7 +34,7 @@ export default function TransferDetail() {
     const getDetail = async (isLoading = true) => {
       try {
         const id = searchParams.get('id');
-        if (!id || !isLoginRef.current) {
+        if (!id || !isConnectedRef.current) {
           router.push('/history');
           return;
         }
@@ -97,7 +97,7 @@ export default function TransferDetail() {
   });
 
   useEffect(() => {
-    if (isLogin) {
+    if (isConnected) {
       getDetail();
     } else {
       router.push('/history');
@@ -106,7 +106,7 @@ export default function TransferDetail() {
     return () => {
       stopTimer();
     };
-  }, [getDetail, isLogin, router, stopTimer]);
+  }, [getDetail, isConnected, router, stopTimer]);
 
   if (detailData?.id && detailData?.id !== DEFAULT_NULL_ORDER_ID && detailData?.createTime) {
     return isPadPX ? (

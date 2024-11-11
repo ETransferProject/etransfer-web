@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useIsLogin } from 'hooks/wallet';
+import useAelf from 'hooks/wallet/useAelf';
 import { SupportedELFChainId, DEFAULT_NULL_VALUE } from 'constants/index';
 import CommonSpace from 'components/CommonSpace';
 import PartialLoading from 'components/PartialLoading';
@@ -18,7 +18,7 @@ export function BalanceAndUSD({
   decimals: string | number;
   chainId: SupportedELFChainId;
 }) {
-  const isLogin = useIsLogin();
+  const { isConnected } = useAelf();
   const getBalanceDivDecimals = useGetBalanceDivDecimals();
   const [balance, setBalance] = useState<string>('');
   const [balanceUsd, setBalanceUsd] = useState<string>('');
@@ -66,7 +66,7 @@ export function BalanceAndUSD({
     getBalanceAndUSDRef.current(symbol, decimals, chainId);
   }, [chainId, decimals, symbol]);
 
-  if (!isLogin) {
+  if (!isConnected) {
     return (
       <div className={clsx('flex-column-end', styles['balance-and-usd'])}>
         <div className={styles['balance']}>{DEFAULT_NULL_VALUE}</div>

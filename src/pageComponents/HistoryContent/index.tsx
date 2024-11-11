@@ -26,7 +26,7 @@ import queryString from 'query-string';
 import { SideMenuKey } from 'constants/home';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { useSetAuthFromStorage } from 'hooks/authToken';
-import { useIsLogin } from 'hooks/wallet';
+import useAelf from 'hooks/wallet/useAelf';
 
 export type TRecordsContentProps = TRecordsBodyProps & {
   onReset: () => void;
@@ -41,9 +41,9 @@ export default function Content() {
   const dispatch = useAppDispatch();
   const { setFilter } = useHistoryFilter();
   const { setLoading } = useLoading();
-  const isLogin = useIsLogin();
-  const isLoginRef = useRef(isLogin);
-  isLoginRef.current = isLogin;
+  const { isConnected } = useAelf();
+  const isConnectedRef = useRef(isConnected);
+  isConnectedRef.current = isConnected;
 
   const {
     type = TRecordsRequestType.ALL,
@@ -57,7 +57,7 @@ export default function Content() {
   const setAuthFromStorage = useSetAuthFromStorage();
   const requestRecordsList = useDebounceCallback(async (isLoading = false, isSetAuth = false) => {
     try {
-      if (!isLoginRef.current) return;
+      if (!isConnectedRef.current) return;
 
       isLoading && setLoading(true);
       if (isSetAuth) {
@@ -188,7 +188,7 @@ export default function Content() {
   initRef.current = init;
 
   useEffect(() => {
-    if (isLogin) {
+    if (isConnected) {
       initRef.current();
     } else {
       // setFilter({
@@ -200,7 +200,7 @@ export default function Content() {
 
       dispatch(setRecordsList([]));
     }
-  }, [dispatch, isLogin, setFilter]);
+  }, [dispatch, isConnected, setFilter]);
 
   // Listener login
   const refreshData = useCallback(() => {

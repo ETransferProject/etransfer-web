@@ -4,7 +4,7 @@ import styles from './styles.module.scss';
 import { CHAIN_NAME_ENUM, SupportedChainId } from 'constants/index';
 import { CopySize } from 'components/Copy';
 import { SynchronizingAddress } from 'constants/chain';
-import { useGetAccount } from 'hooks/wallet';
+import { useGetAccount } from 'hooks/wallet/useAelf';
 import clsx from 'clsx';
 
 interface AddressProps {

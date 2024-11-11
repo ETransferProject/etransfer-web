@@ -6,9 +6,8 @@ import clsx from 'clsx';
 import FAQ from 'components/FAQ';
 import { FAQ_CROSS_CHAIN_TRANSFER } from 'constants/footer';
 import { ProcessingTip } from 'components/Tips/ProcessingTip';
-import { useIsLogin } from 'hooks/wallet';
+import useAelf from 'hooks/wallet/useAelf';
 import { useRecordsState } from 'store/Provider/hooks';
-
 export interface WebCrossChainTransferProps {
   onClickProcessingTip: () => void;
 }
@@ -16,7 +15,7 @@ export interface WebCrossChainTransferProps {
 export default function WebCrossChainTransfer({
   onClickProcessingTip,
 }: WebCrossChainTransferProps) {
-  const isLogin = useIsLogin(); // TODO
+  const { isConnected } = useAelf(); // TODO
   const { depositProcessingCount, transferProcessingCount } = useRecordsState();
 
   const renderDepositMainContent = useMemo(() => {
@@ -27,7 +26,7 @@ export default function WebCrossChainTransfer({
           'main-content-container-safe-area',
           styles['main-content'],
         )}>
-        {isLogin && (
+        {isConnected && (
           <ProcessingTip
             depositProcessingCount={depositProcessingCount}
             transferProcessingCount={transferProcessingCount}
@@ -41,7 +40,7 @@ export default function WebCrossChainTransfer({
         <CrossChainTransferFooter recipientAddress={''} />
       </div>
     );
-  }, []);
+  }, [depositProcessingCount, isConnected, onClickProcessingTip, transferProcessingCount]);
 
   return (
     <div className="content-container flex-row">

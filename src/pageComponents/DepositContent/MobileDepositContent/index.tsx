@@ -21,8 +21,7 @@ import { FAQ_DEPOSIT } from 'constants/footer';
 import DepositTip from '../DepositTip';
 import CommonButton, { CommonButtonSize } from 'components/CommonButton';
 import { CopySize } from 'components/Copy';
-import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
-import { useIsLogin, useLogin, useShowLoginButtonLoading } from 'hooks/wallet';
+import useAelf, { useLogin, useShowLoginButtonLoading } from 'hooks/wallet/useAelf';
 import { LOGIN, UNLOCK } from 'constants/wallet';
 import { SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE, TokenType } from 'constants/index';
 import TransferTip from '../TransferTip';
@@ -44,7 +43,7 @@ export default function MobileDepositContent({
   toTokenSelected,
   isCheckTxnLoading,
   depositProcessingCount,
-  withdrawProcessingCount,
+  transferProcessingCount,
   onRetry,
   onCheckTxnClick,
   onClickProcessingTip,
@@ -66,8 +65,7 @@ export default function MobileDepositContent({
   const fromNetwork = useMemo(() => fromNetworkSelected, [fromNetworkSelected]);
 
   // login info
-  const { isLocking } = useConnectWallet();
-  const isLogin = useIsLogin();
+  const { isConnected, isLocking } = useAelf();
   const handleLogin = useLogin();
   // Fix: It takes too long to obtain NightElf walletInfo, and the user mistakenly clicks the login button during this period.
   const isLoginButtonLoading = useShowLoginButtonLoading();
@@ -87,15 +85,15 @@ export default function MobileDepositContent({
           )}
         </div>
         <CommonSpace direction="vertical" size={16} />
-        {isLogin && showRetry && <DepositRetryForMobile onClick={onRetry} />}
-        {isLogin && !showRetry && !!depositInfo?.depositAddress && (
+        {isConnected && showRetry && <DepositRetryForMobile onClick={onRetry} />}
+        {isConnected && !showRetry && !!depositInfo?.depositAddress && (
           <CommonAddress
             label={DEPOSIT_ADDRESS_LABEL}
             value={depositInfo.depositAddress}
             copySize={CopySize.Big}
           />
         )}
-        {isLogin && !showRetry && !!depositInfo.depositAddress && (
+        {isConnected && !showRetry && !!depositInfo.depositAddress && (
           <div className="flex-center">
             <CommonButton
               className={styles['check-txn-btn']}
@@ -111,7 +109,7 @@ export default function MobileDepositContent({
   }, [
     depositInfo.depositAddress,
     isCheckTxnLoading,
-    isLogin,
+    isConnected,
     onCheckTxnClick,
     onRetry,
     qrCodeValue,
@@ -189,12 +187,12 @@ export default function MobileDepositContent({
 
   const isShowTransferTip = useMemo(() => {
     return (
-      isLogin &&
+      isConnected &&
       SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE.includes(fromTokenSymbol as TokenType) &&
       fromTokenSymbol === toTokenSymbol &&
       AelfChainIdList.includes(fromNetwork?.network as TChainId)
     );
-  }, [fromNetwork?.network, fromTokenSymbol, isLogin, toTokenSymbol]);
+  }, [fromNetwork?.network, fromTokenSymbol, isConnected, toTokenSymbol]);
 
   const goWithdraw = useGoWithdraw();
   const handleGoWithdraw = useCallback(async () => {
@@ -203,10 +201,10 @@ export default function MobileDepositContent({
 
   return (
     <>
-      {isLogin && (
+      {isConnected && (
         <ProcessingTip
           depositProcessingCount={depositProcessingCount}
-          withdrawProcessingCount={withdrawProcessingCount}
+          transferProcessingCount={transferProcessingCount}
           marginBottom={isPadPX && !isMobilePX ? 24 : 0}
           borderRadius={0}
           onClick={onClickProcessingTip}
@@ -257,9 +255,9 @@ export default function MobileDepositContent({
 
           <CommonSpace direction="vertical" size={24} />
 
-          {!isShowTransferTip && isLogin && renderDepositInfo}
+          {!isShowTransferTip && isConnected && renderDepositInfo}
 
-          {!isLogin && (
+          {!isConnected && (
             <div
               className={clsx(
                 styles['next-button-wrapper'],
@@ -274,7 +272,7 @@ export default function MobileDepositContent({
               </CommonButton>
             </div>
           )}
-          {isLogin && isShowTransferTip && (
+          {isConnected && isShowTransferTip && (
             <div
               className={clsx(
                 styles['next-button-wrapper'],

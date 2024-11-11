@@ -83,7 +83,7 @@ export default function CrossChainTransferPage() {
     } catch (error: any) {
       console.log('getNetworkData error', error);
     }
-  }, [dispatch]);
+  }, [dispatch, fromNetwork?.network, toNetwork?.network]);
 
   const router = useRouter();
   const handleClickProcessingTip = useCallback(() => {
@@ -91,12 +91,13 @@ export default function CrossChainTransferPage() {
   }, [router]);
 
   const init = useCallback(async () => {
+    await getNetworkData();
     await getTokenData();
-  }, []);
+  }, [getNetworkData, getTokenData]);
 
   useEffect(() => {
     init();
-  }, []);
+  }, [init]);
 
   useEffectOnce(() => {
     dispatch(setActiveMenuKey(SideMenuKey.CrossChainTransfer));

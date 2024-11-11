@@ -17,22 +17,24 @@ export const EVM_USDT_ABI = [
   },
 ];
 
+export const EVM_WALLET_ALLOWANCE = ['metaMaskSDK', 'coinbaseWalletSDK', 'walletConnect'];
+
 export const CONNECT_EVM_LIST_CONFIG = {
   section: 'EVM',
   list: [
     {
       name: 'Metamask',
-      key: 'MetaMask',
+      key: 'metaMaskSDK',
       icon: Metamask,
     },
     {
       name: 'Coinbase Wallet',
-      key: 'Coinbase Wallet',
+      key: 'coinbaseWalletSDK',
       icon: Coinbase,
     },
     {
       name: 'WalletConnect',
-      key: 'WalletConnect',
+      key: 'walletConnect',
       icon: WalletConnect,
     },
   ],

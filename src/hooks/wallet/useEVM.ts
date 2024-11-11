@@ -1,5 +1,5 @@
 import { WalletTypeEnum } from 'context/Wallet/types';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { getAuthPlainTextOrigin } from 'utils/auth';
 import { ethers } from 'ethers';
 import { sepolia } from 'viem/chains';
@@ -11,7 +11,7 @@ import {
   useSignMessage,
   useWriteContract,
 } from 'wagmi';
-import { EVM_USDT_CONTRACT_ADDRESS_SEPOLIA } from 'constants/wallet/EVM';
+import { EVM_USDT_CONTRACT_ADDRESS_SEPOLIA, EVM_WALLET_ALLOWANCE } from 'constants/wallet/EVM';
 import { Abi } from 'viem';
 
 export default function useEVM() {
@@ -24,6 +24,19 @@ export default function useEVM() {
     token: EVM_USDT_CONTRACT_ADDRESS_SEPOLIA, // token contract address
   });
   console.log('>>>>>> EVM balance result', isSuccess, data);
+
+  const [isConnected, setIsConnected] = useState(false);
+  connectors.map(async (item) => {
+    const isAuth = await item.isAuthorized();
+    setIsConnected(true);
+    if (
+      accountInfo?.connector?.id &&
+      EVM_WALLET_ALLOWANCE.includes(accountInfo.connector.id) &&
+      isAuth
+    ) {
+      setIsConnected(true);
+    }
+  });
 
   const { signMessageAsync } = useSignMessage();
 
@@ -67,9 +80,12 @@ export default function useEVM() {
 
   const evmContext = useMemo(() => {
     return {
-      isConnected: accountInfo.isConnected,
+      isConnected:
+        isConnected &&
+        accountInfo.connector &&
+        accountInfo?.connector?.id &&
+        EVM_WALLET_ALLOWANCE.includes(accountInfo.connector.id),
       walletType: WalletTypeEnum.EVM,
-      chainId: accountInfo.chain,
       provider: accountInfo.connector?.getProvider(),
       account: accountInfo.address,
       accounts: accountInfo.addresses,
@@ -81,7 +97,15 @@ export default function useEVM() {
       signMessage,
       sendTransaction,
     };
-  }, [accountInfo, connectAsync, connectors, disconnect, sendTransaction, signMessage]);
+  }, [
+    accountInfo,
+    connectAsync,
+    connectors,
+    disconnect,
+    isConnected,
+    sendTransaction,
+    signMessage,
+  ]);
 
   return evmContext;
 }

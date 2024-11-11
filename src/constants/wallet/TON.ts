@@ -6,11 +6,7 @@ export const TON_USDT_CONTRACT_ADDRESS = 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv
 
 export const CONNECT_TON_LIST_CONFIG = {
   section: 'Ton',
-  list: [
-    {
-      name: 'Ton Wallet',
-      key: 'tonkeeper',
-      icon: Tonkeeper,
-    },
-  ],
+  name: 'Ton Wallet',
+  key: 'tonkeeper',
+  icon: Tonkeeper,
 };

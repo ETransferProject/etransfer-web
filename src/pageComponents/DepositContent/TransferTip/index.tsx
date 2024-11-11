@@ -1,7 +1,7 @@
 import { InfoBrandIcon } from 'assets/images';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
-import { useIsLogin } from 'hooks/wallet';
+import useAelf from 'hooks/wallet/useAelf';
 import { SideMenuKey } from 'constants/home';
 import { CHAIN_NAME_ENUM, IChainNameItem } from 'constants/index';
 import { useCallback } from 'react';
@@ -21,13 +21,13 @@ export default function TransferTip({
   isShowIcon?: boolean;
   isCard?: boolean;
 }) {
-  const isLogin = useIsLogin();
+  const { isConnected } = useAelf();
   const goWithdraw = useGoWithdraw();
   const handleGoWithdraw = useCallback(async () => {
     goWithdraw(toChainItem, symbol, network);
   }, [goWithdraw, network, symbol, toChainItem]);
 
-  if (!isLogin) return null;
+  if (!isConnected) return null;
 
   return (
     <div

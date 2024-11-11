@@ -60,7 +60,6 @@ export default function useTRON() {
     return {
       isConnected: connected,
       walletType: WalletTypeEnum.TRON,
-      chain: wallet?.adapter.connected,
       account: address,
       accounts: [address],
       connector: wallet?.adapter,

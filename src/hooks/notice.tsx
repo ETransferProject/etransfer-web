@@ -5,9 +5,10 @@ import { useAppDispatch } from 'store/Provider/hooks';
 import {
   setDepositProcessingCount,
   setWithdrawProcessingCount,
+  // setTransferProcessingCount,
 } from 'store/reducers/records/slice';
 import { handleNoticeDataAndShow } from 'utils/notice';
-import { useGetAccount } from './wallet';
+import { useGetAccount } from './wallet/useAelf';
 import { removeAddressSuffix } from '@etransfer/utils';
 import { TOrderRecordsNoticeResponse } from '@etransfer/socket';
 import myEvents from 'utils/myEvent';
@@ -33,6 +34,13 @@ export function useNoticeSocket() {
         } else {
           dispatch(setWithdrawProcessingCount(0));
         }
+
+        // TODO
+        // if (res.processing.transferCount) {
+        //   dispatch(setTransferProcessingCount(res.processing.transferCount));
+        // } else {
+        //   dispatch(setTransferProcessingCount(0));
+        // }
 
         myEvents.GlobalTxnNotice.emit();
         // handle order data and show notice

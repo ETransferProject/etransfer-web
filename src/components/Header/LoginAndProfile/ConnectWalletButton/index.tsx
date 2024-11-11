@@ -15,7 +15,7 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
     }
 
     return <ConnectOtherWalletButton {...props} onClick={() => setOpenConnectWalletModal(true)} />;
-  }, []);
+  }, [pathname, props]);
 
   return (
     <>

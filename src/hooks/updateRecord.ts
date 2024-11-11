@@ -6,19 +6,19 @@ import myEvents from 'utils/myEvent';
 import { eTransferInstance } from 'utils/etransferInstance';
 import { useSetAuthFromStorage } from './authToken';
 import { sleep } from '@etransfer/utils';
-import { useIsLogin } from './wallet';
+import useAelf from './wallet/useAelf';
 
 export const MAX_UPDATE_TIME = 6;
 
 export function useUpdateRecord() {
   const dispatch = useAppDispatch();
-  const isLogin = useIsLogin();
-  const isLoginRef = useRef(isLogin);
-  isLoginRef.current = isLogin;
+  const { isConnected } = useAelf();
+  const isConnectedRef = useRef(isConnected);
+  isConnectedRef.current = isConnected;
   const setAuthFromStorage = useSetAuthFromStorage();
 
   const updateRecordStatus = useCallback(async () => {
-    if (!isLoginRef.current) return;
+    if (!isConnectedRef.current) return;
     if (eTransferInstance.unauthorized) return;
 
     try {
@@ -57,7 +57,7 @@ export function useUpdateRecord() {
   }, [setAuthFromStorage, updateRecordStatus]);
 
   useEffect(() => {
-    if (!isLogin) return;
+    if (!isConnected) return;
     // start 6s countdown
     resetTimer();
     // then, get one-time new record
@@ -71,5 +71,5 @@ export function useUpdateRecord() {
       clearInterval(updateTimerRef.current);
       updateTimerRef.current = undefined;
     };
-  }, [init, isLogin, resetTimer, updateRecordStatus]);
+  }, [init, isConnected, resetTimer, updateRecordStatus]);
 }

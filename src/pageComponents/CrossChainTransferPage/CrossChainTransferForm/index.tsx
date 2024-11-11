@@ -2,7 +2,8 @@ import { Form } from 'antd';
 import styles from './styles.module.scss';
 import { TNetworkItem } from 'types/api';
 import { CommentCheckTip } from 'constants/withdraw';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useWallet } from 'context/Wallet';
 
 enum ValidateStatus {
   Error = 'error',
@@ -38,10 +39,17 @@ const FORM_VALIDATE_DATA = {
 };
 
 export default function CrossChainTransferForm() {
+  const [{ fromWallet }] = useWallet();
   const [form] = Form.useForm<TFormValues>();
   const [formValidateData, setFormValidateData] = useState<{
     [key in FormKeys]: { validateStatus: ValidateStatus; errorMessage: string };
   }>(JSON.parse(JSON.stringify(FORM_VALIDATE_DATA)));
+
+  useEffect(() => {
+    if (!fromWallet?.isConnected) {
+      setFormValidateData(JSON.parse(JSON.stringify(FORM_VALIDATE_DATA)));
+    }
+  }, [fromWallet?.isConnected]);
 
   return (
     <div className={styles['cross-chain-transfer-form']}>
