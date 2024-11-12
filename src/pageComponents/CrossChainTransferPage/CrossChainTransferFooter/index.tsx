@@ -6,7 +6,6 @@ import { useWallet } from 'context/Wallet';
 import {
   BUTTON_TEXT_CONNECT_WALLET,
   BUTTON_TEXT_INSUFFICIENT_FUNDS,
-  BUTTON_TEXT_NOT_ENOUGH_NATIVE_FOR_GAS,
   BUTTON_TEXT_TRANSFER,
 } from 'constants/crossChainTransfer';
 import { ZERO } from '@etransfer/utils';
@@ -17,21 +16,20 @@ export interface CrossChainTransferFooterProps {
   recipientAddress: string;
   fromInput?: string;
   fromBalance?: string;
+  estimateReceive?: string;
+  transactionFee?: string;
+  isSubmitDisabled: boolean;
 }
 
 export default function CrossChainTransferFooter({
   recipientAddress,
   fromInput,
   fromBalance,
+  estimateReceive = DEFAULT_NULL_VALUE,
+  transactionFee = DEFAULT_NULL_VALUE,
+  isSubmitDisabled,
 }: CrossChainTransferFooterProps) {
   const [{ fromWalletType, toWalletType }] = useWallet();
-
-  // const [estimateReceive, setEstimateReceive] = useState<string>(DEFAULT_NULL_VALUE);
-  // const [transactionFee, setTransactionFee] = useState<string>(DEFAULT_NULL_VALUE);
-  // const [isShowTxnFeeEnoughTip, setIsShowTxnFeeEnoughTip] = useState<boolean>(false);
-  const estimateReceive = DEFAULT_NULL_VALUE;
-  const transactionFee = DEFAULT_NULL_VALUE;
-  const isShowTxnFeeEnoughTip = false;
 
   const onConnectWallet = useCallback(() => {
     console.log('onConnectWallet');
@@ -69,26 +67,18 @@ export default function CrossChainTransferFooter({
           loading,
         };
       }
-      if (isShowTxnFeeEnoughTip) {
-        return {
-          children: BUTTON_TEXT_NOT_ENOUGH_NATIVE_FOR_GAS,
-          onClick: undefined,
-          disabled,
-          loading,
-        };
-      }
     }
     return {
       children: BUTTON_TEXT_TRANSFER,
       onClick: onTransfer,
-      disabled: false,
+      disabled: isSubmitDisabled,
       loading,
     };
   }, [
     fromBalance,
     fromInput,
     fromWalletType,
-    isShowTxnFeeEnoughTip,
+    isSubmitDisabled,
     onConnectWallet,
     onTransfer,
     recipientAddress,

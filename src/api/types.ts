@@ -8,6 +8,7 @@ export enum CancelTokenSourceKey {
   GET_DEPOSIT_INFO = 'getDepositInfo',
   GET_WITHDRAW_INFO = 'getWithdrawInfo',
   GET_NETWORK_LIST = 'getNetworkList',
+  GET_TRANSFER_INFO = 'getTransferInfo',
 }
 
 export type RequestConfig = {

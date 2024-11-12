@@ -1,5 +1,5 @@
 import { CommonModal } from '@etransfer/ui-react';
-import { CONNECT_WALLET } from 'constants/wallet';
+import { CONNECT_WALLET } from 'constants/wallet/index';
 import styles from './styles.module.scss';
 import AelfWalletList from './aelfList';
 import EVMWalletList from './EVMList';

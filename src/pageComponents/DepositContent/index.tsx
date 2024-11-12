@@ -16,7 +16,8 @@ import {
   NetworkStatus,
   TToTokenItem,
 } from 'types/api';
-import { getDepositInfo, getDepositTokenList, getNetworkList } from 'utils/api/deposit';
+import { getDepositInfo, getDepositTokenList } from 'utils/api/deposit';
+import { getNetworkList } from 'utils/api/transfer';
 import { CHAIN_LIST, IChainNameItem } from 'constants/index';
 import {
   InitialDepositState,

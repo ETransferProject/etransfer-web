@@ -2,7 +2,7 @@ import { GetCAHolderByManagerParams } from '@portkey/services';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
 import { SupportedChainId } from 'constants/index';
-import { pubKeyToAddress } from './aelf/aelfBase';
+import { pubKeyToAddress } from '../aelf/aelfBase';
 import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { ExtraInfoForDiscover, ExtraInfoForPortkeyAA, WalletInfo } from 'types/wallet';
 

@@ -1,7 +1,7 @@
 import { InfoBrandIcon } from 'assets/images';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
-import { LOGIN, UNLOCK } from 'constants/wallet';
+import { LOGIN, UNLOCK } from 'constants/wallet/index';
 import useAelf, { useLogin } from 'hooks/wallet/useAelf';
 
 export default function NotLoginTip({

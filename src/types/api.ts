@@ -1,5 +1,5 @@
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
-import { PortkeyVersion } from 'constants/wallet';
+import { PortkeyVersion } from 'constants/wallet/index';
 import { TFromTransfer, TOrderStatus, TToTransfer } from './records';
 import type { Moment } from 'moment';
 import { IChainNameItem, TokenType } from 'constants/index';
@@ -222,6 +222,22 @@ export type TCheckEOARegistrationResult = {
   result: boolean;
 };
 
+export enum WalletSourceType {
+  EVM = 'EVM',
+  Solana = 'Solana',
+  TRX = 'TRX',
+  Ton = 'Ton',
+}
+
+export type TCheckRegistrationRequest = {
+  address: string;
+  sourceType: WalletSourceType;
+};
+
+export type TCheckRegistrationResult = {
+  result: boolean;
+};
+
 export type TTokenPricesRequest = {
   symbols: string;
 };
@@ -422,3 +438,72 @@ export enum TransactionRecordStep {
   ToTransfer,
   ReceivedOrSent,
 }
+
+export type TGetTransferInfoRequest = {
+  fromNetwork: string;
+  toNetwork?: string;
+  symbol: string;
+  amount?: string;
+  toAddress?: string;
+  memo?: string;
+  version?: PortkeyVersion;
+};
+
+export type TGetTransferInfoResult = {
+  transferInfo: TCrossChainTransferInfo;
+};
+
+export type TCrossChainTransferInfo = {
+  maxAmount: string;
+  minAmount: string;
+  limitCurrency: string;
+  totalLimit: string;
+  remainingLimit: string;
+  transactionFee?: string;
+  transactionUnit?: string;
+  aelfTransactionFee?: string;
+  aelfTransactionUnit?: string;
+  receiveAmount: string;
+  expiredTimestamp: number;
+  amountUsd: string;
+  receiveAmountUsd: string;
+  feeUsd: string;
+};
+
+export type TCreateTransferOrderRequest = {
+  amount: string;
+  fromNetwork: string;
+  toNetwork: string;
+  fromSymbol: string;
+  toSymbol?: string;
+  fromAddress: string;
+  toAddress: string;
+  memo?: string;
+  rawTransaction?: string;
+};
+
+export type TCreateTransferOrderResult = {
+  orderId: string;
+  address: string;
+  txId: string;
+};
+
+export enum UpdateTransferOrderStatus {
+  Rejected = 'Rejected',
+}
+
+export type TUpdateTransferOrderRequest = {
+  amount: string;
+  fromNetwork: string;
+  toNetwork: string;
+  fromSymbol: string;
+  toSymbol?: string;
+  fromAddress: string;
+  toAddress: string;
+  address: string; // token pool address
+  memo?: string;
+  txId: string;
+  status: UpdateTransferOrderStatus;
+};
+
+export type TUpdateTransferOrderResult = boolean;

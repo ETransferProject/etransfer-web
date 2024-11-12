@@ -22,7 +22,7 @@ import DepositTip from '../DepositTip';
 import CommonButton, { CommonButtonSize } from 'components/CommonButton';
 import { CopySize } from 'components/Copy';
 import useAelf, { useLogin, useShowLoginButtonLoading } from 'hooks/wallet/useAelf';
-import { LOGIN, UNLOCK } from 'constants/wallet';
+import { LOGIN, UNLOCK } from 'constants/wallet/index';
 import { SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE, TokenType } from 'constants/index';
 import TransferTip from '../TransferTip';
 import { useGoWithdraw } from 'hooks/withdraw';

@@ -1,7 +1,7 @@
 import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { QueryAuthApiExtraRequest, getLocalJWT, queryAuthApi } from 'api/utils';
 import { APP_NAME } from 'constants/index';
-import { PortkeyVersion } from 'constants/wallet';
+import { PortkeyVersion } from 'constants/wallet/index';
 import { useCallback, useEffect, useState } from 'react';
 import { useLoading } from 'store/Provider/hooks';
 import AElf from 'aelf-sdk';
@@ -9,7 +9,7 @@ import { recoverPubKey } from 'utils/aelf/aelfBase';
 import { useDebounceCallback } from 'hooks/debounce';
 import service from 'api/axios';
 import { eTransferInstance } from 'utils/etransferInstance';
-import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
+import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet/index';
 import { AuthTokenSource } from 'types/api';
 import { ReCaptchaType } from 'components/GoogleRecaptcha/types';
 import { checkEOARegistration } from 'utils/api/user';

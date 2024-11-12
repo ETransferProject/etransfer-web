@@ -6,7 +6,12 @@ import { useState } from 'react';
 import ConnectWalletModal from '../ConnectWalletModal';
 import { WalletTypeEnum } from 'context/Wallet/types';
 import useAelf from 'hooks/wallet/useAelf';
-import { CONNECT_AELF_WALLET, CONNECT_WALLET, MY_AELF_WALLET, MY_WALLET } from 'constants/wallet';
+import {
+  CONNECT_AELF_WALLET,
+  CONNECT_WALLET,
+  MY_AELF_WALLET,
+  MY_WALLET,
+} from 'constants/wallet/index';
 import { useCheckHasConnectedWallet } from 'hooks/wallet';
 
 export default function ConnectWalletButton(props: CommonButtonProps) {

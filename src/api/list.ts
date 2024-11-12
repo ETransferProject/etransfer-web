@@ -25,15 +25,30 @@ const AuthList = {
 };
 
 const DepositApiList = {
-  getTokenList: '/api/etransfer/token/list',
   getDepositTokenList: '/api/etransfer/token/option',
-  getNetworkList: '/api/etransfer/network/list',
   getDepositInfo: '/api/etransfer/deposit/info',
   depositCalculator: '/api/etransfer/deposit/calculator',
+};
+
+const WithdrawApiList = {
   getWithdrawInfo: '/api/etransfer/withdraw/info',
   createWithdrawOrder: {
     target: '/api/etransfer/withdraw/order',
     baseConfig: { method: 'POST' },
+  },
+};
+
+const TransferApiList = {
+  getTokenList: '/api/etransfer/token/list',
+  getNetworkList: '/api/etransfer/network/list',
+  getTransferInfo: '/api/etransfer/transfer/info',
+  createTransferOrder: {
+    target: '/api/etransfer/transfer/order',
+    baseConfig: { method: 'POST' },
+  },
+  updateTransferOrder: {
+    target: '/api/etransfer/transfer',
+    baseConfig: { method: 'PUT' },
   },
 };
 
@@ -54,6 +69,7 @@ const InfoDashboard = {
 const UserApiList = {
   checkEOARegistration: '/api/etransfer/user/check-eoa-registration',
   getTokenPrices: '/api/etransfer/token/price',
+  checkRegistration: '/api/etransfer/user/check-registration',
 };
 
 /**
@@ -62,6 +78,8 @@ const UserApiList = {
  */
 export const EXPAND_APIS = {
   deposit: DepositApiList,
+  withdraw: WithdrawApiList,
+  transfer: TransferApiList,
   auth: AuthList,
   records: HistoryApiList,
   user: UserApiList,

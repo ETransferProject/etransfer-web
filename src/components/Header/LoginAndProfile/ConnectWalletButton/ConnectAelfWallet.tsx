@@ -1,6 +1,6 @@
 import { PortkeyV2_16 } from 'assets/images';
 import CommonButton, { CommonButtonProps, CommonButtonType } from 'components/CommonButton';
-import { CONNECT_AELF_WALLET, MY_AELF_WALLET, UNLOCK } from 'constants/wallet';
+import { CONNECT_AELF_WALLET, MY_AELF_WALLET, UNLOCK } from 'constants/wallet/index';
 import useAelf, { useShowLoginButtonLoading } from 'hooks/wallet/useAelf';
 import { useMemo } from 'react';
 import styles from '../styles.module.scss';

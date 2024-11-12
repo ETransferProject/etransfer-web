@@ -4,7 +4,7 @@ import { stringify } from 'query-string';
 import { ETransferAuthHost } from 'constants/index';
 import { LocalStorageKey } from 'constants/localStorage';
 import service from './axios';
-import { PortkeyVersion } from 'constants/wallet';
+import { PortkeyVersion } from 'constants/wallet/index';
 import myEvents from 'utils/myEvent';
 import { AuthTokenSource } from 'types/api';
 

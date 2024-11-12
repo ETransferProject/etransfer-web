@@ -26,11 +26,11 @@ export function ProcessingTip({
     } processing`;
   } else if (!depositProcessingCount && transferProcessingCount) {
     text = `${transferProcessingCount} ${
-      transferProcessingCount > 1 ? 'transactions' : 'transaction'
+      transferProcessingCount > 1 ? 'transfers' : 'transfer'
     } processing`;
   } else if (transferProcessingCount && depositProcessingCount) {
     text = `${transferProcessingCount} ${
-      transferProcessingCount > 1 ? 'transactions' : 'transaction'
+      transferProcessingCount > 1 ? 'transfers' : 'transfer'
     } and ${depositProcessingCount} ${
       depositProcessingCount > 1 ? 'deposits' : 'deposit'
     } processing`;

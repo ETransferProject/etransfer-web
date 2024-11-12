@@ -8,7 +8,7 @@ import {
   WalletConnect_16,
 } from 'assets/images';
 import CommonButton, { CommonButtonProps, CommonButtonType } from 'components/CommonButton';
-import { CONNECT_WALLET, MY_WALLET } from 'constants/wallet';
+import { CONNECT_WALLET, MY_WALLET } from 'constants/wallet/index';
 import { WalletTypeEnum } from 'context/Wallet/types';
 import { useCheckHasConnectedWallet } from 'hooks/wallet';
 import styles from '../styles.module.scss';

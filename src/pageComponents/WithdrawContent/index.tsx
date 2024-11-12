@@ -25,7 +25,8 @@ import {
 } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { CHAIN_LIST, IChainNameItem, DEFAULT_NULL_VALUE } from 'constants/index';
-import { getNetworkList, getTokenList, getWithdrawInfo } from 'utils/api/deposit';
+import { getNetworkList, getTokenList } from 'utils/api/transfer';
+import { getWithdrawInfo } from 'utils/api/withdraw';
 import { CONTRACT_ADDRESS } from 'constants/deposit';
 import { checkIsEnoughAllowance, getBalance } from 'utils/contract';
 import { SingleMessage } from '@etransfer/ui-react';
@@ -75,7 +76,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import FAQ from 'components/FAQ';
 import { FAQ_WITHDRAW } from 'constants/footer';
-import { PortkeyVersion } from 'constants/wallet';
+import { PortkeyVersion } from 'constants/wallet/index';
 import { TelegramPlatform } from 'utils/telegram';
 import { useSetAuthFromStorage } from 'hooks/authToken';
 import WithdrawFooter from './WithdrawFooter';

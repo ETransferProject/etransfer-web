@@ -1,7 +1,7 @@
 import { ContractType } from 'constants/chain';
 import * as AELF from '../platform/AELF';
 import * as tDVV from '../platform/tDVV';
-import { NetworkName } from 'constants/network';
+import { BlockchainNetworkType, NetworkName } from 'constants/network';
 import { NetworkEnum } from '@aelf-web-login/wallet-adapter-base';
 
 export const TELEGRAM_BOT_ID = '7393968118';
@@ -96,3 +96,71 @@ export const EXPLORE_CONFIG = {
 };
 
 export const SHOW_V_CONSOLE = false;
+
+export enum TransferAllowanceTokens {
+  USDT = 'USDT',
+  ELF = 'ELF',
+  'SGR-1' = 'SGR-1',
+  Agent = 'Agent',
+}
+
+export const TOKEN_NETWORK_RELATIONS = {
+  [TransferAllowanceTokens.USDT]: [
+    BlockchainNetworkType.AELF,
+    BlockchainNetworkType.tDVV,
+    BlockchainNetworkType.Ethereum,
+    BlockchainNetworkType.Binance,
+    BlockchainNetworkType.Tron,
+    BlockchainNetworkType.Polygon,
+    BlockchainNetworkType.Solana,
+    BlockchainNetworkType.Avax,
+    BlockchainNetworkType.Arbitrum,
+    BlockchainNetworkType.Optimism,
+    BlockchainNetworkType.TON,
+  ],
+  [TransferAllowanceTokens.ELF]: [
+    BlockchainNetworkType.AELF,
+    BlockchainNetworkType.tDVV,
+    BlockchainNetworkType.Ethereum,
+    BlockchainNetworkType.Binance,
+  ],
+  [TransferAllowanceTokens['SGR-1']]: [
+    BlockchainNetworkType.AELF,
+    BlockchainNetworkType.tDVV,
+    BlockchainNetworkType.Ethereum,
+  ],
+  [TransferAllowanceTokens.Agent]: [
+    BlockchainNetworkType.AELF,
+    BlockchainNetworkType.tDVV,
+    BlockchainNetworkType.BASE,
+  ],
+};
+
+export const TO_NETWORK_TOKEN_CONFIG = {
+  [BlockchainNetworkType.AELF]: [
+    TransferAllowanceTokens.USDT,
+    TransferAllowanceTokens.ELF,
+    TransferAllowanceTokens['SGR-1'],
+    TransferAllowanceTokens.Agent,
+  ],
+  [BlockchainNetworkType.tDVV]: [
+    TransferAllowanceTokens.USDT,
+    TransferAllowanceTokens.ELF,
+    TransferAllowanceTokens['SGR-1'],
+    TransferAllowanceTokens.Agent,
+  ],
+  [BlockchainNetworkType.Ethereum]: [
+    TransferAllowanceTokens.USDT,
+    TransferAllowanceTokens.ELF,
+    TransferAllowanceTokens['SGR-1'],
+  ],
+  [BlockchainNetworkType.Binance]: [TransferAllowanceTokens.USDT, TransferAllowanceTokens.ELF],
+  [BlockchainNetworkType.Tron]: [TransferAllowanceTokens.USDT],
+  [BlockchainNetworkType.Polygon]: [TransferAllowanceTokens.USDT],
+  [BlockchainNetworkType.Solana]: [TransferAllowanceTokens.USDT],
+  [BlockchainNetworkType.Avax]: [TransferAllowanceTokens.USDT],
+  [BlockchainNetworkType.Arbitrum]: [TransferAllowanceTokens.USDT],
+  [BlockchainNetworkType.Optimism]: [TransferAllowanceTokens.USDT],
+  [BlockchainNetworkType.TON]: [TransferAllowanceTokens.USDT],
+  [BlockchainNetworkType.BASE]: [TransferAllowanceTokens.Agent],
+};
