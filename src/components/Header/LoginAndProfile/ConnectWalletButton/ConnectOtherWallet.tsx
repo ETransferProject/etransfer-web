@@ -1,7 +1,63 @@
-import CommonButton, { CommonButtonProps } from 'components/CommonButton';
-import { CONNECT_WALLET } from 'constants/wallet';
+import {
+  Coinbase_16,
+  Metamask_16,
+  Phantom_16,
+  PortkeyV2_16,
+  Tonkeeper_16,
+  TronLink_16,
+  WalletConnect_16,
+} from 'assets/images';
+import CommonButton, { CommonButtonProps, CommonButtonType } from 'components/CommonButton';
+import { CONNECT_WALLET, MY_WALLET } from 'constants/wallet';
+import { WalletTypeEnum } from 'context/Wallet/types';
+import { useCheckHasConnectedWallet } from 'hooks/wallet';
+import styles from '../styles.module.scss';
+import useEVM from 'hooks/wallet/useEVM';
+import { COINBASE_WALLET_ID, METAMASK_WALLET_ID, WALLET_CONNECT_ID } from 'constants/wallet/EVM';
+import { useMemo } from 'react';
 
 export default function ConnectOtherWalletButton(props: CommonButtonProps) {
+  const { hasConnected, hasConnectedTypes } = useCheckHasConnectedWallet();
+  const { connector } = useEVM();
+
+  const walletLogoList = useMemo(() => {
+    const walletLogoList = [];
+    if (hasConnectedTypes.includes(WalletTypeEnum.AELF)) walletLogoList.push(PortkeyV2_16);
+    if (hasConnectedTypes.includes(WalletTypeEnum.EVM)) {
+      switch (connector?.id) {
+        case METAMASK_WALLET_ID:
+          walletLogoList.push(Metamask_16);
+          break;
+        case COINBASE_WALLET_ID:
+          walletLogoList.push(Coinbase_16);
+          break;
+        case WALLET_CONNECT_ID:
+          walletLogoList.push(WalletConnect_16);
+          break;
+        default:
+          break;
+      }
+    }
+    if (hasConnectedTypes.includes(WalletTypeEnum.SOL)) walletLogoList.push(Phantom_16);
+    if (hasConnectedTypes.includes(WalletTypeEnum.TRON)) walletLogoList.push(TronLink_16);
+    if (hasConnectedTypes.includes(WalletTypeEnum.TON)) walletLogoList.push(Tonkeeper_16);
+
+    return walletLogoList;
+  }, [connector?.id, hasConnectedTypes]);
+
+  if (hasConnected) {
+    return (
+      <CommonButton id="ConnectWalletButton" type={CommonButtonType.Border} ghost {...props}>
+        <div className="flex-row-center gap-6">
+          {walletLogoList.map((Item, index) => {
+            return <Item key={'wallet-icon' + index} />;
+          })}
+        </div>
+        <span className={styles['connected-wallet-button-text']}>{MY_WALLET}</span>
+      </CommonButton>
+    );
+  }
+
   return (
     <CommonButton id="ConnectWalletButton" {...props}>
       {CONNECT_WALLET}

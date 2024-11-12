@@ -1,4 +1,5 @@
 @import 'src/assets/theme/breakpoint.scss';
+@import 'src/assets/theme/color.scss';
 
 .connect-wallet-button {
   padding: 0 20px;
@@ -7,4 +8,8 @@
     height: 28px !important;
     padding: 0 8px !important;
   }
+}
+
+.connected-wallet-button-text {
+  margin-left: 12px;
 }

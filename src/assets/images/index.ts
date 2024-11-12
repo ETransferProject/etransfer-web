@@ -22,12 +22,19 @@ import CopyBig from './copyBig.svg';
 import Portkey from './wallet/portkey.svg';
 import Portkey24 from './wallet/portkey24.svg';
 import PortkeyV2 from './wallet/portkeyV2.svg';
+import PortkeyV2_16 from './wallet/portkeyV2_16.svg';
 import Metamask from './wallet/metamask.svg';
 import Coinbase from './wallet/coinbase.svg';
 import WalletConnect from './wallet/walletConnect.svg';
 import Phantom from './wallet/phantom.svg';
-import Tonkeeper from './wallet/Tonkeeper.svg';
+import Tonkeeper from './wallet/tonkeeper.svg';
 import TronLink from './wallet/tronLink.svg';
+import Metamask_16 from './wallet/metamask_16.svg';
+import Coinbase_16 from './wallet/coinbase_16.svg';
+import WalletConnect_16 from './wallet/walletConnect_16.svg';
+import Phantom_16 from './wallet/phantom_16.svg';
+import Tonkeeper_16 from './wallet/tonkeeper_16.svg';
+import TronLink_16 from './wallet/tronLink_16.svg';
 import Logout from './logout.svg';
 
 import qrCodePlaceholder from './qrCodePlaceholder.png';
@@ -139,12 +146,19 @@ export {
   Portkey,
   Portkey24,
   PortkeyV2,
+  PortkeyV2_16,
   Metamask,
+  Metamask_16,
   Coinbase,
+  Coinbase_16,
   WalletConnect,
+  WalletConnect_16,
   Phantom,
+  Phantom_16,
   Tonkeeper,
+  Tonkeeper_16,
   TronLink,
+  TronLink_16,
   Logout,
   Copy,
   CopySmall,

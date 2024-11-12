@@ -12,6 +12,7 @@ export enum CommonButtonSize {
 export enum CommonButtonType {
   Primary = 'primary',
   Secondary = 'secondary',
+  Border = 'border',
 }
 
 export type CommonButtonProps = Omit<ButtonProps, 'size' | 'type'> & {

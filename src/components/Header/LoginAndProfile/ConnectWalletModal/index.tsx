@@ -1,17 +1,28 @@
 import { CommonModal } from '@etransfer/ui-react';
-import { CONNECT_AELF_WALLET } from 'constants/wallet';
+import { CONNECT_WALLET } from 'constants/wallet';
 import styles from './styles.module.scss';
 import AelfWalletList from './aelfList';
 import EVMWalletList from './EVMList';
 import SolanaWalletList from './SolanaList';
 import TONWalletList from './TONList';
 import TRONWalletList from './TRONList';
+import { WalletTypeEnum } from 'context/Wallet/types';
 
 export default function ConnectWalletModal({
   open,
+  title = CONNECT_WALLET,
+  allowList = [
+    WalletTypeEnum.AELF,
+    WalletTypeEnum.EVM,
+    WalletTypeEnum.SOL,
+    WalletTypeEnum.TRON,
+    WalletTypeEnum.TON,
+  ],
   onCancel,
 }: {
   open: boolean;
+  title?: string;
+  allowList?: WalletTypeEnum[];
   onCancel: () => void;
 }) {
   return (
@@ -20,16 +31,16 @@ export default function ConnectWalletModal({
       getContainer="#ConnectWalletButton"
       wrapClassName={styles['connect-wallet-modal-wrap']}
       className={styles['connect-wallet-modal']}
-      title={CONNECT_AELF_WALLET}
+      title={title}
       hideCancelButton
       hideOkButton
       onCancel={onCancel}>
       <div>
-        <AelfWalletList />
-        <EVMWalletList />
-        <SolanaWalletList />
-        <TRONWalletList />
-        <TONWalletList />
+        {allowList?.includes(WalletTypeEnum.AELF) && <AelfWalletList />}
+        {allowList?.includes(WalletTypeEnum.EVM) && <EVMWalletList />}
+        {allowList?.includes(WalletTypeEnum.SOL) && <SolanaWalletList />}
+        {allowList?.includes(WalletTypeEnum.TRON) && <TRONWalletList />}
+        {allowList?.includes(WalletTypeEnum.TON) && <TONWalletList />}
       </div>
     </CommonModal>
   );
