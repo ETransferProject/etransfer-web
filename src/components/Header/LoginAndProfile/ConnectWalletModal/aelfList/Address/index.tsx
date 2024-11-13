@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import styles from '../../styles.module.scss';
 import { CHAIN_NAME_ENUM, SupportedChainId } from 'constants/index';
 import Copy, { CopySize } from 'components/Copy';
@@ -9,6 +9,8 @@ import { AelfSmall, tDVVSmall as TDVVSmall } from 'assets/images';
 
 export default function Address() {
   const accounts = useGetAccount();
+  const [isShowCopy, setIsShowCopy] = useState(false);
+  const [isShowCopyIndex, setIsShowCopyIndex] = useState<number>();
 
   const accountsList = useMemo(() => {
     const temp = [];
@@ -31,17 +33,35 @@ export default function Address() {
     return temp;
   }, [accounts]);
 
+  const handleMouseEnter = useCallback((event: any, index: number) => {
+    event.stopPropagation();
+    setIsShowCopy(true);
+    setIsShowCopyIndex(index);
+  }, []);
+
+  const handleMouseLeave = useCallback((event: any) => {
+    event.stopPropagation();
+    setIsShowCopy(false);
+    setIsShowCopyIndex(undefined);
+  }, []);
+
   return (
     <div className={styles['wallet-aelf-address']}>
       <div className={styles['wallet-aelf-address-divider']} />
       <div className="flex-column gap-4">
-        {accountsList.map((item) => (
-          <div className={clsx('flex-column', styles['wallet-aelf-address-item'])} key={item.key}>
+        {accountsList.map((item, index) => (
+          <div
+            className={clsx('flex-column', styles['wallet-aelf-address-item'])}
+            key={item.key}
+            onMouseEnter={(event) => handleMouseEnter(event, index)}
+            onMouseLeave={handleMouseLeave}>
             <div className="flex-row-center gap-8">
               <span className={styles['wallet-list-item-name']}>
                 {getOmittedStr(item.value, 5, 5)}
               </span>
-              <Copy toCopy={item.value} size={CopySize.Small} />
+              {isShowCopy && isShowCopyIndex === index && (
+                <Copy toCopy={item.value} size={CopySize.Small} />
+              )}
             </div>
             <div className="flex-row-center gap-4">
               {item.key === SupportedChainId.mainChain ? <AelfSmall /> : <TDVVSmall />}

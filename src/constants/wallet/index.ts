@@ -21,3 +21,5 @@ export const CONNECT_WALLET = 'Connect Wallet';
 export const CONNECT_AELF_WALLET = 'Connect aelf wallet';
 export const MY_WALLET = 'My Wallets';
 export const MY_AELF_WALLET = 'My aelf wallet';
+
+export const USER_REJECT_CONNECT_WALLET_TIP = 'User denied account authorization.';

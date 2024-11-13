@@ -58,6 +58,15 @@
   background-color: $hover-bg;
   padding: 14px 16px;
   margin-bottom: 4px;
+  &:hover {
+    background-color: #f1f1f1;
+  }
+}
+
+.wallet-list-item-expand {
+  &:hover {
+    background-color: $hover-bg;
+  }
 }
 
 .wallet-list-item-show {

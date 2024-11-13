@@ -26,5 +26,5 @@ export function useCheckHasConnectedWallet() {
       hasConnected:
         isAelfConnected || isEVMConnected || isSolanaConnected || isTONConnected || isTRONConnected,
     };
-  }, []);
+  }, [isAelfConnected, isEVMConnected, isSolanaConnected, isTONConnected, isTRONConnected]);
 }

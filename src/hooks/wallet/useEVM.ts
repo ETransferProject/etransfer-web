@@ -3,15 +3,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { getAuthPlainTextOrigin } from 'utils/auth';
 import { ethers } from 'ethers';
 import { sepolia } from 'viem/chains';
-import {
-  useAccount,
-  useBalance,
-  useConnect,
-  useDisconnect,
-  useSignMessage,
-  useWriteContract,
-} from 'wagmi';
-import { EVM_USDT_CONTRACT_ADDRESS_SEPOLIA, EVM_WALLET_ALLOWANCE } from 'constants/wallet/EVM';
+import { useAccount, useConnect, useDisconnect, useSignMessage, useWriteContract } from 'wagmi';
+import { EVM_WALLET_ALLOWANCE } from 'constants/wallet/EVM';
 import { Abi } from 'viem';
 
 export default function useEVM() {
@@ -19,11 +12,11 @@ export default function useEVM() {
   const { writeContractAsync } = useWriteContract();
   const { disconnect } = useDisconnect();
   const accountInfo = useAccount();
-  const { data, isSuccess } = useBalance({
-    address: accountInfo.address,
-    token: EVM_USDT_CONTRACT_ADDRESS_SEPOLIA, // token contract address
-  });
-  console.log('>>>>>> EVM balance result', isSuccess, data);
+  // const { data, isSuccess } = useBalance({
+  //   address: accountInfo.address,
+  //   token: EVM_USDT_CONTRACT_ADDRESS_SEPOLIA, // token contract address
+  // });
+  // console.log('>>>>>> EVM balance result', isSuccess, data);
 
   const [isConnected, setIsConnected] = useState(false);
   connectors.map(async (item) => {

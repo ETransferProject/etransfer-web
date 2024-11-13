@@ -3,6 +3,7 @@ import * as AELF from '../platform/AELF';
 import * as tDVV from '../platform/tDVV';
 import { BlockchainNetworkType, NetworkName } from 'constants/network';
 import { NetworkEnum } from '@aelf-web-login/wallet-adapter-base';
+import { NetworkStatus, TNetworkItem } from 'types/api';
 
 export const TELEGRAM_BOT_ID = '7393968118';
 
@@ -163,4 +164,28 @@ export const TO_NETWORK_TOKEN_CONFIG = {
   [BlockchainNetworkType.Optimism]: [TransferAllowanceTokens.USDT],
   [BlockchainNetworkType.TON]: [TransferAllowanceTokens.USDT],
   [BlockchainNetworkType.BASE]: [TransferAllowanceTokens.Agent],
+};
+
+export const TRANSFER_DEFAULT_FROM_NETWORK: TNetworkItem = {
+  contractAddress: '',
+  explorerUrl: '',
+  multiConfirm: '64 confirmations',
+  multiConfirmTime: '4 mins',
+  name: 'Ethereum (ERC20)',
+  network: 'ETH',
+  specialWithdrawFee: '',
+  specialWithdrawFeeDisplay: false,
+  status: NetworkStatus.Health,
+};
+
+export const TRANSFER_DEFAULT_TO_NETWORK: TNetworkItem = {
+  contractAddress: '',
+  explorerUrl: '',
+  multiConfirm: '16 confirmations',
+  multiConfirmTime: '4 mins',
+  name: 'aelf dAppChain',
+  network: 'tDVV',
+  specialWithdrawFee: '',
+  specialWithdrawFeeDisplay: false,
+  status: NetworkStatus.Health,
 };

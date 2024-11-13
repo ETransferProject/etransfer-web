@@ -71,6 +71,8 @@ export type TNetworkItem = {
   status: NetworkStatus;
   withdrawFee?: string;
   withdrawFeeUnit?: string;
+  specialWithdrawFee?: string;
+  specialWithdrawFeeDisplay?: boolean;
 };
 
 export enum NetworkStatus {

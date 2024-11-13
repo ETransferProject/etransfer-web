@@ -4,7 +4,15 @@ import { WalletTypeEnum } from 'context/Wallet/types';
 import { getAuthPlainTextOrigin } from 'utils/auth';
 
 export default function useTRON() {
-  const { address, wallet, connected, select, disconnect, signMessage } = useWallet();
+  const { address, wallet, connected, connect, select, disconnect, signMessage } = useWallet();
+
+  const onConnect = useCallback(
+    async (name: any) => {
+      select(name);
+      await connect();
+    },
+    [connect, select],
+  );
 
   const getBalance = useCallback(
     async ({ tokenContractAddress }: { tokenContractAddress: string }) => {
@@ -63,7 +71,7 @@ export default function useTRON() {
       account: address,
       accounts: [address],
       connector: wallet?.adapter,
-      connect: select,
+      connect: onConnect,
       disconnect: disconnect,
       getBalance,
       signMessage: getSignMessage,
@@ -75,7 +83,7 @@ export default function useTRON() {
     disconnect,
     getBalance,
     getSignMessage,
-    select,
+    onConnect,
     sendTransaction,
     wallet?.adapter,
   ]);

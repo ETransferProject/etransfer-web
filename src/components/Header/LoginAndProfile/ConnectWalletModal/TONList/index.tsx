@@ -2,30 +2,54 @@ import { Logout } from 'assets/images';
 import styles from '../styles.module.scss';
 import clsx from 'clsx';
 import { CONNECT_TON_LIST_CONFIG } from 'constants/wallet/TON';
-import useTON from 'hooks/wallet/useTON';
-import { useCallback, useState } from 'react';
-import { getOmittedStr } from '@etransfer/utils';
+import useTON, { useTonWalletConnectionError } from 'hooks/wallet/useTON';
+import { useCallback, useEffect, useState } from 'react';
+import { getOmittedStr, handleErrorMessage } from '@etransfer/utils';
 import Copy, { CopySize } from 'components/Copy';
 import PartialLoading from 'components/PartialLoading';
+import { SingleMessage } from '@etransfer/ui-react';
+import { TonConnectError } from '@tonconnect/ui-react';
+import { USER_REJECT_CONNECT_WALLET_TIP } from 'constants/wallet';
 
 export default function TONWalletList() {
   const { account, connect, disconnect, isConnected } = useTON();
   const [isConnectLoading, setIsConnectLoading] = useState(false);
+  const [isShowCopy, setIsShowCopy] = useState(false);
+
+  const onConnectErrorCallback = useCallback((error: TonConnectError) => {
+    const errorMessage = handleErrorMessage(error);
+    let targetMessage = errorMessage;
+    if (errorMessage.includes('Pop-up closed') || errorMessage.includes('Reject request')) {
+      targetMessage = USER_REJECT_CONNECT_WALLET_TIP;
+    }
+    SingleMessage.error(targetMessage);
+    setIsConnectLoading(false);
+  }, []);
+  useTonWalletConnectionError(onConnectErrorCallback);
 
   const onConnect = useCallback(async () => {
     try {
       setIsConnectLoading(true);
       if (isConnected) return;
-      connect(CONNECT_TON_LIST_CONFIG.key);
-      setIsConnectLoading(false);
+      await connect(CONNECT_TON_LIST_CONFIG.key);
     } catch (error) {
       setIsConnectLoading(false);
     }
   }, [connect, isConnected]);
 
-  const onDisconnect = useCallback(async () => {
-    disconnect();
-  }, [disconnect]);
+  useEffect(() => {
+    if (isConnected) {
+      setIsConnectLoading(false);
+    }
+  }, [isConnected]);
+
+  const onDisconnect = useCallback(
+    async (event: any) => {
+      event.stopPropagation();
+      disconnect();
+    },
+    [disconnect],
+  );
 
   const renderAccount = useCallback(
     (name: string) => {
@@ -36,7 +60,7 @@ export default function TONWalletList() {
               <span className={styles['wallet-list-item-name']}>
                 {getOmittedStr(account, 5, 5)}
               </span>
-              <Copy toCopy={account} size={CopySize.Small} />
+              {isShowCopy && <Copy toCopy={account} size={CopySize.Small} />}
             </div>
             <div className={styles['wallet-list-item-desc']}>{name}</div>
           </div>
@@ -44,8 +68,18 @@ export default function TONWalletList() {
       }
       return <div className={styles['wallet-list-item-name']}>{name}</div>;
     },
-    [account, isConnected],
+    [account, isConnected, isShowCopy],
   );
+
+  const handleMouseEnter = useCallback((event: any) => {
+    event.stopPropagation();
+    setIsShowCopy(true);
+  }, []);
+
+  const handleMouseLeave = useCallback((event: any) => {
+    event.stopPropagation();
+    setIsShowCopy(false);
+  }, []);
 
   return (
     <div>
@@ -53,7 +87,9 @@ export default function TONWalletList() {
 
       <div
         className={clsx('flex-row-center-between', styles['wallet-list-item'])}
-        onClick={onConnect}>
+        onClick={onConnect}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}>
         <div className={clsx('flex-row-center', styles['wallet-list-item-left'])}>
           <div
             className={clsx(

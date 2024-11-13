@@ -1,6 +1,13 @@
-import { useTonWallet, useTonConnectUI, SendTransactionRequest, CHAIN } from '@tonconnect/ui-react';
+import {
+  useTonWallet,
+  useTonConnectUI,
+  SendTransactionRequest,
+  CHAIN,
+  Wallet,
+  TonConnectError,
+} from '@tonconnect/ui-react';
 import { WalletTypeEnum } from 'context/Wallet/types';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import TonWeb from 'tonweb';
 import { Address as CoreAddress, beginCell, toNano } from '@ton/core';
 import { sign, mnemonicToPrivateKey } from '@ton/crypto';
@@ -111,7 +118,7 @@ export default function useTON() {
       accounts: [address],
       connector: tonConnectUI.connector,
       provider: wallet?.provider,
-      connect: (name: string) => tonConnectUI.openSingleWalletModal(name),
+      connect: async (name: string) => await tonConnectUI.openSingleWalletModal(name),
       disconnect: tonConnectUI.disconnect,
       getAccountInfo: () => tonConnectUI.account,
       getBalance,
@@ -121,4 +128,24 @@ export default function useTON() {
   }, [address, getBalance, sendTransaction, signMessage, tonConnectUI, wallet?.provider]);
 
   return tonContext;
+}
+
+export function useTonWalletConnectionError(callback: (error: TonConnectError) => void) {
+  const { connector } = useTON();
+
+  const errorsHandler = useCallback(
+    (error: TonConnectError) => {
+      callback(error);
+    },
+    [callback],
+  );
+
+  const emptyCallback = useCallback((info: Wallet | null) => {
+    console.log('>>>>>> TON emptyCallback', info);
+  }, []);
+
+  useEffect(
+    () => connector.onStatusChange(emptyCallback, errorsHandler),
+    [connector, emptyCallback, errorsHandler],
+  );
 }

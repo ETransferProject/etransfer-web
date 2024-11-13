@@ -4,14 +4,16 @@ import clsx from 'clsx';
 import { CONNECT_EVM_LIST_CONFIG } from 'constants/wallet/EVM';
 import useEVM from 'hooks/wallet/useEVM';
 import { useCallback, useMemo, useState } from 'react';
-import { getOmittedStr } from '@etransfer/utils';
+import { getOmittedStr, handleErrorMessage } from '@etransfer/utils';
 import Copy, { CopySize } from 'components/Copy';
 import PartialLoading from 'components/PartialLoading';
+import { SingleMessage } from '@etransfer/ui-react';
 
 export default function EVMWalletList() {
   const { account, connect, connectors, connector, disconnect, isConnected } = useEVM();
   const [isConnectLoading, setIsConnectLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [isShowCopy, setIsShowCopy] = useState(false);
 
   const onConnect = useCallback(
     async (index: number) => {
@@ -23,14 +25,29 @@ export default function EVMWalletList() {
         setIsConnectLoading(false);
       } catch (error) {
         setIsConnectLoading(false);
+        SingleMessage.error(handleErrorMessage(error));
       }
     },
     [connect, connectors, isConnected],
   );
 
-  const onDisconnect = useCallback(async () => {
-    disconnect();
-  }, [disconnect]);
+  const onDisconnect = useCallback(
+    async (event: any) => {
+      event.stopPropagation();
+      disconnect();
+    },
+    [disconnect],
+  );
+
+  const handleMouseEnter = useCallback((event: any) => {
+    event.stopPropagation();
+    setIsShowCopy(true);
+  }, []);
+
+  const handleMouseLeave = useCallback((event: any) => {
+    event.stopPropagation();
+    setIsShowCopy(false);
+  }, []);
 
   const renderAccount = useCallback(
     (key: string, name: string) => {
@@ -41,7 +58,7 @@ export default function EVMWalletList() {
               <span className={styles['wallet-list-item-name']}>
                 {getOmittedStr(account, 5, 5)}
               </span>
-              <Copy toCopy={account} size={CopySize.Small} />
+              {isShowCopy && <Copy toCopy={account} size={CopySize.Small} />}
             </div>
             <div className={styles['wallet-list-item-desc']}>{name}</div>
           </div>
@@ -49,7 +66,7 @@ export default function EVMWalletList() {
       }
       return <div className={styles['wallet-list-item-name']}>{name}</div>;
     },
-    [account, connector?.id, isConnected],
+    [account, connector?.id, isConnected, isShowCopy],
   );
 
   const walletList = useMemo(() => {
@@ -71,7 +88,9 @@ export default function EVMWalletList() {
           <div
             className={clsx('flex-row-center-between', styles['wallet-list-item'])}
             key={'evm-wallet-' + item.key}
-            onClick={() => onConnect(index)}>
+            onClick={() => onConnect(index)}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}>
             <div className={clsx('flex-row-center', styles['wallet-list-item-left'])}>
               <div
                 className={clsx(

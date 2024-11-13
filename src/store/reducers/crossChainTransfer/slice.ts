@@ -1,14 +1,20 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { TOKEN_INFO_USDT, TokenType } from 'constants/index';
+import {
+  TOKEN_INFO_USDT,
+  TokenType,
+  TRANSFER_DEFAULT_FROM_NETWORK,
+  TRANSFER_DEFAULT_TO_NETWORK,
+} from 'constants/index';
 import { TNetworkItem, TTokenItem } from 'types/api';
 
 export type TCrossChainTransferState = {
   tokenSymbol: string;
   tokenList: TTokenItem[];
+  totalTokenList: TTokenItem[];
 
-  fromNetwork?: TNetworkItem;
+  fromNetwork: TNetworkItem;
   fromNetworkList?: TNetworkItem[];
-  toNetwork?: TNetworkItem;
+  toNetwork: TNetworkItem;
   toNetworkList?: TNetworkItem[];
   totalNetworkList?: TNetworkItem[];
 
@@ -18,6 +24,9 @@ export type TCrossChainTransferState = {
 export const InitialCrossChainTransferState: TCrossChainTransferState = {
   tokenSymbol: TokenType.USDT,
   tokenList: [TOKEN_INFO_USDT],
+  totalTokenList: [TOKEN_INFO_USDT],
+  fromNetwork: TRANSFER_DEFAULT_FROM_NETWORK,
+  toNetwork: TRANSFER_DEFAULT_TO_NETWORK,
 };
 
 export const CrossChainTransferSlice = createSlice({
@@ -30,13 +39,16 @@ export const CrossChainTransferSlice = createSlice({
     setTokenList: (state, action: PayloadAction<TTokenItem[]>) => {
       state.tokenList = action.payload;
     },
-    setFromNetwork: (state, action: PayloadAction<TNetworkItem | undefined>) => {
+    setTotalTokenList: (state, action: PayloadAction<TTokenItem[]>) => {
+      state.tokenList = action.payload;
+    },
+    setFromNetwork: (state, action: PayloadAction<TNetworkItem>) => {
       state.fromNetwork = action.payload;
     },
     setFromNetworkList: (state, action: PayloadAction<TNetworkItem[]>) => {
       state.fromNetworkList = action.payload;
     },
-    setToNetwork: (state, action: PayloadAction<TNetworkItem | undefined>) => {
+    setToNetwork: (state, action: PayloadAction<TNetworkItem>) => {
       state.toNetwork = action.payload;
     },
     setToNetworkList: (state, action: PayloadAction<TNetworkItem[]>) => {
@@ -57,6 +69,7 @@ export const CrossChainTransferSlice = createSlice({
 export const {
   setTokenSymbol,
   setTokenList,
+  setTotalTokenList,
   setFromNetwork,
   setFromNetworkList,
   setToNetwork,

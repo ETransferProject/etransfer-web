@@ -12,6 +12,7 @@ import {
   TCrossChainTransferInfo,
   TGetTransferInfoRequest,
   TNetworkItem,
+  TTokenItem,
 } from 'types/api';
 import { getNetworkList, getTokenList, getTransferInfo } from 'utils/api/transfer';
 import {
@@ -23,6 +24,7 @@ import {
   setToNetwork,
   setToNetworkList,
   setTotalNetworkList,
+  setTotalTokenList,
 } from 'store/reducers/crossChainTransfer/slice';
 import { formatSymbolDisplay } from '@etransfer/ui-react';
 import { removeELFAddressSuffix, ZERO } from '@etransfer/utils';
@@ -37,6 +39,7 @@ import {
 } from './types';
 import { isDIDAddressSuffix } from 'utils/aelf/aelfBase';
 import { WalletTypeEnum } from 'context/Wallet/types';
+import { computeToNetworkList } from './utils';
 
 export default function CrossChainTransferPage() {
   const dispatch = useAppDispatch();
@@ -44,6 +47,7 @@ export default function CrossChainTransferPage() {
   const [{ fromWallet, toWallet }] = useWallet();
   const { fromNetwork, toNetwork, tokenSymbol } = useCrossChainTransfer();
   const fromNetworkRef = useRef<TNetworkItem>();
+  const totalTokenListRef = useRef<TTokenItem[]>([]);
   const [form] = Form.useForm<TTransferFormValues>();
   const [formValidateData, setFormValidateData] = useState<{
     [key in TransferFormKeys]: { validateStatus: TransferValidateStatus; errorMessage: string };
@@ -107,10 +111,13 @@ export default function CrossChainTransferPage() {
     async (isInitCurrentSymbol?: boolean) => {
       try {
         const res = await getTokenList({
-          type: BusinessType.Withdraw,
+          type: BusinessType.Transfer,
         });
 
-        dispatch(setTokenList(res.tokenList));
+        dispatch(setTotalTokenList(res.tokenList));
+        totalTokenListRef.current = res.tokenList;
+
+        dispatch(setTokenList(res.tokenList)); // TODO
 
         if (isInitCurrentSymbol && !tokenSymbol) {
           dispatch(setTokenSymbol(res.tokenList[0].symbol));
@@ -136,9 +143,14 @@ export default function CrossChainTransferPage() {
       const { networkList } = await getNetworkList({ type: BusinessType.Transfer });
 
       dispatch(setTotalNetworkList(networkList));
-
       dispatch(setFromNetworkList(networkList));
-      dispatch(setToNetworkList(networkList));
+
+      const toNetworkList = computeToNetworkList(
+        fromNetwork,
+        networkList,
+        totalTokenListRef.current,
+      );
+      dispatch(setToNetworkList(toNetworkList)); // TODO
 
       if (networkList?.length > 0) {
         // from logic
@@ -157,13 +169,14 @@ export default function CrossChainTransferPage() {
           dispatch(setToNetwork(networkList[0]));
         }
       } else {
-        dispatch(setFromNetwork(undefined));
-        dispatch(setToNetwork(undefined));
+        // TODO
+        // dispatch(setFromNetwork(undefined));
+        // dispatch(setToNetwork(undefined));
       }
     } catch (error: any) {
       console.log('getNetworkData error', error);
     }
-  }, [dispatch, fromNetwork?.network, toNetwork?.network]);
+  }, [dispatch, fromNetwork, toNetwork?.network]);
 
   const getTransferData = useCallback(
     async (symbol?: string, amount?: string) => {

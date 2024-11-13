@@ -15,8 +15,10 @@ import styles from '../styles.module.scss';
 import useEVM from 'hooks/wallet/useEVM';
 import { COINBASE_WALLET_ID, METAMASK_WALLET_ID, WALLET_CONNECT_ID } from 'constants/wallet/EVM';
 import { useMemo } from 'react';
+import { useCommonState } from 'store/Provider/hooks';
 
 export default function ConnectOtherWalletButton(props: CommonButtonProps) {
+  const { isMobilePX } = useCommonState();
   const { hasConnected, hasConnectedTypes } = useCheckHasConnectedWallet();
   const { connector } = useEVM();
 
@@ -53,7 +55,7 @@ export default function ConnectOtherWalletButton(props: CommonButtonProps) {
             return <Item key={'wallet-icon' + index} />;
           })}
         </div>
-        <span className={styles['connected-wallet-button-text']}>{MY_WALLET}</span>
+        {!isMobilePX && <span className={styles['connected-wallet-button-text']}>{MY_WALLET}</span>}
       </CommonButton>
     );
   }

@@ -1,6 +1,6 @@
 import { Checkbox, Form, FormInstance, Input, InputProps } from 'antd';
 import styles from './styles.module.scss';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useWallet } from 'context/Wallet';
 import { BlockchainNetworkType } from 'constants/network';
 import { useCrossChainTransfer } from 'store/Provider/hooks';
@@ -35,6 +35,7 @@ export default function CrossChainTransferForm({
   const isAndroid = devices.isMobile().android;
   const [{ fromWallet }] = useWallet();
   const { toNetwork, tokenSymbol, tokenList } = useCrossChainTransfer();
+  const [isInputAddress, setIsInputAddress] = useState(false);
 
   const currentToken = useMemo(() => {
     const item = tokenList?.find((item) => item.symbol === tokenSymbol);
@@ -45,6 +46,7 @@ export default function CrossChainTransferForm({
   const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
 
   const onUseRecipientChange = useCallback((e: CheckboxChangeEvent) => {
+    setIsInputAddress(e.target.checked);
     console.log(`onUseRecipientChange = ${e.target.checked}`);
   }, []);
 
@@ -90,7 +92,7 @@ export default function CrossChainTransferForm({
             help={formValidateData[TransferFormKeys.AMOUNT].errorMessage}>
             <Input
               className={styles['transfer-input-amount']}
-              bordered={false}
+              // bordered={false}
               autoComplete="off"
               placeholder={fromWallet?.isConnected ? `Minimum: ${minAmount}` : ''}
               onInput={(event: any) => {
@@ -148,22 +150,24 @@ export default function CrossChainTransferForm({
         </div>
 
         <Checkbox onChange={onUseRecipientChange}>Send to another address manually</Checkbox>
-        <div className={styles['form-item-wrapper']}>
-          <Form.Item
-            className={styles['form-item']}
-            label="Recipient Address"
-            name={TransferFormKeys.RECIPIENT}
-            validateStatus={formValidateData[TransferFormKeys.RECIPIENT].validateStatus}
-            help={formValidateData[TransferFormKeys.RECIPIENT].errorMessage}>
-            <Input
-              placeholder="Recipient's aelf Address"
-              autoComplete="off"
-              onChange={(e) => onRecipientAddressChange?.(e.target.value)}
-              onBlur={onRecipientAddressBlur}
-            />
-          </Form.Item>
-        </div>
-        {toNetwork?.network === BlockchainNetworkType.TON && (
+        {isInputAddress && (
+          <div className={styles['form-item-wrapper']}>
+            <Form.Item
+              className={styles['form-item']}
+              name={TransferFormKeys.RECIPIENT}
+              validateStatus={formValidateData[TransferFormKeys.RECIPIENT].validateStatus}
+              help={formValidateData[TransferFormKeys.RECIPIENT].errorMessage}>
+              <Input
+                placeholder="Recipient's aelf Address"
+                autoComplete="off"
+                onChange={(e) => onRecipientAddressChange?.(e.target.value)}
+                onBlur={onRecipientAddressBlur}
+              />
+            </Form.Item>
+          </div>
+        )}
+
+        {isInputAddress && toNetwork?.network === BlockchainNetworkType.TON && (
           <div className={styles['form-item-wrapper']}>
             <Form.Item
               className={styles['form-item']}

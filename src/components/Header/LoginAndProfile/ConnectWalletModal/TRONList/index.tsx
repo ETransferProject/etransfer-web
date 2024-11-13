@@ -11,13 +11,14 @@ import PartialLoading from 'components/PartialLoading';
 export default function TRONWalletList() {
   const { account, isConnected, connect, disconnect } = useTRON();
   const [isConnectLoading, setIsConnectLoading] = useState(false);
+  const [isShowCopy, setIsShowCopy] = useState(false);
 
   const onConnect = useCallback(
     async (name: string) => {
       try {
         setIsConnectLoading(true);
         if (isConnected) return;
-        connect(name as any);
+        await connect(name as any);
         setIsConnectLoading(false);
       } catch (error) {
         setIsConnectLoading(false);
@@ -26,9 +27,13 @@ export default function TRONWalletList() {
     [connect, isConnected],
   );
 
-  const onDisconnect = useCallback(() => {
-    disconnect();
-  }, [disconnect]);
+  const onDisconnect = useCallback(
+    (event: any) => {
+      event.stopPropagation();
+      disconnect();
+    },
+    [disconnect],
+  );
 
   const renderAccount = useCallback(
     (name: string) => {
@@ -39,7 +44,7 @@ export default function TRONWalletList() {
               <span className={styles['wallet-list-item-name']}>
                 {getOmittedStr(account, 5, 5)}
               </span>
-              <Copy toCopy={account} size={CopySize.Small} />
+              {isShowCopy && <Copy toCopy={account} size={CopySize.Small} />}
             </div>
             <div className={styles['wallet-list-item-desc']}>{name}</div>
           </div>
@@ -47,8 +52,18 @@ export default function TRONWalletList() {
       }
       return <div className={styles['wallet-list-item-name']}>{name}</div>;
     },
-    [account, isConnected],
+    [account, isConnected, isShowCopy],
   );
+
+  const handleMouseEnter = useCallback((event: any) => {
+    event.stopPropagation();
+    setIsShowCopy(true);
+  }, []);
+
+  const handleMouseLeave = useCallback((event: any) => {
+    event.stopPropagation();
+    setIsShowCopy(false);
+  }, []);
 
   return (
     <div>
@@ -59,7 +74,9 @@ export default function TRONWalletList() {
           <div
             className={clsx('flex-row-center-between', styles['wallet-list-item'])}
             key={'tron-wallet-' + item.key}
-            onClick={() => onConnect('TronLink')}>
+            onClick={() => onConnect('TronLink')}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}>
             <div className={clsx('flex-row-center', styles['wallet-list-item-left'])}>
               <div
                 className={clsx(

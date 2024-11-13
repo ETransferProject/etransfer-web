@@ -63,7 +63,12 @@ export default function AelfWalletList() {
       {CONNECT_AELF_LIST_CONFIG.list.map((item) => {
         const Icon = item.icon;
         return (
-          <div className={clsx(styles['wallet-list-item'])} key={'aelf-wallet-' + item.key}>
+          <div
+            className={clsx(
+              styles['wallet-list-item'],
+              dynamicArrowExpand && styles['wallet-list-item-expand'],
+            )}
+            key={'aelf-wallet-' + item.key}>
             <div className={clsx('flex-row-center-between')} onClick={handleLogin}>
               <div className={clsx('flex-row-center', styles['wallet-list-item-left'])}>
                 <div

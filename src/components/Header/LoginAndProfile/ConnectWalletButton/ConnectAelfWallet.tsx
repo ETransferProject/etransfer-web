@@ -4,8 +4,10 @@ import { CONNECT_AELF_WALLET, MY_AELF_WALLET, UNLOCK } from 'constants/wallet/in
 import useAelf, { useShowLoginButtonLoading } from 'hooks/wallet/useAelf';
 import { useMemo } from 'react';
 import styles from '../styles.module.scss';
+import { useCommonState } from 'store/Provider/hooks';
 
 export default function ConnectAelfWalletButton(props: CommonButtonProps) {
+  const { isMobilePX } = useCommonState();
   const { isLocking, isConnected } = useAelf();
   // Fix: It takes too long to obtain NightElf walletInfo, and the user mistakenly clicks the login button during this period.
   const isLoginButtonLoading = useShowLoginButtonLoading();
@@ -26,7 +28,9 @@ export default function ConnectAelfWalletButton(props: CommonButtonProps) {
           loading={isLoginButtonLoading}
           ghost>
           <PortkeyV2_16 />
-          <span className={styles['connected-wallet-button-text']}>{MY_AELF_WALLET}</span>
+          {!isMobilePX && (
+            <span className={styles['connected-wallet-button-text']}>{MY_AELF_WALLET}</span>
+          )}
         </CommonButton>
       );
     }
@@ -36,7 +40,7 @@ export default function ConnectAelfWalletButton(props: CommonButtonProps) {
         {CONNECT_AELF_WALLET}
       </CommonButton>
     );
-  }, [isConnected, isLocking, isLoginButtonLoading, props]);
+  }, [isConnected, isLocking, isLoginButtonLoading, isMobilePX, props]);
 
   return renderElement;
 }
