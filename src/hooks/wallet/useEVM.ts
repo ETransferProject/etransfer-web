@@ -79,7 +79,7 @@ export default function useEVM() {
         accountInfo?.connector?.id &&
         EVM_WALLET_ALLOWANCE.includes(accountInfo.connector.id),
       walletType: WalletTypeEnum.EVM,
-      provider: accountInfo.connector?.getProvider(),
+      provider: accountInfo.connector?.getProvider,
       account: accountInfo.address,
       accounts: accountInfo.addresses,
       connector: accountInfo.connector,

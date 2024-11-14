@@ -270,6 +270,7 @@ export default function CrossChainTransferPage() {
   });
 
   useEffect(() => {
+    // TODO TCrossChainTransferEntryConfig
     initRef.current();
   }, []);
 

@@ -119,3 +119,9 @@ export const isAelfChain = (network: string) => {
   }
   return false;
 };
+
+export const uint8ArrayToHex = (uint8Array: Uint8Array) => {
+  Array.from(uint8Array)
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+};

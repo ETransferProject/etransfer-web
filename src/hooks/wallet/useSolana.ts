@@ -12,6 +12,7 @@ import {
 } from '@solana/spl-token';
 import { configureAndSendCurrentTransaction } from 'utils/wallet/SOL';
 import { timesDecimals, ZERO } from '@etransfer/utils';
+import AElf from 'aelf-sdk';
 
 export default function useSolana() {
   const { connection } = useConnection();
@@ -51,7 +52,9 @@ export default function useSolana() {
     const encoder = new TextEncoder();
     const message = encoder.encode(plainTextOrigin);
     const res = await signMessage(message);
-    console.log('>>>>>> Solana res', res);
+    const hex = AElf.utils.uint8ArrayToHex(res);
+
+    console.log('>>>>>> Solana res', hex);
     return res;
   }, [signMessage]);
 

@@ -19,6 +19,9 @@ export function useRouteParamType(): { type: SideMenuKey } {
   );
 
   useEffect(() => {
+    if (pathname === '/withdraw') {
+      // TODO
+    }
     if (routeType && pathname === '/') {
       dispatch(setActiveMenuKey(routeType));
     }
