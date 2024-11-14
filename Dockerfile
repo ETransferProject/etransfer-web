@@ -1,9 +1,9 @@
-FROM node:18-alpine AS base
+FROM node:18 AS base
 
 # Install dependencies only when needed
 FROM base AS deps
 # Check GitHub - nodejs/docker-node at b4117f9333da4138b03a546ec926ef50a31506c3 to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
+# RUN apk add --no-cache libc6-compat libusb-dev
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
