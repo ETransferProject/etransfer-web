@@ -16,13 +16,15 @@ export default function EVMWalletList() {
   const [isShowCopy, setIsShowCopy] = useState(false);
 
   const onConnect = useCallback(
-    async (index: number) => {
+    async (id: string, index: number) => {
       try {
         if (isConnected) return;
+        const connector = connectors.find((item) => item.id === id);
+        if (!connector) return;
+
         setActiveIndex(index);
         setIsConnectLoading(true);
-        console.log('🌈 🌈 🌈 🌈 🌈 🌈 connectors', connectors);
-        await connect({ connector: connectors[index] });
+        await connect({ connector: connector });
         setIsConnectLoading(false);
       } catch (error) {
         setIsConnectLoading(false);
@@ -89,7 +91,7 @@ export default function EVMWalletList() {
           <div
             className={clsx('flex-row-center-between', styles['wallet-list-item'])}
             key={'evm-wallet-' + item.key}
-            onClick={() => onConnect(index)}
+            onClick={() => onConnect(item.key, index)}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}>
             <div className={clsx('flex-row-center', styles['wallet-list-item-left'])}>

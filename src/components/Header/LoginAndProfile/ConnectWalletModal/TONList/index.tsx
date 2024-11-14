@@ -3,17 +3,17 @@ import styles from '../styles.module.scss';
 import clsx from 'clsx';
 import { CONNECT_TON_LIST_CONFIG } from 'constants/wallet/TON';
 import useTON, { useTonWalletConnectionError } from 'hooks/wallet/useTON';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { getOmittedStr, handleErrorMessage } from '@etransfer/utils';
 import Copy, { CopySize } from 'components/Copy';
-import PartialLoading from 'components/PartialLoading';
+// import PartialLoading from 'components/PartialLoading';
 import { SingleMessage } from '@etransfer/ui-react';
 import { TonConnectError } from '@tonconnect/ui-react';
 import { USER_REJECT_CONNECT_WALLET_TIP } from 'constants/wallet';
 
 export default function TONWalletList() {
   const { account, connect, disconnect, isConnected } = useTON();
-  const [isConnectLoading, setIsConnectLoading] = useState(false);
+  // const [isConnectLoading, setIsConnectLoading] = useState(false);
   const [isShowCopy, setIsShowCopy] = useState(false);
 
   const onConnectErrorCallback = useCallback((error: TonConnectError) => {
@@ -23,25 +23,25 @@ export default function TONWalletList() {
       targetMessage = USER_REJECT_CONNECT_WALLET_TIP;
     }
     SingleMessage.error(targetMessage);
-    setIsConnectLoading(false);
+    // setIsConnectLoading(false);
   }, []);
   useTonWalletConnectionError(onConnectErrorCallback);
 
   const onConnect = useCallback(async () => {
     try {
-      setIsConnectLoading(true);
+      // setIsConnectLoading(true);
       if (isConnected) return;
       await connect(CONNECT_TON_LIST_CONFIG.key);
     } catch (error) {
-      setIsConnectLoading(false);
+      // setIsConnectLoading(false);
     }
   }, [connect, isConnected]);
 
-  useEffect(() => {
-    if (isConnected) {
-      setIsConnectLoading(false);
-    }
-  }, [isConnected]);
+  // useEffect(() => {
+  //   if (isConnected) {
+  //     setIsConnectLoading(false);
+  //   }
+  // }, [isConnected]);
 
   const onDisconnect = useCallback(
     async (event: any) => {
@@ -107,11 +107,11 @@ export default function TONWalletList() {
             <Logout />
           </div>
         )}
-        {!isConnected && isConnectLoading && (
+        {/* {!isConnected && isConnectLoading && (
           <div className={styles['wallet-connect-loading']}>
             <PartialLoading />
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

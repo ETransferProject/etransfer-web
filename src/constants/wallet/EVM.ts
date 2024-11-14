@@ -17,8 +17,8 @@ export const EVM_USDT_ABI = [
   },
 ];
 
-export const METAMASK_WALLET_ID = 'metaMaskSDK';
-export const COINBASE_WALLET_ID = 'coinbaseWalletSDK';
+export const METAMASK_WALLET_ID = 'io.metamask'; // 'metaMaskSDK'
+export const COINBASE_WALLET_ID = 'coinbaseWalletSDK'; // 'com.coinbase.wallet'
 export const WALLET_CONNECT_ID = 'walletConnect';
 
 export const EVM_WALLET_ALLOWANCE = [METAMASK_WALLET_ID, COINBASE_WALLET_ID, WALLET_CONNECT_ID];

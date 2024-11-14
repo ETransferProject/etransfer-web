@@ -17,7 +17,6 @@ export const config = createConfig({
     [sepolia.id]: http(),
     [bscTestnet.id]: http(),
   },
-  ssr: true,
 });
 
 export default function EVMProvider({ children }: { children: React.ReactNode }) {

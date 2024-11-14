@@ -12,14 +12,14 @@ import { useClearStore } from 'hooks/common';
 import service from 'api/axios';
 import myEvents from 'utils/myEvent';
 import Address from './Address';
-import PartialLoading from 'components/PartialLoading';
+// import PartialLoading from 'components/PartialLoading';
 
 export default function AelfWalletList() {
   const { account, connect, disconnect, isConnected } = useAelf();
   const { getAuth } = useQueryAuthToken();
   const [dynamicArrowExpand, setDynamicArrowExpand] = useState(false);
   const clearStore = useClearStore();
-  const [isConnectLoading, setIsConnectLoading] = useState(false);
+  // const [isConnectLoading, setIsConnectLoading] = useState(false);
 
   const handleLogin = useCallback(async () => {
     try {
@@ -27,12 +27,12 @@ export default function AelfWalletList() {
         await getAuth();
       }
       if (!isConnected) {
-        setIsConnectLoading(true);
+        // setIsConnectLoading(true);
         await connect();
-        setIsConnectLoading(false);
+        // setIsConnectLoading(false);
       }
     } catch (error) {
-      setIsConnectLoading(false);
+      // setIsConnectLoading(false);
       SingleMessage.error(handleWebLoginErrorMessage(error));
     }
   }, [connect, getAuth, isConnected]);
@@ -90,11 +90,11 @@ export default function AelfWalletList() {
                   <Logout />
                 </div>
               )}
-              {!isConnected && isConnectLoading && (
+              {/* {!isConnected && isConnectLoading && (
                 <div className={styles['wallet-connect-loading']}>
                   <PartialLoading />
                 </div>
-              )}
+              )} */}
             </div>
             <div
               className={clsx(
