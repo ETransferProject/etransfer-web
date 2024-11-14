@@ -262,14 +262,16 @@ export default function CrossChainTransferPage() {
     await getNetworkData();
     await getTokenData();
   }, [getNetworkData, getTokenData]);
+  const initRef = useRef(init);
+  initRef.current = init;
 
   useEffectOnce(() => {
     dispatch(setActiveMenuKey(SideMenuKey.CrossChainTransfer));
   });
 
   useEffect(() => {
-    init();
-  }, [init]);
+    initRef.current();
+  }, []);
 
   useEffect(() => {
     if (!fromWallet?.isConnected) {

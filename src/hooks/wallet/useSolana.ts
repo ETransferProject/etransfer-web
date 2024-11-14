@@ -15,8 +15,16 @@ import { timesDecimals, ZERO } from '@etransfer/utils';
 
 export default function useSolana() {
   const { connection } = useConnection();
-  const { publicKey, connected, disconnect, select, signMessage, signTransaction, wallet } =
-    useWallet();
+  const {
+    publicKey,
+    connected,
+    connecting,
+    disconnect,
+    select,
+    signMessage,
+    signTransaction,
+    wallet,
+  } = useWallet();
 
   const getBalance = useCallback(
     async ({ tokenContractAddress }: { tokenContractAddress: string }) => {
@@ -111,6 +119,7 @@ export default function useSolana() {
 
   const solanaContext = useMemo(() => {
     return {
+      isConnecting: connecting,
       isConnected: connected,
       walletType: WalletTypeEnum.SOL,
       account: publicKey?.toString(),
@@ -125,6 +134,7 @@ export default function useSolana() {
     };
   }, [
     connected,
+    connecting,
     connection.getAccountInfo,
     disconnect,
     getBalance,

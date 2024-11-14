@@ -15,7 +15,7 @@ import Address from './Address';
 import PartialLoading from 'components/PartialLoading';
 
 export default function AelfWalletList() {
-  const { account, connectWallet, disconnect, isConnected } = useAelf();
+  const { account, connect, disconnect, isConnected } = useAelf();
   const { getAuth } = useQueryAuthToken();
   const [dynamicArrowExpand, setDynamicArrowExpand] = useState(false);
   const clearStore = useClearStore();
@@ -28,14 +28,14 @@ export default function AelfWalletList() {
       }
       if (!isConnected) {
         setIsConnectLoading(true);
-        await connectWallet();
+        await connect();
         setIsConnectLoading(false);
       }
     } catch (error) {
       setIsConnectLoading(false);
       SingleMessage.error(handleWebLoginErrorMessage(error));
     }
-  }, [connectWallet, getAuth, isConnected]);
+  }, [connect, getAuth, isConnected]);
 
   const onDisconnect = useCallback(() => {
     Promise.resolve(disconnect()).then(() => {

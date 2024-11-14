@@ -9,19 +9,16 @@ import Copy, { CopySize } from 'components/Copy';
 import PartialLoading from 'components/PartialLoading';
 
 export default function SolanaWalletList() {
-  const { account, connect, isConnected, disconnect } = useSolana();
-  const [isConnectLoading, setIsConnectLoading] = useState(false);
+  const { account, connect, isConnected, isConnecting, disconnect } = useSolana();
   const [isShowCopy, setIsShowCopy] = useState(false);
 
   const onConnect = useCallback(
     async (name: any) => {
       try {
-        setIsConnectLoading(true);
         if (isConnected) return;
         connect(name);
-        setIsConnectLoading(false);
       } catch (error) {
-        setIsConnectLoading(false);
+        console.log('>>>>>> SolanaWalletList onConnect error', error);
       }
     },
     [connect, isConnected],
@@ -93,7 +90,7 @@ export default function SolanaWalletList() {
                 <Logout />
               </div>
             )}
-            {!isConnected && isConnectLoading && (
+            {!isConnected && isConnecting && (
               <div className={styles['wallet-connect-loading']}>
                 <PartialLoading />
               </div>

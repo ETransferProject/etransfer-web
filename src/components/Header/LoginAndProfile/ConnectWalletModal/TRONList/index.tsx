@@ -9,19 +9,16 @@ import Copy, { CopySize } from 'components/Copy';
 import PartialLoading from 'components/PartialLoading';
 
 export default function TRONWalletList() {
-  const { account, isConnected, connect, disconnect } = useTRON();
-  const [isConnectLoading, setIsConnectLoading] = useState(false);
+  const { account, isConnected, isConnecting, connect, disconnect } = useTRON();
   const [isShowCopy, setIsShowCopy] = useState(false);
 
   const onConnect = useCallback(
     async (name: string) => {
       try {
-        setIsConnectLoading(true);
         if (isConnected) return;
-        await connect(name as any);
-        setIsConnectLoading(false);
+        connect(name as any);
       } catch (error) {
-        setIsConnectLoading(false);
+        console.log('>>>>>> TRONWalletList onConnect error', error);
       }
     },
     [connect, isConnected],
@@ -94,7 +91,7 @@ export default function TRONWalletList() {
                 <Logout />
               </div>
             )}
-            {!isConnected && isConnectLoading && (
+            {!isConnected && isConnecting && (
               <div className={styles['wallet-connect-loading']}>
                 <PartialLoading />
               </div>

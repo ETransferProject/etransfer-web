@@ -12,11 +12,20 @@ import { SingleMessage } from '@etransfer/ui-react';
 import { useEffectOnce } from 'react-use';
 
 export default function useAelf() {
-  const { walletInfo, walletType, isConnected, disConnectWallet, ...props } = useConnectWallet();
+  const {
+    walletInfo,
+    walletType,
+    isConnected,
+    connecting,
+    connectWallet,
+    disConnectWallet,
+    ...props
+  } = useConnectWallet();
 
   const aelfContext = useMemo(() => {
     return {
       ...props,
+      isConnecting: connecting,
       isConnected: isConnected && !!walletInfo,
       walletType: WalletTypeEnum.AELF,
       walletInfo: walletInfo,
@@ -24,10 +33,11 @@ export default function useAelf() {
       account: walletInfo?.address,
       accounts: [walletInfo?.address],
       connector: walletType,
+      connect: connectWallet,
       disconnect: async () => await disConnectWallet(),
       getAccountInfo: () => walletInfo?.extraInfo,
     };
-  }, [disConnectWallet, isConnected, props, walletInfo, walletType]);
+  }, [connectWallet, connecting, disConnectWallet, isConnected, props, walletInfo, walletType]);
 
   return aelfContext;
 }

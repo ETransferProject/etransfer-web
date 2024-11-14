@@ -21,6 +21,7 @@ export default function EVMWalletList() {
         if (isConnected) return;
         setActiveIndex(index);
         setIsConnectLoading(true);
+        console.log('🌈 🌈 🌈 🌈 🌈 🌈 connectors', connectors);
         await connect({ connector: connectors[index] });
         setIsConnectLoading(false);
       } catch (error) {
