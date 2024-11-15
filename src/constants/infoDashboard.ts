@@ -4,12 +4,15 @@ export enum InfoBusinessTypeLabel {
   ALL = 'All',
   Deposit = 'Deposit',
   Withdraw = 'Withdrawal',
+  Transfer = 'Transfer',
 }
 
+// TODO
 export const InfoBusinessTypeOptions = [
   { value: TokensDashboardType.All, label: InfoBusinessTypeLabel.ALL },
   { value: TokensDashboardType.Deposit, label: InfoBusinessTypeLabel.Deposit },
   { value: TokensDashboardType.Withdraw, label: InfoBusinessTypeLabel.Withdraw },
+  { value: TokensDashboardType.Transfer, label: InfoBusinessTypeLabel.Transfer },
 ];
 
 export const DefaultTransferDashboardFromTokenOptions = {
@@ -34,7 +37,7 @@ export const DefaultTransferDashboardToChainOptions = {
 
 export const OverviewLegendList = [
   { color: '#916BFF', label: 'Deposit' },
-  { color: '#41DAFB', label: 'Withdraw' },
+  { color: '#41DAFB', label: 'Transfer' },
 ];
 
 export enum TransferStatusType {

@@ -49,7 +49,7 @@ export default function TransferDetailStep({
         } Chain in progress`,
       },
       {
-        title: 'Received',
+        title: orderType === BusinessType.Transfer ? 'Success' : 'Received',
         description:
           fromTransfer.symbol !== toTransfer.symbol
             ? `You will receive ${formatSymbolDisplay(toTransfer.symbol)}`

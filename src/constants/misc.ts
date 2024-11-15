@@ -17,3 +17,9 @@ export const ETRANSFER_LOGO_BASE64 =
 export const ETRANSFER_PORTKEY_PROJECT_CODE = '13001';
 
 export const COBO_CUSTODY = 'Cobo Custody';
+
+export const DATE_FORMATE = 'YYYY-MM-DD';
+
+export const DATE_FORMATE_MMM_D_YYYY = 'MMM D, YYYY';
+
+export const TIME_FORMATE_MMM_D_YYYY_HH_mm_ss = 'MMM D, YYYY HH:mm:ss';

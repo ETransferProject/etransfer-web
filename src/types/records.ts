@@ -83,6 +83,6 @@ export enum TOrderStatus {
 
 export enum TRecordsStatusI18n {
   Processing = 'Pending',
-  Succeed = 'Completed',
+  Succeed = 'Success',
   Failed = 'Failed',
 }

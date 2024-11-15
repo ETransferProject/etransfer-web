@@ -1,5 +1,7 @@
 import { DEFAULT_NULL_VALUE } from 'constants/index';
 
+export const DEPOSIT_PAGE_TITLE = 'Deposit Assets to aelf';
+
 export const DEPOSIT_ADDRESS_LABEL = 'Deposit Address';
 
 export const MINIMUM_DEPOSIT = 'Minimum Deposit';

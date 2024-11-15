@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { Select, DatePicker, Button } from 'antd';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import { setSkipCount } from 'store/reducers/records/slice';
-import { TRecordsRequestType, TRecordsRequestStatus, TRecordsStatusI18n } from 'types/records';
+import { TRecordsRequestStatus, TRecordsStatusI18n } from 'types/records';
 import { useCallback, useMemo } from 'react';
 import { TRangeValue } from 'types/api';
 import { TRecordsContentProps } from 'pageComponents/HistoryContent';
@@ -12,24 +12,14 @@ import { SwapRightDefault, SwapRightSelected } from 'assets/images';
 import moment from 'moment';
 import { useHistoryFilter } from 'hooks/history';
 import { END_TIME_FORMAT, START_TIME_FORMAT } from 'constants/records';
-import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
+import { DATE_FORMATE } from 'constants/misc';
 
 const { RangePicker } = DatePicker;
-const dateFormat = 'YYYY-MM-DD';
 
 export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecordsContentProps) {
   const dispatch = useAppDispatch();
-  const { type, status, timestamp } = useRecordsState();
-  const { setMethodFilter, setStatusFilter, setTimestampFilter } = useHistoryFilter();
-
-  const handleTypeChange = useCallback(
-    (type: TRecordsRequestType) => {
-      setMethodFilter(type);
-      dispatch(setSkipCount(1));
-      requestRecordsList();
-    },
-    [dispatch, requestRecordsList, setMethodFilter],
-  );
+  const { status, timestamp } = useRecordsState();
+  const { setStatusFilter, setTimestampFilter } = useHistoryFilter();
 
   const handleStatusChange = useCallback(
     (status: TRecordsRequestStatus) => {
@@ -58,11 +48,11 @@ export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecor
 
   const isShowReset = useCallback(() => {
     let isShow = false;
-    if (type !== 0 || status !== 0 || timestamp) {
+    if (status !== 0 || timestamp) {
       isShow = true;
     }
     return isShow;
-  }, [type, status, timestamp]);
+  }, [status, timestamp]);
 
   const valueDate: TRangeValue = useMemo(
     () => [
@@ -76,18 +66,6 @@ export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecor
     <div className={clsx(styles['web-records-header-wrapper'])}>
       <div className={clsx(styles['web-records-title'])}>History</div>
       <div className={clsx(styles['web-records-search-wrapper'])}>
-        <Select
-          size={'large'}
-          value={type}
-          className={clsx(styles['web-records-select-type'])}
-          onChange={handleTypeChange}
-          popupClassName={'drop-wrap'}
-          options={[
-            { value: TRecordsRequestType.ALL, label: 'All' },
-            { value: TRecordsRequestType.Deposits, label: InfoBusinessTypeLabel.Deposit },
-            { value: TRecordsRequestType.Withdraws, label: InfoBusinessTypeLabel.Withdraw },
-          ]}
-        />
         <Select
           size={'large'}
           value={status}
@@ -106,7 +84,7 @@ export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecor
           allowClear={false}
           value={valueDate}
           className={clsx(styles['web-records-range-picker'])}
-          format={dateFormat}
+          format={DATE_FORMATE}
           allowEmpty={[true, true]}
           separator={timestamp ? <SwapRightSelected /> : <SwapRightDefault />}
           onCalendarChange={(dates) => handleDateRangeChange(dates)}

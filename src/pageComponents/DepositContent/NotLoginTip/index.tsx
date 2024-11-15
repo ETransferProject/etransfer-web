@@ -1,7 +1,7 @@
 import { InfoBrandIcon } from 'assets/images';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
-import { LOGIN, UNLOCK } from 'constants/wallet/index';
+import { CONNECT_AELF_WALLET, UNLOCK } from 'constants/wallet/index';
 import useAelf, { useLogin } from 'hooks/wallet/useAelf';
 
 export default function NotLoginTip({
@@ -26,7 +26,7 @@ export default function NotLoginTip({
       <span className={styles['text']}>
         <span>{`Please `}</span>
         <span className={styles['action']} onClick={handleLogin}>
-          {isLocking ? UNLOCK : LOGIN}
+          {isLocking ? UNLOCK : CONNECT_AELF_WALLET.toLocaleLowerCase()}
         </span>
         <span>{` to get the deposit address.`}</span>
       </span>

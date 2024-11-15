@@ -29,7 +29,7 @@ import {
 import { formatSymbolDisplay } from '@etransfer/ui-react';
 import { removeELFAddressSuffix, ZERO } from '@etransfer/utils';
 import { Form } from 'antd';
-import { InitialCrossChainTransferInfo } from 'constants/transfer';
+import { InitialCrossChainTransferInfo } from 'constants/crossChainTransfer';
 import { useWallet } from 'context/Wallet';
 import {
   TRANSFER_FORM_VALIDATE_DATA,

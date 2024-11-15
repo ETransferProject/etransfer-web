@@ -6,9 +6,11 @@ import clsx from 'clsx';
 import FAQ from 'components/FAQ';
 import { FAQ_CROSS_CHAIN_TRANSFER } from 'constants/footer';
 import { ProcessingTip } from 'components/Tips/ProcessingTip';
-import useAelf from 'hooks/wallet/useAelf';
+import { useWallet } from 'context/Wallet';
 import { useRecordsState } from 'store/Provider/hooks';
 import { TCrossChainTransferInfo } from 'types/api';
+import { CROSS_CHAIN_TRANSFER_PAGE_TITLE } from 'constants/crossChainTransfer';
+
 export interface WebCrossChainTransferProps extends CrossChainTransferFormProps {
   receiveAmount?: string;
   transferInfo: TCrossChainTransferInfo;
@@ -29,7 +31,7 @@ export default function WebCrossChainTransfer({
   onRecipientAddressBlur,
   onClickProcessingTip,
 }: WebCrossChainTransferProps) {
-  const { isConnected } = useAelf(); // TODO
+  const [{ fromWallet }] = useWallet();
   const { depositProcessingCount, transferProcessingCount } = useRecordsState();
 
   const renderDepositMainContent = useMemo(() => {
@@ -40,7 +42,7 @@ export default function WebCrossChainTransfer({
           'main-content-container-safe-area',
           styles['main-content'],
         )}>
-        {isConnected && (
+        {fromWallet?.isConnected && (
           <ProcessingTip
             depositProcessingCount={depositProcessingCount}
             transferProcessingCount={transferProcessingCount}
@@ -48,7 +50,7 @@ export default function WebCrossChainTransfer({
           />
         )}
 
-        <div className={styles['transfer-title']}>Cross-chain Transfer</div>
+        <div className={styles['transfer-title']}>{CROSS_CHAIN_TRANSFER_PAGE_TITLE}</div>
 
         <CrossChainTransferForm
           form={form}
@@ -71,8 +73,8 @@ export default function WebCrossChainTransfer({
     depositProcessingCount,
     form,
     formValidateData,
+    fromWallet?.isConnected,
     getTransferData,
-    isConnected,
     isSubmitDisabled,
     minAmount,
     onAmountChange,

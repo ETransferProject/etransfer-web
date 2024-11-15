@@ -1,12 +1,11 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useRef } from 'react';
 import { useAppDispatch } from 'store/Provider/hooks';
-import { setType, setStatus, setTimestamp } from 'store/reducers/records/slice';
-import { TRecordsRequestType, TRecordsRequestStatus } from 'types/records';
+import { setStatus, setTimestamp } from 'store/reducers/records/slice';
+import { TRecordsRequestStatus } from 'types/records';
 import queryString from 'query-string';
 
 type THistoryFilter = {
-  method?: TRecordsRequestType;
   status?: TRecordsRequestStatus;
   timeArray?: number[] | null;
 };
@@ -17,20 +16,9 @@ export function useHistoryFilter() {
   const searchParams = useSearchParams();
 
   const replaceUrl = useCallback(
-    (
-      key: 'method' | 'status' | 'timeArray' | 'all',
-      { method, status, timeArray }: THistoryFilter,
-    ) => {
+    (key: 'status' | 'timeArray' | 'all', { status, timeArray }: THistoryFilter) => {
       let search;
       switch (key) {
-        case 'method':
-          search = queryString.stringify({
-            method: String(method),
-            status: searchParams.get('status') || undefined,
-            start: searchParams.get('start') || undefined,
-            end: searchParams.get('end') || undefined,
-          });
-          break;
         case 'status':
           search = queryString.stringify({
             status,
@@ -55,7 +43,6 @@ export function useHistoryFilter() {
           break;
         case 'all':
           search = queryString.stringify({
-            method,
             status,
             start: timeArray?.[0],
             end: timeArray?.[1],
@@ -71,14 +58,6 @@ export function useHistoryFilter() {
   );
   const replaceUrlRef = useRef(replaceUrl);
   replaceUrlRef.current = replaceUrl;
-
-  const setMethodFilter = useCallback(
-    (method: TRecordsRequestType) => {
-      dispatch(setType(method));
-      replaceUrlRef.current('method', { method });
-    },
-    [dispatch],
-  );
 
   const setStatusFilter = useCallback(
     (status: TRecordsRequestStatus) => {
@@ -97,17 +76,15 @@ export function useHistoryFilter() {
   );
 
   const setFilter = useCallback(
-    ({ method, status, timeArray }: Required<THistoryFilter>) => {
-      dispatch(setType(method));
+    ({ status, timeArray }: Required<THistoryFilter>) => {
       dispatch(setStatus(status));
       dispatch(setTimestamp(timeArray));
-      replaceUrlRef.current('all', { method, status, timeArray });
+      replaceUrlRef.current('all', { status, timeArray });
     },
     [dispatch],
   );
 
   return {
-    setMethodFilter,
     setStatusFilter,
     setTimestampFilter,
     setFilter,

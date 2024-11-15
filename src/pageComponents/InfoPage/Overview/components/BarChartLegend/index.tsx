@@ -14,7 +14,7 @@ export interface BarChartLegendProps {
   countUnit: string;
   unitPosition?: 'prefix' | 'suffix';
   depositCount?: string;
-  withdrawCount?: string;
+  transferCount?: string;
 }
 
 export default function BarChartLegend({
@@ -23,7 +23,7 @@ export default function BarChartLegend({
   countUnit,
   unitPosition,
   depositCount,
-  withdrawCount,
+  transferCount,
 }: BarChartLegendProps) {
   const count = useCallback(
     (key: string) => {
@@ -32,15 +32,15 @@ export default function BarChartLegend({
           unitPosition === 'suffix' ? countUnit : ''
         }`;
       }
-      if (key === BusinessType.Withdraw && withdrawCount && countUnit) {
-        return `${unitPosition === 'prefix' ? countUnit : ''}${withdrawCount}${
+      if (key === BusinessType.Transfer && transferCount && countUnit) {
+        return `${unitPosition === 'prefix' ? countUnit : ''}${transferCount}${
           unitPosition === 'suffix' ? countUnit : ''
         }`;
       }
 
-      return key === BusinessType.Withdraw ? 'Withdrawal' : key;
+      return key;
     },
-    [countUnit, depositCount, unitPosition, withdrawCount],
+    [countUnit, depositCount, unitPosition, transferCount],
   );
 
   return (

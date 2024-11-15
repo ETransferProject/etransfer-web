@@ -1,7 +1,7 @@
 import { ZERO } from 'utils/format';
 
-export const computePlus = (deposit?: number | string, withdraw?: number | string) => {
+export const computePlus = (deposit?: number | string, transfer?: number | string) => {
   return ZERO.plus(String(deposit) || '')
-    .plus(String(withdraw) || '')
+    .plus(String(transfer) || '')
     .toFixed();
 };

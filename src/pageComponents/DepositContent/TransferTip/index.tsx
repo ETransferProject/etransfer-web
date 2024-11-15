@@ -3,29 +3,28 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import useAelf from 'hooks/wallet/useAelf';
 import { SideMenuKey } from 'constants/home';
-import { CHAIN_NAME_ENUM, IChainNameItem } from 'constants/index';
+import { CHAIN_NAME_ENUM } from 'constants/index';
 import { useCallback } from 'react';
-import { useGoWithdraw } from 'hooks/withdraw';
-import { TNetworkItem } from 'types/api';
+import { useGoTransfer } from 'hooks/crossChainTransfer';
 
 export default function TransferTip({
-  toChainItem,
   symbol,
-  network,
+  fromNetwork,
+  toNetwork,
   isShowIcon = true,
   isCard = true,
 }: {
-  toChainItem: IChainNameItem;
   symbol: string;
-  network?: TNetworkItem;
+  fromNetwork?: string;
+  toNetwork?: string;
   isShowIcon?: boolean;
   isCard?: boolean;
 }) {
   const { isConnected } = useAelf();
-  const goWithdraw = useGoWithdraw();
-  const handleGoWithdraw = useCallback(async () => {
-    goWithdraw(toChainItem, symbol, network);
-  }, [goWithdraw, network, symbol, toChainItem]);
+  const goTransfer = useGoTransfer();
+  const handleGoTransfer = useCallback(async () => {
+    goTransfer(symbol, fromNetwork, toNetwork);
+  }, [fromNetwork, goTransfer, symbol, toNetwork]);
 
   if (!isConnected) return null;
 
@@ -42,8 +41,8 @@ export default function TransferTip({
         <span>{` and `}</span>
         <span className={styles['bold-text']}>{CHAIN_NAME_ENUM.SideChain}</span>
         <span>{`, please go to the `}</span>
-        <span className={styles['action']} onClick={handleGoWithdraw}>
-          {SideMenuKey.Withdraw}
+        <span className={styles['action']} onClick={handleGoTransfer}>
+          {SideMenuKey.CrossChainTransfer}
         </span>
         <span>{` page.`}</span>
       </span>

@@ -113,9 +113,9 @@ export const TOKEN_NETWORK_RELATIONS = {
     BlockchainNetworkType.tDVW,
     BlockchainNetworkType.SETH,
     BlockchainNetworkType.TBinance,
+    BlockchainNetworkType.Solana,
     BlockchainNetworkType.Tron,
     BlockchainNetworkType.Polygon,
-    BlockchainNetworkType.Solana,
     BlockchainNetworkType.Avax,
     BlockchainNetworkType.Arbitrum,
     BlockchainNetworkType.Optimism,
@@ -158,14 +158,14 @@ export const TO_NETWORK_TOKEN_CONFIG = {
     TransferAllowanceTokens['SGR-1'],
   ],
   [BlockchainNetworkType.TBinance]: [TransferAllowanceTokens.USDT, TransferAllowanceTokens.ELF],
+  [BlockchainNetworkType.Solana]: [TransferAllowanceTokens.USDT],
   [BlockchainNetworkType.Tron]: [TransferAllowanceTokens.USDT],
   [BlockchainNetworkType.Polygon]: [TransferAllowanceTokens.USDT],
-  [BlockchainNetworkType.Solana]: [TransferAllowanceTokens.USDT],
   [BlockchainNetworkType.Avax]: [TransferAllowanceTokens.USDT],
   [BlockchainNetworkType.Arbitrum]: [TransferAllowanceTokens.USDT],
   [BlockchainNetworkType.Optimism]: [TransferAllowanceTokens.USDT],
-  [BlockchainNetworkType.TON]: [TransferAllowanceTokens.USDT],
   [BlockchainNetworkType.BASE]: [TransferAllowanceTokens.Agent],
+  [BlockchainNetworkType.TON]: [TransferAllowanceTokens.USDT],
 };
 
 export const TRANSFER_DEFAULT_FROM_NETWORK: TNetworkItem = {

@@ -7,7 +7,6 @@ import {
   setTotalCount,
   setHasMore,
   setSkipCount,
-  setType,
   setStatus,
   setTimestamp,
   resetRecordsStateNotNotice,
@@ -27,6 +26,7 @@ import { SideMenuKey } from 'constants/home';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { useSetAuthFromStorage } from 'hooks/authToken';
 import useAelf from 'hooks/wallet/useAelf';
+import { END_TIME_FORMAT, START_TIME_FORMAT } from 'constants/records';
 
 export type TRecordsContentProps = TRecordsBodyProps & {
   onReset: () => void;
@@ -46,7 +46,6 @@ export default function Content() {
   isConnectedRef.current = isConnected;
 
   const {
-    type = TRecordsRequestType.ALL,
     status = TRecordsRequestStatus.ALL,
     timestamp,
     skipCount,
@@ -67,14 +66,13 @@ export default function Content() {
       }
 
       const startTimestampFormat =
-        timestamp?.[0] && moment(timestamp?.[0]).format('YYYY-MM-DD 00:00:00');
-      const endTimestampFormat =
-        timestamp?.[1] && moment(timestamp?.[1]).format('YYYY-MM-DD 23:59:59');
+        timestamp?.[0] && moment(timestamp?.[0]).format(START_TIME_FORMAT);
+      const endTimestampFormat = timestamp?.[1] && moment(timestamp?.[1]).format(END_TIME_FORMAT);
       const startTimestamp = startTimestampFormat ? moment(startTimestampFormat).valueOf() : null;
       const endTimestamp = endTimestampFormat ? moment(endTimestampFormat).valueOf() : null;
 
       const { items: recordsListRes, totalCount } = await getRecordsList({
-        type,
+        type: TRecordsRequestType.ALL,
         status,
         startTimestamp: startTimestamp,
         endTimestamp: endTimestamp,
@@ -112,7 +110,6 @@ export default function Content() {
   const handleReset = useCallback(
     async (isSetAuth = false) => {
       setFilter({
-        method: TRecordsRequestType.ALL,
         status: TRecordsRequestStatus.ALL,
         timeArray: null,
       });
@@ -129,7 +126,7 @@ export default function Content() {
   const searchParams = useSearchParams();
   const routeQuery = useMemo(
     () => ({
-      method: searchParams.get('method'),
+      // method: searchParams.get('method'),
       status: searchParams.get('status'),
       start: searchParams.get('start'),
       end: searchParams.get('end'),
@@ -141,16 +138,10 @@ export default function Content() {
     dispatch(setActiveMenuKey(SideMenuKey.History));
 
     const search: any = {
-      method: routeQuery.method != null ? routeQuery.method : undefined,
       status: routeQuery.status != null ? routeQuery.status : undefined,
       start: routeQuery.start != null ? routeQuery.start : undefined,
       end: routeQuery.end != null ? routeQuery.end : undefined,
     };
-    if (routeQuery.method != null) {
-      dispatch(setType(Number(routeQuery.method)));
-    } else {
-      search.method = type;
-    }
 
     if (routeQuery.status != null) {
       dispatch(setStatus(Number(routeQuery.status)));
@@ -191,11 +182,6 @@ export default function Content() {
     if (isConnected) {
       initRef.current();
     } else {
-      // setFilter({
-      //   method: TRecordsRequestType.ALL,
-      //   status: TRecordsRequestStatus.ALL,
-      //   timeArray: null,
-      // });
       dispatch(setSkipCount(1));
 
       dispatch(setRecordsList([]));

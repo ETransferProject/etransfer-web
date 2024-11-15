@@ -6,7 +6,12 @@ import DepositDescription from 'pageComponents/DepositContent/DepositDescription
 import styles from './styles.module.scss';
 import { TDepositContentProps } from '..';
 import CommonQRCode from 'components/CommonQRCode';
-import { CHECK_TXN_BUTTON, CHECKING_TXN_BUTTON, DEPOSIT_ADDRESS_LABEL } from 'constants/deposit';
+import {
+  CHECK_TXN_BUTTON,
+  CHECKING_TXN_BUTTON,
+  DEPOSIT_ADDRESS_LABEL,
+  DEPOSIT_PAGE_TITLE,
+} from 'constants/deposit';
 import CommonImage from 'components/CommonImage';
 import { DoubleArrowIcon, qrCodePlaceholder } from 'assets/images';
 import { DepositRetryForWeb } from 'pageComponents/DepositContent/DepositRetry';
@@ -325,7 +330,7 @@ export default function WebContent({
           />
         )}
 
-        <div className={styles['deposit-title']}>Deposit Assets</div>
+        <div className={styles['deposit-title']}>{DEPOSIT_PAGE_TITLE}</div>
 
         {renderSelectSection}
 
@@ -337,9 +342,9 @@ export default function WebContent({
           <>
             <div className={clsx(styles['label'], styles['label-deposit-address'])}>Transfer</div>
             <TransferTip
-              toChainItem={toChainItem}
               symbol={fromTokenSymbol}
-              network={fromNetworkSelected}
+              fromNetwork={fromNetworkSelected?.network}
+              toNetwork={toChainItem.key}
             />
             <CommonSpace direction="vertical" size={24} />
           </>

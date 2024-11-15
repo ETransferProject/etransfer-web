@@ -25,7 +25,7 @@ import useAelf, { useLogin, useShowLoginButtonLoading } from 'hooks/wallet/useAe
 import { LOGIN, UNLOCK } from 'constants/wallet/index';
 import { SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE, TokenType } from 'constants/index';
 import TransferTip from '../TransferTip';
-import { useGoWithdraw } from 'hooks/withdraw';
+import { useGoTransfer } from 'hooks/crossChainTransfer';
 import { AelfChainIdList } from 'constants/chain';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { ProcessingTip } from 'components/Tips/ProcessingTip';
@@ -194,10 +194,10 @@ export default function MobileDepositContent({
     );
   }, [fromNetwork?.network, fromTokenSymbol, isConnected, toTokenSymbol]);
 
-  const goWithdraw = useGoWithdraw();
-  const handleGoWithdraw = useCallback(async () => {
-    goWithdraw(toChainItem, fromTokenSymbol, fromNetwork);
-  }, [fromNetwork, fromTokenSymbol, goWithdraw, toChainItem]);
+  const goTransfer = useGoTransfer();
+  const handleGoTransfer = useCallback(async () => {
+    goTransfer(fromTokenSymbol, fromNetwork?.network, toChainItem.key);
+  }, [fromNetwork?.network, fromTokenSymbol, goTransfer, toChainItem.key]);
 
   return (
     <>
@@ -281,13 +281,13 @@ export default function MobileDepositContent({
               <CommonSpace direction="vertical" size={24} />
               <TransferTip
                 isShowIcon={false}
-                toChainItem={toChainItem}
                 symbol={fromTokenSymbol}
-                network={fromNetwork}
+                fromNetwork={fromNetwork?.network}
+                toNetwork={toChainItem.key}
               />
               <CommonSpace direction="vertical" size={24} />
-              <CommonButton className={styles['next-button']} onClick={handleGoWithdraw}>
-                Go to Withdraw Page
+              <CommonButton className={styles['next-button']} onClick={handleGoTransfer}>
+                Go to Transfer Page
               </CommonButton>
             </div>
           )}

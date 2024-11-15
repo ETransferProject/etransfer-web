@@ -16,7 +16,7 @@ import { computePlus } from '../utils';
 type TCurrentItem = {
   date: string;
   deposit: string;
-  withdraw: string;
+  transfer: string;
   plus: string;
 };
 
@@ -38,7 +38,7 @@ export default function VolumeOverview() {
     return generateStackBarOption({
       data: chartData,
       depositKey: 'depositAmountUsd',
-      withdrawKey: 'withdrawAmountUsd',
+      transferKey: 'transferAmountUsd',
       stackName: 'volume',
       opacity: opacity,
       emphasisOpacity: 1,
@@ -51,8 +51,8 @@ export default function VolumeOverview() {
     const dataItem = dataMapRef.current?.[event?.name] || {};
     setCurrentItem({
       deposit: dataItem.depositAmountUsd || '',
-      withdraw: dataItem.withdrawAmountUsd || '',
-      plus: computePlus(dataItem.depositAmountUsd, dataItem.withdrawAmountUsd),
+      transfer: dataItem.transferAmountUsd || '',
+      plus: computePlus(dataItem.depositAmountUsd, dataItem.transferAmountUsd),
       date: event?.name,
     });
   }, []);
@@ -62,7 +62,7 @@ export default function VolumeOverview() {
 
     setCurrentItem({
       deposit: '',
-      withdraw: '',
+      transfer: '',
       plus: totalItem?.plus || '',
       date: totalItem?.date || '',
     });
@@ -74,7 +74,7 @@ export default function VolumeOverview() {
 
       setCurrentItem({
         deposit: '',
-        withdraw: '',
+        transfer: '',
         plus: totalItem?.plus || '',
         date: totalItem?.date || '',
       });
@@ -123,7 +123,7 @@ export default function VolumeOverview() {
       });
       setCurrentItem({
         deposit: '',
-        withdraw: '',
+        transfer: '',
         plus: res.volume.totalAmountUsd,
         date: res.volume.latest,
       });
@@ -156,7 +156,7 @@ export default function VolumeOverview() {
         countUnit="$"
         unitPosition="prefix"
         depositCount={currentItem?.deposit}
-        withdrawCount={currentItem?.withdraw}
+        transferCount={currentItem?.transfer}
         time={currentItem?.date || ''}
         switchPeriod={onSwitchPeriod}
       />

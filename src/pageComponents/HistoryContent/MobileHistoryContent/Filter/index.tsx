@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { FilterIcon, CloseSmall } from 'assets/images';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import { setSkipCount, setRecordsList } from 'store/reducers/records/slice';
-import { TRecordsRequestType, TRecordsRequestStatus, TRecordsStatusI18n } from 'types/records';
+import { TRecordsRequestStatus, TRecordsStatusI18n } from 'types/records';
 import CommonDrawer from 'components/CommonDrawer';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import { Select, DatePicker } from 'antd';
@@ -15,15 +15,12 @@ import moment from 'moment';
 import { useHistoryFilter } from 'hooks/history';
 import SimpleTipModal from 'pageComponents/Modal/SimpleTipModal';
 import { END_TIME_FORMAT, START_TIME_FORMAT } from 'constants/records';
-import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
-
-const dateFormat = 'YYYY-MM-DD';
+import { DATE_FORMATE } from 'constants/misc';
 
 export default function Filter({ requestRecordsList, onReset }: TRecordsContentProps) {
   const dispatch = useAppDispatch();
-  const { type, status, timestamp } = useRecordsState();
+  const { status, timestamp } = useRecordsState();
   const [isShowFilterDrawer, setIsShowFilterDrawer] = useState(false);
-  const [filterType, setFilterType] = useState<TRecordsRequestType>(type);
   const [filterStatus, setFilterStatus] = useState<TRecordsRequestStatus>(status);
   const [filterTimestampStart, setFilterTimestampStart] = useState<Moment | null>(
     timestamp?.[0] ? moment(timestamp?.[0]) : null,
@@ -33,11 +30,11 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
   );
 
   const isShowReset = useMemo(() => {
-    if (type !== 0 || status !== 0 || timestamp?.[0] || timestamp?.[1]) {
+    if (status !== 0 || timestamp?.[0] || timestamp?.[1]) {
       return true;
     }
     return false;
-  }, [type, status, timestamp]);
+  }, [status, timestamp]);
 
   const isShowTimestamp = useCallback(() => {
     let isShow = false;
@@ -52,13 +49,10 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
 
   const [openTipModal, setOpenTipModal] = useState(false);
 
-  const { setFilter, setMethodFilter, setStatusFilter, setTimestampFilter } = useHistoryFilter();
+  const { setFilter, setStatusFilter, setTimestampFilter } = useHistoryFilter();
   const closeItem = useCallback(
     (clickType: string) => {
       switch (clickType) {
-        case 'type':
-          setMethodFilter(TRecordsRequestType.ALL);
-          break;
         case 'status':
           setStatusFilter(TRecordsRequestStatus.ALL);
           break;
@@ -72,11 +66,10 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
       dispatch(setRecordsList([]));
       requestRecordsList();
     },
-    [dispatch, requestRecordsList, setMethodFilter, setStatusFilter, setTimestampFilter],
+    [dispatch, requestRecordsList, setStatusFilter, setTimestampFilter],
   );
 
   const handleResetFilter = useCallback(() => {
-    setFilterType(TRecordsRequestType.ALL);
     setFilterStatus(TRecordsRequestStatus.ALL);
     setFilterTimestampStart(null);
     setFilterTimestampEnd(null);
@@ -101,7 +94,6 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
     const endTimestampFormat = moment(moment(filterTimestampEnd).format(END_TIME_FORMAT)).valueOf();
 
     setFilter({
-      method: filterType,
       status: filterStatus,
       timeArray: timeIsNaN ? null : [startTimestampFormat, endTimestampFormat],
     });
@@ -111,7 +103,6 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
     requestRecordsList();
   }, [
     setFilter,
-    filterType,
     filterStatus,
     filterTimestampStart,
     filterTimestampEnd,
@@ -120,25 +111,17 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
   ]);
 
   const handleOpenFilterDrawer = useCallback(() => {
-    setFilterType(type);
     setFilterStatus(status);
     setFilterTimestampStart(timestamp?.[0] ? moment(timestamp[0]) : null);
     setFilterTimestampEnd(timestamp?.[1] ? moment(timestamp?.[1]) : null);
 
     setIsShowFilterDrawer(true);
-  }, [type, status, timestamp]);
+  }, [status, timestamp]);
 
   return (
     <div className={clsx(styles['filter-wrapper'])}>
       <div className={styles['filter-item-wrapper']}>
         <FilterIcon className={styles['filter-icon']} onClick={handleOpenFilterDrawer} />
-        {type !== TRecordsRequestType.ALL && (
-          <div className={styles['filter-item']}>
-            {type === TRecordsRequestType.Deposits && InfoBusinessTypeLabel.Deposit}
-            {type === TRecordsRequestType.Withdraws && InfoBusinessTypeLabel.Withdraw}
-            <CloseSmall className={styles['filter-close-icon']} onClick={() => closeItem('type')} />
-          </div>
-        )}
         {status !== TRecordsRequestStatus.ALL && (
           <div className={styles['filter-item']}>
             {status === TRecordsRequestStatus.Processing && TRecordsStatusI18n.Processing}
@@ -152,9 +135,11 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
         )}
         {isShowTimestamp() && (
           <div className={styles['filter-item']}>
-            {(timestamp?.[0] && moment(timestamp[0]).format(dateFormat)) || `${DEFAULT_NULL_VALUE}`}
+            {(timestamp?.[0] && moment(timestamp[0]).format(DATE_FORMATE)) ||
+              `${DEFAULT_NULL_VALUE}`}
             {' - '}
-            {(timestamp?.[1] && moment(timestamp[1]).format(dateFormat)) || `${DEFAULT_NULL_VALUE}`}
+            {(timestamp?.[1] && moment(timestamp[1]).format(DATE_FORMATE)) ||
+              `${DEFAULT_NULL_VALUE}`}
             <CloseSmall
               className={styles['filter-close-icon']}
               onClick={() => closeItem('timestamp')}
@@ -190,19 +175,6 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
         }
         onClose={() => setIsShowFilterDrawer(!isShowFilterDrawer)}>
         <div className={styles['filter-drawer-content']}>
-          <div className={styles['filter-drawer-label']}>Methods</div>
-          <Select
-            size={'large'}
-            value={filterType}
-            className={clsx(styles['mobile-records-select-type'], styles['border-change'])}
-            onChange={setFilterType}
-            popupClassName={'drop-wrap'}
-            options={[
-              { value: TRecordsRequestType.ALL, label: 'All' },
-              { value: TRecordsRequestType.Deposits, label: InfoBusinessTypeLabel.Deposit },
-              { value: TRecordsRequestType.Withdraws, label: InfoBusinessTypeLabel.Withdraw },
-            ]}
-          />
           <div className={styles['filter-drawer-label']}>Status</div>
           <Select
             size={'large'}
@@ -224,7 +196,7 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
             allowClear={false}
             value={filterTimestampStart}
             className={clsx(styles['mobile-records-range-picker'])}
-            format={dateFormat}
+            format={DATE_FORMATE}
             onChange={setFilterTimestampStart}
             showTime={false}
             placeholder={'please choose the start time'}
@@ -236,7 +208,7 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
             allowClear={false}
             value={filterTimestampEnd}
             className={clsx(styles['mobile-records-range-picker'])}
-            format={dateFormat}
+            format={DATE_FORMATE}
             onChange={setFilterTimestampEnd}
             showTime={false}
             placeholder={'please choose the end time'}
