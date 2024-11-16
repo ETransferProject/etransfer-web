@@ -9,6 +9,7 @@ import Close from './close.svg';
 import CloseMedium from './closeMedium.svg';
 import CloseSmall from './closeSmall.svg';
 import Swap from './swap.svg';
+import SwapHorizontal from './swapHorizontal.svg';
 import Deposit from './deposit.svg';
 import Withdraw from './withdraw.svg';
 import Check from './check.svg';
@@ -23,6 +24,8 @@ import Portkey from './wallet/portkey.svg';
 import Portkey24 from './wallet/portkey24.svg';
 import PortkeyV2 from './wallet/portkeyV2.svg';
 import PortkeyV2_16 from './wallet/portkeyV2_16.svg';
+import NightElf from './wallet/nightElf.svg';
+import NightElf_16 from './wallet/nightElf_16.svg';
 import Metamask from './wallet/metamask.svg';
 import Coinbase from './wallet/coinbase.svg';
 import WalletConnect from './wallet/walletConnect.svg';
@@ -88,6 +91,7 @@ import Fingerprint from './fingerprint.svg';
 import User from './user.svg';
 import ArrowUp from './arrowUp.svg';
 import ArrowRight from './arrowRight.svg';
+import ArrowRight2 from './arrowRight2.svg';
 import ToArrow from './toArrow.svg';
 import Reset from './reset.svg';
 import EmptyBox from './emptyBox.svg';
@@ -124,6 +128,7 @@ import NextLineIcon from './nextLineIcon.svg';
 import DoubleArrowIcon from './doubleArrow.svg';
 import InfoDashboard from './infoDashboard.svg';
 import ErrorIcon from './error.svg';
+import SearchIcon from './search.svg';
 
 export {
   Logo,
@@ -136,6 +141,7 @@ export {
   CloseMedium,
   CloseSmall,
   Swap,
+  SwapHorizontal,
   Deposit,
   Withdraw,
   Check,
@@ -147,6 +153,8 @@ export {
   Portkey24,
   PortkeyV2,
   PortkeyV2_16,
+  NightElf,
+  NightElf_16,
   Metamask,
   Metamask_16,
   Coinbase,
@@ -216,6 +224,7 @@ export {
   User,
   ArrowUp,
   ArrowRight,
+  ArrowRight2,
   ToArrow,
   Reset,
   EmptyBox,
@@ -248,4 +257,5 @@ export {
   DoubleArrowIcon,
   InfoDashboard,
   ErrorIcon,
+  SearchIcon,
 };

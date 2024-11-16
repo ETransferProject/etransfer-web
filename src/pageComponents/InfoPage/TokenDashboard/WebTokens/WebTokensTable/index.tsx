@@ -12,7 +12,8 @@ import DynamicArrow from 'components/DynamicArrow';
 import Network from '../../ColumnComponents/Network';
 import { useCallback, useMemo, useState } from 'react';
 import { ZERO } from 'constants/calculate';
-import { formatNetworkName, isAelfChain } from 'utils/format';
+import { formatNetworkName } from 'utils/format';
+import { isAelfChain } from 'utils/wallet';
 
 interface ExpandedTableData extends TTokenDashboardItemDetail {
   symbol: string;

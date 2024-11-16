@@ -108,14 +108,3 @@ export const formatNetworkKey = (network?: string) => {
       return network;
   }
 };
-
-export const isAelfChain = (network: string) => {
-  if (
-    network === BlockchainNetworkType.tDVV ||
-    network === BlockchainNetworkType.tDVW ||
-    network === BlockchainNetworkType.AELF
-  ) {
-    return true;
-  }
-  return false;
-};

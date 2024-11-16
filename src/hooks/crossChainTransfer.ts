@@ -8,7 +8,7 @@ import {
   setTokenSymbol,
 } from 'store/reducers/crossChainTransfer/slice';
 import { TNetworkItem } from 'types/api';
-import { isAelfChain } from 'utils/format';
+import { isAelfChain } from 'utils/wallet';
 
 export function useGoTransfer() {
   const dispatch = useAppDispatch();

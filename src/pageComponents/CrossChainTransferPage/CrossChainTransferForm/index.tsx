@@ -12,11 +12,24 @@ import { sleep } from '@etransfer/utils';
 import { devices } from '@portkey/utils';
 import { InitialCrossChainTransferState } from 'store/reducers/crossChainTransfer/slice';
 import { TTransferFormValues, TransferFormKeys, TTransferFormValidateData } from '../types';
+import { NetworkAndWalletCard } from './NetworkAndWalletCard';
+import { ArrowRight2, QuestionMarkIcon, SwapHorizontal } from 'assets/images';
+import clsx from 'clsx';
+import CommonSpace from 'components/CommonSpace';
+import TokenSelected from './TokenSelected';
+import RemainingLimit from './RemainingLimit';
+import { TCrossChainTransferInfo } from 'types/api';
+import { DEFAULT_NULL_VALUE } from 'constants/index';
+import CommonTooltip from 'components/CommonTooltip';
+import { TRANSFER_SEND_RECIPIENT_TIP } from 'constants/crossChainTransfer';
+import CommentFormItemLabel from './CommentFormItemLabel';
 
 export interface CrossChainTransferFormProps {
   form: FormInstance<TTransferFormValues>;
   formValidateData: TTransferFormValidateData;
   minAmount: string;
+  balance: string;
+  transferInfo: Omit<TCrossChainTransferInfo, 'minAmount'>;
   getTransferData: (symbol?: string, amount?: string) => Promise<void>;
   onAmountChange: (value: string) => void;
   onRecipientAddressChange: (value: string) => void;
@@ -27,6 +40,8 @@ export default function CrossChainTransferForm({
   form,
   formValidateData,
   minAmount,
+  balance,
+  transferInfo,
   getTransferData,
   onAmountChange,
   onRecipientAddressChange,
@@ -36,6 +51,7 @@ export default function CrossChainTransferForm({
   const [{ fromWallet }] = useWallet();
   const { toNetwork, tokenSymbol, tokenList } = useCrossChainTransfer();
   const [isInputAddress, setIsInputAddress] = useState(false);
+  const [isShowSwap, setIsShowSwap] = useState(false);
 
   const currentToken = useMemo(() => {
     const item = tokenList?.find((item) => item.symbol === tokenSymbol);
@@ -50,51 +66,50 @@ export default function CrossChainTransferForm({
     console.log(`onUseRecipientChange = ${e.target.checked}`);
   }, []);
 
+  const handleMouseEnterSwapIcon = useCallback((event: any) => {
+    event.stopPropagation();
+    setIsShowSwap(true);
+  }, []);
+
+  const handleMouseLeaveSwapIcon = useCallback((event: any) => {
+    event.stopPropagation();
+    setIsShowSwap(false);
+  }, []);
+
   return (
-    <div className={styles['cross-chain-transfer-form']}>
-      <Form className={styles['form-wrapper']} layout="vertical" requiredMark={false} form={form}>
-        <div className={styles['form-item-wrapper']}>
-          <Form.Item
-            className={styles['form-item']}
-            label="From Network"
-            name={TransferFormKeys.FROM_NETWORK}
-            validateStatus={formValidateData[TransferFormKeys.FROM_NETWORK].validateStatus}
-            help={formValidateData[TransferFormKeys.FROM_NETWORK].errorMessage}>
-            {/* from network */}
-          </Form.Item>
+    <Form
+      className={styles['cross-chain-transfer-body']}
+      layout="vertical"
+      requiredMark={false}
+      form={form}>
+      <div className={styles['network-and-wallet-section']}>
+        <div
+          className={clsx('flex-center', styles['cross-chain-transfer-swap-icon'])}
+          onMouseEnter={handleMouseEnterSwapIcon}
+          onMouseLeave={handleMouseLeaveSwapIcon}>
+          {isShowSwap ? <SwapHorizontal /> : <ArrowRight2 />}
         </div>
-        <div className={styles['form-item-wrapper']}>
-          <Form.Item
-            className={styles['form-item']}
-            label="To Network"
-            name={TransferFormKeys.TO_NETWORK}
-            validateStatus={formValidateData[TransferFormKeys.TO_NETWORK].validateStatus}
-            help={formValidateData[TransferFormKeys.TO_NETWORK].errorMessage}>
-            {/* to network */}
-          </Form.Item>
+        <div className={clsx('flex-row-center gap-4')}>
+          <NetworkAndWalletCard cardType="From" className={'flex-1'} />
+          <NetworkAndWalletCard
+            cardType="To"
+            className={clsx('flex-1', styles['network-and-wallet-to'])}
+          />
         </div>
-        <div className={styles['form-item-wrapper']}>
+      </div>
+      <CommonSpace direction={'vertical'} size={12} />
+
+      <div className={styles['send-section']}>
+        <div className={styles['send-section-title']}>You Send</div>
+        <div className={clsx('flex-row-center-between', styles['send-section-amount-row'])}>
           <Form.Item
-            className={styles['form-item']}
-            label="Token"
-            name={TransferFormKeys.TOKEN}
-            validateStatus={formValidateData[TransferFormKeys.TOKEN].validateStatus}
-            help={formValidateData[TransferFormKeys.TOKEN].errorMessage}>
-            {/* token */}
-          </Form.Item>
-        </div>
-        <div className={styles['form-item-wrapper']}>
-          <Form.Item
-            className={styles['form-item']}
-            label="Amount"
-            name={TransferFormKeys.AMOUNT}
-            validateStatus={formValidateData[TransferFormKeys.AMOUNT].validateStatus}
-            help={formValidateData[TransferFormKeys.AMOUNT].errorMessage}>
+            className={clsx('flex-row-center', styles['send-section-input-wrap'])}
+            name={TransferFormKeys.AMOUNT}>
             <Input
-              className={styles['transfer-input-amount']}
-              // bordered={false}
+              className={styles['send-section-input-amount']}
+              bordered={false}
               autoComplete="off"
-              placeholder={fromWallet?.isConnected ? `Minimum: ${minAmount}` : ''}
+              placeholder={fromWallet?.isConnected ? `Minimum: ${minAmount}` : '0.0'}
               onInput={(event: any) => {
                 const value = event.target?.value?.trim();
                 const oldValue = form.getFieldValue(TransferFormKeys.AMOUNT);
@@ -147,59 +162,94 @@ export default function CrossChainTransferForm({
               }}
             />
           </Form.Item>
+          <TokenSelected symbol={tokenSymbol} icon={currentToken.icon} />
         </div>
-
-        <Checkbox onChange={onUseRecipientChange}>Send to another address manually</Checkbox>
-        {isInputAddress && (
-          <div className={styles['form-item-wrapper']}>
-            <Form.Item
-              className={styles['form-item']}
-              name={TransferFormKeys.RECIPIENT}
-              validateStatus={formValidateData[TransferFormKeys.RECIPIENT].validateStatus}
-              help={formValidateData[TransferFormKeys.RECIPIENT].errorMessage}>
-              <Input
-                placeholder="Recipient's aelf Address"
-                autoComplete="off"
-                onChange={(e) => onRecipientAddressChange?.(e.target.value)}
-                onBlur={onRecipientAddressBlur}
-              />
-            </Form.Item>
+        <div className={clsx('flex-row-center-between', styles['send-section-balance-row'])}>
+          <div>
+            {!transferInfo.receiveAmountUsd || transferInfo.receiveAmountUsd === DEFAULT_NULL_VALUE
+              ? ''
+              : `$${transferInfo.receiveAmountUsd}`}
           </div>
-        )}
-
-        {isInputAddress && toNetwork?.network === BlockchainNetworkType.TON && (
-          <div className={styles['form-item-wrapper']}>
-            <Form.Item
-              className={styles['form-item']}
-              label="Comment"
-              name={TransferFormKeys.COMMENT}
-              validateStatus={formValidateData[TransferFormKeys.COMMENT].validateStatus}
-              help={formValidateData[TransferFormKeys.COMMENT].errorMessage}>
-              <Input
-                placeholder="Enter comment"
-                autoComplete="off"
-                onInput={(event: any) => {
-                  const value = event.target?.value?.trim();
-                  const oldValue = form.getFieldValue(TransferFormKeys.COMMENT);
-
-                  // CHECK1: not empty
-                  if (!value) return (event.target.value = '');
-
-                  // CHECK2: memo reg
-                  const CheckMemoReg = new RegExp(MEMO_REG);
-                  if (!CheckMemoReg.exec(value)) {
-                    event.target.value = oldValue;
-                    return;
-                  } else {
-                    event.target.value = value;
-                    return;
-                  }
-                }}
-              />
-            </Form.Item>
+          <div className="flex-row-center gap-8">
+            <div>
+              <span>Balance:&nbsp;</span>
+              <span>{balance}&nbsp;</span>
+              <span>{tokenSymbol}</span>
+            </div>
+            <div className={styles['send-section-max']}>Max</div>
           </div>
-        )}
-      </Form>
-    </div>
+        </div>
+      </div>
+
+      <CommonSpace direction={'vertical'} size={12} />
+
+      <div className={styles['limit-section']}>
+        <RemainingLimit
+          limitCurrency={transferInfo.limitCurrency}
+          totalLimit={transferInfo.totalLimit}
+          remainingLimit={transferInfo.remainingLimit}
+        />
+      </div>
+      <CommonSpace direction={'vertical'} size={24} />
+      <div className={clsx('flex-row-center', styles['use-recipient-row'])}>
+        <Checkbox className={styles['use-recipient-checkbox']} onChange={onUseRecipientChange} />
+        <span className={styles['use-recipient-checkbox-text']}>
+          Send to another address manually
+        </span>
+        <CommonTooltip
+          className={clsx(styles['question-label'])}
+          placement="top"
+          title={TRANSFER_SEND_RECIPIENT_TIP}>
+          <QuestionMarkIcon />
+        </CommonTooltip>
+      </div>
+      {isInputAddress && (
+        <Form.Item
+          className={styles['recipient-address-form-item']}
+          name={TransferFormKeys.RECIPIENT}
+          validateStatus={formValidateData[TransferFormKeys.RECIPIENT].validateStatus}
+          help={formValidateData[TransferFormKeys.RECIPIENT].errorMessage}>
+          <Input
+            className={styles['recipient-address-input']}
+            placeholder="Recipient's aelf Address"
+            autoComplete="off"
+            onChange={(e) => onRecipientAddressChange?.(e.target.value)}
+            onBlur={onRecipientAddressBlur}
+          />
+        </Form.Item>
+      )}
+
+      {isInputAddress && toNetwork?.network === BlockchainNetworkType.TON && (
+        <Form.Item
+          className={styles['comment-form-item']}
+          label={<CommentFormItemLabel />}
+          name={TransferFormKeys.COMMENT}
+          validateStatus={formValidateData[TransferFormKeys.COMMENT].validateStatus}
+          help={formValidateData[TransferFormKeys.COMMENT].errorMessage}>
+          <Input
+            className={styles['comment-input']}
+            placeholder="Enter comment"
+            autoComplete="off"
+            onInput={(event: any) => {
+              const value = event.target?.value?.trim();
+              const oldValue = form.getFieldValue(TransferFormKeys.COMMENT);
+
+              // CHECK1: not empty
+              if (!value) return (event.target.value = '');
+
+              // CHECK2: memo reg
+              const CheckMemoReg = new RegExp(MEMO_REG);
+              if (!CheckMemoReg.exec(value)) {
+                event.target.value = oldValue;
+                return;
+              } else {
+                event.target.value = value;
+                return;
+              }
+            }}
+          />
+        </Form.Item>
+      )}
+    </Form>
   );
 }

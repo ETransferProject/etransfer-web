@@ -17,7 +17,9 @@ export interface CrossChainTransferFooterProps {
   fromInput?: string;
   fromBalance?: string;
   estimateReceive?: string;
+  estimateReceiveUnit?: string;
   transactionFee?: string;
+  transactionFeeUnit?: string;
   isSubmitDisabled: boolean;
 }
 
@@ -26,7 +28,9 @@ export default function CrossChainTransferFooter({
   fromInput,
   fromBalance,
   estimateReceive = DEFAULT_NULL_VALUE,
+  estimateReceiveUnit = '',
   transactionFee = DEFAULT_NULL_VALUE,
+  transactionFeeUnit = '',
   isSubmitDisabled,
 }: CrossChainTransferFooterProps) {
   const [{ fromWalletType, toWalletType }] = useWallet();
@@ -87,17 +91,23 @@ export default function CrossChainTransferFooter({
 
   return (
     <div className={styles['cross-chain-transfer-footer']}>
-      <div className="flex-row-center-between">
-        <span>{`You'll receive`}</span>
-        <span>{estimateReceive}</span>
+      <div className={clsx('flex-row-center', styles['you-will-receive'])}>
+        <span>{`You'll receive:`}&nbsp;</span>
+        <span className={styles['you-will-receive-value']}>
+          {estimateReceive ? `${estimateReceive} ${estimateReceiveUnit}` : DEFAULT_NULL_VALUE}
+        </span>
       </div>
-      <div className="flex-row-center-between">
-        <span>{`transaction fee`}</span>
-        <span>{transactionFee}</span>
+      <div className={clsx('flex-row-center', styles['transaction-fee'])}>
+        <span>{`transaction fee:`}&nbsp;</span>
+        <span className={styles['transaction-fee-value']}>
+          {transactionFee ? `${transactionFee} ${transactionFeeUnit}` : DEFAULT_NULL_VALUE}
+        </span>
       </div>
 
-      <Form.Item shouldUpdate className={clsx('flex-none', styles['form-submit-button-wrapper'])}>
-        <CommonButton className={styles['form-submit-button']} {...btnProps}>
+      <Form.Item
+        shouldUpdate
+        className={clsx('flex-none', styles['transfer-submit-button-wrapper'])}>
+        <CommonButton className={styles['transfer-submit-button']} {...btnProps}>
           {btnProps.children}
         </CommonButton>
       </Form.Item>

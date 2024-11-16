@@ -1,0 +1,82 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+
+.token-select-modal {
+  height: 80%;
+
+  :global {
+    .ant-modal-content {
+      height: 100%;
+      .ant-modal-close {
+        .ant-modal-close-x {
+          height: 68px;
+          padding-top: 8px;
+          svg path {
+            fill: $primary-text;
+          }
+        }
+      }
+      .ant-modal-header {
+        height: 68px;
+        padding-top: 24px;
+        padding-bottom: 16px;
+
+        .ant-modal-title {
+          font-size: 20px;
+          font-weight: $font-family-medium-weight;
+          font-family: $font-family-medium-family;
+          line-height: 28px;
+        }
+      }
+      .ant-modal-body {
+        padding: 0;
+        height: calc(100% - 86px);
+      }
+    }
+  }
+}
+
+.token-search {
+  padding: 0px 24px 8px;
+}
+
+.token-search-input {
+  height: 40px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 8px;
+  border: 1px solid $dividers;
+
+  :global {
+    .ant-input-prefix {
+      margin-right: 8px;
+    }
+    .ant-input {
+      &::placeholder {
+        font-size: 16px;
+        color: $secondary-text;
+      }
+    }
+  }
+}
+
+.token-list {
+  height: calc(100% - 48px);
+  overflow-y: auto;
+}
+
+.token-item {
+  padding: 20px 24px;
+  border-bottom: 1px solid $dividers;
+}
+
+.token-item-symbol {
+  margin-right: 8px;
+  font-size: 16px;
+  @extend .font-family-medium;
+}
+
+.token-item-name {
+  font-size: 14px;
+  color: $secondary-text;
+}

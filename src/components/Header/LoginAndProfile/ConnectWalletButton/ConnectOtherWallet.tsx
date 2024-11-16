@@ -1,6 +1,7 @@
 import {
   Coinbase_16,
   Metamask_16,
+  NightElf_16,
   Phantom_16,
   PortkeyV2_16,
   Tonkeeper_16,
@@ -16,15 +17,24 @@ import useEVM from 'hooks/wallet/useEVM';
 import { COINBASE_WALLET_ID, METAMASK_WALLET_ID, WALLET_CONNECT_ID } from 'constants/wallet/EVM';
 import { useMemo } from 'react';
 import { useCommonState } from 'store/Provider/hooks';
+import useAelf from 'hooks/wallet/useAelf';
+import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 
 export default function ConnectOtherWalletButton(props: CommonButtonProps) {
   const { isMobilePX } = useCommonState();
   const { hasConnected, hasConnectedTypes } = useCheckHasConnectedWallet();
   const { connector } = useEVM();
+  const { connector: aelfConnector } = useAelf();
 
   const walletLogoList = useMemo(() => {
     const walletLogoList = [];
-    if (hasConnectedTypes.includes(WalletTypeEnum.AELF)) walletLogoList.push(PortkeyV2_16);
+    if (hasConnectedTypes.includes(WalletTypeEnum.AELF)) {
+      if (aelfConnector === AelfWalletTypeEnum.elf) {
+        walletLogoList.push(NightElf_16);
+      } else {
+        walletLogoList.push(PortkeyV2_16);
+      }
+    }
     if (hasConnectedTypes.includes(WalletTypeEnum.EVM)) {
       switch (connector?.id) {
         case METAMASK_WALLET_ID:
@@ -45,7 +55,7 @@ export default function ConnectOtherWalletButton(props: CommonButtonProps) {
     if (hasConnectedTypes.includes(WalletTypeEnum.TON)) walletLogoList.push(Tonkeeper_16);
 
     return walletLogoList;
-  }, [connector?.id, hasConnectedTypes]);
+  }, [aelfConnector, connector?.id, hasConnectedTypes]);
 
   if (hasConnected) {
     return (

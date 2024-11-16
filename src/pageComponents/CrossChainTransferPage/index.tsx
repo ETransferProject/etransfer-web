@@ -58,6 +58,10 @@ export default function CrossChainTransferPage() {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [amount, setAmount] = useState('');
 
+  // TODO
+  const balance = '0';
+  // const [balance, setBalance] = useState('0');
+
   const minAmount = useMemo(() => {
     return transferInfo?.minAmount || '0.2';
   }, [transferInfo?.minAmount]);
@@ -287,6 +291,7 @@ export default function CrossChainTransferPage() {
       formValidateData={formValidateData}
       transferInfo={transferInfo}
       minAmount={minAmount}
+      balance={balance}
       isSubmitDisabled={isSubmitDisabled}
       getTransferData={getTransferData}
       onAmountChange={handleAmountChange}
@@ -301,6 +306,7 @@ export default function CrossChainTransferPage() {
       formValidateData={formValidateData}
       transferInfo={transferInfo}
       minAmount={minAmount}
+      balance={balance}
       isSubmitDisabled={isSubmitDisabled}
       getTransferData={getTransferData}
       onAmountChange={handleAmountChange}

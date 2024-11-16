@@ -9,7 +9,9 @@ import useTRON from 'hooks/wallet/useTRON';
 import useAelf from 'hooks/wallet/useAelf';
 import { WalletTypeEnum } from './types';
 
-const INITIAL_STATE = {};
+const INITIAL_STATE = {
+  // fromWalletType: WalletTypeEnum.EVM,
+};
 const WalletContext = createContext<any>(INITIAL_STATE);
 
 export function useWallet(): [WalletState, BasicActions<WalletActions>] {

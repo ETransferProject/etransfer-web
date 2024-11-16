@@ -7,9 +7,10 @@ import FAQ from 'components/FAQ';
 import { FAQ_CROSS_CHAIN_TRANSFER } from 'constants/footer';
 import { ProcessingTip } from 'components/Tips/ProcessingTip';
 import { useWallet } from 'context/Wallet';
-import { useRecordsState } from 'store/Provider/hooks';
+import { useCrossChainTransfer, useRecordsState } from 'store/Provider/hooks';
 import { TCrossChainTransferInfo } from 'types/api';
 import { CROSS_CHAIN_TRANSFER_PAGE_TITLE } from 'constants/crossChainTransfer';
+import CommonSpace from 'components/CommonSpace';
 
 export interface WebCrossChainTransferProps extends CrossChainTransferFormProps {
   receiveAmount?: string;
@@ -24,6 +25,7 @@ export default function WebCrossChainTransfer({
   receiveAmount,
   transferInfo,
   minAmount,
+  balance,
   isSubmitDisabled,
   getTransferData,
   onAmountChange,
@@ -33,6 +35,7 @@ export default function WebCrossChainTransfer({
 }: WebCrossChainTransferProps) {
   const [{ fromWallet }] = useWallet();
   const { depositProcessingCount, transferProcessingCount } = useRecordsState();
+  const { tokenSymbol } = useCrossChainTransfer();
 
   const renderDepositMainContent = useMemo(() => {
     return (
@@ -56,20 +59,26 @@ export default function WebCrossChainTransfer({
           form={form}
           formValidateData={formValidateData}
           minAmount={minAmount}
+          balance={balance}
+          transferInfo={transferInfo}
           getTransferData={getTransferData}
           onAmountChange={onAmountChange}
           onRecipientAddressChange={onRecipientAddressChange}
           onRecipientAddressBlur={onRecipientAddressBlur}
         />
+        <CommonSpace direction={'vertical'} size={40} />
         <CrossChainTransferFooter
           recipientAddress={''}
           estimateReceive={receiveAmount}
+          estimateReceiveUnit={tokenSymbol}
           transactionFee={transferInfo.transactionFee}
+          transactionFeeUnit={transferInfo.transactionUnit}
           isSubmitDisabled={isSubmitDisabled}
         />
       </div>
     );
   }, [
+    balance,
     depositProcessingCount,
     form,
     formValidateData,
@@ -82,7 +91,8 @@ export default function WebCrossChainTransfer({
     onRecipientAddressBlur,
     onRecipientAddressChange,
     receiveAmount,
-    transferInfo.transactionFee,
+    tokenSymbol,
+    transferInfo,
     transferProcessingCount,
   ]);
 

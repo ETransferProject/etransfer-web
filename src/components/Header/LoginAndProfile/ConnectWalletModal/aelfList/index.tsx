@@ -7,15 +7,16 @@ import { useCallback, useState } from 'react';
 import { SingleMessage, unsubscribeUserOrderRecord } from '@etransfer/ui-react';
 import { handleWebLoginErrorMessage } from '@etransfer/utils';
 import DynamicArrow from 'components/DynamicArrow';
-import { Logout } from 'assets/images';
+import { Logout, NightElf } from 'assets/images';
 import { useClearStore } from 'hooks/common';
 import service from 'api/axios';
 import myEvents from 'utils/myEvent';
 import Address from './Address';
+import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 // import PartialLoading from 'components/PartialLoading';
 
 export default function AelfWalletList() {
-  const { account, connect, disconnect, isConnected } = useAelf();
+  const { account, connect, disconnect, isConnected, connector } = useAelf();
   const { getAuth } = useQueryAuthToken();
   const [dynamicArrowExpand, setDynamicArrowExpand] = useState(false);
   const clearStore = useClearStore();
@@ -76,7 +77,13 @@ export default function AelfWalletList() {
                     styles['wallet-list-item-icon'],
                     isConnected && styles['wallet-list-item-icon-active'],
                   )}>
-                  <Icon />
+                  {!isConnected ? (
+                    <Icon />
+                  ) : connector === AelfWalletTypeEnum.elf ? (
+                    <NightElf />
+                  ) : (
+                    <Icon />
+                  )}
                 </div>
                 <div className={styles['wallet-list-item-name']}>{item.name}</div>
                 {isConnected && (

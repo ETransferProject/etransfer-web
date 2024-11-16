@@ -5,8 +5,8 @@ import CrossChainTransferFooter from '../CrossChainTransferFooter';
 import clsx from 'clsx';
 import FAQ from 'components/FAQ';
 import { FAQ_CROSS_CHAIN_TRANSFER } from 'constants/footer';
-import { useCommonState, useRecordsState } from 'store/Provider/hooks';
-import useAelf from 'hooks/wallet/useAelf';
+import { useCommonState, useCrossChainTransfer, useRecordsState } from 'store/Provider/hooks';
+import { useWallet } from 'context/Wallet';
 import { ProcessingTip } from 'components/Tips/ProcessingTip';
 import { TCrossChainTransferInfo } from 'types/api';
 
@@ -22,6 +22,7 @@ export default function MobileCrossChainTransfer({
   formValidateData,
   receiveAmount,
   minAmount,
+  balance,
   transferInfo,
   isSubmitDisabled,
   getTransferData,
@@ -31,8 +32,9 @@ export default function MobileCrossChainTransfer({
   onClickProcessingTip,
 }: MobileCrossChainTransferProps) {
   const { isPadPX, isMobilePX } = useCommonState();
-  const { isConnected } = useAelf(); // TODO
+  const [{ fromWallet }] = useWallet();
   const { depositProcessingCount, transferProcessingCount } = useRecordsState();
+  const { tokenSymbol } = useCrossChainTransfer();
 
   const renderDepositMainContent = useMemo(() => {
     return (
@@ -41,6 +43,8 @@ export default function MobileCrossChainTransfer({
           form={form}
           formValidateData={formValidateData}
           minAmount={minAmount}
+          balance={balance}
+          transferInfo={transferInfo}
           getTransferData={getTransferData}
           onAmountChange={onAmountChange}
           onRecipientAddressChange={onRecipientAddressChange}
@@ -49,12 +53,15 @@ export default function MobileCrossChainTransfer({
         <CrossChainTransferFooter
           recipientAddress={''}
           estimateReceive={receiveAmount}
+          estimateReceiveUnit={tokenSymbol}
           transactionFee={transferInfo.transactionFee}
+          transactionFeeUnit={transferInfo.transactionUnit}
           isSubmitDisabled={isSubmitDisabled}
         />
       </div>
     );
   }, [
+    balance,
     form,
     formValidateData,
     getTransferData,
@@ -64,12 +71,13 @@ export default function MobileCrossChainTransfer({
     onRecipientAddressBlur,
     onRecipientAddressChange,
     receiveAmount,
-    transferInfo.transactionFee,
+    tokenSymbol,
+    transferInfo,
   ]);
 
   return (
     <div className="main-content-container main-content-container-safe-area">
-      {isConnected && (
+      {fromWallet?.isConnected && (
         <ProcessingTip
           depositProcessingCount={depositProcessingCount}
           transferProcessingCount={transferProcessingCount}
