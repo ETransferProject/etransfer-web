@@ -19,11 +19,13 @@ export default function ConnectWalletModal({
     WalletTypeEnum.TON,
   ],
   onCancel,
+  onSelected,
 }: {
   open: boolean;
   title?: string;
   allowList?: WalletTypeEnum[];
   onCancel: () => void;
+  onSelected?: (walletType: WalletTypeEnum) => void;
 }) {
   return (
     <CommonModal
@@ -34,13 +36,14 @@ export default function ConnectWalletModal({
       title={title}
       hideCancelButton
       hideOkButton
+      destroyOnClose
       onCancel={onCancel}>
       <div>
-        {allowList?.includes(WalletTypeEnum.AELF) && <AelfWalletList />}
-        {allowList?.includes(WalletTypeEnum.EVM) && <EVMWalletList />}
-        {allowList?.includes(WalletTypeEnum.SOL) && <SolanaWalletList />}
-        {allowList?.includes(WalletTypeEnum.TRON) && <TRONWalletList />}
-        {allowList?.includes(WalletTypeEnum.TON) && <TONWalletList />}
+        {allowList?.includes(WalletTypeEnum.AELF) && <AelfWalletList onSelected={onSelected} />}
+        {allowList?.includes(WalletTypeEnum.EVM) && <EVMWalletList onSelected={onSelected} />}
+        {allowList?.includes(WalletTypeEnum.SOL) && <SolanaWalletList onSelected={onSelected} />}
+        {allowList?.includes(WalletTypeEnum.TRON) && <TRONWalletList onSelected={onSelected} />}
+        {allowList?.includes(WalletTypeEnum.TON) && <TONWalletList onSelected={onSelected} />}
       </div>
     </CommonModal>
   );

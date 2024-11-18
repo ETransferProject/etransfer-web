@@ -20,7 +20,7 @@ import { ExtraInfoForDiscover, WalletInfo } from 'types/wallet';
 import useAelf from './wallet/useAelf';
 
 export function useQueryAuthToken() {
-  const { account, disconnect, connector, isConnected, getSignature, walletInfo } = useAelf();
+  const { account, disconnect, connector, isConnected, signMessage, walletInfo } = useAelf();
   const { setLoading } = useLoading();
 
   const loginSuccessActive = useCallback(() => {
@@ -28,7 +28,7 @@ export function useQueryAuthToken() {
     myEvents.LoginSuccess.emit();
   }, []);
 
-  const handleGetSignature = useCallback(async () => {
+  const handlesignMessage = useCallback(async () => {
     if (!account) return;
     const plainTextOrigin = `Welcome to ETransfer!
 
@@ -67,7 +67,7 @@ ${Date.now()}`;
         };
       } else {
         const signInfo = AElf.utils.sha256(plainText);
-        signResult = await getSignature({
+        signResult = await signMessage({
           appName: APP_NAME,
           address: account,
           signInfo,
@@ -76,7 +76,7 @@ ${Date.now()}`;
     } else if (connector === WalletTypeEnum.elf) {
       // nightElf
       const signInfo = AElf.utils.sha256(plainText);
-      signResult = await getSignature({
+      signResult = await signMessage({
         appName: APP_NAME,
         address: account,
         signInfo,
@@ -84,7 +84,7 @@ ${Date.now()}`;
     } else {
       // portkey sdk
       const signInfo = Buffer.from(plainText).toString('hex');
-      signResult = await getSignature({
+      signResult = await signMessage({
         appName: APP_NAME,
         address: account,
         signInfo,
@@ -94,7 +94,7 @@ ${Date.now()}`;
     if (signResult?.error) throw signResult.errorMessage;
 
     return { signature: signResult?.signature || '', plainText };
-  }, [account, connector, getSignature, walletInfo?.extraInfo]);
+  }, [account, connector, signMessage, walletInfo?.extraInfo]);
 
   const [isReCaptchaLoading, setIsReCaptchaLoading] = useState(true);
   useEffect(() => {
@@ -138,7 +138,7 @@ ${Date.now()}`;
         walletInfo as WalletInfo,
         connector,
       );
-      const signatureResult = await handleGetSignature();
+      const signatureResult = await handlesignMessage();
       if (!signatureResult) throw Error('Signature error');
       const pubkey = recoverPubKey(signatureResult.plainText, signatureResult.signature) + '';
       const managerAddress = await getManagerAddressByWallet(
@@ -183,7 +183,7 @@ ${Date.now()}`;
   }, [
     connector,
     disconnect,
-    handleGetSignature,
+    handlesignMessage,
     handleReCaptcha,
     isConnected,
     loginSuccessActive,

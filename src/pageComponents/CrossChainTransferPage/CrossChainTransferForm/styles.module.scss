@@ -45,7 +45,15 @@
 }
 
 .send-section-input-wrap {
+  width: 100%;
   margin-bottom: 0;
+
+  :global {
+    .ant-form-item-row {
+      width: 100%;
+      margin-right: 8px;
+    }
+  }
 }
 
 .send-section-input-amount {
@@ -84,6 +92,10 @@
   @extend .font-family-medium;
   margin-left: 8px;
   margin-right: 4px;
+}
+
+.recipient-address-form-item{
+  margin-bottom: 0;
 }
 
 .comment-input,

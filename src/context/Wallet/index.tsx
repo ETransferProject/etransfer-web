@@ -20,12 +20,16 @@ export function useWallet(): [WalletState, BasicActions<WalletActions>] {
 
 function reducer(state: WalletState, { type, payload }: { type: WalletActions; payload: any }) {
   switch (type) {
+    case WalletActions.setFromWalletType: {
+      return Object.assign({}, state, { fromWalletType: payload.walletType });
+    }
+    case WalletActions.setToWalletType: {
+      return Object.assign({}, state, { toWalletType: payload.walletType });
+    }
     case WalletActions.destroy: {
-      return {};
+      return INITIAL_STATE;
     }
     default: {
-      const { destroy } = payload;
-      if (destroy) return Object.assign({}, payload);
       return Object.assign({}, state, payload);
     }
   }

@@ -3,26 +3,39 @@ import styles from '../styles.module.scss';
 import clsx from 'clsx';
 import { CONNECT_SOL_LIST_CONFIG } from 'constants/wallet/Solana';
 import useSolana from 'hooks/wallet/useSolana';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getOmittedStr } from '@etransfer/utils';
 import Copy, { CopySize } from 'components/Copy';
 import PartialLoading from 'components/PartialLoading';
+import { WalletTypeEnum } from 'context/Wallet/types';
 
-export default function SolanaWalletList() {
+export default function SolanaWalletList({
+  onSelected,
+}: {
+  onSelected?: (walletType: WalletTypeEnum) => void;
+}) {
   const { account, connect, isConnected, isConnecting, disconnect } = useSolana();
   const [isShowCopy, setIsShowCopy] = useState(false);
 
   const onConnect = useCallback(
     async (name: any) => {
       try {
-        if (isConnected) return;
+        if (isConnected) {
+          onSelected?.(WalletTypeEnum.SOL);
+          return;
+        }
         connect(name);
       } catch (error) {
         console.log('>>>>>> SolanaWalletList onConnect error', error);
       }
     },
-    [connect, isConnected],
+    [connect, isConnected, onSelected],
   );
+
+  useEffect(() => {
+    if (isConnected) onSelected?.(WalletTypeEnum.SOL);
+  }, [isConnected, onSelected]);
+
   const onDisconnect = useCallback(
     (event: any) => {
       event.stopPropagation();

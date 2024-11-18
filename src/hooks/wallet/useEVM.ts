@@ -6,6 +6,8 @@ import { sepolia } from 'viem/chains';
 import { useAccount, useConnect, useDisconnect, useSignMessage, useWriteContract } from 'wagmi';
 import { EVM_WALLET_ALLOWANCE } from 'constants/wallet/EVM';
 import { Abi } from 'viem';
+import AElf from 'aelf-sdk';
+import { AuthTokenSource } from 'types/api';
 
 export default function useEVM() {
   const { connectAsync, connectors } = useConnect();
@@ -34,13 +36,19 @@ export default function useEVM() {
   const { signMessageAsync } = useSignMessage();
 
   const signMessage = useCallback(async () => {
-    const plainTextOrigin = getAuthPlainTextOrigin();
+    const plainText = getAuthPlainTextOrigin();
     const res = await signMessageAsync({
-      message: plainTextOrigin,
+      message: plainText.plainTextOrigin,
     });
     console.log('>>>>>> EVM onSignMessage res', res);
-    return res;
-  }, [signMessageAsync]);
+    return {
+      plainTextOrigin: plainText.plainTextOrigin,
+      plainTextHex: plainText.plainTextHex,
+      signature: AElf.utils.uint8ArrayToHex(res),
+      publicKey: accountInfo.address,
+      sourceType: AuthTokenSource.EVM,
+    };
+  }, [accountInfo.address, signMessageAsync]);
 
   const sendTransaction = useCallback(
     async ({

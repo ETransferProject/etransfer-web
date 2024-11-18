@@ -14,6 +14,10 @@ export enum BusinessType {
 export enum AuthTokenSource {
   Portkey = 'portkey',
   NightElf = 'nightElf',
+  EVM = 'EVM',
+  Solana = 'Solana',
+  TRON = 'TRX',
+  TON = 'Ton',
 }
 
 export type TGetTokenListRequest = {

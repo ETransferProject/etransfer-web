@@ -13,6 +13,7 @@ import { Form } from 'antd';
 import clsx from 'clsx';
 
 export interface CrossChainTransferFooterProps {
+  className?: string;
   recipientAddress: string;
   fromInput?: string;
   fromBalance?: string;
@@ -24,6 +25,7 @@ export interface CrossChainTransferFooterProps {
 }
 
 export default function CrossChainTransferFooter({
+  className,
   recipientAddress,
   fromInput,
   fromBalance,
@@ -90,19 +92,23 @@ export default function CrossChainTransferFooter({
   ]);
 
   return (
-    <div className={styles['cross-chain-transfer-footer']}>
-      <div className={clsx('flex-row-center', styles['you-will-receive'])}>
-        <span>{`You'll receive:`}&nbsp;</span>
-        <span className={styles['you-will-receive-value']}>
-          {estimateReceive ? `${estimateReceive} ${estimateReceiveUnit}` : DEFAULT_NULL_VALUE}
-        </span>
-      </div>
-      <div className={clsx('flex-row-center', styles['transaction-fee'])}>
-        <span>{`transaction fee:`}&nbsp;</span>
-        <span className={styles['transaction-fee-value']}>
-          {transactionFee ? `${transactionFee} ${transactionFeeUnit}` : DEFAULT_NULL_VALUE}
-        </span>
-      </div>
+    <div className={clsx(styles['cross-chain-transfer-footer'], className)}>
+      {fromInput && (
+        <div className={styles['cross-chain-transfer-footer-info']}>
+          <div className={clsx('flex-row-center', styles['you-will-receive'])}>
+            <span>{`You'll receive:`}&nbsp;</span>
+            <span className={styles['you-will-receive-value']}>
+              {estimateReceive ? `${estimateReceive} ${estimateReceiveUnit}` : DEFAULT_NULL_VALUE}
+            </span>
+          </div>
+          <div className={clsx('flex-row-center', styles['transaction-fee'])}>
+            <span>{`transaction fee:`}&nbsp;</span>
+            <span className={styles['transaction-fee-value']}>
+              {transactionFee ? `${transactionFee} ${transactionFeeUnit}` : DEFAULT_NULL_VALUE}
+            </span>
+          </div>
+        </div>
+      )}
 
       <Form.Item
         shouldUpdate

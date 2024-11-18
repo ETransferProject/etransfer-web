@@ -13,9 +13,14 @@ import service from 'api/axios';
 import myEvents from 'utils/myEvent';
 import Address from './Address';
 import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
+import { WalletTypeEnum } from 'context/Wallet/types';
 // import PartialLoading from 'components/PartialLoading';
 
-export default function AelfWalletList() {
+export default function AelfWalletList({
+  onSelected,
+}: {
+  onSelected?: (walletType: WalletTypeEnum) => void;
+}) {
   const { account, connect, disconnect, isConnected, connector } = useAelf();
   const { getAuth } = useQueryAuthToken();
   const [dynamicArrowExpand, setDynamicArrowExpand] = useState(false);
@@ -30,13 +35,14 @@ export default function AelfWalletList() {
       if (!isConnected) {
         // setIsConnectLoading(true);
         await connect();
+        onSelected?.(WalletTypeEnum.AELF);
         // setIsConnectLoading(false);
       }
     } catch (error) {
       // setIsConnectLoading(false);
       SingleMessage.error(handleWebLoginErrorMessage(error));
     }
-  }, [connect, getAuth, isConnected]);
+  }, [connect, getAuth, isConnected, onSelected]);
 
   const onDisconnect = useCallback(() => {
     Promise.resolve(disconnect()).then(() => {

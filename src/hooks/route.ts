@@ -140,6 +140,15 @@ export function useCheckAllowSearch() {
             searchObject.withdrawAddress = searchParams.get('withdrawAddress');
           break;
 
+        case '/transfer':
+          if (searchParams.get('fromNetwork'))
+            searchObject.chainId = searchParams.get('fromNetwork');
+          if (searchParams.get('toNetwork'))
+            searchObject.withdrawAddress = searchParams.get('toNetwork');
+          if (searchParams.get('tokenSymbol'))
+            searchObject.tokenSymbol = searchParams.get('tokenSymbol');
+          break;
+
         case '/history':
           if (searchParams.get('method')) searchObject.method = searchParams.get('method');
           if (searchParams.get('status')) searchObject.status = searchParams.get('status');

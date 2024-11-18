@@ -1,4 +1,4 @@
-export function basicActions<T extends string>(type: T, payload?: any) {
+export function basicActions<T extends string, P = any>(type: T, payload?: P) {
   return {
     type,
     payload,

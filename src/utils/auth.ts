@@ -13,5 +13,8 @@ ${Date.now()}`;
     Buffer.from(plainText).toString('hex').replace('0x', ''),
   );
 
-  return plainText;
+  return {
+    plainTextOrigin: plainText,
+    plainTextHex: Buffer.from(plainText).toString('hex').replace('0x', ''),
+  };
 }

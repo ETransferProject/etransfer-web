@@ -19,6 +19,7 @@ export default function useAelf() {
     connecting,
     connectWallet,
     disConnectWallet,
+    getSignature,
     ...props
   } = useConnectWallet();
 
@@ -36,8 +37,18 @@ export default function useAelf() {
       connect: connectWallet,
       disconnect: async () => await disConnectWallet(),
       getAccountInfo: () => walletInfo?.extraInfo,
+      signMessage: getSignature,
     };
-  }, [connectWallet, connecting, disConnectWallet, isConnected, props, walletInfo, walletType]);
+  }, [
+    connectWallet,
+    connecting,
+    disConnectWallet,
+    getSignature,
+    isConnected,
+    props,
+    walletInfo,
+    walletType,
+  ]);
 
   return aelfContext;
 }

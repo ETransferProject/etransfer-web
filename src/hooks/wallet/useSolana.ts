@@ -13,6 +13,7 @@ import {
 import { configureAndSendCurrentTransaction } from 'utils/wallet/SOL';
 import { timesDecimals, ZERO } from '@etransfer/utils';
 import AElf from 'aelf-sdk';
+import { AuthTokenSource } from 'types/api';
 
 export default function useSolana() {
   const { connection } = useConnection();
@@ -48,14 +49,18 @@ export default function useSolana() {
   const getSignMessage = useCallback(async () => {
     if (!signMessage) return '';
 
-    const plainTextOrigin = getAuthPlainTextOrigin();
+    const plainText = getAuthPlainTextOrigin();
     const encoder = new TextEncoder();
-    const message = encoder.encode(plainTextOrigin);
+    const message = encoder.encode(plainText.plainTextOrigin);
     const res = await signMessage(message);
-    const hex = AElf.utils.uint8ArrayToHex(res);
 
-    console.log('>>>>>> Solana res', hex);
-    return res;
+    console.log('>>>>>> Solana res', res);
+    return {
+      plainTextOrigin: plainText.plainTextOrigin,
+      plainTextHex: plainText.plainTextHex,
+      signature: AElf.utils.uint8ArrayToHex(res),
+      sourceType: AuthTokenSource.Solana,
+    };
   }, [signMessage]);
 
   const sendTransaction = useCallback(

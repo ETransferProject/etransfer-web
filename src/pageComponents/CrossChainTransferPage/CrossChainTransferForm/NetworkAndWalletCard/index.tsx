@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import styles from './styles.module.scss';
 import { useWallet } from 'context/Wallet';
 import { useCrossChainTransfer } from 'store/Provider/hooks';
@@ -10,22 +10,35 @@ import NetworkSelected from '../NetworkSelected';
 import { TNetworkItem } from 'types/api';
 import clsx from 'clsx';
 import { getOmittedStr } from 'utils/calculate';
+import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
+import { walletAction } from 'context/Wallet/actions';
 
 export interface NetworkAndWalletCardProps {
   className?: string;
   label?: string;
   cardType: 'From' | 'To';
-  onSelectCallback?: (item: TNetworkItem) => Promise<void>;
+  onSelectNetworkCallback?: (item: TNetworkItem) => Promise<void>;
 }
 
 export function NetworkAndWalletCard({
   className,
   label,
   cardType,
-  onSelectCallback,
+  onSelectNetworkCallback,
 }: NetworkAndWalletCardProps) {
-  const [{ fromWallet, fromWalletType, toWallet, toWalletType }] = useWallet();
-  const { fromNetwork, toNetwork } = useCrossChainTransfer();
+  const [{ fromWallet, fromWalletType, toWallet, toWalletType }, { dispatch: walletDispatch }] =
+    useWallet();
+  const { fromNetwork, fromNetworkList, toNetwork, toNetworkList } = useCrossChainTransfer();
+  const [openConnectWalletModal, setOpenConnectWalletModal] = useState(false);
+  const [walletAllowList, setWalletAllowList] = useState<WalletTypeEnum[]>([]);
+
+  const selectedNetwork = useMemo(() => {
+    return cardType === 'From' ? fromNetwork : toNetwork;
+  }, [cardType, fromNetwork, toNetwork]);
+
+  const selectedNetworkList = useMemo(() => {
+    return cardType === 'From' ? fromNetworkList : toNetworkList;
+  }, [cardType, fromNetworkList, toNetworkList]);
 
   const labelFormat = useMemo(() => {
     if (label) return label;
@@ -36,14 +49,29 @@ export function NetworkAndWalletCard({
     const walletType = computeWalletType(network);
     if (!walletType) return;
 
-    // TODO
-    console.log('handleConnectWallet', walletType);
+    setWalletAllowList([walletType]);
+    setOpenConnectWalletModal(true);
   }, []);
 
-  const connectWalletText = useMemo(() => {
+  const handleSelectWallet = useCallback(
+    (walletType: WalletTypeEnum) => {
+      if (cardType === 'From') {
+        walletDispatch(walletAction.setFromWalletType.actions(walletType));
+      } else {
+        walletDispatch(walletAction.setToWalletType.actions(walletType));
+      }
+    },
+    [cardType, walletDispatch],
+  );
+
+  const renderConnectWallet = useMemo(() => {
+    let connectWalletText: React.ReactNode = '';
+    let modalTitle = CONNECT_WALLET;
+
     if (cardType === 'From') {
       if (isAelfChain(fromNetwork?.network)) {
-        return (
+        modalTitle = CONNECT_AELF_WALLET;
+        connectWalletText = (
           <div
             className={styles['connect-wallet-link']}
             onClick={() => handleConnectWallet(fromNetwork.network)}>
@@ -51,7 +79,8 @@ export function NetworkAndWalletCard({
           </div>
         );
       } else {
-        return (
+        modalTitle = CONNECT_WALLET;
+        connectWalletText = (
           <div
             className={styles['connect-wallet-link']}
             onClick={() => handleConnectWallet(fromNetwork.network)}>
@@ -59,25 +88,49 @@ export function NetworkAndWalletCard({
           </div>
         );
       }
-    }
-    if (isAelfChain(toNetwork?.network)) {
-      return (
-        <div
-          className={styles['connect-wallet-link']}
-          onClick={() => handleConnectWallet(toNetwork.network)}>
-          {CONNECT_AELF_WALLET}
-        </div>
-      );
     } else {
-      return (
-        <div
-          className={styles['connect-wallet-link']}
-          onClick={() => handleConnectWallet(toNetwork.network)}>
-          {CONNECT_WALLET}
-        </div>
-      );
+      if (isAelfChain(toNetwork?.network)) {
+        modalTitle = CONNECT_AELF_WALLET;
+        connectWalletText = (
+          <div
+            className={styles['connect-wallet-link']}
+            onClick={() => handleConnectWallet(toNetwork.network)}>
+            {CONNECT_AELF_WALLET}
+          </div>
+        );
+      } else {
+        modalTitle = CONNECT_WALLET;
+        connectWalletText = (
+          <div
+            className={styles['connect-wallet-link']}
+            onClick={() => handleConnectWallet(toNetwork.network)}>
+            {CONNECT_WALLET}
+          </div>
+        );
+      }
     }
-  }, [cardType, fromNetwork.network, handleConnectWallet, toNetwork.network]);
+
+    return (
+      <div>
+        {connectWalletText}
+        <ConnectWalletModal
+          open={openConnectWalletModal}
+          title={modalTitle}
+          allowList={walletAllowList}
+          onCancel={() => setOpenConnectWalletModal(false)}
+          onSelected={handleSelectWallet}
+        />
+      </div>
+    );
+  }, [
+    cardType,
+    fromNetwork.network,
+    handleConnectWallet,
+    handleSelectWallet,
+    openConnectWalletModal,
+    toNetwork.network,
+    walletAllowList,
+  ]);
 
   const WalletLogo = useMemo(() => {
     if (cardType === 'From' && fromWalletType) {
@@ -107,7 +160,7 @@ export function NetworkAndWalletCard({
           </span>
         </div>
       ) : (
-        connectWalletText
+        renderConnectWallet
       );
     }
     return toWallet?.isConnected && toWallet?.account ? (
@@ -116,14 +169,14 @@ export function NetworkAndWalletCard({
         <span className={styles['wallet-account']}>{getOmittedStr(toWallet?.account, 5, 5)}</span>
       </div>
     ) : (
-      connectWalletText
+      renderConnectWallet
     );
   }, [
     WalletLogo,
     cardType,
-    connectWalletText,
     fromWallet?.account,
     fromWallet?.isConnected,
+    renderConnectWallet,
     toWallet?.account,
     toWallet?.isConnected,
   ]);
@@ -135,7 +188,11 @@ export function NetworkAndWalletCard({
         {renderWallet}
       </div>
 
-      <NetworkSelected selectCallback={onSelectCallback} />
+      <NetworkSelected
+        selectCallback={onSelectNetworkCallback}
+        selected={selectedNetwork}
+        networkList={selectedNetworkList || []}
+      />
     </div>
   );
 }

@@ -10,8 +10,13 @@ import Copy, { CopySize } from 'components/Copy';
 import { SingleMessage } from '@etransfer/ui-react';
 import { TonConnectError } from '@tonconnect/ui-react';
 import { USER_REJECT_CONNECT_WALLET_TIP } from 'constants/wallet';
+import { WalletTypeEnum } from 'context/Wallet/types';
 
-export default function TONWalletList() {
+export default function TONWalletList({
+  onSelected,
+}: {
+  onSelected?: (walletType: WalletTypeEnum) => void;
+}) {
   const { account, connect, disconnect, isConnected } = useTON();
   // const [isConnectLoading, setIsConnectLoading] = useState(false);
   const [isShowCopy, setIsShowCopy] = useState(false);
@@ -30,12 +35,16 @@ export default function TONWalletList() {
   const onConnect = useCallback(async () => {
     try {
       // setIsConnectLoading(true);
-      if (isConnected) return;
+      if (isConnected) {
+        onSelected?.(WalletTypeEnum.TON);
+        return;
+      }
       await connect(CONNECT_TON_LIST_CONFIG.key);
+      onSelected?.(WalletTypeEnum.TON);
     } catch (error) {
       // setIsConnectLoading(false);
     }
-  }, [connect, isConnected]);
+  }, [connect, isConnected, onSelected]);
 
   // useEffect(() => {
   //   if (isConnected) {

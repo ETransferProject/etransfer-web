@@ -4,6 +4,8 @@ import { WalletTypeEnum } from 'context/Wallet/types';
 import { getAuthPlainTextOrigin } from 'utils/auth';
 import myEvents from 'utils/myEvent';
 import { sleep } from '@etransfer/utils';
+import AElf from 'aelf-sdk';
+import { AuthTokenSource } from 'types/api';
 
 export default function useTRON() {
   const { address, wallet, connected, connect, select, disconnect, signMessage, connecting } =
@@ -51,11 +53,17 @@ export default function useTRON() {
   const getSignMessage = useCallback(async () => {
     if (!signMessage) return '';
 
-    const plainTextOrigin = getAuthPlainTextOrigin();
-    const res = await signMessage(plainTextOrigin);
+    const plainText = getAuthPlainTextOrigin();
+    const res = await signMessage(plainText.plainTextOrigin);
 
-    return res;
-  }, [signMessage]);
+    return {
+      plainTextOrigin: plainText.plainTextOrigin,
+      plainTextHex: plainText.plainTextHex,
+      signature: AElf.utils.uint8ArrayToHex(res),
+      publicKey: address,
+      sourceType: AuthTokenSource.TRON,
+    };
+  }, [address, signMessage]);
 
   const sendTransaction = useCallback(
     async ({

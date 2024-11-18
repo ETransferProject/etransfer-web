@@ -7,21 +7,30 @@ import { useCallback, useState } from 'react';
 import { getOmittedStr } from '@etransfer/utils';
 import Copy, { CopySize } from 'components/Copy';
 import PartialLoading from 'components/PartialLoading';
+import { WalletTypeEnum } from 'context/Wallet/types';
 
-export default function TRONWalletList() {
+export default function TRONWalletList({
+  onSelected,
+}: {
+  onSelected?: (walletType: WalletTypeEnum) => void;
+}) {
   const { account, isConnected, isConnecting, connect, disconnect } = useTRON();
   const [isShowCopy, setIsShowCopy] = useState(false);
 
   const onConnect = useCallback(
     async (name: string) => {
       try {
-        if (isConnected) return;
+        if (isConnected) {
+          onSelected?.(WalletTypeEnum.TRON);
+          return;
+        }
         connect(name as any);
+        onSelected?.(WalletTypeEnum.TRON);
       } catch (error) {
         console.log('>>>>>> TRONWalletList onConnect error', error);
       }
     },
-    [connect, isConnected],
+    [connect, isConnected, onSelected],
   );
 
   const onDisconnect = useCallback(

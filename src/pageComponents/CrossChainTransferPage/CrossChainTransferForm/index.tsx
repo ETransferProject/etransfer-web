@@ -3,14 +3,19 @@ import styles from './styles.module.scss';
 import { useCallback, useMemo, useState } from 'react';
 import { useWallet } from 'context/Wallet';
 import { BlockchainNetworkType } from 'constants/network';
-import { useCrossChainTransfer } from 'store/Provider/hooks';
+import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { MEMO_REG } from 'utils/reg';
 import { formatWithCommas, parseWithCommas, parseWithStringCommas } from 'utils/format';
 import { TelegramPlatform } from 'utils/telegram';
 import { sleep } from '@etransfer/utils';
 import { devices } from '@portkey/utils';
-import { InitialCrossChainTransferState } from 'store/reducers/crossChainTransfer/slice';
+import {
+  InitialCrossChainTransferState,
+  setFromNetwork,
+  setTokenSymbol,
+  setToNetwork,
+} from 'store/reducers/crossChainTransfer/slice';
 import { TTransferFormValues, TransferFormKeys, TTransferFormValidateData } from '../types';
 import { NetworkAndWalletCard } from './NetworkAndWalletCard';
 import { ArrowRight2, QuestionMarkIcon, SwapHorizontal } from 'assets/images';
@@ -18,7 +23,7 @@ import clsx from 'clsx';
 import CommonSpace from 'components/CommonSpace';
 import TokenSelected from './TokenSelected';
 import RemainingLimit from './RemainingLimit';
-import { TCrossChainTransferInfo } from 'types/api';
+import { TCrossChainTransferInfo, TNetworkItem, TTokenItem } from 'types/api';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
 import CommonTooltip from 'components/CommonTooltip';
 import { TRANSFER_SEND_RECIPIENT_TIP } from 'constants/crossChainTransfer';
@@ -48,6 +53,7 @@ export default function CrossChainTransferForm({
   onRecipientAddressBlur,
 }: CrossChainTransferFormProps) {
   const isAndroid = devices.isMobile().android;
+  const dispatch = useAppDispatch();
   const [{ fromWallet }] = useWallet();
   const { toNetwork, tokenSymbol, tokenList } = useCrossChainTransfer();
   const [isInputAddress, setIsInputAddress] = useState(false);
@@ -76,6 +82,27 @@ export default function CrossChainTransferForm({
     setIsShowSwap(false);
   }, []);
 
+  const handleFromNetworkChange = useCallback(
+    async (item: TNetworkItem) => {
+      dispatch(setFromNetwork(item));
+    },
+    [dispatch],
+  );
+
+  const handleToNetworkChange = useCallback(
+    async (item: TNetworkItem) => {
+      dispatch(setToNetwork(item));
+    },
+    [dispatch],
+  );
+
+  const handleSelectToken = useCallback(
+    (item: TTokenItem) => {
+      dispatch(setTokenSymbol(item.symbol));
+    },
+    [dispatch],
+  );
+
   return (
     <Form
       className={styles['cross-chain-transfer-body']}
@@ -90,10 +117,15 @@ export default function CrossChainTransferForm({
           {isShowSwap ? <SwapHorizontal /> : <ArrowRight2 />}
         </div>
         <div className={clsx('flex-row-center gap-4')}>
-          <NetworkAndWalletCard cardType="From" className={'flex-1'} />
+          <NetworkAndWalletCard
+            cardType="From"
+            className={'flex-1'}
+            onSelectNetworkCallback={handleFromNetworkChange}
+          />
           <NetworkAndWalletCard
             cardType="To"
             className={clsx('flex-1', styles['network-and-wallet-to'])}
+            onSelectNetworkCallback={handleToNetworkChange}
           />
         </div>
       </div>
@@ -162,7 +194,11 @@ export default function CrossChainTransferForm({
               }}
             />
           </Form.Item>
-          <TokenSelected symbol={tokenSymbol} icon={currentToken.icon} />
+          <TokenSelected
+            symbol={tokenSymbol}
+            icon={currentToken.icon}
+            selectCallback={handleSelectToken}
+          />
         </div>
         <div className={clsx('flex-row-center-between', styles['send-section-balance-row'])}>
           <div>

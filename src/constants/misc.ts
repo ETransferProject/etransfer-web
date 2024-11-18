@@ -6,7 +6,7 @@ export const SIGNATURE_MISSING_TIP = 'Signature missing/expired, please log in a
 
 export const GOT_IT = 'Got it';
 
-export const API_VERSION = 'v2.14.0';
+export const API_VERSION = 'v3.0.0';
 
 export const ETRANSFER_LOGO =
   'https://cms.etransfer.exchange/assets/b4f969c7-bdcd-4676-9df8-a3350ae26dd2';

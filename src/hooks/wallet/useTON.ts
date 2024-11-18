@@ -13,6 +13,7 @@ import { Address as CoreAddress, beginCell, toNano } from '@ton/core';
 import { sign, mnemonicToPrivateKey } from '@ton/crypto';
 import { getAuthPlainTextOrigin } from 'utils/auth';
 import { getTONJettonMinter, tonWeb } from 'utils/wallet/TON';
+import { AuthTokenSource } from 'types/api';
 
 export default function useTON() {
   const wallet = useTonWallet();
@@ -44,16 +45,27 @@ export default function useTON() {
     [address],
   );
 
-  const signMessage = useCallback(async (mnemonic: string[]) => {
-    const plainTextOrigin = getAuthPlainTextOrigin();
-    const message = Buffer.from(plainTextOrigin);
-    const keyPair = await mnemonicToPrivateKey(mnemonic);
+  const signMessage = useCallback(
+    async (mnemonic: string[]) => {
+      const plainText = getAuthPlainTextOrigin();
+      const message = Buffer.from(plainText.plainTextOrigin);
+      const keyPair = await mnemonicToPrivateKey(mnemonic);
 
-    const secretKey = keyPair.secretKey;
-    const res = sign(message, secretKey);
+      const secretKey = keyPair.secretKey;
+      const res = sign(message, secretKey);
 
-    console.log('>>>>>> TON SignMessage res', res);
-  }, []);
+      console.log('>>>>>> TON SignMessage res', res);
+
+      return {
+        plainTextOrigin: plainText.plainTextOrigin,
+        plainTextHex: plainText.plainTextHex,
+        signature: res,
+        publicKey: address,
+        sourceType: AuthTokenSource.TON,
+      };
+    },
+    [address],
+  );
 
   const sendTransaction = useCallback(
     async ({

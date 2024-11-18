@@ -8,8 +8,13 @@ import { getOmittedStr, handleErrorMessage } from '@etransfer/utils';
 import Copy, { CopySize } from 'components/Copy';
 import PartialLoading from 'components/PartialLoading';
 import { SingleMessage } from '@etransfer/ui-react';
+import { WalletTypeEnum } from 'context/Wallet/types';
 
-export default function EVMWalletList() {
+export default function EVMWalletList({
+  onSelected,
+}: {
+  onSelected?: (walletType: WalletTypeEnum) => void;
+}) {
   const { account, connect, connectors, connector, disconnect, isConnected } = useEVM();
   const [isConnectLoading, setIsConnectLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -18,20 +23,24 @@ export default function EVMWalletList() {
   const onConnect = useCallback(
     async (id: string, index: number) => {
       try {
-        if (isConnected) return;
+        if (isConnected) {
+          onSelected?.(WalletTypeEnum.EVM);
+          return;
+        }
         const connector = connectors.find((item) => item.id === id);
         if (!connector) return;
 
         setActiveIndex(index);
         setIsConnectLoading(true);
         await connect({ connector: connector });
+        onSelected?.(WalletTypeEnum.EVM);
         setIsConnectLoading(false);
       } catch (error) {
         setIsConnectLoading(false);
         SingleMessage.error(handleErrorMessage(error));
       }
     },
-    [connect, connectors, isConnected],
+    [connect, connectors, isConnected, onSelected],
   );
 
   const onDisconnect = useCallback(

@@ -69,7 +69,7 @@ export default function WithdrawFooter({
 }: WithdrawFooterProps) {
   const { isPadPX } = useCommonState();
   const { setLoading } = useLoading();
-  const { isConnected, walletInfo, connector, isLocking, callSendMethod, getSignature } = useAelf();
+  const { isConnected, walletInfo, connector, isLocking, callSendMethod, signMessage } = useAelf();
   const handleLogin = useLogin();
   const accounts = useGetAccount();
   // Fix: It takes too long to obtain NightElf walletInfo, and the user mistakenly clicks the login button during this period.
@@ -227,7 +227,7 @@ export default function WithdrawFooter({
           chainId: currentChainItem.key,
           fromManagerAddress: connector === WalletTypeEnum.elf ? ownerAddress : managerAddress,
           caAddress: ownerAddress,
-          getSignature,
+          getSignature: signMessage,
         });
         console.log(transaction, '=====transaction');
 
