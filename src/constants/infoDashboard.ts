@@ -7,11 +7,9 @@ export enum InfoBusinessTypeLabel {
   Transfer = 'Transfer',
 }
 
-// TODO
 export const InfoBusinessTypeOptions = [
   { value: TokensDashboardType.All, label: InfoBusinessTypeLabel.ALL },
   { value: TokensDashboardType.Deposit, label: InfoBusinessTypeLabel.Deposit },
-  { value: TokensDashboardType.Withdraw, label: InfoBusinessTypeLabel.Withdraw },
   { value: TokensDashboardType.Transfer, label: InfoBusinessTypeLabel.Transfer },
 ];
 
