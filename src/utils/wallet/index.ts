@@ -165,3 +165,7 @@ export const computeWalletType = (network: string) => {
   if (isTRONChain(network)) return WalletTypeEnum.TRON;
   return '';
 };
+
+export const isAelfWalletType = (walletType: WalletTypeEnum) => {
+  return walletType && walletType !== WalletTypeEnum.AELF;
+};

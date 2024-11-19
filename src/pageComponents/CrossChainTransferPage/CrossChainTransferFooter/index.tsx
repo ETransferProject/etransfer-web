@@ -7,15 +7,27 @@ import {
   BUTTON_TEXT_INSUFFICIENT_FUNDS,
   BUTTON_TEXT_TRANSFER,
 } from 'constants/crossChainTransfer';
-import { ZERO } from '@etransfer/utils';
+import { handleErrorMessage, ZERO } from '@etransfer/utils';
 import { Form } from 'antd';
 import clsx from 'clsx';
 import { useCrossChainTransfer } from 'store/Provider/hooks';
+import { useWallet } from 'context/Wallet';
+import { useAuthToken } from 'hooks/wallet/authToken';
+import { createTransferOrder } from 'utils/api/transfer';
+import { SingleMessage } from '@etransfer/ui-react';
+import { WalletTypeEnum } from 'context/Wallet/types';
+import {
+  SendEVMTransactionParams,
+  SendSolanaTransactionParams,
+  SendTONTransactionParams,
+  SendTRONTransactionParams,
+} from 'types/wallet';
+import { EVM_USDT_ABI } from 'constants/wallet/EVM';
 
 export interface CrossChainTransferFooterProps {
   className?: string;
   recipientAddress?: string;
-  fromInput?: string;
+  fromAmount?: string;
   fromBalance?: string;
   estimateReceive?: string;
   estimateReceiveUnit?: string;
@@ -27,7 +39,7 @@ export interface CrossChainTransferFooterProps {
 export default function CrossChainTransferFooter({
   className,
   recipientAddress,
-  fromInput,
+  fromAmount,
   fromBalance,
   estimateReceive = DEFAULT_NULL_VALUE,
   estimateReceiveUnit = '',
@@ -35,15 +47,102 @@ export default function CrossChainTransferFooter({
   transactionFeeUnit = '',
   isSubmitDisabled,
 }: CrossChainTransferFooterProps) {
-  const { fromWalletType, toWalletType } = useCrossChainTransfer();
+  const { fromNetwork, fromWalletType, tokenSymbol, toNetwork, toWalletType } =
+    useCrossChainTransfer();
+  const [{ fromWallet, toWallet }] = useWallet();
+  const { getAuthToken } = useAuthToken();
 
   const onConnectWallet = useCallback(() => {
     console.log('onConnectWallet');
   }, []);
 
-  const onTransfer = useCallback(() => {
-    console.log('onTransfer');
-  }, []);
+  const onTransfer = useCallback(async () => {
+    try {
+      const toAddress =
+        toWalletType && toWallet?.isConnected && toWallet?.account
+          ? toWallet?.account
+          : recipientAddress;
+
+      if (
+        !fromWallet?.isConnected ||
+        (!toWallet?.isConnected && !!recipientAddress) ||
+        !fromAmount ||
+        !fromWallet?.account ||
+        !toAddress
+      )
+        return;
+
+      if (fromWallet.walletType === WalletTypeEnum.AELF) {
+        // aelf logic
+      } else {
+        // get etransfer jwt
+        const jwt = await getAuthToken({ recipientAddress });
+
+        // create order id
+        const orderResult = await createTransferOrder({
+          amount: fromAmount,
+          fromNetwork: fromNetwork.network,
+          toNetwork: toNetwork.network,
+          fromSymbol: tokenSymbol,
+          fromAddress: fromWallet?.account,
+          toAddress,
+          token: jwt,
+        });
+        console.log('>>>>>> orderResult', orderResult);
+
+        let params:
+          | SendEVMTransactionParams
+          | SendSolanaTransactionParams
+          | SendTONTransactionParams
+          | SendTRONTransactionParams;
+        if (fromWallet.walletType === WalletTypeEnum.EVM) {
+          params = {
+            tokenContractAddress: orderResult.address,
+            toAddress,
+            tokenAbi: EVM_USDT_ABI, // TODO
+            amount: fromAmount, // TODO
+            decimals: 6, // TODO
+          } as SendEVMTransactionParams;
+        } else if (fromWallet.walletType === WalletTypeEnum.SOL) {
+          params = {
+            tokenContractAddress: orderResult.address,
+            toAddress,
+            amount: fromAmount, // TODO
+            decimals: 6, // TODO
+          } as SendSolanaTransactionParams;
+        } else if (fromWallet.walletType === WalletTypeEnum.TON) {
+          params = {
+            tokenContractAddress: orderResult.address,
+            toAddress,
+            amount: Number(fromAmount), // TODO
+            forwardTonAmount: '', // TODO
+          } as SendTONTransactionParams;
+        } else {
+          params = {
+            tokenContractAddress: orderResult.address,
+            toAddress,
+            amount: Number(fromAmount), // TODO
+          } as SendTRONTransactionParams;
+        }
+
+        const sendTransferResult = await fromWallet?.sendTransaction(params);
+        console.log('>>>>>> sendTransferResult', sendTransferResult);
+      }
+    } catch (error) {
+      SingleMessage.error(handleErrorMessage(error));
+    }
+  }, [
+    fromAmount,
+    fromNetwork.network,
+    fromWallet,
+    getAuthToken,
+    recipientAddress,
+    toNetwork.network,
+    toWallet?.account,
+    toWallet?.isConnected,
+    toWalletType,
+    tokenSymbol,
+  ]);
 
   const btnProps = useMemo(() => {
     const disabled = true,
@@ -64,8 +163,8 @@ export default function CrossChainTransferFooter({
         loading,
       };
     }
-    if (fromInput) {
-      if (!fromBalance || ZERO.plus(fromBalance).lt(fromInput)) {
+    if (fromAmount) {
+      if (!fromBalance || ZERO.plus(fromBalance).lt(fromAmount)) {
         return {
           children: BUTTON_TEXT_INSUFFICIENT_FUNDS,
           onClick: undefined,
@@ -81,8 +180,8 @@ export default function CrossChainTransferFooter({
       loading,
     };
   }, [
+    fromAmount,
     fromBalance,
-    fromInput,
     fromWalletType,
     isSubmitDisabled,
     onConnectWallet,
@@ -93,7 +192,7 @@ export default function CrossChainTransferFooter({
 
   return (
     <div className={clsx(styles['cross-chain-transfer-footer'], className)}>
-      {fromInput && (
+      {fromAmount && (
         <div className={styles['cross-chain-transfer-footer-info']}>
           <div className={clsx('flex-row-center', styles['you-will-receive'])}>
             <span>{`You'll receive:`}&nbsp;</span>

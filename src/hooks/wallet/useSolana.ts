@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { WalletTypeEnum } from 'context/Wallet/types';
+import { ISignMessageResult, WalletTypeEnum } from 'context/Wallet/types';
 import { getAuthPlainText } from 'utils/auth';
 import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
 import {
@@ -14,6 +14,7 @@ import { configureAndSendCurrentTransaction } from 'utils/wallet/SOL';
 import { timesDecimals, ZERO } from '@etransfer/utils';
 import AElf from 'aelf-sdk';
 import { AuthTokenSource } from 'types/api';
+import { SendSolanaTransactionParams } from 'types/wallet';
 
 export default function useSolana() {
   const { connection } = useConnection();
@@ -46,8 +47,8 @@ export default function useSolana() {
     [connection, publicKey],
   );
 
-  const getSignMessage = useCallback(async () => {
-    if (!signMessage) return '';
+  const getSignMessage = useCallback<() => Promise<ISignMessageResult>>(async () => {
+    if (!signMessage) throw new Error('No signature method found, please reconnect your wallet');
 
     const plainText = getAuthPlainText();
     const encoder = new TextEncoder();
@@ -58,22 +59,13 @@ export default function useSolana() {
       plainTextOrigin: plainText.plainTextOrigin,
       plainTextHex: plainText.plainTextHex,
       signature: AElf.utils.uint8ArrayToHex(res),
+      publicKey: publicKey?.toString() || '',
       sourceType: AuthTokenSource.Solana,
     };
-  }, [signMessage]);
+  }, [publicKey, signMessage]);
 
   const sendTransaction = useCallback(
-    async ({
-      tokenContractAddress,
-      toAddress,
-      amount,
-      decimals,
-    }: {
-      tokenContractAddress: string;
-      toAddress: string;
-      amount: string;
-      decimals: number;
-    }) => {
+    async ({ tokenContractAddress, toAddress, amount, decimals }: SendSolanaTransactionParams) => {
       if (!signTransaction || !publicKey) return '';
 
       const toPublicKey = new PublicKey(toAddress);

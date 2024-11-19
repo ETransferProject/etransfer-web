@@ -33,12 +33,21 @@ type QueryAuthApiBaseConfig = {
   grant_type: string;
   scope: string;
   client_id: string;
+  version: PortkeyVersion;
 };
+
+type QueryAuthApiBaseConfigV3 = {
+  grant_type: string;
+  scope: string;
+  client_id: string;
+  version: PortkeyVersion;
+  source: string;
+};
+
 export type QueryAuthApiExtraRequest = {
   pubkey: string;
   signature: string;
   plain_text: string;
-  version: PortkeyVersion;
   source: AuthTokenSource;
   managerAddress: string;
   ca_hash?: string; // for Portkey
@@ -46,10 +55,27 @@ export type QueryAuthApiExtraRequest = {
   recaptchaToken?: string; // for NightElf
 };
 
+export type QueryAuthApiExtraRequestV3 = {
+  signature: string;
+  plain_text: string;
+  pubkey: string; // wallet address
+  sourceType: AuthTokenSource;
+  recaptchaToken?: string; // for NightElf
+};
+
 const queryAuthApiBaseConfig: QueryAuthApiBaseConfig = {
   grant_type: 'signature',
   scope: 'ETransferServer',
   client_id: 'ETransferServer_App',
+  version: PortkeyVersion.v2,
+};
+
+const queryAuthApiBaseConfigV3: QueryAuthApiBaseConfigV3 = {
+  grant_type: 'signature',
+  scope: 'ETransferServer',
+  client_id: 'ETransferServer_App',
+  version: PortkeyVersion.v2,
+  source: 'wallet',
 };
 
 export type JWTData = {
@@ -79,6 +105,15 @@ export const resetLocalJWT = () => {
   return localStorage.removeItem(LocalStorageKey.ACCESS_TOKEN);
 };
 
+export const removeOneLocalJWT = (key: string) => {
+  const localData = localStorage.getItem(LocalStorageKey.ACCESS_TOKEN);
+  if (!localData) return;
+  const data = JSON.parse(localData) as { [key: string]: LocalJWTData };
+  const newData = delete data[key];
+
+  localStorage.setItem(LocalStorageKey.ACCESS_TOKEN, JSON.stringify(newData));
+};
+
 export const setLocalJWT = (key: string, data: LocalJWTData) => {
   const localData: LocalJWTData = {
     ...data,
@@ -87,7 +122,7 @@ export const setLocalJWT = (key: string, data: LocalJWTData) => {
   return localStorage.setItem(LocalStorageKey.ACCESS_TOKEN, JSON.stringify({ [key]: localData }));
 };
 
-export const queryAuthApi = async (config: QueryAuthApiExtraRequest) => {
+export const queryAuthApi = async (config: QueryAuthApiExtraRequest): Promise<string> => {
   const data = { ...queryAuthApiBaseConfig, ...config };
   const res = await axios.post<JWTData>(`${ETransferAuthHost}/connect/token`, stringify(data), {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -100,6 +135,26 @@ export const queryAuthApi = async (config: QueryAuthApiExtraRequest) => {
 
   if (localStorage) {
     const key = (config?.ca_hash || config.source) + config.managerAddress;
+    setLocalJWT(key, res.data);
+  }
+
+  return `${token_type} ${access_token}`;
+};
+
+export const queryAuthApiV3 = async (config: QueryAuthApiExtraRequestV3): Promise<string> => {
+  const data = { ...queryAuthApiBaseConfigV3, ...config };
+  const res = await axios.post<JWTData>(`${ETransferAuthHost}/connect/token`, stringify(data), {
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  });
+  const token_type = res.data.token_type;
+  const access_token = res.data.access_token;
+
+  // TODO
+  // service.defaults.headers.common['Authorization'] = `${token_type} ${access_token}`;
+  // myEvents.AuthTokenSuccess.emit();
+
+  if (localStorage) {
+    const key = config?.pubkey + config.sourceType;
     setLocalJWT(key, res.data);
   }
 

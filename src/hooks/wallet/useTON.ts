@@ -14,6 +14,7 @@ import { sign, mnemonicToPrivateKey } from '@ton/crypto';
 import { getAuthPlainText } from 'utils/auth';
 import { getTONJettonMinter, tonWeb } from 'utils/wallet/TON';
 import { AuthTokenSource } from 'types/api';
+import { SendTONTransactionParams } from 'types/wallet';
 
 export default function useTON() {
   const wallet = useTonWallet();
@@ -73,12 +74,7 @@ export default function useTON() {
       toAddress,
       amount,
       forwardTonAmount = '0.00000001',
-    }: {
-      tokenContractAddress: string;
-      toAddress: string;
-      amount: number;
-      forwardTonAmount?: string;
-    }) => {
+    }: SendTONTransactionParams) => {
       if (!address) return;
       const jettonMinter = getTONJettonMinter(tokenContractAddress);
       const jettonWalletAddress = await jettonMinter.getJettonWalletAddress(

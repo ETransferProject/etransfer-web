@@ -52,10 +52,13 @@ export const getTransferInfo = async (
 };
 
 export const createTransferOrder = async (
-  params: TCreateTransferOrderRequest,
+  params: TCreateTransferOrderRequest & { token: string },
 ): Promise<TCreateTransferOrderResult> => {
   try {
-    const res = await request.transfer.createTransferOrder({ data: params });
+    const res = await request.transfer.createTransferOrder({
+      data: params,
+      headers: { Authorization: params.token },
+    });
     return res.data;
   } catch (error: any) {
     throw formatApiError(error, 'createTransferOrder error', false);

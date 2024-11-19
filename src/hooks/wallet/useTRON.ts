@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks';
-import { WalletTypeEnum } from 'context/Wallet/types';
+import { ISignMessageResult, WalletTypeEnum } from 'context/Wallet/types';
 import { getAuthPlainText } from 'utils/auth';
 import myEvents from 'utils/myEvent';
 import { sleep } from '@etransfer/utils';
 import { AuthTokenSource } from 'types/api';
 import { stringToHex } from 'utils/format';
+import { SendTRONTransactionParams } from 'types/wallet';
 
 export default function useTRON() {
   const { address, wallet, connected, connect, select, disconnect, signMessage, connecting } =
@@ -50,8 +51,8 @@ export default function useTRON() {
     [address],
   );
 
-  const getSignMessage = useCallback(async () => {
-    if (!signMessage) return '';
+  const getSignMessage = useCallback<() => Promise<ISignMessageResult>>(async () => {
+    if (!signMessage) throw new Error('No signature method found, please reconnect your wallet');
 
     const plainText = getAuthPlainText();
     const res = await signMessage(plainText.plainTextOrigin);
@@ -60,21 +61,13 @@ export default function useTRON() {
       plainTextOrigin: plainText.plainTextOrigin,
       plainTextHex: plainText.plainTextHex,
       signature: stringToHex(res),
-      publicKey: address,
+      publicKey: address || '',
       sourceType: AuthTokenSource.TRON,
     };
   }, [address, signMessage]);
 
   const sendTransaction = useCallback(
-    async ({
-      tokenContractAddress,
-      toAddress,
-      amount,
-    }: {
-      tokenContractAddress: string;
-      toAddress: string;
-      amount: number; // unit is SUN，1 TRX = 1,000,000 SUN
-    }) => {
+    async ({ tokenContractAddress, toAddress, amount }: SendTRONTransactionParams) => {
       if (typeof window == undefined || !window.tronLink) return '';
 
       const tronWeb = window.tronLink.tronWeb;

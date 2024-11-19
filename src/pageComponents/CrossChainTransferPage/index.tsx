@@ -97,6 +97,7 @@ export default function CrossChainTransferPage() {
           TransferValidateStatus.Error ||
         isValueUndefined(getRecipientAddressInput()) ||
         isValueUndefined(form.getFieldValue(TransferFormKeys.AMOUNT));
+
       setIsSubmitDisabled(isDisabled);
     },
     [form, getRecipientAddressInput],

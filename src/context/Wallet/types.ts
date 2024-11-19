@@ -1,3 +1,11 @@
+import { AuthTokenSource } from 'types/api';
+import {
+  SendEVMTransactionParams,
+  SendSolanaTransactionParams,
+  SendTONTransactionParams,
+  SendTRONTransactionParams,
+} from 'types/wallet';
+
 export enum WalletTypeEnum {
   EVM = 'EVM',
   SOL = 'Solana',
@@ -18,18 +26,27 @@ export interface IWallet {
   getBalance(params: IGetBalanceRequest): Promise<IGetBalanceResult>;
   getAccountInfo(): Promise<IGetAccountInfoResult>;
   getSignature(params: any): Promise<IGetSignatureResult>;
-  createRawTransaction(params: any): Promise<ICreateRawTransactionResult>;
+  signMessage(): Promise<ISignMessageResult>;
+  sendTransaction(
+    params:
+      | SendEVMTransactionParams
+      | SendSolanaTransactionParams
+      | SendTONTransactionParams
+      | SendTRONTransactionParams,
+  ): Promise<any>;
+}
+
+export interface ISignMessageResult {
+  plainTextOrigin: string;
+  plainTextHex: string;
+  signature: any;
+  publicKey: string;
+  sourceType: AuthTokenSource;
 }
 
 export interface IGetSignatureResult {
   type: 'success' | 'error';
   signature?: string;
-  errorMessage?: string | undefined;
-}
-
-export interface ICreateRawTransactionResult {
-  type: 'success' | 'error';
-  raw?: string;
   errorMessage?: string | undefined;
 }
 

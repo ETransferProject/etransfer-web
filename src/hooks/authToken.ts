@@ -1,7 +1,6 @@
 import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { QueryAuthApiExtraRequest, getLocalJWT, queryAuthApi } from 'api/utils';
 import { APP_NAME } from 'constants/index';
-import { PortkeyVersion } from 'constants/wallet/index';
 import { useCallback, useEffect, useState } from 'react';
 import { useLoading } from 'store/Provider/hooks';
 import AElf from 'aelf-sdk';
@@ -144,7 +143,6 @@ export function useQueryAuthToken() {
         pubkey,
         signature: signatureResult.signature,
         plain_text: signatureResult.plainText,
-        version: PortkeyVersion.v2,
         source:
           connector === AelfWalletTypeEnum.elf ? AuthTokenSource.NightElf : AuthTokenSource.Portkey,
         managerAddress: managerAddress,

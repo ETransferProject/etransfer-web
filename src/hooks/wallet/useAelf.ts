@@ -1,15 +1,18 @@
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
+import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { WalletTypeEnum } from 'context/Wallet/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { eTransferInstance } from 'utils/etransferInstance';
 import myEvents from 'utils/myEvent';
-import { resetLocalJWT } from 'api/utils';
 import { useQueryAuthToken } from 'hooks/authToken';
-import { TAelfAccounts } from 'types/wallet';
+import { TAelfAccounts, WalletInfo } from 'types/wallet';
 import { SupportedChainId } from 'constants/index';
 import { handleWebLoginErrorMessage } from 'utils/api/error';
 import { SingleMessage } from '@etransfer/ui-react';
 import { useEffectOnce } from 'react-use';
+import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
+import { AuthTokenSource } from 'types/api';
+import { removeOneLocalJWT } from 'api/utils';
 
 export default function useAelf() {
   const {
@@ -54,7 +57,7 @@ export default function useAelf() {
 }
 
 export function useInitWallet() {
-  const { isConnected, walletInfo } = useConnectWallet();
+  const { isConnected, walletInfo, walletType } = useConnectWallet();
 
   const { getAuth } = useQueryAuthToken();
   const getAuthRef = useRef(getAuth);
@@ -74,14 +77,23 @@ export function useInitWallet() {
       eTransferInstance.setUnauthorized(false);
       return;
     } else if (isConnected && walletInfo) {
-      resetLocalJWT();
+      const { caHash } = await getCaHashAndOriginChainIdByWallet(
+        walletInfo as WalletInfo,
+        walletType,
+      );
+      const managerAddress = await getManagerAddressByWallet(walletInfo as WalletInfo, walletType);
+      const source =
+        walletType === AelfWalletTypeEnum.elf ? AuthTokenSource.NightElf : AuthTokenSource.Portkey;
+      const key = (caHash || source) + managerAddress;
+      removeOneLocalJWT(key);
+
       console.log('AuthorizationExpired');
       eTransferInstance.setUnauthorized(true);
       await queryAuth();
     } else {
       eTransferInstance.setUnauthorized(false);
     }
-  }, [isConnected, queryAuth, walletInfo]);
+  }, [isConnected, queryAuth, walletInfo, walletType]);
   const onAuthorizationExpiredRef = useRef(onAuthorizationExpired);
   onAuthorizationExpiredRef.current = onAuthorizationExpired;
 

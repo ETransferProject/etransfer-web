@@ -1,13 +1,13 @@
-import { WalletTypeEnum } from 'context/Wallet/types';
+import { ISignMessageResult, WalletTypeEnum } from 'context/Wallet/types';
 import { useCallback, useMemo, useState } from 'react';
 import { getAuthPlainText } from 'utils/auth';
 import { ethers } from 'ethers';
 import { sepolia } from 'viem/chains';
 import { useAccount, useConnect, useDisconnect, useSignMessage, useWriteContract } from 'wagmi';
 import { EVM_WALLET_ALLOWANCE } from 'constants/wallet/EVM';
-import { Abi } from 'viem';
 import AElf from 'aelf-sdk';
 import { AuthTokenSource } from 'types/api';
+import { SendEVMTransactionParams } from 'types/wallet';
 
 export default function useEVM() {
   const { connectAsync, connectors } = useConnect();
@@ -35,7 +35,7 @@ export default function useEVM() {
 
   const { signMessageAsync } = useSignMessage();
 
-  const signMessage = useCallback(async () => {
+  const signMessage = useCallback<() => Promise<ISignMessageResult>>(async () => {
     const plainText = getAuthPlainText();
     const res = await signMessageAsync({
       message: plainText.plainTextOrigin,
@@ -45,7 +45,7 @@ export default function useEVM() {
       plainTextOrigin: plainText.plainTextOrigin,
       plainTextHex: plainText.plainTextHex,
       signature: AElf.utils.uint8ArrayToHex(res),
-      publicKey: accountInfo.address,
+      publicKey: accountInfo.address || '',
       sourceType: AuthTokenSource.EVM,
     };
   }, [accountInfo.address, signMessageAsync]);
@@ -57,13 +57,7 @@ export default function useEVM() {
       tokenAbi,
       amount,
       decimals,
-    }: {
-      tokenContractAddress: `0x${string}`;
-      toAddress: string;
-      tokenAbi: Abi | unknown[];
-      amount: string;
-      decimals: number;
-    }) => {
+    }: SendEVMTransactionParams) => {
       // if (!accountInfo.address) {
       //   await connectAsync({ chainId: sepolia.id, connector: metaMask() });
       // }
