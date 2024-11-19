@@ -8,10 +8,9 @@ import useTON from 'hooks/wallet/useTON';
 import useTRON from 'hooks/wallet/useTRON';
 import useAelf from 'hooks/wallet/useAelf';
 import { WalletTypeEnum } from './types';
+import { useCrossChainTransfer } from 'store/Provider/hooks';
 
-const INITIAL_STATE = {
-  // fromWalletType: WalletTypeEnum.EVM,
-};
+const INITIAL_STATE = {};
 const WalletContext = createContext<any>(INITIAL_STATE);
 
 export function useWallet(): [WalletState, BasicActions<WalletActions>] {
@@ -20,12 +19,6 @@ export function useWallet(): [WalletState, BasicActions<WalletActions>] {
 
 function reducer(state: WalletState, { type, payload }: { type: WalletActions; payload: any }) {
   switch (type) {
-    case WalletActions.setFromWalletType: {
-      return Object.assign({}, state, { fromWalletType: payload.walletType });
-    }
-    case WalletActions.setToWalletType: {
-      return Object.assign({}, state, { toWalletType: payload.walletType });
-    }
     case WalletActions.destroy: {
       return INITIAL_STATE;
     }
@@ -40,7 +33,7 @@ export default function WalletProvider({ children }: { children: React.ReactNode
     reducer,
     INITIAL_STATE,
   );
-  const { fromWalletType, toWalletType } = state;
+  const { fromWalletType, toWalletType } = useCrossChainTransfer();
   const actions = useMemo(() => ({ dispatch }), [dispatch]);
 
   const evmWallet = useEVM();

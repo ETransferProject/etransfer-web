@@ -1,4 +1,8 @@
-import { TOKEN_NETWORK_RELATIONS, TransferAllowanceTokens } from 'constants/index';
+import {
+  TO_NETWORK_TOKEN_CONFIG,
+  TOKEN_NETWORK_RELATIONS,
+  TransferAllowanceTokens,
+} from 'constants/index';
 import { BlockchainNetworkType } from 'constants/network';
 import { TNetworkItem, TTokenItem } from 'types/api';
 
@@ -33,4 +37,23 @@ export function computeToNetworkList(
   });
 
   return toNetworkList;
+}
+
+export function computeTokenList(
+  toNetwork: TNetworkItem,
+  totalTokenList: TTokenItem[],
+): TTokenItem[] {
+  const network = toNetwork.network as unknown as BlockchainNetworkType;
+  const targetList: string[] = (TO_NETWORK_TOKEN_CONFIG as any)?.[network];
+
+  const list: TTokenItem[] = [];
+  if (Array.isArray(targetList) && targetList.length > 0) {
+    totalTokenList.forEach((token) => {
+      if (targetList?.includes(token.symbol)) {
+        list.push(token);
+      }
+    });
+  }
+
+  return list;
 }

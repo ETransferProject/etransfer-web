@@ -68,20 +68,8 @@ export interface IConnector {
 
 export interface IWalletProvider {
   fromWallet?: IWallet;
-  fromWalletType?: WalletTypeEnum;
   toWallet?: IWallet;
-  toWalletType?: WalletTypeEnum;
 }
-
-// export interface IEvmAdapter extends IWallet {}
-
-// export interface ISolanaAdapter extends IWallet {}
-
-// export interface ITonAdapter extends IWallet {}
-
-// export interface ITronAdapter extends IWallet {}
-
-// export interface IAelfAdapter extends IWallet {}
 
 interface IAccounts {
   AELF?: string[] | undefined;

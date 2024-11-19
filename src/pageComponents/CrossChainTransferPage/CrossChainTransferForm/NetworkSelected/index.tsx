@@ -70,7 +70,11 @@ export default function NetworkSelected({
   return (
     <>
       <div
-        className={clsx('flex-row-center-between gap-8 cursor-pointer', className)}
+        className={clsx(
+          'flex-row-center-between gap-8 cursor-pointer',
+          styles['network-selected'],
+          className,
+        )}
         onClick={openModal}>
         {renderSelected}
         <DynamicArrow size={isPadPX ? 'Small' : 'Normal'} isExpand={isShowNetworkSelectModal} />

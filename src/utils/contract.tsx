@@ -17,7 +17,7 @@ import { handleManagerForwardCall, getContractMethods } from '@portkey/contracts
 import {
   ICallContractParams,
   TSignatureParams,
-  WalletTypeEnum,
+  WalletTypeEnum as AelfWalletTypeEnum,
 } from '@aelf-web-login/wallet-adapter-base';
 import {
   getTokenContract,
@@ -173,7 +173,7 @@ export const handleTransaction = async ({
   caAddress,
   getSignature,
 }: GetRawTx & {
-  walletType: WalletTypeEnum;
+  walletType: AelfWalletTypeEnum;
   caAddress: string;
   getSignature: TGetSignature;
 }) => {
@@ -191,7 +191,7 @@ export const handleTransaction = async ({
   const ser = AElf.pbUtils.Transaction.encode(rawTx).finish();
 
   let signInfo: string;
-  if (walletType !== WalletTypeEnum.aa) {
+  if (walletType !== AelfWalletTypeEnum.aa) {
     // nightElf or discover
     signInfo = AElf.utils.sha256(ser);
   } else {
@@ -347,7 +347,7 @@ export type TGetSignatureResult = {
 };
 
 export interface CreateTransferTokenTransactionParams {
-  walletType: WalletTypeEnum;
+  walletType: AelfWalletTypeEnum;
   caContractAddress: string;
   eTransferContractAddress: string;
   caHash: string;
@@ -374,7 +374,7 @@ export const createTransferTokenTransaction = async ({
   getSignature,
 }: CreateTransferTokenTransactionParams) => {
   let transactionParams;
-  if (walletType === WalletTypeEnum.elf) {
+  if (walletType === AelfWalletTypeEnum.elf) {
     transactionParams = await createTokenTransfer({
       contractAddress: eTransferContractAddress,
       args: { symbol, amount, memo },
@@ -396,7 +396,7 @@ export const createTransferTokenTransaction = async ({
   const aelf = getAElf(chainId as unknown as AllSupportedELFChainId);
   const { BestChainHeight, BestChainHash } = await aelf.chain.getChainStatus();
 
-  if (walletType === WalletTypeEnum.elf) {
+  if (walletType === AelfWalletTypeEnum.elf) {
     const transaction = await handleTransaction({
       walletType,
       blockHeightInput: BestChainHeight,

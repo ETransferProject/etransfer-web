@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { LeftOutlined } from '@ant-design/icons';
 import styles from './styles.module.scss';
 import { useClearStore } from 'hooks/common';
-import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
+import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import useAelf from 'hooks/wallet/useAelf';
 import { PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
 import { ExtraInfoForPortkeyAA } from 'types/wallet';
@@ -25,7 +25,7 @@ export default function MyAsset() {
   }, [clearStore]);
 
   useEffect(() => {
-    if (connector !== WalletTypeEnum.aa) {
+    if (connector !== AelfWalletTypeEnum.aa) {
       router.push('/');
     }
   }, [connector, router]);
@@ -42,7 +42,7 @@ export default function MyAsset() {
   // }, [loginOnChainStatus]);
 
   if (
-    connector !== WalletTypeEnum.aa ||
+    connector !== AelfWalletTypeEnum.aa ||
     !portkeyAAInfo?.portkeyInfo?.pin ||
     !portkeyAAInfo?.portkeyInfo?.chainId
   ) {

@@ -13,8 +13,10 @@ import { devices } from '@portkey/utils';
 import {
   InitialCrossChainTransferState,
   setFromNetwork,
+  setTokenList,
   setTokenSymbol,
   setToNetwork,
+  setToNetworkList,
 } from 'store/reducers/crossChainTransfer/slice';
 import { TTransferFormValues, TransferFormKeys, TTransferFormValidateData } from '../types';
 import { NetworkAndWalletCard } from './NetworkAndWalletCard';
@@ -23,11 +25,12 @@ import clsx from 'clsx';
 import CommonSpace from 'components/CommonSpace';
 import TokenSelected from './TokenSelected';
 import RemainingLimit from './RemainingLimit';
-import { TCrossChainTransferInfo, TNetworkItem, TTokenItem } from 'types/api';
+import { NetworkStatus, TCrossChainTransferInfo, TNetworkItem, TTokenItem } from 'types/api';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
 import CommonTooltip from 'components/CommonTooltip';
 import { TRANSFER_SEND_RECIPIENT_TIP } from 'constants/crossChainTransfer';
 import CommentFormItemLabel from './CommentFormItemLabel';
+import { computeTokenList, computeToNetworkList } from '../utils';
 
 export interface CrossChainTransferFormProps {
   form: FormInstance<TTransferFormValues>;
@@ -55,7 +58,8 @@ export default function CrossChainTransferForm({
   const isAndroid = devices.isMobile().android;
   const dispatch = useAppDispatch();
   const [{ fromWallet }] = useWallet();
-  const { toNetwork, tokenSymbol, tokenList } = useCrossChainTransfer();
+  const { toNetwork, tokenSymbol, tokenList, totalNetworkList, totalTokenList } =
+    useCrossChainTransfer();
   const [isInputAddress, setIsInputAddress] = useState(false);
   const [isShowSwap, setIsShowSwap] = useState(false);
 
@@ -85,15 +89,50 @@ export default function CrossChainTransferForm({
   const handleFromNetworkChange = useCallback(
     async (item: TNetworkItem) => {
       dispatch(setFromNetwork(item));
+
+      // compute toNetwork
+      if (!totalNetworkList) return;
+      const toNetworkList = computeToNetworkList(item, totalNetworkList, totalTokenList);
+      dispatch(setToNetworkList(toNetworkList));
+
+      const exitToNetwork = toNetworkList.find((item) => item.network === toNetwork?.network);
+      let toNetworkNew = toNetwork;
+      if (exitToNetwork && exitToNetwork.status !== NetworkStatus.Offline) {
+        dispatch(setToNetwork(exitToNetwork));
+        toNetworkNew = exitToNetwork;
+      } else {
+        dispatch(setToNetwork(toNetworkList[0]));
+        toNetworkNew = toNetworkList[0];
+      }
+
+      // compute token
+      const allowTokenList = computeTokenList(toNetworkNew, totalTokenList);
+      dispatch(setTokenList(allowTokenList));
+      const exitToken = totalTokenList.find((item) => item.symbol === tokenSymbol);
+      if (exitToken) {
+        dispatch(setTokenSymbol(exitToken.symbol));
+      } else {
+        dispatch(setTokenSymbol(allowTokenList[0].symbol));
+      }
     },
-    [dispatch],
+    [dispatch, toNetwork, tokenSymbol, totalNetworkList, totalTokenList],
   );
 
   const handleToNetworkChange = useCallback(
     async (item: TNetworkItem) => {
       dispatch(setToNetwork(item));
+
+      // compute token
+      const allowTokenList = computeTokenList(item, totalTokenList);
+      dispatch(setTokenList(allowTokenList));
+      const exitToken = totalTokenList.find((item) => item.symbol === tokenSymbol);
+      if (exitToken) {
+        dispatch(setTokenSymbol(exitToken.symbol));
+      } else {
+        dispatch(setTokenSymbol(allowTokenList[0].symbol));
+      }
     },
-    [dispatch],
+    [dispatch, tokenSymbol, totalTokenList],
   );
 
   const handleSelectToken = useCallback(

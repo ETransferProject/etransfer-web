@@ -14,6 +14,7 @@ export interface MobileCrossChainTransferProps extends CrossChainTransferFormPro
   receiveAmount: string;
   transferInfo: TCrossChainTransferInfo;
   isSubmitDisabled: boolean;
+  recipientAddress?: string;
   onClickProcessingTip: () => void;
 }
 
@@ -25,6 +26,7 @@ export default function MobileCrossChainTransfer({
   balance,
   transferInfo,
   isSubmitDisabled,
+  recipientAddress,
   getTransferData,
   onAmountChange,
   onRecipientAddressChange,
@@ -51,7 +53,7 @@ export default function MobileCrossChainTransfer({
           onRecipientAddressBlur={onRecipientAddressBlur}
         />
         <CrossChainTransferFooter
-          recipientAddress={''}
+          recipientAddress={recipientAddress}
           estimateReceive={receiveAmount}
           estimateReceiveUnit={tokenSymbol}
           transactionFee={transferInfo.transactionFee}
@@ -71,6 +73,7 @@ export default function MobileCrossChainTransfer({
     onRecipientAddressBlur,
     onRecipientAddressChange,
     receiveAmount,
+    recipientAddress,
     tokenSymbol,
     transferInfo,
   ]);

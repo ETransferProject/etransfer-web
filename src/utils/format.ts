@@ -108,3 +108,12 @@ export const formatNetworkKey = (network?: string) => {
       return network;
   }
 };
+
+export function stringToHex(str: string) {
+  let val = '';
+  for (let i = 0; i < str.length; i++) {
+    if (val === '') val = str.charCodeAt(i).toString(16);
+    else val += str.charCodeAt(i).toString(16);
+  }
+  return val;
+}

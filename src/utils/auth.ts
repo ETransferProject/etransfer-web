@@ -1,4 +1,4 @@
-export function getAuthPlainTextOrigin() {
+export function getAuthPlainText() {
   const plainText = `Welcome to ETransfer!
 
 Click to sign in and accept the ETransfer Terms of Service (https://etransfer.gitbook.io/docs/more-information/terms-of-service) and Privacy Policy (https://etransfer.gitbook.io/docs/more-information/privacy-policy).

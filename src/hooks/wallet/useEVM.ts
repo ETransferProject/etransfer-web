@@ -1,6 +1,6 @@
 import { WalletTypeEnum } from 'context/Wallet/types';
 import { useCallback, useMemo, useState } from 'react';
-import { getAuthPlainTextOrigin } from 'utils/auth';
+import { getAuthPlainText } from 'utils/auth';
 import { ethers } from 'ethers';
 import { sepolia } from 'viem/chains';
 import { useAccount, useConnect, useDisconnect, useSignMessage, useWriteContract } from 'wagmi';
@@ -36,7 +36,7 @@ export default function useEVM() {
   const { signMessageAsync } = useSignMessage();
 
   const signMessage = useCallback(async () => {
-    const plainText = getAuthPlainTextOrigin();
+    const plainText = getAuthPlainText();
     const res = await signMessageAsync({
       message: plainText.plainTextOrigin,
     });

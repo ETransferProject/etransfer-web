@@ -30,6 +30,15 @@ export default function SolanaWallet() {
     }
   }, [account, getBalance]);
 
+  const onSignMessage = useCallback(async () => {
+    try {
+      const res = await signMessage();
+      console.log('>>>>>> SOL onSignMessage res', res);
+    } catch (error) {
+      console.log('>>>>>> SOL onSignMessage error', error);
+    }
+  }, [signMessage]);
+
   const onSendTransaction = useCallback(async () => {
     try {
       const data = await sendTransaction({
@@ -58,7 +67,7 @@ export default function SolanaWallet() {
           <p>Current Address: {account}</p>
           <Button onClick={onDisConnectSolana}>DisConnect</Button>
           <Button onClick={onGetBalance}>Get Balance</Button>
-          <Button onClick={signMessage}>Sign Message</Button>
+          <Button onClick={onSignMessage}>Sign Message</Button>
           <Button onClick={onSendTransaction}>Send Transaction</Button>
         </>
       )}

@@ -4,7 +4,7 @@ import LoginAndProfileEntry from 'components/Header/LoginAndProfile';
 import { Logo } from 'assets/images';
 import styles from './styles.module.scss';
 import useAelf from 'hooks/wallet/useAelf';
-import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
+import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { useRouter } from 'next/navigation';
 import { ETRANSFER_WEBSITE_URL } from 'constants/index';
 
@@ -26,7 +26,7 @@ export default function WebHeader() {
         <Logo />
       </div>
       <div className={styles['right-wrapper']}>
-        {isConnected && connector === WalletTypeEnum.aa && (
+        {isConnected && connector === AelfWalletTypeEnum.aa && (
           <span className={styles['assets-wrapper']} onClick={() => handleOpenAssets()}>
             Assets
           </span>

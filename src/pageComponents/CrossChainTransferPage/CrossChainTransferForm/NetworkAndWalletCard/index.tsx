@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import styles from './styles.module.scss';
 import { useWallet } from 'context/Wallet';
-import { useCrossChainTransfer } from 'store/Provider/hooks';
+import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
 import { computeWalletType, isAelfChain } from 'utils/wallet';
 import { CONNECT_AELF_WALLET, CONNECT_WALLET } from 'constants/wallet';
 import { IConnector, WalletTypeEnum } from 'context/Wallet/types';
@@ -11,7 +11,7 @@ import { TNetworkItem } from 'types/api';
 import clsx from 'clsx';
 import { getOmittedStr } from 'utils/calculate';
 import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
-import { walletAction } from 'context/Wallet/actions';
+import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
 
 export interface NetworkAndWalletCardProps {
   className?: string;
@@ -26,9 +26,10 @@ export function NetworkAndWalletCard({
   cardType,
   onSelectNetworkCallback,
 }: NetworkAndWalletCardProps) {
-  const [{ fromWallet, fromWalletType, toWallet, toWalletType }, { dispatch: walletDispatch }] =
-    useWallet();
-  const { fromNetwork, fromNetworkList, toNetwork, toNetworkList } = useCrossChainTransfer();
+  const dispatch = useAppDispatch();
+  const [{ fromWallet, toWallet }] = useWallet();
+  const { fromNetwork, fromNetworkList, fromWalletType, toWalletType, toNetwork, toNetworkList } =
+    useCrossChainTransfer();
   const [openConnectWalletModal, setOpenConnectWalletModal] = useState(false);
   const [walletAllowList, setWalletAllowList] = useState<WalletTypeEnum[]>([]);
 
@@ -56,12 +57,12 @@ export function NetworkAndWalletCard({
   const handleSelectWallet = useCallback(
     (walletType: WalletTypeEnum) => {
       if (cardType === 'From') {
-        walletDispatch(walletAction.setFromWalletType.actions(walletType));
+        dispatch(setFromWalletType(walletType));
       } else {
-        walletDispatch(walletAction.setToWalletType.actions(walletType));
+        dispatch(setToWalletType(walletType));
       }
     },
-    [cardType, walletDispatch],
+    [cardType, dispatch],
   );
 
   const renderConnectWallet = useMemo(() => {
@@ -124,11 +125,11 @@ export function NetworkAndWalletCard({
     );
   }, [
     cardType,
-    fromNetwork.network,
+    fromNetwork?.network,
     handleConnectWallet,
     handleSelectWallet,
     openConnectWalletModal,
-    toNetwork.network,
+    toNetwork?.network,
     walletAllowList,
   ]);
 

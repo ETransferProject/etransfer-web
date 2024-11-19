@@ -11,7 +11,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import TonWeb from 'tonweb';
 import { Address as CoreAddress, beginCell, toNano } from '@ton/core';
 import { sign, mnemonicToPrivateKey } from '@ton/crypto';
-import { getAuthPlainTextOrigin } from 'utils/auth';
+import { getAuthPlainText } from 'utils/auth';
 import { getTONJettonMinter, tonWeb } from 'utils/wallet/TON';
 import { AuthTokenSource } from 'types/api';
 
@@ -47,7 +47,7 @@ export default function useTON() {
 
   const signMessage = useCallback(
     async (mnemonic: string[]) => {
-      const plainText = getAuthPlainTextOrigin();
+      const plainText = getAuthPlainText();
       const message = Buffer.from(plainText.plainTextOrigin);
       const keyPair = await mnemonicToPrivateKey(mnemonic);
 

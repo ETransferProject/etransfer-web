@@ -39,14 +39,15 @@ import {
 } from './types';
 import { isDIDAddressSuffix } from 'utils/aelf/aelfBase';
 import { WalletTypeEnum } from 'context/Wallet/types';
-import { computeToNetworkList } from './utils';
+import { computeTokenList, computeToNetworkList } from './utils';
 
 export default function CrossChainTransferPage() {
   const dispatch = useAppDispatch();
   const { isPadPX } = useCommonState();
   const [{ fromWallet, toWallet }] = useWallet();
   const { fromNetwork, toNetwork, tokenSymbol } = useCrossChainTransfer();
-  const fromNetworkRef = useRef<TNetworkItem>();
+  const fromNetworkRef = useRef<TNetworkItem>(fromNetwork);
+  const toNetworkRef = useRef<TNetworkItem>(toNetwork);
   const totalTokenListRef = useRef<TTokenItem[]>([]);
   const [form] = Form.useForm<TTransferFormValues>();
   const [formValidateData, setFormValidateData] = useState<{
@@ -55,6 +56,7 @@ export default function CrossChainTransferPage() {
   const [transferInfo, setTransferInfo] = useState<TCrossChainTransferInfo>(
     InitialCrossChainTransferInfo,
   );
+  const [recipientAddressInput, setRecipientAddressInput] = useState('');
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [amount, setAmount] = useState('');
 
@@ -121,18 +123,21 @@ export default function CrossChainTransferPage() {
         dispatch(setTotalTokenList(res.tokenList));
         totalTokenListRef.current = res.tokenList;
 
-        dispatch(setTokenList(res.tokenList)); // TODO
+        const allowTokenList = computeTokenList(toNetworkRef.current, res.tokenList);
+        dispatch(setTokenList(allowTokenList));
 
         if (isInitCurrentSymbol && !tokenSymbol) {
           dispatch(setTokenSymbol(res.tokenList[0].symbol));
-        } else {
-          const exitToken = res.tokenList.find((item) => item.symbol === tokenSymbol);
-          if (exitToken) {
-            dispatch(setTokenSymbol(exitToken.symbol));
-          } else {
-            dispatch(setTokenSymbol(''));
-          }
         }
+        // TODO delete this logic?
+        // else {
+        //   const exitToken = res.tokenList.find((item) => item.symbol === tokenSymbol);
+        //   if (exitToken) {
+        //     dispatch(setTokenSymbol(exitToken.symbol));
+        //   } else {
+        //     dispatch(setTokenSymbol(allowTokenList[0].symbol));
+        //   }
+        // }
         return res.tokenList;
       } catch (error) {
         console.log('getTokenData error', error);
@@ -149,28 +154,42 @@ export default function CrossChainTransferPage() {
       dispatch(setTotalNetworkList(networkList));
       dispatch(setFromNetworkList(networkList));
 
-      const toNetworkList = computeToNetworkList(
-        fromNetwork,
-        networkList,
-        totalTokenListRef.current,
-      );
-      dispatch(setToNetworkList(toNetworkList)); // TODO
-
       if (networkList?.length > 0) {
         // from logic
         const exitFromNetwork = networkList.find((item) => item.network === fromNetwork?.network);
         if (exitFromNetwork && exitFromNetwork.status !== NetworkStatus.Offline) {
           dispatch(setFromNetwork(exitFromNetwork));
+          fromNetworkRef.current = exitFromNetwork;
         } else {
           dispatch(setFromNetwork(networkList[0]));
+          fromNetworkRef.current = networkList[0];
         }
 
+        const toNetworkList = computeToNetworkList(
+          fromNetworkRef.current,
+          networkList,
+          totalTokenListRef.current,
+        );
+        dispatch(setToNetworkList(toNetworkList));
+
         // to logic
-        const exitToNetwork = networkList.find((item) => item.network === toNetwork?.network);
+        const exitToNetwork = toNetworkList.find((item) => item.network === toNetwork?.network);
         if (exitToNetwork && exitToNetwork.status !== NetworkStatus.Offline) {
           dispatch(setToNetwork(exitToNetwork));
+          toNetworkRef.current = exitToNetwork;
         } else {
-          dispatch(setToNetwork(networkList[0]));
+          dispatch(setToNetwork(toNetworkList[0]));
+          toNetworkRef.current = toNetworkList[0];
+        }
+
+        // token logic
+        const allowTokenList = computeTokenList(toNetworkRef.current, totalTokenListRef.current);
+        dispatch(setTokenList(allowTokenList));
+        const exitToken = totalTokenListRef.current.find((item) => item.symbol === tokenSymbol);
+        if (exitToken) {
+          dispatch(setTokenSymbol(exitToken.symbol));
+        } else {
+          dispatch(setTokenSymbol(allowTokenList[0].symbol));
         }
       } else {
         // TODO
@@ -180,7 +199,7 @@ export default function CrossChainTransferPage() {
     } catch (error: any) {
       console.log('getNetworkData error', error);
     }
-  }, [dispatch, fromNetwork, toNetwork?.network]);
+  }, [dispatch, fromNetwork?.network, toNetwork?.network, tokenSymbol]);
 
   const getTransferData = useCallback(
     async (symbol?: string, amount?: string) => {
@@ -216,6 +235,8 @@ export default function CrossChainTransferPage() {
   const handleRecipientAddressChange = useCallback(
     (value: string | null) => {
       dispatch(setRecipientAddress(value || ''));
+
+      setRecipientAddressInput(value || '');
     },
     [dispatch],
   );
@@ -230,7 +251,6 @@ export default function CrossChainTransferPage() {
           errorMessage: '',
         },
       });
-      await getNetworkData();
       await getTransferData();
       return;
     } else if (addressInput.length < 32 || addressInput.length > 59) {
@@ -247,15 +267,14 @@ export default function CrossChainTransferPage() {
       form.setFieldValue(TransferFormKeys.RECIPIENT, removeELFAddressSuffix(addressInput));
     }
 
-    await getNetworkData();
+    handleFormValidateDataChange({
+      [TransferFormKeys.RECIPIENT]: {
+        validateStatus: TransferValidateStatus.Normal,
+        errorMessage: '',
+      },
+    });
     await getTransferData();
-  }, [
-    form,
-    getNetworkData,
-    getRecipientAddressInput,
-    getTransferData,
-    handleFormValidateDataChange,
-  ]);
+  }, [form, getRecipientAddressInput, getTransferData, handleFormValidateDataChange]);
 
   const router = useRouter();
   const handleClickProcessingTip = useCallback(() => {
@@ -293,6 +312,7 @@ export default function CrossChainTransferPage() {
       minAmount={minAmount}
       balance={balance}
       isSubmitDisabled={isSubmitDisabled}
+      recipientAddress={recipientAddressInput}
       getTransferData={getTransferData}
       onAmountChange={handleAmountChange}
       onRecipientAddressChange={handleRecipientAddressChange}
@@ -308,6 +328,7 @@ export default function CrossChainTransferPage() {
       minAmount={minAmount}
       balance={balance}
       isSubmitDisabled={isSubmitDisabled}
+      recipientAddress={recipientAddressInput}
       getTransferData={getTransferData}
       onAmountChange={handleAmountChange}
       onRecipientAddressChange={handleRecipientAddressChange}

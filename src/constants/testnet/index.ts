@@ -104,7 +104,7 @@ export enum TransferAllowanceTokens {
   USDT = 'USDT',
   ELF = 'ELF',
   'SGR-1' = 'SGR-1',
-  Agent = 'Agent',
+  ETH = 'ETH',
 }
 
 export const TOKEN_NETWORK_RELATIONS = {
@@ -127,30 +127,17 @@ export const TOKEN_NETWORK_RELATIONS = {
     BlockchainNetworkType.SETH,
     BlockchainNetworkType.TBinance,
   ],
-  [TransferAllowanceTokens['SGR-1']]: [
-    BlockchainNetworkType.AELF,
-    BlockchainNetworkType.tDVW,
-    BlockchainNetworkType.SETH,
-  ],
-  [TransferAllowanceTokens.Agent]: [
-    BlockchainNetworkType.AELF,
-    BlockchainNetworkType.tDVW,
-    BlockchainNetworkType.BASE,
-  ],
+  [TransferAllowanceTokens['SGR-1']]: [BlockchainNetworkType.tDVW, BlockchainNetworkType.SETH],
+  [TransferAllowanceTokens.ETH]: [BlockchainNetworkType.tDVW, BlockchainNetworkType.BASE],
 };
 
 export const TO_NETWORK_TOKEN_CONFIG = {
-  [BlockchainNetworkType.AELF]: [
-    TransferAllowanceTokens.USDT,
-    TransferAllowanceTokens.ELF,
-    TransferAllowanceTokens['SGR-1'],
-    TransferAllowanceTokens.Agent,
-  ],
+  [BlockchainNetworkType.AELF]: [TransferAllowanceTokens.USDT, TransferAllowanceTokens.ELF],
   [BlockchainNetworkType.tDVW]: [
     TransferAllowanceTokens.USDT,
     TransferAllowanceTokens.ELF,
     TransferAllowanceTokens['SGR-1'],
-    TransferAllowanceTokens.Agent,
+    TransferAllowanceTokens.ETH,
   ],
   [BlockchainNetworkType.SETH]: [
     TransferAllowanceTokens.USDT,
@@ -164,7 +151,7 @@ export const TO_NETWORK_TOKEN_CONFIG = {
   [BlockchainNetworkType.Avax]: [TransferAllowanceTokens.USDT],
   [BlockchainNetworkType.Arbitrum]: [TransferAllowanceTokens.USDT],
   [BlockchainNetworkType.Optimism]: [TransferAllowanceTokens.USDT],
-  [BlockchainNetworkType.BASE]: [TransferAllowanceTokens.Agent],
+  [BlockchainNetworkType.BASE]: [TransferAllowanceTokens.ETH],
   [BlockchainNetworkType.TON]: [TransferAllowanceTokens.USDT],
 };
 

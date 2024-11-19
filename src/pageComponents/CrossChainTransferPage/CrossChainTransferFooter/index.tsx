@@ -2,7 +2,6 @@ import CommonButton from 'components/CommonButton';
 import styles from './styles.module.scss';
 import { useCallback, useMemo } from 'react';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
-import { useWallet } from 'context/Wallet';
 import {
   BUTTON_TEXT_CONNECT_WALLET,
   BUTTON_TEXT_INSUFFICIENT_FUNDS,
@@ -11,10 +10,11 @@ import {
 import { ZERO } from '@etransfer/utils';
 import { Form } from 'antd';
 import clsx from 'clsx';
+import { useCrossChainTransfer } from 'store/Provider/hooks';
 
 export interface CrossChainTransferFooterProps {
   className?: string;
-  recipientAddress: string;
+  recipientAddress?: string;
   fromInput?: string;
   fromBalance?: string;
   estimateReceive?: string;
@@ -35,7 +35,7 @@ export default function CrossChainTransferFooter({
   transactionFeeUnit = '',
   isSubmitDisabled,
 }: CrossChainTransferFooterProps) {
-  const [{ fromWalletType, toWalletType }] = useWallet();
+  const { fromWalletType, toWalletType } = useCrossChainTransfer();
 
   const onConnectWallet = useCallback(() => {
     console.log('onConnectWallet');
@@ -56,7 +56,7 @@ export default function CrossChainTransferFooter({
         loading,
       };
     }
-    if (!toWalletType || !recipientAddress) {
+    if (!toWalletType && !recipientAddress) {
       return {
         children: BUTTON_TEXT_CONNECT_WALLET,
         onClick: onConnectWallet,

@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks';
 import { WalletTypeEnum } from 'context/Wallet/types';
-import { getAuthPlainTextOrigin } from 'utils/auth';
+import { getAuthPlainText } from 'utils/auth';
 import myEvents from 'utils/myEvent';
 import { sleep } from '@etransfer/utils';
-import AElf from 'aelf-sdk';
 import { AuthTokenSource } from 'types/api';
+import { stringToHex } from 'utils/format';
 
 export default function useTRON() {
   const { address, wallet, connected, connect, select, disconnect, signMessage, connecting } =
@@ -53,13 +53,13 @@ export default function useTRON() {
   const getSignMessage = useCallback(async () => {
     if (!signMessage) return '';
 
-    const plainText = getAuthPlainTextOrigin();
+    const plainText = getAuthPlainText();
     const res = await signMessage(plainText.plainTextOrigin);
 
     return {
       plainTextOrigin: plainText.plainTextOrigin,
       plainTextHex: plainText.plainTextHex,
-      signature: AElf.utils.uint8ArrayToHex(res),
+      signature: stringToHex(res),
       publicKey: address,
       sourceType: AuthTokenSource.TRON,
     };

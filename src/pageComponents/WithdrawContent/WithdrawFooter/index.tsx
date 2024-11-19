@@ -39,7 +39,7 @@ import { LOGIN, UNLOCK } from 'constants/wallet/index';
 import CommonLink from 'components/CommonLink';
 import { AelfExploreType } from 'constants/network';
 import { getAelfExploreLink } from 'utils/common';
-import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
+import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { useGetBalanceDivDecimals } from 'hooks/contract';
 
 export interface WithdrawFooterProps {
@@ -225,7 +225,7 @@ export default function WithdrawFooter({
           amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
           memo,
           chainId: currentChainItem.key,
-          fromManagerAddress: connector === WalletTypeEnum.elf ? ownerAddress : managerAddress,
+          fromManagerAddress: connector === AelfWalletTypeEnum.elf ? ownerAddress : managerAddress,
           caAddress: ownerAddress,
           getSignature: signMessage,
         });

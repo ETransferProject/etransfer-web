@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { WalletTypeEnum } from 'context/Wallet/types';
-import { getAuthPlainTextOrigin } from 'utils/auth';
+import { getAuthPlainText } from 'utils/auth';
 import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
 import {
   TOKEN_PROGRAM_ID,
@@ -49,12 +49,11 @@ export default function useSolana() {
   const getSignMessage = useCallback(async () => {
     if (!signMessage) return '';
 
-    const plainText = getAuthPlainTextOrigin();
+    const plainText = getAuthPlainText();
     const encoder = new TextEncoder();
     const message = encoder.encode(plainText.plainTextOrigin);
     const res = await signMessage(message);
 
-    console.log('>>>>>> Solana res', res);
     return {
       plainTextOrigin: plainText.plainTextOrigin,
       plainTextHex: plainText.plainTextHex,

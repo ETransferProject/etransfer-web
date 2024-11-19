@@ -16,6 +16,7 @@ export interface WebCrossChainTransferProps extends CrossChainTransferFormProps 
   receiveAmount?: string;
   transferInfo: TCrossChainTransferInfo;
   isSubmitDisabled: boolean;
+  recipientAddress?: string;
   onClickProcessingTip: () => void;
 }
 
@@ -27,6 +28,7 @@ export default function WebCrossChainTransfer({
   minAmount,
   balance,
   isSubmitDisabled,
+  recipientAddress,
   getTransferData,
   onAmountChange,
   onRecipientAddressChange,
@@ -68,7 +70,7 @@ export default function WebCrossChainTransfer({
         />
         <CommonSpace direction={'vertical'} size={40} />
         <CrossChainTransferFooter
-          recipientAddress={''}
+          recipientAddress={recipientAddress}
           estimateReceive={receiveAmount}
           estimateReceiveUnit={tokenSymbol}
           transactionFee={transferInfo.transactionFee}
@@ -91,6 +93,7 @@ export default function WebCrossChainTransfer({
     onRecipientAddressBlur,
     onRecipientAddressChange,
     receiveAmount,
+    recipientAddress,
     tokenSymbol,
     transferInfo,
     transferProcessingCount,
