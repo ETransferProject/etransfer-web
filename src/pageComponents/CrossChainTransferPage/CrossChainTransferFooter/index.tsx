@@ -81,8 +81,8 @@ export default function CrossChainTransferFooter({
         // create order id
         const orderResult = await createTransferOrder({
           amount: fromAmount,
-          fromNetwork: fromNetwork.network,
-          toNetwork: toNetwork.network,
+          fromNetwork: fromNetwork?.network,
+          toNetwork: toNetwork?.network,
           fromSymbol: tokenSymbol,
           fromAddress: fromWallet?.account,
           toAddress,
@@ -133,11 +133,11 @@ export default function CrossChainTransferFooter({
     }
   }, [
     fromAmount,
-    fromNetwork.network,
+    fromNetwork?.network,
     fromWallet,
     getAuthToken,
     recipientAddress,
-    toNetwork.network,
+    toNetwork?.network,
     toWallet?.account,
     toWallet?.isConnected,
     toWalletType,
