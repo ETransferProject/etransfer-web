@@ -117,6 +117,21 @@ input[type='number'] {
   }
 }
 
+.main-section-header {
+  @extend .font-family-medium;
+
+  @include media-pad {
+    margin-bottom: 24px;
+    font-size: 24px;
+    line-height: 32px;
+  }
+  @include media-mobile {
+    margin-bottom: 16px;
+    font-size: 20px;
+    line-height: 28px;
+  }
+}
+
 // A separate class name is used here to avoid invalidation of the padding style by incorporating the padding property in the production css.
 .main-content-container-safe-area {
   @include media-mobile {

@@ -29,6 +29,7 @@ import { useGoTransfer } from 'hooks/crossChainTransfer';
 import { AelfChainIdList } from 'constants/chain';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { ProcessingTip } from 'components/Tips/ProcessingTip';
+import { DEPOSIT_PAGE_TITLE } from 'constants/deposit';
 
 export default function MobileDepositContent({
   fromNetworkSelected,
@@ -213,6 +214,8 @@ export default function MobileDepositContent({
 
       <div className="main-content-container main-content-container-safe-area">
         <div className={clsx(styles['main-section'], styles['section'])}>
+          <div className="main-section-header">{DEPOSIT_PAGE_TITLE}</div>
+
           <SelectTokenNetwork
             label={'From'}
             tokenSelected={fromTokenSelected}

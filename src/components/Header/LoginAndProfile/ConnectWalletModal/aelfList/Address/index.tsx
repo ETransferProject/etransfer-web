@@ -57,7 +57,7 @@ export default function Address() {
             onMouseLeave={handleMouseLeave}>
             <div className="flex-row-center gap-8">
               <span className={styles['wallet-list-item-name']}>
-                {getOmittedStr(item.value, 5, 5)}
+                {getOmittedStr(item.value, 8, 9)}
               </span>
               {isShowCopy && isShowCopyIndex === index && (
                 <Copy toCopy={item.value} size={CopySize.Small} />

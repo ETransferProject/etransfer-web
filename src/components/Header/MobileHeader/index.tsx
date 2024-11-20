@@ -5,7 +5,6 @@ import SelectMenu from 'components/Header/SelectMenu';
 import LoginAndProfileEntry from 'components/Header/LoginAndProfile';
 import styles from './styles.module.scss';
 import { SideMenuKey } from 'constants/home';
-import { DEPOSIT_PAGE_TITLE } from 'constants/deposit';
 import { CROSS_CHAIN_TRANSFER_PAGE_TITLE } from 'constants/crossChainTransfer';
 
 export default function MobileHeader() {
@@ -16,7 +15,6 @@ export default function MobileHeader() {
       <SelectMenu />
       <span className={clsx('text-center', styles['header-text'])}>
         {activeMenuKey === SideMenuKey.CrossChainTransfer && CROSS_CHAIN_TRANSFER_PAGE_TITLE}
-        {activeMenuKey === SideMenuKey.Deposit && DEPOSIT_PAGE_TITLE}
         {activeMenuKey === SideMenuKey.Withdraw && 'Withdraw Assets'}
         {activeMenuKey === SideMenuKey.History && 'History'}
         {activeMenuKey === SideMenuKey.Info && 'Info'}

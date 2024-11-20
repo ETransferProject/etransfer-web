@@ -1,6 +1,9 @@
 @import '/src/assets/theme/font.scss';
 @import '/src/assets/theme/color.scss';
 
+$modal-max-height: calc(100vh - (76px + 16px));
+$modal-header-height: 52px;
+
 .connect-wallet-modal-wrap {
   top: 76px;
   right: 16px;
@@ -14,6 +17,7 @@
   overflow: hidden;
   :global {
     .ant-modal-content {
+      max-height: $modal-max-height;
       .ant-modal-header {
         padding: 24px 24px 0px;
         font-weight: $font-family-medium-weight;
@@ -40,6 +44,8 @@
       }
       .ant-modal-body {
         padding: 0 24px 24px;
+        max-height: calc($modal-max-height - $modal-header-height);
+        overflow: auto;
       }
     }
   }

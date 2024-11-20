@@ -27,7 +27,7 @@ export const CONNECT_EVM_LIST_CONFIG = {
   section: 'EVM',
   list: [
     {
-      name: 'Metamask',
+      name: 'MetaMask',
       key: METAMASK_WALLET_ID,
       icon: Metamask,
     },

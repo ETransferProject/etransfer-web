@@ -18,8 +18,8 @@ export const NetworkNotMatchTipPrefix = 'Please switch Portkey to aelf';
 export const UNLOCK = 'Unlock';
 export const LOGIN = 'Log In';
 export const CONNECT_WALLET = 'Connect Wallet';
-export const CONNECT_AELF_WALLET = 'Connect aelf wallet';
+export const CONNECT_AELF_WALLET = 'Connect aelf Wallet';
 export const MY_WALLET = 'My Wallets';
-export const MY_AELF_WALLET = 'My aelf wallet';
+export const MY_AELF_WALLET = 'My aelf Wallet';
 
 export const USER_REJECT_CONNECT_WALLET_TIP = 'User denied account authorization.';
