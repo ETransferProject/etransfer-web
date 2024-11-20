@@ -463,6 +463,7 @@ export type TGetTransferInfoResult = {
 };
 
 export type TCrossChainTransferInfo = {
+  contractAddress?: string;
   maxAmount: string;
   minAmount: string;
   limitCurrency: string;

@@ -27,7 +27,7 @@ import { EVM_USDT_ABI } from 'constants/wallet/EVM';
 export interface CrossChainTransferFooterProps {
   className?: string;
   recipientAddress?: string;
-  fromAmount?: string;
+  amount?: string;
   fromBalance?: string;
   estimateReceive?: string;
   estimateReceiveUnit?: string;
@@ -39,7 +39,7 @@ export interface CrossChainTransferFooterProps {
 export default function CrossChainTransferFooter({
   className,
   recipientAddress,
-  fromAmount,
+  amount,
   fromBalance,
   estimateReceive = DEFAULT_NULL_VALUE,
   estimateReceiveUnit = '',
@@ -66,7 +66,7 @@ export default function CrossChainTransferFooter({
       if (
         !fromWallet?.isConnected ||
         (!toWallet?.isConnected && !!recipientAddress) ||
-        !fromAmount ||
+        !amount ||
         !fromWallet?.account ||
         !toAddress
       )
@@ -80,7 +80,7 @@ export default function CrossChainTransferFooter({
 
         // create order id
         const orderResult = await createTransferOrder({
-          amount: fromAmount,
+          amount: amount,
           fromNetwork: fromNetwork?.network,
           toNetwork: toNetwork?.network,
           fromSymbol: tokenSymbol,
@@ -100,28 +100,28 @@ export default function CrossChainTransferFooter({
             tokenContractAddress: orderResult.address,
             toAddress,
             tokenAbi: EVM_USDT_ABI, // TODO
-            amount: fromAmount, // TODO
+            amount: amount, // TODO
             decimals: 6, // TODO
           } as SendEVMTransactionParams;
         } else if (fromWallet.walletType === WalletTypeEnum.SOL) {
           params = {
             tokenContractAddress: orderResult.address,
             toAddress,
-            amount: fromAmount, // TODO
+            amount: amount, // TODO
             decimals: 6, // TODO
           } as SendSolanaTransactionParams;
         } else if (fromWallet.walletType === WalletTypeEnum.TON) {
           params = {
             tokenContractAddress: orderResult.address,
             toAddress,
-            amount: Number(fromAmount), // TODO
+            amount: Number(amount), // TODO
             forwardTonAmount: '', // TODO
           } as SendTONTransactionParams;
         } else {
           params = {
             tokenContractAddress: orderResult.address,
             toAddress,
-            amount: Number(fromAmount), // TODO
+            amount: Number(amount), // TODO
           } as SendTRONTransactionParams;
         }
 
@@ -132,7 +132,7 @@ export default function CrossChainTransferFooter({
       SingleMessage.error(handleErrorMessage(error));
     }
   }, [
-    fromAmount,
+    amount,
     fromNetwork?.network,
     fromWallet,
     getAuthToken,
@@ -163,8 +163,8 @@ export default function CrossChainTransferFooter({
         loading,
       };
     }
-    if (fromAmount) {
-      if (!fromBalance || ZERO.plus(fromBalance).lt(fromAmount)) {
+    if (amount) {
+      if (!fromBalance || ZERO.plus(fromBalance).lt(amount)) {
         return {
           children: BUTTON_TEXT_INSUFFICIENT_FUNDS,
           onClick: undefined,
@@ -180,7 +180,7 @@ export default function CrossChainTransferFooter({
       loading,
     };
   }, [
-    fromAmount,
+    amount,
     fromBalance,
     fromWalletType,
     isSubmitDisabled,
@@ -192,7 +192,7 @@ export default function CrossChainTransferFooter({
 
   return (
     <div className={clsx(styles['cross-chain-transfer-footer'], className)}>
-      {fromAmount && (
+      {amount && (
         <div className={styles['cross-chain-transfer-footer-info']}>
           <div className={clsx('flex-row-center', styles['you-will-receive'])}>
             <span>{`You'll receive:`}&nbsp;</span>

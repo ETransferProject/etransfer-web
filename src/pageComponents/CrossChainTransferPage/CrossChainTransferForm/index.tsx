@@ -35,11 +35,15 @@ import { computeTokenList, computeToNetworkList } from '../utils';
 export interface CrossChainTransferFormProps {
   form: FormInstance<TTransferFormValues>;
   formValidateData: TTransferFormValidateData;
+  amountUSD?: string;
   minAmount: string;
   balance: string;
   transferInfo: Omit<TCrossChainTransferInfo, 'minAmount'>;
-  getTransferData: (symbol?: string, amount?: string) => Promise<void>;
+  // getTransferData: (symbol?: string, amount?: string) => Promise<TGetTransferInfoResult>;
+  onFromNetworkChanged?: (item: TNetworkItem) => Promise<void>;
   onAmountChange: (value: string) => void;
+  onAmountBlur: InputProps['onBlur'];
+  onClickMax: () => void;
   onRecipientAddressChange: (value: string) => void;
   onRecipientAddressBlur: InputProps['onBlur'];
 }
@@ -47,11 +51,14 @@ export interface CrossChainTransferFormProps {
 export default function CrossChainTransferForm({
   form,
   formValidateData,
+  amountUSD,
   minAmount,
   balance,
   transferInfo,
-  getTransferData,
+  onFromNetworkChanged,
   onAmountChange,
+  onAmountBlur,
+  onClickMax,
   onRecipientAddressChange,
   onRecipientAddressBlur,
 }: CrossChainTransferFormProps) {
@@ -114,8 +121,10 @@ export default function CrossChainTransferForm({
       } else {
         dispatch(setTokenSymbol(allowTokenList[0].symbol));
       }
+
+      onFromNetworkChanged?.(item);
     },
-    [dispatch, toNetwork, tokenSymbol, totalNetworkList, totalTokenList],
+    [dispatch, onFromNetworkChanged, toNetwork, tokenSymbol, totalNetworkList, totalTokenList],
   );
 
   const handleToNetworkChange = useCallback(
@@ -225,12 +234,7 @@ export default function CrossChainTransferForm({
                 const valueNotComma = parseWithCommas(value);
                 onAmountChange(valueNotComma || '');
               }}
-              onBlur={() => {
-                // TODO
-                // if (handleAmountValidate()) {
-                getTransferData();
-                // }
-              }}
+              onBlur={onAmountBlur}
             />
           </Form.Item>
           <TokenSelected
@@ -240,18 +244,18 @@ export default function CrossChainTransferForm({
           />
         </div>
         <div className={clsx('flex-row-center-between', styles['send-section-balance-row'])}>
-          <div>
-            {!transferInfo.receiveAmountUsd || transferInfo.receiveAmountUsd === DEFAULT_NULL_VALUE
-              ? ''
-              : `$${transferInfo.receiveAmountUsd}`}
-          </div>
+          <div>{!amountUSD || amountUSD === DEFAULT_NULL_VALUE ? '' : `$${amountUSD}`}</div>
           <div className="flex-row-center gap-8">
             <div>
               <span>Balance:&nbsp;</span>
-              <span>{balance}&nbsp;</span>
+              <span>{fromWallet?.isConnected ? balance : '0'}&nbsp;</span>
               <span>{tokenSymbol}</span>
             </div>
-            <div className={styles['send-section-max']}>Max</div>
+            {fromWallet?.isConnected && (
+              <div className={styles['send-section-max']} onClick={onClickMax}>
+                Max
+              </div>
+            )}
           </div>
         </div>
       </div>

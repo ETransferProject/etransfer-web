@@ -5,9 +5,9 @@ import { ethers } from 'ethers';
 import { sepolia } from 'viem/chains';
 import { useAccount, useConnect, useDisconnect, useSignMessage, useWriteContract } from 'wagmi';
 import { EVM_WALLET_ALLOWANCE } from 'constants/wallet/EVM';
-import AElf from 'aelf-sdk';
 import { AuthTokenSource } from 'types/api';
 import { SendEVMTransactionParams } from 'types/wallet';
+import { stringToHex } from 'utils/format';
 
 export default function useEVM() {
   const { connectAsync, connectors } = useConnect();
@@ -44,8 +44,8 @@ export default function useEVM() {
     return {
       plainTextOrigin: plainText.plainTextOrigin,
       plainTextHex: plainText.plainTextHex,
-      signature: AElf.utils.uint8ArrayToHex(res),
-      publicKey: accountInfo.address || '',
+      signature: stringToHex(res),
+      publicKey: stringToHex(accountInfo.address || ''),
       sourceType: AuthTokenSource.EVM,
     };
   }, [accountInfo.address, signMessageAsync]);

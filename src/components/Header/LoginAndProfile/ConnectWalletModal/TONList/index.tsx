@@ -11,15 +11,20 @@ import { SingleMessage } from '@etransfer/ui-react';
 import { TonConnectError } from '@tonconnect/ui-react';
 import { USER_REJECT_CONNECT_WALLET_TIP } from 'constants/wallet';
 import { WalletTypeEnum } from 'context/Wallet/types';
+import { removeOneLocalJWT } from 'api/utils';
+import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
+import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
 
 export default function TONWalletList({
   onSelected,
 }: {
   onSelected?: (walletType: WalletTypeEnum) => void;
 }) {
-  const { account, connect, disconnect, isConnected } = useTON();
+  const dispatch = useAppDispatch();
+  const { account, connect, disconnect, isConnected, walletType } = useTON();
   // const [isConnectLoading, setIsConnectLoading] = useState(false);
   const [isShowCopy, setIsShowCopy] = useState(false);
+  const { fromWalletType, toWalletType } = useCrossChainTransfer();
 
   const onConnectErrorCallback = useCallback((error: TonConnectError) => {
     const errorMessage = handleErrorMessage(error);
@@ -55,9 +60,23 @@ export default function TONWalletList({
   const onDisconnect = useCallback(
     async (event: any) => {
       event.stopPropagation();
-      disconnect();
+
+      // disconnect wallet
+      await disconnect();
+
+      // clear jwt
+      const localKey = account + walletType;
+      removeOneLocalJWT(localKey);
+
+      // unbind wallet
+      if (fromWalletType === WalletTypeEnum.TON) {
+        dispatch(setFromWalletType(undefined));
+      }
+      if (toWalletType === WalletTypeEnum.TON) {
+        dispatch(setToWalletType(undefined));
+      }
     },
-    [disconnect],
+    [account, disconnect, dispatch, fromWalletType, toWalletType, walletType],
   );
 
   const renderAccount = useCallback(

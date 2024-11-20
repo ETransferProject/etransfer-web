@@ -8,14 +8,19 @@ import { getOmittedStr } from '@etransfer/utils';
 import Copy, { CopySize } from 'components/Copy';
 import PartialLoading from 'components/PartialLoading';
 import { WalletTypeEnum } from 'context/Wallet/types';
+import { removeOneLocalJWT } from 'api/utils';
+import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
+import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
 
 export default function TRONWalletList({
   onSelected,
 }: {
   onSelected?: (walletType: WalletTypeEnum) => void;
 }) {
-  const { account, isConnected, isConnecting, connect, disconnect } = useTRON();
+  const dispatch = useAppDispatch();
+  const { account, isConnected, isConnecting, walletType, connect, disconnect } = useTRON();
   const [isShowCopy, setIsShowCopy] = useState(false);
+  const { fromWalletType, toWalletType } = useCrossChainTransfer();
 
   const onConnect = useCallback(
     async (name: string) => {
@@ -34,11 +39,25 @@ export default function TRONWalletList({
   );
 
   const onDisconnect = useCallback(
-    (event: any) => {
+    async (event: any) => {
       event.stopPropagation();
-      disconnect();
+
+      // disconnect wallet
+      await disconnect();
+
+      // clear jwt
+      const localKey = account + walletType;
+      removeOneLocalJWT(localKey);
+
+      // unbind wallet
+      if (fromWalletType === WalletTypeEnum.TRON) {
+        dispatch(setFromWalletType(undefined));
+      }
+      if (toWalletType === WalletTypeEnum.TRON) {
+        dispatch(setToWalletType(undefined));
+      }
     },
-    [disconnect],
+    [account, disconnect, dispatch, fromWalletType, toWalletType, walletType],
   );
 
   const renderAccount = useCallback(
