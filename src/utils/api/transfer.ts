@@ -39,11 +39,15 @@ export const getNetworkList = async (
 
 export const getTransferInfo = async (
   params: TGetTransferInfoRequest,
+  authToken?: string,
 ): Promise<TGetTransferInfoResult> => {
   try {
     const res = await request.transfer.getTransferInfo({
       params,
       cancelTokenSourceKey: CancelTokenSourceKey.GET_TRANSFER_INFO,
+      headers: {
+        Authorization: authToken || '',
+      },
     });
     return res.data;
   } catch (error: any) {

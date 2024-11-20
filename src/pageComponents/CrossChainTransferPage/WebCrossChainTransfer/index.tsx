@@ -13,6 +13,7 @@ import { CROSS_CHAIN_TRANSFER_PAGE_TITLE } from 'constants/crossChainTransfer';
 import CommonSpace from 'components/CommonSpace';
 
 export interface WebCrossChainTransferProps extends CrossChainTransferFormProps {
+  amount?: string;
   receiveAmount?: string;
   transferInfo: TCrossChainTransferInfo;
   isSubmitDisabled: boolean;
@@ -23,14 +24,18 @@ export interface WebCrossChainTransferProps extends CrossChainTransferFormProps 
 export default function WebCrossChainTransfer({
   form,
   formValidateData,
+  amount,
+  amountUSD,
+  balance,
+  minAmount,
   receiveAmount,
   transferInfo,
-  minAmount,
-  balance,
   isSubmitDisabled,
   recipientAddress,
-  getTransferData,
+  onFromNetworkChanged,
   onAmountChange,
+  onAmountBlur,
+  onClickMax,
   onRecipientAddressChange,
   onRecipientAddressBlur,
   onClickProcessingTip,
@@ -60,16 +65,21 @@ export default function WebCrossChainTransfer({
         <CrossChainTransferForm
           form={form}
           formValidateData={formValidateData}
+          amountUSD={amountUSD}
           minAmount={minAmount}
           balance={balance}
           transferInfo={transferInfo}
-          getTransferData={getTransferData}
+          onFromNetworkChanged={onFromNetworkChanged}
           onAmountChange={onAmountChange}
+          onAmountBlur={onAmountBlur}
+          onClickMax={onClickMax}
           onRecipientAddressChange={onRecipientAddressChange}
           onRecipientAddressBlur={onRecipientAddressBlur}
         />
         <CommonSpace direction={'vertical'} size={40} />
         <CrossChainTransferFooter
+          amount={amount}
+          fromBalance={balance}
           recipientAddress={recipientAddress}
           estimateReceive={receiveAmount}
           estimateReceiveUnit={tokenSymbol}
@@ -80,16 +90,20 @@ export default function WebCrossChainTransfer({
       </div>
     );
   }, [
+    amount,
+    amountUSD,
     balance,
     depositProcessingCount,
     form,
     formValidateData,
     fromWallet?.isConnected,
-    getTransferData,
     isSubmitDisabled,
     minAmount,
+    onAmountBlur,
     onAmountChange,
+    onClickMax,
     onClickProcessingTip,
+    onFromNetworkChanged,
     onRecipientAddressBlur,
     onRecipientAddressChange,
     receiveAmount,

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useAppDispatch } from 'store/Provider/hooks';
 import {
   setDepositProcessingCount,
+  setTransferProcessingCount,
   setWithdrawProcessingCount,
   // setTransferProcessingCount,
 } from 'store/reducers/records/slice';
@@ -36,11 +37,11 @@ export function useNoticeSocket() {
         }
 
         // TODO
-        // if (res.processing.transferCount) {
-        //   dispatch(setTransferProcessingCount(res.processing.transferCount));
-        // } else {
-        //   dispatch(setTransferProcessingCount(0));
-        // }
+        if (res.processing.transferCount) {
+          dispatch(setTransferProcessingCount(res.processing.transferCount));
+        } else {
+          dispatch(setTransferProcessingCount(0));
+        }
 
         myEvents.GlobalTxnNotice.emit();
         // handle order data and show notice

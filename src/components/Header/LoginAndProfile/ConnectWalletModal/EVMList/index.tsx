@@ -9,16 +9,21 @@ import Copy, { CopySize } from 'components/Copy';
 import PartialLoading from 'components/PartialLoading';
 import { SingleMessage } from '@etransfer/ui-react';
 import { WalletTypeEnum } from 'context/Wallet/types';
+import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
+import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
+import { removeOneLocalJWT } from 'api/utils';
 
 export default function EVMWalletList({
   onSelected,
 }: {
   onSelected?: (walletType: WalletTypeEnum) => void;
 }) {
-  const { account, connect, connectors, connector, disconnect, isConnected } = useEVM();
+  const dispatch = useAppDispatch();
+  const { account, connect, connectors, connector, disconnect, isConnected, walletType } = useEVM();
   const [isConnectLoading, setIsConnectLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [isShowCopy, setIsShowCopy] = useState(false);
+  const { fromWalletType, toWalletType } = useCrossChainTransfer();
 
   const onConnect = useCallback(
     async (id: string, index: number) => {
@@ -46,9 +51,23 @@ export default function EVMWalletList({
   const onDisconnect = useCallback(
     async (event: any) => {
       event.stopPropagation();
+
+      // disconnect wallet
       disconnect();
+
+      // clear jwt
+      const localKey = account + walletType;
+      removeOneLocalJWT(localKey);
+
+      // unbind wallet
+      if (fromWalletType === WalletTypeEnum.EVM) {
+        dispatch(setFromWalletType(undefined));
+      }
+      if (toWalletType === WalletTypeEnum.EVM) {
+        dispatch(setToWalletType(undefined));
+      }
     },
-    [disconnect],
+    [account, disconnect, dispatch, fromWalletType, toWalletType, walletType],
   );
 
   const handleMouseEnter = useCallback((event: any) => {

@@ -11,6 +11,7 @@ import { ProcessingTip } from 'components/Tips/ProcessingTip';
 import { TCrossChainTransferInfo } from 'types/api';
 
 export interface MobileCrossChainTransferProps extends CrossChainTransferFormProps {
+  amount?: string;
   receiveAmount: string;
   transferInfo: TCrossChainTransferInfo;
   isSubmitDisabled: boolean;
@@ -21,14 +22,18 @@ export interface MobileCrossChainTransferProps extends CrossChainTransferFormPro
 export default function MobileCrossChainTransfer({
   form,
   formValidateData,
-  receiveAmount,
-  minAmount,
+  amount,
+  amountUSD,
   balance,
+  minAmount,
+  receiveAmount,
   transferInfo,
   isSubmitDisabled,
   recipientAddress,
-  getTransferData,
+  onFromNetworkChanged,
   onAmountChange,
+  onAmountBlur,
+  onClickMax,
   onRecipientAddressChange,
   onRecipientAddressBlur,
   onClickProcessingTip,
@@ -45,14 +50,19 @@ export default function MobileCrossChainTransfer({
           form={form}
           formValidateData={formValidateData}
           minAmount={minAmount}
+          amountUSD={amountUSD}
           balance={balance}
           transferInfo={transferInfo}
-          getTransferData={getTransferData}
+          onFromNetworkChanged={onFromNetworkChanged}
           onAmountChange={onAmountChange}
+          onAmountBlur={onAmountBlur}
+          onClickMax={onClickMax}
           onRecipientAddressChange={onRecipientAddressChange}
           onRecipientAddressBlur={onRecipientAddressBlur}
         />
         <CrossChainTransferFooter
+          amount={amount}
+          fromBalance={balance}
           recipientAddress={recipientAddress}
           estimateReceive={receiveAmount}
           estimateReceiveUnit={tokenSymbol}
@@ -63,13 +73,17 @@ export default function MobileCrossChainTransfer({
       </div>
     );
   }, [
+    amount,
+    amountUSD,
     balance,
     form,
     formValidateData,
-    getTransferData,
     isSubmitDisabled,
     minAmount,
+    onAmountBlur,
     onAmountChange,
+    onClickMax,
+    onFromNetworkChanged,
     onRecipientAddressBlur,
     onRecipientAddressChange,
     receiveAmount,

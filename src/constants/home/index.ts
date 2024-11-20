@@ -11,7 +11,7 @@ export enum SideMenuKey {
 
 export const MENU_ITEMS = [
   {
-    icon: Withdraw, // TODO
+    icon: Withdraw,
     key: SideMenuKey.CrossChainTransfer,
     label: SideMenuKey.CrossChainTransfer,
     pathname: '/cross-chain-transfer',
