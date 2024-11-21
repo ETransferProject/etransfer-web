@@ -32,8 +32,8 @@ import {
   setTotalNetworkList,
   setTotalTokenList,
 } from 'store/reducers/crossChainTransfer/slice';
-import { formatSymbolDisplay, SingleMessage } from '@etransfer/ui-react';
-import { handleErrorMessage, removeELFAddressSuffix, ZERO } from '@etransfer/utils';
+import { formatSymbolDisplay } from '@etransfer/ui-react';
+import { removeELFAddressSuffix, ZERO } from '@etransfer/utils';
 import { Form } from 'antd';
 import { InitialCrossChainTransferInfo } from 'constants/crossChainTransfer';
 import { useWallet } from 'context/Wallet';
@@ -164,7 +164,6 @@ export default function CrossChainTransferPage() {
           limitCurrency: formatSymbolDisplay(res.transferInfo.limitCurrency),
           transactionUnit: formatSymbolDisplay(res.transferInfo?.transactionUnit || ''),
         });
-        console.log('getTransferData res', res);
 
         return res;
       } catch (error) {
@@ -208,7 +207,8 @@ export default function CrossChainTransferPage() {
 
         return res.tokenList;
       } catch (error) {
-        SingleMessage.error(handleErrorMessage(error));
+        console.log('getTokenData error', error);
+        // SingleMessage.error(handleErrorMessage(error));
         return [];
       }
     },
@@ -238,6 +238,7 @@ export default function CrossChainTransferPage() {
           networkList,
           totalTokenListRef.current,
         );
+        console.log('computeToNetworkList toNetworkList', toNetworkList);
         dispatch(setToNetworkList(toNetworkList));
 
         // to logic
@@ -274,7 +275,7 @@ export default function CrossChainTransferPage() {
       try {
         await getTransferData(tokenSymbol, item.network);
       } catch (error) {
-        SingleMessage.error(handleErrorMessage(error));
+        console.log('handleFromNetworkChanged error', error);
       }
     },
     [getTransferData, tokenSymbol],
@@ -316,7 +317,8 @@ export default function CrossChainTransferPage() {
       getAmountUSD();
       // }
     } catch (error) {
-      SingleMessage.error(handleErrorMessage(error));
+      console.log('handleAmountBlur error', error);
+      // SingleMessage.error(handleErrorMessage(error));
     }
   }, [amount, getAmountUSD, getTransferData, tokenSymbol]);
 
@@ -347,7 +349,8 @@ export default function CrossChainTransferPage() {
         setAmount(_maxInput);
         form.setFieldValue(TransferFormKeys.AMOUNT, _maxInput);
       } catch (error) {
-        SingleMessage.error(handleErrorMessage(error));
+        console.log('handleClickMax error', error);
+        // SingleMessage.error(handleErrorMessage(error));
       } finally {
         setLoading(false);
       }
@@ -410,7 +413,8 @@ export default function CrossChainTransferPage() {
       });
       await getTransferData(tokenSymbol, amount);
     } catch (error) {
-      SingleMessage.error(handleErrorMessage(error));
+      console.log('handleRecipientAddressBlur error', error);
+      // SingleMessage.error(handleErrorMessage(error));
     }
   }, [
     amount,

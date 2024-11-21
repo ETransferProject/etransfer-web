@@ -1,6 +1,6 @@
 import { Checkbox, Form, FormInstance, Input, InputProps } from 'antd';
 import styles from './styles.module.scss';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useWallet } from 'context/Wallet';
 import { BlockchainNetworkType } from 'constants/network';
 import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
@@ -13,10 +13,12 @@ import { devices } from '@portkey/utils';
 import {
   InitialCrossChainTransferState,
   setFromNetwork,
+  setFromWalletType,
   setTokenList,
   setTokenSymbol,
   setToNetwork,
   setToNetworkList,
+  setToWalletType,
 } from 'store/reducers/crossChainTransfer/slice';
 import { TTransferFormValues, TransferFormKeys, TTransferFormValidateData } from '../types';
 import { NetworkAndWalletCard } from './NetworkAndWalletCard';
@@ -65,8 +67,24 @@ export default function CrossChainTransferForm({
   const isAndroid = devices.isMobile().android;
   const dispatch = useAppDispatch();
   const [{ fromWallet }] = useWallet();
-  const { toNetwork, tokenSymbol, tokenList, totalNetworkList, totalTokenList } =
-    useCrossChainTransfer();
+  const {
+    fromWalletType,
+    fromNetwork,
+    toWalletType,
+    toNetwork,
+    tokenSymbol,
+    tokenList,
+    totalNetworkList,
+    totalTokenList,
+  } = useCrossChainTransfer();
+  const fromWalletTypeRef = useRef(fromWalletType);
+  fromWalletTypeRef.current = fromWalletType;
+  const toWalletTypeRef = useRef(toWalletType);
+  toWalletTypeRef.current = toWalletType;
+  const fromNetworkRef = useRef(fromNetwork);
+  fromNetworkRef.current = fromNetwork;
+  const toNetworkRef = useRef(toNetwork);
+  toNetworkRef.current = toNetwork;
   const [isInputAddress, setIsInputAddress] = useState(false);
   const [isShowSwap, setIsShowSwap] = useState(false);
 
@@ -83,18 +101,8 @@ export default function CrossChainTransferForm({
     console.log(`onUseRecipientChange = ${e.target.checked}`);
   }, []);
 
-  const handleMouseEnterSwapIcon = useCallback((event: any) => {
-    event.stopPropagation();
-    setIsShowSwap(true);
-  }, []);
-
-  const handleMouseLeaveSwapIcon = useCallback((event: any) => {
-    event.stopPropagation();
-    setIsShowSwap(false);
-  }, []);
-
   const handleFromNetworkChange = useCallback(
-    async (item: TNetworkItem) => {
+    async (item: TNetworkItem, newToNetwork?: TNetworkItem) => {
       dispatch(setFromNetwork(item));
 
       // compute toNetwork
@@ -102,8 +110,9 @@ export default function CrossChainTransferForm({
       const toNetworkList = computeToNetworkList(item, totalNetworkList, totalTokenList);
       dispatch(setToNetworkList(toNetworkList));
 
-      const exitToNetwork = toNetworkList.find((item) => item.network === toNetwork?.network);
-      let toNetworkNew = toNetwork;
+      const _toNetwork = newToNetwork || toNetwork;
+      const exitToNetwork = toNetworkList.find((item) => item.network === _toNetwork?.network);
+      let toNetworkNew = _toNetwork;
       if (exitToNetwork && exitToNetwork.status !== NetworkStatus.Offline) {
         dispatch(setToNetwork(exitToNetwork));
         toNetworkNew = exitToNetwork;
@@ -151,6 +160,30 @@ export default function CrossChainTransferForm({
     [dispatch],
   );
 
+  const handleMouseEnterSwapIcon = useCallback((event: any) => {
+    event.stopPropagation();
+    setIsShowSwap(true);
+  }, []);
+
+  const handleMouseLeaveSwapIcon = useCallback((event: any) => {
+    event.stopPropagation();
+    setIsShowSwap(false);
+  }, []);
+
+  const handleClickSwapIcon = useCallback(async () => {
+    const _fromWalletType = fromWalletTypeRef.current;
+    const _toWalletType = toWalletTypeRef.current;
+    const _fromNetwork = fromNetworkRef.current;
+    const _toNetwork = toNetworkRef.current;
+    dispatch(setFromWalletType(_toWalletType));
+    dispatch(setToWalletType(_fromWalletType));
+    dispatch(setFromNetwork(_toNetwork));
+    dispatch(setToNetwork(_fromNetwork));
+
+    // check toNetwork and token
+    await handleFromNetworkChange(_toNetwork, _fromNetwork);
+  }, [dispatch, handleFromNetworkChange]);
+
   return (
     <Form
       className={styles['cross-chain-transfer-body']}
@@ -161,7 +194,8 @@ export default function CrossChainTransferForm({
         <div
           className={clsx('flex-center', styles['cross-chain-transfer-swap-icon'])}
           onMouseEnter={handleMouseEnterSwapIcon}
-          onMouseLeave={handleMouseLeaveSwapIcon}>
+          onMouseLeave={handleMouseLeaveSwapIcon}
+          onClick={handleClickSwapIcon}>
           {isShowSwap ? <SwapHorizontal /> : <ArrowRight2 />}
         </div>
         <div className={clsx('flex-row-center gap-4')}>
