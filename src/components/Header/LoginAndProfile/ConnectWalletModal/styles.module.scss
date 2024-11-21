@@ -1,8 +1,34 @@
 @import '/src/assets/theme/font.scss';
 @import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/breakpoint.scss';
 
 $modal-max-height: calc(100vh - (76px + 16px));
 $modal-header-height: 52px;
+
+.connect-wallet-drawer.connect-wallet-drawer-weight {
+  :global {
+    .ant-drawer-content {
+      border-radius: 0;
+    }
+    .ant-drawer-header {
+      height: auto;
+      padding: 24px 24px 0px;
+      .ant-drawer-header-title {
+        .ant-drawer-title {
+          text-align: left;
+          font-size: 20px;
+          line-height: 28px;
+        }
+      }
+    }
+
+    .ant-drawer-body {
+      @include media-pad {
+        padding: 0 24px 24px;
+      }
+    }
+  }
+}
 
 .connect-wallet-modal-wrap {
   top: 76px;
@@ -119,7 +145,7 @@ $modal-header-height: 52px;
 }
 
 .wallet-list-item-name {
-  font-size: 16px;
+  font-size: 14px;
   line-height: 22px;
   @extend .font-family-medium;
 }

@@ -206,7 +206,7 @@ export default function MobileDepositContent({
         <ProcessingTip
           depositProcessingCount={depositProcessingCount}
           transferProcessingCount={transferProcessingCount}
-          marginBottom={isPadPX && !isMobilePX ? 24 : 0}
+          marginBottom={0}
           borderRadius={0}
           onClick={onClickProcessingTip}
         />

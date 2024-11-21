@@ -198,10 +198,10 @@ export default function CrossChainTransferForm({
           onClick={handleClickSwapIcon}>
           {isShowSwap ? <SwapHorizontal /> : <ArrowRight2 />}
         </div>
-        <div className={clsx('flex-row-center gap-4')}>
+        <div className={clsx('flex-row-center gap-4', styles['network-and-wallet-card-list'])}>
           <NetworkAndWalletCard
             cardType="From"
-            className={'flex-1'}
+            className={clsx('flex-1', styles['network-and-wallet-from'])}
             onSelectNetworkCallback={handleFromNetworkChange}
           />
           <NetworkAndWalletCard

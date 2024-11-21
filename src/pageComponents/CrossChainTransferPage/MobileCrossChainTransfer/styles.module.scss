@@ -4,12 +4,13 @@
 @import 'src/styles/variable.scss';
 
 .main-section {
-  @include media-mobile-and-pad {
-    padding-top: 16px;
+  @include media-pad {
+    padding-top: 24px;
   }
 
   @include media-mobile {
     height: 100%;
+    padding-top: 16px;
   }
 }
 

@@ -1,4 +1,3 @@
-import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { QuestionMarkIcon } from 'assets/images';
 import clsx from 'clsx';
@@ -21,23 +20,18 @@ export default function RemainingLimit({
   totalLimit,
   limitCurrency,
 }: RemainingLimitProps) {
-  const { isPadPX } = useCommonState();
-
   const label = useMemo(() => {
     return (
       <span className={styles['remaining-limit-label']}>
-        {isPadPX && '• 24-Hour Limit:'}
-        {!isPadPX && (
-          <CommonTooltip
-            className={clsx(styles['question-label'])}
-            placement="top"
-            title={REMAINING_TRANSFER_QUOTA_TOOLTIP}>
-            24-Hour Limit <QuestionMarkIcon />
-          </CommonTooltip>
-        )}
+        <CommonTooltip
+          className={clsx(styles['question-label'])}
+          placement="top"
+          title={REMAINING_TRANSFER_QUOTA_TOOLTIP}>
+          24-Hour Limit <QuestionMarkIcon />
+        </CommonTooltip>
       </span>
     );
-  }, [isPadPX]);
+  }, []);
 
   const value = useMemo(() => {
     return (
@@ -65,18 +59,9 @@ export default function RemainingLimit({
           remainingLimit !== '' &&
           new BigNumber(remainingLimit).isEqualTo(0),
       })}>
-      {isPadPX ? (
-        <>
-          {label}
-          {value}
-        </>
-      ) : (
-        <>
-          {label}
-          <CommonSpace direction={'horizontal'} size={8} />
-          {value}
-        </>
-      )}
+      {label}
+      <CommonSpace direction={'horizontal'} size={8} />
+      {value}
     </div>
   );
 }

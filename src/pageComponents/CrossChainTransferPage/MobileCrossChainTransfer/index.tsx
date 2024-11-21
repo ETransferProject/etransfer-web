@@ -9,6 +9,8 @@ import { useCommonState, useCrossChainTransfer, useRecordsState } from 'store/Pr
 import { useWallet } from 'context/Wallet';
 import { ProcessingTip } from 'components/Tips/ProcessingTip';
 import { TCrossChainTransferInfo } from 'types/api';
+import { CROSS_CHAIN_TRANSFER_PAGE_TITLE } from 'constants/crossChainTransfer';
+import CommonSpace from 'components/CommonSpace';
 
 export interface MobileCrossChainTransferProps extends CrossChainTransferFormProps {
   amount?: string;
@@ -46,6 +48,7 @@ export default function MobileCrossChainTransfer({
   const renderDepositMainContent = useMemo(() => {
     return (
       <div className={clsx(styles['main-section'], styles['section'])}>
+        <div className="main-section-header">{CROSS_CHAIN_TRANSFER_PAGE_TITLE}</div>
         <CrossChainTransferForm
           form={form}
           formValidateData={formValidateData}
@@ -60,6 +63,7 @@ export default function MobileCrossChainTransfer({
           onRecipientAddressChange={onRecipientAddressChange}
           onRecipientAddressBlur={onRecipientAddressBlur}
         />
+        <CommonSpace direction={'vertical'} size={40} />
         <CrossChainTransferFooter
           amount={amount}
           fromBalance={balance}
@@ -93,29 +97,30 @@ export default function MobileCrossChainTransfer({
   ]);
 
   return (
-    <div className="main-content-container main-content-container-safe-area">
+    <>
       {fromWallet?.isConnected && (
         <ProcessingTip
           depositProcessingCount={depositProcessingCount}
           transferProcessingCount={transferProcessingCount}
-          marginBottom={isPadPX && !isMobilePX ? 24 : 0}
+          marginBottom={0}
           borderRadius={0}
           onClick={onClickProcessingTip}
         />
       )}
+      <div className="main-content-container main-content-container-safe-area">
+        {renderDepositMainContent}
 
-      {renderDepositMainContent}
-
-      {isPadPX && !isMobilePX && (
-        <>
-          <div className={styles['divider']} />
-          <FAQ
-            className={clsx(styles['section'], styles['faq'])}
-            title={FAQ_CROSS_CHAIN_TRANSFER.title}
-            list={FAQ_CROSS_CHAIN_TRANSFER.list}
-          />
-        </>
-      )}
-    </div>
+        {isPadPX && !isMobilePX && (
+          <>
+            <div className={styles['divider']} />
+            <FAQ
+              className={clsx(styles['section'], styles['faq'])}
+              title={FAQ_CROSS_CHAIN_TRANSFER.title}
+              list={FAQ_CROSS_CHAIN_TRANSFER.list}
+            />
+          </>
+        )}
+      </div>
+    </>
   );
 }

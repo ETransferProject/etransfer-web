@@ -1,5 +1,6 @@
 @import '/src/assets/theme/color.scss';
 @import '/src/assets/theme/font.scss';
+@import '/src/assets/theme/breakpoint.scss';
 
 .network-and-wallet-section {
   position: relative;
@@ -51,7 +52,7 @@
   :global {
     .ant-form-item-row {
       width: 100%;
-      margin-right: 8px;
+      margin-right: 12px;
     }
   }
 }
@@ -94,7 +95,7 @@
   margin-right: 4px;
 }
 
-.recipient-address-form-item{
+.recipient-address-form-item {
   margin-bottom: 0;
 }
 
@@ -114,4 +115,27 @@
 
 .comment-form-item {
   margin-top: 24px;
+}
+
+@include media-mobile {
+  .network-and-wallet-card-list {
+    flex-direction: column;
+  }
+
+  .network-and-wallet-from,
+  .network-and-wallet-to {
+    width: 100%;
+  }
+
+  .network-and-wallet-from {
+    padding: 12px 12px 20px 12px !important;
+  }
+
+  .network-and-wallet-to {
+    padding: 20px 12px 12px 12px !important;
+  }
+
+  .cross-chain-transfer-swap-icon {
+    transform: translate3d(-50%, -50%, 0) rotate(90deg);
+  }
 }

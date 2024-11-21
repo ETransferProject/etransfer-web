@@ -1,4 +1,7 @@
+import { useMemo } from 'react';
+import clsx from 'clsx';
 import { CommonModal } from '@etransfer/ui-react';
+import CommonDrawer from 'components/CommonDrawer';
 import { CONNECT_WALLET } from 'constants/wallet/index';
 import styles from './styles.module.scss';
 import AelfWalletList from './aelfList';
@@ -7,6 +10,7 @@ import SolanaWalletList from './SolanaList';
 import TONWalletList from './TONList';
 import TRONWalletList from './TRONList';
 import { WalletTypeEnum } from 'context/Wallet/types';
+import { useCommonState } from 'store/Provider/hooks';
 
 export default function ConnectWalletModal({
   open,
@@ -27,6 +31,34 @@ export default function ConnectWalletModal({
   onCancel: () => void;
   onSelected?: (walletType: WalletTypeEnum) => void;
 }) {
+  const { isPadPX } = useCommonState();
+
+  const content = useMemo(() => {
+    return (
+      <div>
+        {allowList?.includes(WalletTypeEnum.AELF) && <AelfWalletList onSelected={onSelected} />}
+        {allowList?.includes(WalletTypeEnum.EVM) && <EVMWalletList onSelected={onSelected} />}
+        {allowList?.includes(WalletTypeEnum.SOL) && <SolanaWalletList onSelected={onSelected} />}
+        {allowList?.includes(WalletTypeEnum.TRON) && <TRONWalletList onSelected={onSelected} />}
+        {allowList?.includes(WalletTypeEnum.TON) && <TONWalletList onSelected={onSelected} />}
+      </div>
+    );
+  }, [allowList, onSelected]);
+
+  if (isPadPX) {
+    return (
+      <CommonDrawer
+        zIndex={301}
+        className={clsx(styles['connect-wallet-drawer'], styles['connect-wallet-drawer-weight'])}
+        height="100%"
+        title={title}
+        open={open}
+        onClose={onCancel}>
+        {content}
+      </CommonDrawer>
+    );
+  }
+
   return (
     <CommonModal
       open={open}
@@ -38,13 +70,7 @@ export default function ConnectWalletModal({
       hideOkButton
       destroyOnClose
       onCancel={onCancel}>
-      <div>
-        {allowList?.includes(WalletTypeEnum.AELF) && <AelfWalletList onSelected={onSelected} />}
-        {allowList?.includes(WalletTypeEnum.EVM) && <EVMWalletList onSelected={onSelected} />}
-        {allowList?.includes(WalletTypeEnum.SOL) && <SolanaWalletList onSelected={onSelected} />}
-        {allowList?.includes(WalletTypeEnum.TRON) && <TRONWalletList onSelected={onSelected} />}
-        {allowList?.includes(WalletTypeEnum.TON) && <TONWalletList onSelected={onSelected} />}
-      </div>
+      {content}
     </CommonModal>
   );
 }
