@@ -74,6 +74,8 @@ export default function CrossChainTransferPage() {
   const [recipientAddressInput, setRecipientAddressInput] = useState('');
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [amount, setAmount] = useState('');
+  const [amountUSD, setAmountUSD] = useState('');
+  const [amountPriceUsd, setAmountPriceUSD] = useState<number>(0);
 
   // TODO
   const balance = '0';
@@ -135,12 +137,13 @@ export default function CrossChainTransferPage() {
   );
 
   const getTransferData = useCallback(
-    async (symbol?: string, amount?: string) => {
+    async (symbol?: string, fromNetworkKey?: string, amount?: string) => {
       try {
-        if (!fromNetworkRef.current?.network) return;
+        const _fromNetworkKey = fromNetworkKey || fromNetworkRef.current?.network;
+        if (!_fromNetworkKey) return;
 
         const params: TGetTransferInfoRequest = {
-          fromNetwork: fromNetworkRef.current.network,
+          fromNetwork: _fromNetworkKey,
           symbol: symbol || tokenSymbol,
         };
         if (amount) params.amount = amount;
@@ -203,7 +206,7 @@ export default function CrossChainTransferPage() {
         }
 
         // to get minAmount and contractAddress
-        await getTransferData(_tokenSymbol, '');
+        await getTransferData(_tokenSymbol, undefined, '');
 
         return res.tokenList;
       } catch (error) {
@@ -270,19 +273,95 @@ export default function CrossChainTransferPage() {
     }
   }, [dispatch, fromNetwork?.network, toNetwork?.network, tokenSymbol]);
 
+  const handleRecipientAddressChange = useCallback(
+    (value: string | null) => {
+      dispatch(setRecipientAddress(value || ''));
+
+      setRecipientAddressInput(value || '');
+    },
+    [dispatch],
+  );
+
+  const handleRecipientAddressBlur = useCallback(async () => {
+    const addressInput = getRecipientAddressInput();
+
+    try {
+      if (!addressInput) {
+        handleFormValidateDataChange({
+          [TransferFormKeys.RECIPIENT]: {
+            validateStatus: TransferValidateStatus.Normal,
+            errorMessage: '',
+          },
+        });
+        await getTransferData(tokenSymbol, amount);
+        return;
+      } else if (addressInput.length < 32 || addressInput.length > 59) {
+        handleFormValidateDataChange({
+          [TransferFormKeys.RECIPIENT]: {
+            validateStatus: TransferValidateStatus.Error,
+            errorMessage: 'Please enter a correct address.',
+          },
+        });
+        return;
+      }
+
+      if (isDIDAddressSuffix(addressInput)) {
+        form.setFieldValue(TransferFormKeys.RECIPIENT, removeELFAddressSuffix(addressInput));
+      }
+
+      handleFormValidateDataChange({
+        [TransferFormKeys.RECIPIENT]: {
+          validateStatus: TransferValidateStatus.Normal,
+          errorMessage: '',
+        },
+      });
+      await getTransferData(tokenSymbol, amount);
+    } catch (error) {
+      console.log('handleRecipientAddressBlur error', error);
+      // SingleMessage.error(handleErrorMessage(error));
+    }
+  }, [
+    amount,
+    form,
+    getRecipientAddressInput,
+    getTransferData,
+    handleFormValidateDataChange,
+    tokenSymbol,
+  ]);
+
   const handleFromNetworkChanged = useCallback(
     async (item: TNetworkItem) => {
       try {
-        await getTransferData(tokenSymbol, item.network);
+        form.setFieldValue(TransferFormKeys.AMOUNT, '');
+        setAmount('');
+        setAmountUSD('');
+        // handleAmountValidate(); // TODO
+
+        form.setFieldValue(TransferFormKeys.RECIPIENT, '');
+        handleRecipientAddressChange('');
+        handleFormValidateDataChange({
+          [TransferFormKeys.RECIPIENT]: {
+            validateStatus: TransferValidateStatus.Normal,
+            errorMessage: '',
+          },
+        });
+
+        form.setFieldValue(TransferFormKeys.COMMENT, '');
+
+        await getTransferData(tokenSymbol, item.network, '');
       } catch (error) {
         console.log('handleFromNetworkChanged error', error);
       }
     },
-    [getTransferData, tokenSymbol],
+    [
+      form,
+      getTransferData,
+      handleFormValidateDataChange,
+      handleRecipientAddressChange,
+      tokenSymbol,
+    ],
   );
 
-  const [amountUSD, setAmountUSD] = useState('');
-  const [amountPriceUsd, setAmountPriceUSD] = useState<number>(0);
   const getAmountUSD = useCallback(async () => {
     const res = await getTokenPrices({
       symbols: tokenSymbol,
@@ -366,62 +445,6 @@ export default function CrossChainTransferPage() {
     fromWallet?.account,
     getTransferData,
     setLoading,
-    tokenSymbol,
-  ]);
-
-  const handleRecipientAddressChange = useCallback(
-    (value: string | null) => {
-      dispatch(setRecipientAddress(value || ''));
-
-      setRecipientAddressInput(value || '');
-    },
-    [dispatch],
-  );
-
-  const handleRecipientAddressBlur = useCallback(async () => {
-    const addressInput = getRecipientAddressInput();
-
-    try {
-      if (!addressInput) {
-        handleFormValidateDataChange({
-          [TransferFormKeys.RECIPIENT]: {
-            validateStatus: TransferValidateStatus.Normal,
-            errorMessage: '',
-          },
-        });
-        await getTransferData(tokenSymbol, amount);
-        return;
-      } else if (addressInput.length < 32 || addressInput.length > 59) {
-        handleFormValidateDataChange({
-          [TransferFormKeys.RECIPIENT]: {
-            validateStatus: TransferValidateStatus.Error,
-            errorMessage: 'Please enter a correct address.',
-          },
-        });
-        return;
-      }
-
-      if (isDIDAddressSuffix(addressInput)) {
-        form.setFieldValue(TransferFormKeys.RECIPIENT, removeELFAddressSuffix(addressInput));
-      }
-
-      handleFormValidateDataChange({
-        [TransferFormKeys.RECIPIENT]: {
-          validateStatus: TransferValidateStatus.Normal,
-          errorMessage: '',
-        },
-      });
-      await getTransferData(tokenSymbol, amount);
-    } catch (error) {
-      console.log('handleRecipientAddressBlur error', error);
-      // SingleMessage.error(handleErrorMessage(error));
-    }
-  }, [
-    amount,
-    form,
-    getRecipientAddressInput,
-    getTransferData,
-    handleFormValidateDataChange,
     tokenSymbol,
   ]);
 
