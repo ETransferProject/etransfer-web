@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks';
-import { ISignMessageResult, WalletTypeEnum } from 'context/Wallet/types';
+import { IGetBalanceRequest, ISignMessageResult, WalletTypeEnum } from 'context/Wallet/types';
 import { getAuthPlainText } from 'utils/auth';
 import myEvents from 'utils/myEvent';
 import { sleep } from '@etransfer/utils';
@@ -34,7 +34,7 @@ export default function useTRON() {
   }, [connect, onConnect, select]);
 
   const getBalance = useCallback(
-    async ({ tokenContractAddress }: { tokenContractAddress: string }) => {
+    async ({ tokenContractAddress }: IGetBalanceRequest) => {
       if (!window.tronLink || !address) return {};
 
       const tronWeb = window.tronLink.tronWeb;

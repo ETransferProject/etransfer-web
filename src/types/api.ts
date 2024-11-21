@@ -485,7 +485,7 @@ export type TCreateTransferOrderRequest = {
   fromNetwork: string;
   toNetwork: string;
   fromSymbol: string;
-  toSymbol?: string;
+  toSymbol: string;
   fromAddress: string;
   toAddress: string;
   memo?: string;
@@ -507,13 +507,13 @@ export type TUpdateTransferOrderRequest = {
   fromNetwork: string;
   toNetwork: string;
   fromSymbol: string;
-  toSymbol?: string;
+  toSymbol: string;
   fromAddress: string;
   toAddress: string;
   address: string; // token pool address
   memo?: string;
   txId: string;
-  status: UpdateTransferOrderStatus;
+  status?: UpdateTransferOrderStatus;
 };
 
 export type TUpdateTransferOrderResult = boolean;

@@ -5,23 +5,19 @@ import { useWallet } from 'context/Wallet';
 import { WalletTypeEnum } from 'context/Wallet/types';
 import { useCallback, useEffect, useState } from 'react';
 import { useCrossChainTransfer, useLoading } from 'store/Provider/hooks';
-import { WalletSourceType } from 'types/api';
 import { checkRegistration } from 'utils/api/user';
 import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
 import myEvents from 'utils/myEvent';
-
-function getWalletSourceType(walletType: WalletTypeEnum) {
-  switch (walletType) {
-    case WalletTypeEnum.EVM:
-      return WalletSourceType.EVM;
-    case WalletTypeEnum.SOL:
-      return WalletSourceType.Solana;
-    case WalletTypeEnum.TRON:
-      return WalletSourceType.TRX;
-    default:
-      return undefined;
-  }
-}
+import {
+  getCaHashAndOriginChainIdByWallet,
+  getManagerAddressByWallet,
+  getWalletSourceType,
+} from 'utils/wallet';
+import useAelf from './useAelf';
+import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
+import { WalletInfo } from 'types/wallet';
+import { AuthTokenSource } from 'types/api';
+import { stringToHex } from 'utils/format';
 
 export function useAuthToken() {
   const { fromWalletType } = useCrossChainTransfer();
@@ -111,7 +107,7 @@ export function useAuthToken() {
         if (!fromWallet?.account || !fromWallet?.walletType) return '';
 
         // 1: local storage has JWT token
-        const key = fromWallet?.account + getWalletSourceType(fromWallet?.walletType);
+        const key = stringToHex(fromWallet?.account) + getWalletSourceType(fromWallet?.walletType);
         const data = getLocalJWT(key);
         if (data) {
           const token_type = data.token_type;
@@ -134,4 +130,62 @@ export function useAuthToken() {
     getAuthToken,
     queryAuthToken,
   };
+}
+
+export function useGetAuthTokenFromStorage() {
+  const { isConnected: isAelfConnected, connector: aelfConnector, walletInfo } = useAelf();
+  const [{ fromWallet }] = useWallet();
+
+  return useCallback(
+    async (walletType?: WalletTypeEnum): Promise<string> => {
+      if (!walletType) return '';
+
+      if (walletType === WalletTypeEnum.AELF) {
+        if (isAelfConnected) {
+          const { caHash } = await getCaHashAndOriginChainIdByWallet(
+            walletInfo as WalletInfo,
+            aelfConnector,
+          );
+          const managerAddress = await getManagerAddressByWallet(
+            walletInfo as WalletInfo,
+            aelfConnector,
+          );
+          const source =
+            aelfConnector === AelfWalletTypeEnum.elf
+              ? AuthTokenSource.NightElf
+              : AuthTokenSource.Portkey;
+          const key = (caHash || source) + managerAddress;
+          const data = getLocalJWT(key);
+          // 1: local storage has JWT token
+          if (data) {
+            const token_type = data.token_type;
+            const access_token = data.access_token;
+            return `${token_type} ${access_token}`;
+          }
+        }
+      } else {
+        if (
+          fromWallet &&
+          fromWallet?.isConnected &&
+          fromWallet?.account &&
+          fromWallet?.walletType &&
+          fromWallet?.walletType === walletType
+        ) {
+          // get JWT token from local storage
+          const key =
+            stringToHex(fromWallet?.account) + getWalletSourceType(fromWallet?.walletType);
+          const data = getLocalJWT(key);
+          if (data) {
+            const token_type = data.token_type;
+            const access_token = data.access_token;
+
+            return `${token_type} ${access_token}`;
+          }
+        }
+      }
+
+      return '';
+    },
+    [aelfConnector, fromWallet, isAelfConnected, walletInfo],
+  );
 }

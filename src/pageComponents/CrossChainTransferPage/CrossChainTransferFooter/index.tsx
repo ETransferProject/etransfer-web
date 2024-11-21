@@ -13,7 +13,7 @@ import clsx from 'clsx';
 import { useCrossChainTransfer } from 'store/Provider/hooks';
 import { useWallet } from 'context/Wallet';
 import { useAuthToken } from 'hooks/wallet/authToken';
-import { createTransferOrder } from 'utils/api/transfer';
+import { createTransferOrder, updateTransferOrder } from 'utils/api/transfer';
 import { SingleMessage } from '@etransfer/ui-react';
 import { WalletTypeEnum } from 'context/Wallet/types';
 import {
@@ -33,6 +33,7 @@ export interface CrossChainTransferFooterProps {
   estimateReceiveUnit?: string;
   transactionFee?: string;
   transactionFeeUnit?: string;
+  tokenContractAddress?: string;
   isSubmitDisabled: boolean;
 }
 
@@ -45,6 +46,7 @@ export default function CrossChainTransferFooter({
   estimateReceiveUnit = '',
   transactionFee = DEFAULT_NULL_VALUE,
   transactionFeeUnit = '',
+  tokenContractAddress,
   isSubmitDisabled,
 }: CrossChainTransferFooterProps) {
   const { fromNetwork, fromWalletType, tokenSymbol, toNetwork, toWalletType } =
@@ -76,18 +78,21 @@ export default function CrossChainTransferFooter({
         // aelf logic
       } else {
         // get etransfer jwt
-        const jwt = await getAuthToken({ recipientAddress });
+        const authToken = await getAuthToken({ recipientAddress });
 
         // create order id
-        const orderResult = await createTransferOrder({
-          amount: amount,
-          fromNetwork: fromNetwork?.network,
-          toNetwork: toNetwork?.network,
-          fromSymbol: tokenSymbol,
-          fromAddress: fromWallet?.account,
-          toAddress,
-          token: jwt,
-        });
+        const orderResult = await createTransferOrder(
+          {
+            amount: amount,
+            fromNetwork: fromNetwork?.network,
+            toNetwork: toNetwork?.network,
+            fromSymbol: tokenSymbol,
+            toSymbol: tokenSymbol,
+            fromAddress: fromWallet?.account,
+            toAddress,
+          },
+          authToken,
+        );
         console.log('>>>>>> orderResult', orderResult);
 
         let params:
@@ -97,36 +102,54 @@ export default function CrossChainTransferFooter({
           | SendTRONTransactionParams;
         if (fromWallet.walletType === WalletTypeEnum.EVM) {
           params = {
-            tokenContractAddress: orderResult.address,
-            toAddress,
+            network: fromNetwork?.network,
+            tokenContractAddress: tokenContractAddress,
+            toAddress: orderResult.address,
             tokenAbi: EVM_USDT_ABI, // TODO
             amount: amount, // TODO
             decimals: 6, // TODO
           } as SendEVMTransactionParams;
         } else if (fromWallet.walletType === WalletTypeEnum.SOL) {
           params = {
-            tokenContractAddress: orderResult.address,
-            toAddress,
+            tokenContractAddress: tokenContractAddress,
+            toAddress: orderResult.address,
             amount: amount, // TODO
             decimals: 6, // TODO
           } as SendSolanaTransactionParams;
         } else if (fromWallet.walletType === WalletTypeEnum.TON) {
           params = {
-            tokenContractAddress: orderResult.address,
-            toAddress,
+            tokenContractAddress: tokenContractAddress,
+            toAddress: orderResult.address,
             amount: Number(amount), // TODO
             forwardTonAmount: '', // TODO
           } as SendTONTransactionParams;
         } else {
           params = {
-            tokenContractAddress: orderResult.address,
-            toAddress,
+            tokenContractAddress: tokenContractAddress,
+            toAddress: orderResult.address,
             amount: Number(amount), // TODO
           } as SendTRONTransactionParams;
         }
 
         const sendTransferResult = await fromWallet?.sendTransaction(params);
         console.log('>>>>>> sendTransferResult', sendTransferResult);
+
+        const updateOrderResult = await updateTransferOrder(
+          {
+            amount: amount,
+            fromNetwork: fromNetwork?.network,
+            toNetwork: toNetwork?.network,
+            fromSymbol: tokenSymbol,
+            toSymbol: tokenSymbol,
+            fromAddress: fromWallet?.account,
+            toAddress,
+            address: orderResult.address,
+            txId: sendTransferResult, // TODO sol ton tron
+          },
+          orderResult.orderId,
+          authToken,
+        );
+        console.log('>>>>>> sendTransferResult updateOrderResult', updateOrderResult);
       }
     } catch (error) {
       SingleMessage.error(handleErrorMessage(error));
@@ -141,6 +164,7 @@ export default function CrossChainTransferFooter({
     toWallet?.account,
     toWallet?.isConnected,
     toWalletType,
+    tokenContractAddress,
     tokenSymbol,
   ]);
 
@@ -176,7 +200,7 @@ export default function CrossChainTransferFooter({
     return {
       children: BUTTON_TEXT_TRANSFER,
       onClick: onTransfer,
-      disabled: isSubmitDisabled,
+      disabled: recipientAddress ? isSubmitDisabled : false,
       loading,
     };
   }, [

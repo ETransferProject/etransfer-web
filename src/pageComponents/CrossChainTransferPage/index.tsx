@@ -19,11 +19,12 @@ import {
   TNetworkItem,
   TTokenItem,
 } from 'types/api';
-import { getNetworkList, getTokenList, getTransferInfo } from 'utils/api/transfer';
+import { getTransferNetworkList, getTokenList, getTransferInfo } from 'utils/api/transfer';
 import {
   InitialCrossChainTransferState,
   setFromNetwork,
   setFromNetworkList,
+  setFromWalletType,
   setRecipientAddress,
   setTokenList,
   setTokenSymbol,
@@ -31,6 +32,7 @@ import {
   setToNetworkList,
   setTotalNetworkList,
   setTotalTokenList,
+  setToWalletType,
 } from 'store/reducers/crossChainTransfer/slice';
 import { formatSymbolDisplay } from '@etransfer/ui-react';
 import { removeELFAddressSuffix, ZERO } from '@etransfer/utils';
@@ -48,11 +50,12 @@ import { WalletTypeEnum } from 'context/Wallet/types';
 import { computeTokenList, computeToNetworkList } from './utils';
 import { getTokenPrices } from 'utils/api/user';
 import BigNumber from 'bignumber.js';
-import { isAelfChain } from 'utils/wallet';
+import { computeWalletType, isAelfChain } from 'utils/wallet';
 import { checkIsEnoughAllowance } from 'utils/contract';
 import { APPROVE_ELF_FEE } from 'constants/withdraw';
 import { SupportedELFChainId } from 'constants/index';
-import { getLocalJWT } from 'api/utils';
+import { useUpdateBalance } from 'hooks/wallet/useUpdateBalance';
+import { useGetAuthTokenFromStorage } from 'hooks/wallet/authToken';
 
 export default function CrossChainTransferPage() {
   const dispatch = useAppDispatch();
@@ -71,15 +74,15 @@ export default function CrossChainTransferPage() {
   const [transferInfo, setTransferInfo] = useState<TCrossChainTransferInfo>(
     InitialCrossChainTransferInfo,
   );
+  const transferInfoRef = useRef(InitialCrossChainTransferInfo);
   const [recipientAddressInput, setRecipientAddressInput] = useState('');
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [amount, setAmount] = useState('');
   const [amountUSD, setAmountUSD] = useState('');
   const [amountPriceUsd, setAmountPriceUSD] = useState<number>(0);
-
-  // TODO
-  const balance = '0';
-  // const [balance, setBalance] = useState('0');
+  const { setEVMTokenContractAddressRef, balance, getBalance, getBalanceInterval } =
+    useUpdateBalance();
+  const getAuthTokenFromStorage = useGetAuthTokenFromStorage();
 
   const minAmount = useMemo(() => {
     return transferInfo?.minAmount || '0.2';
@@ -100,6 +103,7 @@ export default function CrossChainTransferPage() {
     const item = totalTokenList?.find((item) => item.symbol === tokenSymbol);
     return item?.symbol ? item : InitialCrossChainTransferState.tokenList[0];
   }, [tokenSymbol, totalTokenList]);
+  const currentTokenRef = useRef(currentToken);
 
   const getRecipientAddressInput = useCallback(() => {
     return form.getFieldValue(TransferFormKeys.RECIPIENT)?.trim();
@@ -119,7 +123,6 @@ export default function CrossChainTransferPage() {
           TransferValidateStatus.Error ||
         isValueUndefined(getRecipientAddressInput()) ||
         isValueUndefined(form.getFieldValue(TransferFormKeys.AMOUNT));
-
       setIsSubmitDisabled(isDisabled);
     },
     [form, getRecipientAddressInput],
@@ -144,6 +147,7 @@ export default function CrossChainTransferPage() {
 
         const params: TGetTransferInfoRequest = {
           fromNetwork: _fromNetworkKey,
+          toNetwork: toNetwork?.network,
           symbol: symbol || tokenSymbol,
         };
         if (amount) params.amount = amount;
@@ -152,29 +156,33 @@ export default function CrossChainTransferPage() {
 
         let authToken = '';
         if (fromWalletType && fromWallet?.isConnected && fromWallet?.account) {
-          const key = fromWallet?.account + fromWallet?.walletType || fromWalletType;
-          const localJWT = getLocalJWT(key);
-          if (localJWT) {
-            const token_type = localJWT.token_type;
-            const access_token = localJWT.access_token;
-            authToken = `${token_type} ${access_token}`;
-          }
+          authToken = await getAuthTokenFromStorage(fromWalletType);
         }
 
         const res = await getTransferInfo(params, authToken);
+        transferInfoRef.current = res.transferInfo;
+        setEVMTokenContractAddressRef.current = '0x60eeCc4d19f65B9EaDe628F2711C543eD1cE6679'; // res.transferInfo.contractAddress as `0x${string}`; // TODO
+
         setTransferInfo({
           ...res.transferInfo,
           limitCurrency: formatSymbolDisplay(res.transferInfo.limitCurrency),
           transactionUnit: formatSymbolDisplay(res.transferInfo?.transactionUnit || ''),
         });
-
-        return res;
       } catch (error) {
         console.log('getTransferData error', error);
-        throw error;
       }
     },
-    [fromWallet, fromWalletType, getCommentInput, toWallet?.walletType, tokenSymbol],
+    [
+      fromWallet?.account,
+      fromWallet?.isConnected,
+      fromWalletType,
+      getAuthTokenFromStorage,
+      getCommentInput,
+      setEVMTokenContractAddressRef,
+      toNetwork?.network,
+      toWallet?.walletType,
+      tokenSymbol,
+    ],
   );
 
   const getTokenData = useCallback(
@@ -190,23 +198,22 @@ export default function CrossChainTransferPage() {
         const allowTokenList = computeTokenList(toNetworkRef.current, res.tokenList);
         dispatch(setTokenList(allowTokenList));
 
-        let _tokenSymbol = '';
         if (isInitCurrentSymbol && !tokenSymbol) {
           dispatch(setTokenSymbol(allowTokenList[0].symbol));
-          _tokenSymbol = allowTokenList[0].symbol;
+          currentTokenRef.current = allowTokenList[0];
         } else {
           const exitToken = res.tokenList.find((item) => item.symbol === tokenSymbol);
           if (exitToken) {
             dispatch(setTokenSymbol(exitToken.symbol));
-            _tokenSymbol = exitToken.symbol;
+            currentTokenRef.current = exitToken;
           } else {
             dispatch(setTokenSymbol(allowTokenList[0].symbol));
-            _tokenSymbol = allowTokenList[0].symbol;
+            currentTokenRef.current = allowTokenList[0];
           }
         }
 
         // to get minAmount and contractAddress
-        await getTransferData(_tokenSymbol, undefined, '');
+        await getTransferData(currentTokenRef.current.symbol, undefined, '');
 
         return res.tokenList;
       } catch (error) {
@@ -220,7 +227,11 @@ export default function CrossChainTransferPage() {
 
   const getNetworkData = useCallback(async () => {
     try {
-      const { networkList } = await getNetworkList({ type: BusinessType.Transfer });
+      const authToken = await getAuthTokenFromStorage(fromWalletType);
+      const { networkList } = await getTransferNetworkList(
+        { type: BusinessType.Transfer },
+        authToken,
+      );
 
       dispatch(setTotalNetworkList(networkList));
       dispatch(setFromNetworkList(networkList));
@@ -235,7 +246,15 @@ export default function CrossChainTransferPage() {
           dispatch(setFromNetwork(networkList[0]));
           fromNetworkRef.current = networkList[0];
         }
+        // set from wallet logic
+        const _fromWalletType = computeWalletType(fromNetworkRef.current.network);
+        if (_fromWalletType) {
+          dispatch(setFromWalletType(_fromWalletType));
+        } else {
+          dispatch(setFromWalletType(undefined));
+        }
 
+        // to logic
         const toNetworkList = computeToNetworkList(
           fromNetworkRef.current,
           networkList,
@@ -244,7 +263,6 @@ export default function CrossChainTransferPage() {
         console.log('computeToNetworkList toNetworkList', toNetworkList);
         dispatch(setToNetworkList(toNetworkList));
 
-        // to logic
         const exitToNetwork = toNetworkList.find((item) => item.network === toNetwork?.network);
         if (exitToNetwork && exitToNetwork.status !== NetworkStatus.Offline) {
           dispatch(setToNetwork(exitToNetwork));
@@ -254,14 +272,24 @@ export default function CrossChainTransferPage() {
           toNetworkRef.current = toNetworkList[0];
         }
 
+        // set to wallet logic
+        const _toWalletType = computeWalletType(toNetworkRef.current.network);
+        if (_toWalletType) {
+          dispatch(setToWalletType(_toWalletType));
+        } else {
+          dispatch(setToWalletType(undefined));
+        }
+
         // token logic
         const allowTokenList = computeTokenList(toNetworkRef.current, totalTokenListRef.current);
         dispatch(setTokenList(allowTokenList));
         const exitToken = totalTokenListRef.current.find((item) => item.symbol === tokenSymbol);
         if (exitToken) {
           dispatch(setTokenSymbol(exitToken.symbol));
+          currentTokenRef.current = exitToken;
         } else {
           dispatch(setTokenSymbol(allowTokenList[0].symbol));
+          currentTokenRef.current = allowTokenList[0];
         }
       } else {
         // TODO
@@ -271,7 +299,14 @@ export default function CrossChainTransferPage() {
     } catch (error: any) {
       console.log('getNetworkData error', error);
     }
-  }, [dispatch, fromNetwork?.network, toNetwork?.network, tokenSymbol]);
+  }, [
+    dispatch,
+    fromNetwork?.network,
+    fromWalletType,
+    getAuthTokenFromStorage,
+    toNetwork?.network,
+    tokenSymbol,
+  ]);
 
   const handleRecipientAddressChange = useCallback(
     (value: string | null) => {
@@ -293,7 +328,7 @@ export default function CrossChainTransferPage() {
             errorMessage: '',
           },
         });
-        await getTransferData(tokenSymbol, amount);
+        await getTransferData(tokenSymbol, undefined, amount);
         return;
       } else if (addressInput.length < 32 || addressInput.length > 59) {
         handleFormValidateDataChange({
@@ -315,7 +350,7 @@ export default function CrossChainTransferPage() {
           errorMessage: '',
         },
       });
-      await getTransferData(tokenSymbol, amount);
+      await getTransferData(tokenSymbol, undefined, amount);
     } catch (error) {
       console.log('handleRecipientAddressBlur error', error);
       // SingleMessage.error(handleErrorMessage(error));
@@ -349,17 +384,59 @@ export default function CrossChainTransferPage() {
         form.setFieldValue(TransferFormKeys.COMMENT, '');
 
         await getTransferData(tokenSymbol, item.network, '');
+
+        getBalanceInterval(
+          transferInfoRef.current?.contractAddress || '',
+          item.network,
+          currentTokenRef.current,
+        );
+        getBalance(
+          true,
+          transferInfoRef.current?.contractAddress || '',
+          item.network,
+          currentTokenRef.current,
+        );
       } catch (error) {
         console.log('handleFromNetworkChanged error', error);
       }
     },
     [
       form,
+      getBalance,
+      getBalanceInterval,
       getTransferData,
       handleFormValidateDataChange,
       handleRecipientAddressChange,
       tokenSymbol,
     ],
+  );
+
+  const handleTokenChanged = useCallback(
+    async (item: TTokenItem) => {
+      try {
+        form.setFieldValue(TransferFormKeys.AMOUNT, '');
+        setAmount('');
+        setAmountUSD('');
+        // handleAmountValidate(); // TODO
+
+        await getTransferData(item.symbol, undefined, '');
+
+        getBalanceInterval(
+          transferInfoRef.current?.contractAddress || '',
+          fromNetwork?.network,
+          item,
+        );
+        getBalance(
+          true,
+          transferInfoRef.current?.contractAddress || '',
+          fromNetwork?.network,
+          item,
+        );
+      } catch (error) {
+        console.log('handleFromNetworkChanged error', error);
+      }
+    },
+    [form, fromNetwork?.network, getBalance, getBalanceInterval, getTransferData],
   );
 
   const getAmountUSD = useCallback(async () => {
@@ -387,10 +464,10 @@ export default function CrossChainTransferPage() {
     try {
       // TODO
       // if (handleAmountValidate()) {
-      const transferRes = await getTransferData(tokenSymbol, amount);
+      await getTransferData(tokenSymbol, undefined, amount);
 
       // update amount usd display
-      setAmountUSD(BigNumber(transferRes?.transferInfo.amountUsd || '').toFixed(2));
+      setAmountUSD(BigNumber(transferInfoRef.current.amountUsd || '').toFixed(2));
 
       // update usd price
       getAmountUSD();
@@ -405,9 +482,9 @@ export default function CrossChainTransferPage() {
     if (isAelfChain(fromNetwork?.network) && tokenSymbol === 'ELF') {
       try {
         setLoading(true);
-        const res = await getTransferData(tokenSymbol, amount);
+        await getTransferData(tokenSymbol, undefined, amount);
         let _maxInput = balance;
-        const aelfFee = res?.transferInfo?.aelfTransactionFee;
+        const aelfFee = transferInfoRef.current?.aelfTransactionFee;
         if (aelfFee && ZERO.plus(aelfFee).gt(0)) {
           const isEnoughAllowance = await checkIsEnoughAllowance({
             chainId: fromNetwork.network as SupportedELFChainId,
@@ -439,6 +516,7 @@ export default function CrossChainTransferPage() {
     }
   }, [
     amount,
+    balance,
     currentToken.contractAddress,
     form,
     fromNetwork.network,
@@ -457,7 +535,13 @@ export default function CrossChainTransferPage() {
     await getNetworkData();
     await getTokenData();
     getAmountUSD();
-  }, [getAmountUSD, getNetworkData, getTokenData]);
+
+    getBalanceInterval(
+      transferInfoRef.current?.contractAddress || '',
+      fromNetworkRef.current?.network,
+      currentTokenRef.current,
+    );
+  }, [getAmountUSD, getBalanceInterval, getNetworkData, getTokenData]);
   const initRef = useRef(init);
   initRef.current = init;
 
@@ -489,6 +573,7 @@ export default function CrossChainTransferPage() {
       isSubmitDisabled={isSubmitDisabled}
       recipientAddress={recipientAddressInput}
       onFromNetworkChanged={handleFromNetworkChanged}
+      onTokenChanged={handleTokenChanged}
       onAmountChange={handleAmountChange}
       onAmountBlur={handleAmountBlur}
       onClickMax={handleClickMax}

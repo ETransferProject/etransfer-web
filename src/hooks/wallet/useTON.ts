@@ -6,7 +6,7 @@ import {
   Wallet,
   TonConnectError,
 } from '@tonconnect/ui-react';
-import { WalletTypeEnum } from 'context/Wallet/types';
+import { IGetBalanceRequest, WalletTypeEnum } from 'context/Wallet/types';
 import { useCallback, useEffect, useMemo } from 'react';
 import TonWeb from 'tonweb';
 import { Address as CoreAddress, beginCell, toNano } from '@ton/core';
@@ -23,7 +23,7 @@ export default function useTON() {
   const address = useMemo(() => wallet?.account.address, [wallet?.account.address]);
 
   const getBalance = useCallback(
-    async ({ tokenContractAddress }: { tokenContractAddress: string }) => {
+    async ({ tokenContractAddress }: IGetBalanceRequest) => {
       if (!address) return;
       const jettonMinter = getTONJettonMinter(tokenContractAddress);
       const jettonWalletAddress = await jettonMinter.getJettonWalletAddress(

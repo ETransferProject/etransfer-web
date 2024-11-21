@@ -51,8 +51,7 @@ export interface IGetSignatureResult {
 }
 
 export interface IGetBalanceRequest {
-  address: string;
-  tokenAddress?: string | undefined;
+  tokenContractAddress: string;
 }
 
 export interface IGetBalanceResult {

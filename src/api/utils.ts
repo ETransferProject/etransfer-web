@@ -119,7 +119,16 @@ export const setLocalJWT = (key: string, data: LocalJWTData) => {
     ...data,
     expiresTime: Date.now() + (data.expires_in - 10) * 1000,
   };
-  return localStorage.setItem(LocalStorageKey.ACCESS_TOKEN, JSON.stringify({ [key]: localData }));
+  const _oldLocalData = localStorage.getItem(LocalStorageKey.ACCESS_TOKEN);
+  if (!_oldLocalData) {
+    return localStorage.setItem(LocalStorageKey.ACCESS_TOKEN, JSON.stringify({ [key]: localData }));
+  }
+
+  const _localDataParse = JSON.parse(_oldLocalData) as { [key: string]: LocalJWTData };
+
+  _localDataParse[key] = localData;
+
+  return localStorage.setItem(LocalStorageKey.ACCESS_TOKEN, JSON.stringify(_localDataParse));
 };
 
 export const queryAuthApi = async (config: QueryAuthApiExtraRequest): Promise<string> => {

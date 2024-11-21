@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { ISignMessageResult, WalletTypeEnum } from 'context/Wallet/types';
+import { IGetBalanceRequest, ISignMessageResult, WalletTypeEnum } from 'context/Wallet/types';
 import { getAuthPlainText } from 'utils/auth';
 import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
 import {
@@ -30,7 +30,7 @@ export default function useSolana() {
   } = useWallet();
 
   const getBalance = useCallback(
-    async ({ tokenContractAddress }: { tokenContractAddress: string }) => {
+    async ({ tokenContractAddress }: IGetBalanceRequest) => {
       if (!publicKey) return '';
       const tokenAddress = new PublicKey(tokenContractAddress);
       const senderTokenAccount = await getAssociatedTokenAddress(
@@ -40,9 +40,10 @@ export default function useSolana() {
         TOKEN_PROGRAM_ID,
       );
       const { value } = await connection.getTokenAccountBalance(senderTokenAccount);
-      // amount,decimals
-
-      return value;
+      return {
+        value: value.amount,
+        decimals: value.decimals,
+      };
     },
     [connection, publicKey],
   );

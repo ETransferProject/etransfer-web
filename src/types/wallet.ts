@@ -44,6 +44,7 @@ export interface ExtraInfoForNightElf {
 }
 
 export interface SendEVMTransactionParams {
+  network: string;
   tokenContractAddress: `0x${string}`;
   toAddress: string;
   tokenAbi: Abi | unknown[];
