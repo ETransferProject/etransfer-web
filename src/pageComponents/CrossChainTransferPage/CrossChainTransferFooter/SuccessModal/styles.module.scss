@@ -1,0 +1,86 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/styles/common.scss';
+
+.container {
+  gap: 24px;
+  @include media-mobile-and-pad {
+    padding-top: 24px;
+  }
+}
+
+.title-wrapper {
+  gap: 16px;
+}
+
+.title-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: $success-bg;
+}
+
+.title {
+  @extend .font-family-medium;
+  font-size: 20px;
+  line-height: 28px;
+  color: $primary-text;
+}
+
+.main-info-wrapper {
+  gap: 4px;
+  .value {
+    font-size: 24px;
+    line-height: 32px;
+  }
+}
+
+.detail-wrapper {
+  gap: 16px;
+}
+
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  .label {
+    flex: none;
+    width: 152px;
+  }
+  .value {
+    flex: 1;
+    text-align: right;
+    word-break: break-all;
+  }
+}
+
+.label,
+.value {
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.label {
+  color: $secondary-text;
+}
+
+.value {
+  @extend .font-family-medium;
+  color: $primary-text;
+  .value-center {
+    text-align: center;
+    display: flex;
+  }
+}
+
+.divider {
+  @extend .divider;
+}
+
+.receive-amount-usd {
+  font-size: 14px;
+  text-align: center;
+  color: $secondary-text;
+}
+

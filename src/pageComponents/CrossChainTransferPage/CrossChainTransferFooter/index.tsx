@@ -78,7 +78,7 @@ export default function CrossChainTransferFooter({
         // aelf logic
       } else {
         // get etransfer jwt
-        const authToken = await getAuthToken({ recipientAddress });
+        const authToken = await getAuthToken();
 
         // create order id
         const orderResult = await createTransferOrder(
