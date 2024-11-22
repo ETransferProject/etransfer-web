@@ -33,6 +33,7 @@ export default function WebCrossChainTransfer({
   isSubmitDisabled,
   recipientAddress,
   onFromNetworkChanged,
+  onTokenChanged,
   onAmountChange,
   onAmountBlur,
   onClickMax,
@@ -70,6 +71,7 @@ export default function WebCrossChainTransfer({
           balance={balance}
           transferInfo={transferInfo}
           onFromNetworkChanged={onFromNetworkChanged}
+          onTokenChanged={onTokenChanged}
           onAmountChange={onAmountChange}
           onAmountBlur={onAmountBlur}
           onClickMax={onClickMax}
@@ -106,6 +108,7 @@ export default function WebCrossChainTransfer({
     onFromNetworkChanged,
     onRecipientAddressBlur,
     onRecipientAddressChange,
+    onTokenChanged,
     receiveAmount,
     recipientAddress,
     tokenSymbol,

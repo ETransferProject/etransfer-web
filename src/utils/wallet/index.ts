@@ -20,6 +20,7 @@ import {
 } from 'assets/images';
 import { COINBASE_WALLET_ID, WALLET_CONNECT_ID } from 'constants/wallet/EVM';
 import { BlockchainNetworkType } from 'constants/network';
+import { WalletSourceType } from 'types/api';
 
 export const getManagerAddressByWallet = async (
   walletInfo: WalletInfo,
@@ -169,3 +170,16 @@ export const computeWalletType = (network: string) => {
 export const isAelfWalletType = (walletType: WalletTypeEnum) => {
   return walletType && walletType !== WalletTypeEnum.AELF;
 };
+
+export function getWalletSourceType(walletType: WalletTypeEnum) {
+  switch (walletType) {
+    case WalletTypeEnum.EVM:
+      return WalletSourceType.EVM;
+    case WalletTypeEnum.SOL:
+      return WalletSourceType.Solana;
+    case WalletTypeEnum.TRON:
+      return WalletSourceType.TRX;
+    default:
+      return undefined;
+  }
+}

@@ -33,6 +33,7 @@ import CommonTooltip from 'components/CommonTooltip';
 import { TRANSFER_SEND_RECIPIENT_TIP } from 'constants/crossChainTransfer';
 import CommentFormItemLabel from './CommentFormItemLabel';
 import { computeTokenList, computeToNetworkList } from '../utils';
+import { computeWalletType } from 'utils/wallet';
 
 export interface CrossChainTransferFormProps {
   form: FormInstance<TTransferFormValues>;
@@ -43,6 +44,7 @@ export interface CrossChainTransferFormProps {
   transferInfo: Omit<TCrossChainTransferInfo, 'minAmount'>;
   // getTransferData: (symbol?: string, amount?: string) => Promise<TGetTransferInfoResult>;
   onFromNetworkChanged?: (item: TNetworkItem) => Promise<void>;
+  onTokenChanged?: (item: TTokenItem) => Promise<void>;
   onAmountChange: (value: string) => void;
   onAmountBlur: InputProps['onBlur'];
   onClickMax: () => void;
@@ -58,6 +60,7 @@ export default function CrossChainTransferForm({
   balance,
   transferInfo,
   onFromNetworkChanged,
+  onTokenChanged,
   onAmountChange,
   onAmountBlur,
   onClickMax,
@@ -105,6 +108,13 @@ export default function CrossChainTransferForm({
     async (item: TNetworkItem, newToNetwork?: TNetworkItem) => {
       dispatch(setFromNetwork(item));
 
+      const _fromWalletType = computeWalletType(item.network);
+      if (_fromWalletType) {
+        dispatch(setFromWalletType(_fromWalletType));
+      } else {
+        dispatch(setFromWalletType(undefined));
+      }
+
       // compute toNetwork
       if (!totalNetworkList) return;
       const toNetworkList = computeToNetworkList(item, totalNetworkList, totalTokenList);
@@ -119,6 +129,14 @@ export default function CrossChainTransferForm({
       } else {
         dispatch(setToNetwork(toNetworkList[0]));
         toNetworkNew = toNetworkList[0];
+      }
+
+      // set to wallet logic
+      const _toWalletType = computeWalletType(toNetworkNew.network);
+      if (_toWalletType) {
+        dispatch(setToWalletType(_toWalletType));
+      } else {
+        dispatch(setToWalletType(undefined));
       }
 
       // compute token
@@ -140,6 +158,14 @@ export default function CrossChainTransferForm({
     async (item: TNetworkItem) => {
       dispatch(setToNetwork(item));
 
+      // set to wallet logic
+      const _toWalletType = computeWalletType(item.network);
+      if (_toWalletType) {
+        dispatch(setToWalletType(_toWalletType));
+      } else {
+        dispatch(setToWalletType(undefined));
+      }
+
       // compute token
       const allowTokenList = computeTokenList(item, totalTokenList);
       dispatch(setTokenList(allowTokenList));
@@ -154,10 +180,12 @@ export default function CrossChainTransferForm({
   );
 
   const handleSelectToken = useCallback(
-    (item: TTokenItem) => {
+    async (item: TTokenItem) => {
       dispatch(setTokenSymbol(item.symbol));
+
+      await onTokenChanged?.(item);
     },
-    [dispatch],
+    [dispatch, onTokenChanged],
   );
 
   const handleMouseEnterSwapIcon = useCallback((event: any) => {
@@ -282,7 +310,12 @@ export default function CrossChainTransferForm({
           <div className="flex-row-center gap-8">
             <div>
               <span>Balance:&nbsp;</span>
-              <span>{fromWallet?.isConnected ? balance : '0'}&nbsp;</span>
+              <span>
+                {fromWallet?.isConnected && balance !== '' && balance !== DEFAULT_NULL_VALUE
+                  ? balance
+                  : '0'}
+                &nbsp;
+              </span>
               <span>{tokenSymbol}</span>
             </div>
             {fromWallet?.isConnected && (

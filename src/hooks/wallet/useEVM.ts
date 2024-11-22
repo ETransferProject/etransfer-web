@@ -2,23 +2,18 @@ import { ISignMessageResult, WalletTypeEnum } from 'context/Wallet/types';
 import { useCallback, useMemo, useState } from 'react';
 import { getAuthPlainText } from 'utils/auth';
 import { ethers } from 'ethers';
-import { sepolia } from 'viem/chains';
 import { useAccount, useConnect, useDisconnect, useSignMessage, useWriteContract } from 'wagmi';
 import { EVM_WALLET_ALLOWANCE } from 'constants/wallet/EVM';
 import { AuthTokenSource } from 'types/api';
 import { SendEVMTransactionParams } from 'types/wallet';
 import { stringToHex } from 'utils/format';
+import { getEVMChainInfo } from 'utils/wallet/EVM';
 
 export default function useEVM() {
   const { connectAsync, connectors } = useConnect();
   const { writeContractAsync } = useWriteContract();
   const { disconnect } = useDisconnect();
   const accountInfo = useAccount();
-  // const { data, isSuccess } = useBalance({
-  //   address: accountInfo.address,
-  //   token: EVM_USDT_CONTRACT_ADDRESS_SEPOLIA, // token contract address
-  // });
-  // console.log('>>>>>> EVM balance result', isSuccess, data);
 
   const [isConnected, setIsConnected] = useState(false);
   connectors.map(async (item) => {
@@ -52,6 +47,7 @@ export default function useEVM() {
 
   const sendTransaction = useCallback(
     async ({
+      network,
       tokenContractAddress,
       toAddress,
       tokenAbi,
@@ -61,8 +57,11 @@ export default function useEVM() {
       // if (!accountInfo.address) {
       //   await connectAsync({ chainId: sepolia.id, connector: metaMask() });
       // }
+      const chain = getEVMChainInfo(network);
+      if (!chain) return '';
+
       const data = await writeContractAsync({
-        chainId: sepolia.id, // TODO
+        chainId: chain.id, // sepolia.id, // TODO
         address: tokenContractAddress,
         functionName: 'transfer',
         abi: tokenAbi,

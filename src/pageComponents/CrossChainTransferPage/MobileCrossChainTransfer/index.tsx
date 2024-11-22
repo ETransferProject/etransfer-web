@@ -33,6 +33,7 @@ export default function MobileCrossChainTransfer({
   isSubmitDisabled,
   recipientAddress,
   onFromNetworkChanged,
+  onTokenChanged,
   onAmountChange,
   onAmountBlur,
   onClickMax,
@@ -57,6 +58,7 @@ export default function MobileCrossChainTransfer({
           balance={balance}
           transferInfo={transferInfo}
           onFromNetworkChanged={onFromNetworkChanged}
+          onTokenChanged={onTokenChanged}
           onAmountChange={onAmountChange}
           onAmountBlur={onAmountBlur}
           onClickMax={onClickMax}
@@ -72,6 +74,7 @@ export default function MobileCrossChainTransfer({
           estimateReceiveUnit={tokenSymbol}
           transactionFee={transferInfo.transactionFee}
           transactionFeeUnit={transferInfo.transactionUnit}
+          tokenContractAddress={transferInfo.contractAddress}
           isSubmitDisabled={isSubmitDisabled}
         />
       </div>
@@ -90,6 +93,7 @@ export default function MobileCrossChainTransfer({
     onFromNetworkChanged,
     onRecipientAddressBlur,
     onRecipientAddressChange,
+    onTokenChanged,
     receiveAmount,
     recipientAddress,
     tokenSymbol,

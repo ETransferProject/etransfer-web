@@ -42,6 +42,7 @@ export default function EVMWallet() {
   const onSendTransaction = useCallback(async () => {
     try {
       const data = await sendTransaction({
+        network: 'SETH',
         tokenContractAddress: EVM_USDT_CONTRACT_ADDRESS_SEPOLIA,
         toAddress: EVM_TO_ADDRESS,
         tokenAbi: EVM_USDT_ABI,

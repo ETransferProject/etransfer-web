@@ -37,6 +37,24 @@ export const getNetworkList = async (
   }
 };
 
+export const getTransferNetworkList = async (
+  params: TGetNetworkListRequest,
+  authToken?: string,
+): Promise<TGetNetworkListResult> => {
+  try {
+    const res = await request.transfer.getNetworkList({
+      params,
+      cancelTokenSourceKey: CancelTokenSourceKey.GET_NETWORK_LIST,
+      headers: {
+        Authorization: authToken || '',
+      },
+    });
+    return res.data;
+  } catch (error: any) {
+    throw formatApiError(error, 'getNetworkList error', true);
+  }
+};
+
 export const getTransferInfo = async (
   params: TGetTransferInfoRequest,
   authToken?: string,
@@ -56,12 +74,13 @@ export const getTransferInfo = async (
 };
 
 export const createTransferOrder = async (
-  params: TCreateTransferOrderRequest & { token: string },
+  params: TCreateTransferOrderRequest,
+  authToken?: string,
 ): Promise<TCreateTransferOrderResult> => {
   try {
     const res = await request.transfer.createTransferOrder({
       data: params,
-      headers: { Authorization: params.token },
+      headers: { Authorization: authToken || '' },
     });
     return res.data;
   } catch (error: any) {
@@ -71,9 +90,15 @@ export const createTransferOrder = async (
 
 export const updateTransferOrder = async (
   params: TUpdateTransferOrderRequest,
+  orderId: string,
+  authToken?: string,
 ): Promise<TUpdateTransferOrderResult> => {
   try {
-    const res = await request.transfer.updateTransferOrder({ data: params });
+    const res = await request.transfer.updateTransferOrder({
+      data: params,
+      query: orderId,
+      headers: { Authorization: authToken || '' },
+    });
     return res.data;
   } catch (error: any) {
     throw formatApiError(error, 'updateTransferOrder error', false);
