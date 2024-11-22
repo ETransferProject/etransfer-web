@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { Select, DatePicker, Button } from 'antd';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import { setSkipCount } from 'store/reducers/records/slice';
-import { TRecordsRequestStatus, TRecordsStatusI18n } from 'types/records';
+import { TRecordsRequestType, TRecordsRequestStatus, TRecordsStatusI18n } from 'types/records';
 import { useCallback, useMemo } from 'react';
 import { TRangeValue } from 'types/api';
 import { TRecordsContentProps } from 'pageComponents/HistoryContent';
@@ -13,14 +13,23 @@ import moment from 'moment';
 import { useHistoryFilter } from 'hooks/history';
 import { END_TIME_FORMAT, START_TIME_FORMAT } from 'constants/records';
 import { DATE_FORMATE } from 'constants/misc';
-import HeaderTab, { EHeaderTab } from 'pageComponents/HistoryContent/HeaderTab';
+import HeaderTab from 'pageComponents/HistoryContent/HeaderTab';
 
 const { RangePicker } = DatePicker;
 
 export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecordsContentProps) {
   const dispatch = useAppDispatch();
-  const { status, timestamp } = useRecordsState();
-  const { setStatusFilter, setTimestampFilter } = useHistoryFilter();
+  const { type, status, timestamp } = useRecordsState();
+  const { setTypeFilter, setStatusFilter, setTimestampFilter } = useHistoryFilter();
+
+  const handleTypeChange = useCallback(
+    (type: TRecordsRequestType) => {
+      setTypeFilter(type);
+      dispatch(setSkipCount(1));
+      requestRecordsList();
+    },
+    [dispatch, requestRecordsList, setTypeFilter],
+  );
 
   const handleStatusChange = useCallback(
     (status: TRecordsRequestStatus) => {
@@ -65,7 +74,7 @@ export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecor
 
   return (
     <div className={clsx(styles['web-records-header-wrapper'])}>
-      <HeaderTab activeTab={EHeaderTab.TRANSFER} onChange={() => void 0} />
+      <HeaderTab activeTab={type} onChange={handleTypeChange} />
       <div className={clsx(styles['web-records-search-wrapper'])}>
         <Select
           size={'large'}

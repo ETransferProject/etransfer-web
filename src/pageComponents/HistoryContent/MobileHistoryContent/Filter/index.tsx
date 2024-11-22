@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { FilterIcon, CloseSmall } from 'assets/images';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import { setSkipCount, setRecordsList } from 'store/reducers/records/slice';
-import { TRecordsRequestStatus, TRecordsStatusI18n } from 'types/records';
+import { TRecordsRequestStatus, TRecordsRequestType, TRecordsStatusI18n } from 'types/records';
 import CommonDrawer from 'components/CommonDrawer';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import { Select, DatePicker } from 'antd';
@@ -16,10 +16,11 @@ import { useHistoryFilter } from 'hooks/history';
 import SimpleTipModal from 'pageComponents/Modal/SimpleTipModal';
 import { END_TIME_FORMAT, START_TIME_FORMAT } from 'constants/records';
 import { DATE_FORMATE } from 'constants/misc';
+import HeaderTab from 'pageComponents/HistoryContent/HeaderTab';
 
 export default function Filter({ requestRecordsList, onReset }: TRecordsContentProps) {
   const dispatch = useAppDispatch();
-  const { status, timestamp } = useRecordsState();
+  const { type, status, timestamp } = useRecordsState();
   const [isShowFilterDrawer, setIsShowFilterDrawer] = useState(false);
   const [filterStatus, setFilterStatus] = useState<TRecordsRequestStatus>(status);
   const [filterTimestampStart, setFilterTimestampStart] = useState<Moment | null>(
@@ -49,7 +50,18 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
 
   const [openTipModal, setOpenTipModal] = useState(false);
 
-  const { setFilter, setStatusFilter, setTimestampFilter } = useHistoryFilter();
+  const { setTypeFilter, setFilter, setStatusFilter, setTimestampFilter } = useHistoryFilter();
+
+  const handleTypeFilter = useCallback(
+    (type: TRecordsRequestType) => {
+      setTypeFilter(type);
+      dispatch(setSkipCount(1));
+      dispatch(setRecordsList([]));
+      requestRecordsList();
+    },
+    [dispatch, requestRecordsList, setTypeFilter],
+  );
+
   const closeItem = useCallback(
     (clickType: string) => {
       switch (clickType) {
@@ -119,113 +131,116 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
   }, [status, timestamp]);
 
   return (
-    <div className={clsx(styles['filter-wrapper'])}>
-      <div className={clsx('flex-row-center', 'flex-row-wrap', styles['filter-item-wrapper'])}>
-        <div
-          className={clsx('flex-center', 'flex-shrink-0', styles['filter-icon'])}
-          onClick={handleOpenFilterDrawer}>
-          <FilterIcon />
+    <>
+      <HeaderTab className={styles['header-tab']} activeTab={type} onChange={handleTypeFilter} />
+      <div className={clsx(styles['filter-wrapper'])}>
+        <div className={clsx('flex-row-center', 'flex-row-wrap', styles['filter-item-wrapper'])}>
+          <div
+            className={clsx('flex-center', 'flex-shrink-0', styles['filter-icon'])}
+            onClick={handleOpenFilterDrawer}>
+            <FilterIcon />
+          </div>
+          {status !== TRecordsRequestStatus.ALL && (
+            <div className={clsx('flex-shrink-0', styles['filter-item'])}>
+              {status === TRecordsRequestStatus.Processing && TRecordsStatusI18n.Processing}
+              {status === TRecordsRequestStatus.Succeed && TRecordsStatusI18n.Succeed}
+              {status === TRecordsRequestStatus.Failed && TRecordsStatusI18n.Failed}
+              <CloseSmall
+                className={styles['filter-close-icon']}
+                onClick={() => closeItem('status')}
+              />
+            </div>
+          )}
+          {isShowTimestamp() && (
+            <div className={clsx('flex-shrink-0', styles['filter-item'])}>
+              {(timestamp?.[0] && moment(timestamp[0]).format(DATE_FORMATE)) ||
+                `${DEFAULT_NULL_VALUE}`}
+              {' - '}
+              {(timestamp?.[1] && moment(timestamp[1]).format(DATE_FORMATE)) ||
+                `${DEFAULT_NULL_VALUE}`}
+              <CloseSmall
+                className={styles['filter-close-icon']}
+                onClick={() => closeItem('timestamp')}
+              />
+            </div>
+          )}
+          {isShowReset && (
+            <div className={clsx('flex-shrink-0', styles['filter-reset'])} onClick={onReset}>
+              Reset
+            </div>
+          )}
         </div>
-        {status !== TRecordsRequestStatus.ALL && (
-          <div className={clsx('flex-shrink-0', styles['filter-item'])}>
-            {status === TRecordsRequestStatus.Processing && TRecordsStatusI18n.Processing}
-            {status === TRecordsRequestStatus.Succeed && TRecordsStatusI18n.Succeed}
-            {status === TRecordsRequestStatus.Failed && TRecordsStatusI18n.Failed}
-            <CloseSmall
-              className={styles['filter-close-icon']}
-              onClick={() => closeItem('status')}
+        <CommonDrawer
+          open={isShowFilterDrawer}
+          height={'100%'}
+          title={<div className={styles['filter-title']}>Filters</div>}
+          id="historyFilterDrawer"
+          className={styles['filter-drawer-wrapper']}
+          destroyOnClose
+          placement={'right'}
+          footer={
+            <div className={styles['drawer-button-wrapper']}>
+              <CommonButton
+                className={styles['cancel-button']}
+                type={CommonButtonType.Secondary}
+                onClick={handleResetFilter}>
+                {'Reset'}
+              </CommonButton>
+              <CommonButton className={styles['ok-button']} onClick={() => handleApplyFilter()}>
+                {'Apply'}
+              </CommonButton>
+            </div>
+          }
+          onClose={() => setIsShowFilterDrawer(!isShowFilterDrawer)}>
+          <div className={styles['filter-drawer-content']}>
+            <div className={styles['filter-drawer-label']}>Status</div>
+            <Select
+              size={'large'}
+              value={filterStatus}
+              className={clsx(styles['mobile-records-select-status'], styles['border-change'])}
+              onChange={setFilterStatus}
+              popupClassName={'drop-wrap'}
+              options={[
+                { value: TRecordsRequestStatus.ALL, label: 'All Status' },
+                { value: TRecordsRequestStatus.Processing, label: TRecordsStatusI18n.Processing },
+                { value: TRecordsRequestStatus.Succeed, label: TRecordsStatusI18n.Succeed },
+                { value: TRecordsRequestStatus.Failed, label: TRecordsStatusI18n.Failed },
+              ]}
+            />
+            <div className={styles['filter-drawer-label']}>Start time</div>
+            <DatePicker
+              inputReadOnly={true}
+              size={'large'}
+              allowClear={false}
+              value={filterTimestampStart}
+              className={clsx(styles['mobile-records-range-picker'])}
+              format={DATE_FORMATE}
+              onChange={setFilterTimestampStart}
+              showTime={false}
+              placeholder={'please choose the start time'}
+            />
+            <div className={styles['filter-drawer-label']}>End time</div>
+            <DatePicker
+              inputReadOnly={true}
+              size={'large'}
+              allowClear={false}
+              value={filterTimestampEnd}
+              className={clsx(styles['mobile-records-range-picker'])}
+              format={DATE_FORMATE}
+              onChange={setFilterTimestampEnd}
+              showTime={false}
+              placeholder={'please choose the end time'}
             />
           </div>
-        )}
-        {isShowTimestamp() && (
-          <div className={clsx('flex-shrink-0', styles['filter-item'])}>
-            {(timestamp?.[0] && moment(timestamp[0]).format(DATE_FORMATE)) ||
-              `${DEFAULT_NULL_VALUE}`}
-            {' - '}
-            {(timestamp?.[1] && moment(timestamp[1]).format(DATE_FORMATE)) ||
-              `${DEFAULT_NULL_VALUE}`}
-            <CloseSmall
-              className={styles['filter-close-icon']}
-              onClick={() => closeItem('timestamp')}
-            />
-          </div>
-        )}
-        {isShowReset && (
-          <div className={clsx('flex-shrink-0', styles['filter-reset'])} onClick={onReset}>
-            Reset
-          </div>
-        )}
-      </div>
-      <CommonDrawer
-        open={isShowFilterDrawer}
-        height={'100%'}
-        title={<div className={styles['filter-title']}>Filters</div>}
-        id="historyFilterDrawer"
-        className={styles['filter-drawer-wrapper']}
-        destroyOnClose
-        placement={'right'}
-        footer={
-          <div className={styles['drawer-button-wrapper']}>
-            <CommonButton
-              className={styles['cancel-button']}
-              type={CommonButtonType.Secondary}
-              onClick={handleResetFilter}>
-              {'Reset'}
-            </CommonButton>
-            <CommonButton className={styles['ok-button']} onClick={() => handleApplyFilter()}>
-              {'Apply'}
-            </CommonButton>
-          </div>
-        }
-        onClose={() => setIsShowFilterDrawer(!isShowFilterDrawer)}>
-        <div className={styles['filter-drawer-content']}>
-          <div className={styles['filter-drawer-label']}>Status</div>
-          <Select
-            size={'large'}
-            value={filterStatus}
-            className={clsx(styles['mobile-records-select-status'], styles['border-change'])}
-            onChange={setFilterStatus}
-            popupClassName={'drop-wrap'}
-            options={[
-              { value: TRecordsRequestStatus.ALL, label: 'All Status' },
-              { value: TRecordsRequestStatus.Processing, label: TRecordsStatusI18n.Processing },
-              { value: TRecordsRequestStatus.Succeed, label: TRecordsStatusI18n.Succeed },
-              { value: TRecordsRequestStatus.Failed, label: TRecordsStatusI18n.Failed },
-            ]}
-          />
-          <div className={styles['filter-drawer-label']}>Start time</div>
-          <DatePicker
-            inputReadOnly={true}
-            size={'large'}
-            allowClear={false}
-            value={filterTimestampStart}
-            className={clsx(styles['mobile-records-range-picker'])}
-            format={DATE_FORMATE}
-            onChange={setFilterTimestampStart}
-            showTime={false}
-            placeholder={'please choose the start time'}
-          />
-          <div className={styles['filter-drawer-label']}>End time</div>
-          <DatePicker
-            inputReadOnly={true}
-            size={'large'}
-            allowClear={false}
-            value={filterTimestampEnd}
-            className={clsx(styles['mobile-records-range-picker'])}
-            format={DATE_FORMATE}
-            onChange={setFilterTimestampEnd}
-            showTime={false}
-            placeholder={'please choose the end time'}
-          />
-        </div>
-      </CommonDrawer>
+        </CommonDrawer>
 
-      <SimpleTipModal
-        open={openTipModal}
-        getContainer="#historyFilterDrawer"
-        content={'Please select another time!'}
-        onOk={() => setOpenTipModal(false)}
-      />
-    </div>
+        <SimpleTipModal
+          open={openTipModal}
+          getContainer="#historyFilterDrawer"
+          content={'Please select another time!'}
+          onOk={() => setOpenTipModal(false)}
+        />
+      </div>
+    </>
   );
 }

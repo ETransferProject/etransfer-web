@@ -114,7 +114,7 @@ export function useCheckAllowSearch() {
             searchObject.calculatePay = searchParams.get('calculatePay');
           if (searchParams.get('withdrawAddress'))
             searchObject.withdrawAddress = searchParams.get('withdrawAddress');
-          if (searchParams.get('method')) searchObject.method = searchParams.get('method');
+          if (searchParams.get('type')) searchObject.type = searchParams.get('type');
           if (searchParams.get('status')) searchObject.status = searchParams.get('status');
           if (searchParams.get('start')) searchObject.start = searchParams.get('start');
           if (searchParams.get('end')) searchObject.end = searchParams.get('end');
@@ -150,7 +150,7 @@ export function useCheckAllowSearch() {
           break;
 
         case '/history':
-          if (searchParams.get('method')) searchObject.method = searchParams.get('method');
+          if (searchParams.get('type')) searchObject.type = searchParams.get('type');
           if (searchParams.get('status')) searchObject.status = searchParams.get('status');
           if (searchParams.get('start')) searchObject.start = searchParams.get('start');
           if (searchParams.get('end')) searchObject.end = searchParams.get('end');

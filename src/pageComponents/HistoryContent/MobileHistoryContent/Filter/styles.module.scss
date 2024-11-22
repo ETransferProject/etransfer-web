@@ -2,6 +2,15 @@
 @import 'src/assets/theme/color.scss';
 @import 'src/assets/theme/breakpoint.scss';
 
+.header-tab {
+  @include media-pad {
+    margin: 0 24px;
+  }
+  @include media-mobile {
+    margin: 0 16px;
+  }
+}
+
 .filter-item-wrapper {
   gap: 12px;
   @include media-mobile {

@@ -3,8 +3,8 @@ import { BusinessType } from './api';
 
 export enum TRecordsRequestType {
   ALL = 0,
-  Deposits = 1,
-  Withdraws = 2,
+  Deposit = 1,
+  Transfer = 2,
 }
 
 export enum TRecordsRequestStatus {

@@ -15,7 +15,7 @@ export type TRecordsState = TGetRecordsListRequest & {
 export const initialRecordState: TRecordsState = {
   recordsList: [],
   totalCount: 0,
-  type: TRecordsRequestType.ALL,
+  type: TRecordsRequestType.Transfer,
   status: TRecordsRequestStatus.ALL,
   timestamp: null,
   skipCount: 1,
@@ -84,7 +84,7 @@ export const RecordsSlice = createSlice({
         ...state,
         recordsList: [],
         totalCount: 0,
-        type: TRecordsRequestType.ALL,
+        type: TRecordsRequestType.Transfer,
         status: TRecordsRequestStatus.ALL,
         timestamp: null,
         skipCount: 1,

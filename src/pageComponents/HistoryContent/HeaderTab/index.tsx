@@ -1,25 +1,21 @@
 import clsx from 'clsx';
+import { TRecordsRequestType } from 'types/records';
 import styles from './styles.module.scss';
-
-export enum EHeaderTab {
-  TRANSFER = 'Transfer',
-  DEPOSIT = 'Deposit',
-}
 
 interface IHeaderTabProps {
   className?: string;
-  activeTab: EHeaderTab;
-  onChange: (tab: EHeaderTab) => void;
+  activeTab: TRecordsRequestType;
+  onChange: (tab: TRecordsRequestType) => void;
 }
 
 const HEADER_TAB_LIST = [
   {
-    label: EHeaderTab.TRANSFER,
-    value: EHeaderTab.TRANSFER,
+    label: 'Transfer',
+    value: TRecordsRequestType.Transfer,
   },
   {
-    label: EHeaderTab.DEPOSIT,
-    value: EHeaderTab.DEPOSIT,
+    label: 'Deposit',
+    value: TRecordsRequestType.Deposit,
   },
 ];
 

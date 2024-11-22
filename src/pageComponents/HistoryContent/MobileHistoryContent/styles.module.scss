@@ -1,15 +1,6 @@
 @import 'assets/theme/color.scss';
 @import 'assets/theme/breakpoint.scss';
 
-.header-tab {
-  @include media-pad {
-    margin: 0 24px;
-  }
-  @include media-mobile {
-    margin: 0 16px;
-  }
-}
-
 .divider-style {
   height: 12px;
   margin: 0;

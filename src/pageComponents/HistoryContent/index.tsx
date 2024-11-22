@@ -9,6 +9,7 @@ import {
   setSkipCount,
   setStatus,
   setTimestamp,
+  setType,
   resetRecordsStateNotNotice,
 } from 'store/reducers/records/slice';
 import { useDebounceCallback } from 'hooks/debounce';
@@ -50,6 +51,7 @@ export default function Content() {
   hasConnectedRef.current = hasConnected;
 
   const {
+    type = TRecordsRequestType.Transfer,
     status = TRecordsRequestStatus.ALL,
     timestamp,
     skipCount,
@@ -79,7 +81,7 @@ export default function Content() {
       const connectedAccountList = getAllConnectedWalletAccount();
       const { items: recordsListRes, totalCount } = await getRecordsList(
         {
-          type: TRecordsRequestType.ALL,
+          type,
           status,
           startTimestamp: startTimestamp,
           endTimestamp: endTimestamp,
@@ -135,7 +137,7 @@ export default function Content() {
   const searchParams = useSearchParams();
   const routeQuery = useMemo(
     () => ({
-      // method: searchParams.get('method'),
+      type: searchParams.get('type'),
       status: searchParams.get('status'),
       start: searchParams.get('start'),
       end: searchParams.get('end'),
@@ -147,10 +149,17 @@ export default function Content() {
     dispatch(setActiveMenuKey(SideMenuKey.History));
 
     const search: any = {
+      type: routeQuery.type != null ? routeQuery.type : undefined,
       status: routeQuery.status != null ? routeQuery.status : undefined,
       start: routeQuery.start != null ? routeQuery.start : undefined,
       end: routeQuery.end != null ? routeQuery.end : undefined,
     };
+
+    if (routeQuery.type != null) {
+      dispatch(setType(Number(routeQuery.type)));
+    } else {
+      search.type = type;
+    }
 
     if (routeQuery.status != null) {
       dispatch(setStatus(Number(routeQuery.status)));
