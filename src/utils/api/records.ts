@@ -2,12 +2,20 @@ import { TGetRecordDetailResult, TGetRecordsListRequest, TGetRecordsListResult }
 import { TCurrentRecordsStatus } from 'types/records';
 import { request } from 'api';
 import { formatApiError } from './error';
+import qs from 'qs';
 
 export const getRecordsList = async (
   params: TGetRecordsListRequest,
+  authToken?: string,
 ): Promise<TGetRecordsListResult> => {
   try {
-    const res = await request.records.getRecordsList({ params });
+    const res = await request.records.getRecordsList({
+      params,
+      paramsSerializer: function (params) {
+        return qs.stringify(params, { arrayFormat: 'repeat' });
+      },
+      headers: { Authorization: authToken || '' },
+    });
     return res.data;
   } catch (error: any) {
     throw formatApiError(error, 'getRecordsList error', false);

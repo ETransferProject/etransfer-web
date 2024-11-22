@@ -203,6 +203,7 @@ export interface TGetRecordsListRequest {
   skipCount: number;
   maxResultCount: number;
   search?: string | undefined;
+  addressList?: string[];
 }
 
 export type TRecordsListItem = {

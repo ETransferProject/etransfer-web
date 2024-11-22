@@ -25,8 +25,12 @@ import queryString from 'query-string';
 import { SideMenuKey } from 'constants/home';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { useSetAuthFromStorage } from 'hooks/authToken';
-import useAelf from 'hooks/wallet/useAelf';
 import { END_TIME_FORMAT, START_TIME_FORMAT } from 'constants/records';
+import { useCheckHasConnectedWallet } from 'hooks/wallet';
+import {
+  useGetAllConnectedWalletAccount,
+  useGetAnyoneAuthTokenFromStorage,
+} from 'hooks/wallet/authToken';
 
 export type TRecordsContentProps = TRecordsBodyProps & {
   onReset: () => void;
@@ -41,9 +45,9 @@ export default function Content() {
   const dispatch = useAppDispatch();
   const { setFilter } = useHistoryFilter();
   const { setLoading } = useLoading();
-  const { isConnected } = useAelf();
-  const isConnectedRef = useRef(isConnected);
-  isConnectedRef.current = isConnected;
+  const { hasConnected } = useCheckHasConnectedWallet();
+  const hasConnectedRef = useRef(hasConnected);
+  hasConnectedRef.current = hasConnected;
 
   const {
     status = TRecordsRequestStatus.ALL,
@@ -52,16 +56,16 @@ export default function Content() {
     maxResultCount,
     recordsList,
   } = useRecordsState();
-
+  const getAllConnectedWalletAccount = useGetAllConnectedWalletAccount();
+  const getAnyoneAuthTokenFromStorage = useGetAnyoneAuthTokenFromStorage();
   const setAuthFromStorage = useSetAuthFromStorage();
   const requestRecordsList = useDebounceCallback(async (isLoading = false, isSetAuth = false) => {
     try {
-      if (!isConnectedRef.current) return;
+      if (!hasConnectedRef.current) return;
 
       isLoading && setLoading(true);
       if (isSetAuth) {
-        const serResult = await setAuthFromStorage();
-        if (!serResult) return;
+        await setAuthFromStorage(); // TODO
         await sleep(500);
       }
 
@@ -71,15 +75,20 @@ export default function Content() {
       const startTimestamp = startTimestampFormat ? moment(startTimestampFormat).valueOf() : null;
       const endTimestamp = endTimestampFormat ? moment(endTimestampFormat).valueOf() : null;
 
-      const { items: recordsListRes, totalCount } = await getRecordsList({
-        type: TRecordsRequestType.ALL,
-        status,
-        startTimestamp: startTimestamp,
-        endTimestamp: endTimestamp,
-        skipCount: (skipCount - 1) * maxResultCount,
-        maxResultCount,
-      });
-
+      const authToken = await getAnyoneAuthTokenFromStorage();
+      const connectedAccountList = getAllConnectedWalletAccount();
+      const { items: recordsListRes, totalCount } = await getRecordsList(
+        {
+          type: TRecordsRequestType.ALL,
+          status,
+          startTimestamp: startTimestamp,
+          endTimestamp: endTimestamp,
+          skipCount: (skipCount - 1) * maxResultCount,
+          maxResultCount,
+          addressList: connectedAccountList, // TODO
+        },
+        authToken,
+      );
       if (isPadPX) {
         let mobileRecordsList = [...recordsList, ...recordsListRes];
         mobileRecordsList = mobileRecordsList.reduce((result: TRecordsListItem[], item) => {
@@ -179,14 +188,14 @@ export default function Content() {
   initRef.current = init;
 
   useEffect(() => {
-    if (isConnected) {
+    if (hasConnected) {
       initRef.current();
     } else {
       dispatch(setSkipCount(1));
 
       dispatch(setRecordsList([]));
     }
-  }, [dispatch, isConnected, setFilter]);
+  }, [dispatch, hasConnected, setFilter]);
 
   // Listener login
   const refreshData = useCallback(() => {

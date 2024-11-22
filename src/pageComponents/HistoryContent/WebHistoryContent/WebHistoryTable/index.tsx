@@ -12,7 +12,7 @@ import StatusBox from 'pageComponents/HistoryContent/StatusBox';
 import ArrivalTimeBox from 'pageComponents/HistoryContent/ArrivalTimeBox';
 import AmountBox from 'pageComponents/HistoryContent/AmountBox';
 import FromAndToBox from 'pageComponents/HistoryContent/FromAndToBox';
-import useAelf from 'hooks/wallet/useAelf';
+import { useCheckHasConnectedWallet } from 'hooks/wallet';
 import { LOGIN_TO_VIEW_HISTORY, NO_HISTORY_FOUND } from 'constants/records';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
@@ -124,7 +124,7 @@ const columns = [
 export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProps) {
   const { recordsList, totalCount, skipCount, maxResultCount } = useRecordsState();
   const dispatch = useAppDispatch();
-  const { isConnected } = useAelf();
+  const { hasConnected } = useCheckHasConnectedWallet();
 
   const handleRecordListData = (recordsList: TRecordsListItem[]) => {
     if (recordsList.length === 0) {
@@ -197,7 +197,7 @@ export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProp
         scroll={{ x: 1020 }}
         locale={{
           emptyText: (
-            <EmptyDataBox emptyText={isConnected ? NO_HISTORY_FOUND : LOGIN_TO_VIEW_HISTORY} />
+            <EmptyDataBox emptyText={hasConnected ? NO_HISTORY_FOUND : LOGIN_TO_VIEW_HISTORY} />
           ),
         }}
         pagination={

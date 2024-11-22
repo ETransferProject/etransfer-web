@@ -18,10 +18,14 @@ import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-ada
 import { WalletInfo } from 'types/wallet';
 import { AuthTokenSource } from 'types/api';
 import { stringToHex } from 'utils/format';
+import useEVM from './useEVM';
+import useSolana from './useSolana';
+import useTON from './useTON';
+import useTRON from './useTRON';
 
 export function useAuthToken() {
   const { fromWalletType } = useCrossChainTransfer();
-  const [{ fromWallet, toWallet }] = useWallet();
+  const [{ fromWallet }] = useWallet();
   const { setLoading } = useLoading();
 
   const [isReCaptchaLoading, setIsReCaptchaLoading] = useState(true);
@@ -65,66 +69,60 @@ export function useAuthToken() {
     return undefined;
   }, [fromWallet?.account, fromWalletType, isReCaptchaLoading, setLoading]);
 
-  const queryAuthToken = useCallback(
-    async ({ recipientAddress }: { recipientAddress?: string }) => {
-      if (!fromWallet?.isConnected || (!toWallet?.isConnected && !!recipientAddress)) return '';
+  const queryAuthToken = useCallback(async () => {
+    if (!fromWallet?.isConnected) return '';
 
-      try {
-        setLoading(true);
-        const recaptchaResult = await handleReCaptcha();
+    try {
+      setLoading(true);
+      const recaptchaResult = await handleReCaptcha();
 
-        const signatureResult = await fromWallet.signMessage();
-        console.log('>>>>>> getAuthToken signatureResult', signatureResult);
-        if (!signatureResult.signature) throw Error('Signature error');
+      const signatureResult = await fromWallet.signMessage();
+      console.log('>>>>>> getAuthToken signatureResult', signatureResult);
+      if (!signatureResult.signature) throw Error('Signature error');
 
-        const apiParams: QueryAuthApiExtraRequestV3 = {
-          pubkey: signatureResult.publicKey,
-          signature: signatureResult.signature,
-          plain_text: signatureResult.plainTextHex,
-          sourceType: signatureResult.sourceType,
-          recaptchaToken: recaptchaResult || undefined,
-        };
-        return await queryAuthApiV3(apiParams);
-      } catch (error: any) {
-        if (
-          error?.type === ReCaptchaType.cancel ||
-          error?.type === ReCaptchaType.error ||
-          error?.type === ReCaptchaType.expire
-        ) {
-          SingleMessage.error(error?.data);
-        }
-        return '';
-      } finally {
-        setLoading(false);
+      const apiParams: QueryAuthApiExtraRequestV3 = {
+        pubkey: signatureResult.publicKey,
+        signature: signatureResult.signature,
+        plain_text: signatureResult.plainTextHex,
+        sourceType: signatureResult.sourceType,
+        recaptchaToken: recaptchaResult || undefined,
+      };
+      return await queryAuthApiV3(apiParams);
+    } catch (error: any) {
+      if (
+        error?.type === ReCaptchaType.cancel ||
+        error?.type === ReCaptchaType.error ||
+        error?.type === ReCaptchaType.expire
+      ) {
+        SingleMessage.error(error?.data);
       }
-    },
-    [fromWallet, handleReCaptcha, setLoading, toWallet?.isConnected],
-  );
+      return '';
+    } finally {
+      setLoading(false);
+    }
+  }, [fromWallet, handleReCaptcha, setLoading]);
 
-  const getAuthToken = useCallback(
-    async ({ recipientAddress }: { recipientAddress?: string }) => {
-      try {
-        if (!fromWallet?.account || !fromWallet?.walletType) return '';
+  const getAuthToken = useCallback(async () => {
+    try {
+      if (!fromWallet?.account || !fromWallet?.walletType) return '';
 
-        // 1: local storage has JWT token
-        const key = stringToHex(fromWallet?.account) + getWalletSourceType(fromWallet?.walletType);
-        const data = getLocalJWT(key);
-        if (data) {
-          const token_type = data.token_type;
-          const access_token = data.access_token;
+      // 1: local storage has JWT token
+      const key = stringToHex(fromWallet?.account) + getWalletSourceType(fromWallet?.walletType);
+      const data = getLocalJWT(key);
+      if (data) {
+        const token_type = data.token_type;
+        const access_token = data.access_token;
 
-          return `${token_type} ${access_token}`;
-        } else {
-          // 2: local storage don not has JWT token
-          return await queryAuthToken({ recipientAddress });
-        }
-      } catch (error) {
-        console.log('getAuth error:', error);
-        return '';
+        return `${token_type} ${access_token}`;
+      } else {
+        // 2: local storage don not has JWT token
+        return await queryAuthToken();
       }
-    },
-    [fromWallet?.account, fromWallet?.walletType, queryAuthToken],
-  );
+    } catch (error) {
+      console.log('getAuth error:', error);
+      return '';
+    }
+  }, [fromWallet?.account, fromWallet?.walletType, queryAuthToken]);
 
   return {
     getAuthToken,
@@ -188,4 +186,94 @@ export function useGetAuthTokenFromStorage() {
     },
     [aelfConnector, fromWallet, isAelfConnected, walletInfo],
   );
+}
+
+export function useGetAnyoneAuthTokenFromStorage() {
+  const { queryAuthToken } = useAuthToken();
+  const getAuthTokenFromStorage = useGetAuthTokenFromStorage();
+  const [{ fromWallet }] = useWallet();
+  const { isConnected: isEVMConnected, account: evmAccount, walletType: evmWalletType } = useEVM();
+  const {
+    isConnected: isSolanaConnected,
+    account: solanaAccount,
+    walletType: solanaWalletType,
+  } = useSolana();
+  const { isConnected: isTONConnected, account: tonAccount, walletType: tonWalletType } = useTON();
+  const {
+    isConnected: isTRONConnected,
+    account: tronAccount,
+    walletType: tronWalletType,
+  } = useTRON();
+
+  const getStorageToken = useCallback((account: string, walletType: WalletTypeEnum) => {
+    const key = stringToHex(account) + getWalletSourceType(walletType);
+    const data = getLocalJWT(key);
+    if (data) {
+      const token_type = data.token_type;
+      const access_token = data.access_token;
+
+      return `${token_type} ${access_token}`;
+    }
+    return '';
+  }, []);
+
+  return useCallback(async () => {
+    let authToken = '';
+
+    // 1. has connected wallet, and has auth token in storage
+    if (isEVMConnected && evmAccount && evmWalletType) {
+      authToken = getStorageToken(evmAccount, evmWalletType);
+      if (authToken) return authToken;
+    }
+    if (isSolanaConnected && solanaAccount && solanaWalletType) {
+      authToken = getStorageToken(solanaAccount, solanaWalletType);
+      if (authToken) return authToken;
+    }
+    if (isTONConnected && tonAccount && tonWalletType) {
+      authToken = getStorageToken(tonAccount, tonWalletType);
+      if (authToken) return authToken;
+    }
+    if (isTRONConnected && tronAccount && tronWalletType) {
+      authToken = getStorageToken(tronAccount, tronWalletType);
+      if (authToken) return authToken;
+    }
+    authToken = await getAuthTokenFromStorage(WalletTypeEnum.AELF);
+    if (authToken) return authToken;
+
+    // 2. has fromWallet, but not auth token in storage, get new auth token.
+    if (fromWallet?.isConnected && fromWallet?.account) {
+      authToken = await queryAuthToken();
+    }
+
+    // 3. not connected wallet, need click 'Connect Wallet' button to connect wallet
+    return authToken;
+  }, []);
+}
+
+export function useGetAllConnectedWalletAccount() {
+  const { isConnected: isAelfConnected, account: aelfAccount } = useAelf();
+  const { isConnected: isEVMConnected, account: evmAccount } = useEVM();
+  const { isConnected: isSolanaConnected, account: solanaAccount } = useSolana();
+  const { isConnected: isTONConnected, account: tonAccount } = useTON();
+  const { isConnected: isTRONConnected, account: tronAccount } = useTRON();
+
+  return useCallback(() => {
+    const accountList: string[] = [];
+    if (isAelfConnected && aelfAccount) {
+      accountList.push(aelfAccount);
+    }
+    if (isEVMConnected && evmAccount) {
+      accountList.push(evmAccount);
+    }
+    if (isSolanaConnected && solanaAccount) {
+      accountList.push(solanaAccount);
+    }
+    if (isTONConnected && tonAccount) {
+      accountList.push(tonAccount);
+    }
+    if (isTRONConnected && tronAccount) {
+      accountList.push(tronAccount);
+    }
+    return accountList;
+  }, []);
 }
