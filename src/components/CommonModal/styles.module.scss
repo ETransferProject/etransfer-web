@@ -1,3 +1,4 @@
+@import 'src/assets/theme/color.scss';
 @import 'src/assets/theme/font.scss';
 
 .common-modal {
@@ -10,6 +11,10 @@
       justify-content: center;
       align-items: center;
       width: calc(20px + (16px * 2));
+
+      svg path {
+        fill: $primary-text;
+      }
     }
     .ant-modal-header {
       height: 54px;

@@ -14,11 +14,16 @@ import CommonSpace from 'components/CommonSpace';
 
 export interface WebCrossChainTransferProps extends CrossChainTransferFormProps {
   amount?: string;
-  receiveAmount?: string;
+  receiveAmount: string;
   transferInfo: TCrossChainTransferInfo;
   isSubmitDisabled: boolean;
+  isTransactionFeeLoading: boolean;
+  isUseRecipientAddress?: boolean;
   recipientAddress?: string;
+  comment?: string;
   onClickProcessingTip: () => void;
+  clickFailedOk: () => void;
+  clickSuccessOk: () => void;
 }
 
 export default function WebCrossChainTransfer({
@@ -31,15 +36,21 @@ export default function WebCrossChainTransfer({
   receiveAmount,
   transferInfo,
   isSubmitDisabled,
+  isTransactionFeeLoading,
+  isUseRecipientAddress,
   recipientAddress,
+  comment,
   onFromNetworkChanged,
   onTokenChanged,
   onAmountChange,
   onAmountBlur,
   onClickMax,
+  onUseRecipientChanged,
   onRecipientAddressChange,
   onRecipientAddressBlur,
   onClickProcessingTip,
+  clickSuccessOk,
+  clickFailedOk,
 }: WebCrossChainTransferProps) {
   const [{ fromWallet }] = useWallet();
   const { depositProcessingCount, transferProcessingCount } = useRecordsState();
@@ -75,6 +86,7 @@ export default function WebCrossChainTransfer({
           onAmountChange={onAmountChange}
           onAmountBlur={onAmountBlur}
           onClickMax={onClickMax}
+          onUseRecipientChanged={onUseRecipientChanged}
           onRecipientAddressChange={onRecipientAddressChange}
           onRecipientAddressBlur={onRecipientAddressBlur}
         />
@@ -82,12 +94,19 @@ export default function WebCrossChainTransfer({
         <CrossChainTransferFooter
           amount={amount}
           fromBalance={balance}
+          isUseRecipientAddress={isUseRecipientAddress}
           recipientAddress={recipientAddress}
+          comment={comment}
+          transferInfo={transferInfo}
           estimateReceive={receiveAmount}
           estimateReceiveUnit={tokenSymbol}
           transactionFee={transferInfo.transactionFee}
           transactionFeeUnit={transferInfo.transactionUnit}
+          tokenContractAddress={transferInfo.contractAddress}
           isSubmitDisabled={isSubmitDisabled}
+          isTransactionFeeLoading={isTransactionFeeLoading}
+          clickFailedOk={clickFailedOk}
+          clickSuccessOk={clickSuccessOk}
         />
       </div>
     );
@@ -95,11 +114,16 @@ export default function WebCrossChainTransfer({
     amount,
     amountUSD,
     balance,
+    clickFailedOk,
+    clickSuccessOk,
+    comment,
     depositProcessingCount,
     form,
     formValidateData,
     fromWallet?.isConnected,
     isSubmitDisabled,
+    isTransactionFeeLoading,
+    isUseRecipientAddress,
     minAmount,
     onAmountBlur,
     onAmountChange,
@@ -109,6 +133,7 @@ export default function WebCrossChainTransfer({
     onRecipientAddressBlur,
     onRecipientAddressChange,
     onTokenChanged,
+    onUseRecipientChanged,
     receiveAmount,
     recipientAddress,
     tokenSymbol,

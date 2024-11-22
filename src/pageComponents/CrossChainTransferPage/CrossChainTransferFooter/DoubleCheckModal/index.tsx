@@ -3,8 +3,8 @@ import CommonModalSwitchDrawer, {
   CommonModalSwitchDrawerProps,
 } from 'components/CommonModalSwitchDrawer';
 import PartialLoading from 'components/PartialLoading';
-import { useCommonState } from 'store/Provider/hooks';
-import { TCrossChainTransferInfo, TNetworkItem } from 'types/api';
+import { useCommonState, useCrossChainTransfer } from 'store/Provider/hooks';
+import { TCrossChainTransferInfo } from 'types/api';
 import styles from './styles.module.scss';
 import { valueFixed2LessThanMin } from 'utils/calculate';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
@@ -13,7 +13,6 @@ import { formatSymbolDisplay } from 'utils/format';
 export interface DoubleCheckModalProps {
   transferInfo: TCrossChainTransferInfo;
   amount: string;
-  toNetwork: TNetworkItem;
   toAddress: string;
   memo?: string;
   modalProps: CommonModalSwitchDrawerProps;
@@ -23,13 +22,13 @@ export interface DoubleCheckModalProps {
 export default function DoubleCheckModal({
   transferInfo,
   amount,
-  toNetwork,
   toAddress,
   memo,
   modalProps,
   isTransactionFeeLoading,
 }: DoubleCheckModalProps) {
   const { isPadPX } = useCommonState();
+  const { toNetwork } = useCrossChainTransfer();
 
   const renderAmountToBeReceived = () => {
     return (
@@ -46,6 +45,7 @@ export default function DoubleCheckModal({
   return (
     <CommonModalSwitchDrawer
       {...modalProps}
+      modalClassName={styles['cross-chain-transfer-double-check-modal']}
       title="Transfer Information"
       isOkButtonDisabled={isTransactionFeeLoading || !transferInfo.receiveAmount}>
       <div>
@@ -98,15 +98,17 @@ export default function DoubleCheckModal({
               </div>
             </div>
           </div>
-          <div className={clsx(styles['detail-row'], styles['transaction-fee-wrapper'])}>
-            <div className={styles['label']}>Estimated Gas Fee</div>
-            <div className={clsx('flex-row', styles['value'], styles['fee-usd-box'])}>
-              <span className={clsx('flex-1', styles['fee-value'])}>
-                {transferInfo.aelfTransactionFee}
-              </span>
-              &nbsp;{transferInfo.aelfTransactionUnit}
+          {transferInfo.aelfTransactionFee && transferInfo.aelfTransactionUnit && (
+            <div className={clsx(styles['detail-row'], styles['transaction-fee-wrapper'])}>
+              <div className={styles['label']}>Estimated Gas Fee</div>
+              <div className={clsx('flex-row', styles['value'], styles['fee-usd-box'])}>
+                <span className={clsx('flex-1', styles['fee-value'])}>
+                  {transferInfo.aelfTransactionFee}
+                </span>
+                &nbsp;{transferInfo.aelfTransactionUnit}
+              </div>
             </div>
-          </div>
+          )}
           <div className={clsx(styles['detail-row'], styles['transaction-fee-wrapper'])}>
             <div className={styles['label']}>Transaction Fee</div>
             <div className={clsx('flex-column', styles['value'], styles['fee-usd-box'])}>

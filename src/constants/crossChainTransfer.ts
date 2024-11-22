@@ -11,6 +11,31 @@ export const REMAINING_TRANSFER_QUOTA_TOOLTIP = `Transfers are subject to a 24-h
 export const TRANSFER_SEND_RECIPIENT_TIP =
   'Choose this option if you wish to send to an address without connecting wallet.';
 
+export const DEFAULT_SEND_TRANSFER_ERROR =
+  'Failed to initiate the transaction. Please try again later.';
+
+export const SEND_TRANSFER_ERROR_CODE_LIST = [
+  '40001',
+  '40002',
+  '40003',
+  '40004',
+  '40005',
+  '40006',
+  '40007',
+  '40008',
+  '40009',
+  '40010',
+  '40011',
+  '40012',
+  '40013',
+  '40014',
+  '40015',
+];
+
+export enum ErrorNameType {
+  FAIL_MODAL_REASON = 'failModalReason',
+}
+
 export const InitialCrossChainTransferInfo: TCrossChainTransferInfo = {
   maxAmount: '',
   minAmount: '',

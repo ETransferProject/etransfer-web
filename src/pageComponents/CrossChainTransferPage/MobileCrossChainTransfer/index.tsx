@@ -17,8 +17,13 @@ export interface MobileCrossChainTransferProps extends CrossChainTransferFormPro
   receiveAmount: string;
   transferInfo: TCrossChainTransferInfo;
   isSubmitDisabled: boolean;
+  isTransactionFeeLoading: boolean;
+  isUseRecipientAddress?: boolean;
   recipientAddress?: string;
+  comment?: string;
   onClickProcessingTip: () => void;
+  clickFailedOk: () => void;
+  clickSuccessOk: () => void;
 }
 
 export default function MobileCrossChainTransfer({
@@ -31,15 +36,21 @@ export default function MobileCrossChainTransfer({
   receiveAmount,
   transferInfo,
   isSubmitDisabled,
+  isTransactionFeeLoading,
+  isUseRecipientAddress,
+  comment,
   recipientAddress,
   onFromNetworkChanged,
   onTokenChanged,
   onAmountChange,
   onAmountBlur,
   onClickMax,
+  onUseRecipientChanged,
   onRecipientAddressChange,
   onRecipientAddressBlur,
   onClickProcessingTip,
+  clickFailedOk,
+  clickSuccessOk,
 }: MobileCrossChainTransferProps) {
   const { isPadPX, isMobilePX } = useCommonState();
   const [{ fromWallet }] = useWallet();
@@ -62,6 +73,7 @@ export default function MobileCrossChainTransfer({
           onAmountChange={onAmountChange}
           onAmountBlur={onAmountBlur}
           onClickMax={onClickMax}
+          onUseRecipientChanged={onUseRecipientChanged}
           onRecipientAddressChange={onRecipientAddressChange}
           onRecipientAddressBlur={onRecipientAddressBlur}
         />
@@ -69,13 +81,19 @@ export default function MobileCrossChainTransfer({
         <CrossChainTransferFooter
           amount={amount}
           fromBalance={balance}
+          isUseRecipientAddress={isUseRecipientAddress}
           recipientAddress={recipientAddress}
+          comment={comment}
+          transferInfo={transferInfo}
           estimateReceive={receiveAmount}
           estimateReceiveUnit={tokenSymbol}
           transactionFee={transferInfo.transactionFee}
           transactionFeeUnit={transferInfo.transactionUnit}
           tokenContractAddress={transferInfo.contractAddress}
           isSubmitDisabled={isSubmitDisabled}
+          isTransactionFeeLoading={isTransactionFeeLoading}
+          clickFailedOk={clickFailedOk}
+          clickSuccessOk={clickSuccessOk}
         />
       </div>
     );
@@ -83,9 +101,14 @@ export default function MobileCrossChainTransfer({
     amount,
     amountUSD,
     balance,
+    clickFailedOk,
+    clickSuccessOk,
+    comment,
     form,
     formValidateData,
     isSubmitDisabled,
+    isTransactionFeeLoading,
+    isUseRecipientAddress,
     minAmount,
     onAmountBlur,
     onAmountChange,
@@ -94,6 +117,7 @@ export default function MobileCrossChainTransfer({
     onRecipientAddressBlur,
     onRecipientAddressChange,
     onTokenChanged,
+    onUseRecipientChanged,
     receiveAmount,
     recipientAddress,
     tokenSymbol,

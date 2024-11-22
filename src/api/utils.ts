@@ -109,9 +109,9 @@ export const removeOneLocalJWT = (key: string) => {
   const localData = localStorage.getItem(LocalStorageKey.ACCESS_TOKEN);
   if (!localData) return;
   const data = JSON.parse(localData) as { [key: string]: LocalJWTData };
-  const newData = delete data[key];
+  delete data[key];
 
-  localStorage.setItem(LocalStorageKey.ACCESS_TOKEN, JSON.stringify(newData));
+  localStorage.setItem(LocalStorageKey.ACCESS_TOKEN, JSON.stringify(data));
 };
 
 export const setLocalJWT = (key: string, data: LocalJWTData) => {

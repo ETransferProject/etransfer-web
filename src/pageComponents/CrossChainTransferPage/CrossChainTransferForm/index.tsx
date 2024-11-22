@@ -48,6 +48,7 @@ export interface CrossChainTransferFormProps {
   onAmountChange: (value: string) => void;
   onAmountBlur: InputProps['onBlur'];
   onClickMax: () => void;
+  onUseRecipientChanged: (item: boolean) => void;
   onRecipientAddressChange: (value: string) => void;
   onRecipientAddressBlur: InputProps['onBlur'];
 }
@@ -64,6 +65,7 @@ export default function CrossChainTransferForm({
   onAmountChange,
   onAmountBlur,
   onClickMax,
+  onUseRecipientChanged,
   onRecipientAddressChange,
   onRecipientAddressBlur,
 }: CrossChainTransferFormProps) {
@@ -99,10 +101,13 @@ export default function CrossChainTransferForm({
   // TODO get from wallet?
   const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
 
-  const onUseRecipientChange = useCallback((e: CheckboxChangeEvent) => {
-    setIsInputAddress(e.target.checked);
-    console.log(`onUseRecipientChange = ${e.target.checked}`);
-  }, []);
+  const onUseRecipientChange = useCallback(
+    (e: CheckboxChangeEvent) => {
+      setIsInputAddress(e.target.checked);
+      onUseRecipientChanged?.(e.target.checked);
+    },
+    [onUseRecipientChanged],
+  );
 
   const handleFromNetworkChange = useCallback(
     async (item: TNetworkItem, newToNetwork?: TNetworkItem) => {

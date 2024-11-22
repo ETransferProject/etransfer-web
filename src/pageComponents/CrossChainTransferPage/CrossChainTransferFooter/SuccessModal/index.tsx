@@ -10,21 +10,17 @@ import { useMemo } from 'react';
 import { ARRIVAL_TIME_CONFIG } from 'constants/withdraw';
 import { AllSupportedELFChainId } from 'constants/chain';
 import { GOT_IT } from 'constants/misc';
-import { TNetworkItem } from 'types/api';
 import { formatSymbolDisplay } from 'utils/format';
 import CommonLink from 'components/CommonLink';
 import { getTxExploreHref } from 'utils/common';
 import { Fingerprint } from 'assets/images';
-import { useCommonState } from 'store/Provider/hooks';
+import { useCommonState, useCrossChainTransfer } from 'store/Provider/hooks';
 
-interface SuccessModalProps {
+export interface SuccessModalProps {
   amount: string;
   symbol: string;
   receiveAmount: string;
   receiveAmountUsd: string;
-  fromNetwork: TNetworkItem;
-  toNetwork: TNetworkItem;
-  arriveTime: string;
   txHash: string;
   modalProps: CommonModalSwitchDrawerProps;
 }
@@ -44,25 +40,23 @@ export default function SuccessModal({
   symbol,
   receiveAmount,
   receiveAmountUsd,
-  fromNetwork,
-  toNetwork,
-  arriveTime,
   txHash,
   modalProps,
 }: SuccessModalProps) {
   const { isPadPX } = useCommonState();
+  const { fromNetwork, toNetwork } = useCrossChainTransfer();
   const arrivalTime = useMemo(() => {
     const _symbol = symbol as TokenType;
-    const chainId = toNetwork.network as unknown as AllSupportedELFChainId;
+    const chainId = toNetwork?.network as unknown as AllSupportedELFChainId;
     if (
       isNeedQuota(_symbol, chainId) &&
       Number(amount) <= Number(ARRIVAL_TIME_CONFIG[_symbol].dividingQuota)
     ) {
       return '30s';
     } else {
-      return arriveTime;
+      return toNetwork?.multiConfirmTime;
     }
-  }, [amount, arriveTime, symbol, toNetwork.network]);
+  }, [amount, symbol, toNetwork?.multiConfirmTime, toNetwork?.network]);
 
   return (
     <CommonModalSwitchDrawer
@@ -87,7 +81,7 @@ export default function SuccessModal({
           <div className={styles['title']}>Transfer Submitted</div>
         </div>
         <div className={clsx('flex-column-center', styles['main-info-wrapper'])}>
-          <div className={styles['label']}>Amount to Be Received on {toNetwork.name}</div>
+          <div className={styles['label']}>Amount to Be Received on {toNetwork?.name}</div>
           <div className={styles['value']}>
             <span className={styles['value-center']}>
               {receiveAmount || DEFAULT_NULL_VALUE} {formatSymbolDisplay(symbol)}

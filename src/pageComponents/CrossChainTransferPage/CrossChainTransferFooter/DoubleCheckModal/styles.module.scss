@@ -4,6 +4,26 @@
 @import 'src/assets/theme/breakpoint.scss';
 @import 'src/styles/common.scss';
 
+.cross-chain-transfer-double-check-modal {
+  :global {
+    .ant-modal-content {
+      .ant-modal-header {
+        height: 76px;
+        padding: 24px;
+        .ant-modal-title {
+          line-height: 28px;
+          text-align: left;
+        }
+      }
+      .ant-modal-close {
+        .ant-modal-close-x {
+          height: 76px;
+        }
+      }
+    }
+  }
+}
+
 .ellipsis {
   white-space: nowrap;
   overflow: hidden;
@@ -42,7 +62,7 @@
 
 .receive-amount-wrapper {
   gap: 4px;
-  margin: 32px 0 24px;
+  margin: 0 0 24px;
   @include media-mobile-and-pad {
     margin-top: 40px;
   }
@@ -105,7 +125,7 @@
   gap: 0px;
 }
 
-.fee-value{
+.fee-value {
   @include text-overflow;
 }
 
