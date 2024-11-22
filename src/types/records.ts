@@ -22,6 +22,7 @@ export type TFromTransfer = {
   amount: string;
   amountUsd?: string;
   symbol: string;
+  icon: string;
   status: TOrderStatus;
   txId: string;
 };
@@ -39,6 +40,7 @@ export type TToTransfer = {
   amount: string;
   amountUsd?: string;
   symbol: string;
+  icon: string;
   status: TOrderStatus;
   feeInfo: TFeeInfo[];
   txId: string;
@@ -59,6 +61,7 @@ export interface TRecordsTableListType {
   status: TOrderStatus;
   arrivalTime: number;
   symbol: string;
+  icon: string;
   sendingAmount: string;
   receivingAmount: string;
   fromNetwork: string;

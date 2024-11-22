@@ -120,10 +120,14 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
 
   return (
     <div className={clsx(styles['filter-wrapper'])}>
-      <div className={styles['filter-item-wrapper']}>
-        <FilterIcon className={styles['filter-icon']} onClick={handleOpenFilterDrawer} />
+      <div className={clsx('flex-row-center', 'flex-row-wrap', styles['filter-item-wrapper'])}>
+        <div
+          className={clsx('flex-center', 'flex-shrink-0', styles['filter-icon'])}
+          onClick={handleOpenFilterDrawer}>
+          <FilterIcon />
+        </div>
         {status !== TRecordsRequestStatus.ALL && (
-          <div className={styles['filter-item']}>
+          <div className={clsx('flex-shrink-0', styles['filter-item'])}>
             {status === TRecordsRequestStatus.Processing && TRecordsStatusI18n.Processing}
             {status === TRecordsRequestStatus.Succeed && TRecordsStatusI18n.Succeed}
             {status === TRecordsRequestStatus.Failed && TRecordsStatusI18n.Failed}
@@ -134,7 +138,7 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
           </div>
         )}
         {isShowTimestamp() && (
-          <div className={styles['filter-item']}>
+          <div className={clsx('flex-shrink-0', styles['filter-item'])}>
             {(timestamp?.[0] && moment(timestamp[0]).format(DATE_FORMATE)) ||
               `${DEFAULT_NULL_VALUE}`}
             {' - '}
@@ -147,7 +151,7 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
           </div>
         )}
         {isShowReset && (
-          <div className={clsx(styles['filter-reset'])} onClick={onReset}>
+          <div className={clsx('flex-shrink-0', styles['filter-reset'])} onClick={onReset}>
             Reset
           </div>
         )}
@@ -183,7 +187,7 @@ export default function Filter({ requestRecordsList, onReset }: TRecordsContentP
             onChange={setFilterStatus}
             popupClassName={'drop-wrap'}
             options={[
-              { value: TRecordsRequestStatus.ALL, label: 'All' },
+              { value: TRecordsRequestStatus.ALL, label: 'All Status' },
               { value: TRecordsRequestStatus.Processing, label: TRecordsStatusI18n.Processing },
               { value: TRecordsRequestStatus.Succeed, label: TRecordsStatusI18n.Succeed },
               { value: TRecordsRequestStatus.Failed, label: TRecordsStatusI18n.Failed },

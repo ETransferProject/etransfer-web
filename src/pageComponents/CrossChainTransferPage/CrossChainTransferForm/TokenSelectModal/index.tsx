@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import CommonModal from 'components/CommonModal';
 import styles from './styles.module.scss';
 import { Input } from 'antd';
@@ -29,6 +29,20 @@ export default function TokenSelectModal({
   onClose,
 }: TokenSelectModalProps) {
   const { isPadPX } = useCommonState();
+  const [searchKeyword, setSearchKeyword] = useState('');
+
+  useEffect(() => {
+    if (!open) {
+      setSearchKeyword('');
+    }
+  }, [open]);
+
+  const filteredTokenList = useMemo(() => {
+    if (!searchKeyword) return tokenList;
+
+    const keyword = searchKeyword.toLowerCase();
+    return tokenList.filter((item) => item.symbol.toLowerCase().includes(keyword));
+  }, [tokenList, searchKeyword]);
 
   const content = useMemo(() => {
     return (
@@ -38,10 +52,12 @@ export default function TokenSelectModal({
             className={styles['token-search-input']}
             placeholder={SearchByTokenName}
             prefix={<SearchIcon />}
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
           />
         </div>
         <div className={styles['token-list']}>
-          {tokenList.map((item, index) => {
+          {filteredTokenList.map((item, index) => {
             return (
               <div
                 key={'TokenSelectModal-item-' + index}
@@ -62,7 +78,7 @@ export default function TokenSelectModal({
         </div>
       </>
     );
-  }, [onSelect, tokenList]);
+  }, [filteredTokenList, onSelect, searchKeyword]);
 
   if (isPadPX) {
     return (

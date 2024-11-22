@@ -3,18 +3,21 @@
 @import 'src/assets/theme/breakpoint.scss';
 
 .filter-item-wrapper {
-  position: relative;
+  gap: 12px;
   @include media-mobile {
-    padding: 12px 16px;
+    padding: 8px 16px;
   }
   @include media-pad {
-    padding: 16px 40px 8px;
+    padding: 8px 24px;
   }
 }
 
 .filter-icon {
-  float: left;
-  margin: 7px 12px 14px 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  border: 1px solid $border;
+  cursor: pointer;
 }
 
 .filter-item {
@@ -24,18 +27,13 @@
   font-size: 14px;
   border-radius: 6px;
   background-color: $hover-bg;
-  margin: 0 12px 7px 0px;
-  float: left;
 }
 
 .filter-reset {
   font-size: 14px;
   height: 22px;
   line-height: 22px;
-  margin-top: 6px;
-  margin-bottom: 6px;
   color: $normal;
-  float: left;
 }
 
 .filter-close-icon {

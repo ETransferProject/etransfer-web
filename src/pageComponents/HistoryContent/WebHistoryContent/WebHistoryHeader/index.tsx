@@ -13,6 +13,7 @@ import moment from 'moment';
 import { useHistoryFilter } from 'hooks/history';
 import { END_TIME_FORMAT, START_TIME_FORMAT } from 'constants/records';
 import { DATE_FORMATE } from 'constants/misc';
+import HeaderTab, { EHeaderTab } from 'pageComponents/HistoryContent/HeaderTab';
 
 const { RangePicker } = DatePicker;
 
@@ -64,7 +65,7 @@ export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecor
 
   return (
     <div className={clsx(styles['web-records-header-wrapper'])}>
-      <div className={clsx(styles['web-records-title'])}>History</div>
+      <HeaderTab activeTab={EHeaderTab.TRANSFER} onChange={() => void 0} />
       <div className={clsx(styles['web-records-search-wrapper'])}>
         <Select
           size={'large'}
@@ -73,7 +74,7 @@ export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecor
           onChange={handleStatusChange}
           popupClassName={'drop-wrap'}
           options={[
-            { value: TRecordsRequestStatus.ALL, label: 'All' },
+            { value: TRecordsRequestStatus.ALL, label: 'All Status' },
             { value: TRecordsRequestStatus.Processing, label: TRecordsStatusI18n.Processing },
             { value: TRecordsRequestStatus.Succeed, label: TRecordsStatusI18n.Succeed },
             { value: TRecordsRequestStatus.Failed, label: TRecordsStatusI18n.Failed },

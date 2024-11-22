@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import CommonModal from 'components/CommonModal';
 import NetworkLogo from 'components/NetworkLogo';
 import { NetworkStatus, TNetworkItem } from 'types/api';
@@ -28,6 +28,20 @@ export default function NetworkSelectModal({
   onClose,
 }: NetworkSelectModalProps) {
   const { isPadPX } = useCommonState();
+  const [searchKeyword, setSearchKeyword] = useState('');
+
+  useEffect(() => {
+    if (!open) {
+      setSearchKeyword('');
+    }
+  }, [open]);
+
+  const filteredNetworkList = useMemo(() => {
+    if (!searchKeyword) return networkList;
+
+    const keyword = searchKeyword.toLowerCase();
+    return networkList.filter((item) => item.name.toLowerCase().includes(keyword));
+  }, [networkList, searchKeyword]);
 
   const content = useMemo(() => {
     return (
@@ -37,10 +51,12 @@ export default function NetworkSelectModal({
             className={styles['network-search-input']}
             placeholder={SearchByChainName}
             prefix={<SearchIcon />}
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
           />
         </div>
         <div className={styles['network-list']}>
-          {networkList.map((item, index) => {
+          {filteredNetworkList.map((item, index) => {
             return (
               <div
                 key={'NetworkSelectModal-item-' + index}
@@ -71,7 +87,7 @@ export default function NetworkSelectModal({
         </div>
       </>
     );
-  }, [networkList, onSelect]);
+  }, [filteredNetworkList, onSelect, searchKeyword]);
 
   if (isPadPX) {
     return (

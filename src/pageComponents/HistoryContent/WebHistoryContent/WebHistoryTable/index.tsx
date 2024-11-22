@@ -11,6 +11,7 @@ import EmptyDataBox from 'pageComponents/EmptyDataBox';
 import StatusBox from 'pageComponents/HistoryContent/StatusBox';
 import ArrivalTimeBox from 'pageComponents/HistoryContent/ArrivalTimeBox';
 import AmountBox from 'pageComponents/HistoryContent/AmountBox';
+import TokenBox from 'pageComponents/HistoryContent/TokenBox';
 import FromAndToBox from 'pageComponents/HistoryContent/FromAndToBox';
 import { useCheckHasConnectedWallet } from 'hooks/wallet';
 import { LOGIN_TO_VIEW_HISTORY, NO_HISTORY_FOUND } from 'constants/records';
@@ -45,7 +46,15 @@ const columns = [
     },
   },
   {
-    title: 'Amount Sent',
+    title: 'Token',
+    dataIndex: 'symbol',
+    key: 'symbol',
+    render: (symbol: string, record: TRecordsTableListType) => {
+      return <TokenBox icon={record.icon} symbol={symbol} />;
+    },
+  },
+  {
+    title: 'Sending Amount',
     dataIndex: 'sendingAmount',
     key: 'sendingAmount',
     render: (sendingAmount: string, record: TRecordsTableListType) => {
@@ -53,7 +62,7 @@ const columns = [
     },
   },
   {
-    title: 'Amount Received',
+    title: 'Receiving Amount',
     dataIndex: 'receivingAmount',
     key: 'receivingAmount',
     render: (receivingAmount: string, record: TRecordsTableListType) => {
@@ -141,6 +150,7 @@ export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProp
         status,
         arrivalTime,
         symbol: fromTransfer.symbol,
+        icon: fromTransfer.icon,
         sendingAmount: fromTransfer.amount,
         receivingAmount: toTransfer.amount,
         fromNetwork: fromTransfer.network,
