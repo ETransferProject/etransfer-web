@@ -3,7 +3,6 @@ import styles from './styles.module.scss';
 import { Table } from 'antd';
 import EmptyDataBox from 'pageComponents/EmptyDataBox';
 import TokenBox from '../../ColumnComponents/TokenBox';
-import AelfChain from '../../ColumnComponents/AelfChain';
 import Networks from '../../ColumnComponents/Networks';
 import Volume from '../../ColumnComponents/Volume';
 import { TTokenDashboardItem, TTokenDashboardItemDetail } from 'types/infoDashboard';
