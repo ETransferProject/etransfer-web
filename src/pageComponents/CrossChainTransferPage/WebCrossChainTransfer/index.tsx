@@ -21,6 +21,7 @@ export interface WebCrossChainTransferProps extends CrossChainTransferFormProps 
   isUseRecipientAddress?: boolean;
   recipientAddress?: string;
   comment?: string;
+  decimalsFromWallet?: string | number;
   onClickProcessingTip: () => void;
   clickFailedOk: () => void;
   clickSuccessOk: () => void;
@@ -32,6 +33,7 @@ export default function WebCrossChainTransfer({
   amount,
   amountUSD,
   balance,
+  decimalsFromWallet,
   minAmount,
   receiveAmount,
   transferInfo,
@@ -96,6 +98,7 @@ export default function WebCrossChainTransfer({
         <CrossChainTransferFooter
           amount={amount}
           fromBalance={balance}
+          decimalsFromWallet={decimalsFromWallet}
           isUseRecipientAddress={isUseRecipientAddress}
           recipientAddress={recipientAddress}
           comment={comment}
@@ -119,6 +122,7 @@ export default function WebCrossChainTransfer({
     clickFailedOk,
     clickSuccessOk,
     comment,
+    decimalsFromWallet,
     depositProcessingCount,
     form,
     formValidateData,

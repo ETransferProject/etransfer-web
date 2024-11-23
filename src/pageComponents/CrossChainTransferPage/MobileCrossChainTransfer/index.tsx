@@ -21,6 +21,7 @@ export interface MobileCrossChainTransferProps extends CrossChainTransferFormPro
   isUseRecipientAddress?: boolean;
   recipientAddress?: string;
   comment?: string;
+  decimalsFromWallet?: string | number;
   onClickProcessingTip: () => void;
   clickFailedOk: () => void;
   clickSuccessOk: () => void;
@@ -32,6 +33,7 @@ export default function MobileCrossChainTransfer({
   amount,
   amountUSD,
   balance,
+  decimalsFromWallet,
   minAmount,
   receiveAmount,
   transferInfo,
@@ -83,6 +85,7 @@ export default function MobileCrossChainTransfer({
         <CrossChainTransferFooter
           amount={amount}
           fromBalance={balance}
+          decimalsFromWallet={decimalsFromWallet}
           isUseRecipientAddress={isUseRecipientAddress}
           recipientAddress={recipientAddress}
           comment={comment}
@@ -106,6 +109,7 @@ export default function MobileCrossChainTransfer({
     clickFailedOk,
     clickSuccessOk,
     comment,
+    decimalsFromWallet,
     form,
     formValidateData,
     isSubmitDisabled,

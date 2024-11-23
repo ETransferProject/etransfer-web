@@ -17,6 +17,7 @@ export default function EVMWallet() {
     getAccountInfo,
     signMessage,
     sendTransaction,
+    getBalance,
   } = useEVM();
 
   const onConnectEVM = useCallback(
@@ -25,6 +26,10 @@ export default function EVMWallet() {
     },
     [connect, connectors],
   );
+
+  const onGetBalance = useCallback(() => {
+    getBalance({ tokenContractAddress: EVM_USDT_CONTRACT_ADDRESS_SEPOLIA, network: 'SETH' });
+  }, [getBalance]);
 
   const onDisconnectEVM = useCallback(async () => {
     disconnect();
@@ -70,6 +75,7 @@ export default function EVMWallet() {
           <Button onClick={onDisconnectEVM}>DisConnect</Button>
         </>
       )}
+      <Button onClick={onGetBalance}>get balance</Button>
       <Button onClick={onSignMessage}>Sign Message</Button>
       <Button onClick={onSendTransaction}>Send Transaction</Button>
     </div>

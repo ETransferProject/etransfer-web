@@ -19,7 +19,7 @@ export const queryClient = new QueryClient();
 
 const WalletConnectProjectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '';
 
-export const config = createConfig({
+export const EVMProviderConfig = createConfig({
   chains: [mainnet, bsc, base, polygon, avalanche, arbitrum, optimism, sepolia, bscTestnet],
   connectors: [metaMask(), coinbaseWallet(), walletConnect({ projectId: WalletConnectProjectId })],
   transports: {
@@ -37,7 +37,7 @@ export const config = createConfig({
 
 export default function EVMProvider({ children }: { children: React.ReactNode }) {
   return (
-    <WagmiProvider config={config}>
+    <WagmiProvider config={EVMProviderConfig}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </WagmiProvider>
   );

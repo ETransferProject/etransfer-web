@@ -57,7 +57,7 @@ import { WalletTypeEnum } from 'context/Wallet/types';
 import { computeTokenList, computeToNetworkList } from './utils';
 import { getTokenPrices } from 'utils/api/user';
 import BigNumber from 'bignumber.js';
-import { computeWalletType, getWalletSourceType, isAelfChain, isEVMChain } from 'utils/wallet';
+import { computeWalletType, getWalletSourceType, isAelfChain } from 'utils/wallet';
 import { checkIsEnoughAllowance } from 'utils/contract';
 import { APPROVE_ELF_FEE } from 'constants/withdraw';
 import { SupportedELFChainId } from 'constants/index';
@@ -90,8 +90,7 @@ export default function CrossChainTransferPage() {
   const [amount, setAmount] = useState('');
   const [amountUSD, setAmountUSD] = useState('');
   const [amountPriceUsd, setAmountPriceUSD] = useState<number>(0);
-  const { setEVMTokenContractAddressRef, balance, getBalance, getBalanceInterval } =
-    useUpdateBalance();
+  const { balance, decimalsFromWallet, getBalance, getBalanceInterval } = useUpdateBalance();
   const getAuthTokenFromStorage = useGetAuthTokenFromStorage();
 
   const minAmount = useMemo(() => {
@@ -186,9 +185,9 @@ export default function CrossChainTransferPage() {
 
         const res = await getTransferInfo(params, authToken);
         transferInfoRef.current = res.transferInfo;
-        setEVMTokenContractAddressRef.current = isEVMChain(_fromNetworkKey)
-          ? (res.transferInfo.contractAddress as `0x${string}`)
-          : '0x';
+        // setEVMTokenContractAddressRef.current = isEVMChain(_fromNetworkKey)
+        //   ? (res.transferInfo.contractAddress as `0x${string}`)
+        //   : '0x';
 
         setTransferInfo({
           ...res.transferInfo,
@@ -235,7 +234,6 @@ export default function CrossChainTransferPage() {
       getBalance,
       getBalanceInterval,
       getCommentInput,
-      setEVMTokenContractAddressRef,
       toWallet?.walletType,
       tokenSymbol,
     ],
@@ -657,33 +655,36 @@ export default function CrossChainTransferPage() {
   }, [fromWallet?.account]);
 
   return isPadPX ? (
-    <MobileCrossChainTransfer
-      receiveAmount={receiveAmount}
-      form={form}
-      formValidateData={formValidateData}
-      transferInfo={transferInfo}
-      minAmount={minAmount}
-      amount={amount}
-      amountUSD={amountUSD}
-      balance={balance}
-      isSubmitDisabled={isSubmitDisabled}
-      isTransactionFeeLoading={isTransactionFeeLoading}
-      isUseRecipientAddress={isUseRecipientAddress}
-      recipientAddress={recipientAddressInput}
-      comment={getCommentInput()}
-      onFromNetworkChanged={handleFromNetworkChanged}
-      onToNetworkChanged={handleToNetworkChanged}
-      onTokenChanged={handleTokenChanged}
-      onAmountChange={handleAmountChange}
-      onAmountBlur={handleAmountBlur}
-      onClickMax={handleClickMax}
-      onUseRecipientChanged={handleUseRecipientChanged}
-      onRecipientAddressChange={handleRecipientAddressChange}
-      onRecipientAddressBlur={handleRecipientAddressBlur}
-      onClickProcessingTip={handleClickProcessingTip}
-      clickFailedOk={handleClickFailedOk}
-      clickSuccessOk={handleClickSuccessOk}
-    />
+    <>
+      <MobileCrossChainTransfer
+        receiveAmount={receiveAmount}
+        form={form}
+        formValidateData={formValidateData}
+        transferInfo={transferInfo}
+        minAmount={minAmount}
+        amount={amount}
+        amountUSD={amountUSD}
+        balance={balance}
+        decimalsFromWallet={decimalsFromWallet}
+        isSubmitDisabled={isSubmitDisabled}
+        isTransactionFeeLoading={isTransactionFeeLoading}
+        isUseRecipientAddress={isUseRecipientAddress}
+        recipientAddress={recipientAddressInput}
+        comment={getCommentInput()}
+        onFromNetworkChanged={handleFromNetworkChanged}
+        onToNetworkChanged={handleToNetworkChanged}
+        onTokenChanged={handleTokenChanged}
+        onAmountChange={handleAmountChange}
+        onAmountBlur={handleAmountBlur}
+        onClickMax={handleClickMax}
+        onUseRecipientChanged={handleUseRecipientChanged}
+        onRecipientAddressChange={handleRecipientAddressChange}
+        onRecipientAddressBlur={handleRecipientAddressBlur}
+        onClickProcessingTip={handleClickProcessingTip}
+        clickFailedOk={handleClickFailedOk}
+        clickSuccessOk={handleClickSuccessOk}
+      />
+    </>
   ) : (
     <WebCrossChainTransfer
       receiveAmount={receiveAmount}
@@ -694,6 +695,7 @@ export default function CrossChainTransferPage() {
       amount={amount}
       amountUSD={amountUSD}
       balance={balance}
+      decimalsFromWallet={decimalsFromWallet}
       isSubmitDisabled={isSubmitDisabled}
       isTransactionFeeLoading={isTransactionFeeLoading}
       isUseRecipientAddress={isUseRecipientAddress}

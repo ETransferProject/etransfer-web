@@ -1,13 +1,15 @@
-import { ISignMessageResult, WalletTypeEnum } from 'context/Wallet/types';
+import { IGetEVMBalanceRequest, ISignMessageResult, WalletTypeEnum } from 'context/Wallet/types';
 import { useCallback, useMemo, useState } from 'react';
 import { getAuthPlainText } from 'utils/auth';
 import { ethers } from 'ethers';
 import { useAccount, useConnect, useDisconnect, useSignMessage, useWriteContract } from 'wagmi';
+import { getBalance } from '@wagmi/core';
 import { EVM_WALLET_ALLOWANCE } from 'constants/wallet/EVM';
 import { AuthTokenSource } from 'types/api';
 import { SendEVMTransactionParams } from 'types/wallet';
 import { stringToHex } from 'utils/format';
 import { getEVMChainInfo } from 'utils/wallet/EVM';
+import { EVMProviderConfig } from 'provider/wallet/EVM';
 
 export default function useEVM() {
   const { connectAsync, connectors } = useConnect();
@@ -29,6 +31,23 @@ export default function useEVM() {
   });
 
   const { signMessageAsync } = useSignMessage();
+
+  const onGetBalance = useCallback(
+    async ({ tokenContractAddress, network }: IGetEVMBalanceRequest) => {
+      if (!accountInfo.address) return { value: '0' };
+
+      const chain = getEVMChainInfo(network);
+      if (!chain) return { value: '0' };
+      const res = await getBalance(EVMProviderConfig, {
+        address: accountInfo.address,
+        chainId: chain.id,
+        token: tokenContractAddress as `0x${string}`,
+      });
+
+      return { value: res.value.toString(), decimals: res.decimals };
+    },
+    [accountInfo.address],
+  );
 
   const signMessage = useCallback<() => Promise<ISignMessageResult>>(async () => {
     const plainText = getAuthPlainText();
@@ -84,6 +103,7 @@ export default function useEVM() {
       accounts: accountInfo.addresses,
       connector: accountInfo.connector,
       connectors,
+      getBalance: onGetBalance,
       connect: connectAsync,
       disconnect: disconnect,
       getAccountInfo: () => accountInfo,
@@ -96,6 +116,7 @@ export default function useEVM() {
     connectors,
     disconnect,
     isConnected,
+    onGetBalance,
     sendTransaction,
     signMessage,
   ]);

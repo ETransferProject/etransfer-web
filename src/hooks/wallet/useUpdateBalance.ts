@@ -10,14 +10,12 @@ import { isAelfChain, isEVMChain, isSolanaChain, isTONChain } from 'utils/wallet
 import { getBalance as getAelfBalance } from 'utils/contract';
 import { SupportedELFChainId } from 'constants/index';
 import { useWallet } from 'context/Wallet';
-import { useBalance } from 'wagmi';
-import useEVM from './useEVM';
 
 export function useUpdateBalance() {
   const { tokenSymbol, totalTokenList } = useCrossChainTransfer();
   const [{ fromWallet }] = useWallet();
   const [balance, setBalance] = useState('');
-  const walletBalanceDecimalsRef = useRef<string | number>('');
+  const [decimalsFromWallet, setDecimalsFromWallet] = useState<string | number>('');
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
   const getBalanceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const accounts = useGetAccount(); // aelf account
@@ -27,13 +25,6 @@ export function useUpdateBalance() {
     return item?.symbol ? item : InitialCrossChainTransferState.tokenList[0];
   }, [tokenSymbol, totalTokenList]);
   const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
-
-  const setEVMTokenContractAddressRef = useRef<`0x${string}`>('0x');
-  const { account } = useEVM();
-  const { data: evmBalance, isSuccess: evmGetBalanceSuccess } = useBalance({
-    address: account,
-    token: setEVMTokenContractAddressRef.current, // token contract address
-  });
 
   const getBalance = useCallback(
     async (
@@ -65,29 +56,22 @@ export function useUpdateBalance() {
           _formatBalance = divDecimals(_balance, decimal).toFixed();
         } else if (isEVMChain(network)) {
           // EVM
-          if (!evmGetBalanceSuccess) return '';
-          _formatBalance = divDecimals(
-            evmBalance?.value.toString(),
-            evmBalance?.decimals,
-          ).toFixed();
-          _walletDecimals = evmBalance?.decimals;
+          if (!tokenContractAddress) return '';
+          const _balanceRes = await fromWallet?.getBalance({ tokenContractAddress, network });
+          _walletDecimals = _balanceRes.decimals || decimal;
+          _formatBalance = divDecimals(_balanceRes.value, _walletDecimals).toFixed();
         } else if (isSolanaChain(network)) {
           // Solana
           if (!tokenContractAddress) return '';
           const _balanceRes = await fromWallet?.getBalance({ tokenContractAddress });
-          _formatBalance = divDecimals(
-            _balanceRes.value,
-            _balanceRes.decimals || decimal,
-          ).toFixed();
           _walletDecimals = _balanceRes.decimals || decimal;
+          _formatBalance = divDecimals(_balanceRes.value, _walletDecimals).toFixed();
         } else if (isTONChain(network)) {
           // TON
           if (!tokenContractAddress) return '';
           const _balanceRes = await fromWallet?.getBalance({ tokenContractAddress });
-          _formatBalance = divDecimals(
-            _balanceRes.value,
-            _balanceRes.decimals || decimal,
-          ).toFixed();
+          _walletDecimals = _balanceRes.decimals || decimal;
+          _formatBalance = divDecimals(_balanceRes.value, _walletDecimals).toFixed();
         } else {
           // TRON
           if (!tokenContractAddress) return '';
@@ -103,7 +87,8 @@ export function useUpdateBalance() {
           }
           return _formatBalance;
         });
-        walletBalanceDecimalsRef.current = _walletDecimals;
+        setDecimalsFromWallet(_walletDecimals);
+        // walletBalanceDecimalsRef.current = _walletDecimals;
         return _formatBalance;
       } catch (error) {
         console.log('getBalance error', error);
@@ -112,15 +97,7 @@ export function useUpdateBalance() {
         isLoading && setIsBalanceLoading(false);
       }
     },
-    [
-      accounts,
-      currentTokenDecimal,
-      evmBalance?.decimals,
-      evmBalance?.value,
-      evmGetBalanceSuccess,
-      fromWallet,
-      tokenSymbol,
-    ],
+    [accounts, currentTokenDecimal, fromWallet, tokenSymbol],
   );
 
   const getBalanceRef = useRef(getBalance);
@@ -145,10 +122,9 @@ export function useUpdateBalance() {
   }, []);
 
   return {
-    setEVMTokenContractAddressRef,
     balance,
     isBalanceLoading,
-    walletBalanceDecimalsRef,
+    decimalsFromWallet,
     getBalance,
     getBalanceInterval,
   };

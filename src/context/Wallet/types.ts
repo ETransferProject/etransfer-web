@@ -23,7 +23,7 @@ export interface IWallet {
   accounts?: IAccounts;
   connector?: IConnector | string;
   disconnect(): Promise<void>;
-  getBalance(params: IGetBalanceRequest): Promise<IGetBalanceResult>;
+  getBalance(params: IGetBalanceRequest | IGetEVMBalanceRequest): Promise<IGetBalanceResult>;
   getAccountInfo(): Promise<IGetAccountInfoResult>;
   getSignature(params: any): Promise<IGetSignatureResult>;
   signMessage(): Promise<ISignMessageResult>;
@@ -48,6 +48,11 @@ export interface IGetSignatureResult {
   type: 'success' | 'error';
   signature?: string;
   errorMessage?: string | undefined;
+}
+
+export interface IGetEVMBalanceRequest {
+  tokenContractAddress: string;
+  network: string;
 }
 
 export interface IGetBalanceRequest {

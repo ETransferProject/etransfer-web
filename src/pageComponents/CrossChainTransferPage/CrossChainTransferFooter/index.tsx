@@ -35,8 +35,6 @@ import { TCrossChainTransferInfo, UpdateTransferOrderStatus } from 'types/api';
 import myEvents from 'utils/myEvent';
 import { useSendTxnFromAelfChain } from 'hooks/crossChainTransfer';
 import { isAuthTokenError } from 'utils/api/error';
-// import { useUpdateBalance } from 'hooks/wallet/useUpdateBalance';
-import { InitialCrossChainTransferState } from 'store/reducers/crossChainTransfer/slice';
 
 export interface CrossChainTransferFooterProps {
   className?: string;
@@ -45,6 +43,7 @@ export interface CrossChainTransferFooterProps {
   comment?: string;
   amount?: string;
   fromBalance?: string;
+  decimalsFromWallet?: string | number;
   transferInfo: TCrossChainTransferInfo;
   estimateReceive?: string;
   estimateReceiveUnit?: string;
@@ -71,6 +70,7 @@ export default function CrossChainTransferFooter({
   comment,
   amount,
   fromBalance,
+  decimalsFromWallet,
   transferInfo,
   estimateReceive = DEFAULT_NULL_VALUE,
   estimateReceiveUnit = '',
@@ -83,20 +83,18 @@ export default function CrossChainTransferFooter({
   clickSuccessOk,
 }: CrossChainTransferFooterProps) {
   const { setLoading } = useLoading();
-  const { fromNetwork, fromWalletType, totalTokenList, tokenSymbol, toNetwork, toWalletType } =
+  const { fromNetwork, fromWalletType, tokenSymbol, toNetwork, toWalletType } =
     useCrossChainTransfer();
   const [{ fromWallet, toWallet }] = useWallet();
   const { getAuthToken, queryAuthToken } = useAuthToken();
   const [firstTxnHash, setFirstTxnHash] = useState('');
   const firstTxnHashRef = useRef('');
 
-  const currentToken = useMemo(() => {
-    const item = totalTokenList?.find((item) => item.symbol === tokenSymbol);
-    return item?.symbol ? item : InitialCrossChainTransferState.tokenList[0];
-  }, [tokenSymbol, totalTokenList]);
-  const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
-
-  // const { walletBalanceDecimalsRef } = useUpdateBalance();
+  // const currentToken = useMemo(() => {
+  //   const item = totalTokenList?.find((item) => item.symbol === tokenSymbol);
+  //   return item?.symbol ? item : InitialCrossChainTransferState.tokenList[0];
+  // }, [tokenSymbol, totalTokenList]);
+  // const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
 
   // DoubleCheckModal
   const [isDoubleCheckModalOpen, setIsDoubleCheckModalOpen] = useState(false);
@@ -285,21 +283,21 @@ export default function CrossChainTransferFooter({
             toAddress: orderResultRef.current.address,
             tokenAbi: EVM_TOKEN_ABI,
             amount: amount,
-            decimals: Number(currentTokenDecimal), // TODO
+            decimals: Number(decimalsFromWallet), // TODO
           } as SendEVMTransactionParams;
         } else if (fromWallet.walletType === WalletTypeEnum.SOL) {
           params = {
             tokenContractAddress: tokenContractAddress,
             toAddress: orderResultRef.current.address,
             amount: amount,
-            decimals: currentTokenDecimal,
+            decimals: decimalsFromWallet,
           } as SendSolanaTransactionParams;
         } else if (fromWallet.walletType === WalletTypeEnum.TON) {
           params = {
             tokenContractAddress: tokenContractAddress,
             toAddress: orderResultRef.current.address,
             amount: Number(amount),
-            decimals: currentTokenDecimal,
+            decimals: decimalsFromWallet,
             orderId: orderResultRef.current.orderId,
             forwardTonAmount: '',
           } as SendTONTransactionParams;
@@ -349,7 +347,7 @@ export default function CrossChainTransferFooter({
   }, [
     amount,
     comment,
-    currentTokenDecimal,
+    decimalsFromWallet,
     fromNetwork?.network,
     fromWallet,
     getAuthToken,
