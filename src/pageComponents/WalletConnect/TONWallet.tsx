@@ -29,6 +29,8 @@ export default function TONWallet() {
       const res = await sendTransaction({
         tokenContractAddress: TON_USDT_CONTRACT_ADDRESS,
         toAddress: TON_TO_ADDRESS,
+        decimals: 6,
+        orderId: '',
         amount: 0.01,
       });
       console.log('>>>>>> TON sendTransaction res', res);

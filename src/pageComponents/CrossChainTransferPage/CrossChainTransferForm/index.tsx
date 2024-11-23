@@ -104,7 +104,6 @@ export default function CrossChainTransferForm({
     return item?.symbol ? item : InitialCrossChainTransferState.tokenList[0];
   }, [tokenList, tokenSymbol]);
 
-  // TODO get from wallet?
   const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
 
   const onUseRecipientChange = useCallback(
@@ -222,6 +221,8 @@ export default function CrossChainTransferForm({
     const _toWalletType = toWalletTypeRef.current;
     const _fromNetwork = fromNetworkRef.current;
     const _toNetwork = toNetworkRef.current;
+    if (!_fromNetwork || !_toNetwork) return;
+
     dispatch(setFromWalletType(_toWalletType));
     dispatch(setToWalletType(_fromWalletType));
     dispatch(setFromNetwork(_toNetwork));

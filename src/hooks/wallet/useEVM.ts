@@ -59,9 +59,8 @@ export default function useEVM() {
       // }
       const chain = getEVMChainInfo(network);
       if (!chain) return '';
-
       const data = await writeContractAsync({
-        chainId: chain.id, // sepolia.id, // TODO
+        chainId: chain.id,
         address: tokenContractAddress,
         functionName: 'transfer',
         abi: tokenAbi,

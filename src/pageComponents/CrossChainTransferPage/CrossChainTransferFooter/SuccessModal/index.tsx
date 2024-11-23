@@ -64,7 +64,7 @@ export default function SuccessModal({
       hideCancelButton
       okText={GOT_IT}
       footerSlot={CommonLink({
-        href: getTxExploreHref(fromNetwork.network, txHash, false),
+        href: getTxExploreHref(fromNetwork?.network || '', txHash, false),
         isTagA: true,
         children: (
           <div className={clsx(styles['link-wrap'], !isPadPX && styles['linkToExplore'])}>

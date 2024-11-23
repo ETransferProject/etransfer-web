@@ -13,9 +13,9 @@ export type TCrossChainTransferState = {
   tokenList: TTokenItem[];
   totalTokenList: TTokenItem[];
 
-  fromNetwork: TNetworkItem;
+  fromNetwork?: TNetworkItem;
   fromNetworkList?: TNetworkItem[];
-  toNetwork: TNetworkItem;
+  toNetwork?: TNetworkItem;
   toNetworkList?: TNetworkItem[];
   totalNetworkList?: TNetworkItem[];
 
@@ -46,13 +46,13 @@ export const CrossChainTransferSlice = createSlice({
     setTotalTokenList: (state, action: PayloadAction<TTokenItem[]>) => {
       state.totalTokenList = action.payload;
     },
-    setFromNetwork: (state, action: PayloadAction<TNetworkItem>) => {
+    setFromNetwork: (state, action: PayloadAction<TNetworkItem | undefined>) => {
       state.fromNetwork = action.payload;
     },
     setFromNetworkList: (state, action: PayloadAction<TNetworkItem[]>) => {
       state.fromNetworkList = action.payload;
     },
-    setToNetwork: (state, action: PayloadAction<TNetworkItem>) => {
+    setToNetwork: (state, action: PayloadAction<TNetworkItem | undefined>) => {
       state.toNetwork = action.payload;
     },
     setToNetworkList: (state, action: PayloadAction<TNetworkItem[]>) => {

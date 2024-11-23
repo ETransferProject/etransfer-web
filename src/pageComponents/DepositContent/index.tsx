@@ -43,7 +43,7 @@ import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { useSetAuthFromStorage } from 'hooks/authToken';
-import useAelf from 'hooks/wallet/useAelf';
+import useAelf, { useInitWallet } from 'hooks/wallet/useAelf';
 import { addAelfNetwork, deleteAelfNetwork } from 'utils/deposit';
 import { AelfChainIdList } from 'constants/chain';
 import { useCheckTxn } from 'hooks/deposit';
@@ -80,6 +80,7 @@ type TGetNetworkData = {
 export default function Content() {
   const dispatch = useAppDispatch();
   const { isPadPX } = useCommonState();
+  useInitWallet();
   const { depositProcessingCount, transferProcessingCount } = useRecordsState();
   const {
     fromNetwork,
@@ -493,7 +494,7 @@ export default function Content() {
         fromNetworkList &&
         fromNetworkList?.length > 0
       ) {
-        fromNetworkRef.current = fromNetwork.network;
+        fromNetworkRef.current = fromNetwork?.network;
       }
 
       await setAuthFromStorage();
