@@ -359,7 +359,7 @@ export default function WithdrawFooter({
             isTagA: true,
             children: (
               <div className={clsx(styles['link-wrap'], !isPadPX && styles['linkToExplore'])}>
-                <span className={styles['link-word']}>View on aelf Explorer</span>
+                <span className={styles['link-word']}>View on aelfscan</span>
                 <Fingerprint className={styles['link-explore-icon']} />
               </div>
             ),
