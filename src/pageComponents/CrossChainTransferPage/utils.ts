@@ -43,7 +43,7 @@ export function computeTokenList(
   toNetwork: TNetworkItem,
   totalTokenList: TTokenItem[],
 ): TTokenItem[] {
-  const network = toNetwork.network as unknown as BlockchainNetworkType;
+  const network = toNetwork?.network as unknown as BlockchainNetworkType;
   const targetList: string[] = (TO_NETWORK_TOKEN_CONFIG as any)?.[network];
 
   const list: TTokenItem[] = [];

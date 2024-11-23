@@ -177,8 +177,11 @@ export function getWalletSourceType(walletType: WalletTypeEnum) {
       return WalletSourceType.EVM;
     case WalletTypeEnum.SOL:
       return WalletSourceType.Solana;
+    case WalletTypeEnum.TON:
+      return WalletSourceType.Ton;
     case WalletTypeEnum.TRON:
       return WalletSourceType.TRX;
+
     default:
       return undefined;
   }

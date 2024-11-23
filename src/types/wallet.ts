@@ -63,6 +63,8 @@ export interface SendTONTransactionParams {
   tokenContractAddress: string;
   toAddress: string;
   amount: number;
+  decimals: number | string;
+  orderId: string;
   forwardTonAmount?: string;
 }
 

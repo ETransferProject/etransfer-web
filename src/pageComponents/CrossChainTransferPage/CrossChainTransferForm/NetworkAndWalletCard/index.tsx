@@ -70,12 +70,12 @@ export function NetworkAndWalletCard({
     let modalTitle = CONNECT_WALLET;
 
     if (cardType === 'From') {
-      if (isAelfChain(fromNetwork?.network)) {
+      if (isAelfChain(fromNetwork?.network || '')) {
         modalTitle = CONNECT_AELF_WALLET;
         connectWalletText = (
           <div
             className={styles['connect-wallet-link']}
-            onClick={() => handleConnectWallet(fromNetwork.network)}>
+            onClick={() => handleConnectWallet(fromNetwork?.network || '')}>
             {CONNECT_AELF_WALLET}
           </div>
         );
@@ -84,18 +84,18 @@ export function NetworkAndWalletCard({
         connectWalletText = (
           <div
             className={styles['connect-wallet-link']}
-            onClick={() => handleConnectWallet(fromNetwork.network)}>
+            onClick={() => handleConnectWallet(fromNetwork?.network || '')}>
             {CONNECT_WALLET}
           </div>
         );
       }
     } else {
-      if (isAelfChain(toNetwork?.network)) {
+      if (isAelfChain(toNetwork?.network || '')) {
         modalTitle = CONNECT_AELF_WALLET;
         connectWalletText = (
           <div
             className={styles['connect-wallet-link']}
-            onClick={() => handleConnectWallet(toNetwork.network)}>
+            onClick={() => handleConnectWallet(toNetwork?.network || '')}>
             {CONNECT_AELF_WALLET}
           </div>
         );
@@ -104,7 +104,7 @@ export function NetworkAndWalletCard({
         connectWalletText = (
           <div
             className={styles['connect-wallet-link']}
-            onClick={() => handleConnectWallet(toNetwork.network)}>
+            onClick={() => handleConnectWallet(toNetwork?.network || '')}>
             {CONNECT_WALLET}
           </div>
         );

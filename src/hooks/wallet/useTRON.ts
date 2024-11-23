@@ -41,11 +41,11 @@ export default function useTRON() {
       const contract = await tronWeb.contract().at(tokenContractAddress);
 
       const balanceInSun = await contract.balanceOf(address).call();
-      const balanceInUSDT = tronWeb.fromSun(balanceInSun);
-      console.log('>>>>>> TRON balance', balanceInUSDT);
+      const balanceFromSun = tronWeb.fromSun(balanceInSun);
+      console.log('>>>>>> TRON balance', balanceFromSun);
       return {
-        value: balanceInUSDT,
-        decimals: 6, // TODO
+        value: balanceFromSun,
+        decimals: '',
       };
     },
     [address],

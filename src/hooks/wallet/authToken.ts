@@ -43,12 +43,7 @@ export function useAuthToken() {
   const handleReCaptcha = useCallback(async (): Promise<string | undefined> => {
     if (!fromWallet?.account || !fromWalletType) return undefined;
     const walletSourceType = getWalletSourceType(fromWalletType);
-
-    if (
-      !walletSourceType ||
-      fromWalletType === WalletTypeEnum.AELF ||
-      fromWalletType === WalletTypeEnum.TON
-    ) {
+    if (!walletSourceType || fromWalletType === WalletTypeEnum.AELF) {
       return undefined;
     }
 
@@ -78,7 +73,9 @@ export function useAuthToken() {
 
       const signatureResult = await fromWallet.signMessage();
       console.log('>>>>>> getAuthToken signatureResult', signatureResult);
-      if (!signatureResult.signature) throw Error('Signature error');
+      if (fromWallet.walletType !== WalletTypeEnum.TON && !signatureResult.signature) {
+        throw Error('Signature error');
+      }
 
       const apiParams: QueryAuthApiExtraRequestV3 = {
         pubkey: signatureResult.publicKey,

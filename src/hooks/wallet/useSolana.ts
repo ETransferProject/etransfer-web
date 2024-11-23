@@ -104,7 +104,7 @@ export default function useSolana() {
           fromAccount.address, // source
           associatedTokenTo, // destination
           publicKey,
-          amountFormat, // amount, transfer 1 USDT, USDT on solana devnet has 6 decimal
+          amountFormat, // amount
         ),
       );
       const transaction = new Transaction().add(...transactionInstructions);

@@ -8,7 +8,7 @@ import NetworkSelectModal from '../NetworkSelectModal';
 
 export interface NetworkSelectedProps {
   className?: string;
-  selected: TNetworkItem;
+  selected?: TNetworkItem;
   networkList: TNetworkItem[];
   onChange?: (item: TNetworkItem) => void;
   selectCallback?: (item: TNetworkItem) => Promise<void>;

@@ -72,8 +72,8 @@ export default function CrossChainTransferPage() {
   const [{ fromWallet, toWallet }] = useWallet();
   const { fromWalletType, fromNetwork, toNetwork, tokenSymbol, totalTokenList } =
     useCrossChainTransfer();
-  const fromNetworkRef = useRef<TNetworkItem>(fromNetwork);
-  const toNetworkRef = useRef<TNetworkItem>(toNetwork);
+  const fromNetworkRef = useRef<TNetworkItem | undefined>(fromNetwork);
+  const toNetworkRef = useRef<TNetworkItem | undefined>(toNetwork);
   const totalTokenListRef = useRef<TTokenItem[]>([]);
   const [form] = Form.useForm<TTransferFormValues>();
   const [formValidateData, setFormValidateData] = useState<{
@@ -243,6 +243,7 @@ export default function CrossChainTransferPage() {
         dispatch(setTotalTokenList(res.tokenList));
         totalTokenListRef.current = res.tokenList;
 
+        if (!toNetworkRef.current) return;
         const allowTokenList = computeTokenList(toNetworkRef.current, res.tokenList);
         dispatch(setTokenList(allowTokenList));
 
@@ -508,7 +509,7 @@ export default function CrossChainTransferPage() {
   }, [amount, getAmountUSD, getTransferData, tokenSymbol]);
 
   const handleClickMax = useCallback(async () => {
-    if (isAelfChain(fromNetwork?.network) && tokenSymbol === 'ELF') {
+    if (isAelfChain(fromNetwork?.network || '') && tokenSymbol === 'ELF') {
       try {
         setLoading(true);
         await getTransferData(tokenSymbol, undefined, undefined, amount);
@@ -516,7 +517,7 @@ export default function CrossChainTransferPage() {
         const aelfFee = transferInfoRef.current?.aelfTransactionFee;
         if (aelfFee && ZERO.plus(aelfFee).gt(0)) {
           const isEnoughAllowance = await checkIsEnoughAllowance({
-            chainId: fromNetwork.network as SupportedELFChainId,
+            chainId: fromNetwork?.network as SupportedELFChainId,
             symbol: tokenSymbol,
             address: fromWallet?.account || '',
             approveTargetAddress: currentToken.contractAddress,
@@ -548,7 +549,7 @@ export default function CrossChainTransferPage() {
     balance,
     currentToken.contractAddress,
     form,
-    fromNetwork.network,
+    fromNetwork?.network,
     fromWallet?.account,
     getTransferData,
     setLoading,
@@ -584,7 +585,7 @@ export default function CrossChainTransferPage() {
 
     getBalanceInterval(
       transferInfoRef.current?.contractAddress || '',
-      fromNetworkRef.current?.network,
+      fromNetworkRef.current?.network || '',
       currentTokenRef.current,
     );
   }, [getAmountUSD, getBalanceInterval, getNetworkData, getTokenData]);

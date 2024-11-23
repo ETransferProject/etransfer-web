@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import useEVM from 'hooks/wallet/useEVM';
 import {
   EVM_TO_ADDRESS,
-  EVM_USDT_ABI,
+  EVM_TOKEN_ABI,
   EVM_USDT_CONTRACT_ADDRESS_SEPOLIA,
 } from 'constants/wallet/EVM';
 
@@ -45,7 +45,7 @@ export default function EVMWallet() {
         network: 'SETH',
         tokenContractAddress: EVM_USDT_CONTRACT_ADDRESS_SEPOLIA,
         toAddress: EVM_TO_ADDRESS,
-        tokenAbi: EVM_USDT_ABI,
+        tokenAbi: EVM_TOKEN_ABI,
         amount: '0.02',
         decimals: 6,
       });
