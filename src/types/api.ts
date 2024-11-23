@@ -384,6 +384,7 @@ export type TTransferDashboardResult = {
 export type TTransferDashboardItem = {
   id: string;
   orderType: BusinessType;
+  secondOrderType: BusinessType;
   status: TOrderStatus;
   createTime: number;
   arrivalTime: number;
@@ -426,6 +427,7 @@ export type TTransferDashboardItemToFee = {
 export type TGetRecordDetailResult = {
   id: string;
   orderType: BusinessType;
+  secondOrderType: BusinessType;
   status: TOrderStatus;
   arrivalTime: number;
   createTime: number;

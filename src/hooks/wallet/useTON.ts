@@ -103,7 +103,7 @@ export default function useTON() {
       //   .storeUint(0, 32) // 0 opcode means we have a comment
       //   .storeStringTail(orderId)
       //   .endCell();
-      const orderIdParse = orderId.replace(/-/g, '');
+      // const orderIdParse = orderId.replace(/-/g, '');
       const payload = beginCell()
         .storeUint(0xf8a7ea5, 32) // op transfer
         .storeUint(0, 64) // queryId
@@ -113,7 +113,7 @@ export default function useTON() {
         .storeUint(0, 1) // custom_payload:(Maybe ^Cell)
         .storeCoins(toNano(forwardTonAmount)) // forward_ton_amount:(VarUInteger 16) - if >0, will send notification message
         .storeUint(0, 1) // forward_payload:(Either Cell ^Cell)
-        .storeMaybeRef(beginCell().storeUint(0, 32).storeStringTail(orderIdParse).endCell())
+        .storeMaybeRef(beginCell().storeStringTail(orderId).endCell())
         // .storeRef(forwardPayload)
         .endCell();
       // .storeMaybeRef(null) // custom_payload

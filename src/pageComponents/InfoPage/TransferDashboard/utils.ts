@@ -12,6 +12,7 @@ export const getTransferDashboard = async (params: TTransferDashboardRequest) =>
     list.push({
       id: item.id,
       orderType: item.orderType,
+      secondOrderType: item.secondOrderType,
       status: item.status,
       createTime: item.createTime,
       fromNetwork: item.fromTransfer.network,
