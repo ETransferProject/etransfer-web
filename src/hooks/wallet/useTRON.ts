@@ -61,7 +61,7 @@ export default function useTRON() {
       plainTextOrigin: plainText.plainTextOrigin,
       plainTextHex: plainText.plainTextHex,
       signature: stringToHex(res),
-      publicKey: address || '',
+      publicKey: stringToHex(address || ''),
       sourceType: AuthTokenSource.TRON,
     };
   }, [address, signMessage]);

@@ -41,6 +41,7 @@ export default function MobileCrossChainTransfer({
   comment,
   recipientAddress,
   onFromNetworkChanged,
+  onToNetworkChanged,
   onTokenChanged,
   onAmountChange,
   onAmountBlur,
@@ -69,6 +70,7 @@ export default function MobileCrossChainTransfer({
           balance={balance}
           transferInfo={transferInfo}
           onFromNetworkChanged={onFromNetworkChanged}
+          onToNetworkChanged={onToNetworkChanged}
           onTokenChanged={onTokenChanged}
           onAmountChange={onAmountChange}
           onAmountBlur={onAmountBlur}
@@ -116,6 +118,7 @@ export default function MobileCrossChainTransfer({
     onFromNetworkChanged,
     onRecipientAddressBlur,
     onRecipientAddressChange,
+    onToNetworkChanged,
     onTokenChanged,
     onUseRecipientChanged,
     receiveAmount,

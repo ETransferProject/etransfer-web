@@ -51,6 +51,13 @@ export interface CrossChainTransferFooterProps {
   clickSuccessOk: () => void;
 }
 
+interface ISuccessData {
+  amount: string;
+  symbol: string;
+  receiveAmount: string;
+  receiveAmountUsd: string;
+}
+
 export default function CrossChainTransferFooter({
   className,
   isUseRecipientAddress = false,
@@ -75,6 +82,12 @@ export default function CrossChainTransferFooter({
   const [{ fromWallet, toWallet }] = useWallet();
   const { getAuthToken } = useAuthToken();
   const [firstTxnHash, setFirstTxnHash] = useState('');
+  const [successData, setSuccessData] = useState<ISuccessData>({
+    amount: amount || '',
+    symbol: tokenSymbol,
+    receiveAmount: estimateReceive,
+    receiveAmountUsd: estimateReceiveUnit,
+  });
 
   // DoubleCheckModal
   const [isDoubleCheckModalOpen, setIsDoubleCheckModalOpen] = useState(false);
@@ -151,6 +164,13 @@ export default function CrossChainTransferFooter({
           },
           authToken,
         );
+        setSuccessData({
+          amount: amount,
+          symbol: transferInfo.limitCurrency,
+          receiveAmount: estimateReceive,
+          receiveAmountUsd: estimateReceiveUnit,
+        });
+
         if (!orderResult.orderId || !orderResult.address) {
           setFailModalReason(DEFAULT_SEND_TRANSFER_ERROR);
           setIsFailModalOpen(true);
@@ -243,6 +263,8 @@ export default function CrossChainTransferFooter({
   }, [
     amount,
     comment,
+    estimateReceive,
+    estimateReceiveUnit,
     fromNetwork?.network,
     fromWallet,
     getAuthToken,
@@ -256,6 +278,7 @@ export default function CrossChainTransferFooter({
     toWallet?.isConnected,
     tokenContractAddress,
     tokenSymbol,
+    transferInfo.limitCurrency,
   ]);
 
   const onClickSuccess = useCallback(() => {
@@ -358,10 +381,10 @@ export default function CrossChainTransferFooter({
         isTransactionFeeLoading={isTransactionFeeLoading}
       />
       <SuccessModal
-        amount={amount || ''}
-        symbol={transferInfo.limitCurrency}
-        receiveAmount={estimateReceive}
-        receiveAmountUsd={estimateReceiveUnit}
+        amount={successData.amount}
+        symbol={successData.symbol}
+        receiveAmount={successData.receiveAmount}
+        receiveAmountUsd={successData.receiveAmountUsd}
         txHash={firstTxnHash}
         modalProps={{
           open: isSuccessModalOpen,

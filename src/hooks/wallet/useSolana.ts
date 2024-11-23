@@ -16,6 +16,7 @@ import AElf from 'aelf-sdk';
 import { AuthTokenSource } from 'types/api';
 import { SendSolanaTransactionParams } from 'types/wallet';
 import { WalletName } from '@solana/wallet-adapter-base';
+import { stringToHex } from 'utils/format';
 
 export default function useSolana() {
   const { connection } = useConnection();
@@ -61,7 +62,7 @@ export default function useSolana() {
       plainTextOrigin: plainText.plainTextOrigin,
       plainTextHex: plainText.plainTextHex,
       signature: AElf.utils.uint8ArrayToHex(res),
-      publicKey: publicKey?.toString() || '',
+      publicKey: stringToHex(publicKey?.toString() || ''),
       sourceType: AuthTokenSource.Solana,
     };
   }, [publicKey, signMessage]);

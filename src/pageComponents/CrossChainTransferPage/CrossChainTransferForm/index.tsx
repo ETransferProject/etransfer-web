@@ -43,7 +43,12 @@ export interface CrossChainTransferFormProps {
   balance: string;
   transferInfo: Omit<TCrossChainTransferInfo, 'minAmount'>;
   // getTransferData: (symbol?: string, amount?: string) => Promise<TGetTransferInfoResult>;
-  onFromNetworkChanged?: (item: TNetworkItem) => Promise<void>;
+  onFromNetworkChanged?: (
+    fromNetwork: TNetworkItem,
+    toNetwork: TNetworkItem,
+    tokenSymbol: string,
+  ) => Promise<void>;
+  onToNetworkChanged?: (toNetwork: TNetworkItem, tokenSymbol: string) => Promise<void>;
   onTokenChanged?: (item: TTokenItem) => Promise<void>;
   onAmountChange: (value: string) => void;
   onAmountBlur: InputProps['onBlur'];
@@ -61,6 +66,7 @@ export default function CrossChainTransferForm({
   balance,
   transferInfo,
   onFromNetworkChanged,
+  onToNetworkChanged,
   onTokenChanged,
   onAmountChange,
   onAmountBlur,
@@ -148,13 +154,16 @@ export default function CrossChainTransferForm({
       const allowTokenList = computeTokenList(toNetworkNew, totalTokenList);
       dispatch(setTokenList(allowTokenList));
       const exitToken = totalTokenList.find((item) => item.symbol === tokenSymbol);
+      let _tokenNew;
       if (exitToken) {
         dispatch(setTokenSymbol(exitToken.symbol));
+        _tokenNew = exitToken.symbol;
       } else {
         dispatch(setTokenSymbol(allowTokenList[0].symbol));
+        _tokenNew = allowTokenList[0].symbol;
       }
 
-      onFromNetworkChanged?.(item);
+      onFromNetworkChanged?.(item, toNetworkNew, _tokenNew);
     },
     [dispatch, onFromNetworkChanged, toNetwork, tokenSymbol, totalNetworkList, totalTokenList],
   );
@@ -175,13 +184,18 @@ export default function CrossChainTransferForm({
       const allowTokenList = computeTokenList(item, totalTokenList);
       dispatch(setTokenList(allowTokenList));
       const exitToken = totalTokenList.find((item) => item.symbol === tokenSymbol);
+      let _tokenNew;
       if (exitToken) {
         dispatch(setTokenSymbol(exitToken.symbol));
+        _tokenNew = exitToken.symbol;
       } else {
         dispatch(setTokenSymbol(allowTokenList[0].symbol));
+        _tokenNew = allowTokenList[0].symbol;
       }
+
+      onToNetworkChanged?.(item, _tokenNew);
     },
-    [dispatch, tokenSymbol, totalTokenList],
+    [dispatch, onToNetworkChanged, tokenSymbol, totalTokenList],
   );
 
   const handleSelectToken = useCallback(

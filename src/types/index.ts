@@ -33,8 +33,8 @@ export type TWithdrawEntryConfig = {
 };
 
 export type TCrossChainTransferEntryConfig = {
-  fromNetwork?: string;
-  toNetwork?: string;
+  fromNetwork?: string; // eg: "AELF"
+  toNetwork?: string; // eg: "tDVW"
   tokenSymbol?: string; // 'USDT'|'SGR'|'ELF' , default = 'USDT'
 };
 

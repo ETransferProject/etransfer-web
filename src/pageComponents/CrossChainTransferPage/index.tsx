@@ -150,15 +150,16 @@ export default function CrossChainTransferPage() {
   );
 
   const getTransferData = useCallback(
-    async (symbol?: string, fromNetworkKey?: string, amount?: string) => {
+    async (symbol?: string, fromNetworkKey?: string, toNetworkKey?: string, amount?: string) => {
       try {
         const _fromNetworkKey = fromNetworkKey || fromNetworkRef.current?.network;
+        const _toNetworkKey = toNetworkKey || toNetworkRef.current?.network;
         if (!_fromNetworkKey) return;
 
         setIsTransactionFeeLoading(true);
         const params: TGetTransferInfoRequest = {
           fromNetwork: _fromNetworkKey,
-          toNetwork: toNetwork?.network,
+          toNetwork: _toNetworkKey,
           symbol: symbol || tokenSymbol,
         };
         if (amount) params.amount = amount;
@@ -225,7 +226,6 @@ export default function CrossChainTransferPage() {
       getBalanceInterval,
       getCommentInput,
       setEVMTokenContractAddressRef,
-      toNetwork?.network,
       toWallet?.walletType,
       tokenSymbol,
     ],
@@ -261,7 +261,7 @@ export default function CrossChainTransferPage() {
         }
 
         // to get minAmount and contractAddress
-        await getTransferData(currentTokenRef.current.symbol, undefined, '');
+        await getTransferData(currentTokenRef.current.symbol, undefined, undefined, '');
 
         return res.tokenList;
       } catch (error) {
@@ -376,7 +376,7 @@ export default function CrossChainTransferPage() {
             errorMessage: '',
           },
         });
-        await getTransferData(tokenSymbol, undefined, amount);
+        await getTransferData(tokenSymbol, undefined, undefined, amount);
         return;
       } else if (addressInput.length < 32 || addressInput.length > 59) {
         handleFormValidateDataChange({
@@ -398,7 +398,7 @@ export default function CrossChainTransferPage() {
           errorMessage: '',
         },
       });
-      await getTransferData(tokenSymbol, undefined, amount);
+      await getTransferData(tokenSymbol, undefined, undefined, amount);
     } catch (error) {
       console.log('handleRecipientAddressBlur error', error);
       // SingleMessage.error(handleErrorMessage(error));
@@ -413,7 +413,7 @@ export default function CrossChainTransferPage() {
   ]);
 
   const handleFromNetworkChanged = useCallback(
-    async (item: TNetworkItem) => {
+    async (item: TNetworkItem, toNetworkNew: TNetworkItem, newSymbol: string) => {
       try {
         fromNetworkRef.current = item;
         form.setFieldValue(TransferFormKeys.AMOUNT, '');
@@ -432,18 +432,24 @@ export default function CrossChainTransferPage() {
 
         form.setFieldValue(TransferFormKeys.COMMENT, '');
 
-        await getTransferData(tokenSymbol, item.network, '');
+        await getTransferData(newSymbol, item.network, toNetworkNew.network, '');
       } catch (error) {
         console.log('handleFromNetworkChanged error', error);
       }
     },
-    [
-      form,
-      getTransferData,
-      handleFormValidateDataChange,
-      handleRecipientAddressChange,
-      tokenSymbol,
-    ],
+    [form, getTransferData, handleFormValidateDataChange, handleRecipientAddressChange],
+  );
+
+  const handleToNetworkChanged = useCallback(
+    async (item: TNetworkItem, newSymbol: string) => {
+      toNetworkRef.current = item;
+      form.setFieldValue(TransferFormKeys.AMOUNT, '');
+      setAmount('');
+      setAmountUSD('');
+
+      await getTransferData(newSymbol, undefined, item.network, '');
+    },
+    [form, getTransferData],
   );
 
   const handleTokenChanged = useCallback(
@@ -454,7 +460,7 @@ export default function CrossChainTransferPage() {
         setAmountUSD('');
         // handleAmountValidate(); // TODO
 
-        await getTransferData(item.symbol, undefined, '');
+        await getTransferData(item.symbol, undefined, undefined, '');
       } catch (error) {
         console.log('handleFromNetworkChanged error', error);
       }
@@ -487,7 +493,7 @@ export default function CrossChainTransferPage() {
     try {
       // TODO
       // if (handleAmountValidate()) {
-      await getTransferData(tokenSymbol, undefined, amount);
+      await getTransferData(tokenSymbol, undefined, undefined, amount);
 
       // update amount usd display
       setAmountUSD(BigNumber(transferInfoRef.current.amountUsd || '').toFixed(2));
@@ -505,7 +511,7 @@ export default function CrossChainTransferPage() {
     if (isAelfChain(fromNetwork?.network) && tokenSymbol === 'ELF') {
       try {
         setLoading(true);
-        await getTransferData(tokenSymbol, undefined, amount);
+        await getTransferData(tokenSymbol, undefined, undefined, amount);
         let _maxInput = balance;
         const aelfFee = transferInfoRef.current?.aelfTransactionFee;
         if (aelfFee && ZERO.plus(aelfFee).gt(0)) {
@@ -557,13 +563,13 @@ export default function CrossChainTransferPage() {
     setAmount('');
     form.setFieldValue(TransferFormKeys.AMOUNT, '');
 
-    getTransferData();
+    getTransferData(undefined, undefined, undefined, '');
   }, [form, getTransferData]);
   const handleClickSuccessOk = useCallback(() => {
     setAmount('');
     form.setFieldValue(TransferFormKeys.AMOUNT, '');
 
-    getTransferData();
+    getTransferData(undefined, undefined, undefined, '');
   }, [form, getTransferData]);
 
   const router = useRouter();
@@ -644,6 +650,7 @@ export default function CrossChainTransferPage() {
       recipientAddress={recipientAddressInput}
       comment={getCommentInput()}
       onFromNetworkChanged={handleFromNetworkChanged}
+      onToNetworkChanged={handleToNetworkChanged}
       onTokenChanged={handleTokenChanged}
       onAmountChange={handleAmountChange}
       onAmountBlur={handleAmountBlur}
@@ -671,6 +678,7 @@ export default function CrossChainTransferPage() {
       recipientAddress={recipientAddressInput}
       comment={getCommentInput()}
       onFromNetworkChanged={handleFromNetworkChanged}
+      onToNetworkChanged={handleToNetworkChanged}
       onAmountChange={handleAmountChange}
       onAmountBlur={handleAmountBlur}
       onClickMax={handleClickMax}
