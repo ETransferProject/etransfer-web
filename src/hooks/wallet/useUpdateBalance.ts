@@ -95,8 +95,8 @@ export function useUpdateBalance() {
         });
         return _formatBalance;
       } catch (error) {
-        // SingleMessage.error(handleErrorMessage(error));
-        throw new Error('Failed to get balance.');
+        console.log('getBalance error', error);
+        return { value: '0' };
       } finally {
         isLoading && setIsBalanceLoading(false);
       }

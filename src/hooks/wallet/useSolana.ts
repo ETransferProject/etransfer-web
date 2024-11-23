@@ -15,6 +15,7 @@ import { timesDecimals, ZERO } from '@etransfer/utils';
 import AElf from 'aelf-sdk';
 import { AuthTokenSource } from 'types/api';
 import { SendSolanaTransactionParams } from 'types/wallet';
+import { WalletName } from '@solana/wallet-adapter-base';
 
 export default function useSolana() {
   const { connection } = useConnection();
@@ -117,6 +118,14 @@ export default function useSolana() {
     [connection, publicKey, signTransaction],
   );
 
+  const onConnect = useCallback(
+    async (walletName: WalletName) => {
+      select(walletName);
+      // await connect();
+    },
+    [select],
+  );
+
   const solanaContext = useMemo(() => {
     return {
       isConnecting: connecting,
@@ -125,7 +134,7 @@ export default function useSolana() {
       account: publicKey?.toString(),
       accounts: [publicKey?.toString()],
       connector: wallet?.adapter,
-      connect: select,
+      connect: onConnect,
       disconnect: disconnect,
       getAccountInfo: connection.getAccountInfo,
       getBalance: getBalance,
@@ -139,8 +148,8 @@ export default function useSolana() {
     disconnect,
     getBalance,
     getSignMessage,
+    onConnect,
     publicKey,
-    select,
     sendTransaction,
     wallet?.adapter,
   ]);

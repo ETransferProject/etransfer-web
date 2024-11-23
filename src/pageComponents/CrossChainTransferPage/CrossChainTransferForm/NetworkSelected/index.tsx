@@ -3,7 +3,6 @@ import styles from './styles.module.scss';
 import NetworkLogo from 'components/NetworkLogo';
 import { useCallback, useMemo, useState } from 'react';
 import { TNetworkItem } from 'types/api';
-import { useCommonState } from 'store/Provider/hooks';
 import DynamicArrow from 'components/DynamicArrow';
 import NetworkSelectModal from '../NetworkSelectModal';
 
@@ -22,7 +21,6 @@ export default function NetworkSelected({
   onChange,
   selectCallback,
 }: NetworkSelectedProps) {
-  const { isPadPX } = useCommonState();
   const [isShowNetworkSelectModal, setIsShowNetworkSelectModal] = useState<boolean>(false);
 
   const onSelectNetwork = useCallback(
@@ -47,14 +45,10 @@ export default function NetworkSelected({
   const renderNetworkLogo = useMemo(() => {
     return (
       selected?.network && (
-        <NetworkLogo
-          className="flex-shrink-0 flex"
-          network={selected?.network}
-          size={isPadPX ? 'small' : 'big'}
-        />
+        <NetworkLogo className="flex-shrink-0 flex" network={selected?.network} size={'big'} />
       )
     );
-  }, [isPadPX, selected?.network]);
+  }, [selected?.network]);
 
   const renderSelected = useMemo(() => {
     return (
@@ -77,7 +71,7 @@ export default function NetworkSelected({
         )}
         onClick={openModal}>
         {renderSelected}
-        <DynamicArrow size={isPadPX ? 'Small' : 'Normal'} isExpand={isShowNetworkSelectModal} />
+        <DynamicArrow size={'Normal'} isExpand={isShowNetworkSelectModal} />
       </div>
 
       <NetworkSelectModal

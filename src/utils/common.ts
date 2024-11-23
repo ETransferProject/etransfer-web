@@ -79,3 +79,22 @@ export const viewTxDetailInExplore = (
     ),
   );
 };
+
+export const getTxExploreHref = (
+  network: string,
+  txHash: string,
+  isCoboHash: boolean,
+  chainId?: TChainId,
+) => {
+  if (isCoboHash) {
+    return LOOP_TOP_TX_URL + txHash;
+  }
+  if (network === BlockchainNetworkType.AELF && chainId) {
+    return getAelfExploreLink(txHash, AelfExploreType.transaction, chainId);
+  }
+  return getOtherExploreLink(
+    txHash,
+    OtherExploreType.transaction,
+    network as keyof typeof ExploreUrlNotAelf,
+  );
+};

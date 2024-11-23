@@ -1,7 +1,7 @@
 import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { Divider } from 'antd';
-import { BusinessType, TRecordsListItem } from 'types/api';
+import { TRecordsListItem } from 'types/api';
 import { TRecordsTableListType } from 'types/records';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import FeeInfo from 'pageComponents/HistoryContent/FeeInfo';
@@ -15,7 +15,6 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebounceCallback } from 'hooks/debounce';
 import { setSkipCount, setHasMore } from 'store/reducers/records/slice';
 import TxHashBox from 'pageComponents/HistoryContent/TxHashBox';
-import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
 import { Fragment, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { COBO_CUSTODY } from 'constants/misc';

@@ -247,7 +247,25 @@ export function useGetAnyoneAuthTokenFromStorage() {
 
     // 3. not connected wallet, need click 'Connect Wallet' button to connect wallet
     return authToken;
-  }, []);
+  }, [
+    evmAccount,
+    evmWalletType,
+    fromWallet?.account,
+    fromWallet?.isConnected,
+    getAuthTokenFromStorage,
+    getStorageToken,
+    isEVMConnected,
+    isSolanaConnected,
+    isTONConnected,
+    isTRONConnected,
+    queryAuthToken,
+    solanaAccount,
+    solanaWalletType,
+    tonAccount,
+    tonWalletType,
+    tronAccount,
+    tronWalletType,
+  ]);
 }
 
 export function useGetAllConnectedWalletAccount() {
@@ -275,5 +293,16 @@ export function useGetAllConnectedWalletAccount() {
       accountList.push(tronAccount);
     }
     return accountList;
-  }, []);
+  }, [
+    aelfAccount,
+    evmAccount,
+    isAelfConnected,
+    isEVMConnected,
+    isSolanaConnected,
+    isTONConnected,
+    isTRONConnected,
+    solanaAccount,
+    tonAccount,
+    tronAccount,
+  ]);
 }

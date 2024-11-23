@@ -457,6 +457,8 @@ export type TGetTransferInfoRequest = {
   toAddress?: string;
   memo?: string;
   version?: PortkeyVersion;
+  fromAddress?: string;
+  sourceType?: WalletSourceType;
 };
 
 export type TGetTransferInfoResult = {

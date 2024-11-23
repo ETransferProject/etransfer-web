@@ -1,0 +1,136 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/constants.scss';
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/styles/common.scss';
+
+.cross-chain-transfer-double-check-modal {
+  :global {
+    .ant-modal-content {
+      .ant-modal-header {
+        height: 76px;
+        padding: 24px;
+        .ant-modal-title {
+          line-height: 28px;
+          text-align: left;
+        }
+      }
+      .ant-modal-close {
+        .ant-modal-close-x {
+          height: 76px;
+        }
+      }
+    }
+  }
+}
+
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.label,
+.value {
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.label {
+  color: $secondary-text;
+}
+
+.value {
+  @extend .font-family-medium;
+  color: $primary-text;
+}
+.value-content {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.value-symbol {
+  max-width: 60px;
+  margin-left: 4px;
+  display: inline-block;
+  @extend .ellipsis;
+}
+
+.secondary-value {
+  color: $secondary-text;
+}
+
+.receive-amount-wrapper {
+  gap: 4px;
+  margin: 0 0 24px;
+  @include media-mobile-and-pad {
+    margin-top: 40px;
+  }
+  .value {
+    gap: 8px;
+    font-size: 24px;
+    line-height: 32px;
+  }
+}
+.receive-amount-center {
+  text-align: center;
+}
+
+.detail-wrapper {
+  gap: 16px;
+  margin-top: 24px;
+  .label {
+    flex: none;
+    width: 140px;
+  }
+  .value {
+    flex: 1;
+    text-align: right;
+    word-break: break-all;
+  }
+}
+
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.divider {
+  @extend .divider;
+}
+
+.transaction-fee-wrapper {
+  .value {
+    justify-content: flex-end;
+  }
+}
+
+.transfer-network-wrapper {
+  .value {
+    justify-content: flex-end;
+    gap: 8px;
+  }
+}
+
+.fee-usd,
+.amount-usd {
+  font-size: 12px;
+  text-align: right;
+  color: $secondary-text;
+}
+
+.fee-usd-box {
+  align-items: flex-end;
+  gap: 0px;
+}
+
+.fee-value {
+  @include text-overflow;
+}
+
+.receive-amount-usd {
+  font-size: 14px;
+  text-align: center;
+  color: $secondary-text;
+}
