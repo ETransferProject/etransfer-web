@@ -16,7 +16,7 @@ interface NetworksProps {
 export default function Networks({ list, size = 'big', className }: NetworksProps) {
   const { isPadPX } = useCommonState();
   const renderMore = useMemo(() => {
-    const moreList = list.slice(2, list.length);
+    const moreList = list.slice(4, list.length);
     const moreListLogo = (
       <div className={clsx('row-center', styles['network-more'])}>
         {moreList.map((item, index) => {
@@ -46,7 +46,7 @@ export default function Networks({ list, size = 'big', className }: NetworksProp
             width: size === 'big' ? 24 : 16,
             height: size === 'big' ? 24 : 16,
           }}>
-          {`+${list.length - 2}`}
+          {`+${list.length - 4}`}
         </div>
       </CommonTooltip>
     );
@@ -55,10 +55,10 @@ export default function Networks({ list, size = 'big', className }: NetworksProp
   const renderNetworkList = useMemo(() => {
     if (!list || (Array.isArray(list) && list.length === 0)) return null;
 
-    // 0 - 3
-    if (Array.isArray(list) && list.length > 0 && list.length <= 3) {
+    // 0 - 4
+    if (Array.isArray(list) && list.length > 0 && list.length <= 4) {
       return (
-        <div className={clsx('flex-row-center', styles['networks-3'], className)}>
+        <div className={clsx('flex-row-center', styles['networks-4'], className)}>
           {list?.map((item) => {
             return (
               <CommonTooltip
@@ -76,8 +76,8 @@ export default function Networks({ list, size = 'big', className }: NetworksProp
       );
     }
 
-    // >3
-    const listSlice = list.slice(0, 2);
+    // >4
+    const listSlice = list.slice(0, 4);
     return (
       <div className={clsx('flex-row-center', styles['network-more-wrapper'], className)}>
         {listSlice?.map((item) => {

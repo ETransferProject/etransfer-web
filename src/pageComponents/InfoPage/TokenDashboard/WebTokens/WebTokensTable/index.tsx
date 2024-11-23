@@ -31,23 +31,10 @@ const WebTokensTableExpandedColumns = [
     },
   },
   {
-    title: 'aelfChainEmpty',
-    dataIndex: 'aelfChain',
-    key: 'aelfChain',
-    width: 120,
-    render: (aelfChain: TChainId[]) => {
-      return (
-        <div style={{ visibility: 'hidden' }}>
-          <AelfChain list={aelfChain} />
-        </div>
-      );
-    },
-  },
-  {
     title: 'Network',
     dataIndex: 'name',
     key: 'name',
-    width: 170,
+    width: 220,
     showSorterTooltip: false,
     render: (name: string) => {
       return (
@@ -130,19 +117,10 @@ export default function WebTokensTable() {
         },
       },
       {
-        title: 'aelf Chain',
-        dataIndex: 'aelfChain',
-        key: 'aelfChain',
-        width: 120,
-        render: (aelfChain: TChainId[]) => {
-          return <AelfChain list={aelfChain} />;
-        },
-      },
-      {
-        title: 'Multiple Networks',
+        title: 'Networks',
         dataIndex: 'networks',
         key: 'networks',
-        width: 170,
+        width: 220,
         render: (networks: string[]) => {
           return <Networks list={networks} />;
         },
@@ -224,7 +202,7 @@ export default function WebTokensTable() {
       <Table
         size={'large'}
         rowKey={'key'}
-        scroll={{ x: 864 }}
+        scroll={{ x: 994 }}
         columns={WebTokensTableExpandedColumns}
         dataSource={handleExpandedTableData(activeRowData)}
         showHeader={false}
@@ -241,7 +219,7 @@ export default function WebTokensTable() {
         rowKey={(row) => row.symbol}
         dataSource={tokens}
         columns={WebTokensTableColumns}
-        scroll={{ x: 1020 }}
+        scroll={{ x: 994 }}
         expandable={{
           expandedRowRender,
           showExpandColumn: false,
