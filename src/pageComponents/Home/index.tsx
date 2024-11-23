@@ -15,7 +15,11 @@ export default function Home() {
   const routeType = useMemo(() => searchParams.get('type') as SideMenuKey, [searchParams]);
   const { activeMenuKey } = useCommonState();
   useEffectOnce(() => {
-    routerPush('/' + (routeType || activeMenuKey).toLocaleLowerCase());
+    let key = routeType || activeMenuKey;
+    if (key === SideMenuKey.CrossChainTransfer) {
+      key = 'cross-chain-transfer' as SideMenuKey;
+    }
+    routerPush('/' + key.toLocaleLowerCase());
   });
 
   return (

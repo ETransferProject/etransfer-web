@@ -23,7 +23,7 @@ export const FOOTER_CONFIG: TFooterConfig = {
   faq: {
     name: 'FAQ',
     icon: QuestionMarkLarge,
-    link: 'https://etransfer.gitbook.io/docs/faq',
+    link: 'https://app.gitbook.com/o/gatA6RsANyFxzadzxrMX/s/iTzpMF5wdCcNCovd7baL/~/changes/30/faq',
   },
   menus: [
     {
@@ -102,11 +102,19 @@ export const FOOTER_CONFIG: TFooterConfig = {
 export const DOCUMENTATION_LINK: Record<string, TFooterMenuItem> = {
   aboutETransfer: {
     name: 'What is ETransfer?',
-    link: 'https://etransfer.gitbook.io/docs/faq#what-is-etransfer',
+    link: 'https://app.gitbook.com/o/gatA6RsANyFxzadzxrMX/s/iTzpMF5wdCcNCovd7baL/~/changes/30/faq#what-is-etransfer',
+  },
+  secure: {
+    name: 'How Secure is ETransfer?',
+    link: 'https://app.gitbook.com/o/gatA6RsANyFxzadzxrMX/s/iTzpMF5wdCcNCovd7baL/~/changes/30/faq#how-secure-is-etransfer',
+  },
+  transferProcess: {
+    name: 'How do I initiate a cross-chain transfer on ETransfer?',
+    link: 'https://app.gitbook.com/o/gatA6RsANyFxzadzxrMX/s/iTzpMF5wdCcNCovd7baL/~/changes/30/faq#how-do-i-initiate-a-cross-chain-transfer-on-etransfer',
   },
   depositProcess: {
     name: 'How to deposit to aelf by ETransfer?',
-    link: 'https://etransfer.gitbook.io/docs/faq#how-to-deposit-to-aelf-by-etransfer',
+    link: 'https://app.gitbook.com/o/gatA6RsANyFxzadzxrMX/s/iTzpMF5wdCcNCovd7baL/~/changes/30/faq#how-to-deposit-to-aelf-by-etransfer',
   },
   withdrawProcess: {
     name: 'How to withdraw from aelf by ETransfer?',
@@ -126,9 +134,8 @@ export const FAQ_DEPOSIT: TFrequentlyAskedQuestionsSection = {
   title: 'FAQ',
   list: [
     DOCUMENTATION_LINK.aboutETransfer,
+    DOCUMENTATION_LINK.secure,
     DOCUMENTATION_LINK.depositProcess,
-    DOCUMENTATION_LINK.notArrived,
-    DOCUMENTATION_LINK.completedTime,
   ],
 };
 
@@ -136,6 +143,7 @@ export const FAQ_WITHDRAW: TFrequentlyAskedQuestionsSection = {
   title: 'FAQ',
   list: [
     DOCUMENTATION_LINK.aboutETransfer,
+    DOCUMENTATION_LINK.secure,
     DOCUMENTATION_LINK.withdrawProcess,
     DOCUMENTATION_LINK.notArrived,
     DOCUMENTATION_LINK.completedTime,
@@ -146,7 +154,7 @@ export const FAQ_CROSS_CHAIN_TRANSFER: TFrequentlyAskedQuestionsSection = {
   title: 'FAQ',
   list: [
     DOCUMENTATION_LINK.aboutETransfer,
-    DOCUMENTATION_LINK.notArrived,
-    DOCUMENTATION_LINK.completedTime,
+    DOCUMENTATION_LINK.secure,
+    DOCUMENTATION_LINK.transferProcess,
   ],
 };

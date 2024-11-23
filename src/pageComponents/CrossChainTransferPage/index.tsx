@@ -9,7 +9,7 @@ import {
 import { SideMenuKey } from 'constants/home';
 import WebCrossChainTransfer from './WebCrossChainTransfer';
 import MobileCrossChainTransfer from './MobileCrossChainTransfer';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   BusinessType,
@@ -149,6 +149,16 @@ export default function CrossChainTransferPage() {
     [judgeIsSubmitDisabled],
   );
 
+  const searchParams = useSearchParams();
+  const routeQuery = useMemo(
+    () => ({
+      fromNetwork: searchParams.get('fromNetwork'),
+      toNetwork: searchParams.get('toNetwork'),
+      tokenSymbol: searchParams.get('tokenSymbol'),
+    }),
+    [searchParams],
+  );
+
   const getTransferData = useCallback(
     async (symbol?: string, fromNetworkKey?: string, toNetworkKey?: string, amount?: string) => {
       try {
@@ -250,7 +260,9 @@ export default function CrossChainTransferPage() {
           dispatch(setTokenSymbol(allowTokenList[0].symbol));
           currentTokenRef.current = allowTokenList[0];
         } else {
-          const exitToken = res.tokenList.find((item) => item.symbol === tokenSymbol);
+          const exitToken = res.tokenList.find(
+            (item) => item.symbol === (routeQuery.tokenSymbol || tokenSymbol),
+          );
           if (exitToken) {
             dispatch(setTokenSymbol(exitToken.symbol));
             currentTokenRef.current = exitToken;
@@ -270,7 +282,7 @@ export default function CrossChainTransferPage() {
         return [];
       }
     },
-    [dispatch, getTransferData, tokenSymbol],
+    [dispatch, getTransferData, routeQuery.tokenSymbol, tokenSymbol],
   );
 
   const getNetworkData = useCallback(async () => {
@@ -286,7 +298,9 @@ export default function CrossChainTransferPage() {
 
       if (networkList?.length > 0) {
         // from logic
-        const exitFromNetwork = networkList.find((item) => item.network === fromNetwork?.network);
+        const exitFromNetwork = networkList.find(
+          (item) => item.network === (routeQuery.fromNetwork || fromNetwork?.network),
+        );
         if (exitFromNetwork && exitFromNetwork.status !== NetworkStatus.Offline) {
           dispatch(setFromNetwork(exitFromNetwork));
           fromNetworkRef.current = exitFromNetwork;
@@ -311,7 +325,9 @@ export default function CrossChainTransferPage() {
         console.log('computeToNetworkList toNetworkList', toNetworkList);
         dispatch(setToNetworkList(toNetworkList));
 
-        const exitToNetwork = toNetworkList.find((item) => item.network === toNetwork?.network);
+        const exitToNetwork = toNetworkList.find(
+          (item) => item.network === (routeQuery.toNetwork || toNetwork?.network),
+        );
         if (exitToNetwork && exitToNetwork.status !== NetworkStatus.Offline) {
           dispatch(setToNetwork(exitToNetwork));
           toNetworkRef.current = exitToNetwork;
@@ -331,7 +347,9 @@ export default function CrossChainTransferPage() {
         // token logic
         const allowTokenList = computeTokenList(toNetworkRef.current, totalTokenListRef.current);
         dispatch(setTokenList(allowTokenList));
-        const exitToken = totalTokenListRef.current.find((item) => item.symbol === tokenSymbol);
+        const exitToken = totalTokenListRef.current.find(
+          (item) => item.symbol === (routeQuery.tokenSymbol || tokenSymbol),
+        );
         if (exitToken) {
           dispatch(setTokenSymbol(exitToken.symbol));
           currentTokenRef.current = exitToken;
@@ -352,6 +370,9 @@ export default function CrossChainTransferPage() {
     fromNetwork?.network,
     fromWalletType,
     getAuthTokenFromStorage,
+    routeQuery.fromNetwork,
+    routeQuery.toNetwork,
+    routeQuery.tokenSymbol,
     toNetwork?.network,
     tokenSymbol,
   ]);
@@ -596,9 +617,9 @@ export default function CrossChainTransferPage() {
   });
 
   useEffect(() => {
-    // TODO TCrossChainTransferEntryConfig
     initRef.current();
-  }, []);
+    router.replace('/cross-chain-transfer');
+  }, [router]);
 
   useEffect(() => {
     if (!fromWallet?.isConnected) {

@@ -1,5 +1,5 @@
 import { sleep } from '@portkey/utils';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 import { useAppDispatch, useCrossChainTransfer, useLoading } from 'store/Provider/hooks';
 import {
@@ -9,11 +9,7 @@ import {
   setTokenSymbol,
 } from 'store/reducers/crossChainTransfer/slice';
 import { TNetworkItem } from 'types/api';
-import {
-  getCaHashAndOriginChainIdByWallet,
-  getManagerAddressByWallet,
-  isAelfChain,
-} from 'utils/wallet';
+import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
 import { useGetBalanceDivDecimals } from './contract';
 import { ZERO } from '@etransfer/utils';
 import { ErrorNameType } from 'constants/crossChainTransfer';
@@ -34,14 +30,14 @@ export function useGoTransfer() {
   const router = useRouter();
 
   return useCallback(
-    async (symbol: string, fromNetwork?: string, toNetwork?: string) => {
-      dispatch(setTokenSymbol(symbol));
-
-      // TODO
-      if (fromNetwork && isAelfChain(fromNetwork)) {
+    async (symbol?: string, fromNetwork?: string, toNetwork?: string) => {
+      if (symbol) {
+        dispatch(setTokenSymbol(symbol));
+      }
+      if (fromNetwork) {
         dispatch(setFromNetwork({ network: fromNetwork } as unknown as TNetworkItem));
       }
-      if (toNetwork && isAelfChain(toNetwork)) {
+      if (toNetwork) {
         dispatch(setToNetwork({ network: toNetwork } as unknown as TNetworkItem));
       }
 
