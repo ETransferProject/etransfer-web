@@ -156,7 +156,7 @@ export default function CrossChainTransferForm({
         totalTokenList,
       });
       dispatch(setTokenList(allowTokenList));
-      const exitToken = totalTokenList.find((item) => item.symbol === tokenSymbol);
+      const exitToken = allowTokenList.find((item) => item.symbol === tokenSymbol);
       let _tokenNew;
       if (exitToken) {
         dispatch(setTokenSymbol(exitToken.symbol));
@@ -190,7 +190,7 @@ export default function CrossChainTransferForm({
         totalTokenList,
       });
       dispatch(setTokenList(allowTokenList));
-      const exitToken = totalTokenList.find((item) => item.symbol === tokenSymbol);
+      const exitToken = allowTokenList.find((item) => item.symbol === tokenSymbol);
       let _tokenNew;
       if (exitToken) {
         dispatch(setTokenSymbol(exitToken.symbol));

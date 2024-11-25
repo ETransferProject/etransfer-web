@@ -1,3 +1,4 @@
+import 'antd/dist/antd.min.css';
 import 'styles/global.scss';
 import '@etransfer/ui-react/dist/assets/index.css';
 
