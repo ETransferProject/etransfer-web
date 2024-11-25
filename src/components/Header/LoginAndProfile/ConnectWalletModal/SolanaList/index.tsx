@@ -29,7 +29,7 @@ export default function SolanaWalletList({
           onSelected?.(WalletTypeEnum.SOL);
           return;
         }
-        connect(name);
+        await connect(name);
       } catch (error) {
         console.log('>>>>>> SolanaWalletList onConnect error', error);
       }

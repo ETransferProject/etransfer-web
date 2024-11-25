@@ -15,7 +15,6 @@ import { timesDecimals, ZERO } from '@etransfer/utils';
 import AElf from 'aelf-sdk';
 import { AuthTokenSource } from 'types/api';
 import { SendSolanaTransactionParams } from 'types/wallet';
-import { WalletName } from '@solana/wallet-adapter-base';
 import { stringToHex } from 'utils/format';
 
 export default function useSolana() {
@@ -29,7 +28,17 @@ export default function useSolana() {
     signMessage,
     signTransaction,
     wallet,
+    wallets,
   } = useWallet();
+
+  const onConnect = useCallback(
+    async (walletName: string) => {
+      const _wallet = wallets.find((item) => item.adapter.name === walletName);
+      if (!_wallet) return;
+      select(_wallet.adapter.name);
+    },
+    [select, wallets],
+  );
 
   const getBalance = useCallback(
     async ({ tokenContractAddress }: IGetBalanceRequest) => {
@@ -117,14 +126,6 @@ export default function useSolana() {
       return signature;
     },
     [connection, publicKey, signTransaction],
-  );
-
-  const onConnect = useCallback(
-    async (walletName: WalletName) => {
-      select(walletName);
-      // await connect();
-    },
-    [select],
   );
 
   const solanaContext = useMemo(() => {
