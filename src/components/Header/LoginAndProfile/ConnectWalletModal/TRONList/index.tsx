@@ -22,21 +22,18 @@ export default function TRONWalletList({
   const [isShowCopy, setIsShowCopy] = useState(false);
   const { fromWalletType, toWalletType } = useCrossChainTransfer();
 
-  const onConnect = useCallback(
-    async (name: string) => {
-      try {
-        if (isConnected) {
-          onSelected?.(WalletTypeEnum.TRON);
-          return;
-        }
-        connect(name as any);
+  const onConnect = useCallback(async () => {
+    try {
+      if (isConnected) {
         onSelected?.(WalletTypeEnum.TRON);
-      } catch (error) {
-        console.log('>>>>>> TRONWalletList onConnect error', error);
+        return;
       }
-    },
-    [connect, isConnected, onSelected],
-  );
+      await connect();
+      onSelected?.(WalletTypeEnum.TRON);
+    } catch (error) {
+      console.log('>>>>>> TRONWalletList onConnect error', error);
+    }
+  }, [connect, isConnected, onSelected]);
 
   const onDisconnect = useCallback(
     async (event: any) => {
@@ -99,7 +96,7 @@ export default function TRONWalletList({
           <div
             className={clsx('flex-row-center-between', styles['wallet-list-item'])}
             key={'tron-wallet-' + item.key}
-            onClick={() => onConnect('TronLink')}
+            onClick={onConnect}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}>
             <div className={clsx('flex-row-center', styles['wallet-list-item-left'])}>

@@ -57,7 +57,7 @@ export default function TRONWallet() {
         </>
       ) : (
         <>
-          <Button onClick={() => connect('TronLink' as any)}>Select Wallet</Button>
+          <Button onClick={connect}>Select Wallet</Button>
         </>
       )}
     </div>
