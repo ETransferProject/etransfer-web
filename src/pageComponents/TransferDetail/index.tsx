@@ -9,10 +9,9 @@ import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { SideMenuKey } from 'constants/home';
 import { useEffectOnce } from 'react-use';
 import useAelf from 'hooks/wallet/useAelf';
-import { sleep } from '@etransfer/utils';
-import { useSetAuthFromStorage } from 'hooks/authToken';
 import { TOrderStatus } from 'types/records';
 import { DEFAULT_NULL_ORDER_ID } from 'constants/records';
+import { useGetAllConnectedWalletAccount } from 'hooks/wallet/authToken';
 
 export default function TransferDetail() {
   const { isPadPX } = useCommonState();
@@ -26,10 +25,9 @@ export default function TransferDetail() {
 
   const [detailData, setDetailData] = useState<TGetRecordDetailResult>();
 
-  const setAuthFromStorage = useSetAuthFromStorage();
-
   const getDetailRef = useRef<(isLoading?: boolean) => Promise<void>>();
   const updateTimerRef = useRef<NodeJS.Timer | number>();
+  const getAllConnectedWalletAccount = useGetAllConnectedWalletAccount();
   const { getDetail, stopTimer } = useMemo(() => {
     const getDetail = async (isLoading = true) => {
       try {
@@ -39,13 +37,10 @@ export default function TransferDetail() {
           return;
         }
 
-        const authResult = await setAuthFromStorage();
-        if (!authResult) return;
-        await sleep(500);
-
         isLoading && setLoading(true);
 
-        const data = await getRecordDetail(id);
+        const connectedAccountList = getAllConnectedWalletAccount();
+        const data = await getRecordDetail(id, { addressList: connectedAccountList });
         // No data found
         if (data?.id === DEFAULT_NULL_ORDER_ID || !data?.createTime) {
           stopTimer();
@@ -90,7 +85,7 @@ export default function TransferDetail() {
     };
 
     return { getDetail, stopTimer };
-  }, [router, searchParams, setAuthFromStorage, setLoading]);
+  }, [getAllConnectedWalletAccount, router, searchParams, setLoading]);
 
   useEffectOnce(() => {
     dispatch(setActiveMenuKey(SideMenuKey.History));

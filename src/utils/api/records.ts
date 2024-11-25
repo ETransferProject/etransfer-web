@@ -31,9 +31,18 @@ export const getRecordStatus = async (): Promise<TCurrentRecordsStatus> => {
   }
 };
 
-export const getRecordDetail = async (id: string): Promise<TGetRecordDetailResult> => {
+export const getRecordDetail = async (
+  id: string,
+  { addressList }: { addressList: string[] },
+): Promise<TGetRecordDetailResult> => {
   try {
-    const res = await request.records.getRecordDetail({ query: id });
+    const res = await request.records.getRecordDetail({
+      query: id,
+      params: { addressList },
+      paramsSerializer: function (params) {
+        return qs.stringify(params, { arrayFormat: 'repeat' });
+      },
+    });
     return res.data;
   } catch (error: any) {
     throw formatApiError(error, 'getRecordDetail error', false);

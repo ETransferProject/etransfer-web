@@ -23,7 +23,7 @@ export const FOOTER_CONFIG: TFooterConfig = {
   faq: {
     name: 'FAQ',
     icon: QuestionMarkLarge,
-    link: 'https://app.gitbook.com/o/gatA6RsANyFxzadzxrMX/s/iTzpMF5wdCcNCovd7baL/~/changes/30/faq',
+    link: 'https://etransfer.gitbook.io/docs/faq',
   },
   menus: [
     {
@@ -102,19 +102,19 @@ export const FOOTER_CONFIG: TFooterConfig = {
 export const DOCUMENTATION_LINK: Record<string, TFooterMenuItem> = {
   aboutETransfer: {
     name: 'What is ETransfer?',
-    link: 'https://app.gitbook.com/o/gatA6RsANyFxzadzxrMX/s/iTzpMF5wdCcNCovd7baL/~/changes/30/faq#what-is-etransfer',
+    link: 'https://etransfer.gitbook.io/docs/faq#what-is-etransfer',
   },
   secure: {
     name: 'How Secure is ETransfer?',
-    link: 'https://app.gitbook.com/o/gatA6RsANyFxzadzxrMX/s/iTzpMF5wdCcNCovd7baL/~/changes/30/faq#how-secure-is-etransfer',
+    link: 'https://etransfer.gitbook.io/docs/faq#how-secure-is-etransfer',
   },
   transferProcess: {
     name: 'How do I initiate a cross-chain transfer on ETransfer?',
-    link: 'https://app.gitbook.com/o/gatA6RsANyFxzadzxrMX/s/iTzpMF5wdCcNCovd7baL/~/changes/30/faq#how-do-i-initiate-a-cross-chain-transfer-on-etransfer',
+    link: 'https://etransfer.gitbook.io/docs/faq#how-do-i-initiate-a-cross-chain-transfer-on-etransfer',
   },
   depositProcess: {
     name: 'How to deposit to aelf by ETransfer?',
-    link: 'https://app.gitbook.com/o/gatA6RsANyFxzadzxrMX/s/iTzpMF5wdCcNCovd7baL/~/changes/30/faq#how-to-deposit-to-aelf-by-etransfer',
+    link: 'https://etransfer.gitbook.io/docs/faq#how-to-deposit-to-aelf-by-etransfer',
   },
   withdrawProcess: {
     name: 'How to withdraw from aelf by ETransfer?',

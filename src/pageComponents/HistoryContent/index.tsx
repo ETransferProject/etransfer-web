@@ -25,13 +25,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import queryString from 'query-string';
 import { SideMenuKey } from 'constants/home';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
-import { useSetAuthFromStorage } from 'hooks/authToken';
 import { END_TIME_FORMAT, START_TIME_FORMAT } from 'constants/records';
 import { useCheckHasConnectedWallet } from 'hooks/wallet';
-import {
-  useGetAllConnectedWalletAccount,
-  useGetAnyoneAuthTokenFromStorage,
-} from 'hooks/wallet/authToken';
+import { useGetAllConnectedWalletAccount } from 'hooks/wallet/authToken';
 
 export type TRecordsContentProps = TRecordsBodyProps & {
   onReset: () => void;
@@ -59,17 +55,11 @@ export default function Content() {
     recordsList,
   } = useRecordsState();
   const getAllConnectedWalletAccount = useGetAllConnectedWalletAccount();
-  const getAnyoneAuthTokenFromStorage = useGetAnyoneAuthTokenFromStorage();
-  const setAuthFromStorage = useSetAuthFromStorage();
-  const requestRecordsList = useDebounceCallback(async (isLoading = false, isSetAuth = false) => {
+  const requestRecordsList = useDebounceCallback(async (isLoading = false) => {
     try {
       if (!hasConnectedRef.current) return;
 
       isLoading && setLoading(true);
-      if (isSetAuth) {
-        await setAuthFromStorage(); // TODO
-        await sleep(500);
-      }
 
       const startTimestampFormat =
         timestamp?.[0] && moment(timestamp?.[0]).format(START_TIME_FORMAT);
@@ -77,20 +67,16 @@ export default function Content() {
       const startTimestamp = startTimestampFormat ? moment(startTimestampFormat).valueOf() : null;
       const endTimestamp = endTimestampFormat ? moment(endTimestampFormat).valueOf() : null;
 
-      const authToken = await getAnyoneAuthTokenFromStorage();
       const connectedAccountList = getAllConnectedWalletAccount();
-      const { items: recordsListRes, totalCount } = await getRecordsList(
-        {
-          type,
-          status,
-          startTimestamp: startTimestamp,
-          endTimestamp: endTimestamp,
-          skipCount: (skipCount - 1) * maxResultCount,
-          maxResultCount,
-          addressList: connectedAccountList, // TODO
-        },
-        authToken,
-      );
+      const { items: recordsListRes, totalCount } = await getRecordsList({
+        type,
+        status,
+        startTimestamp: startTimestamp,
+        endTimestamp: endTimestamp,
+        skipCount: (skipCount - 1) * maxResultCount,
+        maxResultCount,
+        addressList: connectedAccountList, // TODO
+      });
       if (isPadPX) {
         let mobileRecordsList = [...recordsList, ...recordsListRes];
         mobileRecordsList = mobileRecordsList.reduce((result: TRecordsListItem[], item) => {
@@ -118,20 +104,17 @@ export default function Content() {
     }
   }, []);
 
-  const handleReset = useCallback(
-    async (isSetAuth = false) => {
-      setFilter({
-        status: TRecordsRequestStatus.ALL,
-        timeArray: null,
-      });
-      dispatch(setSkipCount(1));
-      if (isPadPX) {
-        dispatch(setRecordsList([]));
-      }
-      await requestRecordsList(true, isSetAuth);
-    },
-    [dispatch, isPadPX, requestRecordsList, setFilter],
-  );
+  const handleReset = useCallback(async () => {
+    setFilter({
+      status: TRecordsRequestStatus.ALL,
+      timeArray: null,
+    });
+    dispatch(setSkipCount(1));
+    if (isPadPX) {
+      dispatch(setRecordsList([]));
+    }
+    await requestRecordsList(true);
+  }, [dispatch, isPadPX, requestRecordsList, setFilter]);
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -187,9 +170,9 @@ export default function Content() {
 
   const init = useCallback(() => {
     if (isUnreadHistory) {
-      handleReset(true);
+      handleReset();
     } else {
-      requestRecordsList(true, true);
+      requestRecordsList(true);
     }
   }, [handleReset, isUnreadHistory, requestRecordsList]);
 
@@ -208,7 +191,7 @@ export default function Content() {
 
   // Listener login
   const refreshData = useCallback(() => {
-    requestRecordsList(true, true);
+    requestRecordsList(true);
   }, [requestRecordsList]);
   useEffectOnce(() => {
     const { remove } = myEvents.LoginSuccess.addListener(() => refreshData());

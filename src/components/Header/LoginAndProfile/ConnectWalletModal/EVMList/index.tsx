@@ -12,6 +12,7 @@ import { WalletTypeEnum } from 'context/Wallet/types';
 import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
 import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
 import { removeOneLocalJWT } from 'api/utils';
+import { USER_REJECT_CONNECT_WALLET_TIP } from 'constants/wallet';
 
 export default function EVMWalletList({
   onSelected,
@@ -42,7 +43,7 @@ export default function EVMWalletList({
         setIsConnectLoading(false);
       } catch (error) {
         setIsConnectLoading(false);
-        SingleMessage.error(handleErrorMessage(error));
+        SingleMessage.error(handleErrorMessage(USER_REJECT_CONNECT_WALLET_TIP));
       }
     },
     [connect, connectors, isConnected, onSelected],

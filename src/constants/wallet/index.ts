@@ -22,4 +22,4 @@ export const CONNECT_AELF_WALLET = 'Connect aelf Wallet';
 export const MY_WALLET = 'My Wallets';
 export const MY_AELF_WALLET = 'My aelf Wallet';
 
-export const USER_REJECT_CONNECT_WALLET_TIP = 'User denied account authorization.';
+export const USER_REJECT_CONNECT_WALLET_TIP = 'User rejected the request';
