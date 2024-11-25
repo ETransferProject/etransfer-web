@@ -16,10 +16,10 @@ import myEvents from 'utils/myEvent';
 import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
 import { SingleMessage } from '@etransfer/ui-react';
 import { ExtraInfoForDiscover, WalletInfo } from 'types/wallet';
-import useAelf from './wallet/useAelf';
+import useAelf from './useAelf';
 import { getAuthPlainText } from 'utils/auth';
 
-export function useQueryAuthToken() {
+export function useAelfAuthToken() {
   const { account, disconnect, connector, isConnected, signMessage, walletInfo } = useAelf();
   const { setLoading } = useLoading();
 
@@ -118,7 +118,7 @@ export function useQueryAuthToken() {
     return undefined;
   }, [account, connector, isReCaptchaLoading, setLoading]);
 
-  const queryAuth = useCallback(async () => {
+  const queryAuth = useCallback(async (): Promise<string | undefined> => {
     if (!isConnected) return;
     if (eTransferInstance.obtainingSignature) return;
     try {
@@ -151,10 +151,11 @@ export function useQueryAuthToken() {
         recaptchaToken: recaptchaResult || undefined,
       };
 
-      await queryAuthApi(apiParams);
+      const authToken = await queryAuthApi(apiParams);
       eTransferInstance.setUnauthorized(false);
       console.log('login status isConnected', isConnected);
       loginSuccessActive();
+      return authToken;
     } catch (error: any) {
       console.log('queryAuthApi error', error);
       if (
@@ -183,7 +184,7 @@ export function useQueryAuthToken() {
     walletInfo,
   ]);
 
-  const getAuth = useDebounceCallback(async () => {
+  const getAuth = useDebounceCallback(async (): Promise<string | undefined> => {
     if (!isConnected) return;
     if (eTransferInstance.obtainingSignature) return;
     try {
@@ -200,14 +201,17 @@ export function useQueryAuthToken() {
       if (data) {
         const token_type = data.token_type;
         const access_token = data.access_token;
+
         service.defaults.headers.common['Authorization'] = `${token_type} ${access_token}`;
         loginSuccessActive();
+        return `${token_type} ${access_token}`;
       } else {
         // 2: local storage don not has JWT token
-        await queryAuth();
+        return await queryAuth();
       }
     } catch (error) {
       console.log('getAuth error:', error);
+      return;
     }
   }, [connector, isConnected, walletInfo]);
 

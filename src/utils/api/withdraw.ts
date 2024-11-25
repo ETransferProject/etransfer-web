@@ -1,5 +1,5 @@
 import { request } from 'api';
-import { CancelTokenSourceKey } from 'api/types';
+import { CancelTokenSourceKey, RequestConfig } from 'api/types';
 import {
   TCreateWithdrawOrderRequest,
   TCreateWithdrawOrderResult,
@@ -24,9 +24,16 @@ export const getWithdrawInfo = async (
 
 export const createWithdrawOrder = async (
   params: TCreateWithdrawOrderRequest,
+  authToken?: string,
 ): Promise<TCreateWithdrawOrderResult> => {
   try {
-    const res = await request.withdraw.createWithdrawOrder({ data: params });
+    const _config: RequestConfig = { data: params };
+    if (authToken) {
+      _config.headers = {
+        Authorization: authToken || '',
+      };
+    }
+    const res = await request.withdraw.createWithdrawOrder(_config);
     return res.data;
   } catch (error: any) {
     throw formatApiError(error, 'createWithdrawOrder error', false);

@@ -4,7 +4,7 @@ import { setIsUnreadHistory } from 'store/reducers/common/slice';
 import { getRecordStatus } from 'utils/api/records';
 import myEvents from 'utils/myEvent';
 import { eTransferInstance } from 'utils/etransferInstance';
-import { useSetAuthFromStorage } from './authToken';
+import { useSetAuthFromStorage } from './wallet/aelfAuthToken';
 import { sleep } from '@etransfer/utils';
 import useAelf from './wallet/useAelf';
 

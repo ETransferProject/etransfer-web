@@ -4,7 +4,7 @@ import { WalletTypeEnum } from 'context/Wallet/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { eTransferInstance } from 'utils/etransferInstance';
 import myEvents from 'utils/myEvent';
-import { useQueryAuthToken } from 'hooks/authToken';
+import { useAelfAuthToken } from 'hooks/wallet/aelfAuthToken';
 import { TAelfAccounts, WalletInfo } from 'types/wallet';
 import { SupportedChainId } from 'constants/index';
 import { handleWebLoginErrorMessage } from 'utils/api/error';
@@ -59,7 +59,7 @@ export default function useAelf() {
 export function useInitWallet() {
   const { isConnected, walletInfo, walletType } = useConnectWallet();
 
-  const { getAuth } = useQueryAuthToken();
+  const { getAuth, queryAuth } = useAelfAuthToken();
   const getAuthRef = useRef(getAuth);
   getAuthRef.current = getAuth;
   useEffect(() => {
@@ -70,7 +70,6 @@ export function useInitWallet() {
     }
   }, [isConnected, walletInfo]);
 
-  const { queryAuth } = useQueryAuthToken();
   const onAuthorizationExpired = useCallback(async () => {
     if (!isConnected) {
       console.warn('AuthorizationExpired: Not Logined');

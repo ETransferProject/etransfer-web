@@ -78,7 +78,7 @@ import FAQ from 'components/FAQ';
 import { FAQ_WITHDRAW } from 'constants/footer';
 import { PortkeyVersion } from 'constants/wallet/index';
 import { TelegramPlatform } from 'utils/telegram';
-import { useSetAuthFromStorage } from 'hooks/authToken';
+import { useSetAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
 import WithdrawFooter from './WithdrawFooter';
 import RemainingLimit from './RemainingLimit';
 import CommentFormItemLabel from './CommentFormItemLabel';

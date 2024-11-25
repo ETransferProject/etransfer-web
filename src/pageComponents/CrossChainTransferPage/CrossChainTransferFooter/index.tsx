@@ -90,8 +90,7 @@ export default function CrossChainTransferFooter({
 }: CrossChainTransferFooterProps) {
   const dispatch = useAppDispatch();
   const { setLoading } = useLoading();
-  const { fromNetwork, fromWalletType, tokenSymbol, toNetwork, toWalletType } =
-    useCrossChainTransfer();
+  const { fromNetwork, tokenSymbol, toNetwork, toWalletType } = useCrossChainTransfer();
   const [{ fromWallet, toWallet }] = useWallet();
   const { getAuthToken, queryAuthToken } = useAuthToken();
   const [firstTxnHash, setFirstTxnHash] = useState('');
@@ -203,7 +202,14 @@ export default function CrossChainTransferFooter({
       onSelected: (type) => handleSelectWallet(type, isFrom),
     });
     return;
-  }, [handleSelectWallet, isFromWalletConnected, isToWalletConnected, getConnectWalletText]);
+  }, [
+    isFromWalletConnected,
+    isToWalletConnected,
+    fromNetwork?.network,
+    toNetwork?.network,
+    getConnectWalletText,
+    handleSelectWallet,
+  ]);
 
   const handleSuccessCallback = useCallback(() => {
     setIsSuccessModalOpen(true);
@@ -493,22 +499,15 @@ export default function CrossChainTransferFooter({
       loading,
     };
   }, [
+    isFromWalletConnected,
+    isToWalletConnected,
     amount,
     fromBalance,
-    fromWalletType,
     isSubmitDisabled,
     onConnectWallet,
-    recipientAddress,
-    toWalletType,
-    fromWallet?.isConnected,
-    fromWallet?.account,
-    toWallet?.isConnected,
-    toWallet?.account,
-    isUseRecipientAddress,
+    getConnectWalletText,
     fromNetwork?.network,
     toNetwork?.network,
-    formValidateData,
-    getConnectWalletText,
   ]);
 
   return (

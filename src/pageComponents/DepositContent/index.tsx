@@ -42,7 +42,7 @@ import { SideMenuKey } from 'constants/home';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
-import { useSetAuthFromStorage } from 'hooks/authToken';
+import { useSetAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
 import useAelf, { useInitWallet } from 'hooks/wallet/useAelf';
 import { addAelfNetwork, deleteAelfNetwork } from 'utils/deposit';
 import { AelfChainIdList } from 'constants/chain';

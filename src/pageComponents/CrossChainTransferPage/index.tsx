@@ -74,6 +74,7 @@ export default function CrossChainTransferPage() {
     useCrossChainTransfer();
   const fromNetworkRef = useRef<TNetworkItem | undefined>(fromNetwork);
   const toNetworkRef = useRef<TNetworkItem | undefined>(toNetwork);
+  const tokenSymbolRef = useRef(tokenSymbol);
   const totalTokenListRef = useRef<TTokenItem[]>([]);
   const [form] = Form.useForm<TTransferFormValues>();
   const [formValidateData, setFormValidateData] = useState<{
@@ -159,17 +160,18 @@ export default function CrossChainTransferPage() {
   );
 
   const getTransferData = useCallback(
-    async (symbol?: string, fromNetworkKey?: string, toNetworkKey?: string, amount?: string) => {
+    async (amount?: string) => {
       try {
-        const _fromNetworkKey = fromNetworkKey || fromNetworkRef.current?.network;
-        const _toNetworkKey = toNetworkKey || toNetworkRef.current?.network;
+        const _symbol = tokenSymbolRef.current || tokenSymbol;
+        const _fromNetworkKey = fromNetworkRef.current?.network;
+        const _toNetworkKey = toNetworkRef.current?.network;
         if (!_fromNetworkKey) return;
 
         setIsTransactionFeeLoading(true);
         const params: TGetTransferInfoRequest = {
           fromNetwork: _fromNetworkKey,
           toNetwork: _toNetworkKey,
-          symbol: symbol || tokenSymbol,
+          symbol: _symbol,
         };
         if (amount) params.amount = amount;
         if (fromWallet?.account) params.fromAddress = fromWallet?.account;
@@ -196,23 +198,24 @@ export default function CrossChainTransferPage() {
         });
         setIsTransactionFeeLoading(false);
 
+        const tokenItem = totalTokenList.find((item) => item.symbol === _symbol);
         getBalanceInterval(
           transferInfoRef.current?.contractAddress || '',
           _fromNetworkKey,
-          currentTokenRef.current,
+          tokenItem,
         );
         getBalance(
           true,
           transferInfoRef.current?.contractAddress || '',
           _fromNetworkKey,
-          currentTokenRef.current,
+          tokenItem,
         );
       } catch (error: any) {
         // when network error, transactionUnit should as the same with symbol
         setTransferInfo({
           ...InitialCrossChainTransferInfo,
-          limitCurrency: formatSymbolDisplay(symbol || tokenSymbol),
-          transactionUnit: formatSymbolDisplay(symbol || tokenSymbol),
+          limitCurrency: formatSymbolDisplay(tokenSymbolRef.current),
+          transactionUnit: formatSymbolDisplay(tokenSymbolRef.current),
         });
         if (
           error.name !== CommonErrorNameType.CANCEL &&
@@ -236,6 +239,7 @@ export default function CrossChainTransferPage() {
       getCommentInput,
       toWallet?.walletType,
       tokenSymbol,
+      totalTokenList,
     ],
   );
   const getTransferDataRef = useRef(getTransferData);
@@ -269,13 +273,14 @@ export default function CrossChainTransferPage() {
         }
 
         // to get minAmount and contractAddress
-        await getTransferData(currentTokenRef.current.symbol, undefined, undefined, '');
+        tokenSymbolRef.current = currentTokenRef.current.symbol;
+        await getTransferDataRef.current('');
       } catch (error) {
         console.log('getTokenData error', error);
         // SingleMessage.error(handleErrorMessage(error));
       }
     },
-    [dispatch, getTransferData, routeQuery.tokenSymbol, tokenSymbol],
+    [dispatch, routeQuery.tokenSymbol, tokenSymbol],
   );
 
   const getNetworkData = useCallback(async () => {
@@ -352,9 +357,7 @@ export default function CrossChainTransferPage() {
     getAuthTokenFromStorage,
     routeQuery.fromNetwork,
     routeQuery.toNetwork,
-    routeQuery.tokenSymbol,
     toNetwork?.network,
-    tokenSymbol,
   ]);
 
   const handleRecipientAddressChange = useCallback(
@@ -377,7 +380,7 @@ export default function CrossChainTransferPage() {
             errorMessage: '',
           },
         });
-        await getTransferData(tokenSymbol, undefined, undefined, amount);
+        await getTransferDataRef.current(amount);
         return;
       } else if (addressInput.length < 32 || addressInput.length > 59) {
         handleFormValidateDataChange({
@@ -399,24 +402,19 @@ export default function CrossChainTransferPage() {
           errorMessage: '',
         },
       });
-      await getTransferData(tokenSymbol, undefined, undefined, amount);
+      await getTransferDataRef.current(amount);
     } catch (error) {
       console.log('handleRecipientAddressBlur error', error);
       // SingleMessage.error(handleErrorMessage(error));
     }
-  }, [
-    amount,
-    form,
-    getRecipientAddressInput,
-    getTransferData,
-    handleFormValidateDataChange,
-    tokenSymbol,
-  ]);
+  }, [amount, form, getRecipientAddressInput, handleFormValidateDataChange]);
 
   const handleFromNetworkChanged = useCallback(
     async (item: TNetworkItem, toNetworkNew: TNetworkItem, newSymbol: string) => {
       try {
         fromNetworkRef.current = item;
+        toNetworkRef.current = toNetworkNew;
+        tokenSymbolRef.current = newSymbol;
         form.setFieldValue(TransferFormKeys.AMOUNT, '');
         setAmount('');
         setAmountUSD('');
@@ -433,24 +431,25 @@ export default function CrossChainTransferPage() {
 
         form.setFieldValue(TransferFormKeys.COMMENT, '');
 
-        await getTransferData(newSymbol, item.network, toNetworkNew.network, '');
+        await getTransferDataRef.current('');
       } catch (error) {
         console.log('handleFromNetworkChanged error', error);
       }
     },
-    [form, getTransferData, handleFormValidateDataChange, handleRecipientAddressChange],
+    [form, handleFormValidateDataChange, handleRecipientAddressChange],
   );
 
   const handleToNetworkChanged = useCallback(
     async (item: TNetworkItem, newSymbol: string) => {
       toNetworkRef.current = item;
+      tokenSymbolRef.current = newSymbol;
       form.setFieldValue(TransferFormKeys.AMOUNT, '');
       setAmount('');
       setAmountUSD('');
 
-      await getTransferData(newSymbol, undefined, item.network, '');
+      await getTransferDataRef.current('');
     },
-    [form, getTransferData],
+    [form],
   );
 
   const handleTokenChanged = useCallback(
@@ -461,12 +460,14 @@ export default function CrossChainTransferPage() {
         setAmountUSD('');
         // handleAmountValidate(); // TODO
 
-        await getTransferData(item.symbol, undefined, undefined, '');
+        currentTokenRef.current = item;
+        tokenSymbolRef.current = item.symbol;
+        await getTransferDataRef.current('');
       } catch (error) {
         console.log('handleFromNetworkChanged error', error);
       }
     },
-    [form, getTransferData],
+    [form],
   );
 
   const getAmountUSD = useCallback(async () => {
@@ -492,7 +493,9 @@ export default function CrossChainTransferPage() {
 
   const handleAmountBlur = useCallback(async () => {
     try {
-      await getTransferData(tokenSymbol, undefined, undefined, amount);
+      // TODO
+      // if (handleAmountValidate()) {
+      await getTransferDataRef.current(amount);
 
       // update amount usd display
       setAmountUSD(BigNumber(transferInfoRef.current.amountUsd || '').toFixed(2));
@@ -524,13 +527,20 @@ export default function CrossChainTransferPage() {
       console.log('handleAmountBlur error', error);
       // SingleMessage.error(handleErrorMessage(error));
     }
-  }, [amount, getAmountUSD, getTransferData, tokenSymbol, handleFormValidateDataChange]);
+  }, [
+    amount,
+    balance,
+    getAmountUSD,
+    handleFormValidateDataChange,
+    minAmount,
+    transferInfo.remainingLimit,
+  ]);
 
   const handleClickMax = useCallback(async () => {
     if (isAelfChain(fromNetwork?.network || '') && tokenSymbol === 'ELF') {
       try {
         setLoading(true);
-        await getTransferData(tokenSymbol, undefined, undefined, amount);
+        await getTransferDataRef.current(amount);
         let _maxInput = balance;
         const aelfFee = transferInfoRef.current?.aelfTransactionFee;
         if (aelfFee && ZERO.plus(aelfFee).gt(0)) {
@@ -569,7 +579,6 @@ export default function CrossChainTransferPage() {
     form,
     fromNetwork?.network,
     fromWallet?.account,
-    getTransferData,
     setLoading,
     tokenSymbol,
   ]);
@@ -579,21 +588,19 @@ export default function CrossChainTransferPage() {
       setIsUseRecipientAddress(isUse);
       judgeIsSubmitDisabled(formValidateData, isUse);
     },
-    [judgeIsSubmitDisabled],
+    [formValidateData, judgeIsSubmitDisabled],
   );
 
   const handleClickFailedOk = useCallback(() => {
     setAmount('');
     form.setFieldValue(TransferFormKeys.AMOUNT, '');
-
-    getTransferData(undefined, undefined, undefined, '');
-  }, [form, getTransferData]);
+    getTransferDataRef.current('');
+  }, [form]);
   const handleClickSuccessOk = useCallback(() => {
     setAmount('');
     form.setFieldValue(TransferFormKeys.AMOUNT, '');
-
-    getTransferData(undefined, undefined, undefined, '');
-  }, [form, getTransferData]);
+    getTransferDataRef.current('');
+  }, [form]);
 
   const router = useRouter();
   const handleClickProcessingTip = useCallback(() => {
@@ -654,7 +661,7 @@ export default function CrossChainTransferPage() {
     }
     getTransactionFeeTimerRef.current = setInterval(async () => {
       if (new Date().getTime() > transferInfo.expiredTimestamp && fromNetworkRef.current?.network) {
-        await getTransferData();
+        await getTransferDataRef.current();
       }
     }, 10000);
     return () => {

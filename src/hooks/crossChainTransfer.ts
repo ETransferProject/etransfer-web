@@ -8,7 +8,7 @@ import {
   setToNetwork,
   setTokenSymbol,
 } from 'store/reducers/crossChainTransfer/slice';
-import { TNetworkItem } from 'types/api';
+import { TCreateWithdrawOrderResult, TNetworkItem } from 'types/api';
 import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
 import { useGetBalanceDivDecimals } from './contract';
 import { ZERO } from '@etransfer/utils';
@@ -24,6 +24,8 @@ import useAelf, { useGetAccount } from './wallet/useAelf';
 import { ADDRESS_MAP, SupportedELFChainId } from 'constants/index';
 import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { ContractType } from 'constants/chain';
+import { useAelfAuthToken } from './wallet/aelfAuthToken';
+import { isAuthTokenError } from 'utils/api/error';
 
 export function useGoTransfer() {
   const dispatch = useAppDispatch();
@@ -101,6 +103,7 @@ export function useSendTxnFromAelfChain() {
     ],
   );
 
+  const { getAuth: getAelfAuthToken, queryAuth: queryAelfAuthToken } = useAelfAuthToken();
   const handleCreateWithdrawOrder = useCallback(
     async ({
       amount,
@@ -119,7 +122,7 @@ export function useSendTxnFromAelfChain() {
     }) => {
       if (!toNetwork?.network) throw new Error('Please selected network');
 
-      const createWithdrawOrderRes = await createWithdrawOrder({
+      const params = {
         network: toNetwork?.network,
         symbol: tokenSymbol,
         amount,
@@ -127,7 +130,16 @@ export function useSendTxnFromAelfChain() {
         fromChainId: chainId,
         toAddress: isDIDAddressSuffix(address) ? removeELFAddressSuffix(address) : address,
         rawTransaction: rawTransaction,
-      });
+      };
+      let createWithdrawOrderRes: TCreateWithdrawOrderResult = { orderId: '', transactionId: '' };
+      try {
+        createWithdrawOrderRes = await createWithdrawOrder(params);
+      } catch (error) {
+        if (isAuthTokenError(error)) {
+          const _authToken = await queryAelfAuthToken();
+          createWithdrawOrderRes = await createWithdrawOrder(params, _authToken);
+        }
+      }
       console.log(
         '>>>>>> handleCreateWithdrawOrder createWithdrawOrderRes',
         createWithdrawOrderRes,
@@ -138,7 +150,7 @@ export function useSendTxnFromAelfChain() {
         failCallback();
       }
     },
-    [chainId, toNetwork?.network, tokenSymbol],
+    [chainId, queryAelfAuthToken, toNetwork?.network, tokenSymbol],
   );
 
   const sendTransferTokenTransaction = useDebounceCallback(
@@ -157,6 +169,9 @@ export function useSendTxnFromAelfChain() {
     }) => {
       setLoading(true, { text: 'Please approve the transaction in the wallet...' });
       if (!address) throw new Error('Please enter a correct address.');
+
+      // get etransfer jwt
+      await getAelfAuthToken();
 
       const approveRes = await handleApproveToken({ amount, memo });
       if (!approveRes) throw new Error(InsufficientAllowanceMessage);
