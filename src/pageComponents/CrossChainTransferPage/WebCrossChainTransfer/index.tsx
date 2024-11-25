@@ -96,6 +96,7 @@ export default function WebCrossChainTransfer({
         />
         <CommonSpace direction={'vertical'} size={40} />
         <CrossChainTransferFooter
+          formValidateData={formValidateData}
           amount={amount}
           fromBalance={balance}
           decimalsFromWallet={decimalsFromWallet}

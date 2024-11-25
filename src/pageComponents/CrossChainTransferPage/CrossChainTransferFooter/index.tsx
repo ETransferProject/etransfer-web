@@ -3,7 +3,6 @@ import styles from './styles.module.scss';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
 import {
-  BUTTON_TEXT_CONNECT_WALLET,
   BUTTON_TEXT_INSUFFICIENT_FUNDS,
   BUTTON_TEXT_TRANSFER,
   DEFAULT_SEND_TRANSFER_ERROR,
@@ -13,7 +12,7 @@ import {
 import { handleErrorMessage, sleep, ZERO } from '@etransfer/utils';
 import { Form } from 'antd';
 import clsx from 'clsx';
-import { useCrossChainTransfer, useLoading } from 'store/Provider/hooks';
+import { useAppDispatch, useCrossChainTransfer, useLoading } from 'store/Provider/hooks';
 import { useWallet } from 'context/Wallet';
 import { useAuthToken } from 'hooks/wallet/authToken';
 import {
@@ -35,6 +34,11 @@ import { TCrossChainTransferInfo, UpdateTransferOrderStatus } from 'types/api';
 import myEvents from 'utils/myEvent';
 import { useSendTxnFromAelfChain } from 'hooks/crossChainTransfer';
 import { isAuthTokenError } from 'utils/api/error';
+import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
+import { CONNECT_AELF_WALLET, CONNECT_WALLET } from 'constants/wallet/index';
+import { computeWalletType, isAelfChain } from 'utils/wallet';
+import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
+import { TransferFormKeys, TransferValidateStatus, TTransferFormValidateData } from '../types';
 
 export interface CrossChainTransferFooterProps {
   className?: string;
@@ -52,6 +56,7 @@ export interface CrossChainTransferFooterProps {
   tokenContractAddress?: string;
   isSubmitDisabled: boolean;
   isTransactionFeeLoading: boolean;
+  formValidateData: TTransferFormValidateData;
   clickFailedOk: () => void;
   clickSuccessOk: () => void;
 }
@@ -79,9 +84,11 @@ export default function CrossChainTransferFooter({
   tokenContractAddress,
   isSubmitDisabled,
   isTransactionFeeLoading,
+  formValidateData,
   clickFailedOk,
   clickSuccessOk,
 }: CrossChainTransferFooterProps) {
+  const dispatch = useAppDispatch();
   const { setLoading } = useLoading();
   const { fromNetwork, fromWalletType, tokenSymbol, toNetwork, toWalletType } =
     useCrossChainTransfer();
@@ -95,6 +102,12 @@ export default function CrossChainTransferFooter({
   //   return item?.symbol ? item : InitialCrossChainTransferState.tokenList[0];
   // }, [tokenSymbol, totalTokenList]);
   // const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
+
+  const [connectWalletModalProps, setConnectWalletModalProps] = useState<
+    Omit<Parameters<typeof ConnectWalletModal>[0], 'onCancel'>
+  >({
+    open: false,
+  });
 
   // DoubleCheckModal
   const [isDoubleCheckModalOpen, setIsDoubleCheckModalOpen] = useState(false);
@@ -124,9 +137,73 @@ export default function CrossChainTransferFooter({
     toWalletType,
   ]);
 
-  const onConnectWallet = useCallback(() => {
-    console.log('onConnectWallet');
+  const isFromWalletConnected = useMemo(
+    () => fromWallet?.isConnected && !!fromWallet?.account,
+    [fromWallet?.isConnected, fromWallet?.account],
+  );
+
+  const isToWalletConnected = useMemo(
+    () =>
+      (toWallet?.isConnected && !!toWallet?.account) ||
+      (isUseRecipientAddress &&
+        recipientAddress &&
+        formValidateData[TransferFormKeys.RECIPIENT].validateStatus !==
+          TransferValidateStatus.Error),
+    [
+      toWallet?.isConnected,
+      toWallet?.account,
+      isUseRecipientAddress,
+      recipientAddress,
+      formValidateData,
+    ],
+  );
+
+  const getConnectWalletText = useCallback((network?: string) => {
+    if (!network) return CONNECT_WALLET;
+    return isAelfChain(network) ? CONNECT_AELF_WALLET : CONNECT_WALLET;
   }, []);
+
+  const handleSelectWallet = useCallback(
+    (walletType: WalletTypeEnum, isFromWallet: boolean) => {
+      if (isFromWallet) {
+        dispatch(setFromWalletType(walletType));
+      } else {
+        dispatch(setToWalletType(walletType));
+      }
+    },
+    [dispatch],
+  );
+
+  const onConnectWallet = useCallback(() => {
+    if (!isFromWalletConnected && !isToWalletConnected) {
+      setConnectWalletModalProps({
+        open: true,
+        title: getConnectWalletText(),
+      });
+      return;
+    }
+
+    const { network, isFrom } = !isFromWalletConnected
+      ? { network: fromNetwork?.network, isFrom: true }
+      : { network: toNetwork?.network, isFrom: false };
+
+    const walletType = computeWalletType(network || '');
+    if (!walletType) {
+      setConnectWalletModalProps({
+        open: true,
+        title: getConnectWalletText(),
+      });
+      return;
+    }
+
+    setConnectWalletModalProps({
+      open: true,
+      title: getConnectWalletText(network),
+      allowList: [walletType],
+      onSelected: (type) => handleSelectWallet(type, isFrom),
+    });
+    return;
+  }, [handleSelectWallet, isFromWalletConnected, isToWalletConnected, getConnectWalletText]);
 
   const handleSuccessCallback = useCallback(() => {
     setIsSuccessModalOpen(true);
@@ -382,36 +459,37 @@ export default function CrossChainTransferFooter({
   const btnProps = useMemo(() => {
     const disabled = true,
       loading = false;
-    if (!fromWalletType) {
-      return {
-        children: BUTTON_TEXT_CONNECT_WALLET,
-        onClick: onConnectWallet,
-        disabled: false,
-        loading,
-      };
-    }
-    if (!toWalletType && !recipientAddress) {
-      return {
-        children: BUTTON_TEXT_CONNECT_WALLET,
-        onClick: onConnectWallet,
-        disabled: false,
-        loading,
-      };
-    }
-    if (amount) {
-      if (!fromBalance || ZERO.plus(fromBalance).lt(amount)) {
-        return {
-          children: BUTTON_TEXT_INSUFFICIENT_FUNDS,
-          onClick: undefined,
-          disabled,
-          loading,
-        };
+
+    if (!isFromWalletConnected || !isToWalletConnected) {
+      let children = '';
+      if (!isFromWalletConnected && !isToWalletConnected) {
+        children = getConnectWalletText();
+      } else if (!isFromWalletConnected) {
+        children = getConnectWalletText(fromNetwork?.network);
+      } else {
+        children = getConnectWalletText(toNetwork?.network);
       }
+      return {
+        children,
+        onClick: onConnectWallet,
+        disabled: false,
+        loading,
+      };
     }
+
+    if (amount && (!fromBalance || ZERO.plus(fromBalance).lt(amount))) {
+      return {
+        children: BUTTON_TEXT_INSUFFICIENT_FUNDS,
+        onClick: undefined,
+        disabled,
+        loading,
+      };
+    }
+
     return {
       children: BUTTON_TEXT_TRANSFER,
       onClick: () => setIsDoubleCheckModalOpen(true),
-      disabled: recipientAddress ? isSubmitDisabled : false,
+      disabled: isSubmitDisabled,
       loading,
     };
   }, [
@@ -422,6 +500,15 @@ export default function CrossChainTransferFooter({
     onConnectWallet,
     recipientAddress,
     toWalletType,
+    fromWallet?.isConnected,
+    fromWallet?.account,
+    toWallet?.isConnected,
+    toWallet?.account,
+    isUseRecipientAddress,
+    fromNetwork?.network,
+    toNetwork?.network,
+    formValidateData,
+    getConnectWalletText,
   ]);
 
   return (
@@ -452,6 +539,11 @@ export default function CrossChainTransferFooter({
           </CommonButton>
         </Form.Item>
       </div>
+
+      <ConnectWalletModal
+        {...connectWalletModalProps}
+        onCancel={() => setConnectWalletModalProps({ ...connectWalletModalProps, open: false })}
+      />
 
       <DoubleCheckModal
         transferInfo={transferInfo}

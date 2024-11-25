@@ -123,14 +123,14 @@ export default function CrossChainTransferPage() {
   }, [form]);
 
   const judgeIsSubmitDisabled = useCallback(
-    (currentFormValidateData: typeof formValidateData) => {
+    (currentFormValidateData: typeof formValidateData, _isUseRecipientAddress: boolean) => {
       const isValueUndefined = (value: unknown) => value === undefined || value === '';
       const isDisabled =
         currentFormValidateData[TransferFormKeys.RECIPIENT].validateStatus ===
           TransferValidateStatus.Error ||
         currentFormValidateData[TransferFormKeys.AMOUNT].validateStatus ===
           TransferValidateStatus.Error ||
-        isValueUndefined(getRecipientAddressInput()) ||
+        (_isUseRecipientAddress && isValueUndefined(getRecipientAddressInput())) ||
         isValueUndefined(form.getFieldValue(TransferFormKeys.AMOUNT));
       setIsSubmitDisabled(isDisabled);
     },
@@ -141,11 +141,11 @@ export default function CrossChainTransferPage() {
     (updateFormValidateData: Partial<typeof formValidateData>) => {
       setFormValidateData((prev) => {
         const newFormValidateData = { ...prev, ...updateFormValidateData };
-        judgeIsSubmitDisabled(newFormValidateData);
+        judgeIsSubmitDisabled(newFormValidateData, isUseRecipientAddress);
         return newFormValidateData;
       });
     },
-    [judgeIsSubmitDisabled],
+    [judgeIsSubmitDisabled, isUseRecipientAddress],
   );
 
   const searchParams = useSearchParams();
@@ -492,8 +492,6 @@ export default function CrossChainTransferPage() {
 
   const handleAmountBlur = useCallback(async () => {
     try {
-      // TODO
-      // if (handleAmountValidate()) {
       await getTransferData(tokenSymbol, undefined, undefined, amount);
 
       // update amount usd display
@@ -501,12 +499,32 @@ export default function CrossChainTransferPage() {
 
       // update usd price
       getAmountUSD();
-      // }
+
+      if (
+        amount &&
+        ((balance && ZERO.plus(amount).gt(balance)) ||
+          (minAmount && ZERO.plus(amount).lt(minAmount)) ||
+          (transferInfo.remainingLimit && ZERO.plus(amount).gt(transferInfo.remainingLimit)))
+      ) {
+        handleFormValidateDataChange({
+          [TransferFormKeys.AMOUNT]: {
+            validateStatus: TransferValidateStatus.Error,
+            errorMessage: '',
+          },
+        });
+      } else {
+        handleFormValidateDataChange({
+          [TransferFormKeys.AMOUNT]: {
+            validateStatus: TransferValidateStatus.Normal,
+            errorMessage: '',
+          },
+        });
+      }
     } catch (error) {
       console.log('handleAmountBlur error', error);
       // SingleMessage.error(handleErrorMessage(error));
     }
-  }, [amount, getAmountUSD, getTransferData, tokenSymbol]);
+  }, [amount, getAmountUSD, getTransferData, tokenSymbol, handleFormValidateDataChange]);
 
   const handleClickMax = useCallback(async () => {
     if (isAelfChain(fromNetwork?.network || '') && tokenSymbol === 'ELF') {
@@ -556,9 +574,13 @@ export default function CrossChainTransferPage() {
     tokenSymbol,
   ]);
 
-  const handleUseRecipientChanged = useCallback((item: boolean) => {
-    setIsUseRecipientAddress(item);
-  }, []);
+  const handleUseRecipientChanged = useCallback(
+    (isUse: boolean) => {
+      setIsUseRecipientAddress(isUse);
+      judgeIsSubmitDisabled(formValidateData, isUse);
+    },
+    [judgeIsSubmitDisabled],
+  );
 
   const handleClickFailedOk = useCallback(() => {
     setAmount('');
