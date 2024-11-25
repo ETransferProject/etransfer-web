@@ -244,23 +244,20 @@ export default function CrossChainTransferPage() {
   const getTokenData = useCallback(
     async (isInitCurrentSymbol?: boolean) => {
       try {
-        const res = await getTokenList({
-          type: BusinessType.Transfer,
+        if (!fromNetworkRef.current || !toNetworkRef.current) return;
+        const allowTokenList = computeTokenList({
+          fromNetwork: fromNetworkRef.current,
+          toNetwork: toNetworkRef.current,
+          totalTokenList: totalTokenListRef.current,
         });
-
-        dispatch(setTotalTokenList(res.tokenList));
-        totalTokenListRef.current = res.tokenList;
-
-        if (!toNetworkRef.current) return;
-        const allowTokenList = computeTokenList(toNetworkRef.current, res.tokenList);
         dispatch(setTokenList(allowTokenList));
 
         if (isInitCurrentSymbol && !tokenSymbol) {
           dispatch(setTokenSymbol(allowTokenList[0].symbol));
           currentTokenRef.current = allowTokenList[0];
         } else {
-          const exitToken = res.tokenList.find(
-            (item) => item.symbol === (routeQuery.tokenSymbol || tokenSymbol),
+          const exitToken = totalTokenListRef.current.find(
+            (item) => item.symbol === routeQuery.tokenSymbol || item.symbol === tokenSymbol,
           );
           if (exitToken) {
             dispatch(setTokenSymbol(exitToken.symbol));
@@ -273,12 +270,9 @@ export default function CrossChainTransferPage() {
 
         // to get minAmount and contractAddress
         await getTransferData(currentTokenRef.current.symbol, undefined, undefined, '');
-
-        return res.tokenList;
       } catch (error) {
         console.log('getTokenData error', error);
         // SingleMessage.error(handleErrorMessage(error));
-        return [];
       }
     },
     [dispatch, getTransferData, routeQuery.tokenSymbol, tokenSymbol],
@@ -298,7 +292,8 @@ export default function CrossChainTransferPage() {
       if (networkList?.length > 0) {
         // from logic
         const exitFromNetwork = networkList.find(
-          (item) => item.network === (routeQuery.fromNetwork || fromNetwork?.network),
+          (item) =>
+            item.network === routeQuery.fromNetwork || item.network === fromNetwork?.network,
         );
         if (exitFromNetwork && exitFromNetwork.status !== NetworkStatus.Offline) {
           dispatch(setFromNetwork(exitFromNetwork));
@@ -325,7 +320,7 @@ export default function CrossChainTransferPage() {
         dispatch(setToNetworkList(toNetworkList));
 
         const exitToNetwork = toNetworkList.find(
-          (item) => item.network === (routeQuery.toNetwork || toNetwork?.network),
+          (item) => item.network === routeQuery.toNetwork || item.network === toNetwork?.network,
         );
         if (exitToNetwork && exitToNetwork.status !== NetworkStatus.Offline) {
           dispatch(setToNetwork(exitToNetwork));
@@ -341,20 +336,6 @@ export default function CrossChainTransferPage() {
           dispatch(setToWalletType(_toWalletType));
         } else {
           dispatch(setToWalletType(undefined));
-        }
-
-        // token logic
-        const allowTokenList = computeTokenList(toNetworkRef.current, totalTokenListRef.current);
-        dispatch(setTokenList(allowTokenList));
-        const exitToken = totalTokenListRef.current.find(
-          (item) => item.symbol === (routeQuery.tokenSymbol || tokenSymbol),
-        );
-        if (exitToken) {
-          dispatch(setTokenSymbol(exitToken.symbol));
-          currentTokenRef.current = exitToken;
-        } else {
-          dispatch(setTokenSymbol(allowTokenList[0].symbol));
-          currentTokenRef.current = allowTokenList[0];
         }
       } else {
         // TODO
@@ -597,7 +578,21 @@ export default function CrossChainTransferPage() {
     router.push('/history');
   }, [router]);
 
+  const getTotalTokenList = useCallback(async () => {
+    try {
+      const res = await getTokenList({
+        type: BusinessType.Transfer,
+      });
+
+      dispatch(setTotalTokenList(res.tokenList));
+      totalTokenListRef.current = res.tokenList;
+    } catch (error) {
+      console.log('getTotalTokenList error', error);
+    }
+  }, [dispatch]);
+
   const init = useCallback(async () => {
+    await getTotalTokenList();
     await getNetworkData();
     await getTokenData();
     getAmountUSD();
@@ -607,7 +602,7 @@ export default function CrossChainTransferPage() {
       fromNetworkRef.current?.network || '',
       currentTokenRef.current,
     );
-  }, [getAmountUSD, getBalanceInterval, getNetworkData, getTokenData]);
+  }, [getAmountUSD, getBalanceInterval, getNetworkData, getTokenData, getTotalTokenList]);
   const initRef = useRef(init);
   initRef.current = init;
 

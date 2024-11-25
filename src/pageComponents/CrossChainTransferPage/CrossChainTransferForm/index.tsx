@@ -150,7 +150,11 @@ export default function CrossChainTransferForm({
       }
 
       // compute token
-      const allowTokenList = computeTokenList(toNetworkNew, totalTokenList);
+      const allowTokenList = computeTokenList({
+        fromNetwork: item,
+        toNetwork: toNetworkNew,
+        totalTokenList,
+      });
       dispatch(setTokenList(allowTokenList));
       const exitToken = totalTokenList.find((item) => item.symbol === tokenSymbol);
       let _tokenNew;
@@ -180,7 +184,11 @@ export default function CrossChainTransferForm({
       }
 
       // compute token
-      const allowTokenList = computeTokenList(item, totalTokenList);
+      const allowTokenList = computeTokenList({
+        fromNetwork: fromNetworkRef.current,
+        toNetwork: item,
+        totalTokenList,
+      });
       dispatch(setTokenList(allowTokenList));
       const exitToken = totalTokenList.find((item) => item.symbol === tokenSymbol);
       let _tokenNew;
