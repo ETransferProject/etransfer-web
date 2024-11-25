@@ -83,6 +83,7 @@ export default function MobileCrossChainTransfer({
         />
         <CommonSpace direction={'vertical'} size={40} />
         <CrossChainTransferFooter
+          formValidateData={formValidateData}
           amount={amount}
           fromBalance={balance}
           decimalsFromWallet={decimalsFromWallet}
