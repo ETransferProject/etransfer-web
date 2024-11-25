@@ -124,7 +124,7 @@ export default function useTON() {
       const base64Boc = payload.toBoc().toString('base64');
       const transaction: SendTransactionRequest = {
         validUntil: Math.floor(Date.now() / 1000) + 360, // 360 sec
-        network: CHAIN.MAINNET, // TODO
+        network: CHAIN.MAINNET,
         // from: address,
         messages: [
           {

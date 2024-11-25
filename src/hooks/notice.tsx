@@ -1,6 +1,6 @@
 import { etransferCore } from '@etransfer/ui-react';
 import { ETransferHost } from 'constants/index';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useAppDispatch } from 'store/Provider/hooks';
 import {
   setDepositProcessingCount,
@@ -9,17 +9,13 @@ import {
   // setTransferProcessingCount,
 } from 'store/reducers/records/slice';
 import { handleNoticeDataAndShow } from 'utils/notice';
-import { useGetAccount } from './wallet/useAelf';
-import { removeAddressSuffix } from '@etransfer/utils';
 import { TOrderRecordsNoticeResponse } from '@etransfer/socket';
 import myEvents from 'utils/myEvent';
+import { useGetAllConnectedWalletAccount } from './wallet/authToken';
 
 export function useNoticeSocket() {
   const dispatch = useAppDispatch();
-  const account = useGetAccount();
-  const address = useMemo(() => {
-    return removeAddressSuffix(account?.AELF || '');
-  }, [account?.AELF]);
+  const getAllConnectedWalletAccount = useGetAllConnectedWalletAccount();
 
   const handleNotice = useCallback(
     (res: TOrderRecordsNoticeResponse | null) => {
@@ -36,7 +32,6 @@ export function useNoticeSocket() {
           dispatch(setWithdrawProcessingCount(0));
         }
 
-        // TODO
         if (res.processing.transferCount) {
           dispatch(setTransferProcessingCount(res.processing.transferCount));
         } else {
@@ -56,18 +51,23 @@ export function useNoticeSocket() {
 
   useEffect(() => {
     etransferCore.setSocketUrl(ETransferHost);
-
-    if (address && !etransferCore.noticeSocket?.signalr?.connectionId) {
+    const addressList = getAllConnectedWalletAccount();
+    const accountListWithWalletType = addressList.accountListWithWalletType;
+    if (
+      Array.isArray(accountListWithWalletType) &&
+      accountListWithWalletType.length > 0 &&
+      !etransferCore.noticeSocket?.signalr?.connectionId
+    ) {
       etransferCore.noticeSocket
         ?.doOpen()
         .then((res) => {
           console.log('NoticeSocket doOpen res:', res);
           etransferCore.noticeSocket?.RequestUserOrderRecord({
-            address: address,
+            addressList: accountListWithWalletType,
           });
           etransferCore.noticeSocket?.ReceiveUserOrderRecords(
             {
-              address: address,
+              addressList: accountListWithWalletType,
             },
             (res) => {
               console.log(
@@ -81,7 +81,7 @@ export function useNoticeSocket() {
           etransferCore.noticeSocket?.signalr?.onreconnected((id?: string) => {
             console.log('NoticeSocket onreconnected:', id);
             etransferCore.noticeSocket?.RequestUserOrderRecord({
-              address: address,
+              addressList: accountListWithWalletType,
             });
           });
         })
@@ -89,5 +89,5 @@ export function useNoticeSocket() {
           console.log('NoticeSocket doOpen error', error);
         });
     }
-  }, [address]);
+  }, [getAllConnectedWalletAccount]);
 }

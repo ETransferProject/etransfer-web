@@ -75,7 +75,7 @@ export default function Content() {
         endTimestamp: endTimestamp,
         skipCount: (skipCount - 1) * maxResultCount,
         maxResultCount,
-        addressList: connectedAccountList, // TODO
+        addressList: connectedAccountList.accountList,
       });
       if (isPadPX) {
         let mobileRecordsList = [...recordsList, ...recordsListRes];

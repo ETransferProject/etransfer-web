@@ -1625,56 +1625,56 @@
     "@ethersproject/properties" "^5.7.0"
     "@ethersproject/strings" "^5.7.0"
 
-"@etransfer/core@^1.11.0-alpha.0":
-  version "1.11.0-alpha.0"
-  resolved "https://registry.npmjs.org/@etransfer/core/-/core-1.11.0-alpha.0.tgz#3fddf27429a6f429054a0009ac12f4acacee2bc0"
-  integrity sha512-cA4/DiaMHXaDEe6d62g3aYy238L05HtS+XDVCiA9T1E43IjSpVZAk7MAzPRrPVrQDUX2t8GcOxsM1HWokEO3/g==
+"@etransfer/core@^1.11.0-alpha.3":
+  version "1.11.0-alpha.3"
+  resolved "https://registry.npmjs.org/@etransfer/core/-/core-1.11.0-alpha.3.tgz#f053b257c8533a5214c2c2839ad7228ecab1f014"
+  integrity sha512-nznF13NhBDQZsvtDEbjTbpXXSVEDY8IE4bv8Bbv7c0HxOxZe6JMi/9tcVYo0thUuuAOLcioiUZAsFuCFQqL5UA==
   dependencies:
-    "@etransfer/services" "^1.11.0-alpha.0"
-    "@etransfer/socket" "^1.11.0-alpha.0"
-    "@etransfer/types" "^1.11.0-alpha.0"
-    "@etransfer/utils" "^1.11.0-alpha.0"
+    "@etransfer/services" "^1.11.0-alpha.3"
+    "@etransfer/socket" "^1.11.0-alpha.3"
+    "@etransfer/types" "^1.11.0-alpha.3"
+    "@etransfer/utils" "^1.11.0-alpha.3"
 
-"@etransfer/request@^1.11.0-alpha.0":
-  version "1.11.0-alpha.0"
-  resolved "https://registry.npmjs.org/@etransfer/request/-/request-1.11.0-alpha.0.tgz#c5d12e61211667e6c1dee0c838f18e3b442a9e77"
-  integrity sha512-lcvQHgYlhV/nCOJex620wDDOtFPsxp1i3pGEDINuUCrQP4VDSQI5tiJqUOGdxdt4+DTe1nMW7I2X7Qk6BLxluw==
+"@etransfer/request@^1.11.0-alpha.3":
+  version "1.11.0-alpha.3"
+  resolved "https://registry.npmjs.org/@etransfer/request/-/request-1.11.0-alpha.3.tgz#7a58d0c9835a8441ae741e784e2a84926fa74b51"
+  integrity sha512-7Ot12xmRebpTFnLRQpXSXBil6aRAvozUF70PbWax2qVET8XX2fKhbPy0D805oTl/KoSDw7a7C8JIn95Njzi3+w==
   dependencies:
-    "@etransfer/types" "^1.11.0-alpha.0"
-    "@etransfer/utils" "^1.11.0-alpha.0"
+    "@etransfer/types" "^1.11.0-alpha.3"
+    "@etransfer/utils" "^1.11.0-alpha.3"
     axios "^0.24.0"
 
-"@etransfer/services@^1.11.0-alpha.0":
-  version "1.11.0-alpha.0"
-  resolved "https://registry.npmjs.org/@etransfer/services/-/services-1.11.0-alpha.0.tgz#35e07c559cc94fcc7d7a5dfa6d32f37459104e6c"
-  integrity sha512-xSVADQc8BlP56NQl+MSaRZUZFo+jdDDfYoEwJIDY4ExE+HJx08D7HwgYw3oUAg5nLRczfIvSU//bzOulS6OpCw==
+"@etransfer/services@^1.11.0-alpha.3":
+  version "1.11.0-alpha.3"
+  resolved "https://registry.npmjs.org/@etransfer/services/-/services-1.11.0-alpha.3.tgz#9f038ac90e6d3db6167f97bdb85387506d440b45"
+  integrity sha512-VkqA/KPfXZrjpqvb/vZgOoNrHpigIMsQtGwlE4+3ifx86OTi0ojw/RFXBsKdOpjazVSN7krUBVOoVbbA8NTPeA==
   dependencies:
-    "@etransfer/request" "^1.11.0-alpha.0"
-    "@etransfer/types" "^1.11.0-alpha.0"
-    "@etransfer/utils" "^1.11.0-alpha.0"
+    "@etransfer/request" "^1.11.0-alpha.3"
+    "@etransfer/types" "^1.11.0-alpha.3"
+    "@etransfer/utils" "^1.11.0-alpha.3"
     "@portkey/types" "2.15.0"
 
-"@etransfer/socket@^1.11.0-alpha.0":
-  version "1.11.0-alpha.0"
-  resolved "https://registry.npmjs.org/@etransfer/socket/-/socket-1.11.0-alpha.0.tgz#53f3122658546e7ed14bbd0bceecdd0858d1349a"
-  integrity sha512-s1BPVwo9AtO3QOdb3eDxkxx6ZzyYxeqoJ75+45Z3MyhfbZSolWzMlp50Xd8lDFWCWGIKUx+te8VefPvP4uBT0A==
+"@etransfer/socket@^1.11.0-alpha.3":
+  version "1.11.0-alpha.3"
+  resolved "https://registry.npmjs.org/@etransfer/socket/-/socket-1.11.0-alpha.3.tgz#ff9198b361e14a55531b91197faf062dc3136d2c"
+  integrity sha512-nAKTR77L+qcCsheh+d/EGIH75kqn8EyAiC7H+U4dQSn7A2hupwThFhrgEBhnQSZKpdikB9BTIqJSGjIfA+5CgQ==
   dependencies:
     "@abp/signalr" "^7.0.0"
-    "@etransfer/utils" "^1.11.0-alpha.0"
+    "@etransfer/utils" "^1.11.0-alpha.3"
 
-"@etransfer/types@^1.11.0-alpha.0":
-  version "1.11.0-alpha.0"
-  resolved "https://registry.npmjs.org/@etransfer/types/-/types-1.11.0-alpha.0.tgz#382c22ade0251c5f9a3fe9e1f8980d1f4a64075b"
-  integrity sha512-ZXitGBXcM2ATi7kimcvxiGkmFgF8KO9Y+TlQx06AFAP2F/BG8rfkg9XhoesgrBZ5OEW8oZFpHNUb46N1az5kag==
+"@etransfer/types@^1.11.0-alpha.3":
+  version "1.11.0-alpha.3"
+  resolved "https://registry.npmjs.org/@etransfer/types/-/types-1.11.0-alpha.3.tgz#f086ab7d60c22cb4070d9fbea3103199a3d4e3b0"
+  integrity sha512-RHywH6fV25x3YN6OqcrrymOnWfQsh1KoUFAjz1YhjByxuBR1TX+u7y9dHkMzywU8u8Z+rkjpZrKdiO4tcYsoWg==
 
-"@etransfer/ui-react@^1.11.0-alpha.0":
-  version "1.11.0-alpha.0"
-  resolved "https://registry.npmjs.org/@etransfer/ui-react/-/ui-react-1.11.0-alpha.0.tgz#19fd46426b3a2f9e4d3c37e382d80274ae49767c"
-  integrity sha512-10fXHnEnNBB7P9T/vffJwj48WCboVdhw8BYd/yHmV1L0LFiz45pyA8YJIb0qNVp1cDnf9/YMXYNYOsSMKg5VrQ==
+"@etransfer/ui-react@^1.11.0-alpha.3":
+  version "1.11.0-alpha.3"
+  resolved "https://registry.npmjs.org/@etransfer/ui-react/-/ui-react-1.11.0-alpha.3.tgz#922e7b32ea26f62e7a7c411664f366ae36ac3664"
+  integrity sha512-tj0yPBd+mRYolPiKAYMDo8+jkUrnI3nOX8FpDXW7Da3++6GvU4310K/mm0TJrraiitSLm1Rzxpvfepv4mjIOpg==
   dependencies:
-    "@etransfer/core" "^1.11.0-alpha.0"
-    "@etransfer/types" "^1.11.0-alpha.0"
-    "@etransfer/utils" "^1.11.0-alpha.0"
+    "@etransfer/core" "^1.11.0-alpha.3"
+    "@etransfer/types" "^1.11.0-alpha.3"
+    "@etransfer/utils" "^1.11.0-alpha.3"
     "@portkey/types" "2.15.0"
     "@portkey/utils" "2.15.0"
     antd "4.24.14"
@@ -1688,13 +1688,13 @@
     react-use "^17.4.0"
     uuid "^8.3.2"
 
-"@etransfer/utils@^1.11.0-alpha.0":
-  version "1.11.0-alpha.0"
-  resolved "https://registry.npmjs.org/@etransfer/utils/-/utils-1.11.0-alpha.0.tgz#d8343700c5d547c90503627f5bfb36cdd8fd7b21"
-  integrity sha512-YaEyqQnydA3S8fH3gEw/dA2RAQuWnRTJuSAHmfCtM4EbBzqTUAUXHWMn3vVu7I9W9uIx4BOrOMNOMIQR/5P+TQ==
+"@etransfer/utils@^1.11.0-alpha.3":
+  version "1.11.0-alpha.3"
+  resolved "https://registry.npmjs.org/@etransfer/utils/-/utils-1.11.0-alpha.3.tgz#e6ac12a862961d0f59898255bf4ed3306ce21b36"
+  integrity sha512-wjTNSFCqwK3aG5S6zMZPbOQh8/Dv6rqCu2zsmna2rGN1wkf0FBc05zl+Cj0UUZWDhDXTJ6IrYLZbV6XSGCEXww==
   dependencies:
-    "@etransfer/services" "^1.11.0-alpha.0"
-    "@etransfer/types" "^1.11.0-alpha.0"
+    "@etransfer/services" "^1.11.0-alpha.3"
+    "@etransfer/types" "^1.11.0-alpha.3"
     bn.js "^5.2.1"
 
 "@firebase/analytics-compat@0.2.6":

@@ -52,7 +52,7 @@ export default function Address() {
         {accountsList.map((item, index) => (
           <div
             className={clsx('flex-column', styles['wallet-aelf-address-item'])}
-            key={item.key}
+            key={item.key + index}
             onMouseEnter={(event) => handleMouseEnter(event, index)}
             onMouseLeave={handleMouseLeave}>
             <div className="flex-row-center gap-8">

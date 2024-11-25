@@ -19,7 +19,7 @@ export function ProcessingTip({
 }: ProcessingTipProps) {
   if (!transferProcessingCount && !depositProcessingCount) return null;
 
-  let text; // TODO
+  let text;
   if (!transferProcessingCount && depositProcessingCount) {
     text = `${depositProcessingCount} ${
       depositProcessingCount > 1 ? 'deposits' : 'deposit'

@@ -158,10 +158,6 @@ export const queryAuthApiV3 = async (config: QueryAuthApiExtraRequestV3): Promis
   const token_type = res.data.token_type;
   const access_token = res.data.access_token;
 
-  // TODO
-  // service.defaults.headers.common['Authorization'] = `${token_type} ${access_token}`;
-  // myEvents.AuthTokenSuccess.emit();
-
   if (localStorage) {
     const key = config?.pubkey + config.sourceType;
     setLocalJWT(key, res.data);

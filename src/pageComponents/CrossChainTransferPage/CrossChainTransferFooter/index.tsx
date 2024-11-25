@@ -244,7 +244,7 @@ export default function CrossChainTransferFooter({
           fromAddress: fromWallet?.account,
           toAddress,
           address: orderResultRef.current.address,
-          txId: firstTxnHashRef.current, // TODO sol ton
+          txId: firstTxnHashRef.current,
           status,
           memo: fromWallet.walletType === WalletTypeEnum.TON ? orderResultRef.current.orderId : '',
         },
@@ -310,6 +310,12 @@ export default function CrossChainTransferFooter({
           memo: comment,
           successCallback: handleSuccessCallback,
           failCallback: handleFailCallback,
+        });
+        setSuccessData({
+          amount: amount,
+          symbol: transferInfo.limitCurrency,
+          receiveAmount: transferInfo.receiveAmount,
+          receiveAmountUsd: transferInfo.receiveAmountUsd,
         });
       } else {
         // get etransfer jwt

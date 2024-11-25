@@ -44,7 +44,7 @@ export function useUpdateBalance() {
         if (isAelfChain(network)) {
           console.log('>>>>>> getBalance', item?.symbol);
 
-          const chainId = network as SupportedELFChainId; // TODO
+          const chainId = network as SupportedELFChainId;
           const caAddress = accounts?.[chainId];
           if (!caAddress) return '';
           isLoading && setIsBalanceLoading(true);

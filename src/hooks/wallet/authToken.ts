@@ -22,6 +22,7 @@ import useEVM from './useEVM';
 import useSolana from './useSolana';
 import useTON from './useTON';
 import useTRON from './useTRON';
+import { TOrderRecordsNoticeRequestAddressItem } from '@etransfer/socket';
 
 export function useAuthToken() {
   const { fromWalletType } = useCrossChainTransfer();
@@ -274,22 +275,46 @@ export function useGetAllConnectedWalletAccount() {
 
   return useCallback(() => {
     const accountList: string[] = [];
+    const accountListWithWalletType: TOrderRecordsNoticeRequestAddressItem[] = [];
     if (isAelfConnected && aelfAccount) {
       accountList.push(aelfAccount);
+      accountListWithWalletType.push({
+        SourceType: WalletTypeEnum.AELF.toLocaleLowerCase(),
+        Address: aelfAccount,
+      });
     }
     if (isEVMConnected && evmAccount) {
       accountList.push(evmAccount);
+      accountListWithWalletType.push({
+        SourceType: AuthTokenSource.EVM.toLocaleLowerCase(),
+        Address: evmAccount,
+      });
     }
     if (isSolanaConnected && solanaAccount) {
       accountList.push(solanaAccount);
+      accountListWithWalletType.push({
+        SourceType: AuthTokenSource.Solana.toLocaleLowerCase(),
+        Address: solanaAccount,
+      });
     }
     if (isTONConnected && tonAccount) {
       accountList.push(tonAccount);
+      accountListWithWalletType.push({
+        SourceType: AuthTokenSource.TON.toLocaleLowerCase(),
+        Address: tonAccount,
+      });
     }
     if (isTRONConnected && tronAccount) {
       accountList.push(tronAccount);
+      accountListWithWalletType.push({
+        SourceType: AuthTokenSource.TRON.toLocaleLowerCase(),
+        Address: tronAccount,
+      });
     }
-    return accountList;
+    return {
+      accountList,
+      accountListWithWalletType,
+    };
   }, [
     aelfAccount,
     evmAccount,

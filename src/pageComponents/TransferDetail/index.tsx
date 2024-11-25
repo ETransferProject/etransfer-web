@@ -40,7 +40,7 @@ export default function TransferDetail() {
         isLoading && setLoading(true);
 
         const connectedAccountList = getAllConnectedWalletAccount();
-        const data = await getRecordDetail(id, { addressList: connectedAccountList });
+        const data = await getRecordDetail(id, { addressList: connectedAccountList.accountList });
         // No data found
         if (data?.id === DEFAULT_NULL_ORDER_ID || !data?.createTime) {
           stopTimer();
