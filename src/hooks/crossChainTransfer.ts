@@ -64,9 +64,9 @@ export function useSendTxnFromAelfChain() {
     return item?.symbol ? item : InitialCrossChainTransferState.tokenList[0];
   }, [tokenSymbol, totalTokenList]);
   const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
-  const currentTokenAddress = useMemo(
-    () => currentToken.contractAddress,
-    [currentToken.contractAddress],
+  const currentEtransferContractAddress = useMemo(
+    () => ADDRESS_MAP[chainId]?.[ContractType.ETRANSFER] || '',
+    [chainId],
   );
 
   const handleApproveToken = useCallback(
@@ -85,7 +85,7 @@ export function useSendTxnFromAelfChain() {
         chainId: chainId,
         symbol: tokenSymbol,
         address: accounts?.[chainId] || '',
-        approveTargetAddress: currentTokenAddress,
+        approveTargetAddress: currentEtransferContractAddress,
         amount,
         memo,
       });
@@ -96,7 +96,7 @@ export function useSendTxnFromAelfChain() {
       accounts,
       callSendMethod,
       chainId,
-      currentTokenAddress,
+      currentEtransferContractAddress,
       currentTokenDecimal,
       getBalanceDivDecimals,
       tokenSymbol,
@@ -187,7 +187,7 @@ export function useSendTxnFromAelfChain() {
         const transaction = await createTransferTokenTransaction({
           walletType: connector,
           caContractAddress: ADDRESS_MAP[chainId][ContractType.CA],
-          eTransferContractAddress: currentTokenAddress,
+          eTransferContractAddress: currentEtransferContractAddress,
           caHash: caHash,
           symbol: tokenSymbol,
           amount: timesDecimals(amount, currentTokenDecimal).toFixed(),
@@ -212,7 +212,7 @@ export function useSendTxnFromAelfChain() {
       }
       setLoading(false);
     },
-    [currentTokenAddress, handleApproveToken, setLoading],
+    [currentEtransferContractAddress, handleApproveToken, setLoading],
   );
 
   return { sendTransferTokenTransaction };
