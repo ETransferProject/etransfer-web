@@ -102,10 +102,10 @@ export const getWalletLogo = (walletType: WalletTypeEnum, connector?: any) => {
       return Phantom_16;
 
     case WalletTypeEnum.TON:
-      return TronLink_16;
+      return Tonkeeper_16;
 
     case WalletTypeEnum.TRON:
-      return Tonkeeper_16;
+      return TronLink_16;
   }
 };
 

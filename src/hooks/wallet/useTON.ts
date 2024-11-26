@@ -125,13 +125,12 @@ export default function useTON() {
       const transaction: SendTransactionRequest = {
         validUntil: Math.floor(Date.now() / 1000) + 360, // 360 sec
         network: CHAIN.MAINNET,
-        // from: address,
         messages: [
           {
             address: jettonWalletAddress.toString(), // eg: USDT wallet address
             // unit is nanoton. for contract calls, the transaction amount is usually 0
             // for jetton transaction, the amount is the max ton coins fee
-            amount: toNano(0.02).toString(),
+            amount: toNano(0.05).toString(),
             payload: base64Boc,
           },
         ],

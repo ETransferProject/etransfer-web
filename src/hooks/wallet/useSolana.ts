@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { IGetBalanceRequest, ISignMessageResult, WalletTypeEnum } from 'context/Wallet/types';
 import { getAuthPlainText } from 'utils/auth';
@@ -11,7 +11,7 @@ import {
   createAssociatedTokenAccountInstruction,
 } from '@solana/spl-token';
 import { configureAndSendCurrentTransaction } from 'utils/wallet/SOL';
-import { timesDecimals, ZERO } from '@etransfer/utils';
+import { sleep, timesDecimals, ZERO } from '@etransfer/utils';
 import AElf from 'aelf-sdk';
 import { AuthTokenSource } from 'types/api';
 import { SendSolanaTransactionParams } from 'types/wallet';
@@ -33,25 +33,21 @@ export default function useSolana() {
     wallets,
   } = useWallet();
 
-  useEffect(() => {
-    const isMobile = devices.isMobile();
-    if (isMobile) {
-      localStorage?.removeItem(SOLANA_STORAGE_CONNECTED_KEY);
-    }
-  }, []);
-
   const onConnect = useCallback(
     async (walletName: string) => {
-      const isMobile = devices.isMobile();
-      if (isMobile) {
-        localStorage?.removeItem(SOLANA_STORAGE_CONNECTED_KEY);
-      }
-
       const _wallet = wallets.find((item) => item.adapter.name === walletName);
       if (!_wallet) return;
       select(_wallet.adapter.name);
+
+      const isMobile = devices.isMobile();
+      if (isMobile) {
+        await sleep(3000);
+        await disconnect();
+        localStorage?.removeItem(SOLANA_STORAGE_CONNECTED_KEY);
+        window.location.reload();
+      }
     },
-    [select, wallets],
+    [disconnect, select, wallets],
   );
 
   const getBalance = useCallback(

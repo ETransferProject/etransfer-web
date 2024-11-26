@@ -389,7 +389,6 @@ export default function CrossChainTransferFooter({
             amount: Number(amount),
             decimals: decimalsFromWallet,
             orderId: orderResultRef.current.orderId,
-            forwardTonAmount: '',
           } as SendTONTransactionParams;
         } else {
           // TRON
