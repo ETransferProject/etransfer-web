@@ -271,6 +271,7 @@ export default function CrossChainTransferFooter({
         (fromWallet?.walletType === WalletTypeEnum.EVM &&
           error?.details &&
           error.details.includes('User denied')) ||
+        error.details.includes('rejected') ||
         (fromWallet?.walletType === WalletTypeEnum.TON &&
           handleErrorMessage(error).includes('TON_CONNECT_SDK_ERROR')) ||
         (fromWallet?.walletType === WalletTypeEnum.SOL &&

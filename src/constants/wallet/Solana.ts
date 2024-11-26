@@ -14,3 +14,5 @@ export const CONNECT_SOL_LIST_CONFIG = {
     },
   ],
 };
+
+export const SOLANA_STORAGE_CONNECTED_KEY = 'walletName';

@@ -43,7 +43,12 @@ export default function EVMWalletList({
         setIsConnectLoading(false);
       } catch (error) {
         setIsConnectLoading(false);
-        SingleMessage.error(handleErrorMessage(USER_REJECT_CONNECT_WALLET_TIP));
+        if (
+          handleErrorMessage(error).includes('rejected') ||
+          handleErrorMessage(error).includes('denied')
+        ) {
+          SingleMessage.error(handleErrorMessage(USER_REJECT_CONNECT_WALLET_TIP));
+        }
       }
     },
     [connect, connectors, isConnected, onSelected],
