@@ -14,6 +14,7 @@ import myEvents from 'utils/myEvent';
 import Address from './Address';
 import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { WalletTypeEnum } from 'context/Wallet/types';
+import { TelegramPlatform } from 'utils/telegram';
 // import PartialLoading from 'components/PartialLoading';
 
 export default function AelfWalletList({
@@ -68,7 +69,18 @@ export default function AelfWalletList({
     <div>
       <div className={styles['wallet-list-title']}>{CONNECT_AELF_LIST_CONFIG.section}</div>
       {CONNECT_AELF_LIST_CONFIG.list.map((item) => {
-        const Icon = item.icon;
+        let Icon = item.icon;
+        if (isConnected && connector === AelfWalletTypeEnum.elf) {
+          Icon = NightElf;
+        }
+        let name = item.name;
+        if (isConnected) {
+          if (connector === AelfWalletTypeEnum.elf) {
+            name = 'Nightelf Wallet';
+          } else {
+            name = 'Portkey Wallet';
+          }
+        }
         return (
           <div
             className={clsx(
@@ -83,22 +95,16 @@ export default function AelfWalletList({
                     styles['wallet-list-item-icon'],
                     isConnected && styles['wallet-list-item-icon-active'],
                   )}>
-                  {!isConnected ? (
-                    <Icon />
-                  ) : connector === AelfWalletTypeEnum.elf ? (
-                    <NightElf />
-                  ) : (
-                    <Icon />
-                  )}
+                  <Icon />
                 </div>
-                <div className={styles['wallet-list-item-name']}>{item.name}</div>
+                <div className={styles['wallet-list-item-name']}>{name}</div>
                 {isConnected && (
                   <div onClick={onViewDetail} className={'flex-row-center'}>
                     <DynamicArrow isExpand={dynamicArrowExpand} />
                   </div>
                 )}
               </div>
-              {isConnected && (
+              {isConnected && !TelegramPlatform.isTelegramPlatform() && (
                 <div onClick={onDisconnect}>
                   <Logout />
                 </div>

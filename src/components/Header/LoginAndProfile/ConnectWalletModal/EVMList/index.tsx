@@ -1,7 +1,12 @@
 import { Logout } from 'assets/images';
 import styles from '../styles.module.scss';
 import clsx from 'clsx';
-import { CONNECT_EVM_LIST_CONFIG } from 'constants/wallet/EVM';
+import {
+  CONNECT_EVM_LIST_CONFIG,
+  MOBILE_EVM_WALLET_ALLOWANCE,
+  PORTKEY_EVM_WALLET_ALLOWANCE,
+  TELEGRAM_EVM_WALLET_ALLOWANCE,
+} from 'constants/wallet/EVM';
 import useEVM from 'hooks/wallet/useEVM';
 import { useCallback, useMemo, useState } from 'react';
 import { getOmittedStr, handleErrorMessage } from '@etransfer/utils';
@@ -13,6 +18,9 @@ import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
 import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
 import { removeOneLocalJWT } from 'api/utils';
 import { USER_REJECT_CONNECT_WALLET_TIP } from 'constants/wallet';
+import { TelegramPlatform } from 'utils/telegram';
+import { isPortkey } from 'utils/portkey';
+import { isMobileDevices } from 'utils/isMobile';
 
 export default function EVMWalletList({
   onSelected,
@@ -102,13 +110,26 @@ export default function EVMWalletList({
   );
 
   const walletList = useMemo(() => {
+    const totalList = CONNECT_EVM_LIST_CONFIG.list.filter((item) => {
+      if (TelegramPlatform.isTelegramPlatform()) {
+        return TELEGRAM_EVM_WALLET_ALLOWANCE.includes(item.key);
+      }
+      if (isPortkey()) {
+        return PORTKEY_EVM_WALLET_ALLOWANCE.includes(item.key);
+      }
+      if (isMobileDevices()) {
+        return MOBILE_EVM_WALLET_ALLOWANCE.includes(item.key);
+      }
+      return true;
+    });
+
     if (isConnected) {
-      const targetList = CONNECT_EVM_LIST_CONFIG.list.filter((item) => {
+      const targetList = totalList.filter((item) => {
         return connector?.id === item.key;
       });
       return targetList;
     }
-    return CONNECT_EVM_LIST_CONFIG.list;
+    return totalList;
   }, [connector, isConnected]);
 
   return (

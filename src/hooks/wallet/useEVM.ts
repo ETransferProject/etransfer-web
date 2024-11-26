@@ -4,12 +4,20 @@ import { getAuthPlainText } from 'utils/auth';
 import { ethers } from 'ethers';
 import { useAccount, useConnect, useDisconnect, useSignMessage, useWriteContract } from 'wagmi';
 import { getBalance } from '@wagmi/core';
-import { EVM_WALLET_ALLOWANCE } from 'constants/wallet/EVM';
+import {
+  EVM_WALLET_ALLOWANCE,
+  MOBILE_EVM_WALLET_ALLOWANCE,
+  PORTKEY_EVM_WALLET_ALLOWANCE,
+  TELEGRAM_EVM_WALLET_ALLOWANCE,
+} from 'constants/wallet/EVM';
 import { AuthTokenSource } from 'types/api';
 import { SendEVMTransactionParams } from 'types/wallet';
 import { stringToHex } from 'utils/format';
 import { getEVMChainInfo } from 'utils/wallet/EVM';
 import { EVMProviderConfig } from 'provider/wallet/EVM';
+import { TelegramPlatform } from 'utils/telegram';
+import { isPortkey } from 'utils/portkey';
+import { isMobileDevices } from 'utils/isMobile';
 
 export default function useEVM() {
   const { connectAsync, connectors } = useConnect();
@@ -18,12 +26,26 @@ export default function useEVM() {
   const accountInfo = useAccount();
 
   const [isConnected, setIsConnected] = useState(false);
+
+  const evmWalletAllowance = useMemo(() => {
+    if (TelegramPlatform.isTelegramPlatform()) {
+      return TELEGRAM_EVM_WALLET_ALLOWANCE;
+    }
+    if (isPortkey()) {
+      return PORTKEY_EVM_WALLET_ALLOWANCE;
+    }
+    if (isMobileDevices()) {
+      return MOBILE_EVM_WALLET_ALLOWANCE;
+    }
+    return EVM_WALLET_ALLOWANCE;
+  }, []);
+
   connectors.map(async (item) => {
     const isAuth = await item.isAuthorized();
     setIsConnected(true);
     if (
       accountInfo?.connector?.id &&
-      EVM_WALLET_ALLOWANCE.includes(accountInfo.connector.id) &&
+      evmWalletAllowance.includes(accountInfo.connector.id) &&
       isAuth
     ) {
       setIsConnected(true);
@@ -96,7 +118,7 @@ export default function useEVM() {
         isConnected &&
         accountInfo.connector &&
         accountInfo?.connector?.id &&
-        EVM_WALLET_ALLOWANCE.includes(accountInfo.connector.id),
+        evmWalletAllowance.includes(accountInfo.connector.id),
       walletType: WalletTypeEnum.EVM,
       provider: accountInfo.connector?.getProvider,
       account: accountInfo.address,
@@ -119,6 +141,7 @@ export default function useEVM() {
     onGetBalance,
     sendTransaction,
     signMessage,
+    evmWalletAllowance,
   ]);
 
   return evmContext;

@@ -48,7 +48,7 @@ export default function ConnectWalletModal({
   if (isPadPX) {
     return (
       <CommonDrawer
-        zIndex={301}
+        zIndex={80}
         className={clsx(styles['connect-wallet-drawer'], styles['connect-wallet-drawer-weight'])}
         height="100%"
         title={title}

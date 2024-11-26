@@ -519,22 +519,20 @@ export default function CrossChainTransferFooter({
   return (
     <>
       <div className={clsx(styles['cross-chain-transfer-footer'], className)}>
-        {amount && (
-          <div className={styles['cross-chain-transfer-footer-info']}>
-            <div className={clsx('flex-row-center', styles['you-will-receive'])}>
-              <span>{`You'll receive:`}&nbsp;</span>
-              <span className={styles['you-will-receive-value']}>
-                {estimateReceive ? `${estimateReceive} ${estimateReceiveUnit}` : DEFAULT_NULL_VALUE}
-              </span>
-            </div>
-            <div className={clsx('flex-row-center', styles['transaction-fee'])}>
-              <span>{`transaction fee:`}&nbsp;</span>
-              <span className={styles['transaction-fee-value']}>
-                {transactionFee ? `${transactionFee} ${transactionFeeUnit}` : DEFAULT_NULL_VALUE}
-              </span>
-            </div>
+        <div className={styles['cross-chain-transfer-footer-info']}>
+          <div className={clsx('flex-row-center', styles['you-will-receive'])}>
+            <span>{`You'll receive:`}&nbsp;</span>
+            <span className={styles['you-will-receive-value']}>
+              {estimateReceive ? `${estimateReceive} ${estimateReceiveUnit}` : DEFAULT_NULL_VALUE}
+            </span>
           </div>
-        )}
+          <div className={clsx('flex-row-center', styles['transaction-fee'])}>
+            <span>{`transaction fee:`}&nbsp;</span>
+            <span className={styles['transaction-fee-value']}>
+              {transactionFee ? `${transactionFee} ${transactionFeeUnit}` : DEFAULT_NULL_VALUE}
+            </span>
+          </div>
+        </div>
 
         <Form.Item
           shouldUpdate
