@@ -385,7 +385,7 @@ export default function CrossChainTransferForm({
           help={formValidateData[TransferFormKeys.RECIPIENT].errorMessage}>
           <Input
             className={styles['recipient-address-input']}
-            placeholder="Recipient's aelf Address"
+            placeholder="Recipient address"
             autoComplete="off"
             onChange={(e) => onRecipientAddressChange?.(e.target.value)}
             onBlur={onRecipientAddressBlur}

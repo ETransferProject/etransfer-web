@@ -11,6 +11,8 @@ import { WalletTypeEnum } from 'context/Wallet/types';
 import { removeOneLocalJWT } from 'api/utils';
 import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
 import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
+import { TelegramNotice } from '../TelegramNotice';
+import { TelegramPlatform } from 'utils/telegram';
 
 export default function TRONWalletList({
   onSelected,
@@ -21,10 +23,11 @@ export default function TRONWalletList({
   const { account, isConnected, isConnecting, walletType, connect, disconnect } = useTRON();
   const [isShowCopy, setIsShowCopy] = useState(false);
   const { fromWalletType, toWalletType } = useCrossChainTransfer();
+  const isTelegramPlatform = TelegramPlatform.isTelegramPlatform();
 
   const onConnect = useCallback(async () => {
     try {
-      if (isConnected) {
+      if (isConnected || isTelegramPlatform) {
         onSelected?.(WalletTypeEnum.TRON);
         return;
       }
@@ -33,7 +36,7 @@ export default function TRONWalletList({
     } catch (error) {
       console.log('>>>>>> TRONWalletList onConnect error', error);
     }
-  }, [connect, isConnected, onSelected]);
+  }, [connect, isConnected, isTelegramPlatform, onSelected]);
 
   const onDisconnect = useCallback(
     async (event: any) => {
@@ -107,16 +110,20 @@ export default function TRONWalletList({
                 )}>
                 <Icon />
               </div>
-              {renderAccount(item.name)}
+              {isTelegramPlatform ? (
+                <TelegramNotice title={item.name} walletName={item.key} />
+              ) : (
+                renderAccount(item.name)
+              )}
             </div>
-            {isConnected && (
+            {!isTelegramPlatform && isConnected && (
               <div
                 className={clsx('flex-row-center', styles['wallet-list-item-logout'])}
                 onClick={onDisconnect}>
                 <Logout />
               </div>
             )}
-            {!isConnected && isConnecting && (
+            {!isTelegramPlatform && !isConnected && isConnecting && (
               <div className={styles['wallet-connect-loading']}>
                 <PartialLoading />
               </div>
