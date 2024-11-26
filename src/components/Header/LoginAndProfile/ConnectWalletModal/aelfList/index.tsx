@@ -4,7 +4,7 @@ import { CONNECT_AELF_LIST_CONFIG } from 'constants/wallet/aelf';
 import { useAelfAuthToken } from 'hooks/wallet/aelfAuthToken';
 import useAelf from 'hooks/wallet/useAelf';
 import { useCallback, useState } from 'react';
-import { SingleMessage, unsubscribeUserOrderRecord } from '@etransfer/ui-react';
+import { SingleMessage } from '@etransfer/ui-react';
 import { handleWebLoginErrorMessage } from '@etransfer/utils';
 import DynamicArrow from 'components/DynamicArrow';
 import { Logout, NightElf } from 'assets/images';
@@ -22,7 +22,7 @@ export default function AelfWalletList({
 }: {
   onSelected?: (walletType: WalletTypeEnum) => void;
 }) {
-  const { account, connect, disconnect, isConnected, connector } = useAelf();
+  const { connect, disconnect, isConnected, connector } = useAelf();
   const { getAuth } = useAelfAuthToken();
   const [dynamicArrowExpand, setDynamicArrowExpand] = useState(false);
   const clearStore = useClearStore();
@@ -52,9 +52,10 @@ export default function AelfWalletList({
       myEvents.LogoutSuccess.emit();
       console.warn('>>>>>> logout');
       // stop notice socket
-      unsubscribeUserOrderRecord(account || '');
+      // TODO
+      // unsubscribeUserOrderRecord(account || '');
     });
-  }, [account, clearStore, disconnect]);
+  }, [clearStore, disconnect]);
 
   const onViewDetail = useCallback(
     (event: any) => {

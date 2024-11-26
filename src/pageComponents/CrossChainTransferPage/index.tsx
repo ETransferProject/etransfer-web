@@ -560,8 +560,8 @@ export default function CrossChainTransferPage() {
           _maxInput = _maxInputBignumber.lt(0) ? '0' : _maxInputBignumber.toFixed();
         }
 
-        setAmount(_maxInput);
         form.setFieldValue(TransferFormKeys.AMOUNT, _maxInput);
+        handleAmountChange(_maxInput);
       } catch (error) {
         console.log('handleClickMax error', error);
         // SingleMessage.error(handleErrorMessage(error));
@@ -569,8 +569,8 @@ export default function CrossChainTransferPage() {
         setLoading(false);
       }
     } else {
-      setAmount(balance);
       form.setFieldValue(TransferFormKeys.AMOUNT, balance);
+      handleAmountChange(balance);
     }
   }, [
     amount,
@@ -579,6 +579,7 @@ export default function CrossChainTransferPage() {
     form,
     fromNetwork?.network,
     fromWallet?.account,
+    handleAmountChange,
     setLoading,
     tokenSymbol,
   ]);
@@ -593,11 +594,13 @@ export default function CrossChainTransferPage() {
 
   const handleClickFailedOk = useCallback(() => {
     setAmount('');
+    setAmountUSD('');
     form.setFieldValue(TransferFormKeys.AMOUNT, '');
     getTransferDataRef.current('');
   }, [form]);
   const handleClickSuccessOk = useCallback(() => {
     setAmount('');
+    setAmountUSD('');
     form.setFieldValue(TransferFormKeys.AMOUNT, '');
     getTransferDataRef.current('');
   }, [form]);
@@ -727,6 +730,7 @@ export default function CrossChainTransferPage() {
       comment={getCommentInput()}
       onFromNetworkChanged={handleFromNetworkChanged}
       onToNetworkChanged={handleToNetworkChanged}
+      onTokenChanged={handleTokenChanged}
       onAmountChange={handleAmountChange}
       onAmountBlur={handleAmountBlur}
       onClickMax={handleClickMax}

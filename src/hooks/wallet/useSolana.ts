@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { IGetBalanceRequest, ISignMessageResult, WalletTypeEnum } from 'context/Wallet/types';
 import { getAuthPlainText } from 'utils/auth';
@@ -16,6 +16,8 @@ import AElf from 'aelf-sdk';
 import { AuthTokenSource } from 'types/api';
 import { SendSolanaTransactionParams } from 'types/wallet';
 import { stringToHex } from 'utils/format';
+import { SOLANA_STORAGE_CONNECTED_KEY } from 'constants/wallet/Solana';
+import { devices } from '@portkey/utils';
 
 export default function useSolana() {
   const { connection } = useConnection();
@@ -31,8 +33,20 @@ export default function useSolana() {
     wallets,
   } = useWallet();
 
+  useEffect(() => {
+    const isMobile = devices.isMobile();
+    if (isMobile) {
+      localStorage?.removeItem(SOLANA_STORAGE_CONNECTED_KEY);
+    }
+  }, []);
+
   const onConnect = useCallback(
     async (walletName: string) => {
+      const isMobile = devices.isMobile();
+      if (isMobile) {
+        localStorage?.removeItem(SOLANA_STORAGE_CONNECTED_KEY);
+      }
+
       const _wallet = wallets.find((item) => item.adapter.name === walletName);
       if (!_wallet) return;
       select(_wallet.adapter.name);
