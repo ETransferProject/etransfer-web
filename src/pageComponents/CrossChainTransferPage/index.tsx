@@ -409,6 +409,47 @@ export default function CrossChainTransferPage() {
     }
   }, [amount, form, getRecipientAddressInput, handleFormValidateDataChange]);
 
+  const handleAmountChange = useCallback(
+    (value: string) => {
+      setAmount(value);
+
+      if (
+        value &&
+        ((balance && ZERO.plus(value).gt(balance)) ||
+          (minAmount && ZERO.plus(value).lt(minAmount)) ||
+          (transferInfo.remainingLimit && ZERO.plus(value).gt(transferInfo.remainingLimit)))
+      ) {
+        handleFormValidateDataChange({
+          [TransferFormKeys.AMOUNT]: {
+            validateStatus: TransferValidateStatus.Error,
+            errorMessage: '',
+          },
+        });
+      } else {
+        handleFormValidateDataChange({
+          [TransferFormKeys.AMOUNT]: {
+            validateStatus: TransferValidateStatus.Normal,
+            errorMessage: '',
+          },
+        });
+      }
+
+      const _amountUsd = BigNumber(amountPriceUsd)
+        .times(BigNumber(Number(value)))
+        .toFixed(2);
+
+      setAmountUSD(_amountUsd);
+    },
+    [amountPriceUsd],
+  );
+
+  useEffect(() => {
+    if (!fromWallet?.isConnected) {
+      form.setFieldValue(TransferFormKeys.AMOUNT, '');
+      handleAmountChange('');
+    }
+  }, [fromWallet?.isConnected, handleAmountChange, form]);
+
   const handleFromNetworkChanged = useCallback(
     async (item: TNetworkItem, toNetworkNew: TNetworkItem, newSymbol: string) => {
       try {
@@ -416,8 +457,7 @@ export default function CrossChainTransferPage() {
         toNetworkRef.current = toNetworkNew;
         tokenSymbolRef.current = newSymbol;
         form.setFieldValue(TransferFormKeys.AMOUNT, '');
-        setAmount('');
-        setAmountUSD('');
+        handleAmountChange('');
         // handleAmountValidate(); // TODO
 
         form.setFieldValue(TransferFormKeys.RECIPIENT, '');
@@ -436,7 +476,7 @@ export default function CrossChainTransferPage() {
         console.log('handleFromNetworkChanged error', error);
       }
     },
-    [form, handleFormValidateDataChange, handleRecipientAddressChange],
+    [form, handleFormValidateDataChange, handleRecipientAddressChange, handleAmountChange],
   );
 
   const handleToNetworkChanged = useCallback(
@@ -444,20 +484,18 @@ export default function CrossChainTransferPage() {
       toNetworkRef.current = item;
       tokenSymbolRef.current = newSymbol;
       form.setFieldValue(TransferFormKeys.AMOUNT, '');
-      setAmount('');
-      setAmountUSD('');
+      handleAmountChange('');
 
       await getTransferDataRef.current('');
     },
-    [form],
+    [form, handleAmountChange],
   );
 
   const handleTokenChanged = useCallback(
     async (item: TTokenItem) => {
       try {
         form.setFieldValue(TransferFormKeys.AMOUNT, '');
-        setAmount('');
-        setAmountUSD('');
+        handleAmountChange('');
         // handleAmountValidate(); // TODO
 
         currentTokenRef.current = item;
@@ -467,7 +505,7 @@ export default function CrossChainTransferPage() {
         console.log('handleFromNetworkChanged error', error);
       }
     },
-    [form],
+    [form, handleAmountChange],
   );
 
   const getAmountUSD = useCallback(async () => {
@@ -477,19 +515,6 @@ export default function CrossChainTransferPage() {
 
     setAmountPriceUSD(res.items[0].priceUsd);
   }, [tokenSymbol]);
-
-  const handleAmountChange = useCallback(
-    (value: string) => {
-      setAmount(value);
-
-      const _amountUsd = BigNumber(amountPriceUsd)
-        .times(BigNumber(Number(value)))
-        .toFixed(2);
-
-      setAmountUSD(_amountUsd);
-    },
-    [amountPriceUsd],
-  );
 
   const handleAmountBlur = useCallback(async () => {
     try {
@@ -502,27 +527,6 @@ export default function CrossChainTransferPage() {
 
       // update usd price
       getAmountUSD();
-
-      if (
-        amount &&
-        ((balance && ZERO.plus(amount).gt(balance)) ||
-          (minAmount && ZERO.plus(amount).lt(minAmount)) ||
-          (transferInfo.remainingLimit && ZERO.plus(amount).gt(transferInfo.remainingLimit)))
-      ) {
-        handleFormValidateDataChange({
-          [TransferFormKeys.AMOUNT]: {
-            validateStatus: TransferValidateStatus.Error,
-            errorMessage: '',
-          },
-        });
-      } else {
-        handleFormValidateDataChange({
-          [TransferFormKeys.AMOUNT]: {
-            validateStatus: TransferValidateStatus.Normal,
-            errorMessage: '',
-          },
-        });
-      }
     } catch (error) {
       console.log('handleAmountBlur error', error);
       // SingleMessage.error(handleErrorMessage(error));
@@ -593,17 +597,15 @@ export default function CrossChainTransferPage() {
   );
 
   const handleClickFailedOk = useCallback(() => {
-    setAmount('');
-    setAmountUSD('');
     form.setFieldValue(TransferFormKeys.AMOUNT, '');
+    handleAmountChange('');
     getTransferDataRef.current('');
-  }, [form]);
+  }, [form, handleAmountChange]);
   const handleClickSuccessOk = useCallback(() => {
-    setAmount('');
-    setAmountUSD('');
     form.setFieldValue(TransferFormKeys.AMOUNT, '');
+    handleAmountChange('');
     getTransferDataRef.current('');
-  }, [form]);
+  }, [form, handleAmountChange]);
 
   const router = useRouter();
   const handleClickProcessingTip = useCallback(() => {
