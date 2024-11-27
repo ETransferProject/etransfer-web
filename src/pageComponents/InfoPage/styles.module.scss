@@ -10,6 +10,17 @@
     padding: 16px 24px 48px;
   }
 
+  .info-page-title {
+    margin-bottom: 16px;
+
+    @include media-pad {
+      margin-bottom: 16px;
+    }
+    @include media-mobile {
+      margin-bottom: 12px;
+    }
+  }
+
   :global {
     .ant-table-wrapper {
       //   border-radius: 8px;

@@ -13,6 +13,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import CommonDrawer from 'components/CommonDrawer';
 import TransferDetail from './TransferDetail';
 import { useRouter } from 'next/navigation';
+import { INFO_PAGE_TITLE } from 'constants/infoDashboard';
 
 export default function InfoPage() {
   const dispatch = useAppDispatch();
@@ -61,6 +62,9 @@ export default function InfoPage() {
 
   return (
     <div className={clsx('wide-screen-content-container', styles['info-page'])}>
+      <div className={clsx('main-section-header', styles['info-page-title'])}>
+        {INFO_PAGE_TITLE}
+      </div>
       <div style={{ display: !isPadPX && isShowDetailDrawer ? 'none' : 'block' }}>
         <Overview />
         <CommonSpace direction={'vertical'} size={isPadPX ? 40 : 64} />

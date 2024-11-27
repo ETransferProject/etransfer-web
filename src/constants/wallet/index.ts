@@ -19,6 +19,7 @@ export const UNLOCK = 'Unlock';
 export const LOGIN = 'Log In';
 export const CONNECT_WALLET = 'Connect Wallet';
 export const CONNECT_AELF_WALLET = 'Connect aelf Wallet';
+export const CONNECT_EVM_WALLET = 'Connect EVM Wallet';
 export const MY_WALLET = 'My Wallets';
 export const MY_AELF_WALLET = 'My aelf Wallet';
 

@@ -35,8 +35,7 @@ import myEvents from 'utils/myEvent';
 import { useSendTxnFromAelfChain } from 'hooks/crossChainTransfer';
 import { isAuthTokenError } from 'utils/api/error';
 import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
-import { CONNECT_AELF_WALLET, CONNECT_WALLET } from 'constants/wallet/index';
-import { computeWalletType, isAelfChain } from 'utils/wallet';
+import { computeWalletType, getConnectWalletText } from 'utils/wallet';
 import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
 import { TransferFormKeys, TransferValidateStatus, TTransferFormValidateData } from '../types';
 
@@ -139,13 +138,13 @@ export default function CrossChainTransferFooter({
   ]);
 
   const isFromWalletConnected = useMemo(
-    () => fromWallet?.isConnected && !!fromWallet?.account,
+    () => !!(fromWallet?.isConnected && fromWallet?.account),
     [fromWallet?.isConnected, fromWallet?.account],
   );
 
   const isToWalletConnected = useMemo(
     () =>
-      (toWallet?.isConnected && !!toWallet?.account) ||
+      !!(toWallet?.isConnected && toWallet?.account) ||
       (isUseRecipientAddress &&
         recipientAddress &&
         formValidateData[TransferFormKeys.RECIPIENT].validateStatus !==
@@ -158,11 +157,6 @@ export default function CrossChainTransferFooter({
       formValidateData,
     ],
   );
-
-  const getConnectWalletText = useCallback((network?: string) => {
-    if (!network) return CONNECT_WALLET;
-    return isAelfChain(network) ? CONNECT_AELF_WALLET : CONNECT_WALLET;
-  }, []);
 
   const handleSelectWallet = useCallback(
     (walletType: WalletTypeEnum, isFromWallet: boolean) => {
@@ -199,7 +193,7 @@ export default function CrossChainTransferFooter({
 
     setConnectWalletModalProps({
       open: true,
-      title: getConnectWalletText(network),
+      title: getConnectWalletText({ network, walletType }),
       allowList: [walletType],
       onSelected: (type) => handleSelectWallet(type, isFrom),
     });
@@ -209,7 +203,6 @@ export default function CrossChainTransferFooter({
     isToWalletConnected,
     fromNetwork?.network,
     toNetwork?.network,
-    getConnectWalletText,
     handleSelectWallet,
   ]);
 
@@ -487,9 +480,15 @@ export default function CrossChainTransferFooter({
       if (!isFromWalletConnected && !isToWalletConnected) {
         children = getConnectWalletText();
       } else if (!isFromWalletConnected) {
-        children = getConnectWalletText(fromNetwork?.network);
+        children = getConnectWalletText({
+          network: fromNetwork?.network,
+          walletType: fromWallet?.walletType,
+        });
       } else {
-        children = getConnectWalletText(toNetwork?.network);
+        children = getConnectWalletText({
+          network: toNetwork?.network,
+          walletType: toWallet?.walletType,
+        });
       }
       return {
         children,
@@ -521,9 +520,10 @@ export default function CrossChainTransferFooter({
     fromBalance,
     isSubmitDisabled,
     onConnectWallet,
-    getConnectWalletText,
     fromNetwork?.network,
+    fromWallet?.walletType,
     toNetwork?.network,
+    toWallet?.walletType,
   ]);
 
   return (
