@@ -22,7 +22,7 @@ import DepositTip from '../DepositTip';
 import CommonButton, { CommonButtonSize } from 'components/CommonButton';
 import { CopySize } from 'components/Copy';
 import useAelf, { useLogin, useShowLoginButtonLoading } from 'hooks/wallet/useAelf';
-import { LOGIN, UNLOCK } from 'constants/wallet/index';
+import { CONNECT_AELF_WALLET, UNLOCK } from 'constants/wallet/index';
 import { SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE, TokenType } from 'constants/index';
 import TransferTip from '../TransferTip';
 import { useGoTransfer } from 'hooks/crossChainTransfer';
@@ -271,7 +271,7 @@ export default function MobileDepositContent({
                 className={styles['next-button']}
                 onClick={handleLogin}
                 loading={isLoginButtonLoading}>
-                {isLocking ? UNLOCK : LOGIN}
+                {isLocking ? UNLOCK : CONNECT_AELF_WALLET}
               </CommonButton>
             </div>
           )}

@@ -35,6 +35,7 @@ import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { AelfChainIdList } from 'constants/chain';
 import CommonButton, { CommonButtonSize } from 'components/CommonButton';
 import { ProcessingTip } from 'components/Tips/ProcessingTip';
+import { CONNECT_AELF_WALLET } from 'constants/wallet';
 
 export default function WebContent({
   fromNetworkSelected,
@@ -189,7 +190,7 @@ export default function WebContent({
                 </>
               ) : (
                 <span className={styles['connect']} onClick={handleLogin}>
-                  Connect
+                  {CONNECT_AELF_WALLET}
                 </span>
               )}
             </div>
