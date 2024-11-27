@@ -276,7 +276,7 @@ export default function CrossChainTransferFooter({
           handleErrorMessage(error).includes('TON_CONNECT_SDK_ERROR')) ||
         (fromWallet?.walletType === WalletTypeEnum.SOL &&
           handleErrorMessage(error).includes('rejected')) ||
-        (fromWallet?.walletType === WalletTypeEnum.SOL &&
+        (fromWallet?.walletType === WalletTypeEnum.TRON &&
           handleErrorMessage(error).includes('declined'))
       ) {
         await updateTransferOrder(UpdateTransferOrderStatus.Rejected);

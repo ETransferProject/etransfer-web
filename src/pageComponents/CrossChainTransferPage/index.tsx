@@ -440,7 +440,7 @@ export default function CrossChainTransferPage() {
 
       setAmountUSD(_amountUsd);
     },
-    [amountPriceUsd],
+    [amountPriceUsd, balance, handleFormValidateDataChange, minAmount, transferInfo.remainingLimit],
   );
 
   useEffect(() => {
@@ -531,14 +531,7 @@ export default function CrossChainTransferPage() {
       console.log('handleAmountBlur error', error);
       // SingleMessage.error(handleErrorMessage(error));
     }
-  }, [
-    amount,
-    balance,
-    getAmountUSD,
-    handleFormValidateDataChange,
-    minAmount,
-    transferInfo.remainingLimit,
-  ]);
+  }, [amount, getAmountUSD]);
 
   const handleClickMax = useCallback(async () => {
     if (isAelfChain(fromNetwork?.network || '') && tokenSymbol === 'ELF') {
