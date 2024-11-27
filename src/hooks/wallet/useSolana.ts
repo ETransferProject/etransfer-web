@@ -39,7 +39,7 @@ export default function useSolana() {
       if (!_wallet) return;
       select(_wallet.adapter.name);
 
-      const isMobile = devices.isMobile();
+      const isMobile = devices.isMobileDevices();
       if (isMobile) {
         await sleep(3000);
         await disconnect();
