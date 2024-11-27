@@ -10,10 +10,12 @@ export const BUTTON_TEXT_TRANSFER = 'Transfer';
 export const REMAINING_TRANSFER_QUOTA_TOOLTIP = `Transfers are subject to a 24-hour limit, determined by the real-time USD value of the asset. You can transfer assets up to the available transfer limit.`;
 export const TRANSFER_SEND_RECIPIENT_TIP =
   'Choose this option if you wish to send to an address without connecting wallet.';
-
 export const DEFAULT_SEND_TRANSFER_ERROR =
   'Failed to initiate the transaction. Please try again later.';
+export const ADDRESS_SHORTER_THAN_USUAL = `The address you entered is shorter than usual. Please double-check to ensure it's the correct address.`;
+export const ADDRESS_NOT_CORRECT = `Please enter a correct address.`;
 
+export const SEND_TRANSFER_ADDRESS_ERROR_CODE_LIST = ['40100', '40101'];
 export const SEND_TRANSFER_ERROR_CODE_LIST = [
   '40001',
   '40002',
