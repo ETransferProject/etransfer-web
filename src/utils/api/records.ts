@@ -1,4 +1,9 @@
-import { TGetRecordDetailResult, TGetRecordsListRequest, TGetRecordsListResult } from 'types/api';
+import {
+  TGetRecordDetailResult,
+  TGetRecordsListRequest,
+  TGetRecordsListResult,
+  TGetRecordStatusRequest,
+} from 'types/api';
 import { TCurrentRecordsStatus } from 'types/records';
 import { request } from 'api';
 import { formatApiError } from './error';
@@ -22,26 +27,26 @@ export const getRecordsList = async (
   }
 };
 
-export const getRecordStatus = async (): Promise<TCurrentRecordsStatus> => {
+export const getRecordStatus = async (
+  params: TGetRecordStatusRequest,
+): Promise<TCurrentRecordsStatus> => {
   try {
-    const res = await request.records.getRecordStatus();
+    const res = await request.records.getRecordStatus({
+      params,
+      paramsSerializer: function (params) {
+        return qs.stringify(params, { arrayFormat: 'repeat' });
+      },
+    });
     return res.data;
   } catch (error: any) {
     throw formatApiError(error, 'getRecordStatus error', false);
   }
 };
 
-export const getRecordDetail = async (
-  id: string,
-  { addressList }: { addressList: string[] },
-): Promise<TGetRecordDetailResult> => {
+export const getRecordDetail = async (id: string): Promise<TGetRecordDetailResult> => {
   try {
     const res = await request.records.getRecordDetail({
       query: id,
-      params: { addressList },
-      paramsSerializer: function (params) {
-        return qs.stringify(params, { arrayFormat: 'repeat' });
-      },
     });
     return res.data;
   } catch (error: any) {

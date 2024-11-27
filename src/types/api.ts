@@ -221,6 +221,10 @@ export type TGetRecordsListResult = {
   items: TRecordsListItem[];
 };
 
+export type TGetRecordStatusRequest = {
+  addressList: string[];
+};
+
 export type TCheckEOARegistrationRequest = {
   address: string;
 };
