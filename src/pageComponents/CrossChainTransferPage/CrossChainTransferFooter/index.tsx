@@ -262,11 +262,11 @@ export default function CrossChainTransferFooter({
 
   const updateTransferOrderRejected = useCallback(
     async (error: any) => {
+      // TON Transaction was not sent || [TON_CONNECT_SDK_ERROR]
       if (
         (fromWallet?.walletType === WalletTypeEnum.EVM &&
           error?.details &&
-          error.details.includes('User denied')) ||
-        error.details.includes('rejected') ||
+          (error?.details?.includes('User denied') || error?.details?.includes('rejected'))) ||
         (fromWallet?.walletType === WalletTypeEnum.TON &&
           handleErrorMessage(error).includes('TON_CONNECT_SDK_ERROR')) ||
         (fromWallet?.walletType === WalletTypeEnum.SOL &&
@@ -276,7 +276,6 @@ export default function CrossChainTransferFooter({
       ) {
         await updateTransferOrder(UpdateTransferOrderStatus.Rejected);
       }
-      // TON Transaction was not sent || [TON_CONNECT_SDK_ERROR]
     },
     [fromWallet?.walletType, updateTransferOrder],
   );
