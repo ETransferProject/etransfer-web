@@ -31,10 +31,16 @@ $modal-header-height: 52px;
 }
 
 .connect-wallet-modal-wrap {
-  top: 76px;
-  right: 16px;
-  bottom: auto;
-  left: auto;
+  :global {
+    .ant-modal {
+      position: absolute;
+      top: 76px;
+      right: 16px;
+      bottom: auto;
+      left: auto;
+      transform-origin: top right !important;
+    }
+  }
 }
 
 .connect-wallet-modal {
