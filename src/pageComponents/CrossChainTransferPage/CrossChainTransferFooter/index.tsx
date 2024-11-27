@@ -68,6 +68,8 @@ interface ISuccessData {
   receiveAmountUsd: string;
 }
 
+const DefaultTransferOrderResponse = { orderId: '', address: '' };
+
 export default function CrossChainTransferFooter({
   className,
   isUseRecipientAddress = false,
@@ -220,7 +222,7 @@ export default function CrossChainTransferFooter({
     setIsFailModalOpen(true);
   }, []);
 
-  const orderResultRef = useRef({ orderId: '', address: '' });
+  const orderResultRef = useRef(DefaultTransferOrderResponse);
   const updateTransferOrder = useCallback(
     async (status?: UpdateTransferOrderStatus) => {
       if (
@@ -303,6 +305,7 @@ export default function CrossChainTransferFooter({
         return;
 
       setLoading(true);
+      orderResultRef.current = DefaultTransferOrderResponse;
       if (fromWallet.walletType === WalletTypeEnum.AELF) {
         // aelf logic
         await sendTransferTokenTransaction({
@@ -320,7 +323,7 @@ export default function CrossChainTransferFooter({
         });
       } else {
         // get etransfer jwt
-        const authToken = await getAuthToken();
+        const authToken = await getAuthToken(true);
         authTokenRef.current = authToken;
 
         // create order id
@@ -337,13 +340,16 @@ export default function CrossChainTransferFooter({
         try {
           orderResultRef.current = await createTransferOrder(createTransferOrderParams, authToken);
         } catch (error) {
+          orderResultRef.current = DefaultTransferOrderResponse;
           if (isAuthTokenError(error)) {
-            const _authToken = await queryAuthToken();
+            const _authToken = await queryAuthToken(true);
             authTokenRef.current = _authToken;
             orderResultRef.current = await createTransferOrder(
               createTransferOrderParams,
               _authToken,
             );
+          } else {
+            throw error;
           }
         }
 
@@ -413,8 +419,6 @@ export default function CrossChainTransferFooter({
       }
     } catch (error: any) {
       console.log('>>>>>> onTransfer error', error);
-      updateTransferOrderRejected(error);
-
       if (SEND_TRANSFER_ERROR_CODE_LIST.includes(error?.code)) {
         setFailModalReason(error?.message);
       } else if (error?.code == 4001) {
@@ -426,12 +430,18 @@ export default function CrossChainTransferFooter({
       }
 
       setIsFailModalOpen(true);
+
+      if (orderResultRef.current.orderId && orderResultRef.current.address) {
+        await updateTransferOrderRejected(error);
+      }
     } finally {
       setLoading(false);
       setIsDoubleCheckModalOpen(false);
 
       await sleep(1000);
       myEvents.UpdateNewRecordStatus.emit();
+
+      orderResultRef.current = DefaultTransferOrderResponse;
     }
   }, [
     amount,

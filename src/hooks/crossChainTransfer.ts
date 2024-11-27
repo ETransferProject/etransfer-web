@@ -136,7 +136,7 @@ export function useSendTxnFromAelfChain() {
         createWithdrawOrderRes = await createWithdrawOrder(params);
       } catch (error) {
         if (isAuthTokenError(error)) {
-          const _authToken = await queryAelfAuthToken();
+          const _authToken = await queryAelfAuthToken(true, false);
           createWithdrawOrderRes = await createWithdrawOrder(params, _authToken);
         }
       }
@@ -171,7 +171,7 @@ export function useSendTxnFromAelfChain() {
       if (!address) throw new Error('Please enter a correct address.');
 
       // get etransfer jwt
-      await getAelfAuthToken();
+      await getAelfAuthToken(true, false);
 
       const approveRes = await handleApproveToken({ amount, memo });
       if (!approveRes) throw new Error(InsufficientAllowanceMessage);

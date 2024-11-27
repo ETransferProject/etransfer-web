@@ -66,7 +66,7 @@ export function useInitWallet() {
     console.warn('>>>>>> isConnected', isConnected);
     console.warn('>>>>>> walletInfo', walletInfo);
     if (isConnected && walletInfo) {
-      getAuthRef.current();
+      getAuthRef.current(false, true);
     }
   }, [isConnected, walletInfo]);
 
@@ -88,7 +88,7 @@ export function useInitWallet() {
 
       console.log('AuthorizationExpired');
       eTransferInstance.setUnauthorized(true);
-      await queryAuth();
+      await queryAuth(false, true);
     } else {
       eTransferInstance.setUnauthorized(false);
     }

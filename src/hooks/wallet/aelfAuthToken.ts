@@ -118,102 +118,112 @@ export function useAelfAuthToken() {
     return undefined;
   }, [account, connector, isReCaptchaLoading, setLoading]);
 
-  const queryAuth = useCallback(async (): Promise<string | undefined> => {
-    if (!isConnected) return;
-    if (eTransferInstance.obtainingSignature) return;
-    try {
-      // Mark: only one signature process can be performed at the same time
-      eTransferInstance.setObtainingSignature(true);
-      setLoading(true);
-      const recaptchaResult = await handleReCaptcha();
-      setLoading(true); // to change loading text = 'Loading...'
-      const { caHash, originChainId } = await getCaHashAndOriginChainIdByWallet(
-        walletInfo as WalletInfo,
-        connector,
-      );
-      const signatureResult = await handleSignMessage();
-      if (!signatureResult) throw Error('Signature error');
-      const pubkey = recoverPubKey(signatureResult.plainText, signatureResult.signature) + '';
-      const managerAddress = await getManagerAddressByWallet(
-        walletInfo as WalletInfo,
-        connector,
-        pubkey,
-      );
-      const apiParams: QueryAuthApiExtraRequest = {
-        pubkey,
-        signature: signatureResult.signature,
-        plain_text: signatureResult.plainText,
-        source:
-          connector === AelfWalletTypeEnum.elf ? AuthTokenSource.NightElf : AuthTokenSource.Portkey,
-        managerAddress: managerAddress,
-        ca_hash: caHash || undefined,
-        chain_id: originChainId || undefined,
-        recaptchaToken: recaptchaResult || undefined,
-      };
+  const queryAuth = useCallback(
+    async (isThrowError: boolean, isAfterErrorDisconnect: boolean): Promise<string | undefined> => {
+      if (!isConnected) return;
+      if (eTransferInstance.obtainingSignature) return;
+      try {
+        // Mark: only one signature process can be performed at the same time
+        eTransferInstance.setObtainingSignature(true);
+        setLoading(true);
+        const recaptchaResult = await handleReCaptcha();
+        setLoading(true); // to change loading text = 'Loading...'
+        const { caHash, originChainId } = await getCaHashAndOriginChainIdByWallet(
+          walletInfo as WalletInfo,
+          connector,
+        );
+        const signatureResult = await handleSignMessage();
+        if (!signatureResult) throw Error('Signature error');
+        const pubkey = recoverPubKey(signatureResult.plainText, signatureResult.signature) + '';
+        const managerAddress = await getManagerAddressByWallet(
+          walletInfo as WalletInfo,
+          connector,
+          pubkey,
+        );
+        const apiParams: QueryAuthApiExtraRequest = {
+          pubkey,
+          signature: signatureResult.signature,
+          plain_text: signatureResult.plainText,
+          source:
+            connector === AelfWalletTypeEnum.elf
+              ? AuthTokenSource.NightElf
+              : AuthTokenSource.Portkey,
+          managerAddress: managerAddress,
+          ca_hash: caHash || undefined,
+          chain_id: originChainId || undefined,
+          recaptchaToken: recaptchaResult || undefined,
+        };
 
-      const authToken = await queryAuthApi(apiParams);
-      eTransferInstance.setUnauthorized(false);
-      console.log('login status isConnected', isConnected);
-      loginSuccessActive();
-      return authToken;
-    } catch (error: any) {
-      console.log('queryAuthApi error', error);
-      if (
-        error?.type === ReCaptchaType.cancel ||
-        error?.type === ReCaptchaType.error ||
-        error?.type === ReCaptchaType.expire
-      ) {
-        SingleMessage.error(error?.data);
-      }
-      await disconnect();
-
-      return;
-    } finally {
-      setLoading(false);
-      eTransferInstance.setUnauthorized(false);
-      eTransferInstance.setObtainingSignature(false);
-    }
-  }, [
-    connector,
-    disconnect,
-    handleSignMessage,
-    handleReCaptcha,
-    isConnected,
-    loginSuccessActive,
-    setLoading,
-    walletInfo,
-  ]);
-
-  const getAuth = useDebounceCallback(async (): Promise<string | undefined> => {
-    if (!isConnected) return;
-    if (eTransferInstance.obtainingSignature) return;
-    try {
-      const { caHash } = await getCaHashAndOriginChainIdByWallet(
-        walletInfo as WalletInfo,
-        connector,
-      );
-      const managerAddress = await getManagerAddressByWallet(walletInfo as WalletInfo, connector);
-      const source =
-        connector === AelfWalletTypeEnum.elf ? AuthTokenSource.NightElf : AuthTokenSource.Portkey;
-      const key = (caHash || source) + managerAddress;
-      const data = getLocalJWT(key);
-      // 1: local storage has JWT token
-      if (data) {
-        const token_type = data.token_type;
-        const access_token = data.access_token;
-
-        service.defaults.headers.common['Authorization'] = `${token_type} ${access_token}`;
+        const authToken = await queryAuthApi(apiParams);
+        eTransferInstance.setUnauthorized(false);
+        console.log('login status isConnected', isConnected);
         loginSuccessActive();
-        return `${token_type} ${access_token}`;
-      } else {
-        // 2: local storage don not has JWT token
-        return await queryAuth();
+        return authToken;
+      } catch (error: any) {
+        console.log('queryAuthApi error', error);
+        if (
+          error?.type === ReCaptchaType.cancel ||
+          error?.type === ReCaptchaType.error ||
+          error?.type === ReCaptchaType.expire
+        ) {
+          SingleMessage.error(error?.data);
+        }
+        if (isThrowError) throw error;
+        if (isAfterErrorDisconnect) await disconnect();
+
+        return;
+      } finally {
+        setLoading(false);
+        eTransferInstance.setUnauthorized(false);
+        eTransferInstance.setObtainingSignature(false);
       }
-    } catch (error) {
-      console.log('getAuth error:', error);
-      return;
-    }
-  }, [connector, isConnected, walletInfo]);
+    },
+    [
+      connector,
+      disconnect,
+      handleSignMessage,
+      handleReCaptcha,
+      isConnected,
+      loginSuccessActive,
+      setLoading,
+      walletInfo,
+    ],
+  );
+
+  const getAuth = useDebounceCallback(
+    async (isThrowError: boolean, isAfterErrorDisconnect: boolean): Promise<string | undefined> => {
+      if (!isConnected) return;
+      if (eTransferInstance.obtainingSignature) return;
+      try {
+        const { caHash } = await getCaHashAndOriginChainIdByWallet(
+          walletInfo as WalletInfo,
+          connector,
+        );
+        const managerAddress = await getManagerAddressByWallet(walletInfo as WalletInfo, connector);
+        const source =
+          connector === AelfWalletTypeEnum.elf ? AuthTokenSource.NightElf : AuthTokenSource.Portkey;
+        const key = (caHash || source) + managerAddress;
+        const data = getLocalJWT(key);
+        // 1: local storage has JWT token
+        if (data) {
+          const token_type = data.token_type;
+          const access_token = data.access_token;
+
+          service.defaults.headers.common['Authorization'] = `${token_type} ${access_token}`;
+          loginSuccessActive();
+          return `${token_type} ${access_token}`;
+        } else {
+          // 2: local storage don not has JWT token
+          return await queryAuth(isThrowError, isAfterErrorDisconnect);
+        }
+      } catch (error) {
+        console.log('getAuth error:', error);
+        if (isThrowError) throw error;
+        return;
+      }
+    },
+    [connector, isConnected, walletInfo],
+  );
 
   return { getAuth, queryAuth, loginSuccessActive };
 }

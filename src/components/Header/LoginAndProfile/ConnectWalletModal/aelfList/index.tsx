@@ -1,7 +1,6 @@
 import styles from '../styles.module.scss';
 import clsx from 'clsx';
 import { CONNECT_AELF_LIST_CONFIG } from 'constants/wallet/aelf';
-import { useAelfAuthToken } from 'hooks/wallet/aelfAuthToken';
 import useAelf from 'hooks/wallet/useAelf';
 import { useCallback, useState } from 'react';
 import { SingleMessage } from '@etransfer/ui-react';
@@ -23,16 +22,12 @@ export default function AelfWalletList({
   onSelected?: (walletType: WalletTypeEnum) => void;
 }) {
   const { connect, disconnect, isConnected, connector } = useAelf();
-  const { getAuth } = useAelfAuthToken();
   const [dynamicArrowExpand, setDynamicArrowExpand] = useState(false);
   const clearStore = useClearStore();
   // const [isConnectLoading, setIsConnectLoading] = useState(false);
 
   const handleLogin = useCallback(async () => {
     try {
-      if (isConnected) {
-        await getAuth();
-      }
       if (!isConnected) {
         // setIsConnectLoading(true);
         await connect();
@@ -43,7 +38,7 @@ export default function AelfWalletList({
       // setIsConnectLoading(false);
       SingleMessage.error(handleWebLoginErrorMessage(error));
     }
-  }, [connect, getAuth, isConnected, onSelected]);
+  }, [connect, isConnected, onSelected]);
 
   const onDisconnect = useCallback(() => {
     Promise.resolve(disconnect()).then(() => {
