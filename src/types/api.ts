@@ -316,7 +316,6 @@ export type TVolumeOverviewItem = {
 export enum TokensDashboardType {
   All,
   Deposit,
-  Withdraw,
   Transfer,
 }
 

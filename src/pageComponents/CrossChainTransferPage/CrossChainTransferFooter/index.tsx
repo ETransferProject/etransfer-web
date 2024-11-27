@@ -354,6 +354,7 @@ export default function CrossChainTransferFooter({
 
         if (!orderResultRef.current.orderId || !orderResultRef.current.address) {
           setFailModalReason(DEFAULT_SEND_TRANSFER_ERROR);
+          setLoading(false);
           setIsFailModalOpen(true);
           return;
         }
@@ -421,6 +422,7 @@ export default function CrossChainTransferFooter({
         setFailModalReason(DEFAULT_SEND_TRANSFER_ERROR);
       }
 
+      setLoading(false);
       setIsFailModalOpen(true);
 
       if (orderResultRef.current.orderId && orderResultRef.current.address) {
