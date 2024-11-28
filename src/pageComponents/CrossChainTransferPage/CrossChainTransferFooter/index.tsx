@@ -13,7 +13,7 @@ import {
 import { handleErrorMessage, sleep, ZERO } from '@etransfer/utils';
 import { Form } from 'antd';
 import clsx from 'clsx';
-import { useAppDispatch, useCrossChainTransfer, useLoading } from 'store/Provider/hooks';
+import { useCrossChainTransfer, useLoading } from 'store/Provider/hooks';
 import { useWallet } from 'context/Wallet';
 import { useAuthToken } from 'hooks/wallet/authToken';
 import {
@@ -41,7 +41,6 @@ import { useSendTxnFromAelfChain } from 'hooks/crossChainTransfer';
 import { isAuthTokenError } from 'utils/api/error';
 import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
 import { computeWalletType, getConnectWalletText } from 'utils/wallet';
-import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
 import { TransferFormKeys, TransferValidateStatus, TTransferFormValidateData } from '../types';
 import { formatSymbolDisplay } from 'utils/format';
 
@@ -95,7 +94,6 @@ export default function CrossChainTransferFooter({
   clickFailedOk,
   clickSuccessOk,
 }: CrossChainTransferFooterProps) {
-  const dispatch = useAppDispatch();
   const { setLoading } = useLoading();
   const { fromNetwork, tokenSymbol, toNetwork, toWalletType } = useCrossChainTransfer();
   const [{ fromWallet, toWallet }] = useWallet();
@@ -164,17 +162,6 @@ export default function CrossChainTransferFooter({
     ],
   );
 
-  const handleSelectWallet = useCallback(
-    (walletType: WalletTypeEnum, isFromWallet: boolean) => {
-      if (isFromWallet) {
-        dispatch(setFromWalletType(walletType));
-      } else {
-        dispatch(setToWalletType(walletType));
-      }
-    },
-    [dispatch],
-  );
-
   const onConnectWallet = useCallback(() => {
     if (!isFromWalletConnected && !isToWalletConnected) {
       setConnectWalletModalProps({
@@ -184,9 +171,7 @@ export default function CrossChainTransferFooter({
       return;
     }
 
-    const { network, isFrom } = !isFromWalletConnected
-      ? { network: fromNetwork?.network, isFrom: true }
-      : { network: toNetwork?.network, isFrom: false };
+    const network = !isFromWalletConnected ? fromNetwork?.network : toNetwork?.network;
 
     const walletType = computeWalletType(network || '');
     if (!walletType) {
@@ -199,18 +184,11 @@ export default function CrossChainTransferFooter({
 
     setConnectWalletModalProps({
       open: true,
-      title: getConnectWalletText({ network, walletType }),
+      title: getConnectWalletText(network),
       allowList: [walletType],
-      onSelected: (type) => handleSelectWallet(type, isFrom),
     });
     return;
-  }, [
-    isFromWalletConnected,
-    isToWalletConnected,
-    fromNetwork?.network,
-    toNetwork?.network,
-    handleSelectWallet,
-  ]);
+  }, [isFromWalletConnected, isToWalletConnected, fromNetwork?.network, toNetwork?.network]);
 
   const handleSuccessCallback = useCallback((res: TCreateTransferOrderResult) => {
     if (res?.transactionId) {
@@ -504,15 +482,9 @@ export default function CrossChainTransferFooter({
       if (!isFromWalletConnected && !isToWalletConnected) {
         children = getConnectWalletText();
       } else if (!isFromWalletConnected) {
-        children = getConnectWalletText({
-          network: fromNetwork?.network,
-          walletType: fromWallet?.walletType,
-        });
+        children = getConnectWalletText(fromNetwork?.network);
       } else {
-        children = getConnectWalletText({
-          network: toNetwork?.network,
-          walletType: toWallet?.walletType,
-        });
+        children = getConnectWalletText(toNetwork?.network);
       }
       return {
         children,
@@ -545,9 +517,7 @@ export default function CrossChainTransferFooter({
     isSubmitDisabled,
     onConnectWallet,
     fromNetwork?.network,
-    fromWallet?.walletType,
     toNetwork?.network,
-    toWallet?.walletType,
   ]);
 
   return (

@@ -11,28 +11,26 @@ import { WalletTypeEnum } from 'context/Wallet/types';
 import { TelegramNotice } from '../TelegramNotice';
 import { TelegramPlatform } from 'utils/telegram';
 import { useAfterDisconnect } from 'hooks/wallet';
+import { useSetWalletType } from 'hooks/crossChainTransfer';
 
-export default function TRONWalletList({
-  onSelected,
-}: {
-  onSelected?: (walletType: WalletTypeEnum) => void;
-}) {
+export default function TRONWalletList() {
   const { account, isConnected, isConnecting, connect, disconnect } = useTRON();
   const [isShowCopy, setIsShowCopy] = useState(false);
   const isTelegramPlatform = TelegramPlatform.isTelegramPlatform();
+  const setWalletType = useSetWalletType();
 
   const onConnect = useCallback(async () => {
     try {
       if (isConnected || isTelegramPlatform) {
-        onSelected?.(WalletTypeEnum.TRON);
+        setWalletType(WalletTypeEnum.TRON);
         return;
       }
       await connect();
-      onSelected?.(WalletTypeEnum.TRON);
+      setWalletType(WalletTypeEnum.TRON);
     } catch (error) {
       console.log('>>>>>> TRONWalletList onConnect error', error);
     }
-  }, [connect, isConnected, isTelegramPlatform, onSelected]);
+  }, [connect, isConnected, isTelegramPlatform, setWalletType]);
 
   const afterDisconnect = useAfterDisconnect();
   const onDisconnect = useCallback(

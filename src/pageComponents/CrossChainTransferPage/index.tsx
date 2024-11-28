@@ -286,8 +286,8 @@ export default function CrossChainTransferPage() {
           dispatch(setTokenSymbol(allowTokenList[0].symbol));
           currentTokenRef.current = allowTokenList[0];
         } else {
-          const exitToken = totalTokenListRef.current.find(
-            (item) => item.symbol === routeQuery.tokenSymbol || item.symbol === tokenSymbol,
+          const exitToken = allowTokenList.find(
+            (item) => item.symbol === (routeQuery.tokenSymbol || tokenSymbol),
           );
           if (exitToken) {
             dispatch(setTokenSymbol(exitToken.symbol));
@@ -323,8 +323,7 @@ export default function CrossChainTransferPage() {
       if (networkList?.length > 0) {
         // from logic
         const exitFromNetwork = networkList.find(
-          (item) =>
-            item.network === routeQuery.fromNetwork || item.network === fromNetwork?.network,
+          (item) => item.network === (routeQuery.fromNetwork || fromNetwork?.network),
         );
         if (exitFromNetwork && exitFromNetwork.status !== NetworkStatus.Offline) {
           dispatch(setFromNetwork(exitFromNetwork));
@@ -351,7 +350,7 @@ export default function CrossChainTransferPage() {
         dispatch(setToNetworkList(toNetworkList));
 
         const exitToNetwork = toNetworkList.find(
-          (item) => item.network === routeQuery.toNetwork || item.network === toNetwork?.network,
+          (item) => item.network === (routeQuery.toNetwork || toNetwork?.network),
         );
         if (exitToNetwork && exitToNetwork.status !== NetworkStatus.Offline) {
           dispatch(setToNetwork(exitToNetwork));

@@ -12,13 +12,11 @@ import { TonConnectError } from '@tonconnect/ui-react';
 import { USER_REJECT_CONNECT_WALLET_TIP } from 'constants/wallet';
 import { WalletTypeEnum } from 'context/Wallet/types';
 import { useAfterDisconnect } from 'hooks/wallet';
+import { useSetWalletType } from 'hooks/crossChainTransfer';
 
-export default function TONWalletList({
-  onSelected,
-}: {
-  onSelected?: (walletType: WalletTypeEnum) => void;
-}) {
+export default function TONWalletList() {
   const { account, connect, disconnect, isConnected } = useTON();
+  const setWalletType = useSetWalletType();
   // const [isConnectLoading, setIsConnectLoading] = useState(false);
   const [isShowCopy, setIsShowCopy] = useState(false);
 
@@ -37,15 +35,15 @@ export default function TONWalletList({
     try {
       // setIsConnectLoading(true);
       if (isConnected) {
-        onSelected?.(WalletTypeEnum.TON);
+        setWalletType(WalletTypeEnum.TON);
         return;
       }
       await connect(CONNECT_TON_LIST_CONFIG.key);
-      onSelected?.(WalletTypeEnum.TON);
+      setWalletType(WalletTypeEnum.TON);
     } catch (error) {
       // setIsConnectLoading(false);
     }
-  }, [connect, isConnected, onSelected]);
+  }, [connect, isConnected, setWalletType]);
 
   // useEffect(() => {
   //   if (isConnected) {

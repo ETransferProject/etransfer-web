@@ -1,17 +1,17 @@
 import { useCallback, useMemo, useState } from 'react';
 import styles from './styles.module.scss';
 import { useWallet } from 'context/Wallet';
-import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
+import { useCrossChainTransfer } from 'store/Provider/hooks';
 import { computeWalletType, getConnectWalletText, isAelfChain } from 'utils/wallet';
-import { IConnector, WalletTypeEnum } from 'context/Wallet/types';
+import { WalletTypeEnum } from 'context/Wallet/types';
 import { getWalletLogo } from 'utils/wallet';
 import NetworkSelected from '../NetworkSelected';
 import { TNetworkItem } from 'types/api';
 import clsx from 'clsx';
 import { getOmittedStr } from 'utils/calculate';
 import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
-import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
 import { useGetAccount } from 'hooks/wallet/useAelf';
+import { MY_WALLET } from 'constants/wallet';
 
 export interface NetworkAndWalletCardProps {
   className?: string;
@@ -26,7 +26,6 @@ export function NetworkAndWalletCard({
   cardType,
   onSelectNetworkCallback,
 }: NetworkAndWalletCardProps) {
-  const dispatch = useAppDispatch();
   const accounts = useGetAccount();
   const [{ fromWallet, toWallet }] = useWallet();
   const { fromNetwork, fromNetworkList, fromWalletType, toWalletType, toNetwork, toNetworkList } =
@@ -55,30 +54,13 @@ export function NetworkAndWalletCard({
     setOpenConnectWalletModal(true);
   }, []);
 
-  const handleSelectWallet = useCallback(
-    (walletType: WalletTypeEnum) => {
-      if (cardType === 'From') {
-        dispatch(setFromWalletType(walletType));
-      } else {
-        dispatch(setToWalletType(walletType));
-      }
-    },
-    [cardType, dispatch],
-  );
-
   const WalletLogo = useMemo(() => {
     if (cardType === 'From' && fromWalletType) {
-      return getWalletLogo(
-        fromWalletType,
-        fromWalletType === WalletTypeEnum.EVM ? (fromWallet?.connector as IConnector) : undefined,
-      );
+      return getWalletLogo(fromWalletType, fromWallet?.connector);
     }
 
     if (cardType === 'To' && toWalletType) {
-      return getWalletLogo(
-        toWalletType,
-        toWalletType === WalletTypeEnum.EVM ? (toWallet?.connector as IConnector) : undefined,
-      );
+      return getWalletLogo(toWalletType, toWallet?.connector);
     }
 
     return null;
@@ -89,10 +71,9 @@ export function NetworkAndWalletCard({
       cardType === 'From'
         ? fromWallet?.isConnected && fromWallet?.account
         : toWallet?.isConnected && toWallet?.account;
-    let account = cardType === 'From' ? fromWallet?.account : toWallet?.account;
-    const network = cardType === 'From' ? fromNetwork?.network : toNetwork?.network;
-    const walletType = cardType === 'From' ? fromWalletType : toWalletType;
-    const connectWalletText = getConnectWalletText({ network, walletType });
+    let account = (cardType === 'From' ? fromWallet?.account : toWallet?.account) || '';
+    const network = (cardType === 'From' ? fromNetwork?.network : toNetwork?.network) || '';
+    const connectWalletText = getConnectWalletText(network);
 
     if (network && (accounts as any)?.[network]) {
       account = (accounts as any)[network];
@@ -100,7 +81,7 @@ export function NetworkAndWalletCard({
 
     return (
       <div>
-        {isConnected && account && network ? (
+        {isConnected ? (
           <div
             className="flex-row-center gap-4 cursor-pointer"
             onClick={() => handleConnectWallet(network || '')}>
@@ -118,10 +99,9 @@ export function NetworkAndWalletCard({
         )}
         <ConnectWalletModal
           open={openConnectWalletModal}
-          title={connectWalletText}
-          allowList={walletAllowList}
+          title={isConnected ? MY_WALLET : connectWalletText}
+          allowList={isConnected ? undefined : walletAllowList}
           onCancel={() => setOpenConnectWalletModal(false)}
-          onSelected={handleSelectWallet}
         />
       </div>
     );
@@ -132,14 +112,11 @@ export function NetworkAndWalletCard({
     fromNetwork?.network,
     fromWallet?.account,
     fromWallet?.isConnected,
-    fromWalletType,
     handleConnectWallet,
-    handleSelectWallet,
     openConnectWalletModal,
     toNetwork?.network,
     toWallet?.account,
     toWallet?.isConnected,
-    toWalletType,
     walletAllowList,
   ]);
 

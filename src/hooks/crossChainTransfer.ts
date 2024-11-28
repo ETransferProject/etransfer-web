@@ -9,7 +9,15 @@ import {
   setTokenSymbol,
 } from 'store/reducers/crossChainTransfer/slice';
 import { TCreateTransferOrderRequest, TCreateTransferOrderResult, TNetworkItem } from 'types/api';
-import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
+import {
+  getCaHashAndOriginChainIdByWallet,
+  getManagerAddressByWallet,
+  isAelfChain,
+  isEVMChain,
+  isSolanaChain,
+  isTRONChain,
+  isTONChain,
+} from 'utils/wallet';
 import { useGetBalanceDivDecimals } from './contract';
 import { ZERO } from '@etransfer/utils';
 import { ErrorNameType, TRANSACTION_APPROVE_LOADING } from 'constants/crossChainTransfer';
@@ -25,6 +33,8 @@ import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-ada
 import { ContractType } from 'constants/chain';
 import { useAelfAuthToken } from './wallet/aelfAuthToken';
 import { isAuthTokenError } from 'utils/api/error';
+import { WalletTypeEnum } from 'context/Wallet/types';
+import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
 
 export function useGoTransfer() {
   const dispatch = useAppDispatch();
@@ -235,4 +245,39 @@ export function useSendTxnFromAelfChain() {
   );
 
   return { sendTransferTokenTransaction };
+}
+
+export function useSetWalletType() {
+  const dispatch = useAppDispatch();
+  const { fromNetwork, toNetwork } = useCrossChainTransfer();
+  return useCallback(
+    (walletType: WalletTypeEnum) => {
+      let judgeNetworkFn: (network: string) => boolean = () => false;
+      switch (walletType) {
+        case WalletTypeEnum.AELF:
+          judgeNetworkFn = isAelfChain;
+          break;
+        case WalletTypeEnum.EVM:
+          judgeNetworkFn = isEVMChain;
+          break;
+        case WalletTypeEnum.SOL:
+          judgeNetworkFn = isSolanaChain;
+          break;
+        case WalletTypeEnum.TRON:
+          judgeNetworkFn = isTRONChain;
+          break;
+        case WalletTypeEnum.TON:
+          judgeNetworkFn = isTONChain;
+          break;
+      }
+
+      if (fromNetwork?.network && judgeNetworkFn(fromNetwork?.network)) {
+        dispatch(setFromWalletType(walletType));
+      }
+      if (toNetwork?.network && judgeNetworkFn(toNetwork?.network)) {
+        dispatch(setToWalletType(walletType));
+      }
+    },
+    [dispatch, fromNetwork?.network, toNetwork?.network],
+  );
 }

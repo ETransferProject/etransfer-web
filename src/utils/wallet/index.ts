@@ -21,7 +21,7 @@ import {
 import { COINBASE_WALLET_ID, WALLET_CONNECT_ID } from 'constants/wallet/EVM';
 import { BlockchainNetworkType } from 'constants/network';
 import { WalletSourceType } from 'types/api';
-import { CONNECT_AELF_WALLET, CONNECT_EVM_WALLET, CONNECT_WALLET } from 'constants/wallet';
+import { CONNECT_WALLET, WALLET_TYPE_TEXT } from 'constants/wallet';
 
 export const getManagerAddressByWallet = async (
   walletInfo: WalletInfo,
@@ -188,18 +188,11 @@ export function getWalletSourceType(walletType: WalletTypeEnum) {
   }
 }
 
-export const getConnectWalletText = ({
-  network,
-  walletType,
-}: {
-  network?: string;
-  walletType?: WalletTypeEnum;
-} = {}) => {
-  if (isAelfChain(network || '')) {
-    return CONNECT_AELF_WALLET;
-  }
-  if (walletType === WalletTypeEnum.EVM) {
-    return CONNECT_EVM_WALLET;
+export const getConnectWalletText = (network?: string) => {
+  const walletType = computeWalletType(network || '');
+  const walletTypeText = WALLET_TYPE_TEXT[walletType as WalletTypeEnum];
+  if (walletTypeText) {
+    return `Connect ${walletTypeText} Wallet`;
   }
   return CONNECT_WALLET;
 };

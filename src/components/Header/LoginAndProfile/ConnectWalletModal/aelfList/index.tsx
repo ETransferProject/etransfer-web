@@ -16,16 +16,14 @@ import { WalletTypeEnum } from 'context/Wallet/types';
 import { TelegramPlatform } from 'utils/telegram';
 import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
 import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
+import { useSetWalletType } from 'hooks/crossChainTransfer';
 // import PartialLoading from 'components/PartialLoading';
 
-export default function AelfWalletList({
-  onSelected,
-}: {
-  onSelected?: (walletType: WalletTypeEnum) => void;
-}) {
+export default function AelfWalletList() {
   const dispatch = useAppDispatch();
   const { connect, disconnect, isConnected, connector } = useAelf();
   const { fromWalletType, toWalletType } = useCrossChainTransfer();
+  const setWalletType = useSetWalletType();
   const [dynamicArrowExpand, setDynamicArrowExpand] = useState(false);
   const clearStore = useClearStore();
   // const [isConnectLoading, setIsConnectLoading] = useState(false);
@@ -35,15 +33,15 @@ export default function AelfWalletList({
       if (!isConnected) {
         // setIsConnectLoading(true);
         await connect();
-        onSelected?.(WalletTypeEnum.AELF);
+        setWalletType(WalletTypeEnum.AELF);
         // setIsConnectLoading(false);
       }
-      onSelected?.(WalletTypeEnum.AELF);
+      setWalletType(WalletTypeEnum.AELF);
     } catch (error) {
       // setIsConnectLoading(false);
       SingleMessage.error(handleWebLoginErrorMessage(error));
     }
-  }, [connect, isConnected, onSelected]);
+  }, [connect, isConnected, setWalletType]);
 
   const onDisconnect = useCallback(() => {
     Promise.resolve(disconnect()).then(() => {

@@ -19,13 +19,11 @@ import { TelegramPlatform } from 'utils/telegram';
 import { isPortkey } from 'utils/portkey';
 import { isMobileDevices } from 'utils/isMobile';
 import { useAfterDisconnect } from 'hooks/wallet';
+import { useSetWalletType } from 'hooks/crossChainTransfer';
 
-export default function EVMWalletList({
-  onSelected,
-}: {
-  onSelected?: (walletType: WalletTypeEnum) => void;
-}) {
+export default function EVMWalletList() {
   const { account, connect, connectors, connector, disconnect, isConnected } = useEVM();
+  const setWalletType = useSetWalletType();
   const [isConnectLoading, setIsConnectLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [isShowCopy, setIsShowCopy] = useState(false);
@@ -34,7 +32,7 @@ export default function EVMWalletList({
     async (id: string, index: number) => {
       try {
         if (isConnected) {
-          onSelected?.(WalletTypeEnum.EVM);
+          setWalletType(WalletTypeEnum.EVM);
           return;
         }
         const connector = connectors.find((item) => item.id === id);
@@ -43,7 +41,7 @@ export default function EVMWalletList({
         setActiveIndex(index);
         setIsConnectLoading(true);
         await connect({ connector: connector });
-        onSelected?.(WalletTypeEnum.EVM);
+        setWalletType(WalletTypeEnum.EVM);
         setIsConnectLoading(false);
       } catch (error) {
         setIsConnectLoading(false);
@@ -55,7 +53,7 @@ export default function EVMWalletList({
         }
       }
     },
-    [connect, connectors, isConnected, onSelected],
+    [connect, connectors, isConnected, setWalletType],
   );
 
   const afterDisconnect = useAfterDisconnect();

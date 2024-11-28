@@ -1,3 +1,5 @@
+import { WalletTypeEnum } from 'context/Wallet/types';
+
 export enum PortkeyVersion {
   v1 = 'v1',
   v2 = 'v2',
@@ -24,3 +26,11 @@ export const MY_WALLET = 'My Wallets';
 export const MY_AELF_WALLET = 'My aelf Wallet';
 
 export const USER_REJECT_CONNECT_WALLET_TIP = 'User rejected the request';
+
+export const WALLET_TYPE_TEXT = {
+  [WalletTypeEnum.EVM]: 'EVM',
+  [WalletTypeEnum.SOL]: 'Solana',
+  [WalletTypeEnum.TON]: 'TON',
+  [WalletTypeEnum.TRON]: 'TRON',
+  [WalletTypeEnum.AELF]: 'aelf',
+};
