@@ -66,17 +66,18 @@ export default function useEVM() {
   const { signMessageAsync } = useSignMessage();
 
   const onGetBalance = useCallback(
-    async ({ tokenContractAddress, network }: IGetEVMBalanceRequest) => {
+    async ({ tokenContractAddress, network, tokenSymbol }: IGetEVMBalanceRequest) => {
       if (!accountInfo.address) return { value: '0' };
-
       const chain = getEVMChainInfo(network);
       if (!chain) return { value: '0' };
-      const res = await getBalance(EVMProviderConfig, {
+      const params: any = {
         address: accountInfo.address,
         chainId: chain.id,
-        token: tokenContractAddress as `0x${string}`,
-      });
-
+      };
+      if (tokenContractAddress && tokenSymbol !== 'ETH') {
+        params.token = tokenContractAddress as `0x${string}`;
+      }
+      const res = await getBalance(EVMProviderConfig, params);
       return { value: res.value.toString(), decimals: res.decimals };
     },
     [accountInfo.address],
