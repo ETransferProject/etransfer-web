@@ -213,12 +213,11 @@ export default function CrossChainTransferFooter({
       if (
         !fromWallet ||
         !fromWallet?.isConnected ||
-        (!toWallet?.isConnected && !!recipientAddress) ||
-        !amount ||
         !fromWallet?.account ||
         !toAddress ||
         !fromNetwork?.network ||
         !toNetwork?.network ||
+        !amount ||
         !orderResultRef.current?.address
       )
         return;
@@ -241,16 +240,7 @@ export default function CrossChainTransferFooter({
       );
       console.log('>>>>>> sendTransferResult updateOrderResult', updateOrderResult);
     },
-    [
-      amount,
-      fromNetwork?.network,
-      fromWallet,
-      recipientAddress,
-      toAddress,
-      toNetwork?.network,
-      toWallet?.isConnected,
-      tokenSymbol,
-    ],
+    [amount, fromNetwork?.network, fromWallet, toAddress, toNetwork?.network, tokenSymbol],
   );
 
   const updateTransferOrderRejected = useCallback(
@@ -280,12 +270,11 @@ export default function CrossChainTransferFooter({
       if (
         !fromWallet ||
         !fromWallet?.isConnected ||
-        (!toWallet?.isConnected && !!recipientAddress) ||
-        !amount ||
         !fromWallet?.account ||
         !toAddress ||
         !fromNetwork?.network ||
-        !toNetwork?.network
+        !toNetwork?.network ||
+        !amount
       )
         return;
 
@@ -440,12 +429,10 @@ export default function CrossChainTransferFooter({
     handleFailCallback,
     handleSuccessCallback,
     queryAuthToken,
-    recipientAddress,
     sendTransferTokenTransaction,
     setLoading,
     toAddress,
     toNetwork?.network,
-    toWallet?.isConnected,
     tokenContractAddress,
     tokenSymbol,
     transferInfo.limitCurrency,
