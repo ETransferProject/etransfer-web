@@ -31,7 +31,7 @@ export function NetworkAndWalletCard({
   const { fromNetwork, fromNetworkList, fromWalletType, toWalletType, toNetwork, toNetworkList } =
     useCrossChainTransfer();
   const [openConnectWalletModal, setOpenConnectWalletModal] = useState(false);
-  const [walletAllowList, setWalletAllowList] = useState<WalletTypeEnum[]>([]);
+  const [walletAllowList, setWalletAllowList] = useState<WalletTypeEnum[] | undefined>();
 
   const selectedNetwork = useMemo(() => {
     return cardType === 'From' ? fromNetwork : toNetwork;
@@ -84,7 +84,10 @@ export function NetworkAndWalletCard({
         {isConnected ? (
           <div
             className="flex-row-center gap-4 cursor-pointer"
-            onClick={() => handleConnectWallet(network || '')}>
+            onClick={() => {
+              setWalletAllowList(undefined);
+              setOpenConnectWalletModal(true);
+            }}>
             <WalletLogo />
             <span className={styles['wallet-account']}>
               {isAelfChain(network) ? getOmittedStr(account, 8, 8) : getOmittedStr(account, 4, 4)}
@@ -99,8 +102,8 @@ export function NetworkAndWalletCard({
         )}
         <ConnectWalletModal
           open={openConnectWalletModal}
-          title={isConnected ? MY_WALLET : connectWalletText}
-          allowList={isConnected ? undefined : walletAllowList}
+          title={walletAllowList?.length ? connectWalletText : MY_WALLET}
+          allowList={walletAllowList}
           onCancel={() => setOpenConnectWalletModal(false)}
         />
       </div>
