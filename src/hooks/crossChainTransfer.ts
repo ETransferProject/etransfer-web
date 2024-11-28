@@ -12,7 +12,7 @@ import { TCreateTransferOrderRequest, TCreateTransferOrderResult, TNetworkItem }
 import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
 import { useGetBalanceDivDecimals } from './contract';
 import { ZERO } from '@etransfer/utils';
-import { ErrorNameType } from 'constants/crossChainTransfer';
+import { ErrorNameType, TRANSACTION_APPROVE_LOADING } from 'constants/crossChainTransfer';
 import { checkTokenAllowanceAndApprove, createTransferTokenTransaction } from 'utils/contract';
 import { createTransferOrder } from 'utils/api/transfer';
 import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
@@ -135,7 +135,7 @@ export function useSendTxnFromAelfChain() {
         memo,
         rawTransaction: rawTransaction,
       };
-      let createWithdrawOrderRes: TCreateTransferOrderResult = { orderId: '', txId: '' };
+      let createWithdrawOrderRes: TCreateTransferOrderResult = { orderId: '', transactionId: '' };
       try {
         createWithdrawOrderRes = await createTransferOrder(params);
       } catch (error) {
@@ -173,7 +173,7 @@ export function useSendTxnFromAelfChain() {
       successCallback: (item: TCreateTransferOrderResult) => void;
       failCallback: () => void;
     }) => {
-      setLoading(true, { text: 'Please approve the transaction in the wallet...' });
+      setLoading(true, { text: TRANSACTION_APPROVE_LOADING });
       if (!address) throw new Error('Please enter a correct address.');
 
       // get etransfer jwt

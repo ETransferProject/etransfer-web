@@ -15,6 +15,7 @@ import CommonLink from 'components/CommonLink';
 import { getTxExploreHref } from 'utils/common';
 import { Fingerprint } from 'assets/images';
 import { useCommonState, useCrossChainTransfer } from 'store/Provider/hooks';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 
 export interface SuccessModalProps {
   amount: string;
@@ -63,20 +64,21 @@ export default function SuccessModal({
       {...modalProps}
       hideCancelButton
       okText={GOT_IT}
-      footerSlot={
-        txHash
-          ? CommonLink({
-              href: getTxExploreHref(fromNetwork?.network || '', txHash, false),
-              isTagA: true,
-              children: (
-                <div className={clsx(styles['link-wrap'], !isPadPX && styles['linkToExplore'])}>
-                  <span className={styles['link-word']}>View on aelf Explorer</span>
-                  <Fingerprint className={styles['link-explore-icon']} />
-                </div>
-              ),
-            })
-          : null
-      }>
+      footerSlot={CommonLink({
+        href: getTxExploreHref(
+          fromNetwork?.network || '',
+          txHash,
+          false,
+          fromNetwork?.network as TChainId,
+        ),
+        isTagA: true,
+        children: (
+          <div className={clsx(styles['link-wrap'], !isPadPX && styles['linkToExplore'])}>
+            <span className={styles['link-word']}>View on Explorer</span>
+            <Fingerprint className={styles['link-explore-icon']} />
+          </div>
+        ),
+      })}>
       <div className={clsx('flex-column', styles['container'])}>
         <div className={clsx('flex-column-center', styles['title-wrapper'])}>
           <div className={clsx('flex-center', styles['title-icon'])}>

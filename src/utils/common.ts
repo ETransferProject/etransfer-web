@@ -7,6 +7,7 @@ import {
   LOOP_TOP_TX_URL,
   OtherExploreType,
 } from 'constants/network';
+import { isAelfChain } from './wallet';
 
 export function getAelfExploreLink(data: string, type: AelfExploreType, chainId: TChainId): string {
   const prefix = EXPLORE_CONFIG[chainId];
@@ -89,7 +90,7 @@ export const getTxExploreHref = (
   if (isCoboHash) {
     return LOOP_TOP_TX_URL + txHash;
   }
-  if (network === BlockchainNetworkType.AELF && chainId) {
+  if (isAelfChain(network) && chainId) {
     return getAelfExploreLink(txHash, AelfExploreType.transaction, chainId);
   }
   return getOtherExploreLink(

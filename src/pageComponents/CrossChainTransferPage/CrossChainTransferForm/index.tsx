@@ -6,7 +6,12 @@ import { BlockchainNetworkType } from 'constants/network';
 import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { MEMO_REG } from 'utils/reg';
-import { formatWithCommas, parseWithCommas, parseWithStringCommas } from 'utils/format';
+import {
+  formatSymbolDisplay,
+  formatWithCommas,
+  parseWithCommas,
+  parseWithStringCommas,
+} from 'utils/format';
 import { TelegramPlatform } from 'utils/telegram';
 import { sleep } from '@etransfer/utils';
 import { devices } from '@portkey/utils';
@@ -346,7 +351,7 @@ export default function CrossChainTransferForm({
                   : '0'}
                 &nbsp;
               </span>
-              <span>{tokenSymbol}</span>
+              <span>{formatSymbolDisplay(tokenSymbol)}</span>
             </div>
             {fromWallet?.isConnected && (
               <div className={styles['send-section-max']} onClick={onClickMax}>

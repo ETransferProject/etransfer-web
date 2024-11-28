@@ -96,8 +96,6 @@ export function useAuthToken() {
         }
         if (isThrowError) throw error;
         return '';
-      } finally {
-        setLoading(false);
       }
     },
     [fromWallet, handleReCaptcha, setLoading],

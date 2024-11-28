@@ -172,7 +172,6 @@ export function useAelfAuthToken() {
 
         return;
       } finally {
-        setLoading(false);
         eTransferInstance.setUnauthorized(false);
         eTransferInstance.setObtainingSignature(false);
       }

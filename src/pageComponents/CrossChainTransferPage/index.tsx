@@ -191,12 +191,7 @@ export default function CrossChainTransferPage() {
         const comment = getCommentInput();
         if (toWallet?.walletType === WalletTypeEnum.TON && comment) params.memo = comment;
 
-        let authToken = '';
-        if (fromWalletType && fromWallet?.isConnected && fromWallet?.account) {
-          authToken = await getAuthTokenFromStorage(fromWalletType);
-        }
-
-        const res = await getTransferInfo(params, authToken);
+        const res = await getTransferInfo(params);
         transferInfoRef.current = res.transferInfo;
         // setEVMTokenContractAddressRef.current = isEVMChain(_fromNetworkKey)
         //   ? (res.transferInfo.contractAddress as `0x${string}`)
@@ -258,10 +253,7 @@ export default function CrossChainTransferPage() {
     },
     [
       fromWallet?.account,
-      fromWallet?.isConnected,
       fromWallet?.walletType,
-      fromWalletType,
-      getAuthTokenFromStorage,
       getBalance,
       getBalanceInterval,
       getCommentInput,
