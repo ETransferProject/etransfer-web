@@ -13,6 +13,7 @@ import { useEffectOnce } from 'react-use';
 import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
 import { AuthTokenSource } from 'types/api';
 import { removeOneLocalJWT } from 'api/utils';
+import { useLoading } from 'store/Provider/hooks';
 
 export default function useAelf() {
   const {
@@ -57,18 +58,20 @@ export default function useAelf() {
 }
 
 export function useInitWallet() {
+  const { setLoading } = useLoading();
   const { isConnected, walletInfo, walletType } = useConnectWallet();
 
-  const { getAuth, queryAuth } = useAelfAuthToken();
-  const getAuthRef = useRef(getAuth);
-  getAuthRef.current = getAuth;
-  useEffect(() => {
-    console.warn('>>>>>> isConnected', isConnected);
-    console.warn('>>>>>> walletInfo', walletInfo);
-    if (isConnected && walletInfo) {
-      getAuthRef.current(false, true);
-    }
-  }, [isConnected, walletInfo]);
+  const { queryAuth } = useAelfAuthToken();
+  // const getAuthRef = useRef(getAuth);
+  // getAuthRef.current = getAuth;
+
+  // useEffect(() => {
+  //   console.warn('>>>>>> isConnected', isConnected);
+  //   console.warn('>>>>>> walletInfo', walletInfo);
+  //   if (isConnected && walletInfo) {
+  //     getAuthRef.current(false, true);
+  //   }
+  // }, [isConnected, walletInfo]);
 
   const onAuthorizationExpired = useCallback(async () => {
     if (!isConnected) {
@@ -92,7 +95,8 @@ export function useInitWallet() {
     } else {
       eTransferInstance.setUnauthorized(false);
     }
-  }, [isConnected, queryAuth, walletInfo, walletType]);
+    setLoading(false);
+  }, [isConnected, queryAuth, setLoading, walletInfo, walletType]);
   const onAuthorizationExpiredRef = useRef(onAuthorizationExpired);
   onAuthorizationExpiredRef.current = onAuthorizationExpired;
 

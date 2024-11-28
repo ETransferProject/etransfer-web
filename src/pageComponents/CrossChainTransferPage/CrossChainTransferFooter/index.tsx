@@ -8,6 +8,7 @@ import {
   DEFAULT_SEND_TRANSFER_ERROR,
   ErrorNameType,
   SEND_TRANSFER_ERROR_CODE_LIST,
+  TRANSACTION_APPROVE_LOADING,
 } from 'constants/crossChainTransfer';
 import { handleErrorMessage, sleep, ZERO } from '@etransfer/utils';
 import { Form } from 'antd';
@@ -42,6 +43,7 @@ import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletM
 import { computeWalletType, getConnectWalletText } from 'utils/wallet';
 import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
 import { TransferFormKeys, TransferValidateStatus, TTransferFormValidateData } from '../types';
+import { formatSymbolDisplay } from 'utils/format';
 
 export interface CrossChainTransferFooterProps {
   className?: string;
@@ -211,9 +213,9 @@ export default function CrossChainTransferFooter({
   ]);
 
   const handleSuccessCallback = useCallback((res: TCreateTransferOrderResult) => {
-    if (res?.txId) {
-      setFirstTxnHash(res.txId);
-      firstTxnHashRef.current = res.txId;
+    if (res?.transactionId) {
+      setFirstTxnHash(res.transactionId);
+      firstTxnHashRef.current = res.transactionId;
     }
 
     setIsSuccessModalOpen(true);
@@ -332,6 +334,7 @@ export default function CrossChainTransferFooter({
         const authToken = await getAuthToken(true);
         authTokenRef.current = authToken;
 
+        setLoading(true, { text: TRANSACTION_APPROVE_LOADING });
         // create order id
         const createTransferOrderParams = {
           amount: amount,
@@ -448,10 +451,6 @@ export default function CrossChainTransferFooter({
 
       await sleep(1000);
       myEvents.UpdateNewRecordStatus.emit();
-
-      orderResultRef.current = DefaultTransferOrderResponse;
-      setFirstTxnHash('');
-      firstTxnHashRef.current = '';
     }
   }, [
     amount,
@@ -481,11 +480,19 @@ export default function CrossChainTransferFooter({
   const onClickSuccess = useCallback(() => {
     setIsSuccessModalOpen(false);
     clickSuccessOk();
+
+    orderResultRef.current = DefaultTransferOrderResponse;
+    setFirstTxnHash('');
+    firstTxnHashRef.current = '';
   }, [clickSuccessOk]);
 
   const onClickFailed = useCallback(() => {
     setIsFailModalOpen(false);
     clickFailedOk();
+
+    orderResultRef.current = DefaultTransferOrderResponse;
+    setFirstTxnHash('');
+    firstTxnHashRef.current = '';
   }, [clickFailedOk]);
 
   const btnProps = useMemo(() => {
@@ -550,13 +557,17 @@ export default function CrossChainTransferFooter({
           <div className={clsx('flex-row-center', styles['you-will-receive'])}>
             <span>{`You'll receive:`}&nbsp;</span>
             <span className={styles['you-will-receive-value']}>
-              {estimateReceive ? `${estimateReceive} ${estimateReceiveUnit}` : DEFAULT_NULL_VALUE}
+              {estimateReceive
+                ? `${estimateReceive} ${formatSymbolDisplay(estimateReceiveUnit)}`
+                : DEFAULT_NULL_VALUE}
             </span>
           </div>
           <div className={clsx('flex-row-center', styles['transaction-fee'])}>
             <span>{`transaction fee:`}&nbsp;</span>
             <span className={styles['transaction-fee-value']}>
-              {transactionFee ? `${transactionFee} ${transactionFeeUnit}` : DEFAULT_NULL_VALUE}
+              {transactionFee
+                ? `${transactionFee} ${formatSymbolDisplay(transactionFeeUnit)}`
+                : DEFAULT_NULL_VALUE}
             </span>
           </div>
         </div>

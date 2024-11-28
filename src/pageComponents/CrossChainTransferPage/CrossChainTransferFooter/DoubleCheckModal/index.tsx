@@ -105,7 +105,7 @@ export default function DoubleCheckModal({
                 <span className={clsx('flex-1', styles['fee-value'])}>
                   {transferInfo.aelfTransactionFee}
                 </span>
-                &nbsp;{transferInfo.aelfTransactionUnit}
+                &nbsp;{formatSymbolDisplay(transferInfo.aelfTransactionUnit)}
               </div>
             </div>
           )}
@@ -116,7 +116,7 @@ export default function DoubleCheckModal({
                 <span className={clsx('flex-1', styles['fee-value'])}>
                   {transferInfo.transactionFee}
                 </span>
-                &nbsp;{transferInfo.transactionUnit}
+                &nbsp;{formatSymbolDisplay(transferInfo?.transactionUnit || '')}
               </div>
 
               <div className={clsx(styles['fee-usd'])}>

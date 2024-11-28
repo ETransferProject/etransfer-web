@@ -238,6 +238,7 @@ export enum WalletSourceType {
   Solana = 'Solana',
   TRX = 'TRX',
   Ton = 'Ton',
+  Portkey = 'Portkey',
 }
 
 export type TCheckRegistrationRequest = {
@@ -503,7 +504,7 @@ export type TCreateTransferOrderRequest = {
 export type TCreateTransferOrderResult = {
   orderId: string;
   address?: string;
-  txId?: string;
+  transactionId?: string;
 };
 
 export enum UpdateTransferOrderStatus {

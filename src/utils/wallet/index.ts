@@ -184,7 +184,7 @@ export function getWalletSourceType(walletType: WalletTypeEnum) {
       return WalletSourceType.TRX;
 
     default:
-      return undefined;
+      return WalletSourceType.Portkey;
   }
 }
 
