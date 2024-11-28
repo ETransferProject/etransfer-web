@@ -279,7 +279,7 @@ export default function CrossChainTransferForm({
               className={styles['send-section-input-amount']}
               bordered={false}
               autoComplete="off"
-              placeholder={fromWallet?.isConnected ? `Minimum: ${minAmount}` : '0.0'}
+              placeholder={fromWallet?.isConnected ? `Min: ${minAmount}` : '0.0'}
               onInput={(event: any) => {
                 const value = event.target?.value?.trim();
                 const oldValue = form.getFieldValue(TransferFormKeys.AMOUNT);

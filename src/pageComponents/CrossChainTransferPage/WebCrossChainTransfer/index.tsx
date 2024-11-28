@@ -155,7 +155,6 @@ export default function WebCrossChainTransfer({
         <div className={styles['main-wrapper']}>{renderDepositMainContent}</div>
       </div>
       <div className={clsx('flex-row', styles['faq-wrapper'])}>
-        <div className={styles['faq-left']}></div>
         <FAQ
           className={styles['faq']}
           title={FAQ_CROSS_CHAIN_TRANSFER.title}

@@ -22,12 +22,14 @@ export default function ConnectWalletModal({
     WalletTypeEnum.TRON,
     WalletTypeEnum.TON,
   ],
+  drawerZIndex = 80,
   onCancel,
   onSelected,
 }: {
   open: boolean;
   title?: string;
   allowList?: WalletTypeEnum[];
+  drawerZIndex?: number;
   onCancel: () => void;
   onSelected?: (walletType: WalletTypeEnum) => void;
 }) {
@@ -48,7 +50,7 @@ export default function ConnectWalletModal({
   if (isPadPX) {
     return (
       <CommonDrawer
-        zIndex={80}
+        zIndex={drawerZIndex}
         className={clsx(styles['connect-wallet-drawer'], styles['connect-wallet-drawer-weight'])}
         height="100%"
         title={title}
@@ -62,6 +64,7 @@ export default function ConnectWalletModal({
   return (
     <CommonModal
       open={open}
+      width={400}
       getContainer="#ConnectWalletButton"
       wrapClassName={styles['connect-wallet-modal-wrap']}
       className={styles['connect-wallet-modal']}
