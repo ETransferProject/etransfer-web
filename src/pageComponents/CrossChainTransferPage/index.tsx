@@ -38,7 +38,6 @@ import { formatSymbolDisplay, SingleMessage } from '@etransfer/ui-react';
 import {
   handleErrorMessage,
   isAuthTokenError,
-  isHtmlError,
   isWriteOperationError,
   removeELFAddressSuffix,
   ZERO,
@@ -70,6 +69,7 @@ import { useUpdateBalance } from 'hooks/wallet/useUpdateBalance';
 import { useGetAuthTokenFromStorage } from 'hooks/wallet/authToken';
 import { CommonErrorNameType } from 'api/types';
 import { BlockchainNetworkType } from 'constants/network';
+import { isHtmlError } from 'utils/api/error';
 
 export default function CrossChainTransferPage() {
   const dispatch = useAppDispatch();
@@ -727,36 +727,34 @@ export default function CrossChainTransferPage() {
   }, [fromWallet?.account]);
 
   return isPadPX ? (
-    <>
-      <MobileCrossChainTransfer
-        receiveAmount={receiveAmount}
-        form={form}
-        formValidateData={formValidateData}
-        transferInfo={transferInfo}
-        minAmount={minAmount}
-        amount={amount}
-        amountUSD={amountUSD}
-        balance={balance}
-        decimalsFromWallet={decimalsFromWallet}
-        isSubmitDisabled={isSubmitDisabled}
-        isTransactionFeeLoading={isTransactionFeeLoading}
-        isUseRecipientAddress={isUseRecipientAddress}
-        recipientAddress={recipientAddressInput}
-        comment={getCommentInput()}
-        onFromNetworkChanged={handleFromNetworkChanged}
-        onToNetworkChanged={handleToNetworkChanged}
-        onTokenChanged={handleTokenChanged}
-        onAmountChange={handleAmountChange}
-        onAmountBlur={handleAmountBlur}
-        onClickMax={handleClickMax}
-        onUseRecipientChanged={handleUseRecipientChanged}
-        onRecipientAddressChange={handleRecipientAddressChange}
-        onRecipientAddressBlur={handleRecipientAddressBlur}
-        onClickProcessingTip={handleClickProcessingTip}
-        clickFailedOk={handleClickFailedOk}
-        clickSuccessOk={handleClickSuccessOk}
-      />
-    </>
+    <MobileCrossChainTransfer
+      receiveAmount={receiveAmount}
+      form={form}
+      formValidateData={formValidateData}
+      transferInfo={transferInfo}
+      minAmount={minAmount}
+      amount={amount}
+      amountUSD={amountUSD}
+      balance={balance}
+      decimalsFromWallet={decimalsFromWallet}
+      isSubmitDisabled={isSubmitDisabled}
+      isTransactionFeeLoading={isTransactionFeeLoading}
+      isUseRecipientAddress={isUseRecipientAddress}
+      recipientAddress={recipientAddressInput}
+      comment={getCommentInput()}
+      onFromNetworkChanged={handleFromNetworkChanged}
+      onToNetworkChanged={handleToNetworkChanged}
+      onTokenChanged={handleTokenChanged}
+      onAmountChange={handleAmountChange}
+      onAmountBlur={handleAmountBlur}
+      onClickMax={handleClickMax}
+      onUseRecipientChanged={handleUseRecipientChanged}
+      onRecipientAddressChange={handleRecipientAddressChange}
+      onRecipientAddressBlur={handleRecipientAddressBlur}
+      onClickProcessingTip={handleClickProcessingTip}
+      clickFailedOk={handleClickFailedOk}
+      clickSuccessOk={handleClickSuccessOk}
+    />
   ) : (
     <WebCrossChainTransfer
       receiveAmount={receiveAmount}

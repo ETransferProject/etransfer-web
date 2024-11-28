@@ -8,21 +8,17 @@ import { getOmittedStr } from '@etransfer/utils';
 import Copy, { CopySize } from 'components/Copy';
 import PartialLoading from 'components/PartialLoading';
 import { WalletTypeEnum } from 'context/Wallet/types';
-import { removeOneLocalJWT } from 'api/utils';
-import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
-import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
 import { TelegramPlatform } from 'utils/telegram';
 import { TelegramNotice } from '../TelegramNotice';
+import { useAfterDisconnect } from 'hooks/wallet';
 
 export default function SolanaWalletList({
   onSelected,
 }: {
   onSelected?: (walletType: WalletTypeEnum) => void;
 }) {
-  const dispatch = useAppDispatch();
-  const { account, connect, isConnected, isConnecting, disconnect, walletType } = useSolana();
+  const { account, connect, isConnected, isConnecting, disconnect } = useSolana();
   const [isShowCopy, setIsShowCopy] = useState(false);
-  const { fromWalletType, toWalletType } = useCrossChainTransfer();
   const isTelegramPlatform = TelegramPlatform.isTelegramPlatform();
 
   const onConnect = useCallback(
@@ -44,26 +40,16 @@ export default function SolanaWalletList({
     if (isConnected) onSelected?.(WalletTypeEnum.SOL);
   }, [isConnected, onSelected]);
 
+  const afterDisconnect = useAfterDisconnect();
   const onDisconnect = useCallback(
     async (event: any) => {
       event.stopPropagation();
 
-      // disconnect wallet
+      const _account = account || '';
       await disconnect();
-
-      // clear jwt
-      const localKey = account + walletType;
-      removeOneLocalJWT(localKey);
-
-      // unbind wallet
-      if (fromWalletType === WalletTypeEnum.SOL) {
-        dispatch(setFromWalletType(undefined));
-      }
-      if (toWalletType === WalletTypeEnum.SOL) {
-        dispatch(setToWalletType(undefined));
-      }
+      afterDisconnect(_account, WalletTypeEnum.SOL);
     },
-    [account, disconnect, dispatch, fromWalletType, toWalletType, walletType],
+    [account, afterDisconnect, disconnect],
   );
 
   const renderAccount = useCallback(

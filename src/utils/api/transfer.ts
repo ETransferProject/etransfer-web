@@ -1,5 +1,5 @@
 import { request } from 'api';
-import { CancelTokenSourceKey } from 'api/types';
+import { CancelTokenSourceKey, RequestConfig } from 'api/types';
 import {
   TCreateTransferOrderRequest,
   TCreateTransferOrderResult,
@@ -77,11 +77,13 @@ export const createTransferOrder = async (
   params: TCreateTransferOrderRequest,
   authToken?: string,
 ): Promise<TCreateTransferOrderResult> => {
+  const _params: RequestConfig = { data: params };
+  if (authToken) {
+    _params.headers = { Authorization: authToken || '' };
+  }
+
   try {
-    const res = await request.transfer.createTransferOrder({
-      data: params,
-      headers: { Authorization: authToken || '' },
-    });
+    const res = await request.transfer.createTransferOrder(_params);
     return res.data;
   } catch (error: any) {
     throw formatApiError(error, 'createTransferOrder error', false);

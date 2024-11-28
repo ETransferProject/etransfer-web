@@ -5,7 +5,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useLoading } from 'store/Provider/hooks';
 import AElf from 'aelf-sdk';
 import { recoverPubKey } from 'utils/aelf/aelfBase';
-import { useDebounceCallback } from 'hooks/debounce';
 import service from 'api/axios';
 import { eTransferInstance } from 'utils/etransferInstance';
 import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet/index';
@@ -190,7 +189,7 @@ export function useAelfAuthToken() {
     ],
   );
 
-  const getAuth = useDebounceCallback(
+  const getAuth = useCallback(
     async (isThrowError: boolean, isAfterErrorDisconnect: boolean): Promise<string | undefined> => {
       if (!isConnected) return;
       if (eTransferInstance.obtainingSignature) return;
@@ -222,7 +221,7 @@ export function useAelfAuthToken() {
         return;
       }
     },
-    [connector, isConnected, walletInfo],
+    [connector, isConnected, loginSuccessActive, queryAuth, walletInfo],
   );
 
   return { getAuth, queryAuth, loginSuccessActive };

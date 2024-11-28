@@ -14,6 +14,8 @@ import Address from './Address';
 import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { WalletTypeEnum } from 'context/Wallet/types';
 import { TelegramPlatform } from 'utils/telegram';
+import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
+import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
 // import PartialLoading from 'components/PartialLoading';
 
 export default function AelfWalletList({
@@ -21,7 +23,9 @@ export default function AelfWalletList({
 }: {
   onSelected?: (walletType: WalletTypeEnum) => void;
 }) {
+  const dispatch = useAppDispatch();
   const { connect, disconnect, isConnected, connector } = useAelf();
+  const { fromWalletType, toWalletType } = useCrossChainTransfer();
   const [dynamicArrowExpand, setDynamicArrowExpand] = useState(false);
   const clearStore = useClearStore();
   // const [isConnectLoading, setIsConnectLoading] = useState(false);
@@ -34,6 +38,7 @@ export default function AelfWalletList({
         onSelected?.(WalletTypeEnum.AELF);
         // setIsConnectLoading(false);
       }
+      onSelected?.(WalletTypeEnum.AELF);
     } catch (error) {
       // setIsConnectLoading(false);
       SingleMessage.error(handleWebLoginErrorMessage(error));
@@ -44,13 +49,20 @@ export default function AelfWalletList({
     Promise.resolve(disconnect()).then(() => {
       clearStore();
       service.defaults.headers.common['Authorization'] = '';
+      // unbind wallet
+      if (fromWalletType === WalletTypeEnum.AELF) {
+        dispatch(setFromWalletType(undefined));
+      }
+      if (toWalletType === WalletTypeEnum.AELF) {
+        dispatch(setToWalletType(undefined));
+      }
       myEvents.LogoutSuccess.emit();
       console.warn('>>>>>> logout');
       // stop notice socket
       // TODO
       // unsubscribeUserOrderRecord(account || '');
     });
-  }, [clearStore, disconnect]);
+  }, [clearStore, disconnect, dispatch, fromWalletType, toWalletType]);
 
   const onViewDetail = useCallback(
     (event: any) => {

@@ -30,7 +30,11 @@ import { EVM_TOKEN_ABI } from 'constants/wallet/EVM';
 import DoubleCheckModal from './DoubleCheckModal';
 import SuccessModal from './SuccessModal';
 import FailModal from './FailModal';
-import { TCrossChainTransferInfo, UpdateTransferOrderStatus } from 'types/api';
+import {
+  TCreateTransferOrderResult,
+  TCrossChainTransferInfo,
+  UpdateTransferOrderStatus,
+} from 'types/api';
 import myEvents from 'utils/myEvent';
 import { useSendTxnFromAelfChain } from 'hooks/crossChainTransfer';
 import { isAuthTokenError } from 'utils/api/error';
@@ -67,7 +71,7 @@ interface ISuccessData {
   receiveAmountUsd: string;
 }
 
-const DefaultTransferOrderResponse = { orderId: '', address: '' };
+const DefaultTransferOrderResponse: TCreateTransferOrderResult = { orderId: '' };
 
 export default function CrossChainTransferFooter({
   className,
@@ -206,11 +210,19 @@ export default function CrossChainTransferFooter({
     handleSelectWallet,
   ]);
 
-  const handleSuccessCallback = useCallback(() => {
+  const handleSuccessCallback = useCallback((res: TCreateTransferOrderResult) => {
+    if (res?.txId) {
+      setFirstTxnHash(res.txId);
+      firstTxnHashRef.current = res.txId;
+    }
+
     setIsSuccessModalOpen(true);
   }, []);
 
   const handleFailCallback = useCallback(() => {
+    orderResultRef.current = DefaultTransferOrderResponse;
+    setFirstTxnHash('');
+    firstTxnHashRef.current = '';
     setFailModalReason(DEFAULT_SEND_TRANSFER_ERROR);
     setIsFailModalOpen(true);
   }, []);
@@ -226,7 +238,8 @@ export default function CrossChainTransferFooter({
         !fromWallet?.account ||
         !toAddress ||
         !fromNetwork?.network ||
-        !toNetwork?.network
+        !toNetwork?.network ||
+        !orderResultRef.current?.address
       )
         return;
       const updateOrderResult = await updateTransferOrderApi(
@@ -238,7 +251,7 @@ export default function CrossChainTransferFooter({
           toSymbol: tokenSymbol,
           fromAddress: fromWallet?.account,
           toAddress,
-          address: orderResultRef.current.address,
+          address: orderResultRef.current?.address,
           txId: firstTxnHashRef.current,
           status,
           memo: fromWallet.walletType === WalletTypeEnum.TON ? orderResultRef.current.orderId : '',
@@ -298,6 +311,7 @@ export default function CrossChainTransferFooter({
 
       setLoading(true);
       orderResultRef.current = DefaultTransferOrderResponse;
+      firstTxnHashRef.current = '';
       if (fromWallet.walletType === WalletTypeEnum.AELF) {
         // aelf logic
         await sendTransferTokenTransaction({
@@ -436,6 +450,8 @@ export default function CrossChainTransferFooter({
       myEvents.UpdateNewRecordStatus.emit();
 
       orderResultRef.current = DefaultTransferOrderResponse;
+      setFirstTxnHash('');
+      firstTxnHashRef.current = '';
     }
   }, [
     amount,

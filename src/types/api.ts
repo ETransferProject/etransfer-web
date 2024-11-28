@@ -502,8 +502,8 @@ export type TCreateTransferOrderRequest = {
 
 export type TCreateTransferOrderResult = {
   orderId: string;
-  address: string;
-  txId: string;
+  address?: string;
+  txId?: string;
 };
 
 export enum UpdateTransferOrderStatus {

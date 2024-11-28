@@ -238,7 +238,9 @@ export default function CrossChainTransferForm({
 
     // check toNetwork and token
     await handleFromNetworkChange(_toNetwork, _fromNetwork);
-  }, [dispatch, handleFromNetworkChange]);
+    // check toNetwork and token
+    await handleToNetworkChange(_fromNetwork);
+  }, [dispatch, handleFromNetworkChange, handleToNetworkChange]);
 
   return (
     <Form

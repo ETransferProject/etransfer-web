@@ -3,12 +3,14 @@ class ETransferInstance {
   public obtainingSignature: boolean;
   public showNoticeIds: string[]; // already show notice
   public processingIds: string[];
+  public noticeStorageAddresses: any[];
 
   constructor() {
     this.unauthorized = false;
     this.obtainingSignature = false;
     this.showNoticeIds = [];
     this.processingIds = [];
+    this.noticeStorageAddresses = [];
   }
 
   setUnauthorized(status: boolean) {
@@ -25,6 +27,9 @@ class ETransferInstance {
 
   setProcessingIds(list: string[]) {
     this.processingIds = list;
+  }
+  setNoticeStorageAddresses(list: any[]) {
+    this.noticeStorageAddresses = list;
   }
 }
 

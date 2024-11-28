@@ -27,7 +27,7 @@ import { SideMenuKey } from 'constants/home';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { END_TIME_FORMAT, START_TIME_FORMAT } from 'constants/records';
 import { useCheckHasConnectedWallet } from 'hooks/wallet';
-import { useGetAllConnectedWalletAccount } from 'hooks/wallet/authToken';
+import { useGetAllConnectedWalletAccount } from 'hooks/wallet';
 
 export type TRecordsContentProps = TRecordsBodyProps & {
   onReset: () => void;
@@ -45,6 +45,7 @@ export default function Content() {
   const { hasConnected } = useCheckHasConnectedWallet();
   const hasConnectedRef = useRef(hasConnected);
   hasConnectedRef.current = hasConnected;
+  const getAllConnectedWalletAccount = useGetAllConnectedWalletAccount();
 
   const {
     type = TRecordsRequestType.Transfer,
@@ -54,57 +55,70 @@ export default function Content() {
     maxResultCount,
     recordsList,
   } = useRecordsState();
-  const getAllConnectedWalletAccount = useGetAllConnectedWalletAccount();
-  const requestRecordsList = useDebounceCallback(async (isLoading = false) => {
-    try {
-      if (!hasConnectedRef.current) return;
+  const requestRecordsList = useDebounceCallback(
+    async (isLoading = false) => {
+      try {
+        if (!hasConnectedRef.current) return;
 
-      isLoading && setLoading(true);
+        isLoading && setLoading(true);
 
-      const startTimestampFormat =
-        timestamp?.[0] && moment(timestamp?.[0]).format(START_TIME_FORMAT);
-      const endTimestampFormat = timestamp?.[1] && moment(timestamp?.[1]).format(END_TIME_FORMAT);
-      const startTimestamp = startTimestampFormat ? moment(startTimestampFormat).valueOf() : null;
-      const endTimestamp = endTimestampFormat ? moment(endTimestampFormat).valueOf() : null;
+        const startTimestampFormat =
+          timestamp?.[0] && moment(timestamp?.[0]).format(START_TIME_FORMAT);
+        const endTimestampFormat = timestamp?.[1] && moment(timestamp?.[1]).format(END_TIME_FORMAT);
+        const startTimestamp = startTimestampFormat ? moment(startTimestampFormat).valueOf() : null;
+        const endTimestamp = endTimestampFormat ? moment(endTimestampFormat).valueOf() : null;
 
-      const connectedAccountList = getAllConnectedWalletAccount();
-      const { items: recordsListRes, totalCount } = await getRecordsList({
-        type,
-        status,
-        startTimestamp: startTimestamp,
-        endTimestamp: endTimestamp,
-        skipCount: (skipCount - 1) * maxResultCount,
-        maxResultCount,
-        addressList: connectedAccountList.accountList,
-      });
-      if (isPadPX) {
-        let mobileRecordsList = [...recordsList, ...recordsListRes];
-        mobileRecordsList = mobileRecordsList.reduce((result: TRecordsListItem[], item) => {
-          if (!result.some((it: TRecordsListItem) => it.id === item.id)) {
-            result.push(item);
-          }
-          return result;
-        }, []);
-        dispatch(setRecordsList(mobileRecordsList));
-      } else {
-        dispatch(setRecordsList(recordsListRes));
+        const connectedAccountList = getAllConnectedWalletAccount();
+        const { items: recordsListRes, totalCount } = await getRecordsList({
+          type,
+          status,
+          startTimestamp: startTimestamp,
+          endTimestamp: endTimestamp,
+          skipCount: (skipCount - 1) * maxResultCount,
+          maxResultCount,
+          addressList: connectedAccountList.accountList,
+        });
+        if (isPadPX) {
+          let mobileRecordsList = [...recordsList, ...recordsListRes];
+          mobileRecordsList = mobileRecordsList.reduce((result: TRecordsListItem[], item) => {
+            if (!result.some((it: TRecordsListItem) => it.id === item.id)) {
+              result.push(item);
+            }
+            return result;
+          }, []);
+          dispatch(setRecordsList(mobileRecordsList));
+        } else {
+          dispatch(setRecordsList(recordsListRes));
+        }
+        dispatch(setTotalCount(totalCount));
+        // recordsList is load all and hasMore set false
+        if (recordsListRes.length < maxResultCount) {
+          dispatch(setHasMore(false));
+        }
+      } catch (error) {
+        console.log('records', error);
+      } finally {
+        setLoading(false);
+
+        await sleep(1000);
+        myEvents.UpdateNewRecordStatus.emit();
       }
-      dispatch(setTotalCount(totalCount));
-      // recordsList is load all and hasMore set false
-      if (recordsListRes.length < maxResultCount) {
-        dispatch(setHasMore(false));
-      }
-    } catch (error) {
-      console.log('records', error);
-    } finally {
-      setLoading(false);
+    },
+    [
+      dispatch,
+      getAllConnectedWalletAccount,
+      isPadPX,
+      maxResultCount,
+      recordsList,
+      setLoading,
+      skipCount,
+      status,
+      timestamp,
+      type,
+    ],
+  );
 
-      await sleep(1000);
-      myEvents.UpdateNewRecordStatus.emit();
-    }
-  }, []);
-
-  const handleReset = useCallback(async () => {
+  const handleReset = useDebounceCallback(async () => {
     setFilter({
       status: TRecordsRequestStatus.ALL,
       timeArray: null,
