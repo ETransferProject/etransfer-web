@@ -554,7 +554,7 @@ export default function CrossChainTransferFooter({
             </span>
           </div>
           <div className={clsx('flex-row-center', styles['transaction-fee'])}>
-            <span>{`transaction fee:`}&nbsp;</span>
+            <span>{`Transaction fee:`}&nbsp;</span>
             <span className={styles['transaction-fee-value']}>
               {transactionFee ? `${transactionFee} ${transactionFeeUnit}` : DEFAULT_NULL_VALUE}
             </span>

@@ -75,7 +75,7 @@ export default function WebCrossChainTransfer({
           />
         )}
 
-        <div className={styles['transfer-title']}>{CROSS_CHAIN_TRANSFER_PAGE_TITLE}</div>
+        <div className="main-section-header">{CROSS_CHAIN_TRANSFER_PAGE_TITLE}</div>
 
         <CrossChainTransferForm
           form={form}

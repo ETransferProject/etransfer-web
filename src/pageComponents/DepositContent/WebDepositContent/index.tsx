@@ -331,7 +331,7 @@ export default function WebContent({
           />
         )}
 
-        <div className={styles['deposit-title']}>{DEPOSIT_PAGE_TITLE}</div>
+        <div className="main-section-header">{DEPOSIT_PAGE_TITLE}</div>
 
         {renderSelectSection}
 

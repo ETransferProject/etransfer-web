@@ -60,6 +60,7 @@ export interface TRecordsTableListType {
   orderType: BusinessType;
   status: TOrderStatus;
   arrivalTime: number;
+  createTime: number;
   symbol: string;
   icon: string;
   sendingAmount: string;
