@@ -63,16 +63,20 @@ export default function SuccessModal({
       {...modalProps}
       hideCancelButton
       okText={GOT_IT}
-      footerSlot={CommonLink({
-        href: getTxExploreHref(fromNetwork?.network || '', txHash, false),
-        isTagA: true,
-        children: (
-          <div className={clsx(styles['link-wrap'], !isPadPX && styles['linkToExplore'])}>
-            <span className={styles['link-word']}>View on aelf Explorer</span>
-            <Fingerprint className={styles['link-explore-icon']} />
-          </div>
-        ),
-      })}>
+      footerSlot={
+        txHash
+          ? CommonLink({
+              href: getTxExploreHref(fromNetwork?.network || '', txHash, false),
+              isTagA: true,
+              children: (
+                <div className={clsx(styles['link-wrap'], !isPadPX && styles['linkToExplore'])}>
+                  <span className={styles['link-word']}>View on aelf Explorer</span>
+                  <Fingerprint className={styles['link-explore-icon']} />
+                </div>
+              ),
+            })
+          : null
+      }>
       <div className={clsx('flex-column', styles['container'])}>
         <div className={clsx('flex-column-center', styles['title-wrapper'])}>
           <div className={clsx('flex-center', styles['title-icon'])}>

@@ -3,7 +3,7 @@ import { useAppDispatch } from 'store/Provider/hooks';
 import { setIsUnreadHistory } from 'store/reducers/common/slice';
 import { getRecordStatus } from 'utils/api/records';
 import myEvents from 'utils/myEvent';
-import { useGetAllConnectedWalletAccount } from './wallet/authToken';
+import { useGetAllConnectedWalletAccount } from './wallet';
 
 export const MAX_UPDATE_TIME = 6;
 

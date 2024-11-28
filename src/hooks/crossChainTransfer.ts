@@ -8,15 +8,14 @@ import {
   setToNetwork,
   setTokenSymbol,
 } from 'store/reducers/crossChainTransfer/slice';
-import { TCreateWithdrawOrderResult, TNetworkItem } from 'types/api';
+import { TCreateTransferOrderRequest, TCreateTransferOrderResult, TNetworkItem } from 'types/api';
 import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
 import { useGetBalanceDivDecimals } from './contract';
 import { ZERO } from '@etransfer/utils';
 import { ErrorNameType } from 'constants/crossChainTransfer';
 import { checkTokenAllowanceAndApprove, createTransferTokenTransaction } from 'utils/contract';
-import { createWithdrawOrder } from 'utils/api/withdraw';
+import { createTransferOrder } from 'utils/api/transfer';
 import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
-import { useDebounceCallback } from './debounce';
 import { InsufficientAllowanceMessage } from 'constants/withdraw';
 import { WalletInfo } from 'types/wallet';
 import { timesDecimals } from 'utils/calculate';
@@ -117,27 +116,34 @@ export function useSendTxnFromAelfChain() {
       address: string;
       memo?: string;
       rawTransaction: string;
-      successCallback: () => void;
+      successCallback: (item: TCreateTransferOrderResult) => void;
       failCallback: () => void;
     }) => {
       if (!toNetwork?.network) throw new Error('Please selected network');
+      if (!accounts?.[chainId]) throw new Error('Please connect from wallet');
 
-      const params = {
-        network: toNetwork?.network,
-        symbol: tokenSymbol,
+      const params: TCreateTransferOrderRequest = {
         amount,
-        memo,
-        fromChainId: chainId,
+        fromNetwork: chainId,
+        toNetwork: toNetwork?.network,
+        fromSymbol: tokenSymbol,
+        toSymbol: tokenSymbol,
+        fromAddress: isDIDAddressSuffix(accounts?.[chainId])
+          ? removeELFAddressSuffix(accounts?.[chainId])
+          : address,
         toAddress: isDIDAddressSuffix(address) ? removeELFAddressSuffix(address) : address,
+        memo,
         rawTransaction: rawTransaction,
       };
-      let createWithdrawOrderRes: TCreateWithdrawOrderResult = { orderId: '', transactionId: '' };
+      let createWithdrawOrderRes: TCreateTransferOrderResult = { orderId: '', txId: '' };
       try {
-        createWithdrawOrderRes = await createWithdrawOrder(params);
+        createWithdrawOrderRes = await createTransferOrder(params);
       } catch (error) {
         if (isAuthTokenError(error)) {
           const _authToken = await queryAelfAuthToken(true, false);
-          createWithdrawOrderRes = await createWithdrawOrder(params, _authToken);
+          createWithdrawOrderRes = await createTransferOrder(params, _authToken);
+        } else {
+          throw error;
         }
       }
       console.log(
@@ -145,15 +151,15 @@ export function useSendTxnFromAelfChain() {
         createWithdrawOrderRes,
       );
       if (createWithdrawOrderRes.orderId) {
-        successCallback();
+        successCallback(createWithdrawOrderRes);
       } else {
         failCallback();
       }
     },
-    [chainId, queryAelfAuthToken, toNetwork?.network, tokenSymbol],
+    [accounts, chainId, queryAelfAuthToken, toNetwork?.network, tokenSymbol],
   );
 
-  const sendTransferTokenTransaction = useDebounceCallback(
+  const sendTransferTokenTransaction = useCallback(
     async ({
       amount,
       address,
@@ -164,7 +170,7 @@ export function useSendTxnFromAelfChain() {
       amount: string;
       address: string;
       memo?: string;
-      successCallback: () => void;
+      successCallback: (item: TCreateTransferOrderResult) => void;
       failCallback: () => void;
     }) => {
       setLoading(true, { text: 'Please approve the transaction in the wallet...' });
@@ -212,7 +218,20 @@ export function useSendTxnFromAelfChain() {
       }
       setLoading(false);
     },
-    [currentEtransferContractAddress, handleApproveToken, setLoading],
+    [
+      accounts,
+      chainId,
+      connector,
+      currentEtransferContractAddress,
+      currentTokenDecimal,
+      getAelfAuthToken,
+      handleApproveToken,
+      handleCreateWithdrawOrder,
+      setLoading,
+      signMessage,
+      tokenSymbol,
+      walletInfo,
+    ],
   );
 
   return { sendTransferTokenTransaction };
