@@ -17,6 +17,7 @@ import { AuthTokenSource } from 'types/api';
 import { SendTONTransactionParams } from 'types/wallet';
 import { stringToHex } from 'utils/format';
 import { timesDecimals } from 'utils/calculate';
+import { isMobileDevices } from 'utils/isMobile';
 
 export default function useTON() {
   const wallet = useTonWallet();
@@ -150,6 +151,9 @@ export default function useTON() {
   );
 
   const tonContext = useMemo(() => {
+    const disconnect = isMobileDevices()
+      ? tonConnectUI.disconnect
+      : (tonConnectUI.connector as any)?.provider?.injectedWallet?.disconnect;
     return {
       isConnected: tonConnectUI.connected,
       walletType: WalletTypeEnum.TON,
@@ -159,7 +163,7 @@ export default function useTON() {
       connector: tonConnectUI.connector,
       provider: wallet?.provider,
       connect: async (name: string) => await tonConnectUI.openSingleWalletModal(name),
-      disconnect: (tonConnectUI.connector as any)?.provider?.injectedWallet?.disconnect,
+      disconnect,
       getAccountInfo: () => tonConnectUI.account,
       getBalance,
       signMessage,
