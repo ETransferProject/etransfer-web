@@ -57,11 +57,10 @@ import {
   TTransferFormValues,
 } from './types';
 import { isDIDAddressSuffix } from 'utils/aelf/aelfBase';
-import { WalletTypeEnum } from 'context/Wallet/types';
 import { computeTokenList, computeToNetworkList } from './utils';
 import { getTokenPrices } from 'utils/api/user';
 import BigNumber from 'bignumber.js';
-import { computeWalletType, getWalletSourceType, isAelfChain } from 'utils/wallet';
+import { computeWalletType, getWalletSourceType, isAelfChain, isTONChain } from 'utils/wallet';
 import { checkIsEnoughAllowance } from 'utils/contract';
 import { APPROVE_ELF_FEE } from 'constants/withdraw';
 import { SupportedELFChainId } from 'constants/index';
@@ -75,8 +74,8 @@ export default function CrossChainTransferPage() {
   const dispatch = useAppDispatch();
   const { isPadPX } = useCommonState();
   const { setLoading } = useLoading();
-  const [{ fromWallet, toWallet }] = useWallet();
-  const { fromWalletType, toWalletType, fromNetwork, toNetwork, tokenSymbol, totalTokenList } =
+  const [{ fromWallet }] = useWallet();
+  const { fromWalletType, fromNetwork, toNetwork, tokenSymbol, totalTokenList } =
     useCrossChainTransfer();
   const fromNetworkRef = useRef<TNetworkItem | undefined>(fromNetwork);
   const toNetworkRef = useRef<TNetworkItem | undefined>(toNetwork);
@@ -183,13 +182,12 @@ export default function CrossChainTransferPage() {
         if (fromWallet?.account) params.fromAddress = fromWallet?.account;
         if (fromWallet?.walletType) params.sourceType = getWalletSourceType(fromWallet?.walletType);
 
-        const toWalletAccount =
-          toWalletType && toWallet?.isConnected && toWallet?.account ? toWallet?.account : '';
-        const _toAddress = isUseRecipientAddress ? getRecipientAddressInput() : toWalletAccount;
+        // Used to check whether the recipient address is reasonable.
+        const _toAddress = isUseRecipientAddress ? getRecipientAddressInput() : '';
         if (_toAddress) params.toAddress = _toAddress;
 
         const comment = getCommentInput();
-        if (toWallet?.walletType === WalletTypeEnum.TON && comment) params.memo = comment;
+        if (_toNetworkKey && isTONChain(_toNetworkKey) && comment) params.memo = comment;
 
         const res = await getTransferInfo(params);
         transferInfoRef.current = res.transferInfo;
@@ -257,10 +255,6 @@ export default function CrossChainTransferPage() {
       getRecipientAddressInput,
       handleFormValidateDataChange,
       isUseRecipientAddress,
-      toWallet?.account,
-      toWallet?.isConnected,
-      toWallet?.walletType,
-      toWalletType,
       tokenSymbol,
       totalTokenList,
     ],
