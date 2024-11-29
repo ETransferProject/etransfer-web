@@ -94,6 +94,7 @@ export default function CrossChainTransferPage() {
   const [recipientAddressInput, setRecipientAddressInput] = useState('');
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [amount, setAmount] = useState('');
+  const amountRef = useRef('');
   const [amountUSD, setAmountUSD] = useState('');
   const [amountPriceUsd, setAmountPriceUSD] = useState<number>(0);
   const { balance, decimalsFromWallet, getBalance, getBalanceInterval } = useUpdateBalance();
@@ -400,7 +401,7 @@ export default function CrossChainTransferPage() {
             errorMessage: '',
           },
         });
-        await getTransferDataRef.current(amount);
+        await getTransferDataRef.current(amountRef.current);
         return;
       } else if (isSolanaNetwork && isAddressShorterThanUsual) {
         // Only the Solana network has this warning
@@ -431,16 +432,17 @@ export default function CrossChainTransferPage() {
           errorMessage: '',
         },
       });
-      await getTransferDataRef.current(amount);
+      await getTransferDataRef.current(amountRef.current);
     } catch (error) {
       console.log('handleRecipientAddressBlur error', error);
       // SingleMessage.error(handleErrorMessage(error));
     }
-  }, [amount, form, getRecipientAddressInput, handleFormValidateDataChange]);
+  }, [form, getRecipientAddressInput, handleFormValidateDataChange]);
 
   const handleAmountChange = useCallback(
     (value: string) => {
       setAmount(value);
+      amountRef.current = value;
 
       if (
         value &&
@@ -549,7 +551,7 @@ export default function CrossChainTransferPage() {
 
   const handleAmountBlur = useCallback(async () => {
     try {
-      await getTransferDataRef.current(amount);
+      await getTransferDataRef.current(amountRef.current);
 
       // update amount usd display
       setAmountUSD(BigNumber(transferInfoRef.current.amountUsd || '').toFixed(2));
@@ -560,13 +562,13 @@ export default function CrossChainTransferPage() {
       console.log('handleAmountBlur error', error);
       // SingleMessage.error(handleErrorMessage(error));
     }
-  }, [amount, getAmountUSD]);
+  }, [getAmountUSD]);
 
   const handleClickMax = useCallback(async () => {
     if (isAelfChain(fromNetwork?.network || '') && tokenSymbol === 'ELF') {
       try {
         setLoading(true);
-        await getTransferDataRef.current(amount);
+        await getTransferDataRef.current(amountRef.current);
         let _maxInput = balance;
         const aelfFee = transferInfoRef.current?.aelfTransactionFee;
         if (aelfFee && ZERO.plus(aelfFee).gt(0)) {
@@ -599,7 +601,6 @@ export default function CrossChainTransferPage() {
       handleAmountChange(balance);
     }
   }, [
-    amount,
     balance,
     currentToken.contractAddress,
     form,
@@ -688,7 +689,7 @@ export default function CrossChainTransferPage() {
     }
     getTransactionFeeTimerRef.current = setInterval(async () => {
       if (new Date().getTime() > transferInfo.expiredTimestamp && fromNetworkRef.current?.network) {
-        await getTransferDataRef.current(amount);
+        await getTransferDataRef.current(amountRef.current);
       }
     }, 10000);
     return () => {
@@ -701,7 +702,7 @@ export default function CrossChainTransferPage() {
   // If fromWallet.account changed, update transferInfo data.
   useEffect(() => {
     if (fromWallet?.account) {
-      getTransferDataRef.current();
+      getTransferDataRef.current(amountRef.current);
     }
   }, [fromWallet?.account]);
 

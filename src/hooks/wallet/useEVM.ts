@@ -33,7 +33,7 @@ export default function useEVM() {
   const { connectAsync, connectors } = useConnect();
   const { switchChainAsync } = useSwitchChain();
   const { writeContractAsync } = useWriteContract();
-  const { disconnect } = useDisconnect();
+  const { disconnectAsync } = useDisconnect();
   const accountInfo = useAccount();
 
   const [isConnected, setIsConnected] = useState(false);
@@ -148,7 +148,7 @@ export default function useEVM() {
       connectors,
       getBalance: onGetBalance,
       connect: connectAsync,
-      disconnect: disconnect,
+      disconnect: disconnectAsync,
       getAccountInfo: () => accountInfo,
       signMessage,
       sendTransaction,
@@ -157,7 +157,7 @@ export default function useEVM() {
     accountInfo,
     connectAsync,
     connectors,
-    disconnect,
+    disconnectAsync,
     isConnected,
     onGetBalance,
     sendTransaction,

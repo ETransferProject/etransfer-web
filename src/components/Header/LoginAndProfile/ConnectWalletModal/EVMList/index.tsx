@@ -63,7 +63,7 @@ export default function EVMWalletList() {
 
       const _account = account || '';
       // disconnect wallet
-      disconnect();
+      await disconnect();
 
       afterDisconnect(_account, WalletTypeEnum.EVM);
     },
