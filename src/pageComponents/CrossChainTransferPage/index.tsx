@@ -133,7 +133,7 @@ export default function CrossChainTransferPage() {
     (currentFormValidateData: typeof formValidateData, _isUseRecipientAddress: boolean) => {
       const isValueUndefined = (value: unknown) => value === undefined || value === '';
       const isDisabled =
-        !transferInfo?.transactionFee ||
+        isValueUndefined(receiveAmount) ||
         currentFormValidateData[TransferFormKeys.RECIPIENT].validateStatus ===
           TransferValidateStatus.Error ||
         currentFormValidateData[TransferFormKeys.AMOUNT].validateStatus ===
@@ -142,7 +142,7 @@ export default function CrossChainTransferPage() {
         isValueUndefined(form.getFieldValue(TransferFormKeys.AMOUNT));
       setIsSubmitDisabled(isDisabled);
     },
-    [form, getRecipientAddressInput, transferInfo?.transactionFee],
+    [form, getRecipientAddressInput, receiveAmount],
   );
 
   const handleFormValidateDataChange = useCallback(
@@ -439,31 +439,37 @@ export default function CrossChainTransferPage() {
     }
   }, [form, getRecipientAddressInput, handleFormValidateDataChange]);
 
+  const judgeAmountValidateStatus = useCallback(() => {
+    if (
+      amount &&
+      ((balance && ZERO.plus(amount).gt(balance)) ||
+        (minAmount && ZERO.plus(amount).lt(minAmount)) ||
+        (transferInfo.remainingLimit && ZERO.plus(amount).gt(transferInfo.remainingLimit)))
+    ) {
+      handleFormValidateDataChange({
+        [TransferFormKeys.AMOUNT]: {
+          validateStatus: TransferValidateStatus.Error,
+          errorMessage: '',
+        },
+      });
+    } else {
+      handleFormValidateDataChange({
+        [TransferFormKeys.AMOUNT]: {
+          validateStatus: TransferValidateStatus.Normal,
+          errorMessage: '',
+        },
+      });
+    }
+  }, [amount, balance, handleFormValidateDataChange, minAmount, transferInfo.remainingLimit]);
+
+  useEffect(() => {
+    judgeAmountValidateStatus();
+  }, [judgeAmountValidateStatus]);
+
   const handleAmountChange = useCallback(
     (value: string) => {
       setAmount(value);
       amountRef.current = value;
-
-      if (
-        value &&
-        ((balance && ZERO.plus(value).gt(balance)) ||
-          (minAmount && ZERO.plus(value).lt(minAmount)) ||
-          (transferInfo.remainingLimit && ZERO.plus(value).gt(transferInfo.remainingLimit)))
-      ) {
-        handleFormValidateDataChange({
-          [TransferFormKeys.AMOUNT]: {
-            validateStatus: TransferValidateStatus.Error,
-            errorMessage: '',
-          },
-        });
-      } else {
-        handleFormValidateDataChange({
-          [TransferFormKeys.AMOUNT]: {
-            validateStatus: TransferValidateStatus.Normal,
-            errorMessage: '',
-          },
-        });
-      }
 
       const _amountUsd = BigNumber(amountPriceUsd)
         .times(BigNumber(Number(value)))
@@ -471,7 +477,7 @@ export default function CrossChainTransferPage() {
 
       setAmountUSD(_amountUsd);
     },
-    [amountPriceUsd, balance, handleFormValidateDataChange, minAmount, transferInfo.remainingLimit],
+    [amountPriceUsd],
   );
 
   useEffect(() => {
