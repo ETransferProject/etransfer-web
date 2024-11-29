@@ -152,6 +152,7 @@ export default function useTON() {
   const disconnectRef = useRef<NodeJS.Timeout>();
 
   const tonContext = useMemo(() => {
+    console.log('>>>>>> tonConnectUI', tonConnectUI);
     return {
       isConnected: tonConnectUI.connected,
       walletType: WalletTypeEnum.TON,
