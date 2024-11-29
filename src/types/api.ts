@@ -204,6 +204,7 @@ export interface TGetRecordsListRequest {
   maxResultCount: number;
   search?: string | undefined;
   addressList?: string[];
+  sorting?: string; // eg: sorting = 'createTime desc'
 }
 
 export type TRecordsListItem = {
