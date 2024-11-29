@@ -3,7 +3,6 @@ import { QuestionMarkIcon } from 'assets/images';
 import clsx from 'clsx';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
 import { REMAINING_TRANSFER_QUOTA_TOOLTIP } from 'constants/crossChainTransfer';
-import RemainingTip from '../RemainingTip';
 import BigNumber from 'bignumber.js';
 import { useMemo } from 'react';
 import CommonTooltip from 'components/CommonTooltip';
@@ -45,7 +44,6 @@ export default function RemainingLimit({
         ) : (
           DEFAULT_NULL_VALUE
         )}
-        <RemainingTip title="24-Hour Limit" content={REMAINING_TRANSFER_QUOTA_TOOLTIP} />
       </span>
     );
   }, [limitCurrency, remainingLimit, totalLimit]);

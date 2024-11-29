@@ -30,7 +30,7 @@ export const USER_REJECT_CONNECT_WALLET_TIP = 'User rejected the request';
 export const WALLET_TYPE_TEXT = {
   [WalletTypeEnum.EVM]: 'EVM',
   [WalletTypeEnum.SOL]: 'Solana',
-  [WalletTypeEnum.TON]: 'TON',
-  [WalletTypeEnum.TRON]: 'TRON',
+  [WalletTypeEnum.TON]: 'Ton',
+  [WalletTypeEnum.TRON]: 'Tron',
   [WalletTypeEnum.AELF]: 'aelf',
 };

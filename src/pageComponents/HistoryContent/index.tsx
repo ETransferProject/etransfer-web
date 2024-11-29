@@ -15,7 +15,7 @@ import {
 import { useDebounceCallback } from 'hooks/debounce';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { TRecordsRequestType, TRecordsRequestStatus } from 'types/records';
-import { TRecordsListItem } from 'types/api';
+import { TGetRecordsListRequest, TRecordsListItem } from 'types/api';
 import moment from 'moment';
 import myEvents from 'utils/myEvent';
 import { sleep } from '@portkey/utils';
@@ -69,16 +69,19 @@ export default function Content() {
         const endTimestamp = endTimestampFormat ? moment(endTimestampFormat).valueOf() : null;
 
         const connectedAccountList = getAllConnectedWalletAccount();
-        const { items: recordsListRes, totalCount } = await getRecordsList({
+        const params: TGetRecordsListRequest = {
           type,
           status,
-          startTimestamp: startTimestamp,
-          endTimestamp: endTimestamp,
+          startTimestamp,
+          endTimestamp,
           skipCount: (skipCount - 1) * maxResultCount,
           maxResultCount,
           addressList: connectedAccountList.accountList,
-          sorting: 'createTime desc',
-        });
+        };
+        if (type === TRecordsRequestType.Transfer) {
+          params.sorting = 'createTime desc';
+        }
+        const { items: recordsListRes, totalCount } = await getRecordsList(params);
         if (isPadPX) {
           let mobileRecordsList = [...recordsList, ...recordsListRes];
           mobileRecordsList = mobileRecordsList.reduce((result: TRecordsListItem[], item) => {

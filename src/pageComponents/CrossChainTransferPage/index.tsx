@@ -133,6 +133,7 @@ export default function CrossChainTransferPage() {
     (currentFormValidateData: typeof formValidateData, _isUseRecipientAddress: boolean) => {
       const isValueUndefined = (value: unknown) => value === undefined || value === '';
       const isDisabled =
+        !transferInfo?.transactionFee ||
         currentFormValidateData[TransferFormKeys.RECIPIENT].validateStatus ===
           TransferValidateStatus.Error ||
         currentFormValidateData[TransferFormKeys.AMOUNT].validateStatus ===
@@ -141,7 +142,7 @@ export default function CrossChainTransferPage() {
         isValueUndefined(form.getFieldValue(TransferFormKeys.AMOUNT));
       setIsSubmitDisabled(isDisabled);
     },
-    [form, getRecipientAddressInput],
+    [form, getRecipientAddressInput, transferInfo?.transactionFee],
   );
 
   const handleFormValidateDataChange = useCallback(
@@ -689,7 +690,7 @@ export default function CrossChainTransferPage() {
     }
     getTransactionFeeTimerRef.current = setInterval(async () => {
       if (new Date().getTime() > transferInfo.expiredTimestamp && fromNetworkRef.current?.network) {
-        await getTransferDataRef.current();
+        await getTransferDataRef.current(amount);
       }
     }, 10000);
     return () => {
@@ -697,7 +698,7 @@ export default function CrossChainTransferPage() {
         clearInterval(getTransactionFeeTimerRef.current);
       }
     };
-  }, [transferInfo.expiredTimestamp, getTransferData]);
+  }, [transferInfo.expiredTimestamp, getTransferData, amount]);
 
   // If fromWallet.account changed, update transferInfo data.
   useEffect(() => {
