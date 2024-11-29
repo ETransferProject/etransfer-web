@@ -356,7 +356,7 @@ export default function CrossChainTransferFooter({
             toAddress: orderResultRef.current.address,
             tokenAbi: EVM_TOKEN_ABI,
             amount: amount,
-            decimals: Number(decimalsFromWallet), // TODO
+            decimals: Number(decimalsFromWallet),
           } as SendEVMTransactionParams;
         } else if (fromWallet.walletType === WalletTypeEnum.SOL) {
           params = {

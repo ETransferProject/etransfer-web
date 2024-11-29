@@ -56,9 +56,6 @@ export default function AelfWalletList() {
       }
       myEvents.LogoutSuccess.emit();
       console.warn('>>>>>> logout');
-      // stop notice socket
-      // TODO
-      // unsubscribeUserOrderRecord(account || '');
     });
   }, [clearStore, disconnect, dispatch, fromWalletType, toWalletType]);
 

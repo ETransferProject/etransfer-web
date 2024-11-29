@@ -193,9 +193,6 @@ export default function CrossChainTransferPage() {
 
         const res = await getTransferInfo(params);
         transferInfoRef.current = res.transferInfo;
-        // setEVMTokenContractAddressRef.current = isEVMChain(_fromNetworkKey)
-        //   ? (res.transferInfo.contractAddress as `0x${string}`)
-        //   : '0x';
 
         setTransferInfo({
           ...res.transferInfo,
@@ -367,10 +364,6 @@ export default function CrossChainTransferPage() {
         } else {
           dispatch(setToWalletType(undefined));
         }
-      } else {
-        // TODO
-        // dispatch(setFromNetwork(undefined));
-        // dispatch(setToNetwork(undefined));
       }
     } catch (error: any) {
       console.log('getNetworkData error', error);
@@ -508,7 +501,6 @@ export default function CrossChainTransferPage() {
         tokenSymbolRef.current = newSymbol;
         form.setFieldValue(TransferFormKeys.AMOUNT, '');
         handleAmountChange('');
-        // handleAmountValidate(); // TODO
         resetRecipientAndComment();
 
         await getTransferDataRef.current('');
@@ -537,7 +529,6 @@ export default function CrossChainTransferPage() {
       try {
         form.setFieldValue(TransferFormKeys.AMOUNT, '');
         handleAmountChange('');
-        // handleAmountValidate(); // TODO
 
         currentTokenRef.current = item;
         tokenSymbolRef.current = item.symbol;
@@ -559,8 +550,6 @@ export default function CrossChainTransferPage() {
 
   const handleAmountBlur = useCallback(async () => {
     try {
-      // TODO
-      // if (handleAmountValidate()) {
       await getTransferDataRef.current(amount);
 
       // update amount usd display

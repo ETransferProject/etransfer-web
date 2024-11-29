@@ -46,6 +46,10 @@ export function useGetAllConnectedWalletAccount() {
     myEvents.HistoryActive.emit();
   }, [aelfAccount, evmAccount, solanaAccount, tonAccount, tronAccount]);
 
+  useEffect(() => {
+    myEvents.LoginSuccess.emit();
+  }, [aelfAccount]);
+
   return useCallback(() => {
     const accountList: string[] = [];
     const accountListWithWalletType: TOrderRecordsNoticeRequestAddressItem[] = [];
