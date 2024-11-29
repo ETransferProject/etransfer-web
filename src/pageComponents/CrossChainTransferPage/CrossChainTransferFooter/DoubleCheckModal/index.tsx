@@ -61,7 +61,7 @@ export default function DoubleCheckModal({
         <div className={styles['divider']} />
         <div className={clsx('flex-column', styles['detail-wrapper'])}>
           <div className={styles['detail-row']}>
-            <div className={styles['label']}>Transfer Address</div>
+            <div className={styles['label']}>Receiving Address</div>
             <div className={styles['value']}>{toAddress || DEFAULT_NULL_VALUE}</div>
           </div>
           {memo && (
