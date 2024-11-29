@@ -179,8 +179,12 @@ export default function CrossChainTransferPage() {
           symbol: _symbol,
         };
         if (amount) params.amount = amount;
-        if (fromWallet?.account) params.fromAddress = fromWallet?.account;
-        if (fromWallet?.walletType) params.sourceType = getWalletSourceType(fromWallet?.walletType);
+
+        // Check from wallet type is reasonable.
+        if (computeWalletType(_fromNetworkKey) === fromWallet?.walletType) {
+          params.sourceType = getWalletSourceType(fromWallet?.walletType);
+          if (fromWallet?.account) params.fromAddress = fromWallet?.account;
+        }
 
         // Used to check whether the recipient address is reasonable.
         const _toAddress = isUseRecipientAddress ? getRecipientAddressInput() : '';
