@@ -15,6 +15,7 @@ import { useCallback, useMemo } from 'react';
 import { SingleMessage } from '@etransfer/ui-react';
 import { handleErrorMessage } from '@etransfer/utils';
 import { USER_REJECT_CONNECT_WALLET_TIP } from 'constants/wallet';
+import { devices } from '@portkey/utils';
 
 export default function SolanaProvider({ children }: { children: React.ReactNode }) {
   const network = WalletAdapterNetwork.Mainnet;
@@ -31,7 +32,10 @@ export default function SolanaProvider({ children }: { children: React.ReactNode
 
   const onError = useCallback((error: WalletError) => {
     if (error instanceof WalletConnectionError) {
-      SingleMessage.error(handleErrorMessage(USER_REJECT_CONNECT_WALLET_TIP));
+      const isMobile = devices.isMobileDevices();
+      if (!isMobile) {
+        SingleMessage.error(handleErrorMessage(USER_REJECT_CONNECT_WALLET_TIP));
+      }
     }
   }, []);
 
