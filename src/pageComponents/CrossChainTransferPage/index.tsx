@@ -596,6 +596,7 @@ export default function CrossChainTransferPage() {
 
         form.setFieldValue(TransferFormKeys.AMOUNT, _maxInput);
         handleAmountChange(_maxInput);
+        await getTransferDataRef.current(_maxInput);
       } catch (error) {
         console.log('handleClickMax error', error);
         // SingleMessage.error(handleErrorMessage(error));
@@ -605,6 +606,7 @@ export default function CrossChainTransferPage() {
     } else {
       form.setFieldValue(TransferFormKeys.AMOUNT, balance);
       handleAmountChange(balance);
+      await getTransferDataRef.current(balance);
     }
   }, [
     balance,
