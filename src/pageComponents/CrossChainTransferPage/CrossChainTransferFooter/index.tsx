@@ -43,6 +43,7 @@ import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletM
 import { computeWalletType, getConnectWalletText } from 'utils/wallet';
 import { TransferFormKeys, TransferValidateStatus, TTransferFormValidateData } from '../types';
 import { formatSymbolDisplay } from 'utils/format';
+import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
 
 export interface CrossChainTransferFooterProps {
   className?: string;
@@ -309,8 +310,10 @@ export default function CrossChainTransferFooter({
           toNetwork: toNetwork?.network,
           fromSymbol: tokenSymbol,
           toSymbol: tokenSymbol,
-          fromAddress: fromWallet?.account,
-          toAddress,
+          fromAddress: isDIDAddressSuffix(fromWallet?.account)
+            ? removeELFAddressSuffix(fromWallet?.account)
+            : fromWallet?.account,
+          toAddress: isDIDAddressSuffix(toAddress) ? removeELFAddressSuffix(toAddress) : toAddress,
         };
 
         try {
