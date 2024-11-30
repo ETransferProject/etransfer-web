@@ -14,6 +14,7 @@ import CommonDrawer from 'components/CommonDrawer';
 import TransferDetail from './TransferDetail';
 import { useRouter } from 'next/navigation';
 import { INFO_PAGE_TITLE } from 'constants/infoDashboard';
+import { LocalStorageKey } from 'constants/localStorage';
 
 export default function InfoPage() {
   const dispatch = useAppDispatch();
@@ -37,6 +38,15 @@ export default function InfoPage() {
     setIsShowDetailDrawer(false);
   }, []);
 
+  const [hasTransferDashboard, setHasTransferDashboard] = useState(false);
+  const showTransferDashboard = useCallback(() => {
+    const isSHowTransferDashboard = localStorage.getItem(
+      LocalStorageKey.TRANSFER_DASHBOARD_DISPLAY,
+    );
+
+    setHasTransferDashboard(isSHowTransferDashboard === 'show');
+  }, []);
+
   const router = useRouter();
   useEffect(() => {
     if (isShowDetailDrawer) {
@@ -48,6 +58,7 @@ export default function InfoPage() {
 
   useEffectOnce(() => {
     dispatch(setActiveMenuKey(SideMenuKey.Info));
+    showTransferDashboard();
 
     const { remove: removeShow } =
       myEvents.ShowWebTransferDashboardDetailPage.addListener(handleShowDetail);
@@ -70,7 +81,8 @@ export default function InfoPage() {
         <CommonSpace direction={'vertical'} size={isPadPX ? 40 : 64} />
         <TokenDashboard />
         <CommonSpace direction={'vertical'} size={isPadPX ? 40 : 64} />
-        <TransferDashboard />
+
+        {hasTransferDashboard && <TransferDashboard />}
       </div>
 
       {!isPadPX ? (
