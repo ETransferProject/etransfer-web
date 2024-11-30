@@ -122,6 +122,7 @@ export default function CrossChainTransferForm({
   const handleFromNetworkChange = useCallback(
     async (item: TNetworkItem, newToNetwork?: TNetworkItem) => {
       dispatch(setFromNetwork(item));
+      fromNetworkRef.current = item;
 
       const _fromWalletType = computeWalletType(item.network);
       if (_fromWalletType) {
@@ -145,6 +146,7 @@ export default function CrossChainTransferForm({
         dispatch(setToNetwork(toNetworkList[0]));
         toNetworkNew = toNetworkList[0];
       }
+      toNetworkRef.current = toNetworkNew;
 
       // set to wallet logic
       const _toWalletType = computeWalletType(toNetworkNew.network);
@@ -179,6 +181,7 @@ export default function CrossChainTransferForm({
   const handleToNetworkChange = useCallback(
     async (item: TNetworkItem) => {
       dispatch(setToNetwork(item));
+      toNetworkRef.current = item;
 
       // set to wallet logic
       const _toWalletType = computeWalletType(item.network);
@@ -244,8 +247,8 @@ export default function CrossChainTransferForm({
     // check toNetwork and token
     await handleFromNetworkChange(_toNetwork, _fromNetwork);
     // check toNetwork and token
-    await handleToNetworkChange(_fromNetwork);
-  }, [dispatch, handleFromNetworkChange, handleToNetworkChange]);
+    // await handleToNetworkChange(_fromNetwork);
+  }, [dispatch, handleFromNetworkChange]);
 
   return (
     <Form
