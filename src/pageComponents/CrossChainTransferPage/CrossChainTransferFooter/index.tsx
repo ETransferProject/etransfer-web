@@ -102,12 +102,6 @@ export default function CrossChainTransferFooter({
   const [firstTxnHash, setFirstTxnHash] = useState('');
   const firstTxnHashRef = useRef('');
 
-  // const currentToken = useMemo(() => {
-  //   const item = totalTokenList?.find((item) => item.symbol === tokenSymbol);
-  //   return item?.symbol ? item : InitialCrossChainTransferState.tokenList[0];
-  // }, [tokenSymbol, totalTokenList]);
-  // const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
-
   const [connectWalletModalProps, setConnectWalletModalProps] = useState<
     Omit<Parameters<typeof ConnectWalletModal>[0], 'onCancel'>
   >({

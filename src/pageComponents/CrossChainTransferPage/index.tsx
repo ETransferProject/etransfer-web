@@ -63,12 +63,13 @@ import BigNumber from 'bignumber.js';
 import { computeWalletType, getWalletSourceType, isAelfChain, isTONChain } from 'utils/wallet';
 import { checkIsEnoughAllowance } from 'utils/contract';
 import { APPROVE_ELF_FEE } from 'constants/withdraw';
-import { SupportedELFChainId } from 'constants/index';
+import { ADDRESS_MAP, SupportedELFChainId } from 'constants/index';
 import { useUpdateBalance } from 'hooks/wallet/useUpdateBalance';
 import { useGetAuthTokenFromStorage } from 'hooks/wallet/authToken';
 import { CommonErrorNameType } from 'api/types';
 import { BlockchainNetworkType } from 'constants/network';
 import { isHtmlError } from 'utils/api/error';
+import { ContractType } from 'constants/chain';
 
 export default function CrossChainTransferPage() {
   const dispatch = useAppDispatch();
@@ -572,11 +573,12 @@ export default function CrossChainTransferPage() {
         let _maxInput = balance;
         const aelfFee = transferInfoRef.current?.aelfTransactionFee;
         if (_maxInput && aelfFee && ZERO.plus(aelfFee).gt(0)) {
+          const _chainId = fromNetwork?.network as SupportedELFChainId;
           const isEnoughAllowance = await checkIsEnoughAllowance({
-            chainId: fromNetwork?.network as SupportedELFChainId,
+            chainId: _chainId,
             symbol: tokenSymbol,
             address: fromWallet?.account || '',
-            approveTargetAddress: currentToken.contractAddress,
+            approveTargetAddress: ADDRESS_MAP[_chainId]?.[ContractType.ETRANSFER],
             amount: _maxInput,
           });
           console.log(
@@ -584,10 +586,10 @@ export default function CrossChainTransferPage() {
             isEnoughAllowance,
             JSON.parse(
               JSON.stringify({
-                chainId: fromNetwork?.network as SupportedELFChainId,
+                chainId: _chainId,
                 symbol: tokenSymbol,
                 address: fromWallet?.account || '',
-                approveTargetAddress: currentToken.contractAddress,
+                approveTargetAddress: ADDRESS_MAP[_chainId]?.[ContractType.ETRANSFER],
                 amount: _maxInput,
               }),
             ),
@@ -617,7 +619,6 @@ export default function CrossChainTransferPage() {
     }
   }, [
     balance,
-    currentToken.contractAddress,
     form,
     fromNetwork?.network,
     fromWallet?.account,
