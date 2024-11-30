@@ -17,6 +17,7 @@ import { SingleMessage } from '@etransfer/ui-react';
 import { ExtraInfoForDiscover, WalletInfo } from 'types/wallet';
 import useAelf from './useAelf';
 import { getAuthPlainText } from 'utils/auth';
+import { zeroFill } from '@portkey/utils';
 
 export function useAelfAuthToken() {
   const { account, disconnect, connector, isConnected, signMessage, walletInfo } = useAelf();
@@ -47,8 +48,8 @@ export function useAelfAuthToken() {
           payload: { hexData: plainTextHex },
         });
         const signInfo = [
-          sin.r.toString('hex', 32),
-          sin.s.toString('hex', 32),
+          zeroFill(sin.r),
+          zeroFill(sin.s),
           `0${sin.recoveryParam.toString()}`,
         ].join('');
         signResult = {

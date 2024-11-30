@@ -92,7 +92,7 @@ export default function useTON() {
       amount,
       decimals,
       orderId,
-      forwardTonAmount = '0.00000001',
+      forwardTonAmount = '0.01',
     }: SendTONTransactionParams) => {
       if (!address) return;
       const jettonMinter = getTONJettonMinter(tokenContractAddress);
