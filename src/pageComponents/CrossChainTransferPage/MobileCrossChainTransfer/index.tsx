@@ -6,7 +6,6 @@ import clsx from 'clsx';
 import FAQ from 'components/FAQ';
 import { FAQ_CROSS_CHAIN_TRANSFER } from 'constants/footer';
 import { useCommonState, useCrossChainTransfer, useRecordsState } from 'store/Provider/hooks';
-import { useWallet } from 'context/Wallet';
 import { ProcessingTip } from 'components/Tips/ProcessingTip';
 import { TCrossChainTransferInfo } from 'types/api';
 import { CROSS_CHAIN_TRANSFER_PAGE_TITLE } from 'constants/crossChainTransfer';
@@ -56,7 +55,6 @@ export default function MobileCrossChainTransfer({
   clickSuccessOk,
 }: MobileCrossChainTransferProps) {
   const { isPadPX, isMobilePX } = useCommonState();
-  const [{ fromWallet }] = useWallet();
   const { depositProcessingCount, transferProcessingCount } = useRecordsState();
   const { tokenSymbol } = useCrossChainTransfer();
 
@@ -134,15 +132,13 @@ export default function MobileCrossChainTransfer({
 
   return (
     <>
-      {fromWallet?.isConnected && (
-        <ProcessingTip
-          depositProcessingCount={depositProcessingCount}
-          transferProcessingCount={transferProcessingCount}
-          marginBottom={0}
-          borderRadius={0}
-          onClick={onClickProcessingTip}
-        />
-      )}
+      <ProcessingTip
+        depositProcessingCount={depositProcessingCount}
+        transferProcessingCount={transferProcessingCount}
+        marginBottom={0}
+        borderRadius={0}
+        onClick={onClickProcessingTip}
+      />
       <div className="main-content-container main-content-container-safe-area">
         {renderDepositMainContent}
 

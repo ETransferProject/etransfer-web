@@ -1,7 +1,6 @@
 import styles from '../styles.module.scss';
 import clsx from 'clsx';
 import { CONNECT_AELF_LIST_CONFIG } from 'constants/wallet/aelf';
-import { useAelfAuthToken } from 'hooks/wallet/aelfAuthToken';
 import useAelf from 'hooks/wallet/useAelf';
 import { useCallback, useState } from 'react';
 import { SingleMessage } from '@etransfer/ui-react';
@@ -15,47 +14,50 @@ import Address from './Address';
 import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { WalletTypeEnum } from 'context/Wallet/types';
 import { TelegramPlatform } from 'utils/telegram';
+import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
+import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
+import { useSetWalletType } from 'hooks/crossChainTransfer';
 // import PartialLoading from 'components/PartialLoading';
 
-export default function AelfWalletList({
-  onSelected,
-}: {
-  onSelected?: (walletType: WalletTypeEnum) => void;
-}) {
+export default function AelfWalletList() {
+  const dispatch = useAppDispatch();
   const { connect, disconnect, isConnected, connector } = useAelf();
-  const { getAuth } = useAelfAuthToken();
+  const { fromWalletType, toWalletType } = useCrossChainTransfer();
+  const setWalletType = useSetWalletType();
   const [dynamicArrowExpand, setDynamicArrowExpand] = useState(false);
   const clearStore = useClearStore();
   // const [isConnectLoading, setIsConnectLoading] = useState(false);
 
   const handleLogin = useCallback(async () => {
     try {
-      if (isConnected) {
-        await getAuth();
-      }
       if (!isConnected) {
         // setIsConnectLoading(true);
         await connect();
-        onSelected?.(WalletTypeEnum.AELF);
+        setWalletType(WalletTypeEnum.AELF);
         // setIsConnectLoading(false);
       }
+      setWalletType(WalletTypeEnum.AELF);
     } catch (error) {
       // setIsConnectLoading(false);
       SingleMessage.error(handleWebLoginErrorMessage(error));
     }
-  }, [connect, getAuth, isConnected, onSelected]);
+  }, [connect, isConnected, setWalletType]);
 
   const onDisconnect = useCallback(() => {
     Promise.resolve(disconnect()).then(() => {
       clearStore();
       service.defaults.headers.common['Authorization'] = '';
+      // unbind wallet
+      if (fromWalletType === WalletTypeEnum.AELF) {
+        dispatch(setFromWalletType(undefined));
+      }
+      if (toWalletType === WalletTypeEnum.AELF) {
+        dispatch(setToWalletType(undefined));
+      }
       myEvents.LogoutSuccess.emit();
       console.warn('>>>>>> logout');
-      // stop notice socket
-      // TODO
-      // unsubscribeUserOrderRecord(account || '');
     });
-  }, [clearStore, disconnect]);
+  }, [clearStore, disconnect, dispatch, fromWalletType, toWalletType]);
 
   const onViewDetail = useCallback(
     (event: any) => {

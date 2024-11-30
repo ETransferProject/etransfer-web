@@ -6,7 +6,6 @@ import clsx from 'clsx';
 import FAQ from 'components/FAQ';
 import { FAQ_CROSS_CHAIN_TRANSFER } from 'constants/footer';
 import { ProcessingTip } from 'components/Tips/ProcessingTip';
-import { useWallet } from 'context/Wallet';
 import { useCrossChainTransfer, useRecordsState } from 'store/Provider/hooks';
 import { TCrossChainTransferInfo } from 'types/api';
 import { CROSS_CHAIN_TRANSFER_PAGE_TITLE } from 'constants/crossChainTransfer';
@@ -55,7 +54,6 @@ export default function WebCrossChainTransfer({
   clickSuccessOk,
   clickFailedOk,
 }: WebCrossChainTransferProps) {
-  const [{ fromWallet }] = useWallet();
   const { depositProcessingCount, transferProcessingCount } = useRecordsState();
   const { tokenSymbol } = useCrossChainTransfer();
 
@@ -67,15 +65,12 @@ export default function WebCrossChainTransfer({
           'main-content-container-safe-area',
           styles['main-content'],
         )}>
-        {fromWallet?.isConnected && (
-          <ProcessingTip
-            depositProcessingCount={depositProcessingCount}
-            transferProcessingCount={transferProcessingCount}
-            onClick={onClickProcessingTip}
-          />
-        )}
-
-        <div className={styles['transfer-title']}>{CROSS_CHAIN_TRANSFER_PAGE_TITLE}</div>
+        <ProcessingTip
+          depositProcessingCount={depositProcessingCount}
+          transferProcessingCount={transferProcessingCount}
+          onClick={onClickProcessingTip}
+        />
+        <div className="main-section-header">{CROSS_CHAIN_TRANSFER_PAGE_TITLE}</div>
 
         <CrossChainTransferForm
           form={form}
@@ -127,7 +122,6 @@ export default function WebCrossChainTransfer({
     depositProcessingCount,
     form,
     formValidateData,
-    fromWallet?.isConnected,
     isSubmitDisabled,
     isTransactionFeeLoading,
     isUseRecipientAddress,
@@ -155,7 +149,6 @@ export default function WebCrossChainTransfer({
         <div className={styles['main-wrapper']}>{renderDepositMainContent}</div>
       </div>
       <div className={clsx('flex-row', styles['faq-wrapper'])}>
-        <div className={styles['faq-left']}></div>
         <FAQ
           className={styles['faq']}
           title={FAQ_CROSS_CHAIN_TRANSFER.title}

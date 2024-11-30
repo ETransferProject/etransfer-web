@@ -1,5 +1,7 @@
 import { TokensDashboardType } from 'types/api';
 
+export const INFO_PAGE_TITLE = 'Overview';
+
 export enum InfoBusinessTypeLabel {
   ALL = 'All',
   Deposit = 'Deposit',

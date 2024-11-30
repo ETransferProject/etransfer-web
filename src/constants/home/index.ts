@@ -1,4 +1,4 @@
-import { Deposit, Withdraw, Records, InfoDashboard } from 'assets/images';
+import { Deposit, Records, InfoDashboard, Transfer } from 'assets/images';
 
 // SideMenuKey must bind BusinessType
 export enum SideMenuKey {
@@ -11,7 +11,7 @@ export enum SideMenuKey {
 
 export const MENU_ITEMS = [
   {
-    icon: Withdraw,
+    icon: Transfer,
     key: SideMenuKey.CrossChainTransfer,
     label: SideMenuKey.CrossChainTransfer,
     pathname: '/cross-chain-transfer',

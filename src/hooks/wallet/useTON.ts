@@ -159,7 +159,9 @@ export default function useTON() {
       connector: tonConnectUI.connector,
       provider: wallet?.provider,
       connect: async (name: string) => await tonConnectUI.openSingleWalletModal(name),
-      disconnect: (tonConnectUI.connector as any)?.provider?.injectedWallet?.disconnect,
+      disconnect: () => {
+        tonConnectUI.disconnect();
+      },
       getAccountInfo: () => tonConnectUI.account,
       getBalance,
       signMessage,

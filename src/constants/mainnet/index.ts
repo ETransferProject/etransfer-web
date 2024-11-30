@@ -72,9 +72,7 @@ export const AELF_NODES = {
 
 export const ETransferHost = 'https://app.etransfer.exchange';
 export const ETransferAuthHost = 'https://app.etransfer.exchange';
-export const WebLoginGraphqlUrl =
-  'https://dapp-aa-portkey.portkey.finance/aefinder-v2/api/app/graphql/portkey';
-// 'https://dapp-aa-portkey.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql';
+export const WebLoginGraphqlUrl = 'https://indexer-api.aefinder.io/api/app/graphql/portkey';
 export const WebLoginServiceUrl = 'https://aa-portkey.portkey.finance';
 export const WebLoginConnectUrl = 'https://auth-aa-portkey.portkey.finance';
 

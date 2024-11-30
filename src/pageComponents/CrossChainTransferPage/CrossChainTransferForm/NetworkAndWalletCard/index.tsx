@@ -1,17 +1,17 @@
 import { useCallback, useMemo, useState } from 'react';
 import styles from './styles.module.scss';
 import { useWallet } from 'context/Wallet';
-import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
-import { computeWalletType, isAelfChain } from 'utils/wallet';
-import { CONNECT_AELF_WALLET, CONNECT_WALLET } from 'constants/wallet';
-import { IConnector, WalletTypeEnum } from 'context/Wallet/types';
+import { useCrossChainTransfer } from 'store/Provider/hooks';
+import { computeWalletType, getConnectWalletText, isAelfChain } from 'utils/wallet';
+import { WalletTypeEnum } from 'context/Wallet/types';
 import { getWalletLogo } from 'utils/wallet';
 import NetworkSelected from '../NetworkSelected';
 import { TNetworkItem } from 'types/api';
 import clsx from 'clsx';
 import { getOmittedStr } from 'utils/calculate';
 import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
-import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
+import { useGetAccount } from 'hooks/wallet/useAelf';
+import { MY_WALLET } from 'constants/wallet';
 
 export interface NetworkAndWalletCardProps {
   className?: string;
@@ -26,12 +26,12 @@ export function NetworkAndWalletCard({
   cardType,
   onSelectNetworkCallback,
 }: NetworkAndWalletCardProps) {
-  const dispatch = useAppDispatch();
+  const accounts = useGetAccount();
   const [{ fromWallet, toWallet }] = useWallet();
   const { fromNetwork, fromNetworkList, fromWalletType, toWalletType, toNetwork, toNetworkList } =
     useCrossChainTransfer();
   const [openConnectWalletModal, setOpenConnectWalletModal] = useState(false);
-  const [walletAllowList, setWalletAllowList] = useState<WalletTypeEnum[]>([]);
+  const [walletAllowList, setWalletAllowList] = useState<WalletTypeEnum[] | undefined>();
 
   const selectedNetwork = useMemo(() => {
     return cardType === 'From' ? fromNetwork : toNetwork;
@@ -54,132 +54,73 @@ export function NetworkAndWalletCard({
     setOpenConnectWalletModal(true);
   }, []);
 
-  const handleSelectWallet = useCallback(
-    (walletType: WalletTypeEnum) => {
-      if (cardType === 'From') {
-        dispatch(setFromWalletType(walletType));
-      } else {
-        dispatch(setToWalletType(walletType));
-      }
-    },
-    [cardType, dispatch],
-  );
-
-  const renderConnectWallet = useMemo(() => {
-    let connectWalletText: React.ReactNode = '';
-    let modalTitle = CONNECT_WALLET;
-
-    if (cardType === 'From') {
-      if (isAelfChain(fromNetwork?.network || '')) {
-        modalTitle = CONNECT_AELF_WALLET;
-        connectWalletText = (
-          <div
-            className={styles['connect-wallet-link']}
-            onClick={() => handleConnectWallet(fromNetwork?.network || '')}>
-            {CONNECT_AELF_WALLET}
-          </div>
-        );
-      } else {
-        modalTitle = CONNECT_WALLET;
-        connectWalletText = (
-          <div
-            className={styles['connect-wallet-link']}
-            onClick={() => handleConnectWallet(fromNetwork?.network || '')}>
-            {CONNECT_WALLET}
-          </div>
-        );
-      }
-    } else {
-      if (isAelfChain(toNetwork?.network || '')) {
-        modalTitle = CONNECT_AELF_WALLET;
-        connectWalletText = (
-          <div
-            className={styles['connect-wallet-link']}
-            onClick={() => handleConnectWallet(toNetwork?.network || '')}>
-            {CONNECT_AELF_WALLET}
-          </div>
-        );
-      } else {
-        modalTitle = CONNECT_WALLET;
-        connectWalletText = (
-          <div
-            className={styles['connect-wallet-link']}
-            onClick={() => handleConnectWallet(toNetwork?.network || '')}>
-            {CONNECT_WALLET}
-          </div>
-        );
-      }
-    }
-
-    return (
-      <div>
-        {connectWalletText}
-        <ConnectWalletModal
-          open={openConnectWalletModal}
-          title={modalTitle}
-          allowList={walletAllowList}
-          onCancel={() => setOpenConnectWalletModal(false)}
-          onSelected={handleSelectWallet}
-        />
-      </div>
-    );
-  }, [
-    cardType,
-    fromNetwork?.network,
-    handleConnectWallet,
-    handleSelectWallet,
-    openConnectWalletModal,
-    toNetwork?.network,
-    walletAllowList,
-  ]);
-
   const WalletLogo = useMemo(() => {
     if (cardType === 'From' && fromWalletType) {
-      return getWalletLogo(
-        fromWalletType,
-        fromWalletType === WalletTypeEnum.EVM ? (fromWallet?.connector as IConnector) : undefined,
-      );
+      return getWalletLogo(fromWalletType, fromWallet?.connector);
     }
 
     if (cardType === 'To' && toWalletType) {
-      return getWalletLogo(
-        toWalletType,
-        toWalletType === WalletTypeEnum.EVM ? (toWallet?.connector as IConnector) : undefined,
-      );
+      return getWalletLogo(toWalletType, toWallet?.connector);
     }
 
     return null;
   }, [cardType, fromWallet?.connector, fromWalletType, toWallet?.connector, toWalletType]);
 
   const renderWallet = useMemo(() => {
-    if (cardType === 'From') {
-      return fromWallet?.isConnected && fromWallet?.account ? (
-        <div className="flex-row-center gap-4">
-          <WalletLogo />
-          <span className={styles['wallet-account']}>
-            {getOmittedStr(fromWallet?.account, 5, 5)}
-          </span>
-        </div>
-      ) : (
-        renderConnectWallet
-      );
+    const isConnected =
+      cardType === 'From'
+        ? fromWallet?.isConnected && fromWallet?.account
+        : toWallet?.isConnected && toWallet?.account;
+    let account = (cardType === 'From' ? fromWallet?.account : toWallet?.account) || '';
+    const network = (cardType === 'From' ? fromNetwork?.network : toNetwork?.network) || '';
+    const connectWalletText = getConnectWalletText(network);
+
+    if (network && (accounts as any)?.[network]) {
+      account = (accounts as any)[network];
     }
-    return toWallet?.isConnected && toWallet?.account ? (
-      <div className="flex-row-center gap-4">
-        <WalletLogo />
-        <span className={styles['wallet-account']}>{getOmittedStr(toWallet?.account, 5, 5)}</span>
+
+    return (
+      <div>
+        {isConnected ? (
+          <div
+            className="flex-row-center gap-4 cursor-pointer"
+            onClick={() => {
+              setWalletAllowList(undefined);
+              setOpenConnectWalletModal(true);
+            }}>
+            <WalletLogo />
+            <span className={styles['wallet-account']}>
+              {isAelfChain(network) ? getOmittedStr(account, 8, 8) : getOmittedStr(account, 4, 4)}
+            </span>
+          </div>
+        ) : (
+          <div
+            className={styles['connect-wallet-link']}
+            onClick={() => handleConnectWallet(network || '')}>
+            {connectWalletText}
+          </div>
+        )}
+        <ConnectWalletModal
+          open={openConnectWalletModal}
+          title={walletAllowList?.length ? connectWalletText : MY_WALLET}
+          allowList={walletAllowList}
+          onCancel={() => setOpenConnectWalletModal(false)}
+        />
       </div>
-    ) : (
-      renderConnectWallet
     );
   }, [
     WalletLogo,
+    accounts,
     cardType,
+    fromNetwork?.network,
     fromWallet?.account,
     fromWallet?.isConnected,
-    renderConnectWallet,
+    handleConnectWallet,
+    openConnectWalletModal,
+    toNetwork?.network,
     toWallet?.account,
     toWallet?.isConnected,
+    walletAllowList,
   ]);
 
   return (

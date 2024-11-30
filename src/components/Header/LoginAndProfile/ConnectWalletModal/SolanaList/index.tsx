@@ -8,28 +8,22 @@ import { getOmittedStr } from '@etransfer/utils';
 import Copy, { CopySize } from 'components/Copy';
 import PartialLoading from 'components/PartialLoading';
 import { WalletTypeEnum } from 'context/Wallet/types';
-import { removeOneLocalJWT } from 'api/utils';
-import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
-import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
 import { TelegramPlatform } from 'utils/telegram';
 import { TelegramNotice } from '../TelegramNotice';
+import { useAfterDisconnect } from 'hooks/wallet';
+import { useSetWalletType } from 'hooks/crossChainTransfer';
 
-export default function SolanaWalletList({
-  onSelected,
-}: {
-  onSelected?: (walletType: WalletTypeEnum) => void;
-}) {
-  const dispatch = useAppDispatch();
-  const { account, connect, isConnected, isConnecting, disconnect, walletType } = useSolana();
+export default function SolanaWalletList() {
+  const { account, connect, isConnected, isConnecting, disconnect } = useSolana();
   const [isShowCopy, setIsShowCopy] = useState(false);
-  const { fromWalletType, toWalletType } = useCrossChainTransfer();
   const isTelegramPlatform = TelegramPlatform.isTelegramPlatform();
+  const setWalletType = useSetWalletType();
 
   const onConnect = useCallback(
     async (name: any) => {
       try {
         if (isConnected || isTelegramPlatform) {
-          onSelected?.(WalletTypeEnum.SOL);
+          setWalletType(WalletTypeEnum.SOL);
           return;
         }
         await connect(name);
@@ -37,33 +31,23 @@ export default function SolanaWalletList({
         console.log('>>>>>> SolanaWalletList onConnect error', error);
       }
     },
-    [connect, isConnected, isTelegramPlatform, onSelected],
+    [connect, isConnected, isTelegramPlatform, setWalletType],
   );
 
   useEffect(() => {
-    if (isConnected) onSelected?.(WalletTypeEnum.SOL);
-  }, [isConnected, onSelected]);
+    if (isConnected) setWalletType(WalletTypeEnum.SOL);
+  }, [isConnected, setWalletType]);
 
+  const afterDisconnect = useAfterDisconnect();
   const onDisconnect = useCallback(
     async (event: any) => {
       event.stopPropagation();
 
-      // disconnect wallet
+      const _account = account || '';
       await disconnect();
-
-      // clear jwt
-      const localKey = account + walletType;
-      removeOneLocalJWT(localKey);
-
-      // unbind wallet
-      if (fromWalletType === WalletTypeEnum.SOL) {
-        dispatch(setFromWalletType(undefined));
-      }
-      if (toWalletType === WalletTypeEnum.SOL) {
-        dispatch(setToWalletType(undefined));
-      }
+      afterDisconnect(_account, WalletTypeEnum.SOL);
     },
-    [account, disconnect, dispatch, fromWalletType, toWalletType, walletType],
+    [account, afterDisconnect, disconnect],
   );
 
   const renderAccount = useCallback(

@@ -3,31 +3,23 @@ import { useAppDispatch } from 'store/Provider/hooks';
 import { setIsUnreadHistory } from 'store/reducers/common/slice';
 import { getRecordStatus } from 'utils/api/records';
 import myEvents from 'utils/myEvent';
-import { eTransferInstance } from 'utils/etransferInstance';
-import { useSetAuthFromStorage } from './wallet/aelfAuthToken';
-import { sleep } from '@etransfer/utils';
-import useAelf from './wallet/useAelf';
+import { useGetAllConnectedWalletAccount } from './wallet';
 
 export const MAX_UPDATE_TIME = 6;
 
 export function useUpdateRecord() {
   const dispatch = useAppDispatch();
-  const { isConnected } = useAelf();
-  const isConnectedRef = useRef(isConnected);
-  isConnectedRef.current = isConnected;
-  const setAuthFromStorage = useSetAuthFromStorage();
+  const getAllConnectedWalletAccount = useGetAllConnectedWalletAccount();
 
   const updateRecordStatus = useCallback(async () => {
-    if (!isConnectedRef.current) return;
-    if (eTransferInstance.unauthorized) return;
-
     try {
-      const res = await getRecordStatus();
+      const { accountList } = getAllConnectedWalletAccount();
+      const res = await getRecordStatus({ addressList: accountList });
       dispatch(setIsUnreadHistory(res.status));
     } catch (error) {
       console.log('update new records error', error);
     }
-  }, [dispatch]);
+  }, [dispatch, getAllConnectedWalletAccount]);
 
   const updateTimeRef = useRef(MAX_UPDATE_TIME);
   const updateTimerRef = useRef<NodeJS.Timer | number>();
@@ -50,14 +42,10 @@ export function useUpdateRecord() {
   }, [handleSetTimer]);
 
   const init = useCallback(async () => {
-    await setAuthFromStorage();
-    await sleep(2000);
-
     updateRecordStatus();
-  }, [setAuthFromStorage, updateRecordStatus]);
+  }, [updateRecordStatus]);
 
   useEffect(() => {
-    if (!isConnected) return;
     // start 6s countdown
     resetTimer();
     // then, get one-time new record
@@ -71,5 +59,5 @@ export function useUpdateRecord() {
       clearInterval(updateTimerRef.current);
       updateTimerRef.current = undefined;
     };
-  }, [init, isConnected, resetTimer, updateRecordStatus]);
+  }, [init, resetTimer, updateRecordStatus]);
 }

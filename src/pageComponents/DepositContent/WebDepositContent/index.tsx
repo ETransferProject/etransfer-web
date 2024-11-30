@@ -331,7 +331,7 @@ export default function WebContent({
           />
         )}
 
-        <div className={styles['deposit-title']}>{DEPOSIT_PAGE_TITLE}</div>
+        <div className="main-section-header">{DEPOSIT_PAGE_TITLE}</div>
 
         {renderSelectSection}
 
@@ -393,7 +393,6 @@ export default function WebContent({
         <div className={styles['main-wrapper']}>{renderDepositMainContent}</div>
       </div>
       <div className={clsx('flex-row', styles['faq-wrapper'])}>
-        <div className={styles['faq-left']}></div>
         <FAQ className={styles['faq']} title={FAQ_DEPOSIT.title} list={FAQ_DEPOSIT.list} />
       </div>
     </div>

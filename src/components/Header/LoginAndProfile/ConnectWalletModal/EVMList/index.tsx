@@ -14,31 +14,25 @@ import Copy, { CopySize } from 'components/Copy';
 import PartialLoading from 'components/PartialLoading';
 import { SingleMessage } from '@etransfer/ui-react';
 import { WalletTypeEnum } from 'context/Wallet/types';
-import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
-import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
-import { removeOneLocalJWT } from 'api/utils';
 import { USER_REJECT_CONNECT_WALLET_TIP } from 'constants/wallet';
 import { TelegramPlatform } from 'utils/telegram';
 import { isPortkey } from 'utils/portkey';
 import { isMobileDevices } from 'utils/isMobile';
+import { useAfterDisconnect } from 'hooks/wallet';
+import { useSetWalletType } from 'hooks/crossChainTransfer';
 
-export default function EVMWalletList({
-  onSelected,
-}: {
-  onSelected?: (walletType: WalletTypeEnum) => void;
-}) {
-  const dispatch = useAppDispatch();
-  const { account, connect, connectors, connector, disconnect, isConnected, walletType } = useEVM();
+export default function EVMWalletList() {
+  const { account, connect, connectors, connector, disconnect, isConnected } = useEVM();
+  const setWalletType = useSetWalletType();
   const [isConnectLoading, setIsConnectLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [isShowCopy, setIsShowCopy] = useState(false);
-  const { fromWalletType, toWalletType } = useCrossChainTransfer();
 
   const onConnect = useCallback(
     async (id: string, index: number) => {
       try {
         if (isConnected) {
-          onSelected?.(WalletTypeEnum.EVM);
+          setWalletType(WalletTypeEnum.EVM);
           return;
         }
         const connector = connectors.find((item) => item.id === id);
@@ -47,7 +41,7 @@ export default function EVMWalletList({
         setActiveIndex(index);
         setIsConnectLoading(true);
         await connect({ connector: connector });
-        onSelected?.(WalletTypeEnum.EVM);
+        setWalletType(WalletTypeEnum.EVM);
         setIsConnectLoading(false);
       } catch (error) {
         setIsConnectLoading(false);
@@ -59,29 +53,21 @@ export default function EVMWalletList({
         }
       }
     },
-    [connect, connectors, isConnected, onSelected],
+    [connect, connectors, isConnected, setWalletType],
   );
 
+  const afterDisconnect = useAfterDisconnect();
   const onDisconnect = useCallback(
     async (event: any) => {
       event.stopPropagation();
 
+      const _account = account || '';
       // disconnect wallet
-      disconnect();
+      await disconnect();
 
-      // clear jwt
-      const localKey = account + walletType;
-      removeOneLocalJWT(localKey);
-
-      // unbind wallet
-      if (fromWalletType === WalletTypeEnum.EVM) {
-        dispatch(setFromWalletType(undefined));
-      }
-      if (toWalletType === WalletTypeEnum.EVM) {
-        dispatch(setToWalletType(undefined));
-      }
+      afterDisconnect(_account, WalletTypeEnum.EVM);
     },
-    [account, disconnect, dispatch, fromWalletType, toWalletType, walletType],
+    [account, afterDisconnect, disconnect],
   );
 
   const handleMouseEnter = useCallback((event: any) => {

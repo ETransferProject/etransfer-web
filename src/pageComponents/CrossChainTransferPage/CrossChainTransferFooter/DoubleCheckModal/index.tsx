@@ -61,7 +61,7 @@ export default function DoubleCheckModal({
         <div className={styles['divider']} />
         <div className={clsx('flex-column', styles['detail-wrapper'])}>
           <div className={styles['detail-row']}>
-            <div className={styles['label']}>Transfer Address</div>
+            <div className={styles['label']}>Receiving Address</div>
             <div className={styles['value']}>{toAddress || DEFAULT_NULL_VALUE}</div>
           </div>
           {memo && (
@@ -105,7 +105,7 @@ export default function DoubleCheckModal({
                 <span className={clsx('flex-1', styles['fee-value'])}>
                   {transferInfo.aelfTransactionFee}
                 </span>
-                &nbsp;{transferInfo.aelfTransactionUnit}
+                &nbsp;{formatSymbolDisplay(transferInfo.aelfTransactionUnit)}
               </div>
             </div>
           )}
@@ -116,7 +116,7 @@ export default function DoubleCheckModal({
                 <span className={clsx('flex-1', styles['fee-value'])}>
                   {transferInfo.transactionFee}
                 </span>
-                &nbsp;{transferInfo.transactionUnit}
+                &nbsp;{formatSymbolDisplay(transferInfo?.transactionUnit || '')}
               </div>
 
               <div className={clsx(styles['fee-usd'])}>

@@ -21,6 +21,7 @@ import {
 import { COINBASE_WALLET_ID, WALLET_CONNECT_ID } from 'constants/wallet/EVM';
 import { BlockchainNetworkType } from 'constants/network';
 import { WalletSourceType } from 'types/api';
+import { CONNECT_WALLET, WALLET_TYPE_TEXT } from 'constants/wallet';
 
 export const getManagerAddressByWallet = async (
   walletInfo: WalletInfo,
@@ -183,6 +184,15 @@ export function getWalletSourceType(walletType: WalletTypeEnum) {
       return WalletSourceType.TRX;
 
     default:
-      return undefined;
+      return WalletSourceType.Portkey;
   }
 }
+
+export const getConnectWalletText = (network?: string) => {
+  const walletType = computeWalletType(network || '');
+  const walletTypeText = WALLET_TYPE_TEXT[walletType as WalletTypeEnum];
+  if (walletTypeText) {
+    return `Connect ${walletTypeText} Wallet`;
+  }
+  return CONNECT_WALLET;
+};

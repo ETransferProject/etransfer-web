@@ -204,6 +204,7 @@ export interface TGetRecordsListRequest {
   maxResultCount: number;
   search?: string | undefined;
   addressList?: string[];
+  sorting?: string; // eg: sorting = 'createTime desc'
 }
 
 export type TRecordsListItem = {
@@ -221,6 +222,10 @@ export type TGetRecordsListResult = {
   items: TRecordsListItem[];
 };
 
+export type TGetRecordStatusRequest = {
+  addressList: string[];
+};
+
 export type TCheckEOARegistrationRequest = {
   address: string;
 };
@@ -234,6 +239,7 @@ export enum WalletSourceType {
   Solana = 'Solana',
   TRX = 'TRX',
   Ton = 'Ton',
+  Portkey = 'Portkey',
 }
 
 export type TCheckRegistrationRequest = {
@@ -312,7 +318,6 @@ export type TVolumeOverviewItem = {
 export enum TokensDashboardType {
   All,
   Deposit,
-  Withdraw,
   Transfer,
 }
 
@@ -499,8 +504,8 @@ export type TCreateTransferOrderRequest = {
 
 export type TCreateTransferOrderResult = {
   orderId: string;
-  address: string;
-  txId: string;
+  address?: string;
+  transactionId?: string;
 };
 
 export enum UpdateTransferOrderStatus {

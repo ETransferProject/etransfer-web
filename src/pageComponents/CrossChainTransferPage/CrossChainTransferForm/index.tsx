@@ -6,7 +6,12 @@ import { BlockchainNetworkType } from 'constants/network';
 import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { MEMO_REG } from 'utils/reg';
-import { formatWithCommas, parseWithCommas, parseWithStringCommas } from 'utils/format';
+import {
+  formatSymbolDisplay,
+  formatWithCommas,
+  parseWithCommas,
+  parseWithStringCommas,
+} from 'utils/format';
 import { TelegramPlatform } from 'utils/telegram';
 import { sleep } from '@etransfer/utils';
 import { devices } from '@portkey/utils';
@@ -238,7 +243,9 @@ export default function CrossChainTransferForm({
 
     // check toNetwork and token
     await handleFromNetworkChange(_toNetwork, _fromNetwork);
-  }, [dispatch, handleFromNetworkChange]);
+    // check toNetwork and token
+    await handleToNetworkChange(_fromNetwork);
+  }, [dispatch, handleFromNetworkChange, handleToNetworkChange]);
 
   return (
     <Form
@@ -254,7 +261,7 @@ export default function CrossChainTransferForm({
           onClick={handleClickSwapIcon}>
           {isShowSwap ? <SwapHorizontal /> : <ArrowRight2 />}
         </div>
-        <div className={clsx('flex-row-center gap-4', styles['network-and-wallet-card-list'])}>
+        <div className={styles['network-and-wallet-card-list']}>
           <NetworkAndWalletCard
             cardType="From"
             className={clsx('flex-1', styles['network-and-wallet-from'])}
@@ -279,7 +286,7 @@ export default function CrossChainTransferForm({
               className={styles['send-section-input-amount']}
               bordered={false}
               autoComplete="off"
-              placeholder={fromWallet?.isConnected ? `Minimum: ${minAmount}` : '0.0'}
+              placeholder={fromWallet?.isConnected ? `Min: ${minAmount}` : '0.0'}
               onInput={(event: any) => {
                 const value = event.target?.value?.trim();
                 const oldValue = form.getFieldValue(TransferFormKeys.AMOUNT);
@@ -344,7 +351,7 @@ export default function CrossChainTransferForm({
                   : '0'}
                 &nbsp;
               </span>
-              <span>{tokenSymbol}</span>
+              <span>{formatSymbolDisplay(tokenSymbol)}</span>
             </div>
             {fromWallet?.isConnected && (
               <div className={styles['send-section-max']} onClick={onClickMax}>

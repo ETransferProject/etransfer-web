@@ -15,6 +15,7 @@ import CommonLink from 'components/CommonLink';
 import { getTxExploreHref } from 'utils/common';
 import { Fingerprint } from 'assets/images';
 import { useCommonState, useCrossChainTransfer } from 'store/Provider/hooks';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 
 export interface SuccessModalProps {
   amount: string;
@@ -64,11 +65,16 @@ export default function SuccessModal({
       hideCancelButton
       okText={GOT_IT}
       footerSlot={CommonLink({
-        href: getTxExploreHref(fromNetwork?.network || '', txHash, false),
+        href: getTxExploreHref(
+          fromNetwork?.network || '',
+          txHash,
+          false,
+          fromNetwork?.network as TChainId,
+        ),
         isTagA: true,
         children: (
           <div className={clsx(styles['link-wrap'], !isPadPX && styles['linkToExplore'])}>
-            <span className={styles['link-word']}>View on aelf Explorer</span>
+            <span className={styles['link-word']}>View on Explorer</span>
             <Fingerprint className={styles['link-explore-icon']} />
           </div>
         ),

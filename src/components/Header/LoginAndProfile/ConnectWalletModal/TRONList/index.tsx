@@ -8,56 +8,41 @@ import { getOmittedStr } from '@etransfer/utils';
 import Copy, { CopySize } from 'components/Copy';
 import PartialLoading from 'components/PartialLoading';
 import { WalletTypeEnum } from 'context/Wallet/types';
-import { removeOneLocalJWT } from 'api/utils';
-import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
-import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
 import { TelegramNotice } from '../TelegramNotice';
 import { TelegramPlatform } from 'utils/telegram';
+import { useAfterDisconnect } from 'hooks/wallet';
+import { useSetWalletType } from 'hooks/crossChainTransfer';
 
-export default function TRONWalletList({
-  onSelected,
-}: {
-  onSelected?: (walletType: WalletTypeEnum) => void;
-}) {
-  const dispatch = useAppDispatch();
-  const { account, isConnected, isConnecting, walletType, connect, disconnect } = useTRON();
+export default function TRONWalletList() {
+  const { account, isConnected, isConnecting, connect, disconnect } = useTRON();
   const [isShowCopy, setIsShowCopy] = useState(false);
-  const { fromWalletType, toWalletType } = useCrossChainTransfer();
   const isTelegramPlatform = TelegramPlatform.isTelegramPlatform();
+  const setWalletType = useSetWalletType();
 
   const onConnect = useCallback(async () => {
     try {
       if (isConnected || isTelegramPlatform) {
-        onSelected?.(WalletTypeEnum.TRON);
+        setWalletType(WalletTypeEnum.TRON);
         return;
       }
       await connect();
-      onSelected?.(WalletTypeEnum.TRON);
+      setWalletType(WalletTypeEnum.TRON);
     } catch (error) {
       console.log('>>>>>> TRONWalletList onConnect error', error);
     }
-  }, [connect, isConnected, isTelegramPlatform, onSelected]);
+  }, [connect, isConnected, isTelegramPlatform, setWalletType]);
 
+  const afterDisconnect = useAfterDisconnect();
   const onDisconnect = useCallback(
     async (event: any) => {
       event.stopPropagation();
 
-      // disconnect wallet
+      const _account = account || '';
       await disconnect();
 
-      // clear jwt
-      const localKey = account + walletType;
-      removeOneLocalJWT(localKey);
-
-      // unbind wallet
-      if (fromWalletType === WalletTypeEnum.TRON) {
-        dispatch(setFromWalletType(undefined));
-      }
-      if (toWalletType === WalletTypeEnum.TRON) {
-        dispatch(setToWalletType(undefined));
-      }
+      afterDisconnect(_account, WalletTypeEnum.TRON);
     },
-    [account, disconnect, dispatch, fromWalletType, toWalletType, walletType],
+    [account, afterDisconnect, disconnect],
   );
 
   const renderAccount = useCallback(

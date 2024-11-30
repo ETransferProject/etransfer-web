@@ -29,7 +29,7 @@ export function useRouteParamType(): { type: SideMenuKey } {
     if (routeType && pathname === '/') {
       dispatch(setActiveMenuKey(routeType));
     }
-  }, [activeMenuKey, dispatch, pathname, routeType]);
+  }, [activeMenuKey, dispatch, goTransfer, pathname, routeType, searchParams]);
 
   return { type: currentActiveMenuKey };
 }
@@ -144,7 +144,7 @@ export function useCheckAllowSearch() {
             searchObject.withdrawAddress = searchParams.get('withdrawAddress');
           break;
 
-        case '/transfer':
+        case '/cross-chain-transfer':
           if (searchParams.get('fromNetwork'))
             searchObject.chainId = searchParams.get('fromNetwork');
           if (searchParams.get('toNetwork'))

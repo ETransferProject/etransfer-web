@@ -22,7 +22,6 @@ import useEVM from './useEVM';
 import useSolana from './useSolana';
 import useTON from './useTON';
 import useTRON from './useTRON';
-import { TOrderRecordsNoticeRequestAddressItem } from '@etransfer/socket';
 
 export function useAuthToken() {
   const { fromWalletType } = useCrossChainTransfer();
@@ -65,62 +64,68 @@ export function useAuthToken() {
     return undefined;
   }, [fromWallet?.account, fromWalletType, isReCaptchaLoading, setLoading]);
 
-  const queryAuthToken = useCallback(async () => {
-    if (!fromWallet?.isConnected) return '';
+  const queryAuthToken = useCallback(
+    async (isThrowError: boolean) => {
+      if (!fromWallet?.isConnected) return '';
 
-    try {
-      setLoading(true);
-      const recaptchaResult = await handleReCaptcha();
+      try {
+        setLoading(true);
+        const recaptchaResult = await handleReCaptcha();
 
-      const signatureResult = await fromWallet.signMessage();
-      console.log('>>>>>> getAuthToken signatureResult', signatureResult);
-      if (fromWallet.walletType !== WalletTypeEnum.TON && !signatureResult.signature) {
-        throw Error('Signature error');
+        const signatureResult = await fromWallet.signMessage();
+        console.log('>>>>>> getAuthToken signatureResult', signatureResult);
+        if (fromWallet.walletType !== WalletTypeEnum.TON && !signatureResult.signature) {
+          throw Error('Signature error');
+        }
+
+        const apiParams: QueryAuthApiExtraRequestV3 = {
+          pubkey: signatureResult.publicKey,
+          signature: signatureResult.signature,
+          plain_text: signatureResult.plainTextHex,
+          sourceType: signatureResult.sourceType,
+          recaptchaToken: recaptchaResult || undefined,
+        };
+        return await queryAuthApiV3(apiParams);
+      } catch (error: any) {
+        if (
+          error?.type === ReCaptchaType.cancel ||
+          error?.type === ReCaptchaType.error ||
+          error?.type === ReCaptchaType.expire
+        ) {
+          SingleMessage.error(error?.data);
+        }
+        if (isThrowError) throw error;
+        return '';
       }
+    },
+    [fromWallet, handleReCaptcha, setLoading],
+  );
 
-      const apiParams: QueryAuthApiExtraRequestV3 = {
-        pubkey: signatureResult.publicKey,
-        signature: signatureResult.signature,
-        plain_text: signatureResult.plainTextHex,
-        sourceType: signatureResult.sourceType,
-        recaptchaToken: recaptchaResult || undefined,
-      };
-      return await queryAuthApiV3(apiParams);
-    } catch (error: any) {
-      if (
-        error?.type === ReCaptchaType.cancel ||
-        error?.type === ReCaptchaType.error ||
-        error?.type === ReCaptchaType.expire
-      ) {
-        SingleMessage.error(error?.data);
+  const getAuthToken = useCallback(
+    async (isThrowError: boolean) => {
+      try {
+        if (!fromWallet?.account || !fromWallet?.walletType) return '';
+
+        // 1: local storage has JWT token
+        const key = stringToHex(fromWallet?.account) + getWalletSourceType(fromWallet?.walletType);
+        const data = getLocalJWT(key);
+        if (data) {
+          const token_type = data.token_type;
+          const access_token = data.access_token;
+
+          return `${token_type} ${access_token}`;
+        } else {
+          // 2: local storage don not has JWT token
+          return await queryAuthToken(isThrowError);
+        }
+      } catch (error) {
+        console.log('getAuth error:', error);
+        if (isThrowError) throw error;
+        return '';
       }
-      return '';
-    } finally {
-      setLoading(false);
-    }
-  }, [fromWallet, handleReCaptcha, setLoading]);
-
-  const getAuthToken = useCallback(async () => {
-    try {
-      if (!fromWallet?.account || !fromWallet?.walletType) return '';
-
-      // 1: local storage has JWT token
-      const key = stringToHex(fromWallet?.account) + getWalletSourceType(fromWallet?.walletType);
-      const data = getLocalJWT(key);
-      if (data) {
-        const token_type = data.token_type;
-        const access_token = data.access_token;
-
-        return `${token_type} ${access_token}`;
-      } else {
-        // 2: local storage don not has JWT token
-        return await queryAuthToken();
-      }
-    } catch (error) {
-      console.log('getAuth error:', error);
-      return '';
-    }
-  }, [fromWallet?.account, fromWallet?.walletType, queryAuthToken]);
+    },
+    [fromWallet?.account, fromWallet?.walletType, queryAuthToken],
+  );
 
   return {
     getAuthToken,
@@ -240,7 +245,7 @@ export function useGetAnyoneAuthTokenFromStorage() {
 
     // 2. has fromWallet, but not auth token in storage, get new auth token.
     if (fromWallet?.isConnected && fromWallet?.account) {
-      authToken = await queryAuthToken();
+      authToken = await queryAuthToken(true);
     }
 
     // 3. not connected wallet, need click 'Connect Wallet' button to connect wallet
@@ -263,68 +268,5 @@ export function useGetAnyoneAuthTokenFromStorage() {
     tonWalletType,
     tronAccount,
     tronWalletType,
-  ]);
-}
-
-export function useGetAllConnectedWalletAccount() {
-  const { isConnected: isAelfConnected, account: aelfAccount } = useAelf();
-  const { isConnected: isEVMConnected, account: evmAccount } = useEVM();
-  const { isConnected: isSolanaConnected, account: solanaAccount } = useSolana();
-  const { isConnected: isTONConnected, account: tonAccount } = useTON();
-  const { isConnected: isTRONConnected, account: tronAccount } = useTRON();
-
-  return useCallback(() => {
-    const accountList: string[] = [];
-    const accountListWithWalletType: TOrderRecordsNoticeRequestAddressItem[] = [];
-    if (isAelfConnected && aelfAccount) {
-      accountList.push(aelfAccount);
-      accountListWithWalletType.push({
-        SourceType: WalletTypeEnum.AELF.toLocaleLowerCase(),
-        Address: aelfAccount,
-      });
-    }
-    if (isEVMConnected && evmAccount) {
-      accountList.push(evmAccount);
-      accountListWithWalletType.push({
-        SourceType: AuthTokenSource.EVM.toLocaleLowerCase(),
-        Address: evmAccount,
-      });
-    }
-    if (isSolanaConnected && solanaAccount) {
-      accountList.push(solanaAccount);
-      accountListWithWalletType.push({
-        SourceType: AuthTokenSource.Solana.toLocaleLowerCase(),
-        Address: solanaAccount,
-      });
-    }
-    if (isTONConnected && tonAccount) {
-      accountList.push(tonAccount);
-      accountListWithWalletType.push({
-        SourceType: AuthTokenSource.TON.toLocaleLowerCase(),
-        Address: tonAccount,
-      });
-    }
-    if (isTRONConnected && tronAccount) {
-      accountList.push(tronAccount);
-      accountListWithWalletType.push({
-        SourceType: AuthTokenSource.TRON.toLocaleLowerCase(),
-        Address: tronAccount,
-      });
-    }
-    return {
-      accountList,
-      accountListWithWalletType,
-    };
-  }, [
-    aelfAccount,
-    evmAccount,
-    isAelfConnected,
-    isEVMConnected,
-    isSolanaConnected,
-    isTONConnected,
-    isTRONConnected,
-    solanaAccount,
-    tonAccount,
-    tronAccount,
   ]);
 }

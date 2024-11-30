@@ -12,6 +12,7 @@ import Swap from './swap.svg';
 import SwapHorizontal from './swapHorizontal.svg';
 import Deposit from './deposit.svg';
 import Withdraw from './withdraw.svg';
+import Transfer from './transfer.svg';
 import Check from './check.svg';
 import CheckSmall from './checkSmall.svg';
 import CheckBig from './checkBig.svg';
@@ -144,6 +145,7 @@ export {
   SwapHorizontal,
   Deposit,
   Withdraw,
+  Transfer,
   Check,
   CheckSmall,
   CheckBig,

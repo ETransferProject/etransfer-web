@@ -26,12 +26,13 @@ const WebTransferTableColumns = [
     title: 'Type',
     dataIndex: 'orderType',
     key: 'orderType',
-    render: (orderType: BusinessType) => {
-      return (
-        <div>
-          {orderType === BusinessType.Withdraw ? InfoBusinessTypeLabel.Withdraw : orderType}
-        </div>
-      );
+    render: (orderType: BusinessType, item: TTransferDashboardData) => {
+      const _orderType = item?.secondOrderType
+        ? item?.secondOrderType
+        : orderType === BusinessType.Withdraw
+        ? InfoBusinessTypeLabel.Withdraw
+        : orderType;
+      return <div>{_orderType}</div>;
     },
   },
   {

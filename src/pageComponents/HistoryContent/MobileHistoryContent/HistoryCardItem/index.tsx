@@ -2,7 +2,7 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { Divider } from 'antd';
 import { TRecordsListItem } from 'types/api';
-import { TRecordsTableListType } from 'types/records';
+import { TRecordsRequestType, TRecordsTableListType } from 'types/records';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import FeeInfo from 'pageComponents/HistoryContent/FeeInfo';
 import StatusBox from 'pageComponents/HistoryContent/StatusBox';
@@ -18,12 +18,13 @@ import TxHashBox from 'pageComponents/HistoryContent/TxHashBox';
 import { Fragment, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { COBO_CUSTODY } from 'constants/misc';
+import CreateTimeBox from 'pageComponents/HistoryContent/CreateTimeBox';
 
 const NoDataText = '-- No Data --';
 
 export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProps) {
   const dispatch = useAppDispatch();
-  const { recordsList, hasMore, maxResultCount, totalCount, skipCount } = useRecordsState();
+  const { type, recordsList, hasMore, maxResultCount, totalCount, skipCount } = useRecordsState();
 
   const handleRecordListData = (recordsList: TRecordsListItem[]) => {
     if (recordsList.length === 0) {
@@ -33,12 +34,13 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
     const recordsTableList: TRecordsTableListType[] = [];
 
     recordsList.map((item) => {
-      const { id, orderType, status, arrivalTime, fromTransfer, toTransfer } = item;
+      const { id, orderType, status, arrivalTime, createTime, fromTransfer, toTransfer } = item;
       recordsTableList.push({
         key: id,
         orderType,
         status,
         arrivalTime,
+        createTime,
         symbol: fromTransfer.symbol,
         icon: fromTransfer.icon,
         sendingAmount: fromTransfer.amount,
@@ -110,13 +112,22 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
                     toChainId={recordItem.toChainId}
                     orderType={recordItem.orderType}
                   />
-                  <ArrivalTimeBox arrivalTime={recordItem.arrivalTime} status={recordItem.status} />
+                  {type === TRecordsRequestType.Transfer ? (
+                    <CreateTimeBox createTime={recordItem.createTime} />
+                  ) : (
+                    <ArrivalTimeBox
+                      arrivalTime={recordItem.arrivalTime}
+                      status={recordItem.status}
+                    />
+                  )}
                 </div>
                 <Divider />
-                <div className={styles['records-card-item-line']}>
-                  <span className={styles['records-card-item-label']}>Token</span>
-                  <TokenBox icon={recordItem.icon} symbol={recordItem.symbol} />
-                </div>
+                {type === TRecordsRequestType.Transfer && (
+                  <div className={styles['records-card-item-line']}>
+                    <span className={styles['records-card-item-label']}>Token</span>
+                    <TokenBox icon={recordItem.icon} symbol={recordItem.symbol} />
+                  </div>
+                )}
                 <div className={styles['records-card-item-line']}>
                   <span className={styles['records-card-item-label']}>Sending Amount</span>
                   <AmountBox amount={recordItem.sendingAmount} token={recordItem.symbol} />

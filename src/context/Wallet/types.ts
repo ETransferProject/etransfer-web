@@ -51,8 +51,9 @@ export interface IGetSignatureResult {
 }
 
 export interface IGetEVMBalanceRequest {
-  tokenContractAddress: string;
+  tokenContractAddress?: string;
   network: string;
+  tokenSymbol?: string;
 }
 
 export interface IGetBalanceRequest {

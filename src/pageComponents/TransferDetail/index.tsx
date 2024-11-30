@@ -10,7 +10,6 @@ import { SideMenuKey } from 'constants/home';
 import { useEffectOnce } from 'react-use';
 import { TOrderStatus } from 'types/records';
 import { DEFAULT_NULL_ORDER_ID } from 'constants/records';
-import { useGetAllConnectedWalletAccount } from 'hooks/wallet/authToken';
 
 export default function TransferDetail() {
   const { isPadPX } = useCommonState();
@@ -23,7 +22,6 @@ export default function TransferDetail() {
 
   const getDetailRef = useRef<(isLoading?: boolean) => Promise<void>>();
   const updateTimerRef = useRef<NodeJS.Timer | number>();
-  const getAllConnectedWalletAccount = useGetAllConnectedWalletAccount();
   const { getDetail, stopTimer } = useMemo(() => {
     const getDetail = async (isLoading = true) => {
       try {
@@ -35,8 +33,7 @@ export default function TransferDetail() {
 
         isLoading && setLoading(true);
 
-        const connectedAccountList = getAllConnectedWalletAccount();
-        const data = await getRecordDetail(id, { addressList: connectedAccountList.accountList });
+        const data = await getRecordDetail(id);
         // No data found
         if (data?.id === DEFAULT_NULL_ORDER_ID || !data?.createTime) {
           stopTimer();
@@ -81,7 +78,7 @@ export default function TransferDetail() {
     };
 
     return { getDetail, stopTimer };
-  }, [getAllConnectedWalletAccount, router, searchParams, setLoading]);
+  }, [router, searchParams, setLoading]);
 
   useEffectOnce(() => {
     dispatch(setActiveMenuKey(SideMenuKey.History));

@@ -8,15 +8,22 @@ import {
   setToNetwork,
   setTokenSymbol,
 } from 'store/reducers/crossChainTransfer/slice';
-import { TCreateWithdrawOrderResult, TNetworkItem } from 'types/api';
-import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
+import { TCreateTransferOrderRequest, TCreateTransferOrderResult, TNetworkItem } from 'types/api';
+import {
+  getCaHashAndOriginChainIdByWallet,
+  getManagerAddressByWallet,
+  isAelfChain,
+  isEVMChain,
+  isSolanaChain,
+  isTRONChain,
+  isTONChain,
+} from 'utils/wallet';
 import { useGetBalanceDivDecimals } from './contract';
 import { ZERO } from '@etransfer/utils';
-import { ErrorNameType } from 'constants/crossChainTransfer';
+import { ErrorNameType, TRANSACTION_APPROVE_LOADING } from 'constants/crossChainTransfer';
 import { checkTokenAllowanceAndApprove, createTransferTokenTransaction } from 'utils/contract';
-import { createWithdrawOrder } from 'utils/api/withdraw';
+import { createTransferOrder } from 'utils/api/transfer';
 import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
-import { useDebounceCallback } from './debounce';
 import { InsufficientAllowanceMessage } from 'constants/withdraw';
 import { WalletInfo } from 'types/wallet';
 import { timesDecimals } from 'utils/calculate';
@@ -26,6 +33,8 @@ import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-ada
 import { ContractType } from 'constants/chain';
 import { useAelfAuthToken } from './wallet/aelfAuthToken';
 import { isAuthTokenError } from 'utils/api/error';
+import { WalletTypeEnum } from 'context/Wallet/types';
+import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
 
 export function useGoTransfer() {
   const dispatch = useAppDispatch();
@@ -117,27 +126,34 @@ export function useSendTxnFromAelfChain() {
       address: string;
       memo?: string;
       rawTransaction: string;
-      successCallback: () => void;
+      successCallback: (item: TCreateTransferOrderResult) => void;
       failCallback: () => void;
     }) => {
       if (!toNetwork?.network) throw new Error('Please selected network');
+      if (!accounts?.[chainId]) throw new Error('Please connect from wallet');
 
-      const params = {
-        network: toNetwork?.network,
-        symbol: tokenSymbol,
+      const params: TCreateTransferOrderRequest = {
         amount,
-        memo,
-        fromChainId: chainId,
+        fromNetwork: chainId,
+        toNetwork: toNetwork?.network,
+        fromSymbol: tokenSymbol,
+        toSymbol: tokenSymbol,
+        fromAddress: isDIDAddressSuffix(accounts?.[chainId])
+          ? removeELFAddressSuffix(accounts?.[chainId])
+          : address,
         toAddress: isDIDAddressSuffix(address) ? removeELFAddressSuffix(address) : address,
+        memo,
         rawTransaction: rawTransaction,
       };
-      let createWithdrawOrderRes: TCreateWithdrawOrderResult = { orderId: '', transactionId: '' };
+      let createWithdrawOrderRes: TCreateTransferOrderResult = { orderId: '', transactionId: '' };
       try {
-        createWithdrawOrderRes = await createWithdrawOrder(params);
+        createWithdrawOrderRes = await createTransferOrder(params);
       } catch (error) {
         if (isAuthTokenError(error)) {
-          const _authToken = await queryAelfAuthToken();
-          createWithdrawOrderRes = await createWithdrawOrder(params, _authToken);
+          const _authToken = await queryAelfAuthToken(true, false);
+          createWithdrawOrderRes = await createTransferOrder(params, _authToken);
+        } else {
+          throw error;
         }
       }
       console.log(
@@ -145,15 +161,15 @@ export function useSendTxnFromAelfChain() {
         createWithdrawOrderRes,
       );
       if (createWithdrawOrderRes.orderId) {
-        successCallback();
+        successCallback(createWithdrawOrderRes);
       } else {
         failCallback();
       }
     },
-    [chainId, queryAelfAuthToken, toNetwork?.network, tokenSymbol],
+    [accounts, chainId, queryAelfAuthToken, toNetwork?.network, tokenSymbol],
   );
 
-  const sendTransferTokenTransaction = useDebounceCallback(
+  const sendTransferTokenTransaction = useCallback(
     async ({
       amount,
       address,
@@ -164,14 +180,14 @@ export function useSendTxnFromAelfChain() {
       amount: string;
       address: string;
       memo?: string;
-      successCallback: () => void;
+      successCallback: (item: TCreateTransferOrderResult) => void;
       failCallback: () => void;
     }) => {
-      setLoading(true, { text: 'Please approve the transaction in the wallet...' });
+      setLoading(true, { text: TRANSACTION_APPROVE_LOADING });
       if (!address) throw new Error('Please enter a correct address.');
 
       // get etransfer jwt
-      await getAelfAuthToken();
+      await getAelfAuthToken(true, false);
 
       const approveRes = await handleApproveToken({ amount, memo });
       if (!approveRes) throw new Error(InsufficientAllowanceMessage);
@@ -212,8 +228,56 @@ export function useSendTxnFromAelfChain() {
       }
       setLoading(false);
     },
-    [currentEtransferContractAddress, handleApproveToken, setLoading],
+    [
+      accounts,
+      chainId,
+      connector,
+      currentEtransferContractAddress,
+      currentTokenDecimal,
+      getAelfAuthToken,
+      handleApproveToken,
+      handleCreateWithdrawOrder,
+      setLoading,
+      signMessage,
+      tokenSymbol,
+      walletInfo,
+    ],
   );
 
   return { sendTransferTokenTransaction };
+}
+
+export function useSetWalletType() {
+  const dispatch = useAppDispatch();
+  const { fromNetwork, toNetwork } = useCrossChainTransfer();
+  return useCallback(
+    (walletType: WalletTypeEnum) => {
+      let judgeNetworkFn: (network: string) => boolean = () => false;
+      switch (walletType) {
+        case WalletTypeEnum.AELF:
+          judgeNetworkFn = isAelfChain;
+          break;
+        case WalletTypeEnum.EVM:
+          judgeNetworkFn = isEVMChain;
+          break;
+        case WalletTypeEnum.SOL:
+          judgeNetworkFn = isSolanaChain;
+          break;
+        case WalletTypeEnum.TRON:
+          judgeNetworkFn = isTRONChain;
+          break;
+        case WalletTypeEnum.TON:
+          judgeNetworkFn = isTONChain;
+          break;
+      }
+
+      if (fromNetwork?.network && judgeNetworkFn(fromNetwork?.network)) {
+        dispatch(setFromWalletType(walletType));
+      }
+      if (toNetwork?.network && judgeNetworkFn(toNetwork?.network)) {
+        dispatch(setToWalletType(walletType));
+      }
+    },
+    [dispatch, fromNetwork?.network, toNetwork?.network],
+  );
 }

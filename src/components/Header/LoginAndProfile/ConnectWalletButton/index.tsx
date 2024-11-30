@@ -28,6 +28,7 @@ export default function ConnectWalletButton(props: CommonButtonProps) {
           open={openConnectWalletModal}
           title={isConnected ? MY_AELF_WALLET : CONNECT_AELF_WALLET}
           allowList={[WalletTypeEnum.AELF]}
+          drawerZIndex={301}
           onCancel={() => setOpenConnectWalletModal(false)}
         />
       </>

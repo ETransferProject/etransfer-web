@@ -42,12 +42,12 @@ export default function useSolana() {
       const isMobile = devices.isMobileDevices();
       if (isMobile) {
         await sleep(3000);
-        await disconnect();
+        // await disconnect();
         localStorage?.removeItem(SOLANA_STORAGE_CONNECTED_KEY);
         window.location.reload();
       }
     },
-    [disconnect, select, wallets],
+    [select, wallets],
   );
 
   const getBalance = useCallback(

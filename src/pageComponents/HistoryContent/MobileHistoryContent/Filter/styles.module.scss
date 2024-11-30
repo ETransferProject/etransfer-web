@@ -2,7 +2,12 @@
 @import 'src/assets/theme/color.scss';
 @import 'src/assets/theme/breakpoint.scss';
 
-.header-tab {
+.header-tab-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
   @include media-pad {
     margin: 0 24px;
   }
@@ -14,18 +19,14 @@
 .filter-item-wrapper {
   gap: 12px;
   @include media-mobile {
-    padding: 8px 16px;
+    padding: 0 16px 8px;
   }
   @include media-pad {
-    padding: 8px 24px;
+    padding: 0 24px 8px;
   }
 }
 
 .filter-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
-  border: 1px solid $border;
   cursor: pointer;
 }
 
@@ -43,6 +44,7 @@
   height: 22px;
   line-height: 22px;
   color: $normal;
+  cursor: pointer;
 }
 
 .filter-close-icon {

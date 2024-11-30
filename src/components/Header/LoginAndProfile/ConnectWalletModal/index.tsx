@@ -22,33 +22,33 @@ export default function ConnectWalletModal({
     WalletTypeEnum.TRON,
     WalletTypeEnum.TON,
   ],
+  drawerZIndex = 80,
   onCancel,
-  onSelected,
 }: {
   open: boolean;
   title?: string;
   allowList?: WalletTypeEnum[];
+  drawerZIndex?: number;
   onCancel: () => void;
-  onSelected?: (walletType: WalletTypeEnum) => void;
 }) {
   const { isPadPX } = useCommonState();
 
   const content = useMemo(() => {
     return (
       <div>
-        {allowList?.includes(WalletTypeEnum.AELF) && <AelfWalletList onSelected={onSelected} />}
-        {allowList?.includes(WalletTypeEnum.EVM) && <EVMWalletList onSelected={onSelected} />}
-        {allowList?.includes(WalletTypeEnum.SOL) && <SolanaWalletList onSelected={onSelected} />}
-        {allowList?.includes(WalletTypeEnum.TRON) && <TRONWalletList onSelected={onSelected} />}
-        {allowList?.includes(WalletTypeEnum.TON) && <TONWalletList onSelected={onSelected} />}
+        {allowList?.includes(WalletTypeEnum.AELF) && <AelfWalletList />}
+        {allowList?.includes(WalletTypeEnum.EVM) && <EVMWalletList />}
+        {allowList?.includes(WalletTypeEnum.SOL) && <SolanaWalletList />}
+        {allowList?.includes(WalletTypeEnum.TRON) && <TRONWalletList />}
+        {allowList?.includes(WalletTypeEnum.TON) && <TONWalletList />}
       </div>
     );
-  }, [allowList, onSelected]);
+  }, [allowList]);
 
   if (isPadPX) {
     return (
       <CommonDrawer
-        zIndex={80}
+        zIndex={drawerZIndex}
         className={clsx(styles['connect-wallet-drawer'], styles['connect-wallet-drawer-weight'])}
         height="100%"
         title={title}
@@ -62,6 +62,7 @@ export default function ConnectWalletModal({
   return (
     <CommonModal
       open={open}
+      width={400}
       getContainer="#ConnectWalletButton"
       wrapClassName={styles['connect-wallet-modal-wrap']}
       className={styles['connect-wallet-modal']}
