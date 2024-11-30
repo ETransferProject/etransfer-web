@@ -1,0 +1,14 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+@import '/src/assets/theme/constants.scss';
+
+.network-selected {
+  height: 24px;
+}
+
+.select-network-value-selected-name {
+  font-size: 16px;
+  @extend .font-family-medium;
+  line-height: 24px;
+  @include text-overflow;
+}

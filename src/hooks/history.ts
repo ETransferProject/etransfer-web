@@ -6,7 +6,7 @@ import { TRecordsRequestType, TRecordsRequestStatus } from 'types/records';
 import queryString from 'query-string';
 
 type THistoryFilter = {
-  method?: TRecordsRequestType;
+  type?: TRecordsRequestType;
   status?: TRecordsRequestStatus;
   timeArray?: number[] | null;
 };
@@ -17,31 +17,26 @@ export function useHistoryFilter() {
   const searchParams = useSearchParams();
 
   const replaceUrl = useCallback(
-    (
-      key: 'method' | 'status' | 'timeArray' | 'all',
-      { method, status, timeArray }: THistoryFilter,
-    ) => {
+    (key: 'type' | 'status' | 'timeArray' | 'all', { type, status, timeArray }: THistoryFilter) => {
       let search;
       switch (key) {
-        case 'method':
+        case 'type':
           search = queryString.stringify({
-            method: String(method),
-            status: searchParams.get('status') || undefined,
-            start: searchParams.get('start') || undefined,
-            end: searchParams.get('end') || undefined,
+            type,
+            status: TRecordsRequestStatus.ALL,
           });
           break;
         case 'status':
           search = queryString.stringify({
+            type: searchParams.get('type') || undefined,
             status,
-            method: searchParams.get('method') || undefined,
             start: searchParams.get('start') || undefined,
             end: searchParams.get('end') || undefined,
           });
           break;
         case 'timeArray':
           search = queryString.stringify({
-            method: searchParams.get('method') || undefined,
+            type: searchParams.get('type') || undefined,
             status: searchParams.get('status') || undefined,
             start:
               typeof timeArray?.[0] === 'number' && !isNaN(timeArray?.[0])
@@ -55,7 +50,7 @@ export function useHistoryFilter() {
           break;
         case 'all':
           search = queryString.stringify({
-            method,
+            type: searchParams.get('type') || undefined,
             status,
             start: timeArray?.[0],
             end: timeArray?.[1],
@@ -72,10 +67,12 @@ export function useHistoryFilter() {
   const replaceUrlRef = useRef(replaceUrl);
   replaceUrlRef.current = replaceUrl;
 
-  const setMethodFilter = useCallback(
-    (method: TRecordsRequestType) => {
-      dispatch(setType(method));
-      replaceUrlRef.current('method', { method });
+  const setTypeFilter = useCallback(
+    (type: TRecordsRequestType) => {
+      dispatch(setType(type));
+      dispatch(setStatus(TRecordsRequestStatus.ALL));
+      dispatch(setTimestamp(null));
+      replaceUrlRef.current('type', { type });
     },
     [dispatch],
   );
@@ -97,17 +94,16 @@ export function useHistoryFilter() {
   );
 
   const setFilter = useCallback(
-    ({ method, status, timeArray }: Required<THistoryFilter>) => {
-      dispatch(setType(method));
+    ({ status, timeArray }: Required<Pick<THistoryFilter, 'status' | 'timeArray'>>) => {
       dispatch(setStatus(status));
       dispatch(setTimestamp(timeArray));
-      replaceUrlRef.current('all', { method, status, timeArray });
+      replaceUrlRef.current('all', { status, timeArray });
     },
     [dispatch],
   );
 
   return {
-    setMethodFilter,
+    setTypeFilter,
     setStatusFilter,
     setTimestampFilter,
     setFilter,

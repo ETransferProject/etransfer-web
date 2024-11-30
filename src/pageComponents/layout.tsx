@@ -15,7 +15,6 @@ import { useRouteParamType } from 'hooks/route';
 import { useUpdateRecord } from 'hooks/updateRecord';
 import Footer from 'components/Footer';
 import { usePathname } from 'next/navigation';
-import { useInitWallet } from 'hooks/wallet';
 import { TelegramPlatform } from 'utils/telegram';
 import service from 'api/axios';
 import { API_VERSION } from 'constants/misc';
@@ -66,7 +65,6 @@ const Layout = ({
   const { isPadPX, isMobilePX } = useCommonState();
   const isTelegramPlatform = TelegramPlatform.isTelegramPlatform();
 
-  useInitWallet();
   useRouteParamType();
   useUpdateRecord();
   useNoticeSocket();

@@ -7,15 +7,15 @@ import {
   setTotalCount,
   setHasMore,
   setSkipCount,
-  setType,
   setStatus,
   setTimestamp,
+  setType,
   resetRecordsStateNotNotice,
 } from 'store/reducers/records/slice';
 import { useDebounceCallback } from 'hooks/debounce';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { TRecordsRequestType, TRecordsRequestStatus } from 'types/records';
-import { TRecordsListItem } from 'types/api';
+import { TGetRecordsListRequest, TRecordsListItem } from 'types/api';
 import moment from 'moment';
 import myEvents from 'utils/myEvent';
 import { sleep } from '@portkey/utils';
@@ -25,8 +25,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import queryString from 'query-string';
 import { SideMenuKey } from 'constants/home';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
-import { useSetAuthFromStorage } from 'hooks/authToken';
-import { useIsLogin } from 'hooks/wallet';
+import { END_TIME_FORMAT, START_TIME_FORMAT } from 'constants/records';
+import { useCheckHasConnectedWallet } from 'hooks/wallet';
+import { useGetAllConnectedWalletAccount } from 'hooks/wallet';
 
 export type TRecordsContentProps = TRecordsBodyProps & {
   onReset: () => void;
@@ -41,95 +42,103 @@ export default function Content() {
   const dispatch = useAppDispatch();
   const { setFilter } = useHistoryFilter();
   const { setLoading } = useLoading();
-  const isLogin = useIsLogin();
-  const isLoginRef = useRef(isLogin);
-  isLoginRef.current = isLogin;
+  const { hasConnected } = useCheckHasConnectedWallet();
+  const hasConnectedRef = useRef(hasConnected);
+  hasConnectedRef.current = hasConnected;
+  const getAllConnectedWalletAccount = useGetAllConnectedWalletAccount();
 
   const {
-    type = TRecordsRequestType.ALL,
+    type = TRecordsRequestType.Transfer,
     status = TRecordsRequestStatus.ALL,
     timestamp,
     skipCount,
     maxResultCount,
     recordsList,
   } = useRecordsState();
+  const requestRecordsList = useDebounceCallback(
+    async (isLoading = false) => {
+      try {
+        if (!hasConnectedRef.current) return;
 
-  const setAuthFromStorage = useSetAuthFromStorage();
-  const requestRecordsList = useDebounceCallback(async (isLoading = false, isSetAuth = false) => {
-    try {
-      if (!isLoginRef.current) return;
+        isLoading && setLoading(true);
 
-      isLoading && setLoading(true);
-      if (isSetAuth) {
-        const serResult = await setAuthFromStorage();
-        if (!serResult) return;
-        await sleep(500);
+        const startTimestampFormat =
+          timestamp?.[0] && moment(timestamp?.[0]).format(START_TIME_FORMAT);
+        const endTimestampFormat = timestamp?.[1] && moment(timestamp?.[1]).format(END_TIME_FORMAT);
+        const startTimestamp = startTimestampFormat ? moment(startTimestampFormat).valueOf() : null;
+        const endTimestamp = endTimestampFormat ? moment(endTimestampFormat).valueOf() : null;
+
+        const connectedAccountList = getAllConnectedWalletAccount();
+        const params: TGetRecordsListRequest = {
+          type,
+          status,
+          startTimestamp,
+          endTimestamp,
+          skipCount: (skipCount - 1) * maxResultCount,
+          maxResultCount,
+          addressList: connectedAccountList.accountList,
+        };
+        if (type === TRecordsRequestType.Transfer) {
+          params.sorting = 'createTime desc';
+        }
+        const { items: recordsListRes, totalCount } = await getRecordsList(params);
+        if (isPadPX) {
+          let mobileRecordsList = [...recordsList, ...recordsListRes];
+          mobileRecordsList = mobileRecordsList.reduce((result: TRecordsListItem[], item) => {
+            if (!result.some((it: TRecordsListItem) => it.id === item.id)) {
+              result.push(item);
+            }
+            return result;
+          }, []);
+          dispatch(setRecordsList(mobileRecordsList));
+        } else {
+          dispatch(setRecordsList(recordsListRes));
+        }
+        dispatch(setTotalCount(totalCount));
+        // recordsList is load all and hasMore set false
+        if (recordsListRes.length < maxResultCount) {
+          dispatch(setHasMore(false));
+        }
+      } catch (error) {
+        console.log('records', error);
+      } finally {
+        setLoading(false);
+
+        await sleep(1000);
+        myEvents.UpdateNewRecordStatus.emit();
       }
-
-      const startTimestampFormat =
-        timestamp?.[0] && moment(timestamp?.[0]).format('YYYY-MM-DD 00:00:00');
-      const endTimestampFormat =
-        timestamp?.[1] && moment(timestamp?.[1]).format('YYYY-MM-DD 23:59:59');
-      const startTimestamp = startTimestampFormat ? moment(startTimestampFormat).valueOf() : null;
-      const endTimestamp = endTimestampFormat ? moment(endTimestampFormat).valueOf() : null;
-
-      const { items: recordsListRes, totalCount } = await getRecordsList({
-        type,
-        status,
-        startTimestamp: startTimestamp,
-        endTimestamp: endTimestamp,
-        skipCount: (skipCount - 1) * maxResultCount,
-        maxResultCount,
-      });
-
-      if (isPadPX) {
-        let mobileRecordsList = [...recordsList, ...recordsListRes];
-        mobileRecordsList = mobileRecordsList.reduce((result: TRecordsListItem[], item) => {
-          if (!result.some((it: TRecordsListItem) => it.id === item.id)) {
-            result.push(item);
-          }
-          return result;
-        }, []);
-        dispatch(setRecordsList(mobileRecordsList));
-      } else {
-        dispatch(setRecordsList(recordsListRes));
-      }
-      dispatch(setTotalCount(totalCount));
-      // recordsList is load all and hasMore set false
-      if (recordsListRes.length < maxResultCount) {
-        dispatch(setHasMore(false));
-      }
-    } catch (error) {
-      console.log('records', error);
-    } finally {
-      setLoading(false);
-
-      await sleep(1000);
-      myEvents.UpdateNewRecordStatus.emit();
-    }
-  }, []);
-
-  const handleReset = useCallback(
-    async (isSetAuth = false) => {
-      setFilter({
-        method: TRecordsRequestType.ALL,
-        status: TRecordsRequestStatus.ALL,
-        timeArray: null,
-      });
-      dispatch(setSkipCount(1));
-      if (isPadPX) {
-        dispatch(setRecordsList([]));
-      }
-      await requestRecordsList(true, isSetAuth);
     },
-    [dispatch, isPadPX, requestRecordsList, setFilter],
+    [
+      dispatch,
+      getAllConnectedWalletAccount,
+      isPadPX,
+      maxResultCount,
+      recordsList,
+      setLoading,
+      skipCount,
+      status,
+      timestamp,
+      type,
+    ],
   );
+
+  const handleReset = useDebounceCallback(async () => {
+    setFilter({
+      status: TRecordsRequestStatus.ALL,
+      timeArray: null,
+    });
+    dispatch(setSkipCount(1));
+    if (isPadPX) {
+      dispatch(setRecordsList([]));
+    }
+    await requestRecordsList(true);
+  }, [dispatch, isPadPX, requestRecordsList, setFilter]);
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const routeQuery = useMemo(
     () => ({
-      method: searchParams.get('method'),
+      type: searchParams.get('type'),
       status: searchParams.get('status'),
       start: searchParams.get('start'),
       end: searchParams.get('end'),
@@ -141,15 +150,16 @@ export default function Content() {
     dispatch(setActiveMenuKey(SideMenuKey.History));
 
     const search: any = {
-      method: routeQuery.method != null ? routeQuery.method : undefined,
+      type: routeQuery.type != null ? routeQuery.type : undefined,
       status: routeQuery.status != null ? routeQuery.status : undefined,
       start: routeQuery.start != null ? routeQuery.start : undefined,
       end: routeQuery.end != null ? routeQuery.end : undefined,
     };
-    if (routeQuery.method != null) {
-      dispatch(setType(Number(routeQuery.method)));
+
+    if (routeQuery.type != null) {
+      dispatch(setType(Number(routeQuery.type)));
     } else {
-      search.method = type;
+      search.type = type;
     }
 
     if (routeQuery.status != null) {
@@ -178,9 +188,9 @@ export default function Content() {
 
   const init = useCallback(() => {
     if (isUnreadHistory) {
-      handleReset(true);
+      handleReset();
     } else {
-      requestRecordsList(true, true);
+      requestRecordsList(true);
     }
   }, [handleReset, isUnreadHistory, requestRecordsList]);
 
@@ -188,23 +198,18 @@ export default function Content() {
   initRef.current = init;
 
   useEffect(() => {
-    if (isLogin) {
+    if (hasConnected) {
       initRef.current();
     } else {
-      // setFilter({
-      //   method: TRecordsRequestType.ALL,
-      //   status: TRecordsRequestStatus.ALL,
-      //   timeArray: null,
-      // });
       dispatch(setSkipCount(1));
 
       dispatch(setRecordsList([]));
     }
-  }, [dispatch, isLogin, setFilter]);
+  }, [dispatch, hasConnected, setFilter]);
 
   // Listener login
   const refreshData = useCallback(() => {
-    requestRecordsList(true, true);
+    requestRecordsList(true);
   }, [requestRecordsList]);
   useEffectOnce(() => {
     const { remove } = myEvents.LoginSuccess.addListener(() => refreshData());

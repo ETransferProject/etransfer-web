@@ -11,10 +11,10 @@
   overflow-x: hidden;
 
   @include media-mobile {
-    padding: 12px 16px;
+    padding: 16px;
   }
   @include media-pad {
-    padding: 16px 40px 8px;
+    padding: 16px 24px;
   }
 
   :global {
@@ -29,10 +29,6 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
-}
-
-.records-card-item-order-type {
-  font-weight: $font-family-medium-weight;
 }
 
 .records-card-item-line {
@@ -51,6 +47,10 @@
 
 .records-card-item-label {
   color: $secondary-text;
+}
+
+.records-card-item-value {
+  color: $primary-text;
 }
 
 .divider-style {

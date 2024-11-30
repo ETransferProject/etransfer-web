@@ -1,3 +1,4 @@
+import { DATE_FORMATE } from 'constants/misc';
 import { EChartsOption, SeriesOption } from 'echarts';
 import moment from 'moment';
 import { BusinessType } from 'types/api';
@@ -5,7 +6,7 @@ import { BusinessType } from 'types/api';
 export interface GenerateStackBarOptionPrams {
   data: Array<{ date: string } & Record<string, string | number>>;
   depositKey: string;
-  withdrawKey: string;
+  transferKey: string;
   stackName: string;
   opacity: number;
   emphasisOpacity: number;
@@ -15,28 +16,28 @@ export interface GenerateStackBarOptionPrams {
 export const generateStackBarOption = ({
   data,
   depositKey,
-  withdrawKey,
+  transferKey,
   stackName,
   opacity,
   emphasisOpacity,
   dateFormat = 'MMM D',
 }: GenerateStackBarOptionPrams): EChartsOption => {
-  const withdrawData: { value: string | number }[] = [],
+  const transferData: { value: string | number }[] = [],
     depositData: { value: string | number }[] = [],
     xAxisData: string[] = [];
 
   data.forEach((item) => {
-    withdrawData.push({ value: item[withdrawKey] });
+    transferData.push({ value: item[transferKey] });
     depositData.push({ value: item[depositKey] });
     xAxisData.push(item.date);
   });
 
   const series: SeriesOption[] = [
     {
-      data: withdrawData,
+      data: transferData,
       type: 'bar',
       stack: stackName,
-      name: BusinessType.Withdraw,
+      name: BusinessType.Transfer,
       // barCategoryGap: 2,
       itemStyle: {
         color: '#41DAFB',
@@ -85,7 +86,7 @@ export const generateStackBarOption = ({
         // alignMinLabel: 'left',
         // alignMaxLabel: 'right',
         formatter: function (value) {
-          return moment(value, 'YYYY-MM-DD').format(dateFormat);
+          return moment(value, DATE_FORMATE).format(dateFormat);
         },
       },
       splitLine: { show: false },

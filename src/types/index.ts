@@ -32,6 +32,12 @@ export type TWithdrawEntryConfig = {
   // withdrawAmount?: string; // not decimal
 };
 
+export type TCrossChainTransferEntryConfig = {
+  fromNetwork?: string; // eg: "AELF"
+  toNetwork?: string; // eg: "tDVW"
+  tokenSymbol?: string; // 'USDT'|'SGR'|'ELF' , default = 'USDT'
+};
+
 export type THistoryEntryConfig = {
   method?: BusinessType;
   status?: TRecordsStatusI18n;

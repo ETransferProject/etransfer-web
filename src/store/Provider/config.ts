@@ -9,6 +9,7 @@ import storage from 'redux-persist/lib/storage';
 import DepositSlice from 'store/reducers/deposit/slice';
 import WithdrawSlice from 'store/reducers/withdraw/slice';
 import InfoDashboardSlice from 'store/reducers/infoDashboard/slice';
+import CrossChainTransferSlice from 'store/reducers/crossChainTransfer/slice';
 
 interface ThunkOptions<E = any> {
   extraArgument: E;
@@ -37,6 +38,11 @@ export const withdrawPersistConfig = {
   storage,
 };
 
+export const crossChainTransferPersistConfig = {
+  key: CrossChainTransferSlice.name,
+  storage,
+};
+
 export const infoDashboardPersistConfig = {
   key: InfoDashboardSlice.name,
   storage,
@@ -51,7 +57,12 @@ const reduxPersistConfig = {
 
   // Optionally, just specify the keys you DO want stored to persistence.
   // An empty array means 'don't store any reducers' -> infinite-red/ignite#409
-  whitelist: [CommonSlice.name, DepositSlice.name, WithdrawSlice.name],
+  whitelist: [
+    CommonSlice.name,
+    DepositSlice.name,
+    WithdrawSlice.name,
+    CrossChainTransferSlice.name,
+  ],
   // More info here:  https://shift.infinite.red/shipping-persistant-reducers-7341691232b1
   // transforms: [SetTokenTransform],
 };

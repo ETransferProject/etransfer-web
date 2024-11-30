@@ -16,7 +16,8 @@ import {
   NetworkStatus,
   TToTokenItem,
 } from 'types/api';
-import { getDepositInfo, getDepositTokenList, getNetworkList } from 'utils/api/deposit';
+import { getDepositInfo, getDepositTokenList } from 'utils/api/deposit';
+import { getNetworkList } from 'utils/api/transfer';
 import { CHAIN_LIST, IChainNameItem } from 'constants/index';
 import {
   InitialDepositState,
@@ -41,8 +42,8 @@ import { SideMenuKey } from 'constants/home';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
-import { useSetAuthFromStorage } from 'hooks/authToken';
-import { useIsLogin } from 'hooks/wallet';
+import { useSetAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
+import useAelf, { useInitWallet } from 'hooks/wallet/useAelf';
 import { addAelfNetwork, deleteAelfNetwork } from 'utils/deposit';
 import { AelfChainIdList } from 'constants/chain';
 import { useCheckTxn } from 'hooks/deposit';
@@ -60,7 +61,7 @@ export type TDepositContentProps = {
   toTokenSelected?: TToTokenItem;
   isCheckTxnLoading?: boolean;
   depositProcessingCount?: number;
-  withdrawProcessingCount?: number;
+  transferProcessingCount?: number;
   onRetry?: () => void;
   onCheckTxnClick?: () => void;
   onClickProcessingTip: () => void;
@@ -79,7 +80,8 @@ type TGetNetworkData = {
 export default function Content() {
   const dispatch = useAppDispatch();
   const { isPadPX } = useCommonState();
-  const { depositProcessingCount, withdrawProcessingCount } = useRecordsState();
+  useInitWallet();
+  const { depositProcessingCount, transferProcessingCount } = useRecordsState();
   const {
     fromNetwork,
     fromNetworkList,
@@ -91,9 +93,9 @@ export default function Content() {
   } = useDepositState();
   const fromNetworkListRef = useRef(fromNetworkList);
   fromNetworkListRef.current = fromNetworkList;
-  const isLogin = useIsLogin();
-  const isLoginRef = useRef(isLogin);
-  isLoginRef.current = isLogin;
+  const { isConnected } = useAelf();
+  const isConnectedRef = useRef(isConnected);
+  isConnectedRef.current = isConnected;
   const { setLoading } = useLoading();
   const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const fromNetworkRef = useRef<string>();
@@ -186,9 +188,9 @@ export default function Content() {
   const getDepositData = useCallback(
     async (chainId: TChainId, symbol: string, toSymbol: string) => {
       console.log('getDepositData >>>>>> fromNetworkRef.current', fromNetworkRef.current);
-      console.log('getDepositData >>>>>> isLogin', isLoginRef.current);
+      console.log('getDepositData >>>>>> isConnected', isConnectedRef.current);
       try {
-        if (!fromNetworkRef.current || !isLoginRef.current) return;
+        if (!fromNetworkRef.current || !isConnectedRef.current) return;
         if (AelfChainIdList.includes(fromNetworkRef.current as any)) return;
         // setLoading(true);
         const res = await getDepositInfo({
@@ -492,7 +494,7 @@ export default function Content() {
         fromNetworkList &&
         fromNetworkList?.length > 0
       ) {
-        fromNetworkRef.current = fromNetwork.network;
+        fromNetworkRef.current = fromNetwork?.network;
       }
 
       await setAuthFromStorage();
@@ -566,7 +568,7 @@ export default function Content() {
   const initLogoutRef = useRef(initForLogout);
   initLogoutRef.current = initForLogout;
 
-  const isPreLoginRef = useRef<boolean>(isLogin);
+  const isPreLoginRef = useRef<boolean>(isConnected);
   const initForReLogin = useCallback(async () => {
     if (is401Ref.current || (!isPreLoginRef.current && !depositInfo.depositAddress)) {
       try {
@@ -586,7 +588,7 @@ export default function Content() {
   initForReLoginRef.current = initForReLogin;
 
   useEffectOnce(() => {
-    isPreLoginRef.current = isLogin;
+    isPreLoginRef.current = isConnected;
     // log in
     const { remove } = myEvents.LoginSuccess.addListener(() => initForReLoginRef.current());
 
@@ -623,7 +625,7 @@ export default function Content() {
       isShowNetworkLoading={isShowNetworkLoading}
       isCheckTxnLoading={isCheckTxnLoading}
       depositProcessingCount={depositProcessingCount}
-      withdrawProcessingCount={withdrawProcessingCount}
+      transferProcessingCount={transferProcessingCount}
       onRetry={handleRetry}
       onCheckTxnClick={handleCheckTxnClick}
       onClickProcessingTip={handleClickProcessingTip}
@@ -646,7 +648,7 @@ export default function Content() {
       isShowNetworkLoading={isShowNetworkLoading}
       isCheckTxnLoading={isCheckTxnLoading}
       depositProcessingCount={depositProcessingCount}
-      withdrawProcessingCount={withdrawProcessingCount}
+      transferProcessingCount={transferProcessingCount}
       onRetry={handleRetry}
       onCheckTxnClick={handleCheckTxnClick}
       onClickProcessingTip={handleClickProcessingTip}

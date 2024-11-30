@@ -12,6 +12,7 @@ import { useMemo } from 'react';
 export default function TransferDetailMain({
   id,
   orderType,
+  secondOrderType,
   status,
   createTime,
   fromTransfer,
@@ -23,6 +24,7 @@ export default function TransferDetailMain({
       return (
         <TransferDetailStep
           orderType={orderType}
+          secondOrderType={secondOrderType}
           currentStep={step.currentStep}
           fromTransfer={{
             confirmingThreshold: step.fromTransfer.confirmingThreshold,
@@ -46,6 +48,7 @@ export default function TransferDetailMain({
     fromTransfer.network,
     fromTransfer.symbol,
     orderType,
+    secondOrderType,
     status,
     step.currentStep,
     step.fromTransfer.confirmedNum,
@@ -121,6 +124,7 @@ export default function TransferDetailMain({
         id={id}
         status={status}
         orderType={orderType}
+        secondOrderType={secondOrderType}
         createTime={createTime}
         fromNetwork={fromTransfer.network}
         fromChainId={fromTransfer.chainId}

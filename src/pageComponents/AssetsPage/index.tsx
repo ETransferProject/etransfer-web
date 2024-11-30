@@ -4,8 +4,8 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { LeftOutlined } from '@ant-design/icons';
 import styles from './styles.module.scss';
 import { useClearStore } from 'hooks/common';
-import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
-import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
+import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
+import useAelf from 'hooks/wallet/useAelf';
 import { PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
 import { ExtraInfoForPortkeyAA } from 'types/wallet';
 // import { LoginStatusEnum } from '@portkey/types';
@@ -13,7 +13,7 @@ import { ExtraInfoForPortkeyAA } from 'types/wallet';
 
 export default function MyAsset() {
   const router = useRouter();
-  const { walletType, walletInfo } = useConnectWallet();
+  const { connector, walletInfo } = useAelf();
   const clearStore = useClearStore();
   const portkeyAAInfo = useMemo(() => {
     return walletInfo?.extraInfo as ExtraInfoForPortkeyAA;
@@ -25,10 +25,10 @@ export default function MyAsset() {
   }, [clearStore]);
 
   useEffect(() => {
-    if (walletType !== WalletTypeEnum.aa) {
+    if (connector !== AelfWalletTypeEnum.aa) {
       router.push('/');
     }
-  }, [walletType, router]);
+  }, [connector, router]);
 
   // const loginOnChainStatus = PortkeyDid.did.didWallet.isLoginStatus;
   // console.log('>>>>>> loginOnChainStatus', loginOnChainStatus === LoginStatusEnum.SUCCESS);
@@ -42,7 +42,7 @@ export default function MyAsset() {
   // }, [loginOnChainStatus]);
 
   if (
-    walletType !== WalletTypeEnum.aa ||
+    connector !== AelfWalletTypeEnum.aa ||
     !portkeyAAInfo?.portkeyInfo?.pin ||
     !portkeyAAInfo?.portkeyInfo?.chainId
   ) {

@@ -13,7 +13,7 @@ export const initialState: CommonState = {
   isMobile: false,
   isMobilePX: false,
   isPadPX: false,
-  activeMenuKey: SideMenuKey.Deposit,
+  activeMenuKey: SideMenuKey.CrossChainTransfer,
   isUnreadHistory: false,
 };
 

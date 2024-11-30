@@ -78,7 +78,6 @@ export function NetworkSelectForMobile({
         )}
         {!isShowLoading &&
           networkList.map((item, idx) => {
-            console.log('🌈 🌈 🌈 🌈 🌈 🌈 item', item);
             return (
               <NetworkCardForMobile
                 key={'network-select' + item.network + idx}

@@ -1,6 +1,7 @@
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import type { Accounts, IPortkeyProvider } from '@portkey/provider-types';
 import { PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
+import { Abi } from 'viem';
 
 export type TAelfAccounts = {
   AELF?: string;
@@ -40,4 +41,35 @@ export interface ExtraInfoForNightElf {
     // aelfBridges: bridges;
     // nodes;
   };
+}
+
+export interface SendEVMTransactionParams {
+  network: string;
+  tokenContractAddress: `0x${string}`;
+  toAddress: string;
+  tokenAbi: Abi | unknown[];
+  amount: string;
+  decimals: number;
+}
+
+export interface SendSolanaTransactionParams {
+  tokenContractAddress: string;
+  toAddress: string;
+  amount: string;
+  decimals: number;
+}
+
+export interface SendTONTransactionParams {
+  tokenContractAddress: string;
+  toAddress: string;
+  amount: number;
+  decimals: number | string;
+  orderId: string;
+  forwardTonAmount?: string;
+}
+
+export interface SendTRONTransactionParams {
+  tokenContractAddress: string;
+  toAddress: string;
+  amount: number; // unit is SUN，1 TRX = 1,000,000 SUN
 }

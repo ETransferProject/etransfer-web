@@ -1,0 +1,19 @@
+@import '/src/assets/theme/font.scss';
+@import '/src/assets/theme/color.scss';
+
+.header-tab {
+  gap: 24px;
+}
+
+.header-tab-item {
+  height: 40px;
+  font-size: 18px;
+  line-height: 26px;
+  font-weight: $font-family-semibold-weight;
+  color: $secondary-text;
+  cursor: pointer;
+}
+
+.header-tab-item-active {
+  color: $primary-text;
+}

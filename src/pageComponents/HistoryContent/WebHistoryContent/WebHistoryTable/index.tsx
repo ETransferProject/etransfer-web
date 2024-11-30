@@ -2,142 +2,28 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { useRecordsState, useAppDispatch } from 'store/Provider/hooks';
 import { Table } from 'antd';
-import { BusinessType, TRecordsListItem } from 'types/api';
+import { TRecordsListItem } from 'types/api';
 import { TRecordsBodyProps } from 'pageComponents/HistoryContent';
-import { TFeeInfoType, TRecordsTableListType } from 'types/records';
+import { TFeeInfoType, TRecordsRequestType, TRecordsTableListType } from 'types/records';
 import { setSkipCount, setMaxResultCount } from 'store/reducers/records/slice';
 import FeeInfo from 'pageComponents/HistoryContent/FeeInfo';
 import EmptyDataBox from 'pageComponents/EmptyDataBox';
 import StatusBox from 'pageComponents/HistoryContent/StatusBox';
 import ArrivalTimeBox from 'pageComponents/HistoryContent/ArrivalTimeBox';
+import CreateTimeBox from 'pageComponents/HistoryContent/CreateTimeBox';
 import AmountBox from 'pageComponents/HistoryContent/AmountBox';
+import TokenBox from 'pageComponents/HistoryContent/TokenBox';
 import FromAndToBox from 'pageComponents/HistoryContent/FromAndToBox';
-import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
-import { useIsLogin } from 'hooks/wallet';
+import { useCheckHasConnectedWallet } from 'hooks/wallet';
 import { LOGIN_TO_VIEW_HISTORY, NO_HISTORY_FOUND } from 'constants/records';
 import { useRouter } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { COBO_CUSTODY } from 'constants/misc';
 
-const columns = [
-  {
-    title: 'Transaction',
-    dataIndex: 'status',
-    key: 'status',
-    render: (status: string, record: TRecordsTableListType) => {
-      return (
-        <StatusBox
-          status={status}
-          address={record.fromAddress}
-          network={record.fromNetwork}
-          fromChainId={record.fromChainId}
-          toChainId={record.toChainId}
-          orderType={record.orderType}
-        />
-      );
-    },
-  },
-  {
-    title: 'Arrival Time',
-    dataIndex: 'arrivalTime',
-    key: 'arrivalTime',
-    render: (arrivalTime: number, record: TRecordsTableListType) => {
-      return <ArrivalTimeBox arrivalTime={arrivalTime} status={record.status} />;
-    },
-  },
-  {
-    title: 'Method',
-    dataIndex: 'orderType',
-    key: 'orderType',
-    render: (orderType: string) => {
-      return (
-        <div className={styles['order-type']}>
-          {orderType === BusinessType.Withdraw ? InfoBusinessTypeLabel.Withdraw : orderType}
-        </div>
-      );
-    },
-  },
-  {
-    title: 'Amount Sent',
-    dataIndex: 'sendingAmount',
-    key: 'sendingAmount',
-    render: (sendingAmount: string, record: TRecordsTableListType) => {
-      return <AmountBox amount={sendingAmount} token={record.symbol} />;
-    },
-  },
-  {
-    title: 'Amount Received',
-    dataIndex: 'receivingAmount',
-    key: 'receivingAmount',
-    render: (receivingAmount: string, record: TRecordsTableListType) => {
-      return (
-        <AmountBox
-          amount={receivingAmount}
-          token={record.toSymbol}
-          status={record.status}
-          fromToken={record.symbol}
-        />
-      );
-    },
-  },
-  {
-    title: 'From',
-    dataIndex: 'fromAddress',
-    key: 'fromAddress',
-    render: (fromAddress: string, record: TRecordsTableListType) => {
-      return (
-        <FromAndToBox
-          type="From"
-          fromAddress={fromAddress}
-          toAddress={record.toAddress}
-          network={record.fromNetwork}
-          fromChainId={record.fromChainId}
-          toChainId={record.toChainId}
-          orderType={record.orderType}
-          orderStatus={record.status}
-          txHashLabel="Tx Hash"
-          txHash={record.fromTxId}
-          isCoboHash={record.fromAddress === COBO_CUSTODY || record.fromToAddress === COBO_CUSTODY}
-        />
-      );
-    },
-  },
-  {
-    title: 'To',
-    dataIndex: 'toAddress',
-    key: 'toAddress',
-    render: (toAddress: string, record: TRecordsTableListType) => {
-      return (
-        <FromAndToBox
-          type="To"
-          fromAddress={record.fromAddress}
-          toAddress={toAddress}
-          network={record.toNetwork}
-          fromChainId={record.fromChainId}
-          toChainId={record.toChainId}
-          orderType={record.orderType}
-          orderStatus={record.status}
-          txHashLabel="Tx Hash"
-          txHash={record.toTxId}
-          isCoboHash={record.toAddress === COBO_CUSTODY || record.toFromAddress === COBO_CUSTODY}
-        />
-      );
-    },
-  },
-  {
-    title: 'Transaction Fee',
-    dataIndex: 'feeInfo',
-    key: 'feeInfo',
-    render: (feeInfo: TFeeInfoType[], record: TRecordsTableListType) => {
-      return <FeeInfo feeInfo={feeInfo} status={record.status} orderType={record.orderType} />;
-    },
-  },
-];
-
 export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProps) {
-  const { recordsList, totalCount, skipCount, maxResultCount } = useRecordsState();
+  const { type, recordsList, totalCount, skipCount, maxResultCount } = useRecordsState();
   const dispatch = useAppDispatch();
-  const isLogin = useIsLogin();
+  const { hasConnected } = useCheckHasConnectedWallet();
 
   const handleRecordListData = (recordsList: TRecordsListItem[]) => {
     if (recordsList.length === 0) {
@@ -147,13 +33,15 @@ export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProp
     const recordsTableList: TRecordsTableListType[] = [];
 
     recordsList.map((item) => {
-      const { id, orderType, status, arrivalTime, fromTransfer, toTransfer } = item;
+      const { id, orderType, status, arrivalTime, createTime, fromTransfer, toTransfer } = item;
       recordsTableList.push({
         key: id,
         orderType,
         status,
         arrivalTime,
+        createTime,
         symbol: fromTransfer.symbol,
+        icon: fromTransfer.icon,
         sendingAmount: fromTransfer.amount,
         receivingAmount: toTransfer.amount,
         fromNetwork: fromTransfer.network,
@@ -194,6 +82,133 @@ export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProp
     [router],
   );
 
+  const columns = useMemo(() => {
+    const result = [
+      {
+        title: 'Status',
+        dataIndex: 'status',
+        key: 'status',
+        render: (status: string, record: TRecordsTableListType) => {
+          return (
+            <StatusBox
+              status={status}
+              address={record.fromAddress}
+              network={record.fromNetwork}
+              fromChainId={record.fromChainId}
+              toChainId={record.toChainId}
+              orderType={record.orderType}
+            />
+          );
+        },
+      },
+      type === TRecordsRequestType.Transfer
+        ? {
+            title: 'Create Time',
+            dataIndex: 'createTime',
+            key: 'createTime',
+            render: (createTime: number) => {
+              return <CreateTimeBox createTime={createTime} />;
+            },
+          }
+        : {
+            title: 'Arrival Time',
+            dataIndex: 'arrivalTime',
+            key: 'arrivalTime',
+            render: (arrivalTime: number, record: TRecordsTableListType) => {
+              return <ArrivalTimeBox arrivalTime={arrivalTime} status={record.status} />;
+            },
+          },
+      type === TRecordsRequestType.Transfer && {
+        title: 'Token',
+        dataIndex: 'symbol',
+        key: 'symbol',
+        render: (symbol: string, record: TRecordsTableListType) => {
+          return <TokenBox icon={record.icon} symbol={symbol} />;
+        },
+      },
+      {
+        title: 'Sending Amount',
+        dataIndex: 'sendingAmount',
+        key: 'sendingAmount',
+        render: (sendingAmount: string, record: TRecordsTableListType) => {
+          return <AmountBox amount={sendingAmount} token={record.symbol} />;
+        },
+      },
+      {
+        title: 'Receiving Amount',
+        dataIndex: 'receivingAmount',
+        key: 'receivingAmount',
+        render: (receivingAmount: string, record: TRecordsTableListType) => {
+          return (
+            <AmountBox
+              amount={receivingAmount}
+              token={record.toSymbol}
+              status={record.status}
+              fromToken={record.symbol}
+            />
+          );
+        },
+      },
+      {
+        title: 'From',
+        dataIndex: 'fromAddress',
+        key: 'fromAddress',
+        render: (fromAddress: string, record: TRecordsTableListType) => {
+          return (
+            <FromAndToBox
+              type="From"
+              fromAddress={fromAddress}
+              toAddress={record.toAddress}
+              network={record.fromNetwork}
+              fromChainId={record.fromChainId}
+              toChainId={record.toChainId}
+              orderType={record.orderType}
+              orderStatus={record.status}
+              txHashLabel="Tx Hash"
+              txHash={record.fromTxId}
+              isCoboHash={
+                record.fromAddress === COBO_CUSTODY || record.fromToAddress === COBO_CUSTODY
+              }
+            />
+          );
+        },
+      },
+      {
+        title: 'To',
+        dataIndex: 'toAddress',
+        key: 'toAddress',
+        render: (toAddress: string, record: TRecordsTableListType) => {
+          return (
+            <FromAndToBox
+              type="To"
+              fromAddress={record.fromAddress}
+              toAddress={toAddress}
+              network={record.toNetwork}
+              fromChainId={record.fromChainId}
+              toChainId={record.toChainId}
+              orderType={record.orderType}
+              orderStatus={record.status}
+              txHashLabel="Tx Hash"
+              txHash={record.toTxId}
+              isCoboHash={
+                record.toAddress === COBO_CUSTODY || record.toFromAddress === COBO_CUSTODY
+              }
+            />
+          );
+        },
+      },
+      {
+        title: 'Transaction Fee',
+        dataIndex: 'feeInfo',
+        key: 'feeInfo',
+        render: (feeInfo: TFeeInfoType[], record: TRecordsTableListType) => {
+          return <FeeInfo feeInfo={feeInfo} status={record.status} orderType={record.orderType} />;
+        },
+      },
+    ];
+    return result.filter((item) => !!item);
+  }, [type]);
+
   return (
     <div className={clsx(styles['web-records-table-wrapper'])}>
       <Table
@@ -210,7 +225,7 @@ export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProp
         scroll={{ x: 1020 }}
         locale={{
           emptyText: (
-            <EmptyDataBox emptyText={isLogin ? NO_HISTORY_FOUND : LOGIN_TO_VIEW_HISTORY} />
+            <EmptyDataBox emptyText={hasConnected ? NO_HISTORY_FOUND : LOGIN_TO_VIEW_HISTORY} />
           ),
         }}
         pagination={

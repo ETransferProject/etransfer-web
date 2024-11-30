@@ -9,6 +9,7 @@ import { BlockchainNetworkType } from 'constants/network';
 
 export interface TransferDetailStepProps {
   orderType: BusinessType;
+  secondOrderType: BusinessType;
   currentStep: TransactionRecordStep;
   fromTransfer: {
     confirmingThreshold: number;
@@ -26,6 +27,7 @@ export interface TransferDetailStepProps {
 
 export default function TransferDetailStep({
   orderType,
+  secondOrderType,
   currentStep,
   fromTransfer,
   toTransfer,
@@ -34,7 +36,7 @@ export default function TransferDetailStep({
   const stepItems = useMemo(() => {
     const items = [
       {
-        title: `${orderType} submitted`,
+        title: `${secondOrderType || orderType} submitted`,
         description: `${fromTransfer.amount} ${formatSymbolDisplay(fromTransfer.symbol)}`,
       },
       {
@@ -49,7 +51,7 @@ export default function TransferDetailStep({
         } Chain in progress`,
       },
       {
-        title: 'Received',
+        title: (secondOrderType || orderType) === BusinessType.Transfer ? 'Success' : 'Received',
         description:
           fromTransfer.symbol !== toTransfer.symbol
             ? `You will receive ${formatSymbolDisplay(toTransfer.symbol)}`
@@ -70,6 +72,7 @@ export default function TransferDetailStep({
     fromTransfer.network,
     fromTransfer.symbol,
     orderType,
+    secondOrderType,
     toTransfer.amount,
     toTransfer.network,
     toTransfer.symbol,

@@ -1,23 +1,22 @@
 import { etransferCore } from '@etransfer/ui-react';
 import { ETransferHost } from 'constants/index';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useAppDispatch } from 'store/Provider/hooks';
 import {
   setDepositProcessingCount,
+  setTransferProcessingCount,
   setWithdrawProcessingCount,
 } from 'store/reducers/records/slice';
 import { handleNoticeDataAndShow } from 'utils/notice';
-import { useGetAccount } from './wallet';
-import { removeAddressSuffix } from '@etransfer/utils';
 import { TOrderRecordsNoticeResponse } from '@etransfer/socket';
 import myEvents from 'utils/myEvent';
+import { useGetAllConnectedWalletAccount } from './wallet';
+import { useDebounceCallback } from './debounce';
+import { eTransferInstance } from 'utils/etransferInstance';
 
 export function useNoticeSocket() {
   const dispatch = useAppDispatch();
-  const account = useGetAccount();
-  const address = useMemo(() => {
-    return removeAddressSuffix(account?.AELF || '');
-  }, [account?.AELF]);
+  const getAllConnectedWalletAccount = useGetAllConnectedWalletAccount();
 
   const handleNotice = useCallback(
     (res: TOrderRecordsNoticeResponse | null) => {
@@ -34,6 +33,12 @@ export function useNoticeSocket() {
           dispatch(setWithdrawProcessingCount(0));
         }
 
+        if (res.processing.transferCount) {
+          dispatch(setTransferProcessingCount(res.processing.transferCount));
+        } else {
+          dispatch(setTransferProcessingCount(0));
+        }
+
         myEvents.GlobalTxnNotice.emit();
         // handle order data and show notice
         handleNoticeDataAndShow(res);
@@ -45,40 +50,59 @@ export function useNoticeSocket() {
   const handleNoticeRef = useRef(handleNotice);
   handleNoticeRef.current = handleNotice;
 
-  useEffect(() => {
+  const openAndUpdateSocket = useDebounceCallback(async () => {
     etransferCore.setSocketUrl(ETransferHost);
+    const addressList = getAllConnectedWalletAccount();
+    const accountListWithWalletType = addressList.accountListWithWalletType;
 
-    if (address && !etransferCore.noticeSocket?.signalr?.connectionId) {
-      etransferCore.noticeSocket
-        ?.doOpen()
-        .then((res) => {
-          console.log('NoticeSocket doOpen res:', res);
-          etransferCore.noticeSocket?.RequestUserOrderRecord({
-            address: address,
-          });
-          etransferCore.noticeSocket?.ReceiveUserOrderRecords(
-            {
-              address: address,
-            },
-            (res) => {
-              console.log(
-                'NoticeSocket ReceiveUserOrderRecords res:',
-                res,
-                etransferCore.noticeSocket?.signalr?.connectionId,
-              );
-              handleNoticeRef.current(res);
-            },
+    const mainFunction = () => {
+      eTransferInstance.setNoticeStorageAddresses(accountListWithWalletType);
+      etransferCore.noticeSocket?.RequestUserOrderRecord({
+        addressList: accountListWithWalletType,
+      });
+      etransferCore.noticeSocket?.ReceiveUserOrderRecords(
+        {
+          addressList: accountListWithWalletType,
+        },
+        (res) => {
+          console.log(
+            'NoticeSocket ReceiveUserOrderRecords res:',
+            res,
+            etransferCore.noticeSocket?.signalr?.connectionId,
           );
-          etransferCore.noticeSocket?.signalr?.onreconnected((id?: string) => {
-            console.log('NoticeSocket onreconnected:', id);
-            etransferCore.noticeSocket?.RequestUserOrderRecord({
-              address: address,
-            });
-          });
-        })
-        .catch((error) => {
-          console.log('NoticeSocket doOpen error', error);
+          handleNoticeRef.current(res);
+        },
+      );
+      etransferCore.noticeSocket?.signalr?.onreconnected((id?: string) => {
+        console.log('NoticeSocket onreconnected:', id);
+        etransferCore.noticeSocket?.RequestUserOrderRecord({
+          addressList: accountListWithWalletType,
         });
+      });
+    };
+    if (Array.isArray(accountListWithWalletType) && accountListWithWalletType.length > 0) {
+      if (!etransferCore.noticeSocket?.signalr?.connectionId) {
+        etransferCore.noticeSocket
+          ?.doOpen()
+          .then((res) => {
+            console.log('NoticeSocket doOpen res:', res);
+            mainFunction();
+          })
+          .catch((error) => {
+            console.log('NoticeSocket doOpen error', error);
+          });
+      } else {
+        // TODO dev in sdk
+        await etransferCore.noticeSocket.UnsubscribeUserOrderRecord(
+          undefined,
+          eTransferInstance.noticeStorageAddresses,
+        );
+        mainFunction();
+      }
     }
-  }, [address]);
+  }, [getAllConnectedWalletAccount]);
+
+  useEffect(() => {
+    openAndUpdateSocket();
+  }, [openAndUpdateSocket]);
 }

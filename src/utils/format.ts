@@ -109,13 +109,11 @@ export const formatNetworkKey = (network?: string) => {
   }
 };
 
-export const isAelfChain = (network: string) => {
-  if (
-    network === BlockchainNetworkType.tDVV ||
-    network === BlockchainNetworkType.tDVW ||
-    network === BlockchainNetworkType.AELF
-  ) {
-    return true;
+export function stringToHex(str: string) {
+  let val = '';
+  for (let i = 0; i < str.length; i++) {
+    if (val === '') val = str.charCodeAt(i).toString(16);
+    else val += str.charCodeAt(i).toString(16);
   }
-  return false;
-};
+  return val;
+}

@@ -6,7 +6,12 @@ import DepositDescription from 'pageComponents/DepositContent/DepositDescription
 import styles from './styles.module.scss';
 import { TDepositContentProps } from '..';
 import CommonQRCode from 'components/CommonQRCode';
-import { CHECK_TXN_BUTTON, CHECKING_TXN_BUTTON, DEPOSIT_ADDRESS_LABEL } from 'constants/deposit';
+import {
+  CHECK_TXN_BUTTON,
+  CHECKING_TXN_BUTTON,
+  DEPOSIT_ADDRESS_LABEL,
+  DEPOSIT_PAGE_TITLE,
+} from 'constants/deposit';
 import CommonImage from 'components/CommonImage';
 import { DoubleArrowIcon, qrCodePlaceholder } from 'assets/images';
 import { DepositRetryForWeb } from 'pageComponents/DepositContent/DepositRetry';
@@ -23,13 +28,14 @@ import SelectChainWrapper from '../SelectChainWrapper';
 import DepositTip from '../DepositTip';
 import { CopySize } from 'components/Copy';
 import NotLoginTip from '../NotLoginTip';
-import { useIsLogin, useLogin } from 'hooks/wallet';
+import useAelf, { useLogin } from 'hooks/wallet/useAelf';
 import { useDepositNetworkList } from 'hooks/deposit';
 import TransferTip from '../TransferTip';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { AelfChainIdList } from 'constants/chain';
 import CommonButton, { CommonButtonSize } from 'components/CommonButton';
 import { ProcessingTip } from 'components/Tips/ProcessingTip';
+import { CONNECT_AELF_WALLET } from 'constants/wallet';
 
 export default function WebContent({
   fromNetworkSelected,
@@ -44,7 +50,7 @@ export default function WebContent({
   toTokenSelected,
   isCheckTxnLoading = false,
   depositProcessingCount,
-  withdrawProcessingCount,
+  transferProcessingCount,
   onRetry,
   onCheckTxnClick,
   onClickProcessingTip,
@@ -53,7 +59,7 @@ export default function WebContent({
   fromNetworkChanged,
   fromTokenChanged,
 }: TDepositContentProps) {
-  const isLogin = useIsLogin();
+  const { isConnected } = useAelf();
   const handleLogin = useLogin();
 
   const {
@@ -72,22 +78,22 @@ export default function WebContent({
 
   const isShowNotLoginTip = useMemo(() => {
     return (
-      !isLogin &&
+      !isConnected &&
       !!fromTokenSymbol &&
       !!toTokenSymbol &&
       !!fromNetwork?.network &&
       !!toChainItem.key
     );
-  }, [fromNetwork?.network, fromTokenSymbol, isLogin, toChainItem.key, toTokenSymbol]);
+  }, [fromNetwork?.network, fromTokenSymbol, isConnected, toChainItem.key, toTokenSymbol]);
 
   const isShowTransferTip = useMemo(() => {
     return (
-      isLogin &&
+      isConnected &&
       SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE.includes(fromTokenSymbol as TokenType) &&
       fromTokenSymbol === toTokenSymbol &&
       AelfChainIdList.includes(fromNetwork?.network as TChainId)
     );
-  }, [fromNetwork?.network, fromTokenSymbol, isLogin, toTokenSymbol]);
+  }, [fromNetwork?.network, fromTokenSymbol, isConnected, toTokenSymbol]);
 
   const isShowDepositAddressLabelForLogin = useMemo(() => {
     return showRetry || !!depositInfo.depositAddress;
@@ -99,12 +105,12 @@ export default function WebContent({
       toChainItem.key &&
       toTokenSymbol &&
       fromNetworkSelected?.network &&
-      !isLogin
+      !isConnected
     );
   }, [
     fromNetworkSelected?.network,
     fromTokenSymbol,
-    isLogin,
+    isConnected,
     showRetry,
     toChainItem.key,
     toTokenSymbol,
@@ -177,14 +183,14 @@ export default function WebContent({
           <div className={clsx('flex-row-center-between', styles['label'])}>
             <span>To</span>
             <div className="flex-row-center">
-              {isLogin ? (
+              {isConnected ? (
                 <>
                   <div className={styles['circle']} />
                   <span className={styles['connected']}>Connected</span>
                 </>
               ) : (
                 <span className={styles['connect']} onClick={handleLogin}>
-                  Connect
+                  {CONNECT_AELF_WALLET}
                 </span>
               )}
             </div>
@@ -204,7 +210,7 @@ export default function WebContent({
     fromNetworkChanged,
     fromNetworkSelected,
     handleLogin,
-    isLogin,
+    isConnected,
     isShowNetworkLoading,
     menuItems,
     newFromNetworkList,
@@ -317,15 +323,15 @@ export default function WebContent({
           'main-content-container-safe-area',
           styles['main-content'],
         )}>
-        {isLogin && (
+        {isConnected && (
           <ProcessingTip
             depositProcessingCount={depositProcessingCount}
-            withdrawProcessingCount={withdrawProcessingCount}
+            transferProcessingCount={transferProcessingCount}
             onClick={onClickProcessingTip}
           />
         )}
 
-        <div className={styles['deposit-title']}>Deposit Assets</div>
+        <div className="main-section-header">{DEPOSIT_PAGE_TITLE}</div>
 
         {renderSelectSection}
 
@@ -337,9 +343,9 @@ export default function WebContent({
           <>
             <div className={clsx(styles['label'], styles['label-deposit-address'])}>Transfer</div>
             <TransferTip
-              toChainItem={toChainItem}
               symbol={fromTokenSymbol}
-              network={fromNetworkSelected}
+              fromNetwork={fromNetworkSelected?.network}
+              toNetwork={toChainItem.key}
             />
             <CommonSpace direction="vertical" size={24} />
           </>
@@ -353,8 +359,10 @@ export default function WebContent({
               </div>
             )}
             {isShowNotLoginTip && <NotLoginTip />}
-            {isLogin && showRetry && <DepositRetryForWeb isShowImage={true} onClick={onRetry} />}
-            {isLogin && !showRetry && !!depositInfo.depositAddress && renderDepositInfo}
+            {isConnected && showRetry && (
+              <DepositRetryForWeb isShowImage={true} onClick={onRetry} />
+            )}
+            {isConnected && !showRetry && !!depositInfo.depositAddress && renderDepositInfo}
           </>
         )}
       </div>
@@ -364,7 +372,7 @@ export default function WebContent({
     depositProcessingCount,
     fromNetworkSelected,
     fromTokenSymbol,
-    isLogin,
+    isConnected,
     isShowDepositAddressLabelForLogin,
     isShowDepositAddressLabelForNotLogin,
     isShowNotLoginTip,
@@ -376,7 +384,7 @@ export default function WebContent({
     renderSelectSection,
     showRetry,
     toChainItem,
-    withdrawProcessingCount,
+    transferProcessingCount,
   ]);
 
   return (
@@ -385,7 +393,6 @@ export default function WebContent({
         <div className={styles['main-wrapper']}>{renderDepositMainContent}</div>
       </div>
       <div className={clsx('flex-row', styles['faq-wrapper'])}>
-        <div className={styles['faq-left']}></div>
         <FAQ className={styles['faq']} title={FAQ_DEPOSIT.title} list={FAQ_DEPOSIT.list} />
       </div>
     </div>

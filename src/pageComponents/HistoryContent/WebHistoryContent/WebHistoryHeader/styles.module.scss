@@ -1,15 +1,8 @@
 @import '/src/assets/theme/font.scss';
 @import '/src/assets/theme/color.scss';
 
-.web-records-title {
-  font-size: 24px;
-  font-weight: $font-family-medium-weight;
-  height: 42px;
-  line-height: 42px;
-}
-
 .web-records-search-wrapper {
-  padding: 16px 0;
+  padding: 12px 0;
   :global {
     .ant-select-selector {
       border-radius: 6px !important;
@@ -17,17 +10,14 @@
   }
 }
 
-.web-records-select-type,
 .web-records-select-status {
   width: 156px;
+  margin-right: 12px;
   border-radius: 6px;
 }
 
-.web-records-select-status {
-  margin: 0 12px;
-}
-
 .web-records-range-picker {
+  width: 328px;
   border-radius: 6px;
   margin-right: 12px;
 }

@@ -1,5 +1,5 @@
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
-import { PortkeyVersion } from 'constants/wallet';
+import { PortkeyVersion } from 'constants/wallet/index';
 import { TFromTransfer, TOrderStatus, TToTransfer } from './records';
 import type { Moment } from 'moment';
 import { IChainNameItem, TokenType } from 'constants/index';
@@ -8,16 +8,21 @@ import { TransferStatusType } from 'constants/infoDashboard';
 export enum BusinessType {
   Deposit = 'Deposit',
   Withdraw = 'Withdraw',
+  Transfer = 'Transfer',
 }
 
 export enum AuthTokenSource {
   Portkey = 'portkey',
   NightElf = 'nightElf',
+  EVM = 'EVM',
+  Solana = 'Solana',
+  TRON = 'TRX',
+  TON = 'Ton',
 }
 
 export type TGetTokenListRequest = {
   type: BusinessType;
-  chainId: TChainId;
+  chainId?: TChainId;
 };
 
 export type TGetTokenListResult = {
@@ -51,7 +56,7 @@ export type TToTokenItem = TTokenItem & {
 
 export type TGetNetworkListRequest = {
   type: BusinessType;
-  chainId: TChainId;
+  chainId?: TChainId;
   symbol?: string;
   address?: string;
 };
@@ -70,6 +75,8 @@ export type TNetworkItem = {
   status: NetworkStatus;
   withdrawFee?: string;
   withdrawFeeUnit?: string;
+  specialWithdrawFee?: string;
+  specialWithdrawFeeDisplay?: boolean;
 };
 
 export enum NetworkStatus {
@@ -196,6 +203,8 @@ export interface TGetRecordsListRequest {
   skipCount: number;
   maxResultCount: number;
   search?: string | undefined;
+  addressList?: string[];
+  sorting?: string; // eg: sorting = 'createTime desc'
 }
 
 export type TRecordsListItem = {
@@ -213,11 +222,32 @@ export type TGetRecordsListResult = {
   items: TRecordsListItem[];
 };
 
+export type TGetRecordStatusRequest = {
+  addressList: string[];
+};
+
 export type TCheckEOARegistrationRequest = {
   address: string;
 };
 
 export type TCheckEOARegistrationResult = {
+  result: boolean;
+};
+
+export enum WalletSourceType {
+  EVM = 'EVM',
+  Solana = 'Solana',
+  TRX = 'TRX',
+  Ton = 'Ton',
+  Portkey = 'Portkey',
+}
+
+export type TCheckRegistrationRequest = {
+  address: string;
+  sourceType: WalletSourceType;
+};
+
+export type TCheckRegistrationResult = {
   result: boolean;
 };
 
@@ -261,6 +291,7 @@ export type TTransactionOverviewItem = {
   date: string;
   depositTx: number;
   withdrawTx: number;
+  transferTx: number;
 };
 
 export type TVolumeOverviewRequest = TTransactionOverviewRequest;
@@ -281,12 +312,13 @@ export type TVolumeOverviewItem = {
   date: string;
   depositAmountUsd: string;
   withdrawAmountUsd: string;
+  transferAmountUsd: string;
 };
 
 export enum TokensDashboardType {
   All,
   Deposit,
-  Withdraw,
+  Transfer,
 }
 
 export type TTokenDashboardRequest = {
@@ -357,6 +389,7 @@ export type TTransferDashboardResult = {
 export type TTransferDashboardItem = {
   id: string;
   orderType: BusinessType;
+  secondOrderType: BusinessType;
   status: TOrderStatus;
   createTime: number;
   arrivalTime: number;
@@ -399,6 +432,7 @@ export type TTransferDashboardItemToFee = {
 export type TGetRecordDetailResult = {
   id: string;
   orderType: BusinessType;
+  secondOrderType: BusinessType;
   status: TOrderStatus;
   arrivalTime: number;
   createTime: number;
@@ -421,3 +455,75 @@ export enum TransactionRecordStep {
   ToTransfer,
   ReceivedOrSent,
 }
+
+export type TGetTransferInfoRequest = {
+  fromNetwork: string;
+  toNetwork?: string;
+  symbol: string;
+  amount?: string;
+  toAddress?: string;
+  memo?: string;
+  version?: PortkeyVersion;
+  fromAddress?: string;
+  sourceType?: WalletSourceType;
+};
+
+export type TGetTransferInfoResult = {
+  transferInfo: TCrossChainTransferInfo;
+};
+
+export type TCrossChainTransferInfo = {
+  contractAddress?: string;
+  maxAmount: string;
+  minAmount: string;
+  limitCurrency: string;
+  totalLimit: string;
+  remainingLimit: string;
+  transactionFee?: string;
+  transactionUnit?: string;
+  aelfTransactionFee?: string;
+  aelfTransactionUnit?: string;
+  receiveAmount: string;
+  expiredTimestamp: number;
+  amountUsd: string;
+  receiveAmountUsd: string;
+  feeUsd: string;
+};
+
+export type TCreateTransferOrderRequest = {
+  amount: string;
+  fromNetwork: string;
+  toNetwork: string;
+  fromSymbol: string;
+  toSymbol: string;
+  fromAddress: string;
+  toAddress: string;
+  memo?: string;
+  rawTransaction?: string;
+};
+
+export type TCreateTransferOrderResult = {
+  orderId: string;
+  address?: string;
+  transactionId?: string;
+};
+
+export enum UpdateTransferOrderStatus {
+  Rejected = 'Rejected',
+}
+
+export type TUpdateTransferOrderRequest = {
+  amount: string;
+  fromNetwork: string;
+  toNetwork: string;
+  fromSymbol: string;
+  toSymbol: string;
+  fromAddress: string;
+  toAddress: string;
+  address: string; // token pool address
+  memo?: string;
+  txId: string;
+  status?: UpdateTransferOrderStatus;
+};
+
+export type TUpdateTransferOrderResult = boolean;

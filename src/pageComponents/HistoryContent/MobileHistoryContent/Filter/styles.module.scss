@@ -2,19 +2,32 @@
 @import 'src/assets/theme/color.scss';
 @import 'src/assets/theme/breakpoint.scss';
 
-.filter-item-wrapper {
-  position: relative;
+.header-tab-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  @include media-pad {
+    margin: 0 24px;
+  }
   @include media-mobile {
-    padding: 12px 16px;
+    margin: 0 16px;
+  }
+}
+
+.filter-item-wrapper {
+  gap: 12px;
+  @include media-mobile {
+    padding: 0 16px 8px;
   }
   @include media-pad {
-    padding: 16px 40px 8px;
+    padding: 0 24px 8px;
   }
 }
 
 .filter-icon {
-  float: left;
-  margin: 7px 12px 14px 0;
+  cursor: pointer;
 }
 
 .filter-item {
@@ -24,18 +37,14 @@
   font-size: 14px;
   border-radius: 6px;
   background-color: $hover-bg;
-  margin: 0 12px 7px 0px;
-  float: left;
 }
 
 .filter-reset {
   font-size: 14px;
   height: 22px;
   line-height: 22px;
-  margin-top: 6px;
-  margin-bottom: 6px;
   color: $normal;
-  float: left;
+  cursor: pointer;
 }
 
 .filter-close-icon {

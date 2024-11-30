@@ -88,11 +88,15 @@ export function TokenCardForWeb({
 }
 
 export function SelectImage({
+  className,
+  defaultIconClassName,
   icon,
   open,
   symbol,
   size = 24,
 }: {
+  className?: string;
+  defaultIconClassName?: string;
   icon: string;
   open: boolean;
   symbol: string;
@@ -117,9 +121,13 @@ export function SelectImage({
           width={size}
           height={size}
           fill={false}
-          className={clsx(styles['token-card-icon'], {
-            [styles['token-card-icon-load']]: !isSuccess,
-          })}
+          className={clsx(
+            styles['token-card-icon'],
+            {
+              [styles['token-card-icon-load']]: !isSuccess,
+            },
+            className,
+          )}
           onLoad={() => {
             setIsSuccess(true);
           }}
@@ -127,9 +135,15 @@ export function SelectImage({
         />
       )}
       <div
-        className={clsx('row-center', styles['token-card-defaultIcon'], styles['token-card-icon'], {
-          [styles['token-card-defaultIcon-none']]: showIcon && isSuccess,
-        })}
+        className={clsx(
+          'row-center',
+          styles['token-card-defaultIcon'],
+          styles['token-card-icon'],
+          {
+            [styles['token-card-defaultIcon-none']]: showIcon && isSuccess,
+          },
+          defaultIconClassName,
+        )}
         style={{ width: size, height: size, lineHeight: size + 'px' }}>
         {symbol.charAt(0)}
       </div>

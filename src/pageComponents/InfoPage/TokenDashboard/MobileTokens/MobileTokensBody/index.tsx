@@ -2,7 +2,6 @@ import { useInfoDashboardState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { useCallback, useMemo, useState } from 'react';
 import TokenBox from '../../ColumnComponents/TokenBox';
-import AelfChain from '../../ColumnComponents/AelfChain';
 import Networks from '../../ColumnComponents/Networks';
 import { TTokenDashboardItem } from 'types/infoDashboard';
 import NetworkTotalVolume from '../../ColumnComponents/NetworkTotalVolume';
@@ -66,8 +65,6 @@ export default function MobileTokensBody() {
 
   const renderTokenCard = useCallback(
     (item: TTokenDashboardItem) => {
-      const hiddenChainDivider = item.aelfChain?.length === 0 || item.networks?.length === 0;
-
       return (
         <div className={styles['token-card-container']}>
           <div className="flex-row-between">
@@ -81,8 +78,6 @@ export default function MobileTokensBody() {
             </div>
 
             <div className="flex-row-center">
-              <AelfChain list={item.aelfChain} size="small" className={styles['chain-wrapper']} />
-              {!hiddenChainDivider && <div className={styles['chain-network-divider']} />}
               <Networks list={item.networks} size="small" className={styles['chain-wrapper']} />
             </div>
           </div>

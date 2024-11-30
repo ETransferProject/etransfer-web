@@ -12,23 +12,23 @@ import { SwapRightDefault, SwapRightSelected } from 'assets/images';
 import moment from 'moment';
 import { useHistoryFilter } from 'hooks/history';
 import { END_TIME_FORMAT, START_TIME_FORMAT } from 'constants/records';
-import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
+import { DATE_FORMATE } from 'constants/misc';
+import HeaderTab from 'pageComponents/HistoryContent/HeaderTab';
 
 const { RangePicker } = DatePicker;
-const dateFormat = 'YYYY-MM-DD';
 
 export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecordsContentProps) {
   const dispatch = useAppDispatch();
   const { type, status, timestamp } = useRecordsState();
-  const { setMethodFilter, setStatusFilter, setTimestampFilter } = useHistoryFilter();
+  const { setTypeFilter, setStatusFilter, setTimestampFilter } = useHistoryFilter();
 
   const handleTypeChange = useCallback(
     (type: TRecordsRequestType) => {
-      setMethodFilter(type);
+      setTypeFilter(type);
       dispatch(setSkipCount(1));
       requestRecordsList();
     },
-    [dispatch, requestRecordsList, setMethodFilter],
+    [dispatch, requestRecordsList, setTypeFilter],
   );
 
   const handleStatusChange = useCallback(
@@ -58,11 +58,11 @@ export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecor
 
   const isShowReset = useCallback(() => {
     let isShow = false;
-    if (type !== 0 || status !== 0 || timestamp) {
+    if (status !== 0 || timestamp) {
       isShow = true;
     }
     return isShow;
-  }, [type, status, timestamp]);
+  }, [status, timestamp]);
 
   const valueDate: TRangeValue = useMemo(
     () => [
@@ -74,20 +74,8 @@ export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecor
 
   return (
     <div className={clsx(styles['web-records-header-wrapper'])}>
-      <div className={clsx(styles['web-records-title'])}>History</div>
+      <HeaderTab activeTab={type} onChange={handleTypeChange} />
       <div className={clsx(styles['web-records-search-wrapper'])}>
-        <Select
-          size={'large'}
-          value={type}
-          className={clsx(styles['web-records-select-type'])}
-          onChange={handleTypeChange}
-          popupClassName={'drop-wrap'}
-          options={[
-            { value: TRecordsRequestType.ALL, label: 'All' },
-            { value: TRecordsRequestType.Deposits, label: InfoBusinessTypeLabel.Deposit },
-            { value: TRecordsRequestType.Withdraws, label: InfoBusinessTypeLabel.Withdraw },
-          ]}
-        />
         <Select
           size={'large'}
           value={status}
@@ -95,7 +83,7 @@ export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecor
           onChange={handleStatusChange}
           popupClassName={'drop-wrap'}
           options={[
-            { value: TRecordsRequestStatus.ALL, label: 'All' },
+            { value: TRecordsRequestStatus.ALL, label: 'All Status' },
             { value: TRecordsRequestStatus.Processing, label: TRecordsStatusI18n.Processing },
             { value: TRecordsRequestStatus.Succeed, label: TRecordsStatusI18n.Succeed },
             { value: TRecordsRequestStatus.Failed, label: TRecordsStatusI18n.Failed },
@@ -106,7 +94,7 @@ export default function WebRecordsHeader({ requestRecordsList, onReset }: TRecor
           allowClear={false}
           value={valueDate}
           className={clsx(styles['web-records-range-picker'])}
-          format={dateFormat}
+          format={DATE_FORMATE}
           allowEmpty={[true, true]}
           separator={timestamp ? <SwapRightSelected /> : <SwapRightDefault />}
           onCalendarChange={(dates) => handleDateRangeChange(dates)}

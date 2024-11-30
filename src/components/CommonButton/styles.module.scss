@@ -62,6 +62,34 @@
   }
 }
 
+.border {
+  background: $page-bg !important;
+  border: 1px solid $border !important;
+  color: $primary-text !important;
+  display: flex;
+  align-items: center;
+  &:hover {
+    background: $page-bg !important;
+    border-color: $hover !important;
+    color: $primary-text !important;
+  }
+  &:checked {
+    background: $page-bg;
+    border-color: $click;
+    color: $primary-text;
+  }
+  &:disabled {
+    background: $disable;
+    border-color: $disable;
+    color: $primary-text;
+  }
+  &:focus {
+    background: $page-bg;
+    border-color: $click;
+    color: $primary-text;
+  }
+}
+
 .extraSmall {
   height: 32px;
   padding: 0 16px;

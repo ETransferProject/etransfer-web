@@ -55,6 +55,11 @@ export default function MobileTransferBody({
 
   const renderTransferCard = useCallback(
     (item: TTransferDashboardData) => {
+      const _orderType = item?.secondOrderType
+        ? item?.secondOrderType
+        : item?.orderType === BusinessType.Withdraw
+        ? InfoBusinessTypeLabel.Withdraw
+        : item?.orderType;
       return (
         <div className={styles['transfer-card-container']}>
           <div
@@ -65,11 +70,7 @@ export default function MobileTransferBody({
               'flex-row-between',
             )}>
             <FromToToken fromSymbol={item.fromSymbol} toSymbol={item.toSymbol} />
-            <div className={styles['transfer-card-type']}>
-              {item.orderType === BusinessType.Withdraw
-                ? InfoBusinessTypeLabel.Withdraw
-                : item.orderType}
-            </div>
+            <div className={styles['transfer-card-type']}>{_orderType}</div>
           </div>
           <div className={clsx('flex-row-between', styles['transfer-card-row'])}>
             <div>From - To</div>

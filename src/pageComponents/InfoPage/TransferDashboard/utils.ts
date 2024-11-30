@@ -2,6 +2,7 @@ import { TTransferDashboardRequest } from 'types/api';
 import { TTransferDashboardData } from 'types/infoDashboard';
 import { getTransferDashboard as getTransferDashboardApi } from 'utils/api/infoDashboard';
 import moment from 'moment';
+import { TIME_FORMATE_MMM_D_YYYY_HH_mm_ss } from 'constants/misc';
 
 export const getTransferDashboard = async (params: TTransferDashboardRequest) => {
   const data = await getTransferDashboardApi(params);
@@ -11,6 +12,7 @@ export const getTransferDashboard = async (params: TTransferDashboardRequest) =>
     list.push({
       id: item.id,
       orderType: item.orderType,
+      secondOrderType: item.secondOrderType,
       status: item.status,
       createTime: item.createTime,
       fromNetwork: item.fromTransfer.network,
@@ -46,7 +48,7 @@ export const formatTime = (time: number) => {
 
   const timeDaysDiff = moment(currentTimestamp).diff(moment(time), 'days');
   if (timeDaysDiff > 0) {
-    return moment(time).format('MMM D, YYYY HH:mm:ss');
+    return moment(time).format(TIME_FORMATE_MMM_D_YYYY_HH_mm_ss);
   } else {
     const timeHourDiff = moment(currentTimestamp).diff(moment(time), 'hours');
     if (timeHourDiff > 0) {

@@ -33,7 +33,7 @@ export default function Sider() {
                 if (item.key === SideMenuKey.History && isUnreadHistory) {
                   myEvents.HistoryActive.emit();
                 }
-                changeSideMenu(item.key);
+                changeSideMenu(item.key, item.pathname);
               }}>
               <MenuIcon className={clsx('flex-none', styles['menu-item-icon'])} />
               <span className={styles['menu-item-label']}>{item.label}</span>

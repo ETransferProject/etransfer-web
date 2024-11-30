@@ -7,6 +7,7 @@ import {
   APP_NAME,
   AelfReact,
   NETWORK_TYPE,
+  SHOW_V_CONSOLE,
   SupportedChainId,
   TELEGRAM_BOT_ID,
   WebLoginConnectUrl,
@@ -38,7 +39,7 @@ const didConfig: IConfigProps['didConfig'] = {
 };
 
 const baseConfig: IConfigProps['baseConfig'] = {
-  showVconsole: false,
+  showVconsole: SHOW_V_CONSOLE,
   networkType: NETWORK_TYPE,
   chainId: SupportedChainId.sideChain,
   sideChainId: SupportedChainId.sideChain,

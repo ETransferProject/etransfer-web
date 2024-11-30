@@ -7,6 +7,7 @@ import {
   LOOP_TOP_TX_URL,
   OtherExploreType,
 } from 'constants/network';
+import { isAelfChain } from './wallet';
 
 export function getAelfExploreLink(data: string, type: AelfExploreType, chainId: TChainId): string {
   const prefix = EXPLORE_CONFIG[chainId];
@@ -77,5 +78,24 @@ export const viewTxDetailInExplore = (
       OtherExploreType.transaction,
       network as keyof typeof ExploreUrlNotAelf,
     ),
+  );
+};
+
+export const getTxExploreHref = (
+  network: string,
+  txHash: string,
+  isCoboHash: boolean,
+  chainId?: TChainId,
+) => {
+  if (isCoboHash) {
+    return LOOP_TOP_TX_URL + txHash;
+  }
+  if (isAelfChain(network) && chainId) {
+    return getAelfExploreLink(txHash, AelfExploreType.transaction, chainId);
+  }
+  return getOtherExploreLink(
+    txHash,
+    OtherExploreType.transaction,
+    network as keyof typeof ExploreUrlNotAelf,
   );
 };

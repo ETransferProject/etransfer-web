@@ -9,8 +9,10 @@ import Close from './close.svg';
 import CloseMedium from './closeMedium.svg';
 import CloseSmall from './closeSmall.svg';
 import Swap from './swap.svg';
+import SwapHorizontal from './swapHorizontal.svg';
 import Deposit from './deposit.svg';
 import Withdraw from './withdraw.svg';
+import Transfer from './transfer.svg';
 import Check from './check.svg';
 import CheckSmall from './checkSmall.svg';
 import CheckBig from './checkBig.svg';
@@ -22,6 +24,23 @@ import CopyBig from './copyBig.svg';
 import Portkey from './wallet/portkey.svg';
 import Portkey24 from './wallet/portkey24.svg';
 import PortkeyV2 from './wallet/portkeyV2.svg';
+import PortkeyV2_16 from './wallet/portkeyV2_16.svg';
+import NightElf from './wallet/nightElf.svg';
+import NightElf_16 from './wallet/nightElf_16.svg';
+import Metamask from './wallet/metamask.svg';
+import Coinbase from './wallet/coinbase.svg';
+import WalletConnect from './wallet/walletConnect.svg';
+import Phantom from './wallet/phantom.svg';
+import Tonkeeper from './wallet/tonkeeper.svg';
+import TronLink from './wallet/tronLink.svg';
+import Metamask_16 from './wallet/metamask_16.svg';
+import Coinbase_16 from './wallet/coinbase_16.svg';
+import WalletConnect_16 from './wallet/walletConnect_16.svg';
+import Phantom_16 from './wallet/phantom_16.svg';
+import Tonkeeper_16 from './wallet/tonkeeper_16.svg';
+import TronLink_16 from './wallet/tronLink_16.svg';
+import Logout from './logout.svg';
+
 import qrCodePlaceholder from './qrCodePlaceholder.png';
 import ExclamationFilledSmall from './exclamationFilledSmall.svg';
 import OpenLinkIcon from './openLink.svg';
@@ -32,9 +51,11 @@ import Records from './recordIcon.svg';
 import Aelf from './chain/aelf.svg';
 import AelfMedium from './chain/aelfMedium.svg';
 import AelfBig from './chain/aelfBig.svg';
+import AelfSmall from './chain/aelfSmall.svg';
 import tDVV from './chain/tDVV.svg';
 import tDVVMedium from './chain/tDVVMedium.svg';
 import tDVVBig from './chain/tDVVBig.svg';
+import tDVVSmall from './chain/tDVVSmall.svg';
 import Arbitrum from './chain/arbitrum.svg';
 import ArbitrumMedium from './chain/arbitrumMedium.svg';
 import ArbitrumBig from './chain/arbitrumBig.svg';
@@ -71,6 +92,7 @@ import Fingerprint from './fingerprint.svg';
 import User from './user.svg';
 import ArrowUp from './arrowUp.svg';
 import ArrowRight from './arrowRight.svg';
+import ArrowRight2 from './arrowRight2.svg';
 import ToArrow from './toArrow.svg';
 import Reset from './reset.svg';
 import EmptyBox from './emptyBox.svg';
@@ -107,6 +129,7 @@ import NextLineIcon from './nextLineIcon.svg';
 import DoubleArrowIcon from './doubleArrow.svg';
 import InfoDashboard from './infoDashboard.svg';
 import ErrorIcon from './error.svg';
+import SearchIcon from './search.svg';
 
 export {
   Logo,
@@ -119,8 +142,10 @@ export {
   CloseMedium,
   CloseSmall,
   Swap,
+  SwapHorizontal,
   Deposit,
   Withdraw,
+  Transfer,
   Check,
   CheckSmall,
   CheckBig,
@@ -129,6 +154,22 @@ export {
   Portkey,
   Portkey24,
   PortkeyV2,
+  PortkeyV2_16,
+  NightElf,
+  NightElf_16,
+  Metamask,
+  Metamask_16,
+  Coinbase,
+  Coinbase_16,
+  WalletConnect,
+  WalletConnect_16,
+  Phantom,
+  Phantom_16,
+  Tonkeeper,
+  Tonkeeper_16,
+  TronLink,
+  TronLink_16,
+  Logout,
   Copy,
   CopySmall,
   CopyBig,
@@ -143,9 +184,11 @@ export {
   Aelf,
   AelfMedium,
   AelfBig,
+  AelfSmall,
   tDVV,
   tDVVMedium,
   tDVVBig,
+  tDVVSmall,
   Arbitrum,
   ArbitrumMedium,
   ArbitrumBig,
@@ -183,6 +226,7 @@ export {
   User,
   ArrowUp,
   ArrowRight,
+  ArrowRight2,
   ToArrow,
   Reset,
   EmptyBox,
@@ -215,4 +259,5 @@ export {
   DoubleArrowIcon,
   InfoDashboard,
   ErrorIcon,
+  SearchIcon,
 };

@@ -6,7 +6,10 @@ import { etransferCore, formatSymbolDisplay } from '@etransfer/ui-react';
 import clsx from 'clsx';
 import { BusinessType } from 'types/api';
 import { ETRANSFER_LOGO } from 'constants/misc';
-import { TOrderRecordsNoticeResponse } from '@etransfer/socket';
+import {
+  TOrderRecordsNoticeRequestAddressItem,
+  TOrderRecordsNoticeResponse,
+} from '@etransfer/socket';
 
 export const browserNotification = ({ title, content }: { title: string; content: string }) => {
   if (!('Notification' in window)) {
@@ -55,9 +58,9 @@ export const showNotice = ({
 }) => {
   if (!type || !status || !amount || !symbol) return;
 
-  const title = `${type === BusinessType.Withdraw ? 'Withdrawal' : type} ${status}`;
+  const title = `${type} ${status}`;
 
-  const typeText = type === BusinessType.Withdraw ? 'withdrawal' : type.toLowerCase();
+  const typeText = type.toLowerCase();
 
   const action = 'received';
 
@@ -99,7 +102,7 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
     }
   });
 
-  noticeData.processing.withdraw?.forEach((item) => {
+  noticeData.processing.transfer?.forEach((item) => {
     if (!eTransferInstance.processingIds.includes(item.id)) {
       eTransferInstance.processingIds.push(item.id);
     }
@@ -121,14 +124,14 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
       eTransferInstance.showNoticeIds.push(item.id);
     }
   });
-  noticeData.succeed?.withdraw?.forEach((item) => {
+  noticeData.succeed?.transfer?.forEach((item) => {
     if (
       eTransferInstance.processingIds.includes(item.id) &&
       !eTransferInstance.showNoticeIds.includes(item.id)
     ) {
       showNotice({
         status: TTxnStatus.Successful,
-        type: BusinessType.Withdraw,
+        type: BusinessType.Transfer,
         amount: item.amount,
         symbol: item.symbol,
       });
@@ -151,14 +154,14 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
       eTransferInstance.showNoticeIds.push(item.id);
     }
   });
-  noticeData.failed?.withdraw?.forEach((item) => {
+  noticeData.failed?.transfer?.forEach((item) => {
     if (
       eTransferInstance.processingIds.includes(item.id) &&
       !eTransferInstance.showNoticeIds.includes(item.id)
     ) {
       showNotice({
         status: TTxnStatus.Failed,
-        type: BusinessType.Withdraw,
+        type: BusinessType.Transfer,
         amount: item.amount,
         symbol: item.symbol,
       });
@@ -167,9 +170,11 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
   });
 };
 
-export const unsubscribeUserOrderRecord = async (address: string) => {
+export const unsubscribeUserOrderRecord = async (
+  addressList?: TOrderRecordsNoticeRequestAddressItem[],
+) => {
   eTransferInstance.setProcessingIds([]);
   eTransferInstance.setShowNoticeIds([]);
-  await etransferCore.noticeSocket?.UnsubscribeUserOrderRecord(address);
+  await etransferCore.noticeSocket?.UnsubscribeUserOrderRecord('', addressList);
   await etransferCore.noticeSocket?.destroy();
 };

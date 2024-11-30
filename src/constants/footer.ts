@@ -104,6 +104,14 @@ export const DOCUMENTATION_LINK: Record<string, TFooterMenuItem> = {
     name: 'What is ETransfer?',
     link: 'https://etransfer.gitbook.io/docs/faq#what-is-etransfer',
   },
+  secure: {
+    name: 'How Secure is ETransfer?',
+    link: 'https://etransfer.gitbook.io/docs/faq#how-secure-is-etransfer',
+  },
+  transferProcess: {
+    name: 'How do I initiate a cross-chain transfer on ETransfer?',
+    link: 'https://etransfer.gitbook.io/docs/faq#how-do-i-initiate-a-cross-chain-transfer-on-etransfer',
+  },
   depositProcess: {
     name: 'How to deposit to aelf by ETransfer?',
     link: 'https://etransfer.gitbook.io/docs/faq#how-to-deposit-to-aelf-by-etransfer',
@@ -126,9 +134,8 @@ export const FAQ_DEPOSIT: TFrequentlyAskedQuestionsSection = {
   title: 'FAQ',
   list: [
     DOCUMENTATION_LINK.aboutETransfer,
+    DOCUMENTATION_LINK.secure,
     DOCUMENTATION_LINK.depositProcess,
-    DOCUMENTATION_LINK.notArrived,
-    DOCUMENTATION_LINK.completedTime,
   ],
 };
 
@@ -136,8 +143,18 @@ export const FAQ_WITHDRAW: TFrequentlyAskedQuestionsSection = {
   title: 'FAQ',
   list: [
     DOCUMENTATION_LINK.aboutETransfer,
+    DOCUMENTATION_LINK.secure,
     DOCUMENTATION_LINK.withdrawProcess,
     DOCUMENTATION_LINK.notArrived,
     DOCUMENTATION_LINK.completedTime,
+  ],
+};
+
+export const FAQ_CROSS_CHAIN_TRANSFER: TFrequentlyAskedQuestionsSection = {
+  title: 'FAQ',
+  list: [
+    DOCUMENTATION_LINK.aboutETransfer,
+    DOCUMENTATION_LINK.secure,
+    DOCUMENTATION_LINK.transferProcess,
   ],
 };
