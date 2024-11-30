@@ -104,52 +104,73 @@ export enum TransferAllowanceTokens {
   ETH = 'ETH',
 }
 
-export const TOKEN_NETWORK_RELATIONS = {
-  [TransferAllowanceTokens.USDT]: [
-    BlockchainNetworkType.AELF,
-    BlockchainNetworkType.tDVW,
-    BlockchainNetworkType.SETH,
-    BlockchainNetworkType.TBinance,
-    BlockchainNetworkType.Solana,
-    BlockchainNetworkType.Tron,
-    BlockchainNetworkType.Polygon,
-    BlockchainNetworkType.Avax,
-    BlockchainNetworkType.Arbitrum,
-    BlockchainNetworkType.Optimism,
-    BlockchainNetworkType.TON,
-  ],
-  [TransferAllowanceTokens.ELF]: [
-    BlockchainNetworkType.AELF,
-    BlockchainNetworkType.tDVW,
-    BlockchainNetworkType.SETH,
-    BlockchainNetworkType.TBinance,
-  ],
-  [TransferAllowanceTokens['SGR-1']]: [BlockchainNetworkType.tDVW, BlockchainNetworkType.SETH],
-  [TransferAllowanceTokens.ETH]: [BlockchainNetworkType.tDVW, BlockchainNetworkType.BASE],
-};
+const USDT_NETWORK_LIST = [
+  BlockchainNetworkType.AELF,
+  BlockchainNetworkType.tDVW,
+  BlockchainNetworkType.SETH,
+  BlockchainNetworkType.TBinance,
+  BlockchainNetworkType.Solana,
+  BlockchainNetworkType.Tron,
+  BlockchainNetworkType.Polygon,
+  BlockchainNetworkType.Avax,
+  BlockchainNetworkType.Arbitrum,
+  BlockchainNetworkType.Optimism,
+  BlockchainNetworkType.TON,
+];
 
-export const TO_NETWORK_TOKEN_CONFIG = {
-  [BlockchainNetworkType.AELF]: [TransferAllowanceTokens.USDT, TransferAllowanceTokens.ELF],
-  [BlockchainNetworkType.tDVW]: [
-    TransferAllowanceTokens.USDT,
-    TransferAllowanceTokens.ELF,
-    TransferAllowanceTokens['SGR-1'],
-    TransferAllowanceTokens.ETH,
-  ],
-  [BlockchainNetworkType.SETH]: [
-    TransferAllowanceTokens.USDT,
-    TransferAllowanceTokens.ELF,
-    TransferAllowanceTokens['SGR-1'],
-  ],
-  [BlockchainNetworkType.TBinance]: [TransferAllowanceTokens.USDT, TransferAllowanceTokens.ELF],
-  [BlockchainNetworkType.Solana]: [TransferAllowanceTokens.USDT],
-  [BlockchainNetworkType.Tron]: [TransferAllowanceTokens.USDT],
-  [BlockchainNetworkType.Polygon]: [TransferAllowanceTokens.USDT],
-  [BlockchainNetworkType.Avax]: [TransferAllowanceTokens.USDT],
-  [BlockchainNetworkType.Arbitrum]: [TransferAllowanceTokens.USDT],
-  [BlockchainNetworkType.Optimism]: [TransferAllowanceTokens.USDT],
-  [BlockchainNetworkType.BASE]: [TransferAllowanceTokens.ETH],
-  [BlockchainNetworkType.TON]: [TransferAllowanceTokens.USDT],
+const ELF_NETWORK_LIST = [
+  BlockchainNetworkType.AELF,
+  BlockchainNetworkType.tDVW,
+  BlockchainNetworkType.SETH,
+  BlockchainNetworkType.TBinance,
+];
+
+export const NETWORK_TOKEN_RELATIONS = {
+  [BlockchainNetworkType.AELF]: {
+    [TransferAllowanceTokens.USDT]: USDT_NETWORK_LIST, // does not include itself
+    [TransferAllowanceTokens.ELF]: ELF_NETWORK_LIST, // does not include itself
+    [TransferAllowanceTokens['SGR-1']]: [BlockchainNetworkType.SETH],
+    [TransferAllowanceTokens.ETH]: [BlockchainNetworkType.BASE],
+  },
+  [BlockchainNetworkType.tDVW]: {
+    [TransferAllowanceTokens.USDT]: USDT_NETWORK_LIST, // does not include itself
+    [TransferAllowanceTokens.ELF]: ELF_NETWORK_LIST, // does not include itself
+    [TransferAllowanceTokens['SGR-1']]: [BlockchainNetworkType.SETH],
+    [TransferAllowanceTokens.ETH]: [BlockchainNetworkType.BASE],
+  },
+  [BlockchainNetworkType.SETH]: {
+    [TransferAllowanceTokens.USDT]: USDT_NETWORK_LIST, // does not include itself
+    [TransferAllowanceTokens.ELF]: ELF_NETWORK_LIST, // does not include itself
+    [TransferAllowanceTokens['SGR-1']]: [BlockchainNetworkType.tDVW],
+  },
+  [BlockchainNetworkType.TBinance]: {
+    [TransferAllowanceTokens.USDT]: USDT_NETWORK_LIST, // does not include itself
+    [TransferAllowanceTokens.ELF]: ELF_NETWORK_LIST, // does not include itself
+  },
+  [BlockchainNetworkType.Solana]: {
+    [TransferAllowanceTokens.USDT]: USDT_NETWORK_LIST, // does not include itself
+  },
+  [BlockchainNetworkType.Tron]: {
+    [TransferAllowanceTokens.USDT]: USDT_NETWORK_LIST, // does not include itself
+  },
+  [BlockchainNetworkType.Polygon]: {
+    [TransferAllowanceTokens.USDT]: USDT_NETWORK_LIST, // does not include itself
+  },
+  [BlockchainNetworkType.Avax]: {
+    [TransferAllowanceTokens.USDT]: USDT_NETWORK_LIST, // does not include itself
+  },
+  [BlockchainNetworkType.Arbitrum]: {
+    [TransferAllowanceTokens.USDT]: USDT_NETWORK_LIST, // does not include itself
+  },
+  [BlockchainNetworkType.Optimism]: {
+    [TransferAllowanceTokens.USDT]: USDT_NETWORK_LIST, // does not include itself
+  },
+  [BlockchainNetworkType.TON]: {
+    [TransferAllowanceTokens.USDT]: USDT_NETWORK_LIST, // does not include itself
+  },
+  [BlockchainNetworkType.BASE]: {
+    [TransferAllowanceTokens.ETH]: [BlockchainNetworkType.tDVW],
+  },
 };
 
 export const TRANSFER_DEFAULT_FROM_NETWORK: TNetworkItem = {
