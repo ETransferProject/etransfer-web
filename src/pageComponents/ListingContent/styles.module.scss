@@ -1,0 +1,41 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.listing-container {
+  height: 100%;
+  padding: 40px 0;
+  background-color: $hover-bg;
+}
+
+.listing-content {
+  width: 720px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.listing-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.listing-card {
+  padding: 24px;
+  border-radius: 8px;
+  border: 1px solid $dividers;
+  background-color: $page-bg;
+}
+
+.listing-card-steps-title {
+  margin-bottom: 24px;
+  @extend .font-family-medium;
+  font-size: 24px;
+  line-height: 32px;
+}
+
+.listing-card-form-title {
+  margin-bottom: 12px;
+  @extend .font-family-medium;
+  font-size: 20px;
+  line-height: 28px;
+}
