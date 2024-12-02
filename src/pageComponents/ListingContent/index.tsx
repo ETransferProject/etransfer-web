@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import CommonSteps from 'components/CommonSteps';
-import { LISTING_STEP_ITEMS } from 'constants/listing';
+import CommonPromptCard from 'components/CommonPromptCard';
+import { LISTING_STEP_ITEMS, LISTING_FORM_PROMPT_CONTENT } from 'constants/listing';
 import styles from './styles.module.scss';
 
 export default function ListingContent() {
@@ -22,6 +23,9 @@ export default function ListingContent() {
             <div className={styles['listing-card-form-title']}>
               {LISTING_STEP_ITEMS[currentStep].title}
             </div>
+            {LISTING_FORM_PROMPT_CONTENT[currentStep] && (
+              <CommonPromptCard content={LISTING_FORM_PROMPT_CONTENT[currentStep]} />
+            )}
           </div>
         </div>
       </div>
