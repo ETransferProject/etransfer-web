@@ -6,28 +6,17 @@ import {
   BUTTON_TEXT_INSUFFICIENT_FUNDS,
   BUTTON_TEXT_TRANSFER,
   DEFAULT_SEND_TRANSFER_ERROR,
+  DefaultTransferOrderResponse,
   ErrorNameType,
   SEND_TRANSFER_ERROR_CODE_LIST,
-  TRANSACTION_APPROVE_LOADING,
 } from 'constants/crossChainTransfer';
 import { handleErrorMessage, sleep, ZERO } from '@etransfer/utils';
 import { Form } from 'antd';
 import clsx from 'clsx';
 import { useCrossChainTransfer, useLoading } from 'store/Provider/hooks';
 import { useWallet } from 'context/Wallet';
-import { useAuthToken } from 'hooks/wallet/authToken';
-import {
-  createTransferOrder,
-  updateTransferOrder as updateTransferOrderApi,
-} from 'utils/api/transfer';
+import { updateTransferOrder as updateTransferOrderApi } from 'utils/api/transfer';
 import { WalletTypeEnum } from 'context/Wallet/types';
-import {
-  SendEVMTransactionParams,
-  SendSolanaTransactionParams,
-  SendTONTransactionParams,
-  SendTRONTransactionParams,
-} from 'types/wallet';
-import { EVM_TOKEN_ABI } from 'constants/wallet/EVM';
 import DoubleCheckModal from './DoubleCheckModal';
 import SuccessModal from './SuccessModal';
 import FailModal from './FailModal';
@@ -37,13 +26,11 @@ import {
   UpdateTransferOrderStatus,
 } from 'types/api';
 import myEvents from 'utils/myEvent';
-import { useSendTxnFromAelfChain } from 'hooks/crossChainTransfer';
-import { isAuthTokenError } from 'utils/api/error';
+import { useSendTxnFromAelfChain, useSendTxnFromOtherChains } from 'hooks/crossChainTransfer';
 import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
 import { computeWalletType, getConnectWalletText } from 'utils/wallet';
 import { TransferFormKeys, TransferValidateStatus, TTransferFormValidateData } from '../types';
 import { formatSymbolDisplay } from 'utils/format';
-import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
 
 export interface CrossChainTransferFooterProps {
   className?: string;
@@ -73,8 +60,6 @@ interface ISuccessData {
   receiveAmountUsd: string;
 }
 
-const DefaultTransferOrderResponse: TCreateTransferOrderResult = { orderId: '' };
-
 export default function CrossChainTransferFooter({
   className,
   isUseRecipientAddress = false,
@@ -98,7 +83,6 @@ export default function CrossChainTransferFooter({
   const { setLoading } = useLoading();
   const { fromNetwork, tokenSymbol, toNetwork, toWalletType } = useCrossChainTransfer();
   const [{ fromWallet, toWallet }] = useWallet();
-  const { getAuthToken, queryAuthToken } = useAuthToken();
   const [firstTxnHash, setFirstTxnHash] = useState('');
   const firstTxnHashRef = useRef('');
 
@@ -260,6 +244,7 @@ export default function CrossChainTransferFooter({
 
   const authTokenRef = useRef('');
   const { sendTransferTokenTransaction } = useSendTxnFromAelfChain();
+  const { sendTransferTransaction } = useSendTxnFromOtherChains();
   const onTransfer = useCallback(async () => {
     try {
       if (
@@ -292,104 +277,43 @@ export default function CrossChainTransferFooter({
           receiveAmountUsd: transferInfo.receiveAmountUsd,
         });
       } else {
-        // get etransfer jwt
-        const authToken = await getAuthToken(true);
-        authTokenRef.current = authToken;
-
-        setLoading(true, { text: TRANSACTION_APPROVE_LOADING });
-        // create order id
-        const createTransferOrderParams = {
-          amount: amount,
-          fromNetwork: fromNetwork?.network,
-          toNetwork: toNetwork?.network,
-          fromSymbol: tokenSymbol,
-          toSymbol: tokenSymbol,
-          fromAddress: isDIDAddressSuffix(fromWallet?.account)
-            ? removeELFAddressSuffix(fromWallet?.account)
-            : fromWallet?.account,
-          toAddress: isDIDAddressSuffix(toAddress) ? removeELFAddressSuffix(toAddress) : toAddress,
-        };
-
-        try {
-          orderResultRef.current = await createTransferOrder(createTransferOrderParams, authToken);
-        } catch (error) {
-          orderResultRef.current = DefaultTransferOrderResponse;
-          if (isAuthTokenError(error)) {
-            const _authToken = await queryAuthToken(true);
-            authTokenRef.current = _authToken;
-            orderResultRef.current = await createTransferOrder(
-              createTransferOrderParams,
-              _authToken,
-            );
-          } else {
-            throw error;
-          }
-        }
-
-        setSuccessData({
-          amount: amount,
-          symbol: transferInfo.limitCurrency,
-          receiveAmount: transferInfo.receiveAmount,
-          receiveAmountUsd: transferInfo.receiveAmountUsd,
+        sendTransferTransaction({
+          tokenContractAddress,
+          decimalsFromWallet,
+          amount,
+          toAddress,
+          updateAuthToken: (authToken: string) => {
+            authTokenRef.current = authToken;
+          },
+          updateOrderResult: (orderResult: TCreateTransferOrderResult) => {
+            orderResultRef.current = orderResult;
+          },
+          updateSuccessData: () => {
+            setSuccessData({
+              amount: amount || '',
+              symbol: transferInfo.limitCurrency,
+              receiveAmount: transferInfo.receiveAmount,
+              receiveAmountUsd: transferInfo.receiveAmountUsd,
+            });
+          },
+          handleOrderResultValid: () => {
+            if (!orderResultRef.current.orderId || !orderResultRef.current.address) {
+              setFailModalReason(DEFAULT_SEND_TRANSFER_ERROR);
+              setLoading(false);
+              setIsFailModalOpen(true);
+              return;
+            }
+          },
+          updateFirstTxnHash: (txnHash: string) => {
+            setFirstTxnHash(txnHash);
+            firstTxnHashRef.current = txnHash;
+          },
+          handleSuccessCallback: async () => {
+            setIsSuccessModalOpen(true);
+            await updateTransferOrder();
+          },
+          handleFailCallback,
         });
-
-        if (!orderResultRef.current.orderId || !orderResultRef.current.address) {
-          setFailModalReason(DEFAULT_SEND_TRANSFER_ERROR);
-          setLoading(false);
-          setIsFailModalOpen(true);
-          return;
-        }
-        console.log('>>>>>> orderResult', orderResultRef.current);
-
-        let params:
-          | SendEVMTransactionParams
-          | SendSolanaTransactionParams
-          | SendTONTransactionParams
-          | SendTRONTransactionParams;
-        if (fromWallet.walletType === WalletTypeEnum.EVM) {
-          params = {
-            network: fromNetwork?.network,
-            tokenContractAddress: tokenContractAddress,
-            toAddress: orderResultRef.current.address,
-            tokenAbi: EVM_TOKEN_ABI,
-            amount: amount,
-            decimals: Number(decimalsFromWallet),
-          } as SendEVMTransactionParams;
-        } else if (fromWallet.walletType === WalletTypeEnum.SOL) {
-          params = {
-            tokenContractAddress: tokenContractAddress,
-            toAddress: orderResultRef.current.address,
-            amount: amount,
-            decimals: decimalsFromWallet,
-          } as SendSolanaTransactionParams;
-        } else if (fromWallet.walletType === WalletTypeEnum.TON) {
-          params = {
-            tokenContractAddress: tokenContractAddress,
-            toAddress: orderResultRef.current.address,
-            amount: Number(amount),
-            decimals: decimalsFromWallet,
-            orderId: orderResultRef.current.orderId,
-          } as SendTONTransactionParams;
-        } else {
-          // TRON
-          params = {
-            tokenContractAddress: tokenContractAddress,
-            toAddress: orderResultRef.current.address,
-            amount: Number(amount),
-          } as SendTRONTransactionParams;
-        }
-
-        const sendTransferResult = await fromWallet?.sendTransaction(params);
-        setFirstTxnHash(sendTransferResult);
-        firstTxnHashRef.current = sendTransferResult;
-        console.log('>>>>>> sendTransferResult', sendTransferResult);
-
-        if (sendTransferResult) {
-          setIsSuccessModalOpen(true);
-          await updateTransferOrder();
-        } else {
-          handleFailCallback();
-        }
       }
     } catch (error: any) {
       console.log('>>>>>> onTransfer error', error);
@@ -422,16 +346,14 @@ export default function CrossChainTransferFooter({
     decimalsFromWallet,
     fromNetwork?.network,
     fromWallet,
-    getAuthToken,
     handleFailCallback,
     handleSuccessCallback,
-    queryAuthToken,
     sendTransferTokenTransaction,
+    sendTransferTransaction,
     setLoading,
     toAddress,
     toNetwork?.network,
     tokenContractAddress,
-    tokenSymbol,
     transferInfo.limitCurrency,
     transferInfo.receiveAmount,
     transferInfo.receiveAmountUsd,

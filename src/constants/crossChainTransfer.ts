@@ -1,5 +1,5 @@
 import { DEFAULT_NULL_VALUE, TokenType } from 'constants/index';
-import { TCrossChainTransferInfo } from 'types/api';
+import { TCreateTransferOrderResult, TCrossChainTransferInfo } from 'types/api';
 
 export const CROSS_CHAIN_TRANSFER_PAGE_TITLE = 'Cross-chain Transfer';
 
@@ -55,3 +55,5 @@ export const InitialCrossChainTransferInfo: TCrossChainTransferInfo = {
   amountUsd: DEFAULT_NULL_VALUE,
   feeUsd: DEFAULT_NULL_VALUE,
 };
+
+export const DefaultTransferOrderResponse: TCreateTransferOrderResult = { orderId: '' };

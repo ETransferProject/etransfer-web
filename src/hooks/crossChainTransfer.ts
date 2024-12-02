@@ -1,6 +1,6 @@
 import { sleep } from '@portkey/utils';
 import { useRouter } from 'next/navigation';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useAppDispatch, useCrossChainTransfer, useLoading } from 'store/Provider/hooks';
 import {
   InitialCrossChainTransferState,
@@ -20,7 +20,11 @@ import {
 } from 'utils/wallet';
 import { useGetBalanceDivDecimals } from './contract';
 import { ZERO } from '@etransfer/utils';
-import { ErrorNameType, TRANSACTION_APPROVE_LOADING } from 'constants/crossChainTransfer';
+import {
+  ErrorNameType,
+  TRANSACTION_APPROVE_LOADING,
+  DefaultTransferOrderResponse,
+} from 'constants/crossChainTransfer';
 import { checkTokenAllowanceAndApprove, createTransferTokenTransaction } from 'utils/contract';
 import { createTransferOrder } from 'utils/api/transfer';
 import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
@@ -35,6 +39,15 @@ import { useAelfAuthToken } from './wallet/aelfAuthToken';
 import { isAuthTokenError } from 'utils/api/error';
 import { WalletTypeEnum } from 'context/Wallet/types';
 import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
+import {
+  SendEVMTransactionParams,
+  SendSolanaTransactionParams,
+  SendTONTransactionParams,
+  SendTRONTransactionParams,
+} from 'types/wallet';
+import { useAuthToken } from './wallet/authToken';
+import { useWallet } from 'context/Wallet';
+import { EVM_TOKEN_ABI } from 'constants/wallet/EVM';
 
 export function useGoTransfer() {
   const dispatch = useAppDispatch();
@@ -245,6 +258,207 @@ export function useSendTxnFromAelfChain() {
   );
 
   return { sendTransferTokenTransaction };
+}
+
+export function useSendTxnFromOtherChains() {
+  const { setLoading } = useLoading();
+  const { fromNetwork, toNetwork, tokenSymbol } = useCrossChainTransfer();
+  const [{ fromWallet }] = useWallet();
+  const { getAuthToken, queryAuthToken } = useAuthToken();
+  const orderResultRef = useRef<TCreateTransferOrderResult>(DefaultTransferOrderResponse);
+
+  const createOrderWithRetry = useCallback(
+    async ({
+      params,
+      authToken,
+      updateAuthToken,
+      updateOrderResult,
+    }: {
+      params: TCreateTransferOrderRequest;
+      authToken: string;
+      updateAuthToken: (authToken: string) => void;
+      updateOrderResult: (orderResult: TCreateTransferOrderResult) => void;
+    }) => {
+      try {
+        const orderResult = await createTransferOrder(params, authToken);
+        updateOrderResult(orderResult);
+      } catch (error) {
+        updateOrderResult(DefaultTransferOrderResponse);
+        if (isAuthTokenError(error)) {
+          const newAuthToken = await queryAuthToken(true);
+          updateAuthToken(newAuthToken);
+          const orderResult = await createTransferOrder(params, newAuthToken);
+          updateOrderResult(orderResult);
+        } else {
+          throw error;
+        }
+      }
+    },
+    [queryAuthToken],
+  );
+
+  const formatAddress = useCallback((address: string) => {
+    return isDIDAddressSuffix(address) ? removeELFAddressSuffix(address) : address;
+  }, []);
+
+  const createTransactionParams = useCallback(
+    ({
+      walletType,
+      tokenContractAddress,
+      toAddress,
+      amount,
+      decimalsFromWallet,
+      orderId,
+    }: {
+      walletType?: WalletTypeEnum;
+      tokenContractAddress?: string;
+      toAddress?: string;
+      amount: string;
+      decimalsFromWallet?: string | number;
+      orderId?: string;
+    }):
+      | SendEVMTransactionParams
+      | SendSolanaTransactionParams
+      | SendTONTransactionParams
+      | SendTRONTransactionParams => {
+      switch (walletType) {
+        case WalletTypeEnum.EVM:
+          return {
+            network: fromNetwork?.network,
+            tokenContractAddress,
+            toAddress,
+            tokenAbi: EVM_TOKEN_ABI,
+            amount,
+            decimals: Number(decimalsFromWallet),
+          } as SendEVMTransactionParams;
+        case WalletTypeEnum.SOL:
+          return {
+            tokenContractAddress,
+            toAddress,
+            amount,
+            decimals: decimalsFromWallet,
+          } as SendSolanaTransactionParams;
+        case WalletTypeEnum.TON:
+          return {
+            tokenContractAddress,
+            toAddress,
+            amount: Number(amount),
+            decimals: decimalsFromWallet,
+            orderId,
+          } as SendTONTransactionParams;
+        default:
+          // TRON
+          return {
+            tokenContractAddress,
+            toAddress,
+            amount: Number(amount),
+          } as SendTRONTransactionParams;
+      }
+    },
+    [fromNetwork?.network],
+  );
+
+  const sendTransferTransaction = useCallback(
+    async ({
+      tokenContractAddress,
+      decimalsFromWallet,
+      amount,
+      toAddress,
+      updateAuthToken,
+      updateOrderResult,
+      updateSuccessData,
+      handleOrderResultValid,
+      updateFirstTxnHash,
+      handleSuccessCallback,
+      handleFailCallback,
+    }: {
+      tokenContractAddress?: string;
+      decimalsFromWallet?: string | number;
+      amount: string;
+      toAddress: string;
+      updateAuthToken: (authToken: string) => void;
+      updateOrderResult: (orderResult: TCreateTransferOrderResult) => void;
+      updateSuccessData: () => void;
+      handleOrderResultValid: () => void;
+      updateFirstTxnHash: (txnHash: string) => void;
+      handleSuccessCallback: () => Promise<void>;
+      handleFailCallback: () => void;
+    }) => {
+      if (
+        !fromWallet ||
+        !fromWallet?.isConnected ||
+        !fromWallet?.account ||
+        !toAddress ||
+        !fromNetwork?.network ||
+        !toNetwork?.network ||
+        !amount
+      ) {
+        return;
+      }
+
+      // get etransfer jwt
+      const authToken = await getAuthToken(true);
+      updateAuthToken(authToken);
+
+      setLoading(true, { text: TRANSACTION_APPROVE_LOADING });
+
+      // create order id
+      await createOrderWithRetry({
+        params: {
+          amount,
+          fromNetwork: fromNetwork.network,
+          toNetwork: toNetwork.network,
+          fromSymbol: tokenSymbol,
+          toSymbol: tokenSymbol,
+          fromAddress: formatAddress(fromWallet.account),
+          toAddress: formatAddress(toAddress),
+        },
+        authToken,
+        updateAuthToken,
+        updateOrderResult: (orderResult) => {
+          orderResultRef.current = orderResult;
+          updateOrderResult(orderResult);
+        },
+      });
+
+      updateSuccessData();
+
+      handleOrderResultValid();
+
+      const params = createTransactionParams({
+        walletType: fromWallet.walletType,
+        tokenContractAddress,
+        toAddress: orderResultRef.current?.address,
+        amount,
+        decimalsFromWallet,
+        orderId: orderResultRef.current?.orderId,
+      });
+
+      const sendTransferResult = await fromWallet?.sendTransaction(params);
+      updateFirstTxnHash(sendTransferResult);
+
+      if (sendTransferResult) {
+        await handleSuccessCallback();
+      } else {
+        handleFailCallback();
+      }
+
+      setLoading(false);
+    },
+    [
+      createOrderWithRetry,
+      createTransactionParams,
+      formatAddress,
+      fromNetwork?.network,
+      fromWallet,
+      getAuthToken,
+      setLoading,
+      toNetwork?.network,
+      tokenSymbol,
+    ],
+  );
+
+  return { sendTransferTransaction };
 }
 
 export function useSetWalletType() {
