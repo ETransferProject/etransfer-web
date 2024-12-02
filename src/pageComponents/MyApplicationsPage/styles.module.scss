@@ -1,0 +1,41 @@
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.page-container-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: $hover-bg;
+  padding: 40px 0;
+}
+
+.page-back {
+  width: 720px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  .page-back-text {
+    font-size: 14px;
+    @extend .font-family-medium;
+  }
+}
+
+.page-body {
+  width: 720px;
+  height: 100%;
+  padding: 24px;
+  background-color: $page-bg;
+  border-radius: 8px;
+  border: 1px solid $dividers;
+}
+
+.page-title {
+  font-size: 24px;
+  @extend .font-family-medium;
+  text-align: left;
+}

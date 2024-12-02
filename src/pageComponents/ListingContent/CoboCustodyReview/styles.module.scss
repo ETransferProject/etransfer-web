@@ -1,0 +1,42 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.remind {
+  align-items: flex-start;
+  .remind-icon {
+    margin-top: 3px;
+  }
+
+  .tip-row {
+    font-size: 14px;
+    line-height: 22px;
+    color: $primary-text;
+  }
+}
+
+.action {
+  color: $brand;
+  cursor: pointer;
+}
+
+.action-bold {
+  line-height: 22px;
+  @extend .font-family-medium;
+}
+
+.cobo-custody-review-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin-top: 12px;
+  padding: 48px 24px;
+}
+
+.cobo-custody-review-text {
+  font-size: 16px;
+  line-height: 24px;
+  @extend .font-family-medium;
+  text-align: center;
+  margin: 8px auto;
+}

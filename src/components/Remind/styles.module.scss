@@ -1,0 +1,28 @@
+@import 'src/assets/theme/color.scss';
+
+.remind-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  padding: 8px 12px;
+  border-radius: 8px;
+  background-color: $brand-bg;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.remind-text {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: $primary-text;
+}
+
+.remind-border {
+  border: 1px solid $disable;
+}
+
+.text {
+  margin-left: 8px;
+}
