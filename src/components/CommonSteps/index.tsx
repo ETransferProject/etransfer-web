@@ -31,6 +31,7 @@ export default function CommonSteps({
       className={clsx(
         isPadPX ? styles['common-steps-vertical'] : styles['common-steps-horizontal'],
         styles['common-steps'],
+        styles['common-steps-weight'],
         className,
       )}
       direction={isPadPX ? 'vertical' : 'horizontal'}
