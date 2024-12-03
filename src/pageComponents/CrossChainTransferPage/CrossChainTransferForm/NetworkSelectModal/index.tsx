@@ -11,17 +11,18 @@ import { SearchIcon } from 'assets/images';
 
 export interface NetworkSelectModalProps {
   className?: string;
+  modalTitle: string;
   open: boolean;
   networkList: TNetworkItem[];
   onSelect: (item: TNetworkItem) => Promise<void>;
   onClose: () => void;
 }
 
-const SelectSourceChain = 'Select Source Chain';
 const SearchByChainName = 'Search by chain name';
 
 export default function NetworkSelectModal({
   className,
+  modalTitle,
   open = false,
   networkList,
   onSelect,
@@ -98,7 +99,7 @@ export default function NetworkSelectModal({
           className,
         )}
         height="80%"
-        title={SelectSourceChain}
+        title={modalTitle}
         open={open}
         onClose={onClose}>
         {content}
@@ -109,7 +110,7 @@ export default function NetworkSelectModal({
   return (
     <CommonModal
       className={clsx(styles['network-select-modal'], className)}
-      title={SelectSourceChain}
+      title={modalTitle}
       open={open}
       onCancel={onClose}
       hideCancelButton
