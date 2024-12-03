@@ -36,3 +36,24 @@ export const LISTING_FORM_PROMPT_CONTENT = [
   ],
   '',
 ];
+
+export const VIEW_COBO_CUSTODY_PROGRESS: ICommonStepsProps['stepItems'] = [
+  {
+    title: 'Submit token info',
+  },
+  {
+    title: 'Issue token',
+  },
+  {
+    title: 'Cobo Custody Review',
+  },
+  {
+    title: 'Initialize Liquidity Pool',
+  },
+  {
+    title: 'Cross-chain integration (1 business day)',
+  },
+  {
+    title: 'Complete',
+  },
+];

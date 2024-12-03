@@ -17,6 +17,7 @@ import Check from './check.svg';
 import CheckSmall from './checkSmall.svg';
 import CheckBig from './checkBig.svg';
 import CheckFilled from './checkFilled.svg';
+import CheckFilled16 from './checkFilled16.svg';
 import CheckNoticeIcon from './checkNotice.svg';
 import Copy from './copy.svg';
 import CopySmall from './copySmall.svg';
@@ -130,8 +131,14 @@ import DoubleArrowIcon from './doubleArrow.svg';
 import InfoDashboard from './infoDashboard.svg';
 import ErrorIcon from './error.svg';
 import SearchIcon from './search.svg';
+import BackIcon from './back.svg';
+import CoboCustodyReviewStatusIcon from './coboCustodyReviewStatus.svg';
+import CompleteIcon from './complete.svg';
 
 export {
+  BackIcon,
+  CoboCustodyReviewStatusIcon,
+  CompleteIcon,
   Logo,
   LargeLogo,
   FooterLogo,
@@ -150,6 +157,7 @@ export {
   CheckSmall,
   CheckBig,
   CheckFilled,
+  CheckFilled16,
   CheckNoticeIcon,
   Portkey,
   Portkey24,

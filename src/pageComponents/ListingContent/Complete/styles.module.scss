@@ -1,0 +1,29 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.complete-container {
+  padding: 48px 24px;
+}
+
+.title {
+  font-size: 16px;
+  line-height: 24px;
+  @extend .font-family-medium;
+  margin-top: 8px;
+}
+
+.content {
+  font-size: 14px;
+  line-height: 22px;
+  color: $secondary-text;
+  margin-bottom: 24px;
+}
+
+.transfer-button {
+  padding: 9px 20px;
+  span {
+    font-size: 14px;
+    line-height: 22px;
+    color: $brand;
+  }
+}

@@ -1,0 +1,76 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.view-progress-modal {
+  :global {
+    .ant-modal-content {
+      height: 100%;
+      .ant-modal-close {
+        .ant-modal-close-x {
+          height: 68px;
+          padding-top: 8px;
+          svg path {
+            fill: $primary-text;
+          }
+        }
+      }
+      .ant-modal-header {
+        height: 68px;
+        padding-top: 24px;
+        padding-bottom: 16px;
+
+        .ant-modal-title {
+          font-size: 20px;
+          font-weight: $font-family-medium-weight;
+          font-family: $font-family-medium-family;
+          line-height: 28px;
+        }
+      }
+    }
+  }
+}
+
+.token-info {
+  background-color: $hover-bg;
+  padding: 9px 12px;
+  border-radius: 6px;
+
+  .token-symbol {
+    font-size: 14px;
+    line-height: 22px;
+    @extend .font-family-medium;
+  }
+
+  .token-network {
+    color: $secondary-text;
+    font-size: 14px;
+    line-height: 22px;
+  }
+}
+
+.view-progress-steps-wrapper {
+  height: 440px;
+  padding-top: 16px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+
+  .view-progress-steps {
+    :global {
+      .ant-steps-item {
+        .ant-steps-item-content {
+          min-height: 80px;
+          .ant-steps-item-title {
+            margin-top: 2px;
+          }
+        }
+        .ant-steps-item-icon {
+          width: 24px;
+          height: 24px;
+          .ant-steps-icon{
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
+}
