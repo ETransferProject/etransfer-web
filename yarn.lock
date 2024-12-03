@@ -56,10 +56,10 @@
     react "^18.0.0"
     react-dom "^18.0.0"
 
-"@aelf-web-login/utils@^0.2.2-alpha.4":
-  version "0.2.2-alpha.4"
-  resolved "https://registry.npmjs.org/@aelf-web-login/utils/-/utils-0.2.2-alpha.4.tgz#4535a49de03bcf14e154c5a775098fce2102da28"
-  integrity sha512-KgIBY3v6ha76KtNZoUhLreSaCij+jQWONho2vHoYmi2zcTu6ky9YEDditaZqagWMunqCeIy3P3HXsqfo/jyEUg==
+"@aelf-web-login/utils@^0.2.2-alpha.5":
+  version "0.2.2-alpha.5"
+  resolved "https://registry.npmjs.org/@aelf-web-login/utils/-/utils-0.2.2-alpha.5.tgz#9d10f1c2c6c9195aa5eed775a23271ad419b2fdc"
+  integrity sha512-o/Y//FMIpbw1r7cHntjBChjQ8ImRl5rlsyCnnMdl+goCQS3DOzySg1W5OgWzrCrya6NEY4NttoPB4LyUmzbFpQ==
   dependencies:
     "@aelf-web-login/wallet-adapter-base" "0.1.2"
     "@aelf-web-login/wallet-adapter-react" "0.1.2"
@@ -75,10 +75,10 @@
   dependencies:
     eventemitter3 "^5.0.1"
 
-"@aelf-web-login/wallet-adapter-base@0.2.2-alpha.4", "@aelf-web-login/wallet-adapter-base@^0.2.2-alpha.4":
-  version "0.2.2-alpha.4"
-  resolved "https://registry.npmjs.org/@aelf-web-login/wallet-adapter-base/-/wallet-adapter-base-0.2.2-alpha.4.tgz#104a08401400aa047b2738b8adaa22323e487a7a"
-  integrity sha512-e1+yyWH/Rpbfw5JWnmphesT0YFlMz/1pXDFiNTwbRlcRqwDezm+DhyK/95tEduxIrZ0ANHdodIGkYfhexzJbZw==
+"@aelf-web-login/wallet-adapter-base@0.2.2-alpha.5", "@aelf-web-login/wallet-adapter-base@^0.2.2-alpha.5":
+  version "0.2.2-alpha.5"
+  resolved "https://registry.npmjs.org/@aelf-web-login/wallet-adapter-base/-/wallet-adapter-base-0.2.2-alpha.5.tgz#2f1b4ce84c0969935fbc33f01716285621e67ee1"
+  integrity sha512-y/E9hV2JxZZDZGHdFYOKFSwaM81mGjmLKsTTFB+tLILRwQG7WsB10HDs9ArD6DA2lBw9nXCtbBBGPdpQgbua8w==
   dependencies:
     eventemitter3 "^5.0.1"
 
@@ -94,43 +94,43 @@
     react "^18.0.0"
     react-dom "^18.0.0"
 
-"@aelf-web-login/wallet-adapter-bridge@0.2.2-alpha.4", "@aelf-web-login/wallet-adapter-bridge@^0.2.2-alpha.4":
-  version "0.2.2-alpha.4"
-  resolved "https://registry.npmjs.org/@aelf-web-login/wallet-adapter-bridge/-/wallet-adapter-bridge-0.2.2-alpha.4.tgz#5d6a2e22fb1072180348a728bf9d06f592f05916"
-  integrity sha512-uS24CG0gi5JfbETNIBFkyj5ISUiRWBuhtr1Eo7NExeAcWvlMHWlnHd/cQCZcK9pRUOecXio3kNX66GaAJELWlg==
+"@aelf-web-login/wallet-adapter-bridge@0.2.2-alpha.5", "@aelf-web-login/wallet-adapter-bridge@^0.2.2-alpha.5":
+  version "0.2.2-alpha.5"
+  resolved "https://registry.npmjs.org/@aelf-web-login/wallet-adapter-bridge/-/wallet-adapter-bridge-0.2.2-alpha.5.tgz#11f3730ed01516061d73cb2bbbe4a8f2ebc8d531"
+  integrity sha512-YBCeLAw2KJRHJVulZYvx9MwH8NK5Xxts/9s/D7Ihl/b0eu9RPeWYjny4z9GH+gka0UNG3C1zQ+ALcou9abxAUg==
   dependencies:
-    "@aelf-web-login/wallet-adapter-base" "0.2.2-alpha.4"
+    "@aelf-web-login/wallet-adapter-base" "0.2.2-alpha.5"
     "@portkey/contracts" "^2.15.9"
     "@portkey/services" "^2.15.9"
     "@reduxjs/toolkit" "^2.2.3"
     react "^18.0.0"
     react-dom "^18.0.0"
 
-"@aelf-web-login/wallet-adapter-night-elf@^0.2.2-alpha.4":
-  version "0.2.2-alpha.4"
-  resolved "https://registry.npmjs.org/@aelf-web-login/wallet-adapter-night-elf/-/wallet-adapter-night-elf-0.2.2-alpha.4.tgz#e6409a4baa89c42969d173ba61cf660358159dbc"
-  integrity sha512-fNI9TAodPwQZz1v70fT1FZuG/xyGlPv1depDLihxj9e8wtj5MArBtBgjvrAy53/JFG90hvBuSQJy5OKoKbDSmA==
+"@aelf-web-login/wallet-adapter-night-elf@^0.2.2-alpha.5":
+  version "0.2.2-alpha.5"
+  resolved "https://registry.npmjs.org/@aelf-web-login/wallet-adapter-night-elf/-/wallet-adapter-night-elf-0.2.2-alpha.5.tgz#a30f9e38b837e4d82dba5c0ec3a354d89f487376"
+  integrity sha512-ChjRWO565e4w51kObyER7oPhGRiI1lpBzp6svEO0VDa4abbT5OitANmkcaNNb25olCu2ifUwahnwiAPUQanP+g==
   dependencies:
-    "@aelf-web-login/wallet-adapter-base" "0.2.2-alpha.4"
+    "@aelf-web-login/wallet-adapter-base" "0.2.2-alpha.5"
     "@portkey/contracts" "^2.15.9"
     aelf-bridge "^0.0.11-alpha.4"
     bn.js "^5.2.1"
 
-"@aelf-web-login/wallet-adapter-portkey-aa@^0.2.2-alpha.4":
-  version "0.2.2-alpha.4"
-  resolved "https://registry.npmjs.org/@aelf-web-login/wallet-adapter-portkey-aa/-/wallet-adapter-portkey-aa-0.2.2-alpha.4.tgz#f2eeff3c59cf8e4ad5833801fcff39039798f1a5"
-  integrity sha512-oqS/ofUE22szCqW0hpPoWfjKDtIW0FHUC2BFTP6ozojzEfb3Y/+QbvQ/0ihGLJVatPDdD66+UxZKQ0nC9gCFLA==
+"@aelf-web-login/wallet-adapter-portkey-aa@^0.2.2-alpha.5":
+  version "0.2.2-alpha.5"
+  resolved "https://registry.npmjs.org/@aelf-web-login/wallet-adapter-portkey-aa/-/wallet-adapter-portkey-aa-0.2.2-alpha.5.tgz#8e2f4537c23ebb1715eb5b1eb20a6d483f54fa80"
+  integrity sha512-JghOtq0PPg2sElbre4BsSBIZMLp4KrjxCNhwKlgmwo45vrWRE27Z/7WwcgFKCiCFhr5kB8TO0bMQQkElbB8Puw==
   dependencies:
-    "@aelf-web-login/wallet-adapter-base" "0.2.2-alpha.4"
+    "@aelf-web-login/wallet-adapter-base" "0.2.2-alpha.5"
     "@portkey/contracts" "^2.15.9"
     "@portkey/utils" "^2.15.9"
 
-"@aelf-web-login/wallet-adapter-portkey-discover@^0.2.2-alpha.4":
-  version "0.2.2-alpha.4"
-  resolved "https://registry.npmjs.org/@aelf-web-login/wallet-adapter-portkey-discover/-/wallet-adapter-portkey-discover-0.2.2-alpha.4.tgz#4ff2c714278726cd71f4260f5dcc2d0cbe35b6bd"
-  integrity sha512-HyWL22g2J6C/j5eLnF2m8/gMqASO1njUnjNW2podffHKjH2W8mt+34i91RYaeFjxUX/QhiUBtoV942z8QyE2vA==
+"@aelf-web-login/wallet-adapter-portkey-discover@^0.2.2-alpha.5":
+  version "0.2.2-alpha.5"
+  resolved "https://registry.npmjs.org/@aelf-web-login/wallet-adapter-portkey-discover/-/wallet-adapter-portkey-discover-0.2.2-alpha.5.tgz#f541dc86f448835b0d1121ec17d65fc59a29787f"
+  integrity sha512-i3wtE+CZai6fBO4XfYRKfvl0EACd97Op2+T/jL/RZdYzsc9ep8QxqCf7c08p2RsLO4Nq8Vh3v1JJ0nfBF8/RMg==
   dependencies:
-    "@aelf-web-login/wallet-adapter-base" "0.2.2-alpha.4"
+    "@aelf-web-login/wallet-adapter-base" "0.2.2-alpha.5"
     "@portkey/contracts" "^2.15.9"
     "@portkey/detect-provider" "^2.3.5-alpha.2"
     "@portkey/provider-types" "^2.3.5-alpha.2"
@@ -147,13 +147,13 @@
     react-dom "^18.0.0"
     vconsole "^3.15.1"
 
-"@aelf-web-login/wallet-adapter-react@^0.2.2-alpha.4":
-  version "0.2.2-alpha.4"
-  resolved "https://registry.npmjs.org/@aelf-web-login/wallet-adapter-react/-/wallet-adapter-react-0.2.2-alpha.4.tgz#c86eecb6d13c0d9c935f00fe436902e959520121"
-  integrity sha512-iXhLI2Ww0/3xtYnuJTOawRmfmMRm0MUgl7ZYKDMt3xL13TTZm2FMFDZB1KYP6k9LKTX7yuOv/SeqsEIbfZLPhQ==
+"@aelf-web-login/wallet-adapter-react@^0.2.2-alpha.5":
+  version "0.2.2-alpha.5"
+  resolved "https://registry.npmjs.org/@aelf-web-login/wallet-adapter-react/-/wallet-adapter-react-0.2.2-alpha.5.tgz#2f17f3ce9b64d89e27ce99a684f460c1fae8f950"
+  integrity sha512-lGfgyPPNXeOGJztFVIUT0yoQI+C6Vo0R5s06yMr+O1rbLKhqdRzqIgyLYLIzsqJCUWlthyH2X0rbXF92cIDN+Q==
   dependencies:
-    "@aelf-web-login/wallet-adapter-base" "0.2.2-alpha.4"
-    "@aelf-web-login/wallet-adapter-bridge" "0.2.2-alpha.4"
+    "@aelf-web-login/wallet-adapter-base" "0.2.2-alpha.5"
+    "@aelf-web-login/wallet-adapter-bridge" "0.2.2-alpha.5"
     react "^18.0.0"
     react-dom "^18.0.0"
     vconsole "^3.15.1"
