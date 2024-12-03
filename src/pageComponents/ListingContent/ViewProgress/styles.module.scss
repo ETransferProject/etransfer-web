@@ -1,5 +1,6 @@
-@import 'src/assets/theme/color.scss';
-@import 'src/assets/theme/font.scss';
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/breakpoint.scss';
+@import '/src/assets/theme/font.scss';
 
 .view-progress-modal {
   :global {
@@ -66,11 +67,46 @@
         .ant-steps-item-icon {
           width: 24px;
           height: 24px;
-          .ant-steps-icon{
+          .ant-steps-icon {
             font-size: 12px;
           }
         }
       }
     }
   }
+}
+
+.view-progress-drawer.view-progress-drawer-weight {
+  :global {
+    .ant-drawer-header {
+      height: auto;
+      @include media-pad {
+        padding: 24px 24px 16px;
+      }
+      @include media-mobile {
+        padding: 16px;
+      }
+      .ant-drawer-header-title {
+        .ant-drawer-title {
+          text-align: left;
+          font-size: 20px;
+          line-height: 28px;
+        }
+      }
+    }
+
+    .ant-drawer-body {
+      @include media-pad {
+        padding: 24px;
+      }
+      @include media-mobile {
+        padding: 16px 16px 48px;
+      }
+    }
+  }
+}
+
+.confirm-button {
+  width: 100%;
+  margin-top: 24px;
 }

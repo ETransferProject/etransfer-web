@@ -6,6 +6,10 @@ import DisplayImage from 'components/DisplayImage';
 import { formatSymbolDisplay } from '@etransfer/ui-react';
 import CommonSteps from 'components/CommonSteps';
 import { VIEW_COBO_CUSTODY_PROGRESS } from 'constants/listing';
+import { GOT_IT } from 'constants/misc';
+import CommonDrawer from 'components/CommonDrawer';
+import { useCommonState } from 'store/Provider/hooks';
+import CommonButton from 'components/CommonButton';
 
 const ViewProgressTitle = 'View Progress';
 
@@ -20,6 +24,7 @@ export default function ViewProgress({
   onClose: () => void;
   onConfirm: () => void;
 }) {
+  const { isPadPX } = useCommonState();
   const [currentStep, setCurrentStep] = useState(1);
 
   const token = useMemo(
@@ -57,12 +62,33 @@ export default function ViewProgress({
     );
   }, [currentStep, token.icon, token.name, token.networkName, token.symbol]);
 
+  if (isPadPX) {
+    return (
+      <CommonDrawer
+        className={clsx(
+          styles['view-progress-drawer'],
+          styles['view-progress-drawer-weight'],
+          className,
+        )}
+        height="auto"
+        title={ViewProgressTitle}
+        open={open}
+        onClose={onClose}>
+        {content}
+        <CommonButton className={styles['confirm-button']} onClick={onConfirm}>
+          {GOT_IT}
+        </CommonButton>
+      </CommonDrawer>
+    );
+  }
+
   return (
     <CommonModal
       className={clsx(styles['view-progress-modal'], className)}
       title={ViewProgressTitle}
       open={open}
       hideCancelButton
+      okText={GOT_IT}
       onCancel={onClose}
       onOk={onConfirm}>
       {content}
