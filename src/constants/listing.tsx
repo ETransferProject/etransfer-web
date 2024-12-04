@@ -1,6 +1,8 @@
 import { ICommonStepsProps } from 'components/CommonSteps';
 import { TokenInformationFormKeys, SelectChainFormKeys } from 'types/listing';
 
+export const VIEW_PROGRESS = 'View Progress';
+
 export enum ListingStep {
   TOKEN_INFORMATION = 0,
   SELECT_CHAIN = 1,

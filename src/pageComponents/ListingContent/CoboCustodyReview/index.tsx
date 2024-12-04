@@ -1,46 +1,62 @@
 import Remind from 'components/Remind';
 import styles from './styles.module.scss';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { CoboCustodyReviewStatusIcon } from 'assets/images';
 import clsx from 'clsx';
-import ViewProgress from '../ViewProgress';
+import { VIEW_PROGRESS } from 'constants/listing';
+import { openWithBlank } from 'utils/common';
+import { CONTACT_US_FORM_URL } from 'constants/index';
 
-export default function CoboCustodyReview() {
+export default function CoboCustodyReview({ networks }: { networks: { network: string }[] }) {
   const router = useRouter();
-  const [openViewProgress, setOpenViewProgress] = useState(false);
+
+  const networksString = useMemo(() => {
+    let str = '';
+    if (networks.length === 1) {
+      str = networks[0].network + ' network';
+    } else if (networks.length === 2) {
+      str = networks[0].network + ' and ' + networks[1].network + ' networks';
+    } else {
+      networks?.forEach((item, index) => {
+        if (index === networks.length - 1) {
+          str += 'and ' + item.network + ' networks';
+        } else if (index === networks.length - 2) {
+          str += item.network + ' ';
+        } else {
+          str += item.network + ', ';
+        }
+      });
+    }
+
+    return str;
+  }, [networks]);
 
   const handleGoMyApplications = useCallback(() => {
     router.push('/my-applications');
   }, [router]);
-
-  const handleViewProgress = useCallback(() => {
-    setOpenViewProgress(true);
-  }, []);
-
-  const handleCloseViewProgress = useCallback(() => {
-    setOpenViewProgress(false);
-  }, []);
-
-  const handleConfirmViewProgress = useCallback(() => {
-    setOpenViewProgress(true);
-  }, []);
 
   const renderRemind = useMemo(() => {
     return (
       <Remind className={styles['remind']} iconClassName={styles['remind-icon']} isBorder={false}>
         <div>
           <div className={styles['tip-row']}>
-            • You can see the progress in ‘
+            {`• You can see the progress in ‘`}
             <span className={styles['action']} onClick={handleGoMyApplications}>
-              My Applications
+              {`My Applications`}
             </span>
-            ’.
+            {`’.`}
           </div>
           <div className={styles['tip-row']}>
-            • Once approved, please add liquidity to complete the listing.
+            {`• Once approved, please add liquidity to complete the listing.`}
           </div>
-          <div className={styles['tip-row']}>• If you need any support, please contact us.</div>
+          <div className={styles['tip-row']}>
+            {`• If you need any support, please `}
+            <span className={styles['action']} onClick={() => openWithBlank(CONTACT_US_FORM_URL)}>
+              {`contact us`}
+            </span>
+            {` .`}
+          </div>
         </div>
       </Remind>
     );
@@ -52,18 +68,15 @@ export default function CoboCustodyReview() {
       <div className={styles['cobo-custody-review-body']}>
         <CoboCustodyReviewStatusIcon />
         <div className={styles['cobo-custody-review-text']}>
-          The token was created successfully and has been submitted for Cobo custody review.
+          {`The token is successfully created on ${networksString} and submitted for Cobo Custody review. Please reapply for networks where creation has failed.`}
         </div>
 
-        <div className={clsx(styles['action'], styles['action-bold'])} onClick={handleViewProgress}>
-          View progress
+        <div
+          className={clsx(styles['action'], styles['action-bold'])}
+          onClick={handleGoMyApplications}>
+          {VIEW_PROGRESS}
         </div>
       </div>
-      <ViewProgress
-        open={openViewProgress}
-        onClose={handleCloseViewProgress}
-        onConfirm={handleConfirmViewProgress}
-      />
     </div>
   );
 }
