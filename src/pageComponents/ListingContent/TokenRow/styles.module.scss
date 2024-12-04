@@ -1,0 +1,21 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+
+.token-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.token-logo {
+  margin-right: 0;
+  line-height: 1;
+}
+
+.token-symbol {
+  @extend .font-family-medium;
+}
+
+.token-name {
+  color: $secondary-text;
+}

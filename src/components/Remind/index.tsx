@@ -24,7 +24,9 @@ export default function Remind({
         isBorder && styles['remind-border'],
         className,
       )}>
-      {isShowIcon && <InfoBrandIcon className={clsx('flex-shrink-0', iconClassName)} />}
+      {isShowIcon && (
+        <InfoBrandIcon className={clsx('flex-shrink-0', styles['icon'], iconClassName)} />
+      )}
       <div className={styles['text']}>{children}</div>
     </div>
   );

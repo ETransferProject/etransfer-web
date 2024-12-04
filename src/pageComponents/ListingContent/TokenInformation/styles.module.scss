@@ -1,0 +1,21 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.token-information-form {
+  padding: 32px 0 8px;
+
+  .token-information-form-label-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .token-information-form-label {
+    @extend .font-family-medium;
+  }
+}
+
+.token-information-next-button {
+  width: 100%;
+}

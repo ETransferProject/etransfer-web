@@ -6,6 +6,7 @@ import {
   // DiscordIcon,
   FooterLogo,
   LegalIcon,
+  ListingIcon,
   QuestionMarkLarge,
   TelegramBigIcon,
   TelegramIcon,
@@ -79,6 +80,20 @@ export const FOOTER_CONFIG: TFooterConfig = {
         {
           name: 'Privacy Policy',
           link: 'https://etransfer.gitbook.io/docs/more-information/privacy-policy',
+        },
+      ],
+    },
+    {
+      group: 'Listing',
+      icon: ListingIcon,
+      items: [
+        {
+          name: 'Listing Application',
+          link: '/listing',
+        },
+        {
+          name: 'My Applications',
+          link: '/listing',
         },
       ],
     },

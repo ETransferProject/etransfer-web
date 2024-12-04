@@ -98,6 +98,7 @@ import ToArrow from './toArrow.svg';
 import Reset from './reset.svg';
 import EmptyBox from './emptyBox.svg';
 import CloseFilled from './closeFilled.svg';
+import CloseFilled16 from './closeFilled16.svg';
 import TimeIcon from './time.svg';
 import TimeFilled from './timeFilled.svg';
 import USDTToken from './token/usdtToken.svg';
@@ -120,12 +121,14 @@ import TelegramBigIcon from './community/telegramBig.svg';
 import DiscordBigIcon from './community/discordBig.svg';
 import TwitterBigIcon from './community/twitterBig.svg';
 
+import QuestionMark16 from './questionMark16.svg';
 import QuestionMarkLarge from './questionMarkLarge.svg';
 import LegalIcon from './legal.svg';
 import DeveloperIcon from './developer.svg';
 import CommunityIcon from './community.svg';
 import ContactsIcon from './contacts.svg';
 import NextLineIcon from './nextLineIcon.svg';
+import ListingIcon from './listing.svg';
 
 import DoubleArrowIcon from './doubleArrow.svg';
 import InfoDashboard from './infoDashboard.svg';
@@ -239,6 +242,7 @@ export {
   Reset,
   EmptyBox,
   CloseFilled,
+  CloseFilled16,
   TimeIcon,
   TimeFilled,
   USDTToken,
@@ -258,12 +262,14 @@ export {
   TelegramBigIcon,
   DiscordBigIcon,
   TwitterBigIcon,
+  QuestionMark16,
   QuestionMarkLarge,
   LegalIcon,
   DeveloperIcon,
   CommunityIcon,
   ContactsIcon,
   NextLineIcon,
+  ListingIcon,
   DoubleArrowIcon,
   InfoDashboard,
   ErrorIcon,

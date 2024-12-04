@@ -3,13 +3,17 @@
 .remind-card {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
 
   padding: 8px 12px;
   border-radius: 8px;
   background-color: $brand-bg;
   font-size: 14px;
   line-height: 22px;
+
+  .icon {
+    margin: 3px 0;
+  }
 }
 
 .remind-text {

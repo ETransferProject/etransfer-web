@@ -13,6 +13,20 @@
   padding: 16px;
 }
 
+.listing-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.listing-back-text {
+  @extend .font-family-medium;
+  font-size: 14px;
+  line-height: 22px;
+  color: $primary-text;
+}
+
 .listing-card-list {
   display: flex;
   flex-direction: column;
@@ -38,4 +52,49 @@
   @extend .font-family-medium;
   font-size: 20px;
   line-height: 28px;
+}
+
+.listing-card-form-content {
+  :global {
+    .ant-form-item-label {
+      label {
+        width: 100%;
+        font-weight: $font-family-medium-weight;
+        font-family: $font-family-medium-family;
+        color: $primary-text;
+      }
+    }
+
+    .ant-input,
+    .ant-input-affix-wrapper {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border-color: $border;
+      font-size: 14px;
+      line-height: 22px;
+
+      &::placeholder {
+        color: $disable-text;
+      }
+
+      &:hover {
+        border-color: $brand;
+      }
+
+      &:focus,
+      &.ant-input-affix-wrapper-focused {
+        border-color: $brand;
+        box-shadow: none;
+        caret-color: $brand;
+      }
+    }
+
+    .ant-input-suffix {
+      margin-left: 16px;
+    }
+
+    .ant-form-item-margin-offset {
+      margin-bottom: 0 !important;
+    }
+  }
 }
