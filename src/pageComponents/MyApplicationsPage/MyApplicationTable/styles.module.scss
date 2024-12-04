@@ -1,6 +1,14 @@
 @import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
 
-.web-records-table-wrapper {
+.my-application-table {
+  .token-symbol {
+    max-width: 152px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   :global {
     .ant-table-thead {
       height: 48px;
@@ -20,13 +28,11 @@
     .ant-table-thead > tr > th::before {
       display: none;
     }
+    .ant-pagination-item-active {
+      border-color: $brand;
+      a {
+        color: $brand;
+      }
+    }
   }
-}
-
-.web-records-table-row {
-  cursor: pointer;
-}
-
-.order-type {
-  min-width: 72px;
 }

@@ -6,7 +6,7 @@ const MyApplicationsLayout = ({ children }: { children: React.ReactNode }) => {
   const { isPadPX } = useCommonState();
 
   return (
-    <Layout isShowHeader={true} isShowSider={false} isShowFooter={!isPadPX}>
+    <Layout isShowHeader={true} isShowSider={false} isShowFooter={!isPadPX} isFullWidth={true}>
       {children}
     </Layout>
   );
