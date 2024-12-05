@@ -1,0 +1,55 @@
+@import 'src/assets/theme/breakpoint.scss';
+
+.creation-progress-drawer {
+  :global {
+    .ant-drawer-content-wrapper {
+      max-height: 80%;
+    }
+    .ant-drawer-header {
+      height: auto;
+      padding: 24px 24px 8px;
+      @include media-mobile {
+        padding: 24px 16px 8px;
+      }
+      .ant-drawer-header-title {
+        .ant-drawer-title {
+          text-align: left;
+          font-size: 20px;
+          line-height: 28px;
+        }
+      }
+    }
+    .ant-drawer-body {
+      @include media-pad {
+        padding: 0 24px 24px;
+      }
+      @include media-mobile {
+        padding: 0 16px 48px;
+      }
+    }
+  }
+
+}
+
+.creation-progress-modal {
+  :global {
+    .ant-modal-header {
+      height: auto;
+      padding-top: 24px;
+      padding-bottom: 8px;
+    }
+    .ant-modal-title {
+      text-align: left;
+      font-size: 20px;
+      line-height: 28px;
+    }
+  }
+}
+
+.creation-progress-steps {
+  margin-top: 16px;
+}
+
+.creation-progress-remind {
+  margin-top: 40px;
+}

@@ -5,22 +5,18 @@ import { IChainNameItem } from 'constants/index';
 import { useCommonState } from 'store/Provider/hooks';
 import { DeviceSelectChainProps, SelectChainProps } from './types';
 import SynchronizingChainModal from 'pageComponents/Modal/SynchronizingChainModal';
+import NetworkSelectModal, { TNetwork } from 'components/NetworkSelectModal';
 
 export default function SelectChain({
-  title,
   className,
   childrenClassName,
-  overlayClassName,
-  getContainer,
-  isBorder,
-  suffixArrowSize,
-  hideDownArrow,
   menuItems,
   selectedItem,
   clickCallback,
 }: SelectChainProps) {
   const { isPadPX } = useCommonState();
 
+  const [openNetworkSelectModal, setOpenNetworkSelectModal] = useState(false);
   const [openSynchronizingModal, setOpenSynchronizingModal] = useState(false);
 
   const closeSynchronizingModal = useCallback(() => {
@@ -37,36 +33,40 @@ export default function SelectChain({
     },
     [clickCallback, selectedItem.key],
   );
-  const dropdownProps: Omit<DeviceSelectChainProps, 'getContainer'> = useMemo(() => {
+
+  const onSelect = async (item: TNetwork) => {
+    const chainItem = menuItems.find((i) => i.key === item.network);
+    if (chainItem) {
+      await onClickChain(chainItem);
+    }
+  };
+
+  const commonProps: DeviceSelectChainProps = useMemo(() => {
     return {
-      menuItems,
+      className,
+      childrenClassName,
       selectedItem,
-      onClick: onClickChain,
+      isExpand: openNetworkSelectModal,
+      onClick: () => setOpenNetworkSelectModal(true),
     };
-  }, [menuItems, onClickChain, selectedItem]);
+  }, [className, childrenClassName, selectedItem, openNetworkSelectModal]);
+
+  const networkList = menuItems.map((item) => {
+    return {
+      network: item.key,
+      name: item.label,
+    };
+  });
 
   return (
     <>
-      {isPadPX ? (
-        <MobileSelectChain
-          {...dropdownProps}
-          title={title}
-          className={className}
-          childrenClassName={childrenClassName}
-          isBorder={isBorder}
-        />
-      ) : (
-        <WebSelectChain
-          {...dropdownProps}
-          getContainer={getContainer}
-          className={className}
-          childrenClassName={childrenClassName}
-          overlayClassName={overlayClassName}
-          isBorder={isBorder}
-          suffixArrowSize={suffixArrowSize}
-          hideDownArrow={hideDownArrow}
-        />
-      )}
+      {isPadPX ? <MobileSelectChain {...commonProps} /> : <WebSelectChain {...commonProps} />}
+      <NetworkSelectModal
+        networkList={networkList}
+        open={openNetworkSelectModal}
+        onSelect={onSelect}
+        onClose={() => setOpenNetworkSelectModal(false)}
+      />
       <SynchronizingChainModal
         open={openSynchronizingModal}
         onOk={closeSynchronizingModal}

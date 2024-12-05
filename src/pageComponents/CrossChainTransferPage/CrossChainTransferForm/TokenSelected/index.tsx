@@ -4,7 +4,7 @@ import DynamicArrow from 'components/DynamicArrow';
 import { useCrossChainTransfer } from 'store/Provider/hooks';
 import { formatSymbolDisplay } from 'utils/format';
 import { useCallback, useState } from 'react';
-import TokenSelectModal from '../TokenSelectModal';
+import TokenSelectModal from 'components/TokenSelectModal';
 import { TTokenItem } from 'types/api';
 import clsx from 'clsx';
 

@@ -108,6 +108,7 @@ import SwapRightSelected from './swap-right-selected.svg';
 import AddIcon from './add.svg';
 import AddMedium from './addMedium.svg';
 import AddBigIcon from './addBig.svg';
+import AddBlueIcon from './addBlue.svg';
 import DownIcon from './down.svg';
 import DownBigIcon from './downBig.svg';
 import DownSmallIcon from './downSmall.svg';
@@ -252,6 +253,7 @@ export {
   AddIcon,
   AddMedium,
   AddBigIcon,
+  AddBlueIcon,
   DownIcon,
   DownBigIcon,
   DownSmallIcon,

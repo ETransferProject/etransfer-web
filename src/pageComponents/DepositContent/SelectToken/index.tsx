@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './styles.module.scss';
 import { useAppDispatch, useCommonState, useDepositState } from 'store/Provider/hooks';
-import TokenSelectDrawer from 'components/SelectToken/TokenSelectDrawer';
-import TokenSelectDropdown from 'components/SelectToken/TokenSelectDropdown';
 import { AddBigIcon } from 'assets/images';
 import clsx from 'clsx';
 import { SelectImage } from 'components/SelectToken/TokenCard';
@@ -10,24 +8,19 @@ import { TDepositTokenItem } from 'types/api';
 import { setAddInitOpenTokenModalCount } from 'store/reducers/deposit/slice';
 import DynamicArrow from 'components/DynamicArrow';
 import { formatSymbolDisplay } from 'utils/format';
+import TokenSelectModal from 'components/TokenSelectModal';
 
 type TSelectTokenProps = {
-  title?: string;
   tokenList?: TDepositTokenItem[];
   selected?: TDepositTokenItem;
-  isDisabled?: boolean;
-  isShowLoading?: boolean;
   className?: string;
   onChange?: (item: TDepositTokenItem) => void;
   selectCallback: (item: TDepositTokenItem) => void;
 };
 
 export default function SelectToken({
-  title,
   tokenList,
   selected,
-  isDisabled,
-  isShowLoading,
   className,
   onChange,
   selectCallback,
@@ -102,29 +95,12 @@ export default function SelectToken({
         </div>
       </div>
 
-      {isPadPX ? (
-        <TokenSelectDrawer
-          open={isShowTokenSelectDropdown}
-          onClose={() => setIsShowTokenSelectDropdown(false)}
-          title={title}
-          tokenList={tokenList}
-          selectedToken={selected?.symbol}
-          isDisabled={isDisabled}
-          isShowLoading={isShowLoading}
-          onSelect={onSelectToken}
-        />
-      ) : (
-        <TokenSelectDropdown
-          className={styles['deposit-token-select-dropdown']}
-          open={isShowTokenSelectDropdown}
-          tokenList={tokenList}
-          selectedToken={selected?.symbol}
-          isDisabled={isDisabled}
-          isShowLoading={isShowLoading}
-          onSelect={onSelectToken}
-          onClose={() => setIsShowTokenSelectDropdown(false)}
-        />
-      )}
+      <TokenSelectModal
+        open={isShowTokenSelectDropdown}
+        onClose={() => setIsShowTokenSelectDropdown(false)}
+        tokenList={tokenList || []}
+        onSelect={onSelectToken}
+      />
     </div>
   );
 }

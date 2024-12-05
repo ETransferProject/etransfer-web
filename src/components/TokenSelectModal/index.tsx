@@ -1,18 +1,21 @@
-import { useMemo, useState, useEffect } from 'react';
-import CommonModal from 'components/CommonModal';
-import styles from './styles.module.scss';
-import { Input } from 'antd';
-import { TTokenItem } from 'types/api';
-import { SelectImage } from 'components/SelectToken/TokenCard';
-import { formatSymbolDisplay } from 'utils/format';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import clsx from 'clsx';
-import { SearchIcon } from 'assets/images';
+import { Input } from 'antd';
+import CommonModal from 'components/CommonModal';
 import CommonDrawer from 'components/CommonDrawer';
+import CommonButton, { CommonButtonType } from 'components/CommonButton';
+import { SelectImage } from 'components/SelectToken/TokenCard';
+import { TTokenItem } from 'types/api';
+import { formatSymbolDisplay } from 'utils/format';
+import { AddBlueIcon, SearchIcon } from 'assets/images';
 import { useCommonState } from 'store/Provider/hooks';
+import { useRouter } from 'next/navigation';
+import styles from './styles.module.scss';
 
 export interface TokenSelectModalProps {
   className?: string;
   open: boolean;
+  hideAddToken?: boolean;
   tokenList: TTokenItem[];
   onSelect: (item: TTokenItem) => Promise<void>;
   onClose: () => void;
@@ -24,11 +27,13 @@ const SearchByTokenName = 'Search by token name';
 export default function TokenSelectModal({
   className,
   open = false,
+  hideAddToken = false,
   tokenList,
   onSelect,
   onClose,
 }: TokenSelectModalProps) {
   const { isPadPX } = useCommonState();
+  const router = useRouter();
   const [searchKeyword, setSearchKeyword] = useState('');
 
   useEffect(() => {
@@ -43,6 +48,10 @@ export default function TokenSelectModal({
     const keyword = searchKeyword.toLowerCase();
     return tokenList.filter((item) => item.symbol.toLowerCase().includes(keyword));
   }, [tokenList, searchKeyword]);
+
+  const handleAddToken = useCallback(() => {
+    router.push('/listing');
+  }, [router]);
 
   const content = useMemo(() => {
     return (
@@ -76,9 +85,18 @@ export default function TokenSelectModal({
             );
           })}
         </div>
+        {!hideAddToken && (
+          <CommonButton
+            className={styles['token-select-button']}
+            type={CommonButtonType.Secondary}
+            icon={<AddBlueIcon />}
+            onClick={handleAddToken}>
+            Add Token
+          </CommonButton>
+        )}
       </>
     );
-  }, [filteredTokenList, onSelect, searchKeyword]);
+  }, [filteredTokenList, onSelect, searchKeyword, handleAddToken, hideAddToken]);
 
   if (isPadPX) {
     return (

@@ -10,10 +10,12 @@ import {
   LISTING_FORM_PROMPT_CONTENT_MAP,
   ListingStep,
 } from 'constants/listing';
+import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 
 export default function ListingContent() {
-  const [currentStep, setCurrentStep] = useState<ListingStep>(ListingStep.SELECT_CHAIN);
+  const { isMobilePX } = useCommonState();
+  const [currentStep, setCurrentStep] = useState<ListingStep>(ListingStep.TOKEN_INFORMATION);
 
   const renderForm = () => {
     switch (currentStep) {
@@ -48,6 +50,7 @@ export default function ListingContent() {
               onChange={setCurrentStep}
             />
           </div>
+          {isMobilePX && <div className={styles['listing-card-divider']} />}
           <div className={styles['listing-card']}>
             <div className={styles['listing-card-form-title']}>
               {LISTING_STEP_ITEMS[currentStep].title}

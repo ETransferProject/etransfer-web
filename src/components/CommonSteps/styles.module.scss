@@ -84,6 +84,9 @@
             background-color: $brand;
           }
         }
+        .ant-steps-item-title {
+          color: $secondary-text;
+        }
       }
     }
   }
@@ -117,8 +120,6 @@
   }
 
   &.common-steps-vertical {
-    height: 240px;
-
     .common-steps-loading {
       width: 10px;
       height: 10px;
@@ -126,12 +127,24 @@
 
     :global {
       .ant-steps-item {
+        &:last-child {
+          flex: none;
+          .ant-steps-item-content {
+            min-height: auto;
+          }
+        }
+        &:not(:last-child) {
+          .ant-steps-item-content {
+            min-height: 52px;
+          }
+        }
         .ant-steps-item-tail {
           left: 10px;
         }
         .ant-steps-item-icon {
           width: 20px;
           height: 20px;
+          margin-right: 12px;
           display: flex;
           align-items: center;
           justify-content: center;

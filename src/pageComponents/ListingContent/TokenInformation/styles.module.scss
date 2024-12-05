@@ -1,5 +1,6 @@
 @import 'src/assets/theme/color.scss';
 @import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/breakpoint.scss';
 
 .token-information-form {
   padding: 32px 0 8px;
@@ -18,4 +19,14 @@
 
 .token-information-next-button {
   width: 100%;
+}
+
+@include media-mobile {
+  .token-information-form {
+    padding: 24px 0 0;
+  }
+
+  .token-information-next-button {
+    margin-bottom: 32px;
+  }
 }

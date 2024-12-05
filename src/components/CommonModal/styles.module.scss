@@ -25,6 +25,9 @@
       line-height: 1.5;
       font-weight: $font-family-medium-weight;
       font-family: $font-family-medium-family;
+      .ant-modal-title {
+        color: $primary-text;
+      }
     }
     .ant-modal-body {
       padding: 0 24px 24px;

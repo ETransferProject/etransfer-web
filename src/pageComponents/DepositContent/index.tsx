@@ -57,7 +57,6 @@ export type TDepositContentProps = {
   qrCodeValue: string;
   tokenLogoUrl?: string;
   showRetry?: boolean;
-  isShowNetworkLoading?: boolean;
   toTokenSelected?: TToTokenItem;
   isCheckTxnLoading?: boolean;
   depositProcessingCount?: number;
@@ -97,7 +96,6 @@ export default function Content() {
   const isConnectedRef = useRef(isConnected);
   isConnectedRef.current = isConnected;
   const { setLoading } = useLoading();
-  const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const fromNetworkRef = useRef<string>();
   const [depositInfo, setDepositInfo] = useState<TDepositInfo>(INIT_DEPOSIT_INFO);
   const [isGetRetry, setIsGetRetry] = useState(false);
@@ -228,7 +226,6 @@ export default function Content() {
   const getNetworkData = useCallback(
     async ({ chainId, symbol, toSymbol }: TGetNetworkData) => {
       try {
-        setIsShowNetworkLoading(true);
         const lastSymbol = symbol || fromTokenSymbol;
         const lastToSymbol = toSymbol || toTokenSymbol;
         const { networkList: networkListOrigin } = await getNetworkList({
@@ -259,7 +256,6 @@ export default function Content() {
         }
         await getDepositData(chainId, lastSymbol, lastToSymbol);
       } catch (error: any) {
-        setIsShowNetworkLoading(false);
         if (isAuthTokenError(error)) {
           is401Ref.current = true;
         } else {
@@ -272,8 +268,6 @@ export default function Content() {
         ) {
           SingleMessage.error(handleErrorMessage(error));
         }
-      } finally {
-        setIsShowNetworkLoading(false);
       }
     },
     [dispatch, fromTokenSymbol, getDepositData, toTokenSymbol],
@@ -622,7 +616,6 @@ export default function Content() {
       depositInfo={depositInfo}
       qrCodeValue={depositInfo.depositAddress}
       showRetry={showRetry}
-      isShowNetworkLoading={isShowNetworkLoading}
       isCheckTxnLoading={isCheckTxnLoading}
       depositProcessingCount={depositProcessingCount}
       transferProcessingCount={transferProcessingCount}
@@ -645,7 +638,6 @@ export default function Content() {
       depositInfo={depositInfo}
       qrCodeValue={depositInfo.depositAddress}
       showRetry={showRetry}
-      isShowNetworkLoading={isShowNetworkLoading}
       isCheckTxnLoading={isCheckTxnLoading}
       depositProcessingCount={depositProcessingCount}
       transferProcessingCount={transferProcessingCount}

@@ -3,31 +3,28 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TNetworkItem } from 'types/api';
 import styles from './styles.module.scss';
 import { useAppDispatch, useCommonState, useDepositState } from 'store/Provider/hooks';
-import NetworkSelectDrawer from 'components/SelectNetwork/NetworkSelectDrawer';
-import NetworkSelectDropdown from 'components/SelectNetwork/NetworkSelectDropdown';
 import clsx from 'clsx';
-import { SideMenuKey } from 'constants/home';
 import { setAddInitOpenNetworkModalCount } from 'store/reducers/deposit/slice';
 import DynamicArrow from 'components/DynamicArrow';
 import NetworkLogo from 'components/NetworkLogo';
+import NetworkSelectModal from 'components/NetworkSelectModal';
 
 type TSelectNetworkProps = {
   label?: string;
   networkList: TNetworkItem[];
   selected?: TNetworkItem;
-  isDisabled?: boolean;
-  isShowLoading?: boolean;
   className?: string;
   onChange?: (item: TNetworkItem) => void;
   selectCallback: (item: TNetworkItem) => Promise<void>;
 };
 
+const DEPOSIT_TIP_CONTENT =
+  'Note: Please select from the supported networks listed below. Sending tokens from other networks may result in the loss of your assets.';
+
 export default function SelectNetwork({
   label,
   networkList,
   selected,
-  isDisabled,
-  isShowLoading,
   className,
   onChange,
   selectCallback,
@@ -111,30 +108,13 @@ export default function SelectNetwork({
         <DynamicArrow size={isPadPX ? 'Small' : 'Normal'} isExpand={isShowNetworkSelectDropdown} />
       </div>
 
-      {isPadPX ? (
-        <NetworkSelectDrawer
-          open={isShowNetworkSelectDropdown}
-          onClose={() => setIsShowNetworkSelectDropdown(false)}
-          type={SideMenuKey.Deposit}
-          networkList={networkList}
-          selectedNetwork={selected?.network}
-          isDisabled={isDisabled}
-          isShowLoading={isShowLoading}
-          onSelect={onSelectNetwork}
-        />
-      ) : (
-        <NetworkSelectDropdown
-          className={styles['deposit-network-select-dropdown']}
-          open={isShowNetworkSelectDropdown}
-          type={SideMenuKey.Deposit}
-          networkList={networkList}
-          selectedNetwork={selected?.network}
-          isDisabled={isDisabled}
-          isShowLoading={isShowLoading}
-          onSelect={onSelectNetwork}
-          onClose={() => setIsShowNetworkSelectDropdown(false)}
-        />
-      )}
+      <NetworkSelectModal
+        open={isShowNetworkSelectDropdown}
+        onClose={() => setIsShowNetworkSelectDropdown(false)}
+        networkList={networkList}
+        onSelect={onSelectNetwork}
+        remindContent={DEPOSIT_TIP_CONTENT}
+      />
     </div>
   );
 }

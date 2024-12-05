@@ -6,12 +6,6 @@
   cursor: pointer;
 }
 
-.trigger-container-border {
-  height: 28px;
-  border: 1px solid $dividers;
-  border-radius: 6px;
-}
-
 .trigger-text {
   font-size: 14px;
   line-height: 22px;
@@ -20,23 +14,4 @@
 
 .children-icon {
   margin-left: 4px;
-}
-
-.drawer-content {
-  gap: 12px;
-  padding-top: 12px;
-}
-
-.drawer-item {
-  padding: 16px 12px;
-  border: 1px solid $dividers;
-  border-radius: 6px;
-  gap: 8px;
-  @extend .font-family-medium;
-  font-size: 16px;
-  line-height: 1.5;
-  color: $primary-text;
-  &.drawer-item-selected {
-    border-color: $brand;
-  }
 }

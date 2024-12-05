@@ -45,7 +45,6 @@ export default function WebContent({
   qrCodeValue,
   tokenLogoUrl,
   showRetry = false,
-  isShowNetworkLoading = false,
   fromTokenSelected,
   toTokenSelected,
   isCheckTxnLoading = false,
@@ -172,7 +171,6 @@ export default function WebContent({
             className={styles['selected-chain']}
             networkList={newFromNetworkList || []}
             selected={fromNetworkSelected}
-            isShowLoading={isShowNetworkLoading}
             selectCallback={fromNetworkChanged}
           />
         </div>
@@ -200,7 +198,6 @@ export default function WebContent({
             className={styles['selected-chain']}
             menuItems={menuItems}
             selectedItem={toChainItem}
-            mobileTitle={`Deposit ${'To'}`}
             chainChanged={toChainChanged}
           />
         </div>
@@ -211,7 +208,6 @@ export default function WebContent({
     fromNetworkSelected,
     handleLogin,
     isConnected,
-    isShowNetworkLoading,
     menuItems,
     newFromNetworkList,
     toChainChanged,

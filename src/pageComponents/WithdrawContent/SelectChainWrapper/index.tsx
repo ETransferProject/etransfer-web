@@ -10,7 +10,6 @@ import { useEffectOnce } from 'react-use';
 
 interface SelectChainWrapperProps {
   className?: string;
-  mobileTitle?: string;
   mobileLabel?: string;
   webLabel?: string;
   chainChanged: (item: IChainNameItem) => void;
@@ -18,7 +17,6 @@ interface SelectChainWrapperProps {
 
 export default function SelectChainWrapper({
   className,
-  mobileTitle = '',
   mobileLabel,
   webLabel,
   chainChanged,
@@ -43,11 +41,9 @@ export default function SelectChainWrapper({
     <div className={clsx(styles['select-chain-wrapper'], className)} id="withdrawChainSelect">
       <span className={styles['select-chain-label']}>{isPadPX ? mobileLabel : webLabel}</span>
       <SelectChain
-        getContainer="withdrawChainSelect"
-        title={mobileTitle}
-        clickCallback={chainChanged}
         menuItems={CHAIN_LIST}
         selectedItem={currentChainItem}
+        clickCallback={chainChanged}
       />
     </div>
   );

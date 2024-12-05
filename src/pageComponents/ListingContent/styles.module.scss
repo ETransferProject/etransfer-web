@@ -1,5 +1,6 @@
 @import '/src/assets/theme/color.scss';
 @import '/src/assets/theme/font.scss';
+@import '/src/assets/theme/breakpoint.scss';
 
 .listing-container {
   height: 100%;
@@ -8,13 +9,13 @@
 }
 
 .listing-content {
-  width: 720px;
+  width: calc(720px + 48px);
   margin: 0 auto;
-  padding: 16px;
+  padding: 0 24px;
 }
 
 .listing-back {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
@@ -96,5 +97,51 @@
     .ant-form-item-margin-offset {
       margin-bottom: 0 !important;
     }
+  }
+}
+
+@include media-pad {
+  .listing-container {
+    padding: 16px 0 24px;
+  }
+
+  .listing-content {
+    width: calc(720px + 32px);
+    padding: 0 16px;
+  }
+}
+
+@include media-mobile {
+  .listing-container {
+    padding: 0;
+    background-color: $page-bg;
+  }
+
+  .listing-content {
+    width: 100%;
+    padding: 0;
+  }
+
+  .listing-back {
+    margin: 16px 16px 12px;
+  }
+
+  .listing-card {
+    padding: 16px;
+    border: none;
+    border-radius: 0;
+  }
+
+  .listing-card-steps-title {
+    margin-bottom: 16px;
+  }
+
+  .listing-card-form-title {
+    margin-bottom: 12px;
+  }
+
+  .listing-card-divider {
+    height: 8px;
+    background-color: $hover-bg;
   }
 }

@@ -7,12 +7,15 @@
 
   padding: 8px 12px;
   border-radius: 8px;
-  background-color: $brand-bg;
+  background-color: $hover-bg;
   font-size: 14px;
   line-height: 22px;
 
   .icon {
     margin: 3px 0;
+    path {
+      fill: $secondary-text;
+    }
   }
 }
 
@@ -24,9 +27,25 @@
 }
 
 .remind-border {
-  border: 1px solid $disable;
+  border: 1px solid $dividers;
 }
 
 .text {
   margin-left: 8px;
+  color: $secondary-text;
+}
+
+.remind-brand {
+  background-color: $brand-bg;
+  border-color: $disable;
+
+  .icon {
+    path {
+      fill: $brand;
+    }
+  }
+
+  .text {
+    color: $primary-text;
+  }
 }

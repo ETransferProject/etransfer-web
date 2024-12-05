@@ -1,4 +1,5 @@
 import { ICommonStepsProps } from 'components/CommonSteps';
+import LinkForBlank from 'components/LinkForBlank';
 import { TokenInformationFormKeys, SelectChainFormKeys } from 'types/listing';
 
 export enum ListingStep {
@@ -27,21 +28,41 @@ export const LISTING_STEP_ITEMS: ICommonStepsProps['stepItems'] = [
   },
 ];
 
+const CONTACT_US_ROW = (
+  <>
+    {'• If you need any support, please '}
+    <LinkForBlank
+      href="https://form.etransfer.exchange/contact"
+      element={<span>contact us</span>}
+    />
+    {'.'}
+  </>
+);
+
 export const LISTING_FORM_PROMPT_CONTENT_MAP: Record<ListingStep, React.ReactNode> = {
   [ListingStep.TOKEN_INFORMATION]: (
     <div key="0">
       <p>{'• Only the current token owner on the aelf chain can apply.'}</p>
       <p>{'• The token must meet the requirements of Liquidity > $1000 and Holders > 1000.'}</p>
+      <p>{CONTACT_US_ROW}</p>
     </div>
   ),
   [ListingStep.SELECT_CHAIN]: (
-    <p key="1">{'Please select at least one aelf chain and one other chain.'}</p>
+    <div key="1">
+      <p>{'• Please select at least one aelf chain and one other chain.'}</p>
+      <p>
+        {
+          '• You can select multiple chains simultaneously, and Transfers will be supported between any two selected chains.f'
+        }
+      </p>
+      <p>{CONTACT_US_ROW}</p>
+    </div>
   ),
   [ListingStep.COBO_CUSTODY_REVIEW]: (
     <div key="2">
       <p>{'• You can see the progress in ‘My Applications’.'}</p>
       <p>{'• Once approved, please add liquidity to complete the listing.'}</p>
-      <p>{'• If you need any support, please contact us.'}</p>
+      <p>{CONTACT_US_ROW}</p>
     </div>
   ),
   [ListingStep.INITIALIZE_LIQUIDITY_POOL]: (
@@ -49,6 +70,7 @@ export const LISTING_FORM_PROMPT_CONTENT_MAP: Record<ListingStep, React.ReactNod
       <p>{'• Please transfer the SGR for each chain into the liquidity pool.'}</p>
       <p>{'• Transferring other tokens will be invalid.'}</p>
       <p>{'• The 24-hour transfer limit for the SGR is $5,000.'}</p>
+      <p>{CONTACT_US_ROW}</p>
     </div>
   ),
   [ListingStep.COMPLETE]: null,

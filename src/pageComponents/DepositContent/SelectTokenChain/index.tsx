@@ -41,12 +41,10 @@ export default function SelectTokenChain({
         menuItems={menuItems}
         selectedItem={toChainItem}
         mobileLabel={label}
-        mobileTitle={`Deposit ${label}`}
         chainChanged={chainChanged}
       />
       <CommonSpace direction="vertical" size={20} />
       <SelectToken
-        title="Receive Token"
         tokenList={toTokenList}
         selected={tokenSelected}
         selectCallback={tokenSelectCallback}

@@ -8,6 +8,7 @@ export default function Remind({
   isShowIcon = true,
   isCard = true,
   isBorder = true,
+  isBrand = true,
   children,
 }: {
   className?: string;
@@ -15,6 +16,7 @@ export default function Remind({
   isShowIcon?: boolean;
   isCard?: boolean;
   isBorder?: boolean;
+  isBrand?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -22,6 +24,7 @@ export default function Remind({
       className={clsx(
         isCard ? styles['remind-card'] : styles['remind-text'],
         isBorder && styles['remind-border'],
+        isBrand && styles['remind-brand'],
         className,
       )}>
       {isShowIcon && (

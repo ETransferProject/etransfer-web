@@ -39,7 +39,6 @@ export default function MobileDepositContent({
   qrCodeValue,
   tokenLogoUrl,
   showRetry = false,
-  isShowNetworkLoading = false,
   fromTokenSelected,
   toTokenSelected,
   isCheckTxnLoading,
@@ -221,7 +220,6 @@ export default function MobileDepositContent({
             tokenSelected={fromTokenSelected}
             tokenSelectCallback={fromTokenChanged}
             networkSelected={fromNetworkSelected}
-            isShowNetworkLoading={isShowNetworkLoading}
             networkSelectCallback={fromNetworkChanged}
           />
 

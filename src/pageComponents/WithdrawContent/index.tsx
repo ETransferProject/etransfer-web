@@ -1038,7 +1038,6 @@ export default function WithdrawContent() {
           </div>
         )}
         <SelectChainWrapper
-          mobileTitle="Withdraw from"
           mobileLabel="from"
           webLabel={'Withdraw Assets from'}
           chainChanged={(item: IChainNameItem) => handleChainChanged(item)}
