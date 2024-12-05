@@ -7,12 +7,25 @@ import {
   TGetNetworkListResult,
   TGetTokenListRequest,
   TGetTokenListResult,
+  TGetTokenNetworkRelationRequest,
+  TGetTokenNetworkRelationResult,
   TGetTransferInfoRequest,
   TGetTransferInfoResult,
   TUpdateTransferOrderRequest,
   TUpdateTransferOrderResult,
 } from 'types/api';
 import { formatApiError } from './error';
+
+export const getTokenNetworkRelation = async (
+  params: TGetTokenNetworkRelationRequest,
+): Promise<TGetTokenNetworkRelationResult> => {
+  try {
+    const res = await request.transfer.getTokenNetworkRelation({ params });
+    return res.data;
+  } catch (error) {
+    throw formatApiError(error, 'getTokenNetworkRelation error', false);
+  }
+};
 
 export const getTokenList = async (params: TGetTokenListRequest): Promise<TGetTokenListResult> => {
   try {

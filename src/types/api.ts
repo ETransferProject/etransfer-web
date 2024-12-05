@@ -20,6 +20,22 @@ export enum AuthTokenSource {
   TON = 'Ton',
 }
 
+export type TGetTokenNetworkRelationRequest = {
+  networkList?: string[];
+  tokenList?: string[];
+  address?: string;
+};
+
+export type TGetTokenNetworkRelationResult = Record<
+  string,
+  Record<string, TGetTokenNetworkRelationItem>
+>;
+
+export type TGetTokenNetworkRelationItem = {
+  network: string;
+  name: string;
+};
+
 export type TGetTokenListRequest = {
   type: BusinessType;
   chainId?: TChainId;
@@ -527,3 +543,169 @@ export type TUpdateTransferOrderRequest = {
 };
 
 export type TUpdateTransferOrderResult = boolean;
+
+export type TGetApplicationTokenListResult = {
+  tokenList: TApplicationTokenItem[];
+};
+
+export type TApplicationTokenItem = {
+  tokenName: string;
+  symbol: string;
+  tokenImage: string;
+  liquidityInUsd: string;
+  holders: number;
+};
+
+export type TGetCommitTokenInfoRequest = {
+  symbol: string;
+  officialWebsite: string;
+  officialTwitter: string;
+  title: string;
+  personName: string;
+  telegramHandler: string;
+  email: string;
+};
+
+export type TGetCommitTokenInfoResult = boolean;
+
+export type TGetApplicationTokenInfoRequest = {
+  symbol: string;
+};
+
+export type TGetApplicationTokenInfoResult = {
+  symbol: string;
+  userAddress: string;
+  officialWebsite: string;
+  officialTwitter: string;
+  title: string;
+  personName: string;
+  telegramHandler: string;
+  email: string;
+};
+
+export type TGetApplicationChainStatusListRequest = {
+  symbol: string;
+};
+
+export type TGetApplicationChainStatusListResult = {
+  chainList: TApplicationChainStatusItem[];
+  otherChainList: TApplicationChainStatusItem[];
+};
+
+export type TApplicationChainStatusItem = {
+  chainId: string;
+  status: ApplicationChainStatusEnum;
+  checked: boolean;
+  totalSupply: number;
+  decimals: number;
+  contractAddress: string;
+  symbol: string;
+  tokenName: string;
+  icon: string;
+  poolAddress: string;
+};
+
+export enum ApplicationChainStatusEnum {
+  Issued = 'Issued',
+  Reviewing = 'Reviewing',
+  Rejected = 'Rejected',
+  Reviewed = 'Reviewed',
+  PoolInitializing = 'PoolInitializing',
+  Integrating = 'Integrating',
+  Complete = 'Complete',
+  Failed = 'Failed',
+}
+
+export type TAddApplicationChainRequest = {
+  chainIds?: string[];
+  otherChainIds?: string[];
+  symbol: string;
+};
+
+export type TAddApplicationChainResult = {
+  chainList: TAddApplicationChainResultChainItem[];
+  otherChainList: TAddApplicationChainResultOtherChainItem[];
+};
+
+export type TAddApplicationChainResultChainItem = {
+  chainId: string;
+};
+
+export type TAddApplicationChainResultOtherChainItem = {
+  id: string;
+  chainId: string;
+};
+
+export type TPrepareBindIssueRequest = {
+  address: string;
+  symbol: string;
+  chainId: string;
+  otherChainId?: string;
+  supply: string;
+};
+
+export type TPrepareBindIssueResult = string; // prepare id
+
+export type TGetApplicationIssueResult = boolean;
+
+export type TGetMyApplicationListRequest = {
+  skipCount?: number;
+  maxResultCount?: number;
+};
+
+export type TGetMyApplicationListResult = {
+  items: TMyApplicationItem[];
+  totalCount: 1;
+};
+
+export type TMyApplicationItem = {
+  id: string;
+  symbol: string;
+  status: ApplicationChainStatusEnum;
+  updateTime: number;
+  chainTokenInfo: TMyApplicationChainTokenInfo[];
+  otherChainTokenInfo: TMyApplicationChainTokenInfo;
+};
+
+export type TMyApplicationChainTokenInfo = {
+  chainId: string;
+  tokenName: string;
+  icon: string;
+  poolAddress: string;
+  status: ApplicationChainStatusEnum;
+};
+
+export type TGetApplicationDetailRequest = {
+  symbol: string;
+  id?: string;
+  network?: string;
+};
+
+export type TGetApplicationDetailResult = {
+  items: TApplicationDetailItem[];
+};
+
+export type TApplicationDetailItem = {
+  id: string;
+  symbol: string;
+  userAddress: string;
+  status: ApplicationChainStatusEnum;
+  createTime: 1732264252713;
+  updateTime: 1732264252713;
+  chainTokenInfo: TApplicationDetailItemChainTokenInfo[];
+  otherChainTokenInfo: TApplicationDetailItemChainTokenInfo;
+};
+
+export type TApplicationDetailItemChainTokenInfo = {
+  chainId: string;
+  tokenName: string;
+  symbol: string;
+  totalSupply: number;
+  decimals: number;
+  icon: string;
+  poolAddress: string;
+  contractAddress: string;
+  status: ApplicationChainStatusEnum;
+  balanceAmount: string;
+  minAmount: string;
+};

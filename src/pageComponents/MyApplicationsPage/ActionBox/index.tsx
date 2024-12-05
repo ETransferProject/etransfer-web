@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { TOrderStatus } from 'types/records';
 import styles from './styles.module.scss';
 import ViewProgress from 'pageComponents/ListingContent/ViewProgress';
+import { VIEW_PROGRESS } from 'constants/listing';
 
 // TODO ts
 export default function ActionBox({
@@ -22,7 +23,7 @@ export default function ActionBox({
   }, []);
 
   const handleConfirmViewProgress = useCallback(() => {
-    setOpenViewProgress(true);
+    setOpenViewProgress(false);
   }, []);
 
   const handleInitializeTokenPool = useCallback(() => {
@@ -42,7 +43,7 @@ export default function ActionBox({
       return (
         <>
           <div className={styles['action']} onClick={handleViewProgress}>
-            View Progress
+            {VIEW_PROGRESS}
           </div>
           <ViewProgress
             open={openViewProgress}

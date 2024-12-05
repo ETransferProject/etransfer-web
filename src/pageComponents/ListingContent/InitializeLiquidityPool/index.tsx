@@ -8,8 +8,16 @@ import CommonQRCode from 'components/CommonQRCode';
 import CommonButton, { CommonButtonSize } from 'components/CommonButton';
 import { CheckFilled16 } from 'assets/images';
 import clsx from 'clsx';
+import { openWithBlank } from 'utils/common';
+import { CONTACT_US_FORM_URL } from 'constants/index';
 
 export default function InitializeLiquidityPool() {
+  const tokenInfo = useMemo(() => {
+    return {
+      symbol: 'SGR-1',
+      minAmount: '1234',
+    };
+  }, []);
   const list = useMemo(() => {
     return [
       {
@@ -38,16 +46,27 @@ export default function InitializeLiquidityPool() {
       <Remind className={styles['remind']} iconClassName={styles['remind-icon']} isBorder={false}>
         <div>
           <div className={styles['tip-row']}>
-            • Please transfer the SGR for each chain into the liquidity pool.
+            {`• Please transfer the ${formatSymbolDisplay(
+              tokenInfo.symbol,
+            )} for each chain into the liquidity pool.`}
           </div>
           <div className={styles['tip-row']}>• Transferring other tokens will be invalid.</div>
           <div className={styles['tip-row']}>
-            • The 24-hour transfer limit for the SGR is $5,000.
+            {`• The 24-hour transfer limit for the ${formatSymbolDisplay(tokenInfo.symbol)} is $${
+              tokenInfo.minAmount
+            }.`}
+          </div>
+          <div className={styles['tip-row']}>
+            {`If you need any support, please `}
+            <span
+              className={styles['action']}
+              onClick={() => openWithBlank(CONTACT_US_FORM_URL)}>{`contact us`}</span>
+            {`.`}
           </div>
         </div>
       </Remind>
     );
-  }, []);
+  }, [tokenInfo.minAmount, tokenInfo.symbol]);
 
   const handleGoExplore = useCallback(() => {
     // TODO

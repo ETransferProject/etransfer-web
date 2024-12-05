@@ -2,30 +2,31 @@ import { CompleteIcon } from 'assets/images';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import styles from './styles.module.scss';
 import { useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
+import { VIEW_PROGRESS } from 'constants/listing';
+import { useRouter } from 'next/navigation';
 
 export default function Complete() {
   const router = useRouter();
 
-  const handleGoTransfer = useCallback(() => {
-    router.push('/cross-chain-transfer');
+  const handleGoMyApplications = useCallback(() => {
+    router.push('/my-applications');
   }, [router]);
 
   return (
     <div className={clsx('column-center', styles['complete-container'])}>
       <CompleteIcon />
-      <div className={styles['title']}>Listing complete.</div>
+      <div className={styles['title']}>Application completed</div>
       <div className={styles['content']}>
-        You can now open the ETransfer App to start cross-chain transfers.
+        {`The token pool has been initialized successfully. Transfers are expected to be available within 1 business day, and we will notify you via email.`}
       </div>
 
       <CommonButton
         className={clsx('flex-1', styles['transfer-button'])}
         type={CommonButtonType.Border}
-        onClick={handleGoTransfer}
+        onClick={handleGoMyApplications}
         ghost>
-        Transfer Now
+        {VIEW_PROGRESS}
       </CommonButton>
     </div>
   );
