@@ -11,7 +11,6 @@ import {
   ListingStep,
 } from 'constants/listing';
 import styles from './styles.module.scss';
-import Complete from './Complete';
 
 export default function ListingContent() {
   const [currentStep, setCurrentStep] = useState<ListingStep>(ListingStep.SELECT_CHAIN);
@@ -58,8 +57,6 @@ export default function ListingContent() {
             )}
             <div className={styles['listing-card-form-content']}>{renderForm()}</div>
           </div>
-
-          <Complete />
         </div>
       </div>
     </div>
