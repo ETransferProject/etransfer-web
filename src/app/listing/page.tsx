@@ -1,12 +1,15 @@
 'use client';
-import CircleLoading from 'components/CircleLoading';
-import dynamic from 'next/dynamic';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default dynamic(() => import('pageComponents/ListingContent'), {
-  ssr: false,
-  loading: () => (
-    <div className="row-center pre-loading">
-      <CircleLoading />
-    </div>
-  ),
-});
+const ListingPage = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push('/listing/token-information');
+  }, [router]);
+
+  return null;
+};
+
+export default ListingPage;

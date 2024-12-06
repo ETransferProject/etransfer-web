@@ -1,6 +1,12 @@
 import { ICommonStepsProps } from 'components/CommonSteps';
 import LinkForBlank from 'components/LinkForBlank';
-import { TokenInformationFormKeys, SelectChainFormKeys } from 'types/listing';
+import {
+  TokenInformationFormKeys,
+  SelectChainFormKeys,
+  TTokenInformationFormValidateData,
+  FormValidateStatus,
+  TTokenInformationFormValues,
+} from 'types/listing';
 
 export const VIEW_PROGRESS = 'View Progress';
 
@@ -11,6 +17,14 @@ export enum ListingStep {
   INITIALIZE_LIQUIDITY_POOL = 3,
   COMPLETE = 4,
 }
+
+export const LISTING_STEP_PATHNAME_MAP: Record<ListingStep, string> = {
+  [ListingStep.TOKEN_INFORMATION]: '/token-information',
+  [ListingStep.SELECT_CHAIN]: '/select-chain',
+  [ListingStep.COBO_CUSTODY_REVIEW]: '/cobo-custody-review',
+  [ListingStep.INITIALIZE_LIQUIDITY_POOL]: '/initialize-liquidity-pool',
+  [ListingStep.COMPLETE]: '/complete',
+};
 
 export const LISTING_STEP_ITEMS: ICommonStepsProps['stepItems'] = [
   {
@@ -30,7 +44,7 @@ export const LISTING_STEP_ITEMS: ICommonStepsProps['stepItems'] = [
   },
 ];
 
-const CONTACT_US_ROW = (
+export const CONTACT_US_ROW = (
   <>
     {'• If you need any support, please '}
     <LinkForBlank
@@ -41,7 +55,7 @@ const CONTACT_US_ROW = (
   </>
 );
 
-export const LISTING_FORM_PROMPT_CONTENT_MAP: Record<ListingStep, React.ReactNode> = {
+export const LISTING_FORM_PROMPT_CONTENT_MAP: Partial<Record<ListingStep, React.ReactNode>> = {
   [ListingStep.TOKEN_INFORMATION]: (
     <div key="0">
       <p>{'• Only the current token owner on the aelf chain can apply.'}</p>
@@ -60,22 +74,6 @@ export const LISTING_FORM_PROMPT_CONTENT_MAP: Record<ListingStep, React.ReactNod
       <p>{CONTACT_US_ROW}</p>
     </div>
   ),
-  [ListingStep.COBO_CUSTODY_REVIEW]: (
-    <div key="2">
-      <p>{'• You can see the progress in ‘My Applications’.'}</p>
-      <p>{'• Once approved, please add liquidity to complete the listing.'}</p>
-      <p>{CONTACT_US_ROW}</p>
-    </div>
-  ),
-  [ListingStep.INITIALIZE_LIQUIDITY_POOL]: (
-    <div key="3">
-      <p>{'• Please transfer the SGR for each chain into the liquidity pool.'}</p>
-      <p>{'• Transferring other tokens will be invalid.'}</p>
-      <p>{'• The 24-hour transfer limit for the SGR is $5,000.'}</p>
-      <p>{CONTACT_US_ROW}</p>
-    </div>
-  ),
-  [ListingStep.COMPLETE]: null,
 };
 
 export const VIEW_COBO_CUSTODY_PROGRESS: ICommonStepsProps['stepItems'] = [
@@ -100,24 +98,70 @@ export const VIEW_COBO_CUSTODY_PROGRESS: ICommonStepsProps['stepItems'] = [
 ];
 
 export const TOKEN_INFORMATION_FORM_LABEL_MAP: Record<TokenInformationFormKeys, string> = {
-  [TokenInformationFormKeys.AELF_CHAIN_TOKEN]: 'Select aelf chain token',
-  [TokenInformationFormKeys.WEBSITE]: 'Official website',
-  [TokenInformationFormKeys.TWITTER]: 'Official Twitter',
+  [TokenInformationFormKeys.TOKEN]: 'Select aelf chain token',
+  [TokenInformationFormKeys.OFFICIAL_WEBSITE]: 'Official website',
+  [TokenInformationFormKeys.OFFICIAL_TWITTER]: 'Official Twitter',
   [TokenInformationFormKeys.TITLE]: 'What is your title on the project/team/company?',
-  [TokenInformationFormKeys.NAME]: 'Contact person name',
-  [TokenInformationFormKeys.TELEGRAM]: 'Your Telegram handle (for contact purposes)',
+  [TokenInformationFormKeys.PERSON_NAME]: 'Contact person name',
+  [TokenInformationFormKeys.TELEGRAM_HANDLER]: 'Your Telegram handle (for contact purposes)',
   [TokenInformationFormKeys.EMAIL]: 'Contact E-mail',
 };
 
 export const TOKEN_INFORMATION_FORM_PLACEHOLDER_MAP: Record<TokenInformationFormKeys, string> = {
-  [TokenInformationFormKeys.AELF_CHAIN_TOKEN]: 'Select a token',
-  [TokenInformationFormKeys.WEBSITE]: 'https://',
-  [TokenInformationFormKeys.TWITTER]: 'Twitter account',
+  [TokenInformationFormKeys.TOKEN]: 'Select a token',
+  [TokenInformationFormKeys.OFFICIAL_WEBSITE]: 'https://',
+  [TokenInformationFormKeys.OFFICIAL_TWITTER]: 'Twitter account',
   [TokenInformationFormKeys.TITLE]: 'Your title',
-  [TokenInformationFormKeys.NAME]: 'Your name',
-  [TokenInformationFormKeys.TELEGRAM]: 'Example@yourhandle',
+  [TokenInformationFormKeys.PERSON_NAME]: 'Your name',
+  [TokenInformationFormKeys.TELEGRAM_HANDLER]: 'Example@yourhandle',
   [TokenInformationFormKeys.EMAIL]: 'It must be the official email address',
 };
+
+export const TOKEN_INFORMATION_FORM_INITIAL_VALUES: Partial<TTokenInformationFormValues> = {
+  [TokenInformationFormKeys.TOKEN]: undefined,
+  [TokenInformationFormKeys.OFFICIAL_WEBSITE]: '',
+  [TokenInformationFormKeys.OFFICIAL_TWITTER]: '',
+  [TokenInformationFormKeys.TITLE]: '',
+  [TokenInformationFormKeys.PERSON_NAME]: '',
+  [TokenInformationFormKeys.TELEGRAM_HANDLER]: '',
+  [TokenInformationFormKeys.EMAIL]: '',
+};
+
+export const TOKEN_INFORMATION_FORM_INITIAL_VALIDATE_DATA: TTokenInformationFormValidateData = {
+  [TokenInformationFormKeys.TOKEN]: {
+    validateStatus: FormValidateStatus.Normal,
+    errorMessage: '',
+  },
+  [TokenInformationFormKeys.OFFICIAL_WEBSITE]: {
+    validateStatus: FormValidateStatus.Normal,
+    errorMessage: '',
+  },
+  [TokenInformationFormKeys.OFFICIAL_TWITTER]: {
+    validateStatus: FormValidateStatus.Normal,
+    errorMessage: '',
+  },
+  [TokenInformationFormKeys.TITLE]: {
+    validateStatus: FormValidateStatus.Normal,
+    errorMessage: '',
+  },
+  [TokenInformationFormKeys.PERSON_NAME]: {
+    validateStatus: FormValidateStatus.Normal,
+    errorMessage: '',
+  },
+  [TokenInformationFormKeys.TELEGRAM_HANDLER]: {
+    validateStatus: FormValidateStatus.Normal,
+    errorMessage: '',
+  },
+  [TokenInformationFormKeys.EMAIL]: {
+    validateStatus: FormValidateStatus.Normal,
+    errorMessage: '',
+  },
+};
+
+export const REQUIRED_ERROR_MESSAGE = 'This field is required';
+
+export const LIQUIDITY_IN_USD_MIN_VALUE = 1000;
+export const HOLDERS_MIN_VALUE = 1000;
 
 export const SELECT_CHAIN_FORM_LABEL_MAP: Record<SelectChainFormKeys, string> = {
   [SelectChainFormKeys.AELF_CHAINS]: 'Select aelf chain(s)',

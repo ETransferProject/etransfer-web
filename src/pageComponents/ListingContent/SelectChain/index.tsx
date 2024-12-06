@@ -4,10 +4,16 @@ import { Form, Checkbox, Row, Col, Input } from 'antd';
 import NetworkLogo from 'components/NetworkLogo';
 import CommonTooltip from 'components/CommonTooltip';
 import CommonButton, { CommonButtonSize, CommonButtonType } from 'components/CommonButton';
+import Remind from 'components/Remind';
 import TokenRow from '../TokenRow';
 import CreationProgressModal from './CreationProgressModal';
 import { TSelectChainFormValues, SelectChainFormKeys } from 'types/listing';
-import { SELECT_CHAIN_FORM_LABEL_MAP, SELECT_CHAIN_FORM_PLACEHOLDER_MAP } from 'constants/listing';
+import {
+  LISTING_FORM_PROMPT_CONTENT_MAP,
+  ListingStep,
+  SELECT_CHAIN_FORM_LABEL_MAP,
+  SELECT_CHAIN_FORM_PLACEHOLDER_MAP,
+} from 'constants/listing';
 import { SupportedChainId, CHAIN_NAME_ENUM } from 'constants/index';
 import { QuestionMark16 } from 'assets/images';
 import { useCommonState } from 'store/Provider/hooks';
@@ -28,7 +34,13 @@ const AELF_CHAINS = [
   },
 ];
 
-export default function SelectChain() {
+interface ISelectChainProps {
+  symbol?: string;
+  handleNextStep: () => void;
+  handlePrevStep: () => void;
+}
+
+export default function SelectChain({ handleNextStep, handlePrevStep }: ISelectChainProps) {
   const { isMobile, isMobilePX } = useCommonState();
   const [form] = Form.useForm<TSelectChainFormValues>();
   const [chains, setChains] = useState<{ [key: string]: string[] }>({
@@ -109,6 +121,7 @@ export default function SelectChain() {
   return (
     <>
       <div className={styles['select-chain']}>
+        <Remind>{LISTING_FORM_PROMPT_CONTENT_MAP[ListingStep.SELECT_CHAIN]}</Remind>
         <Form className={styles['select-chain-form']} form={form} layout="vertical">
           <Form.Item label="Token">
             <div className={styles['select-chain-token-row']}>
@@ -144,10 +157,14 @@ export default function SelectChain() {
         <div className={styles['select-chain-footer']}>
           <CommonButton
             size={CommonButtonSize.Small}
-            onClick={() => setCreationProgressModalOpen(true)}>
+            // onClick={() => setCreationProgressModalOpen(true)}
+            onClick={handleNextStep}>
             Next
           </CommonButton>
-          <CommonButton type={CommonButtonType.Secondary} size={CommonButtonSize.Small}>
+          <CommonButton
+            type={CommonButtonType.Secondary}
+            size={CommonButtonSize.Small}
+            onClick={handlePrevStep}>
             Back
           </CommonButton>
         </div>

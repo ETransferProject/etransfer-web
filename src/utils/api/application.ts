@@ -11,8 +11,8 @@ import {
   TGetApplicationTokenInfoRequest,
   TGetApplicationTokenInfoResult,
   TGetApplicationTokenListResult,
-  TGetCommitTokenInfoRequest,
-  TGetCommitTokenInfoResult,
+  TCommitTokenInfoRequest,
+  TCommitTokenInfoResult,
   TGetMyApplicationListRequest,
   TGetMyApplicationListResult,
   TPrepareBindIssueRequest,
@@ -20,6 +20,18 @@ import {
 } from 'types/api';
 
 export const getApplicationTokenList = async (): Promise<TGetApplicationTokenListResult> => {
+  // return {
+  //   tokenList: [
+  //     {
+  //       tokenName: 'TokenSymbol',
+  //       symbol: 'TokenName',
+  //       tokenImage:
+  //         'https://raw.githubusercontent.com/Awaken-Finance/assets/main/blockchains/AELF/assets/SGR-1/logo24%403x.png',
+  //       liquidityInUsd: '1800',
+  //       holders: 1800,
+  //     },
+  //   ],
+  // };
   try {
     const res = await request.application.getTokenList();
     return res.data;
@@ -28,14 +40,15 @@ export const getApplicationTokenList = async (): Promise<TGetApplicationTokenLis
   }
 };
 
-export const getCommitTokenInfo = async (
-  params: TGetCommitTokenInfoRequest,
-): Promise<TGetCommitTokenInfoResult> => {
+export const commitTokenInfo = async (
+  params: TCommitTokenInfoRequest,
+): Promise<TCommitTokenInfoResult> => {
+  // return true;
   try {
     const res = await request.application.commitTokenInfo({ params });
     return res.data;
   } catch (error) {
-    throw formatApiError(error, 'getCommitTokenInfo error', false);
+    throw formatApiError(error, 'commitTokenInfo error', false);
   }
 };
 

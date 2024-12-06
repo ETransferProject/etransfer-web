@@ -5,33 +5,38 @@ import CommonModal from 'components/CommonModal';
 import CommonDrawer from 'components/CommonDrawer';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import { SelectImage } from 'components/SelectToken/TokenCard';
-import { TTokenItem } from 'types/api';
 import { formatSymbolDisplay } from 'utils/format';
 import { AddBlueIcon, SearchIcon } from 'assets/images';
 import { useCommonState } from 'store/Provider/hooks';
 import { useRouter } from 'next/navigation';
 import styles from './styles.module.scss';
 
-export interface TokenSelectModalProps {
+type TToken<T> = T & {
+  name: string;
+  symbol: string;
+  icon: string;
+};
+
+export interface TokenSelectModalProps<T> {
   className?: string;
   open: boolean;
   hideAddToken?: boolean;
-  tokenList: TTokenItem[];
-  onSelect: (item: TTokenItem) => Promise<void>;
+  tokenList: TToken<T>[];
+  onSelect: (item: TToken<T>) => Promise<void>;
   onClose: () => void;
 }
 
 const SelectSourceChain = 'Select Token';
 const SearchByTokenName = 'Search by token name';
 
-export default function TokenSelectModal({
+export default function TokenSelectModal<T>({
   className,
   open = false,
   hideAddToken = false,
   tokenList,
   onSelect,
   onClose,
-}: TokenSelectModalProps) {
+}: TokenSelectModalProps<T>) {
   const { isPadPX } = useCommonState();
   const router = useRouter();
   const [searchKeyword, setSearchKeyword] = useState('');

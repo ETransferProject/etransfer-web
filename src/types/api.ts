@@ -556,7 +556,7 @@ export type TApplicationTokenItem = {
   holders: number;
 };
 
-export type TGetCommitTokenInfoRequest = {
+export type TCommitTokenInfoRequest = {
   symbol: string;
   officialWebsite: string;
   officialTwitter: string;
@@ -566,7 +566,7 @@ export type TGetCommitTokenInfoRequest = {
   email: string;
 };
 
-export type TGetCommitTokenInfoResult = boolean;
+export type TCommitTokenInfoResult = boolean;
 
 export type TGetApplicationTokenInfoRequest = {
   symbol: string;

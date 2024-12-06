@@ -1,21 +1,46 @@
+export type TSearchParams = {
+  symbol?: string;
+  id?: string;
+};
+
 export enum TokenInformationFormKeys {
-  AELF_CHAIN_TOKEN = 'aelfChainToken',
-  WEBSITE = 'website',
-  TWITTER = 'twitter',
+  TOKEN = 'token',
+  OFFICIAL_WEBSITE = 'officialWebsite',
+  OFFICIAL_TWITTER = 'officialTwitter',
   TITLE = 'title',
-  NAME = 'name',
-  TELEGRAM = 'telegram',
+  PERSON_NAME = 'personName',
+  TELEGRAM_HANDLER = 'telegramHandler',
   EMAIL = 'email',
 }
 
+export type TTokenItem = {
+  name: string;
+  symbol: string;
+  icon: string;
+  liquidityInUsd: string;
+  holders: number;
+};
+
 export type TTokenInformationFormValues = {
-  [TokenInformationFormKeys.AELF_CHAIN_TOKEN]: string;
-  [TokenInformationFormKeys.WEBSITE]: string;
-  [TokenInformationFormKeys.TWITTER]: string;
+  [TokenInformationFormKeys.TOKEN]: TTokenItem;
+  [TokenInformationFormKeys.OFFICIAL_WEBSITE]: string;
+  [TokenInformationFormKeys.OFFICIAL_TWITTER]: string;
   [TokenInformationFormKeys.TITLE]: string;
-  [TokenInformationFormKeys.NAME]: string;
-  [TokenInformationFormKeys.TELEGRAM]: string;
+  [TokenInformationFormKeys.PERSON_NAME]: string;
+  [TokenInformationFormKeys.TELEGRAM_HANDLER]: string;
   [TokenInformationFormKeys.EMAIL]: string;
+};
+
+export enum FormValidateStatus {
+  Error = 'error',
+  Normal = '',
+}
+
+export type TTokenInformationFormValidateData = {
+  [key in TokenInformationFormKeys]: {
+    validateStatus: FormValidateStatus;
+    errorMessage: string;
+  };
 };
 
 export enum SelectChainFormKeys {
