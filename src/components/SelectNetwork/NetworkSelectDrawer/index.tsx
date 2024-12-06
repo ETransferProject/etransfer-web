@@ -18,7 +18,7 @@ export default function NetworkSelectDrawer({
     <CommonDrawer
       destroyOnClose
       placement="bottom"
-      title="Select Network"
+      title="Select Chain"
       closable={true}
       height="88%"
       {...props}>

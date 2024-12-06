@@ -68,7 +68,7 @@ export default function SelectNetwork({
                 )}
               </span>
             ) : (
-              <span className={styles['select-network-value-placeholder']}>Select network</span>
+              <span className={styles['select-network-value-placeholder']}>Select Chain</span>
             )}
           </div>
 

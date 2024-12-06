@@ -66,7 +66,7 @@ export default function SelectNetwork({
     return (
       <div className={clsx('flex-row-center', styles['select-network-not-selected'])}>
         {isPadPX ? <AddIcon className="flex-shrink-0" /> : <AddMedium className="flex-shrink-0" />}
-        <span className={styles['select-network-value-placeholder']}>Select Network</span>
+        <span className={styles['select-network-value-placeholder']}>Select Chain</span>
       </div>
     );
   }, [isPadPX]);
