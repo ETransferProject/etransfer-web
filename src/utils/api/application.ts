@@ -20,18 +20,6 @@ import {
 } from 'types/api';
 
 export const getApplicationTokenList = async (): Promise<TGetApplicationTokenListResult> => {
-  // return {
-  //   tokenList: [
-  //     {
-  //       tokenName: 'TokenSymbol',
-  //       symbol: 'TokenName',
-  //       tokenImage:
-  //         'https://raw.githubusercontent.com/Awaken-Finance/assets/main/blockchains/AELF/assets/SGR-1/logo24%403x.png',
-  //       liquidityInUsd: '1800',
-  //       holders: 1800,
-  //     },
-  //   ],
-  // };
   try {
     const res = await request.application.getTokenList();
     return res.data;
@@ -74,14 +62,14 @@ export const getApplicationChainStatusList = async (
   }
 };
 
-export const AddApplicationChain = async (
+export const addApplicationChain = async (
   params: TAddApplicationChainRequest,
 ): Promise<TAddApplicationChainResult> => {
   try {
     const res = await request.application.addChain({ params });
     return res.data;
   } catch (error) {
-    throw formatApiError(error, 'AddApplicationChain error', false);
+    throw formatApiError(error, 'addApplicationChain error', false);
   }
 };
 

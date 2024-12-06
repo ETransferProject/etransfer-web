@@ -7,17 +7,20 @@ import styles from './styles.module.scss';
 import NetworkLogo from 'components/NetworkLogo';
 import StatusBox from '../StatusBox';
 import ActionBox from '../ActionBox';
+import { TMyApplicationItem } from 'types/api';
 
-// TODO any
 const MyApplicationTableColumns = [
   {
     title: 'Token',
     dataIndex: 'symbol',
     key: 'symbol',
-    render: (symbol: string, item: any) => {
+    render: (symbol: string, item: TMyApplicationItem) => {
+      const chainTokenInfo = item.otherChainTokenInfo.chainId
+        ? item.otherChainTokenInfo
+        : item?.chainTokenInfo?.[0];
       return (
         <div className="flex-row-center gap-8">
-          <DisplayImage width={24} height={24} name={item.name} src={item.icon} />
+          <DisplayImage width={24} height={24} name={symbol} src={chainTokenInfo.icon} />
           <span className={clsx(styles['token-symbol'])}>{formatSymbolDisplay(symbol)}</span>
         </div>
       );
@@ -27,11 +30,14 @@ const MyApplicationTableColumns = [
     title: 'Chain',
     dataIndex: 'networkName',
     key: 'networkName',
-    render: (networkName: string, item: any) => {
+    render: (_: any, item: TMyApplicationItem) => {
+      const chainTokenInfo = item.otherChainTokenInfo.chainId
+        ? item.otherChainTokenInfo
+        : item?.chainTokenInfo?.[0];
       return (
         <div className="flex-row-center gap-8">
-          <NetworkLogo network={item.network} />
-          <span>{networkName}</span>
+          <NetworkLogo network={chainTokenInfo.chainId} />
+          <span>{chainTokenInfo.chainName}</span>
         </div>
       );
     },
@@ -41,16 +47,30 @@ const MyApplicationTableColumns = [
     dataIndex: 'status',
     key: 'status',
     width: '112px',
-    render: (status: string, item: any) => {
-      return <StatusBox status={status} failReason={item.failReason} />;
+    render: (_: any, item: TMyApplicationItem) => {
+      const chainTokenInfo = item.otherChainTokenInfo.chainId
+        ? item.otherChainTokenInfo
+        : item?.chainTokenInfo?.[0];
+      return <StatusBox status={chainTokenInfo.status} failReason={chainTokenInfo.failReason} />;
     },
   },
   {
     title: 'Action',
     dataIndex: 'action',
     key: 'action',
-    render: (_: any, item: any) => {
-      return <ActionBox status={item.status} coboReviewStatus={item.coboReviewStatus} />;
+    render: (_: any, item: TMyApplicationItem) => {
+      const chainTokenInfo = item.otherChainTokenInfo.chainId
+        ? item.otherChainTokenInfo
+        : item?.chainTokenInfo?.[0];
+      return (
+        <ActionBox
+          status={chainTokenInfo.status}
+          symbol={item.symbol}
+          chainId={chainTokenInfo.chainId}
+          id={item.id}
+          rejectedTime={chainTokenInfo.rejectedTime}
+        />
+      );
     },
   },
 ];
@@ -62,7 +82,7 @@ export default function MyApplicationTable({
   skipPageCount,
   tableOnChange,
 }: {
-  applicationList: any[];
+  applicationList: TMyApplicationItem[];
   totalCount: number;
   maxResultCount: number;
   skipPageCount: number;

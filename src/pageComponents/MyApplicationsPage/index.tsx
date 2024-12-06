@@ -1,61 +1,17 @@
 import { BackIcon } from 'assets/images';
 import styles from './styles.module.scss';
 import MyApplicationTable from './MyApplicationTable';
-import { useCommonState } from 'store/Provider/hooks';
+import { useCommonState, useLoading } from 'store/Provider/hooks';
 import MyApplicationList from './MyApplicationList';
 import { useDebounceCallback } from 'hooks/debounce';
 import { useCallback, useState } from 'react';
 import { useEffectOnce } from 'react-use';
-
-const mockData = [
-  {
-    symbol: 'SGR-1',
-    icon: '',
-    name: 'SGR-1',
-    network: 'AELF',
-    networkName: 'aelf MainChain',
-    status: 'Processing',
-    coboReviewStatus: 'Reviewing',
-  },
-  {
-    symbol: 'SGR-1',
-    icon: '',
-    name: 'SGR-1',
-    network: 'AELF',
-    networkName: 'aelf MainChain',
-    status: 'Processing',
-    coboReviewStatus: 'Reviewed',
-  },
-  {
-    symbol: 'USDT',
-    icon: '',
-    name: 'USDT USDT',
-    network: 'tDVW',
-    networkName: 'aelf dAppChain',
-    status: 'Succeed',
-  },
-  {
-    symbol: 'ELF',
-    icon: '',
-    name: 'ELF',
-    network: 'TRX',
-    networkName: 'TRX TRX',
-    status: 'Failed',
-    failReason: '234',
-  },
-  {
-    symbol: 'ELFELFELFELFELFELFELFELFELFELFELFELFELFELFELFELFELF',
-    icon: '',
-    name: 'ELF',
-    network: 'TRX',
-    networkName: 'TRX TRX',
-    status: 'Failed',
-    failReason: '234',
-  },
-];
+import { getMyApplicationList } from 'utils/api/application';
+import LinkForBlank from 'components/LinkForBlank';
 
 export default function MyApplicationsPage() {
   const { isPadPX, isMobilePX } = useCommonState();
+  const { setLoading } = useLoading();
   const [applicationList, setApplicationList] = useState<any[]>([]);
 
   // pagination
@@ -63,12 +19,29 @@ export default function MyApplicationsPage() {
   const [maxResultCount, setMaxResultCount] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
 
-  const getApplicationData = useCallback(async ({ skip, max }: { skip?: number; max?: number }) => {
-    // TODO
-    console.log(skip, max);
-    setApplicationList(mockData);
-    setTotalCount(20);
-  }, []);
+  const getApplicationData = useCallback(
+    async ({ skip, max }: { skip?: number; max?: number }) => {
+      console.log(skip, max);
+      try {
+        setLoading(true);
+
+        const currentSkipPageCount = typeof skip !== 'number' ? skipPageCount : skip;
+        const currentMaxCount = typeof max !== 'number' ? maxResultCount : max;
+        const currentSkipCount = currentSkipPageCount * currentMaxCount;
+        const res = await getMyApplicationList({
+          skipCount: currentSkipCount,
+          maxResultCount: currentMaxCount,
+        });
+        setApplicationList(res.items);
+        setTotalCount(res.totalCount);
+      } catch (error) {
+        console.log('>>>>>> getApplicationData error', error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [maxResultCount, setLoading, skipPageCount],
+  );
 
   // web get page date
   const tableOnChange = useCallback(
@@ -117,10 +90,16 @@ export default function MyApplicationsPage() {
   return (
     <div className={styles['page-container-wrapper']}>
       {!isPadPX && (
-        <div className={styles['page-back']}>
-          <BackIcon />
-          <div className={styles['page-back-text']}>Back</div>
-        </div>
+        <LinkForBlank
+          className={styles['page-back']}
+          href="/"
+          element={
+            <>
+              <BackIcon />
+              <div className={styles['page-back-text']}>Back</div>
+            </>
+          }
+        />
       )}
 
       <div className={styles['page-body']}>

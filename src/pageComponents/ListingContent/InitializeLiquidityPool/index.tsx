@@ -8,12 +8,13 @@ import CommonQRCode from 'components/CommonQRCode';
 import CommonButton, { CommonButtonSize } from 'components/CommonButton';
 import { CheckFilled16 } from 'assets/images';
 import clsx from 'clsx';
-import { openWithBlank } from 'utils/common';
+import { openWithBlank, viewTokenAddressInExplore } from 'utils/common';
 import { CONTACT_US_FORM_URL } from 'constants/index';
 import { getApplicationDetail } from 'utils/api/application';
 import { useSearchParams } from 'next/navigation';
 import { useEffectOnce } from 'react-use';
 import { TApplicationDetailItemChainTokenInfo } from 'types/api';
+import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 
 export interface InitializeLiquidityPoolProps {
   id: string;
@@ -26,7 +27,7 @@ export default function InitializeLiquidityPool({
   symbol,
   onNext,
 }: InitializeLiquidityPoolProps) {
-  const [tokenInfo, setTokenInfo] = useState({ symbol: '', minAmount: '' });
+  const [tokenInfo, setTokenInfo] = useState({ symbol: '', limit24HInUsd: '' });
   const [tokenPoolList, setTokenPoolList] = useState<TApplicationDetailItemChainTokenInfo[]>([]);
   const [submitDisabled, setSubmitDisable] = useState(true);
 
@@ -42,7 +43,7 @@ export default function InitializeLiquidityPool({
           <div className={styles['tip-row']}>• Transferring other tokens will be invalid.</div>
           <div className={styles['tip-row']}>
             {`• The 24-hour transfer limit for the ${formatSymbolDisplay(tokenInfo.symbol)} is $${
-              tokenInfo.minAmount
+              tokenInfo.limit24HInUsd
             }.`}
           </div>
           <div className={styles['tip-row']}>
@@ -55,10 +56,10 @@ export default function InitializeLiquidityPool({
         </div>
       </Remind>
     );
-  }, [tokenInfo.minAmount, tokenInfo.symbol]);
+  }, [tokenInfo.limit24HInUsd, tokenInfo.symbol]);
 
-  const handleGoExplore = useCallback(() => {
-    // TODO
+  const handleGoExplore = useCallback((network: string, symbol?: string, address?: string) => {
+    viewTokenAddressInExplore(network, symbol as TChainId, address);
   }, []);
 
   const renderList = useMemo(() => {
@@ -82,7 +83,7 @@ export default function InitializeLiquidityPool({
                 ) : (
                   <div className={clsx('flex-row-center', styles['amount-rate'])}>
                     <span>Received&nbsp;</span>
-                    <span className={styles['action']}>
+                    <span className={styles['balance-amount']}>
                       {item.balanceAmount}&nbsp;{formatSymbolDisplay(item.symbol)}
                     </span>
                     <span>
@@ -96,7 +97,11 @@ export default function InitializeLiquidityPool({
                 <div>
                   <div className={styles['address-desc']}>
                     <span>Please transfer&nbsp;</span>
-                    <span className={styles['action']} onClick={handleGoExplore}>
+                    <span
+                      className={styles['action-bold']}
+                      onClick={() =>
+                        handleGoExplore(item.chainId, item.symbol, item.contractAddress)
+                      }>
                       {formatSymbolDisplay(item.symbol)}
                     </span>
                     <span>&nbsp;on the&nbsp;</span>
@@ -123,7 +128,10 @@ export default function InitializeLiquidityPool({
     const otherChainTokenInfos = res.items[0].otherChainTokenInfo;
     const concatList = chainTokenInfos.concat([otherChainTokenInfos]);
     setTokenPoolList(concatList);
-    setTokenInfo({ symbol: res.items[0].symbol, minAmount: '' }); // TODO
+    setTokenInfo({
+      symbol: res.items[0].symbol,
+      limit24HInUsd: otherChainTokenInfos.limit24HInUsd || chainTokenInfos[0].limit24HInUsd,
+    });
 
     // submit but disable
     const unfinishedAelfTokenPool = concatList?.find((item) => item.balanceAmount < item.minAmount);

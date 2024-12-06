@@ -624,14 +624,10 @@ export type TAddApplicationChainRequest = {
 
 export type TAddApplicationChainResult = {
   chainList: TAddApplicationChainResultChainItem[];
-  otherChainList: TAddApplicationChainResultOtherChainItem[];
+  otherChainList: TAddApplicationChainResultChainItem[];
 };
 
 export type TAddApplicationChainResultChainItem = {
-  chainId: string;
-};
-
-export type TAddApplicationChainResultOtherChainItem = {
   id: string;
   chainId: string;
 };
@@ -669,10 +665,13 @@ export type TMyApplicationItem = {
 
 export type TMyApplicationChainTokenInfo = {
   chainId: string;
+  chainName: string;
   tokenName: string;
   icon: string;
   poolAddress: string;
   status: ApplicationChainStatusEnum;
+  rejectedTime: number;
+  failReason?: string; // TODO
 };
 
 export type TGetApplicationDetailRequest = {

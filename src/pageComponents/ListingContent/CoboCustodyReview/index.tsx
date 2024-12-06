@@ -68,7 +68,7 @@ export default function CoboCustodyReview({ networks }: { networks: { network: s
       <div className={styles['cobo-custody-review-body']}>
         <CoboCustodyReviewStatusIcon />
         <div className={styles['cobo-custody-review-text']}>
-          {`The token is successfully created on ${networksString} and submitted for Cobo Custody review. Please reapply for networks where creation has failed.`}
+          {`The token is successfully created on ${networksString} and submitted for Cobo Custody review. Please resubmit for networks where creation has failed.`}
         </div>
 
         <div

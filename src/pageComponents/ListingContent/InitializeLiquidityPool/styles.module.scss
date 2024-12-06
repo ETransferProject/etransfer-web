@@ -26,9 +26,19 @@
   line-height: 22px;
 }
 
+.balance-amount {
+  color: $brand;
+}
+
 .action {
   color: $brand;
   cursor: pointer;
+}
+
+.action-bold {
+  color: $brand;
+  cursor: pointer;
+  @extend .font-family-medium;
 }
 
 .initialize-liquidity-pool-item {

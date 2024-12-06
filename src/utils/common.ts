@@ -16,7 +16,7 @@ export function getAelfExploreLink(data: string, type: AelfExploreType, chainId:
       return `${prefix}tx/${data}`;
     }
     case AelfExploreType.token: {
-      return `${prefix}token/${data}`;
+      return `${prefix}multiChain/token/${data}`;
     }
     case AelfExploreType.block: {
       return `${prefix}block/${data}`;
@@ -98,4 +98,30 @@ export const getTxExploreHref = (
     OtherExploreType.transaction,
     network as keyof typeof ExploreUrlNotAelf,
   );
+};
+
+export const getTokenAddressExploreHref = (
+  network: string,
+  chainId?: TChainId,
+  address?: string,
+) => {
+  if (isAelfChain(network) && chainId) {
+    return getAelfExploreLink(chainId, AelfExploreType.token, chainId);
+  }
+  if (address) {
+    return getOtherExploreLink(
+      address,
+      OtherExploreType.address,
+      network as keyof typeof ExploreUrlNotAelf,
+    );
+  }
+  return '';
+};
+
+export const viewTokenAddressInExplore = (
+  network: string,
+  chainId?: TChainId,
+  address?: string,
+) => {
+  openWithBlank(getTokenAddressExploreHref(network, chainId, address));
 };

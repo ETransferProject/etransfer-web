@@ -15,7 +15,7 @@ export type TNetwork = Pick<TNetworkItem, 'network' | 'name'> &
 
 export interface NetworkSelectModalProps<T extends TNetwork | TNetworkItem> {
   className?: string;
-  modalTitle: string;
+  modalTitle?: string;
   open: boolean;
   networkList: T[];
   remindContent?: string;
@@ -28,6 +28,7 @@ const SearchByChainName = 'Search by chain name';
 
 export default function NetworkSelectModal<T extends TNetwork | TNetworkItem>({
   className,
+  modalTitle = SelectChain,
   open = false,
   networkList,
   remindContent,
@@ -110,7 +111,7 @@ export default function NetworkSelectModal<T extends TNetwork | TNetworkItem>({
           className,
         )}
         height="80%"
-        title={SelectChain}
+        title={modalTitle}
         open={open}
         onClose={onClose}>
         {content}
@@ -121,7 +122,7 @@ export default function NetworkSelectModal<T extends TNetwork | TNetworkItem>({
   return (
     <CommonModal
       className={clsx(styles['network-select-modal'], className)}
-      title={SelectChain}
+      title={modalTitle}
       open={open}
       onCancel={onClose}
       hideCancelButton
