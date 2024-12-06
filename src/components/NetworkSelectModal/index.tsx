@@ -15,6 +15,7 @@ export type TNetwork = Pick<TNetworkItem, 'network' | 'name'> &
 
 export interface NetworkSelectModalProps<T extends TNetwork | TNetworkItem> {
   className?: string;
+  modalTitle: string;
   open: boolean;
   networkList: T[];
   remindContent?: string;

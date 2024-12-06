@@ -13,6 +13,9 @@ import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletM
 import { useGetAccount } from 'hooks/wallet/useAelf';
 import { MY_WALLET } from 'constants/wallet';
 
+const SelectSourceChain = 'Select Source Chain';
+const SelectDestinationChain = 'Select Destination Chain';
+
 export interface NetworkAndWalletCardProps {
   className?: string;
   label?: string;
@@ -131,6 +134,7 @@ export function NetworkAndWalletCard({
       </div>
 
       <NetworkSelected
+        modalTitle={cardType === 'From' ? SelectSourceChain : SelectDestinationChain}
         selectCallback={onSelectNetworkCallback}
         selected={selectedNetwork}
         networkList={selectedNetworkList || []}

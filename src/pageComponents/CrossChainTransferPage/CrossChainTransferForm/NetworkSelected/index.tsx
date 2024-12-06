@@ -8,6 +8,7 @@ import NetworkSelectModal from 'components/NetworkSelectModal';
 
 export interface NetworkSelectedProps {
   className?: string;
+  modalTitle: string;
   selected?: TNetworkItem;
   networkList: TNetworkItem[];
   onChange?: (item: TNetworkItem) => void;
@@ -16,6 +17,7 @@ export interface NetworkSelectedProps {
 
 export default function NetworkSelected({
   className,
+  modalTitle,
   selected,
   networkList,
   onChange,
@@ -75,6 +77,7 @@ export default function NetworkSelected({
       </div>
 
       <NetworkSelectModal
+        modalTitle={modalTitle}
         open={isShowNetworkSelectModal}
         networkList={networkList}
         onSelect={onSelectNetwork}
