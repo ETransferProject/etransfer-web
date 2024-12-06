@@ -1,5 +1,5 @@
 import Remind from 'components/Remind';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styles from './styles.module.scss';
 import NetworkLogo from 'components/NetworkLogo';
 import { formatSymbolDisplay } from 'utils/format';
@@ -10,36 +10,25 @@ import { CheckFilled16 } from 'assets/images';
 import clsx from 'clsx';
 import { openWithBlank } from 'utils/common';
 import { CONTACT_US_FORM_URL } from 'constants/index';
+import { getApplicationDetail } from 'utils/api/application';
+import { useSearchParams } from 'next/navigation';
+import { useEffectOnce } from 'react-use';
+import { TApplicationDetailItemChainTokenInfo } from 'types/api';
 
-export default function InitializeLiquidityPool() {
-  const tokenInfo = useMemo(() => {
-    return {
-      symbol: 'SGR-1',
-      minAmount: '1234',
-    };
-  }, []);
-  const list = useMemo(() => {
-    return [
-      {
-        network: 'AELF',
-        name: 'aelf MainChain',
-        receivedAmount: '3616.4747',
-        totalAmount: '1000000',
-        address: 'ELF_24o1XG3ryAB7wnchtPGzar7GWw68mhD1UEW7KGKxyE3tQUb7TT_tDVV',
-        symbol: 'SGR-1',
-        tokenIcon: '',
-      },
-      {
-        network: 'tDVW',
-        name: 'aelf dAppChain',
-        receivedAmount: '1000000',
-        totalAmount: '1000000',
-        address: 'ELF_24o1XG3ryAB7wnchtPGzar7GWw68mhD1UEW7KGKxyE3tQUb7TT_tDVV',
-        symbol: 'SGR-1',
-        tokenIcon: '',
-      },
-    ];
-  }, []);
+export interface InitializeLiquidityPoolProps {
+  id: string;
+  symbol: string;
+  onNext?: () => void;
+}
+
+export default function InitializeLiquidityPool({
+  id,
+  symbol,
+  onNext,
+}: InitializeLiquidityPoolProps) {
+  const [tokenInfo, setTokenInfo] = useState({ symbol: '', minAmount: '' });
+  const [tokenPoolList, setTokenPoolList] = useState<TApplicationDetailItemChainTokenInfo[]>([]);
+  const [submitDisabled, setSubmitDisable] = useState(true);
 
   const renderRemind = useMemo(() => {
     return (
@@ -75,17 +64,17 @@ export default function InitializeLiquidityPool() {
   const renderList = useMemo(() => {
     return (
       <div>
-        {list.map((item, index) => {
+        {tokenPoolList.map((item, index) => {
           return (
             <div
               key={'initialize-liquidity-pool-list-' + index}
               className={styles['initialize-liquidity-pool-item']}>
               <div className="flex-row-center-between">
                 <div className="flex-row-center gap-8">
-                  <NetworkLogo network={item.network} />
-                  <span className={styles['network-name']}>{item.name}</span>
+                  <NetworkLogo network={item.chainId} />
+                  <span className={styles['network-name']}>{item.chainName}</span>
                 </div>
-                {item.receivedAmount === item.totalAmount ? (
+                {item.balanceAmount === item.minAmount ? (
                   <div className={'flex-row-center gap-8'}>
                     <CheckFilled16 />
                     <span>Token pool initialization completed</span>
@@ -94,29 +83,29 @@ export default function InitializeLiquidityPool() {
                   <div className={clsx('flex-row-center', styles['amount-rate'])}>
                     <span>Received&nbsp;</span>
                     <span className={styles['action']}>
-                      {item.receivedAmount}&nbsp;{formatSymbolDisplay(item.symbol)}
+                      {item.balanceAmount}&nbsp;{formatSymbolDisplay(item.symbol)}
                     </span>
                     <span>
-                      /{item.totalAmount}&nbsp;{formatSymbolDisplay(item.symbol)}
+                      /{item.minAmount}&nbsp;{formatSymbolDisplay(item.symbol)}
                     </span>
                   </div>
                 )}
               </div>
               <div className={styles['address-info']}>
-                <CommonQRCode size={120} value={item.address} logoUrl={item.tokenIcon} />
+                <CommonQRCode size={120} value={item.poolAddress} logoUrl={item.icon} />
                 <div>
                   <div className={styles['address-desc']}>
-                    <span>Transfer&nbsp;</span>
+                    <span>Please transfer&nbsp;</span>
                     <span className={styles['action']} onClick={handleGoExplore}>
                       {formatSymbolDisplay(item.symbol)}
                     </span>
                     <span>&nbsp;on the&nbsp;</span>
-                    <span>{item.name}</span>
-                    <span>to the address below:</span>
+                    <span>{item.chainName}</span>
+                    <span>to the following address to complete fund initialization.</span>
                   </div>
                   <div className="flex-row-center gap-8">
-                    <div className={styles['address']}>{item.address}</div>
-                    <Copy toCopy={item.address} className="flex-shrink-0" />
+                    <div className={styles['address']}>{item.poolAddress}</div>
+                    <Copy toCopy={item.poolAddress} className="flex-shrink-0" />
                   </div>
                 </div>
               </div>
@@ -125,7 +114,62 @@ export default function InitializeLiquidityPool() {
         })}
       </div>
     );
-  }, [handleGoExplore, list]);
+  }, [handleGoExplore, tokenPoolList]);
+
+  const getData = useCallback(async (id: string, symbol: string) => {
+    const res = await getApplicationDetail({ symbol, id });
+
+    const chainTokenInfos = res.items[0].chainTokenInfo;
+    const otherChainTokenInfos = res.items[0].otherChainTokenInfo;
+    const concatList = chainTokenInfos.concat([otherChainTokenInfos]);
+    setTokenPoolList(concatList);
+    setTokenInfo({ symbol: res.items[0].symbol, minAmount: '' }); // TODO
+
+    // submit but disable
+    const unfinishedAelfTokenPool = concatList?.find((item) => item.balanceAmount < item.minAmount);
+    if (unfinishedAelfTokenPool?.chainId) {
+      setSubmitDisable(true);
+    } else {
+      setSubmitDisable(false);
+    }
+  }, []);
+
+  const searchParams = useSearchParams();
+  const routeQuery = useMemo(
+    () => ({
+      id: searchParams.get('id'),
+      tokenSymbol: searchParams.get('tokenSymbol'),
+    }),
+    [searchParams],
+  );
+
+  const init = useCallback(async () => {
+    if (routeQuery.id && routeQuery.tokenSymbol) {
+      await getData(routeQuery.id, routeQuery.tokenSymbol);
+    } else if (id && symbol) {
+      await getData(id, symbol);
+    }
+  }, [getData, id, routeQuery.id, routeQuery.tokenSymbol, symbol]);
+
+  useEffectOnce(() => {
+    init();
+  });
+
+  const updateDataTimerRef = useRef<NodeJS.Timeout | null>(null);
+  useEffect(() => {
+    if (updateDataTimerRef.current) {
+      clearInterval(updateDataTimerRef.current);
+    }
+    updateDataTimerRef.current = setInterval(async () => {
+      await init();
+    }, 15 * 1000);
+
+    return () => {
+      if (updateDataTimerRef.current) {
+        clearInterval(updateDataTimerRef.current);
+      }
+    };
+  }, [init]);
 
   return (
     <div className={styles['initialize-liquidity-pool']}>
@@ -133,10 +177,10 @@ export default function InitializeLiquidityPool() {
       {renderList}
       <CommonButton
         className={styles['submit-button']}
+        onClick={onNext}
         size={CommonButtonSize.Small}
-        disabled={true} // TODO
-      >
-        Submit
+        disabled={submitDisabled}>
+        Next
       </CommonButton>
     </div>
   );

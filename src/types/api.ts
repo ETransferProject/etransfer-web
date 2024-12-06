@@ -655,7 +655,7 @@ export type TGetMyApplicationListRequest = {
 
 export type TGetMyApplicationListResult = {
   items: TMyApplicationItem[];
-  totalCount: 1;
+  totalCount: number;
 };
 
 export type TMyApplicationItem = {
@@ -690,14 +690,15 @@ export type TApplicationDetailItem = {
   symbol: string;
   userAddress: string;
   status: ApplicationChainStatusEnum;
-  createTime: 1732264252713;
-  updateTime: 1732264252713;
+  createTime: number;
+  updateTime: number;
   chainTokenInfo: TApplicationDetailItemChainTokenInfo[];
   otherChainTokenInfo: TApplicationDetailItemChainTokenInfo;
 };
 
 export type TApplicationDetailItemChainTokenInfo = {
   chainId: string;
+  chainName: string;
   tokenName: string;
   symbol: string;
   totalSupply: number;
@@ -708,4 +709,6 @@ export type TApplicationDetailItemChainTokenInfo = {
   status: ApplicationChainStatusEnum;
   balanceAmount: string;
   minAmount: string;
+  limit24HInUsd: string;
+  rejectedTime: number;
 };
