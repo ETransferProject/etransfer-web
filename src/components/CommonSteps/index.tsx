@@ -12,7 +12,7 @@ export interface ICommonStepsProps extends Omit<StepsProps, 'labelPlacement' | '
 export default function CommonSteps({
   className,
   stepItems,
-  current = 1,
+  current,
   direction,
   ...props
 }: ICommonStepsProps) {

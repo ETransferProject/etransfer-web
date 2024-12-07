@@ -266,7 +266,9 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
 
   return (
     <div className={styles['token-information']}>
-      <Remind>{LISTING_FORM_PROMPT_CONTENT_MAP[ListingStep.TOKEN_INFORMATION]}</Remind>
+      <Remind isBorder={false}>
+        {LISTING_FORM_PROMPT_CONTENT_MAP[ListingStep.TOKEN_INFORMATION]}
+      </Remind>
       <Form className={styles['token-information-form']} form={form} layout="vertical">
         <Form.Item
           {...getCommonFormItemProps(TokenInformationFormKeys.TOKEN)}

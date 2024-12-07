@@ -1,11 +1,15 @@
 import { ICommonStepsProps } from 'components/CommonSteps';
 import LinkForBlank from 'components/LinkForBlank';
+import { ApplicationChainStatusEnum } from 'types/api';
 import {
   TokenInformationFormKeys,
   SelectChainFormKeys,
   TTokenInformationFormValidateData,
   FormValidateStatus,
   TTokenInformationFormValues,
+  TSelectChainFormValues,
+  TSelectChainFormValidateData,
+  TChains,
 } from 'types/listing';
 
 export const VIEW_PROGRESS = 'View Progress';
@@ -97,6 +101,8 @@ export const VIEW_COBO_CUSTODY_PROGRESS: ICommonStepsProps['stepItems'] = [
   },
 ];
 
+// ================ Token information ================
+
 export const TOKEN_INFORMATION_FORM_LABEL_MAP: Record<TokenInformationFormKeys, string> = {
   [TokenInformationFormKeys.TOKEN]: 'Select aelf chain token',
   [TokenInformationFormKeys.OFFICIAL_WEBSITE]: 'Official website',
@@ -163,6 +169,8 @@ export const REQUIRED_ERROR_MESSAGE = 'This field is required';
 export const LIQUIDITY_IN_USD_MIN_VALUE = 1000;
 export const HOLDERS_MIN_VALUE = 1000;
 
+// ================ Select chain ================
+
 export const SELECT_CHAIN_FORM_LABEL_MAP: Record<SelectChainFormKeys, string> = {
   [SelectChainFormKeys.AELF_CHAINS]: 'Select aelf chain(s)',
   [SelectChainFormKeys.OTHER_CHAINS]: 'Select other chain(s)',
@@ -171,4 +179,57 @@ export const SELECT_CHAIN_FORM_LABEL_MAP: Record<SelectChainFormKeys, string> = 
 
 export const SELECT_CHAIN_FORM_PLACEHOLDER_MAP: Partial<Record<SelectChainFormKeys, string>> = {
   [SelectChainFormKeys.INITIAL_SUPPLY]: 'Initial supply',
+};
+
+export const SELECT_CHAIN_FORM_INITIAL_VALUES: TSelectChainFormValues = {
+  [SelectChainFormKeys.AELF_CHAINS]: [],
+  [SelectChainFormKeys.OTHER_CHAINS]: [],
+  [SelectChainFormKeys.INITIAL_SUPPLY]: '',
+};
+
+export const SELECT_CHAIN_FORM_INITIAL_VALIDATE_DATA: TSelectChainFormValidateData = {
+  [SelectChainFormKeys.AELF_CHAINS]: {
+    validateStatus: FormValidateStatus.Normal,
+    errorMessage: '',
+  },
+  [SelectChainFormKeys.OTHER_CHAINS]: {
+    validateStatus: FormValidateStatus.Normal,
+    errorMessage: '',
+  },
+  [SelectChainFormKeys.INITIAL_SUPPLY]: {
+    validateStatus: FormValidateStatus.Normal,
+    errorMessage: '',
+  },
+};
+
+export const DEFAULT_CHAINS: TChains = {
+  [SelectChainFormKeys.AELF_CHAINS]: [],
+  [SelectChainFormKeys.OTHER_CHAINS]: [],
+};
+
+export const SELECT_CHAIN_FORM_CHAIN_NOT_CREATED_STATUS_LIST = [
+  ApplicationChainStatusEnum.Unissued,
+  ApplicationChainStatusEnum.Issuing,
+  ApplicationChainStatusEnum.Issued,
+];
+
+export const SELECT_CHAIN_FORM_CHAIN_CREATED_NOT_LISTED_STATUS_LIST = [
+  ApplicationChainStatusEnum.Reviewing,
+  ApplicationChainStatusEnum.Rejected,
+  ApplicationChainStatusEnum.Reviewed,
+  ApplicationChainStatusEnum.PoolInitializing,
+  ApplicationChainStatusEnum.Integrating,
+  ApplicationChainStatusEnum.Failed,
+];
+
+export const SELECT_CHAIN_FORM_CHAIN_LISTED_STATUS_LIST = [ApplicationChainStatusEnum.Complete];
+
+export const SELECT_CHAIN_FORM_CHAIN_DISABLED_STATUS_LIST = [
+  ...SELECT_CHAIN_FORM_CHAIN_CREATED_NOT_LISTED_STATUS_LIST,
+  ...SELECT_CHAIN_FORM_CHAIN_LISTED_STATUS_LIST,
+];
+
+export const SELECT_CHAIN_FORM_CHAIN_TOOLTIP_MAP = {
+  LISTED: 'The token is already listed on ETransfer.',
+  CREATED_NOT_LISTED: 'The token has been created on {{chainName}}.',
 };

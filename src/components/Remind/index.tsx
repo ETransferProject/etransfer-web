@@ -2,13 +2,19 @@ import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { InfoBrandIcon } from 'assets/images';
 
+export enum RemindType {
+  BRAND = 'brand',
+  INFO = 'info',
+  WARNING = 'warning',
+}
+
 export default function Remind({
   className,
   iconClassName,
   isShowIcon = true,
   isCard = true,
   isBorder = true,
-  isBrand = true,
+  type = RemindType.BRAND,
   children,
 }: {
   className?: string;
@@ -16,7 +22,7 @@ export default function Remind({
   isShowIcon?: boolean;
   isCard?: boolean;
   isBorder?: boolean;
-  isBrand?: boolean;
+  type?: RemindType;
   children: React.ReactNode;
 }) {
   return (
@@ -24,7 +30,7 @@ export default function Remind({
       className={clsx(
         isCard ? styles['remind-card'] : styles['remind-text'],
         isBorder && styles['remind-border'],
-        isBrand && styles['remind-brand'],
+        styles[`remind-${type}`],
         className,
       )}>
       {isShowIcon && (

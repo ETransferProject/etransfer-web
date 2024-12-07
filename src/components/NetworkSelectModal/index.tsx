@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { Input } from 'antd';
 import CommonModal from 'components/CommonModal';
 import CommonDrawer from 'components/CommonDrawer';
-import Remind from 'components/Remind';
+import Remind, { RemindType } from 'components/Remind';
 import NetworkLogo from 'components/NetworkLogo';
 import { NetworkStatus, TNetworkItem } from 'types/api';
 import { useCommonState } from 'store/Provider/hooks';
@@ -64,7 +64,7 @@ export default function NetworkSelectModal<T extends TNetwork | TNetworkItem>({
           />
         </div>
         {remindContent && (
-          <Remind className={styles['network-tip']} isCard isBorder={false} isBrand={false}>
+          <Remind className={styles['network-tip']} type={RemindType.INFO} isCard isBorder={false}>
             {remindContent}
           </Remind>
         )}

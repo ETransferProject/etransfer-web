@@ -5,12 +5,12 @@ import styles from './styles.module.scss';
 
 interface ITokenRowProps {
   className?: string;
-  symbol: string;
-  name: string;
-  icon: string;
+  symbol?: string;
+  name?: string;
+  icon?: string;
 }
 
-export default function TokenRow({ className, symbol, name, icon }: ITokenRowProps) {
+export default function TokenRow({ className, symbol = '', name = '', icon = '' }: ITokenRowProps) {
   return (
     <div className={clsx(styles['token-row'], className)}>
       <SelectImage

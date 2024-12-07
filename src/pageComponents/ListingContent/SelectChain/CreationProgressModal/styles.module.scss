@@ -53,3 +53,13 @@
 .creation-progress-remind {
   margin-top: 40px;
 }
+
+.creation-progress-button-wrapper {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+
+  .creation-progress-button {
+    flex: 1;
+  }
+}

@@ -63,9 +63,15 @@ export default function ListingContent() {
   const renderForm = () => {
     switch (currentStep) {
       case ListingStep.TOKEN_INFORMATION:
-        return <TokenInformation handleNextStep={handleNextStep} symbol={symbol} />;
+        return <TokenInformation symbol={symbol} handleNextStep={handleNextStep} />;
       case ListingStep.SELECT_CHAIN:
-        return <SelectChain handleNextStep={handleNextStep} handlePrevStep={handlePrevStep} />;
+        return (
+          <SelectChain
+            symbol={symbol}
+            handleNextStep={handleNextStep}
+            handlePrevStep={handlePrevStep}
+          />
+        );
       default:
         return null;
     }

@@ -606,6 +606,8 @@ export type TApplicationChainStatusItem = {
 };
 
 export enum ApplicationChainStatusEnum {
+  Unissued = 'Unissued',
+  Issuing = 'Issuing',
   Issued = 'Issued',
   Reviewing = 'Reviewing',
   Rejected = 'Rejected',

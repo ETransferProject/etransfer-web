@@ -84,8 +84,28 @@
             background-color: $brand;
           }
         }
+      }
+
+      &.ant-steps-item-error {
         .ant-steps-item-title {
-          color: $secondary-text;
+          color: $primary-text;
+        }
+      }
+
+      &:has(+ .ant-steps-item-error) {
+        .ant-steps-item-tail {
+          &::after {
+            background-color: $error;
+          }
+        }
+      }
+
+      &:has(+ .ant-steps-item-finish),
+      &:has(+ .ant-steps-item-process) {
+        .ant-steps-item-tail {
+          &::after {
+            background-color: $brand;
+          }
         }
       }
     }

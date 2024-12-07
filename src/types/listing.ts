@@ -1,3 +1,5 @@
+import { TApplicationChainStatusItem } from './api';
+
 export type TSearchParams = {
   symbol?: string;
   id?: string;
@@ -49,8 +51,18 @@ export enum SelectChainFormKeys {
   INITIAL_SUPPLY = 'initialSupply',
 }
 
-export type TSelectChainFormValues = {
-  [SelectChainFormKeys.AELF_CHAINS]: string[];
-  [SelectChainFormKeys.OTHER_CHAINS]: string[];
+export type TChains = {
+  [SelectChainFormKeys.AELF_CHAINS]: TApplicationChainStatusItem[];
+  [SelectChainFormKeys.OTHER_CHAINS]: TApplicationChainStatusItem[];
+};
+
+export type TSelectChainFormValues = TChains & {
   [SelectChainFormKeys.INITIAL_SUPPLY]: string;
+};
+
+export type TSelectChainFormValidateData = {
+  [key in SelectChainFormKeys]: {
+    validateStatus: FormValidateStatus;
+    errorMessage: string;
+  };
 };
