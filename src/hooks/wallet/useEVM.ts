@@ -12,13 +12,14 @@ import {
 } from 'wagmi';
 import { getBalance } from '@wagmi/core';
 import {
+  EVM_CONTRACT_FUNCTION_NAME,
   EVM_WALLET_ALLOWANCE,
   MOBILE_EVM_WALLET_ALLOWANCE,
   PORTKEY_EVM_WALLET_ALLOWANCE,
   TELEGRAM_EVM_WALLET_ALLOWANCE,
 } from 'constants/wallet/EVM';
 import { AuthTokenSource } from 'types/api';
-import { SendEVMTransactionParams } from 'types/wallet';
+import { CreateTokenOnEVMParams, SendEVMTransactionParams } from 'types/wallet';
 import { stringToHex } from 'utils/format';
 import { getEVMChainInfo } from 'utils/wallet/EVM';
 import { EVMProviderConfig } from 'provider/wallet/EVM';
@@ -124,13 +125,36 @@ export default function useEVM() {
       const data = await writeContractAsync({
         chainId: chain.id,
         address: tokenContractAddress,
-        functionName: 'transfer',
+        functionName: EVM_CONTRACT_FUNCTION_NAME.transfer,
         abi: tokenAbi,
         args: [toAddress, ethers.parseUnits(amount, decimals)],
       });
       return data;
     },
     [accountInfo.chainId, accountInfo.connector, switchChainAsync, writeContractAsync],
+  );
+
+  const createToken = useCallback(
+    async ({
+      network,
+      contractAddress,
+      contractAbi,
+      name,
+      symbol,
+      initialSupply,
+    }: CreateTokenOnEVMParams) => {
+      const chain = getEVMChainInfo(network);
+      if (!chain) return '';
+      const data = await writeContractAsync({
+        chainId: chain.id,
+        address: contractAddress,
+        functionName: EVM_CONTRACT_FUNCTION_NAME.createToken,
+        abi: contractAbi,
+        args: [name, symbol, initialSupply],
+      });
+      return data;
+    },
+    [writeContractAsync],
   );
 
   const evmContext = useMemo(() => {
@@ -152,17 +176,19 @@ export default function useEVM() {
       getAccountInfo: () => accountInfo,
       signMessage,
       sendTransaction,
+      createToken,
     };
   }, [
-    accountInfo,
-    connectAsync,
-    connectors,
-    disconnectAsync,
     isConnected,
-    onGetBalance,
-    sendTransaction,
-    signMessage,
+    accountInfo,
     evmWalletAllowance,
+    connectors,
+    onGetBalance,
+    connectAsync,
+    disconnectAsync,
+    signMessage,
+    sendTransaction,
+    createToken,
   ]);
 
   return evmContext;

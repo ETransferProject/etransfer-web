@@ -2,10 +2,14 @@ import { Button } from 'antd';
 import { useCallback } from 'react';
 import useEVM from 'hooks/wallet/useEVM';
 import {
-  EVM_TO_ADDRESS,
+  EVM_CREATE_TOKEN_ABI,
+  EVM_CREATE_TOKEN_CONTRACT_ADDRESS,
   EVM_TOKEN_ABI,
-  EVM_USDT_CONTRACT_ADDRESS_SEPOLIA,
 } from 'constants/wallet/EVM';
+import { BlockchainNetworkType } from 'constants/network';
+
+const EVM_TO_ADDRESS = '0x08915f275100dfEc26f63624EEACdD41E4040CC0';
+const EVM_USDT_CONTRACT_ADDRESS_SEPOLIA = '0x60eeCc4d19f65B9EaDe628F2711C543eD1cE6679';
 
 export default function EVMWallet() {
   const {
@@ -18,6 +22,7 @@ export default function EVMWallet() {
     signMessage,
     sendTransaction,
     getBalance,
+    createToken,
   } = useEVM();
 
   const onConnectEVM = useCallback(
@@ -60,6 +65,23 @@ export default function EVMWallet() {
     }
   }, [sendTransaction]);
 
+  const onCreateToken = useCallback(async () => {
+    try {
+      const data = await createToken({
+        network: BlockchainNetworkType.SETH,
+        contractAddress: EVM_CREATE_TOKEN_CONTRACT_ADDRESS[BlockchainNetworkType.SETH],
+        contractAbi: EVM_CREATE_TOKEN_ABI,
+        name: 'Tether USD AU',
+        symbol: 'USDT AU',
+        initialSupply: 600,
+      });
+      console.log('>>>>>> EVM onCreateToken data', data);
+      // test data txHash => 0x909b859dc9198f95364f662b2637e4f66d7c4569a2402b427f66c211df2f41c9
+    } catch (error) {
+      console.log('>>>>>> EVM onCreateToken error', error);
+    }
+  }, [createToken]);
+
   return (
     <div>
       {!isConnected ? (
@@ -78,6 +100,7 @@ export default function EVMWallet() {
       <Button onClick={onGetBalance}>get balance</Button>
       <Button onClick={onSignMessage}>Sign Message</Button>
       <Button onClick={onSendTransaction}>Send Transaction</Button>
+      <Button onClick={onCreateToken}>Create Token</Button>
     </div>
   );
 }
