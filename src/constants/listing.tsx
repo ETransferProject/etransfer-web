@@ -14,6 +14,10 @@ import {
 
 export const VIEW_PROGRESS = 'View Progress';
 
+export const NO_APPLICATION = 'No application';
+
+export const WALLET_CONNECTION_REQUIRED = 'Wallet connection required';
+
 export enum ListingStep {
   TOKEN_INFORMATION = 0,
   SELECT_CHAIN = 1,

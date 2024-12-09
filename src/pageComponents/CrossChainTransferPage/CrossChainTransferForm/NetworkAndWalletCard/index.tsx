@@ -10,7 +10,7 @@ import { TNetworkItem } from 'types/api';
 import clsx from 'clsx';
 import { getOmittedStr } from 'utils/calculate';
 import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
-import { useGetAccount } from 'hooks/wallet/useAelf';
+import { useGetAelfAccount } from 'hooks/wallet/useAelf';
 import { MY_WALLET } from 'constants/wallet';
 
 const SelectSourceChain = 'Select Source Chain';
@@ -29,7 +29,7 @@ export function NetworkAndWalletCard({
   cardType,
   onSelectNetworkCallback,
 }: NetworkAndWalletCardProps) {
-  const accounts = useGetAccount();
+  const accounts = useGetAelfAccount();
   const [{ fromWallet, toWallet }] = useWallet();
   const { fromNetwork, fromNetworkList, fromWalletType, toWalletType, toNetwork, toNetworkList } =
     useCrossChainTransfer();

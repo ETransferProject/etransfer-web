@@ -19,9 +19,15 @@ import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTra
 import { useSetWalletType } from 'hooks/crossChainTransfer';
 // import PartialLoading from 'components/PartialLoading';
 
-export default function AelfWalletList() {
+export default function AelfWalletList({
+  connectedCallback,
+  disConnectedCallback,
+}: {
+  connectedCallback?: (walletType: WalletTypeEnum) => void;
+  disConnectedCallback?: (walletType: WalletTypeEnum) => void;
+}) {
   const dispatch = useAppDispatch();
-  const { connect, disconnect, isConnected, connector } = useAelf();
+  const { connect, disconnect, isConnected, connector, walletType } = useAelf();
   const { fromWalletType, toWalletType } = useCrossChainTransfer();
   const setWalletType = useSetWalletType();
   const [dynamicArrowExpand, setDynamicArrowExpand] = useState(false);
@@ -33,15 +39,17 @@ export default function AelfWalletList() {
       if (!isConnected) {
         // setIsConnectLoading(true);
         await connect();
-        setWalletType(WalletTypeEnum.AELF);
+        setWalletType(walletType);
+        connectedCallback?.(walletType);
         // setIsConnectLoading(false);
       }
-      setWalletType(WalletTypeEnum.AELF);
+      setWalletType(walletType);
+      connectedCallback?.(walletType);
     } catch (error) {
       // setIsConnectLoading(false);
       SingleMessage.error(handleWebLoginErrorMessage(error));
     }
-  }, [connect, isConnected, setWalletType]);
+  }, [connect, connectedCallback, isConnected, setWalletType, walletType]);
 
   const onDisconnect = useCallback(() => {
     Promise.resolve(disconnect()).then(() => {
@@ -55,9 +63,10 @@ export default function AelfWalletList() {
         dispatch(setToWalletType(undefined));
       }
       myEvents.LogoutSuccess.emit();
+      disConnectedCallback?.(WalletTypeEnum.AELF);
       console.warn('>>>>>> logout');
     });
-  }, [clearStore, disconnect, dispatch, fromWalletType, toWalletType]);
+  }, [clearStore, disConnectedCallback, disconnect, dispatch, fromWalletType, toWalletType]);
 
   const onViewDetail = useCallback(
     (event: any) => {

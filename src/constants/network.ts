@@ -48,5 +48,6 @@ export enum AelfExploreType {
 
 export enum OtherExploreType {
   transaction = 'transaction',
+  token = 'token',
   address = 'address',
 }

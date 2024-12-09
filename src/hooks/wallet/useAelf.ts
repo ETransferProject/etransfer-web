@@ -14,6 +14,7 @@ import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'ut
 import { AuthTokenSource } from 'types/api';
 import { removeOneLocalJWT } from 'api/utils';
 import { useLoading } from 'store/Provider/hooks';
+import { useSetWalletType } from 'hooks/crossChainTransfer';
 
 export default function useAelf() {
   const {
@@ -57,7 +58,7 @@ export default function useAelf() {
   return aelfContext;
 }
 
-export function useInitWallet() {
+export function useInitAelfWallet() {
   const { setLoading } = useLoading();
   const { isConnected, walletInfo, walletType } = useConnectWallet();
 
@@ -113,22 +114,45 @@ export function useInitWallet() {
   }, []);
 }
 
-export function useLogin() {
+export function useAelfLogin() {
   const { connectWallet } = useConnectWallet();
   const { isConnected } = useAelf();
+  const setWalletType = useSetWalletType();
+  const { setLoading } = useLoading();
 
-  return useCallback(async () => {
-    if (isConnected) return;
+  const { getAuth } = useAelfAuthToken();
+  const getAuthRef = useRef(getAuth);
+  getAuthRef.current = getAuth;
 
-    try {
-      await connectWallet();
-    } catch (error) {
-      SingleMessage.error(handleWebLoginErrorMessage(error));
-    }
-  }, [connectWallet, isConnected]);
+  return useCallback(
+    async (isNeedGetJWT = false, handleConnectedCallback?: () => Promise<void> | void) => {
+      try {
+        if (isConnected) {
+          setWalletType(WalletTypeEnum.AELF);
+          if (isNeedGetJWT) {
+            await getAuthRef.current(true, false);
+          }
+          await handleConnectedCallback?.();
+          return;
+        }
+
+        await connectWallet();
+        setWalletType(WalletTypeEnum.AELF);
+        if (isNeedGetJWT) {
+          await getAuthRef.current(true, false);
+        }
+        await handleConnectedCallback?.();
+      } catch (error) {
+        SingleMessage.error(handleWebLoginErrorMessage(error));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [connectWallet, isConnected, setLoading, setWalletType],
+  );
 }
 
-export function useGetAccount() {
+export function useGetAelfAccount() {
   const { walletInfo } = useConnectWallet();
   const { isConnected } = useAelf();
 

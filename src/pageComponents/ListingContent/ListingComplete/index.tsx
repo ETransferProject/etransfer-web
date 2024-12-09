@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { VIEW_PROGRESS } from 'constants/listing';
 import { useRouter } from 'next/navigation';
 
-export default function Complete() {
+export default function ListingComplete() {
   const router = useRouter();
 
   const handleGoMyApplications = useCallback(() => {
@@ -14,7 +14,7 @@ export default function Complete() {
   }, [router]);
 
   return (
-    <div className={clsx('column-center', styles['complete-container'])}>
+    <div className={clsx('column-center', styles['listing-complete-container'])}>
       <CompleteIcon />
       <div className={styles['title']}>Application completed</div>
       <div className={styles['content']}>

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useGetAccount } from './useAelf';
+import { useGetAelfAccount } from './useAelf';
 import { TTokenItem } from 'types/api';
 // import { SingleMessage } from '@etransfer/ui-react';
 // import { handleErrorMessage } from '@etransfer/utils';
@@ -19,7 +19,7 @@ export function useUpdateBalance() {
   const [decimalsFromWallet, setDecimalsFromWallet] = useState<string | number>('');
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
   const getBalanceTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const accounts = useGetAccount(); // aelf account
+  const accounts = useGetAelfAccount(); // aelf account
 
   const currentToken = useMemo(() => {
     const item = totalTokenList?.find((item) => item.symbol === tokenSymbol);

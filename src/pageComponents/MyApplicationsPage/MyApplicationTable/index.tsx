@@ -8,6 +8,8 @@ import NetworkLogo from 'components/NetworkLogo';
 import StatusBox from '../StatusBox';
 import ActionBox from '../ActionBox';
 import { TMyApplicationItem } from 'types/api';
+import { getApplicationDisplayInfo } from '../utils';
+import { NO_APPLICATION } from 'constants/listing';
 
 const MyApplicationTableColumns = [
   {
@@ -15,9 +17,7 @@ const MyApplicationTableColumns = [
     dataIndex: 'symbol',
     key: 'symbol',
     render: (symbol: string, item: TMyApplicationItem) => {
-      const chainTokenInfo = item.otherChainTokenInfo.chainId
-        ? item.otherChainTokenInfo
-        : item?.chainTokenInfo?.[0];
+      const { chainTokenInfo } = getApplicationDisplayInfo(item);
       return (
         <div className="flex-row-center gap-8">
           <DisplayImage width={24} height={24} name={symbol} src={chainTokenInfo.icon} />
@@ -31,9 +31,7 @@ const MyApplicationTableColumns = [
     dataIndex: 'networkName',
     key: 'networkName',
     render: (_: any, item: TMyApplicationItem) => {
-      const chainTokenInfo = item.otherChainTokenInfo.chainId
-        ? item.otherChainTokenInfo
-        : item?.chainTokenInfo?.[0];
+      const { chainTokenInfo } = getApplicationDisplayInfo(item);
       return (
         <div className="flex-row-center gap-8">
           <NetworkLogo network={chainTokenInfo.chainId} />
@@ -48,10 +46,8 @@ const MyApplicationTableColumns = [
     key: 'status',
     width: '112px',
     render: (_: any, item: TMyApplicationItem) => {
-      const chainTokenInfo = item.otherChainTokenInfo.chainId
-        ? item.otherChainTokenInfo
-        : item?.chainTokenInfo?.[0];
-      return <StatusBox status={chainTokenInfo.status} failReason={chainTokenInfo.failReason} />;
+      const { chainTokenInfo, failReason } = getApplicationDisplayInfo(item);
+      return <StatusBox status={chainTokenInfo.status} failReason={failReason} />;
     },
   },
   {
@@ -59,14 +55,14 @@ const MyApplicationTableColumns = [
     dataIndex: 'action',
     key: 'action',
     render: (_: any, item: TMyApplicationItem) => {
-      const chainTokenInfo = item.otherChainTokenInfo.chainId
-        ? item.otherChainTokenInfo
-        : item?.chainTokenInfo?.[0];
+      const { chainTokenInfo } = getApplicationDisplayInfo(item);
       return (
         <ActionBox
           status={chainTokenInfo.status}
           symbol={item.symbol}
+          tokenIcon={chainTokenInfo.icon}
           chainId={chainTokenInfo.chainId}
+          chainName={chainTokenInfo.chainName}
           id={item.id}
           rejectedTime={chainTokenInfo.rejectedTime}
         />
@@ -97,7 +93,7 @@ export default function MyApplicationTable({
       columns={MyApplicationTableColumns}
       scroll={{ x: 670 }}
       locale={{
-        emptyText: <EmptyDataBox emptyText={'No application found'} />,
+        emptyText: <EmptyDataBox emptyText={NO_APPLICATION} />,
       }}
       pagination={
         totalCount > maxResultCount

@@ -2,7 +2,7 @@
 @import '/src/assets/theme/color.scss';
 @import '/src/assets/theme/font.scss';
 
-.page-container-wrapper {
+.my-applications-page-container-wrapper {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -21,7 +21,7 @@
   }
 }
 
-.page-back {
+.my-applications-page-back {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -35,15 +35,15 @@
     width: 100%;
   }
 
-  .page-back-text {
+  .my-applications-page-back-text {
     font-size: 14px;
+    color: $primary-text;
     @extend .font-family-medium;
   }
 }
 
-.page-body {
+.my-applications-page-body {
   height: 100%;
- 
 
   @include media-web {
     width: 720px;
@@ -64,7 +64,13 @@
   }
 }
 
-.page-title {
+.my-applications-page-body-white {
+  @include media-mobile {
+    background-color: $page-bg;
+  }
+}
+
+.my-applications-page-title {
   font-size: 24px;
   @extend .font-family-medium;
   text-align: left;

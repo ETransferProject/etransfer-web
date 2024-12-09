@@ -12,7 +12,7 @@ import { sleep } from '@etransfer/utils';
 import { TNetworkItem } from 'types/api';
 import { useRouter } from 'next/navigation';
 import { BlockchainNetworkType } from 'constants/network';
-import { useGetAccount } from './wallet/useAelf';
+import { useGetAelfAccount } from './wallet/useAelf';
 import { removeELFAddressSuffix } from 'utils/aelf/aelfBase';
 
 export function useWithdraw() {
@@ -31,7 +31,7 @@ export function useWithdraw() {
 export function useGoWithdraw() {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const accounts = useGetAccount();
+  const accounts = useGetAelfAccount();
 
   return useCallback(
     async (chainItem: IChainNameItem, symbol: string, network?: TNetworkItem) => {

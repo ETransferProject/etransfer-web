@@ -46,6 +46,11 @@ import {
 } from 'utils/api/application';
 import { formatWithCommas, parseWithCommas, parseWithStringCommas } from 'utils/format';
 import styles from './styles.module.scss';
+import { useEffectOnce } from 'react-use';
+import myEvents from 'utils/myEvent';
+import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
+import useAelf, { useAelfLogin } from 'hooks/wallet/useAelf';
+import { sleep } from '@etransfer/utils';
 
 interface ISelectChainProps {
   symbol?: string;
@@ -56,6 +61,9 @@ interface ISelectChainProps {
 export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: ISelectChainProps) {
   const { isMobilePX } = useCommonState();
   const { setLoading } = useLoading();
+  const { isConnected } = useAelf();
+  const handleAelfLogin = useAelfLogin();
+  const setAelfAuthFromStorage = useSetAelfAuthFromStorage();
   const [form] = Form.useForm<TSelectChainFormValues>();
   const tooltipSwitchModalRef = useRef<ICommonTooltipSwitchModalRef>(null);
   const tryAgainTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -327,8 +335,6 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     [handleFormDataChange],
   );
 
-  const isConnected = useMemo(() => true, []);
-
   const { unissuedChains, issuingChains, issuedChains } = useMemo(() => {
     const unissuedChains = {
       [SelectChainFormKeys.AELF_CHAINS]: formData[SelectChainFormKeys.AELF_CHAINS].filter(
@@ -466,6 +472,55 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
       help: formValidateData[formKey].errorMessage,
     };
   };
+
+  const init = useCallback(async () => {
+    try {
+      await setAelfAuthFromStorage();
+      await sleep(500);
+
+      // TODO get data by api
+    } catch (error) {
+      console.log('SelectChain init', error);
+    }
+  }, [setAelfAuthFromStorage]);
+  const initRef = useRef(init);
+  initRef.current = init;
+
+  useEffectOnce(() => {
+    if (!isConnected) {
+      handleAelfLogin(true, init);
+    } else {
+      init();
+    }
+  });
+
+  const initForLogout = useCallback(async () => {
+    // TODO
+  }, []);
+  const initLogoutRef = useRef(initForLogout);
+  initLogoutRef.current = initForLogout;
+
+  const initForReLogin = useCallback(async () => {
+    // TODO
+  }, []);
+  const initForReLoginRef = useRef(initForReLogin);
+  initForReLoginRef.current = initForReLogin;
+
+  useEffectOnce(() => {
+    // log in
+    const { remove: removeLoginSuccess } = myEvents.LoginSuccess.addListener(() =>
+      initForReLoginRef.current(),
+    );
+    // log out \ exit
+    const { remove: removeLogoutSuccess } = myEvents.LogoutSuccess.addListener(() => {
+      initLogoutRef.current();
+    });
+
+    return () => {
+      removeLoginSuccess();
+      removeLogoutSuccess();
+    };
+  });
 
   const renderChainsFormItem = (
     formKey: SelectChainFormKeys.AELF_CHAINS | SelectChainFormKeys.OTHER_CHAINS,

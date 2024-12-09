@@ -42,8 +42,8 @@ import { SideMenuKey } from 'constants/home';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
-import { useSetAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
-import useAelf, { useInitWallet } from 'hooks/wallet/useAelf';
+import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
+import useAelf, { useInitAelfWallet } from 'hooks/wallet/useAelf';
 import { addAelfNetwork, deleteAelfNetwork } from 'utils/deposit';
 import { AelfChainIdList } from 'constants/chain';
 import { useCheckTxn } from 'hooks/deposit';
@@ -79,7 +79,7 @@ type TGetNetworkData = {
 export default function Content() {
   const dispatch = useAppDispatch();
   const { isPadPX } = useCommonState();
-  useInitWallet();
+  useInitAelfWallet();
   const { depositProcessingCount, transferProcessingCount } = useRecordsState();
   const {
     fromNetwork,
@@ -448,7 +448,7 @@ export default function Content() {
     [searchParams],
   );
 
-  const setAuthFromStorage = useSetAuthFromStorage();
+  const setAelfAuthFromStorage = useSetAelfAuthFromStorage();
   const init = useCallback(async () => {
     let chainId = toChainItem.key;
     let fromSymbol = fromTokenSymbol;
@@ -491,7 +491,7 @@ export default function Content() {
         fromNetworkRef.current = fromNetwork?.network;
       }
 
-      await setAuthFromStorage();
+      await setAelfAuthFromStorage();
       await sleep(500);
       // get new network data, when refresh page and switch side menu
       await getNetworkData({ chainId, symbol: fromSymbol, toSymbol });
@@ -513,7 +513,7 @@ export default function Content() {
     routeQuery.depositFromNetwork,
     routeQuery.depositToToken,
     routeQuery.tokenSymbol,
-    setAuthFromStorage,
+    setAelfAuthFromStorage,
     setLoading,
     toChainItem.key,
     toTokenSymbol,

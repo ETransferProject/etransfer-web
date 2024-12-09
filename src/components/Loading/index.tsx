@@ -6,6 +6,7 @@ import styles from './styles.module.scss';
 import { SET_GLOBAL_LOADING } from 'constants/events';
 import { useCallback, useEffect, useState } from 'react';
 import { eventBus } from 'utils/myEvent';
+import { LOADING_TEXT } from 'constants/misc';
 
 export interface LoadingProps {
   className?: string;
@@ -26,7 +27,7 @@ export default function Loading() {
     const info = {
       ...loadingInfo,
       isHasText,
-      text: isHasText ? loadingInfo?.text || 'Loading...' : '',
+      text: isHasText ? loadingInfo?.text || LOADING_TEXT : '',
     };
     setLoadingInfo({
       isLoading,
