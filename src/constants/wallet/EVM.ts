@@ -1,16 +1,44 @@
 import { Coinbase, Metamask, WalletConnect } from 'assets/images';
+import { BlockchainNetworkType } from 'constants/network';
 
-export const EVM_TO_ADDRESS = '0x08915f275100dfEc26f63624EEACdD41E4040CC0';
-// export const EVM_USDT_CONTRACT_ADDRESS_MAINNET = '0xdac17f958d2ee523a2206206994597c13d831ec7';
-export const EVM_USDT_CONTRACT_ADDRESS_SEPOLIA = '0x60eeCc4d19f65B9EaDe628F2711C543eD1cE6679';
-// export const EVM_ELF_CONTRACT_ADDRESS = '0x8add57b8ad6c291bc3e3fff89f767fca08e0e7ab';
+export const EVM_CREATE_TOKEN_CONTRACT_ADDRESS: Record<string, `0x${string}`> = {
+  [BlockchainNetworkType.Arbitrum]: '0x',
+  [BlockchainNetworkType.Avax]: '0x',
+  [BlockchainNetworkType.BASE]: '0x',
+  [BlockchainNetworkType.Binance]: '0x',
+  [BlockchainNetworkType.Ethereum]: '0x',
+  [BlockchainNetworkType.Optimism]: '0x',
+  [BlockchainNetworkType.Polygon]: '0x',
+  [BlockchainNetworkType.SETH]: '0x5F7f441F1d4123b144AB4cf108f248f2c1129172',
+  [BlockchainNetworkType.TBinance]: '0x',
+};
+
+export enum EVM_CONTRACT_FUNCTION_NAME {
+  transfer = 'transfer',
+  createToken = 'createToken',
+}
+
 export const EVM_TOKEN_ABI = [
   {
     inputs: [
       { internalType: 'address', name: 'recipient', type: 'address' },
       { internalType: 'uint256', name: 'amount', type: 'uint256' },
     ],
-    name: 'transfer',
+    name: EVM_CONTRACT_FUNCTION_NAME.transfer,
+    outputs: [], // { internalType: 'bool', name: '', type: 'bool' }
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+];
+
+export const EVM_CREATE_TOKEN_ABI = [
+  {
+    inputs: [
+      { internalType: 'string', name: 'name', type: 'string' },
+      { internalType: 'string', name: 'symbol', type: 'string' },
+      { internalType: 'uint256', name: 'initialSupply', type: 'uint256' },
+    ],
+    name: EVM_CONTRACT_FUNCTION_NAME.createToken,
     outputs: [], // { internalType: 'bool', name: '', type: 'bool' }
     stateMutability: 'nonpayable',
     type: 'function',
