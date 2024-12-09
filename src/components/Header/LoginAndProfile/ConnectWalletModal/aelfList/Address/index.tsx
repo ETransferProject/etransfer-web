@@ -2,13 +2,13 @@ import React, { useCallback, useMemo, useState } from 'react';
 import styles from '../../styles.module.scss';
 import { CHAIN_NAME_ENUM, SupportedChainId } from 'constants/index';
 import Copy, { CopySize } from 'components/Copy';
-import { useGetAccount } from 'hooks/wallet/useAelf';
+import { useGetAelfAccount } from 'hooks/wallet/useAelf';
 import { getOmittedStr } from 'utils/calculate';
 import clsx from 'clsx';
 import { AelfSmall, tDVVSmall as TDVVSmall } from 'assets/images';
 
 export default function Address() {
-  const accounts = useGetAccount();
+  const accounts = useGetAelfAccount();
   const [isShowCopy, setIsShowCopy] = useState(false);
   const [isShowCopyIndex, setIsShowCopyIndex] = useState<number>();
 

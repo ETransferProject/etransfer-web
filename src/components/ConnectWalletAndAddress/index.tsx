@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import clsx from 'clsx';
 import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
 import styles from './styles.module.scss';
-import { useGetAccount } from 'hooks/wallet/useAelf';
+import { useAelfLogin, useGetAelfAccount } from 'hooks/wallet/useAelf';
 import { computeWalletType, getConnectWalletText, getWalletLogo, isAelfChain } from 'utils/wallet';
 import { getOmittedStr } from 'utils/calculate';
 import { MY_WALLET } from 'constants/wallet';
@@ -14,6 +14,7 @@ interface IConnectWalletAndAddressProps {
   network: string;
   account?: string;
   connector?: any;
+  isConnectAelfDirectly?: boolean;
 }
 
 export default function ConnectWalletAndAddress({
@@ -22,8 +23,10 @@ export default function ConnectWalletAndAddress({
   network,
   account,
   connector,
+  isConnectAelfDirectly = false,
 }: IConnectWalletAndAddressProps) {
-  const accounts = useGetAccount();
+  const accounts = useGetAelfAccount();
+  const handleAelfLogin = useAelfLogin();
 
   const [openConnectWalletModal, setOpenConnectWalletModal] = useState(false);
   const [walletAllowList, setWalletAllowList] = useState<WalletTypeEnum[] | undefined>();
@@ -42,12 +45,20 @@ export default function ConnectWalletAndAddress({
     setOpenConnectWalletModal(true);
   }, []);
 
-  const handleConnectWallet = useCallback(() => {
+  const handleAelfConnectedCallback = useCallback(() => {
+    // TODO auth
+  }, []);
+
+  const handleConnectWallet = useCallback(async () => {
     if (!walletType) return;
 
-    setWalletAllowList([walletType]);
-    setOpenConnectWalletModal(true);
-  }, [walletType]);
+    if (isConnectAelfDirectly) {
+      handleAelfLogin(false, handleAelfConnectedCallback);
+    } else {
+      setWalletAllowList([walletType]);
+      setOpenConnectWalletModal(true);
+    }
+  }, [handleAelfConnectedCallback, handleAelfLogin, isConnectAelfDirectly, walletType]);
 
   return (
     <>

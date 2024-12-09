@@ -5,7 +5,7 @@ import styles from './styles.module.scss';
 import { CHAIN_LIST, IChainNameItem } from 'constants/index';
 import CommonSpace from 'components/CommonSpace';
 import { useEffect, useMemo } from 'react';
-import { useGetAccount } from 'hooks/wallet/useAelf';
+import { useGetAelfAccount } from 'hooks/wallet/useAelf';
 import { useAppDispatch, useDepositState } from 'store/Provider/hooks';
 import { setToChainItem } from 'store/reducers/deposit/slice';
 
@@ -22,7 +22,7 @@ export default function SelectTokenChain({
   tokenSelectCallback,
 }: TSelectTokenChain) {
   const { toChainItem, toChainList, toTokenList } = useDepositState();
-  const accounts = useGetAccount();
+  const accounts = useGetAelfAccount();
   const dispatch = useAppDispatch();
 
   useEffect(() => {

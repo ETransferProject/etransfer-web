@@ -28,7 +28,7 @@ import SelectChainWrapper from '../SelectChainWrapper';
 import DepositTip from '../DepositTip';
 import { CopySize } from 'components/Copy';
 import NotLoginTip from '../NotLoginTip';
-import useAelf, { useLogin } from 'hooks/wallet/useAelf';
+import useAelf, { useAelfLogin } from 'hooks/wallet/useAelf';
 import { useDepositNetworkList } from 'hooks/deposit';
 import TransferTip from '../TransferTip';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
@@ -59,7 +59,7 @@ export default function WebContent({
   fromTokenChanged,
 }: TDepositContentProps) {
   const { isConnected } = useAelf();
-  const handleLogin = useLogin();
+  const handleAelfLogin = useAelfLogin();
 
   const {
     fromTokenSymbol,
@@ -187,7 +187,7 @@ export default function WebContent({
                   <span className={styles['connected']}>Connected</span>
                 </>
               ) : (
-                <span className={styles['connect']} onClick={handleLogin}>
+                <span className={styles['connect']} onClick={() => handleAelfLogin()}>
                   {CONNECT_AELF_WALLET}
                 </span>
               )}
@@ -206,7 +206,7 @@ export default function WebContent({
   }, [
     fromNetworkChanged,
     fromNetworkSelected,
-    handleLogin,
+    handleAelfLogin,
     isConnected,
     menuItems,
     newFromNetworkList,

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { Form, Checkbox, Row, Col, Input } from 'antd';
 import NetworkLogo from 'components/NetworkLogo';
@@ -18,6 +18,11 @@ import { SupportedChainId, CHAIN_NAME_ENUM } from 'constants/index';
 import { QuestionMark16 } from 'assets/images';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
+import { useEffectOnce } from 'react-use';
+import myEvents from 'utils/myEvent';
+import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
+import useAelf, { useAelfLogin } from 'hooks/wallet/useAelf';
+import { sleep } from '@etransfer/utils';
 
 const AELF_CHAINS = [
   {
@@ -42,6 +47,9 @@ interface ISelectChainProps {
 
 export default function SelectChain({ handleNextStep, handlePrevStep }: ISelectChainProps) {
   const { isMobile, isMobilePX } = useCommonState();
+  const { isConnected } = useAelf();
+  const handleAelfLogin = useAelfLogin();
+  const setAelfAuthFromStorage = useSetAelfAuthFromStorage();
   const [form] = Form.useForm<TSelectChainFormValues>();
   const [chains, setChains] = useState<{ [key: string]: string[] }>({
     [SelectChainFormKeys.AELF_CHAINS]: [],
@@ -71,6 +79,55 @@ export default function SelectChain({ handleNextStep, handlePrevStep }: ISelectC
     },
     [form],
   );
+
+  const init = useCallback(async () => {
+    try {
+      await setAelfAuthFromStorage();
+      await sleep(500);
+
+      // TODO get data by api
+    } catch (error) {
+      console.log('SelectChain init', error);
+    }
+  }, [setAelfAuthFromStorage]);
+  const initRef = useRef(init);
+  initRef.current = init;
+
+  useEffectOnce(() => {
+    if (!isConnected) {
+      handleAelfLogin(true, init);
+    } else {
+      init();
+    }
+  });
+
+  const initForLogout = useCallback(async () => {
+    // TODO
+  }, []);
+  const initLogoutRef = useRef(initForLogout);
+  initLogoutRef.current = initForLogout;
+
+  const initForReLogin = useCallback(async () => {
+    // TODO
+  }, []);
+  const initForReLoginRef = useRef(initForReLogin);
+  initForReLoginRef.current = initForReLogin;
+
+  useEffectOnce(() => {
+    // log in
+    const { remove: removeLoginSuccess } = myEvents.LoginSuccess.addListener(() =>
+      initForReLoginRef.current(),
+    );
+    // log out \ exit
+    const { remove: removeLogoutSuccess } = myEvents.LogoutSuccess.addListener(() => {
+      initLogoutRef.current();
+    });
+
+    return () => {
+      removeLoginSuccess();
+      removeLogoutSuccess();
+    };
+  });
 
   const renderChainsFormItem = (formKey: SelectChainFormKeys) => {
     return (

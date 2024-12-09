@@ -4,7 +4,7 @@ import { useAppDispatch, useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { CHAIN_LIST, IChainNameItem } from 'constants/index';
 import { useWithdraw } from 'hooks/withdraw';
-import { useGetAccount } from 'hooks/wallet/useAelf';
+import { useGetAelfAccount } from 'hooks/wallet/useAelf';
 import { setWithdrawChainItem } from 'store/reducers/withdraw/slice';
 import { useEffectOnce } from 'react-use';
 
@@ -23,7 +23,7 @@ export default function SelectChainWrapper({
 }: SelectChainWrapperProps) {
   const { isPadPX } = useCommonState();
   const { currentChainItem } = useWithdraw();
-  const accounts = useGetAccount();
+  const accounts = useGetAelfAccount();
   const dispatch = useAppDispatch();
 
   useEffectOnce(() => {

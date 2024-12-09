@@ -54,7 +54,7 @@ import {
 import { CommonErrorNameType } from 'api/types';
 import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
 import { handleErrorMessage } from '@etransfer/utils';
-import useAelf, { useGetAccount } from 'hooks/wallet/useAelf';
+import useAelf, { useGetAelfAccount } from 'hooks/wallet/useAelf';
 import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
 import {
   formatSymbolDisplay,
@@ -78,7 +78,7 @@ import FAQ from 'components/FAQ';
 import { FAQ_WITHDRAW } from 'constants/footer';
 import { PortkeyVersion } from 'constants/wallet/index';
 import { TelegramPlatform } from 'utils/telegram';
-import { useSetAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
+import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
 import WithdrawFooter from './WithdrawFooter';
 import RemainingLimit from './RemainingLimit';
 import CommentFormItemLabel from './CommentFormItemLabel';
@@ -124,7 +124,7 @@ export default function WithdrawContent() {
   const isConnectedRef = useRef(isConnected);
   isConnectedRef.current = isConnected;
   const withdraw = useWithdrawState();
-  const accounts = useGetAccount();
+  const accounts = useGetAelfAccount();
   const { currentSymbol, tokenList, currentChainItem } = useWithdraw();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem || CHAIN_LIST[0]);
   const { setLoading } = useLoading();
@@ -810,10 +810,10 @@ export default function WithdrawContent() {
     [searchParams],
   );
 
-  const setAuthFromStorage = useSetAuthFromStorage();
+  const setAelfAuthFromStorage = useSetAelfAuthFromStorage();
   const init = useCallback(async () => {
     try {
-      await setAuthFromStorage();
+      await setAelfAuthFromStorage();
       await sleep(500);
 
       let newCurrentSymbol = currentSymbol;
@@ -878,7 +878,7 @@ export default function WithdrawContent() {
     routeQuery.chainId,
     routeQuery.tokenSymbol,
     routeQuery.withdrawAddress,
-    setAuthFromStorage,
+    setAelfAuthFromStorage,
     setLoading,
     tokenList,
     withdraw,

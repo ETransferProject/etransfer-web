@@ -25,7 +25,11 @@ import {
   InsufficientAllowanceMessage,
   WithdrawSendTxErrorCodeList,
 } from 'constants/withdraw';
-import useAelf, { useGetAccount, useLogin, useShowLoginButtonLoading } from 'hooks/wallet/useAelf';
+import useAelf, {
+  useGetAelfAccount,
+  useAelfLogin,
+  useShowLoginButtonLoading,
+} from 'hooks/wallet/useAelf';
 import { formatSymbolDisplay } from 'utils/format';
 import { sleep } from '@portkey/utils';
 import { useWithdraw } from 'hooks/withdraw';
@@ -70,8 +74,8 @@ export default function WithdrawFooter({
   const { isPadPX } = useCommonState();
   const { setLoading } = useLoading();
   const { isConnected, walletInfo, connector, isLocking, callSendMethod, signMessage } = useAelf();
-  const handleLogin = useLogin();
-  const accounts = useGetAccount();
+  const handleAelfLogin = useAelfLogin();
+  const accounts = useGetAelfAccount();
   // Fix: It takes too long to obtain NightElf walletInfo, and the user mistakenly clicks the login button during this period.
   const isLoginButtonLoading = useShowLoginButtonLoading();
   const getBalanceDivDecimals = useGetBalanceDivDecimals();
@@ -250,7 +254,22 @@ export default function WithdrawFooter({
     } finally {
       setIsDoubleCheckModalOpen(false);
     }
-  }, [balance, currentSymbol, currentTokenAddress, handleApproveToken, receiveAmount, setLoading]);
+  }, [
+    accounts,
+    address,
+    balance,
+    connector,
+    currentChainItem.key,
+    currentSymbol,
+    currentTokenAddress,
+    currentTokenDecimal,
+    handleApproveToken,
+    handleCreateWithdrawOrder,
+    memo,
+    setLoading,
+    signMessage,
+    walletInfo,
+  ]);
 
   const onSubmit = useCallback(() => {
     if (!currentNetwork) return;
@@ -305,7 +324,7 @@ export default function WithdrawFooter({
         ) : (
           <CommonButton
             className={styles['form-submit-button']}
-            onClick={handleLogin}
+            onClick={() => handleAelfLogin()}
             loading={isLoginButtonLoading}>
             {isLocking ? UNLOCK : LOGIN}
           </CommonButton>

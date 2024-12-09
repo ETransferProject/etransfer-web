@@ -606,6 +606,8 @@ export type TApplicationChainStatusItem = {
 };
 
 export enum ApplicationChainStatusEnum {
+  Unissued = 'Unissued',
+  Issuing = 'Issuing',
   Issued = 'Issued',
   Reviewing = 'Reviewing',
   Rejected = 'Rejected',
@@ -670,8 +672,10 @@ export type TMyApplicationChainTokenInfo = {
   icon: string;
   poolAddress: string;
   status: ApplicationChainStatusEnum;
-  rejectedTime: number;
-  failReason?: string; // TODO
+  rejectedTime?: number; // status === ApplicationChainStatusEnum.Rejected
+  rejectedReason?: string; // status === ApplicationChainStatusEnum.Rejected
+  failedTime?: number; // status === ApplicationChainStatusEnum.Failed
+  failedReason?: string; // status === ApplicationChainStatusEnum.Failed
 };
 
 export type TGetApplicationDetailRequest = {

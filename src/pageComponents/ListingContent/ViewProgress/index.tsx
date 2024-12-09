@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 import CommonModal from 'components/CommonModal';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import DisplayImage from 'components/DisplayImage';
 import { formatSymbolDisplay } from '@etransfer/ui-react';
 import CommonSteps from 'components/CommonSteps';
@@ -16,51 +16,49 @@ const ViewProgressTitle = 'View Progress';
 export default function ViewProgress({
   className,
   open = false,
+  tokenSymbol,
+  tokenIcon,
+  chainName,
   onClose,
   onConfirm,
 }: {
   className?: string;
   open?: boolean;
+  tokenSymbol: string;
+  tokenIcon?: string;
+  chainName: string;
   onClose: () => void;
   onConfirm: () => void;
 }) {
   const { isPadPX } = useCommonState();
-  const [currentStep, setCurrentStep] = useState(1);
 
-  const token = useMemo(
-    () => ({
-      name: 'SGR',
-      symbol: 'SGR-1',
-      icon: '',
-      networkName: 'aelf MainChain',
-    }),
-    [],
-  );
+  // const currentStep = useMemo(() => {
+  //   if (status === ApplicationChainStatusEnum.Reviewing) {
+  //     return 2;
+  //   }
+  // }, []);
 
   const content = useMemo(() => {
     return (
       <div>
         <div className={clsx('flex-row-center-between', styles['token-info'])}>
           <div className="flex-row-center gap-8">
-            <DisplayImage width={20} height={20} name={token.name} src={token.icon} />
-            <span className={clsx(styles['token-symbol'])}>
-              {formatSymbolDisplay(token.symbol)}
-            </span>
+            <DisplayImage width={20} height={20} name={tokenSymbol} src={tokenIcon} />
+            <span className={clsx(styles['token-symbol'])}>{formatSymbolDisplay(tokenSymbol)}</span>
           </div>
-          <div className={styles['token-network']}>{token.networkName}</div>
+          <div className={styles['token-network']}>{chainName}</div>
         </div>
         <div className={styles['view-progress-steps-wrapper']}>
           <CommonSteps
             className={styles['view-progress-steps']}
             stepItems={VIEW_COBO_CUSTODY_PROGRESS}
-            current={currentStep}
+            current={2}
             direction={'vertical'}
-            onChange={setCurrentStep}
           />
         </div>
       </div>
     );
-  }, [currentStep, token.icon, token.name, token.networkName, token.symbol]);
+  }, [chainName, tokenIcon, tokenSymbol]);
 
   if (isPadPX) {
     return (

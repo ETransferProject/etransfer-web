@@ -6,6 +6,8 @@ export const SIGNATURE_MISSING_TIP = 'Signature missing/expired, please log in a
 
 export const GOT_IT = 'Got it';
 
+export const LOADING_TEXT = 'Loading...';
+
 export const API_VERSION = 'v3.0.0';
 
 export const ETRANSFER_LOGO =

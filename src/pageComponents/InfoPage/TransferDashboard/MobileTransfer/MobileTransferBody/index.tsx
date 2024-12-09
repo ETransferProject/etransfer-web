@@ -15,6 +15,7 @@ import { setSelectedTransfer } from 'store/reducers/infoDashboard/slice';
 import myEvents from 'utils/myEvent';
 import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
 import { BusinessType } from 'types/api';
+import { LOADING_TEXT } from 'constants/misc';
 
 const NoDataText = '-- No Data --';
 
@@ -126,7 +127,7 @@ export default function MobileTransferBody({
           scrollableTarget={'etransferWebWrapper'}
           loader={
             <h4 className={clsx(styles['transfer-loader-message'])}>
-              {hasMore ? ' Loading... ' : NoDataText}
+              {hasMore ? LOADING_TEXT : NoDataText}
             </h4>
           }
           endMessage={<p className={clsx(styles['transfer-end-message'])}>{NoDataText}</p>}>

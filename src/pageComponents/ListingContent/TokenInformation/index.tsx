@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Form, Input, InputProps } from 'antd';
 import ConnectWalletAndAddress from 'components/ConnectWalletAndAddress';
 import CommonButton, { CommonButtonSize } from 'components/CommonButton';
 import Remind from 'components/Remind';
 import TokenSelect from './TokenSelect';
-import useAelf from 'hooks/wallet/useAelf';
+import useAelf, { useAelfLogin } from 'hooks/wallet/useAelf';
 import { TCommitTokenInfoRequest } from 'types/api';
 import {
   TTokenInformationFormValues,
@@ -32,6 +32,10 @@ import {
 } from 'utils/api/application';
 import { useLoading } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
+import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
+import { sleep } from '@etransfer/utils';
+import { useEffectOnce } from 'react-use';
+import myEvents from 'utils/myEvent';
 
 interface ITokenInformationProps {
   symbol?: string;
@@ -41,6 +45,8 @@ interface ITokenInformationProps {
 export default function TokenInformation({ symbol, handleNextStep }: ITokenInformationProps) {
   const [form] = Form.useForm<TTokenInformationFormValues>();
   const { isConnected, connector } = useAelf();
+  const handleAelfLogin = useAelfLogin();
+  const setAelfAuthFromStorage = useSetAelfAuthFromStorage();
   const { setLoading } = useLoading();
 
   const [formValues, setFormValues] = useState(TOKEN_INFORMATION_FORM_INITIAL_VALUES);
@@ -52,6 +58,8 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
 
   const getTokenList = useCallback(async () => {
     try {
+      await setAelfAuthFromStorage();
+      await sleep(500);
       const res = await getApplicationTokenList();
       const list = (res.tokenList || []).map((item) => ({
         name: item.tokenName,
@@ -66,7 +74,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
       console.error(error);
       return [];
     }
-  }, []);
+  }, [setAelfAuthFromStorage]);
 
   const init = useCallback(async () => {
     setLoading(true);
@@ -93,11 +101,16 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
       setLoading(false);
     }
   }, [getTokenList, setLoading, symbol]);
+  const initRef = useRef(init);
+  initRef.current = init;
 
-  useEffect(() => {
-    init();
-  }, [init]);
-
+  useEffectOnce(() => {
+    if (!isConnected) {
+      handleAelfLogin(true, init);
+    } else {
+      init();
+    }
+  });
   const judgeIsButtonDisabled = useCallback(
     (
       currentFormData: Partial<TTokenInformationFormValues>,
@@ -264,6 +277,34 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
     value: formValues[key] as string,
   });
 
+  const initForLogout = useCallback(async () => {
+    // TODO
+  }, []);
+  const initLogoutRef = useRef(initForLogout);
+  initLogoutRef.current = initForLogout;
+
+  const initForReLogin = useCallback(async () => {
+    // TODO
+  }, []);
+  const initForReLoginRef = useRef(initForReLogin);
+  initForReLoginRef.current = initForReLogin;
+
+  useEffectOnce(() => {
+    // log in
+    const { remove: removeLoginSuccess } = myEvents.LoginSuccess.addListener(() =>
+      initForReLoginRef.current(),
+    );
+    // log out \ exit
+    const { remove: removeLogoutSuccess } = myEvents.LogoutSuccess.addListener(() => {
+      initLogoutRef.current();
+    });
+
+    return () => {
+      removeLoginSuccess();
+      removeLogoutSuccess();
+    };
+  });
+
   return (
     <div className={styles['token-information']}>
       <Remind>{LISTING_FORM_PROMPT_CONTENT_MAP[ListingStep.TOKEN_INFORMATION]}</Remind>
@@ -279,6 +320,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
                 network={SupportedChainId.sideChain}
                 isConnected={isConnected}
                 connector={connector}
+                isConnectAelfDirectly={true}
               />
             </div>
           }>

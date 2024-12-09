@@ -9,6 +9,9 @@ import NetworkLogo from 'components/NetworkLogo';
 import StatusBox from '../StatusBox';
 import ActionBox from '../ActionBox';
 import { TMyApplicationItem } from 'types/api';
+import { getApplicationDisplayInfo } from '../utils';
+import { NO_APPLICATION } from 'constants/listing';
+import { LOADING_TEXT } from 'constants/misc';
 
 const NoDataText = '-- No Data --';
 
@@ -28,9 +31,8 @@ export default function MyApplicationList({
     [applicationList.length, totalCount],
   );
   const renderApplicationCard = useCallback((item: TMyApplicationItem) => {
-    const chainTokenInfo = item.otherChainTokenInfo.chainId
-      ? item.otherChainTokenInfo
-      : item?.chainTokenInfo?.[0];
+    const { chainTokenInfo, failReason, failTime } = getApplicationDisplayInfo(item);
+
     return (
       <div className={styles['application-card-container']}>
         <div className="flex-row-center gap-8">
@@ -49,17 +51,19 @@ export default function MyApplicationList({
           <StatusBox
             className={styles['status-box']}
             status={chainTokenInfo.status}
-            failReason={chainTokenInfo?.failReason}
+            failReason={failReason}
           />
         </div>
         <div className={clsx(styles['row'], 'flex-row-center-between')}>
           <div className={styles['row-label']}>Action</div>
           <ActionBox
             symbol={item.symbol}
+            tokenIcon={chainTokenInfo.icon}
             chainId={chainTokenInfo.chainId}
+            chainName={chainTokenInfo.chainName}
             id={item.id}
             status={chainTokenInfo.status}
-            rejectedTime={chainTokenInfo.rejectedTime}
+            rejectedTime={failTime}
           />
         </div>
       </div>
@@ -68,7 +72,7 @@ export default function MyApplicationList({
 
   return (
     <div className={styles['my-application-list']}>
-      {applicationList?.length === 0 && <EmptyDataBox emptyText={'No application found'} />}
+      {applicationList?.length === 0 && <EmptyDataBox emptyText={NO_APPLICATION} />}
 
       {applicationList?.length > 0 && (
         <InfiniteScroll
@@ -78,7 +82,7 @@ export default function MyApplicationList({
           scrollableTarget={'etransferWebWrapper'}
           loader={
             <h4 className={clsx(styles['application-loader-message'])}>
-              {hasMore ? ' Loading... ' : NoDataText}
+              {hasMore ? LOADING_TEXT : NoDataText}
             </h4>
           }
           endMessage={<p className={clsx(styles['application-end-message'])}>{NoDataText}</p>}>

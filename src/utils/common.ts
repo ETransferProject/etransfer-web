@@ -111,7 +111,7 @@ export const getTokenAddressExploreHref = (
   if (address) {
     return getOtherExploreLink(
       address,
-      OtherExploreType.address,
+      OtherExploreType.token,
       network as keyof typeof ExploreUrlNotAelf,
     );
   }

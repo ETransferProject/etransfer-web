@@ -15,6 +15,14 @@ import { useSearchParams } from 'next/navigation';
 import { useEffectOnce } from 'react-use';
 import { TApplicationDetailItemChainTokenInfo } from 'types/api';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
+import myEvents from 'utils/myEvent';
+import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
+import { sleep } from '@etransfer/utils';
+import { useLoading } from 'store/Provider/hooks';
+import useAelf, { useAelfLogin, useShowLoginButtonLoading } from 'hooks/wallet/useAelf';
+import { CONNECT_AELF_WALLET } from 'constants/wallet';
+import EmptyDataBox from 'pageComponents/EmptyDataBox';
+import { WALLET_CONNECTION_REQUIRED } from 'constants/listing';
 
 export interface InitializeLiquidityPoolProps {
   id: string;
@@ -27,6 +35,12 @@ export default function InitializeLiquidityPool({
   symbol,
   onNext,
 }: InitializeLiquidityPoolProps) {
+  const { setLoading } = useLoading();
+  const { isConnected } = useAelf();
+  const handleAelfLogin = useAelfLogin();
+  const setAelfAuthFromStorage = useSetAelfAuthFromStorage();
+  // Fix: It takes too long to obtain NightElf walletInfo, and the user mistakenly clicks the login button during this period.
+  const isLoginButtonLoading = useShowLoginButtonLoading();
   const [tokenInfo, setTokenInfo] = useState({ symbol: '', limit24HInUsd: '' });
   const [tokenPoolList, setTokenPoolList] = useState<TApplicationDetailItemChainTokenInfo[]>([]);
   const [submitDisabled, setSubmitDisable] = useState(true);
@@ -121,26 +135,42 @@ export default function InitializeLiquidityPool({
     );
   }, [handleGoExplore, tokenPoolList]);
 
-  const getData = useCallback(async (id: string, symbol: string) => {
-    const res = await getApplicationDetail({ symbol, id });
+  const getData = useCallback(
+    async (id: string, symbol: string) => {
+      if (!isConnected) return;
+      try {
+        setLoading(true);
 
-    const chainTokenInfos = res.items[0].chainTokenInfo;
-    const otherChainTokenInfos = res.items[0].otherChainTokenInfo;
-    const concatList = chainTokenInfos.concat([otherChainTokenInfos]);
-    setTokenPoolList(concatList);
-    setTokenInfo({
-      symbol: res.items[0].symbol,
-      limit24HInUsd: otherChainTokenInfos.limit24HInUsd || chainTokenInfos[0].limit24HInUsd,
-    });
+        await setAelfAuthFromStorage();
+        await sleep(500);
+        const res = await getApplicationDetail({ symbol, id });
 
-    // submit but disable
-    const unfinishedAelfTokenPool = concatList?.find((item) => item.balanceAmount < item.minAmount);
-    if (unfinishedAelfTokenPool?.chainId) {
-      setSubmitDisable(true);
-    } else {
-      setSubmitDisable(false);
-    }
-  }, []);
+        const chainTokenInfos = res.items[0].chainTokenInfo;
+        const otherChainTokenInfos = res.items[0].otherChainTokenInfo;
+        const concatList = chainTokenInfos.concat([otherChainTokenInfos]);
+        setTokenPoolList(concatList);
+        setTokenInfo({
+          symbol: res.items[0].symbol,
+          limit24HInUsd: otherChainTokenInfos.limit24HInUsd || chainTokenInfos[0].limit24HInUsd,
+        });
+
+        // submit but disable
+        const unfinishedAelfTokenPool = concatList?.find(
+          (item) => item.balanceAmount < item.minAmount,
+        );
+        if (unfinishedAelfTokenPool?.chainId) {
+          setSubmitDisable(true);
+        } else {
+          setSubmitDisable(false);
+        }
+      } catch (error) {
+        console.log('InitializeLiquidityPool getData error', error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [isConnected, setAelfAuthFromStorage, setLoading],
+  );
 
   const searchParams = useSearchParams();
   const routeQuery = useMemo(
@@ -158,9 +188,15 @@ export default function InitializeLiquidityPool({
       await getData(id, symbol);
     }
   }, [getData, id, routeQuery.id, routeQuery.tokenSymbol, symbol]);
+  const initRef = useRef(init);
+  initRef.current = init;
 
   useEffectOnce(() => {
-    init();
+    if (!isConnected) {
+      handleAelfLogin(true, init);
+    } else {
+      init();
+    }
   });
 
   const updateDataTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -179,17 +215,65 @@ export default function InitializeLiquidityPool({
     };
   }, [init]);
 
+  const initForLogout = useCallback(async () => {
+    if (updateDataTimerRef.current) {
+      clearInterval(updateDataTimerRef.current);
+    }
+    setTokenPoolList([]);
+    setTokenInfo({ symbol: '', limit24HInUsd: '' });
+    setSubmitDisable(true);
+  }, []);
+  const initLogoutRef = useRef(initForLogout);
+  initLogoutRef.current = initForLogout;
+
+  const initForReLogin = useCallback(async () => {
+    initRef.current();
+  }, []);
+  const initForReLoginRef = useRef(initForReLogin);
+  initForReLoginRef.current = initForReLogin;
+
+  useEffectOnce(() => {
+    // log in
+    const { remove: removeLoginSuccess } = myEvents.LoginSuccess.addListener(() =>
+      initForReLoginRef.current(),
+    );
+    // log out \ exit
+    const { remove: removeLogoutSuccess } = myEvents.LogoutSuccess.addListener(() => {
+      initLogoutRef.current();
+    });
+
+    return () => {
+      removeLoginSuccess();
+      removeLogoutSuccess();
+    };
+  });
+
   return (
     <div className={styles['initialize-liquidity-pool']}>
-      {renderRemind}
-      {renderList}
-      <CommonButton
-        className={styles['submit-button']}
-        onClick={onNext}
-        size={CommonButtonSize.Small}
-        disabled={submitDisabled}>
-        Next
-      </CommonButton>
+      {isConnected ? (
+        <>
+          {renderRemind}
+          {renderList}
+          <CommonButton
+            className={styles['submit-button']}
+            onClick={onNext}
+            size={CommonButtonSize.Small}
+            disabled={submitDisabled}>
+            Next
+          </CommonButton>
+        </>
+      ) : (
+        <>
+          <EmptyDataBox emptyText={WALLET_CONNECTION_REQUIRED} />
+          <CommonButton
+            className={styles['submit-button']}
+            onClick={() => handleAelfLogin()}
+            loading={isLoginButtonLoading}
+            size={CommonButtonSize.Small}>
+            {CONNECT_AELF_WALLET}
+          </CommonButton>
+        </>
+      )}
     </div>
   );
 }

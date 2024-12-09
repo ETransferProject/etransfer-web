@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import styles from './styles.module.scss';
 import ViewProgress from 'pageComponents/ListingContent/ViewProgress';
-import { VIEW_PROGRESS } from 'constants/listing';
+import { LISTING_STEP_PATHNAME_MAP, ListingStep, VIEW_PROGRESS } from 'constants/listing';
 import { useRouter } from 'next/navigation';
 import { ApplicationChainStatusEnum } from 'types/api';
 import { addApplicationChain } from 'utils/api/application';
@@ -12,16 +12,20 @@ const TwoDaysTimestamp = 48 * 60 * 60 * 1000;
 
 export default function ActionBox({
   symbol,
+  tokenIcon,
   chainId,
+  chainName,
   id,
   status,
   rejectedTime,
 }: {
   symbol: string;
+  tokenIcon?: string;
   chainId: string;
+  chainName: string;
   id: string;
   status: ApplicationChainStatusEnum;
-  rejectedTime: number;
+  rejectedTime?: number;
 }) {
   const router = useRouter();
   const { setLoading } = useLoading();
@@ -57,13 +61,17 @@ export default function ActionBox({
   }, []);
 
   const handleInitializeTokenPool = useCallback(() => {
-    // TODO
-    router.push(`/listing/initialize-liquidity-pool?tokenSymbol=${symbol}&id=${id}`);
+    router.push(
+      `/listing/${
+        LISTING_STEP_PATHNAME_MAP[ListingStep.INITIALIZE_LIQUIDITY_POOL]
+      }?tokenSymbol=${symbol}&id=${id}`,
+    );
   }, [id, router, symbol]);
 
   const handleLaunchOnOtherChain = useCallback(() => {
-    // TODO
-    router.push(`/listing/select-chain?tokenSymbol=${symbol}`);
+    router.push(
+      `/listing/${LISTING_STEP_PATHNAME_MAP[ListingStep.SELECT_CHAIN]}?tokenSymbol=${symbol}`,
+    );
   }, [router, symbol]);
 
   const handleReapply = useCallback(async () => {
@@ -87,7 +95,7 @@ export default function ActionBox({
   }, [chainId, setLoading, symbol]);
 
   useEffectOnce(() => {
-    if (rejectedTime + TwoDaysTimestamp >= Date.now()) {
+    if (rejectedTime && rejectedTime + TwoDaysTimestamp >= Date.now()) {
       setIsReapplyDisable(false);
     } else {
       setIsReapplyDisable(true);
@@ -127,6 +135,9 @@ export default function ActionBox({
       </div>
       <ViewProgress
         open={openViewProgress}
+        tokenSymbol={symbol}
+        tokenIcon={tokenIcon}
+        chainName={chainName}
         onClose={handleCloseViewProgress}
         onConfirm={handleConfirmViewProgress}
       />

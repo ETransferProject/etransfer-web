@@ -4,10 +4,12 @@ import MyApplicationTable from './MyApplicationTable';
 import { useCommonState, useLoading } from 'store/Provider/hooks';
 import MyApplicationList from './MyApplicationList';
 import { useDebounceCallback } from 'hooks/debounce';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useEffectOnce } from 'react-use';
 import { getMyApplicationList } from 'utils/api/application';
 import LinkForBlank from 'components/LinkForBlank';
+import clsx from 'clsx';
+import myEvents from 'utils/myEvent';
 
 export default function MyApplicationsPage() {
   const { isPadPX, isMobilePX } = useCommonState();
@@ -87,22 +89,57 @@ export default function MyApplicationsPage() {
     init();
   });
 
+  const initForLogout = useCallback(async () => {
+    setApplicationList([]);
+    setSkipPageCount(0);
+    setMaxResultCount(10);
+    setTotalCount(0);
+  }, []);
+  const initLogoutRef = useRef(initForLogout);
+  initLogoutRef.current = initForLogout;
+
+  const initForReLogin = useCallback(async () => {
+    getApplicationData({ skip: 0, max: 10 });
+  }, []);
+  const initForReLoginRef = useRef(initForReLogin);
+  initForReLoginRef.current = initForReLogin;
+
+  useEffectOnce(() => {
+    // log in
+    const { remove: removeLoginSuccess } = myEvents.LoginSuccess.addListener(() =>
+      initForReLoginRef.current(),
+    );
+    // log out \ exit
+    const { remove: removeLogoutSuccess } = myEvents.LogoutSuccess.addListener(() => {
+      initLogoutRef.current();
+    });
+
+    return () => {
+      removeLoginSuccess();
+      removeLogoutSuccess();
+    };
+  });
+
   return (
-    <div className={styles['page-container-wrapper']}>
+    <div className={styles['my-applications-page-container-wrapper']}>
       {!isPadPX && (
         <LinkForBlank
-          className={styles['page-back']}
+          className={styles['my-applications-page-back']}
           href="/"
           element={
             <>
               <BackIcon />
-              <div className={styles['page-back-text']}>Back</div>
+              <div className={styles['my-applications-page-back-text']}>Back</div>
             </>
           }
         />
       )}
 
-      <div className={styles['page-body']}>
+      <div
+        className={clsx(
+          styles['my-applications-page-body'],
+          applicationList.length === 0 && styles['my-applications-page-body-white'],
+        )}>
         {isMobilePX ? (
           <MyApplicationList
             totalCount={totalCount}
@@ -111,7 +148,7 @@ export default function MyApplicationsPage() {
           />
         ) : (
           <>
-            <div className={styles['page-title']}>My Applications</div>
+            <div className={styles['my-applications-page-title']}>My Applications</div>
             <MyApplicationTable
               totalCount={totalCount}
               applicationList={applicationList}

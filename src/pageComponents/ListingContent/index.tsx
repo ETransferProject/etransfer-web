@@ -10,6 +10,10 @@ import { LISTING_STEP_ITEMS, ListingStep, LISTING_STEP_PATHNAME_MAP } from 'cons
 import { useCommonState } from 'store/Provider/hooks';
 import { TSearchParams } from 'types/listing';
 import styles from './styles.module.scss';
+import { useInitAelfWallet } from 'hooks/wallet/useAelf';
+import CoboCustodyReview from './CoboCustodyReview';
+import ListingComplete from './ListingComplete';
+import InitializeLiquidityPool from './InitializeLiquidityPool';
 
 export default function ListingContent() {
   const { isPadPX, isMobilePX } = useCommonState();
@@ -20,11 +24,15 @@ export default function ListingContent() {
 
   const [currentStep, setCurrentStep] = useState<ListingStep>(ListingStep.TOKEN_INFORMATION);
 
+  useInitAelfWallet();
+
   useEffect(() => {
     const step = Object.values(LISTING_STEP_PATHNAME_MAP).findIndex((item) =>
       pathname.includes(item),
     );
     setCurrentStep(step);
+
+    // TODO no 3 and 5 step
   }, [pathname]);
 
   const getReplaceUrl = (step: ListingStep, params: TSearchParams) => {
@@ -66,6 +74,20 @@ export default function ListingContent() {
         return <TokenInformation handleNextStep={handleNextStep} symbol={symbol} />;
       case ListingStep.SELECT_CHAIN:
         return <SelectChain handleNextStep={handleNextStep} handlePrevStep={handlePrevStep} />;
+      case ListingStep.COBO_CUSTODY_REVIEW:
+        // TODO props
+        return <CoboCustodyReview networks={[]} />;
+      case ListingStep.INITIALIZE_LIQUIDITY_POOL:
+        // TODO props
+        return (
+          <InitializeLiquidityPool
+            id={''}
+            symbol={''}
+            onNext={() => setCurrentStep(ListingStep.COMPLETE)}
+          />
+        );
+      case ListingStep.COMPLETE:
+        return <ListingComplete />;
       default:
         return null;
     }
