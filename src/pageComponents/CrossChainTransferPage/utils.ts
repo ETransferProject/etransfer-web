@@ -1,11 +1,15 @@
-import { NETWORK_TOKEN_RELATIONS } from 'constants/index';
-import { TNetworkItem, TTokenItem } from 'types/api';
+import {
+  TGetTokenNetworkRelationItem,
+  TGetTokenNetworkRelationResult,
+  TNetworkItem,
+  TTokenItem,
+} from 'types/api';
 
-function removeDuplicate(arr: string[]) {
+function removeDuplicate(arr: TGetTokenNetworkRelationItem[]) {
   const newArr: string[] = [];
   arr.forEach((item) => {
-    if (!newArr.includes(item)) {
-      newArr.push(item);
+    if (!newArr.includes(item.network)) {
+      newArr.push(item.network);
     }
   });
   return newArr;
@@ -15,15 +19,16 @@ export function computeToNetworkList(
   currentFromNetwork: TNetworkItem,
   totalNetworkList: TNetworkItem[],
   totalTokenList: TTokenItem[],
+  tokenChainRelation?: TGetTokenNetworkRelationResult,
 ): TNetworkItem[] {
-  const currentRelations = (NETWORK_TOKEN_RELATIONS as any)[currentFromNetwork.network];
+  if (!tokenChainRelation) return [];
+  const currentRelations = tokenChainRelation[currentFromNetwork.network];
   const fromNetworkTokens = Object.keys(currentRelations);
 
   const availableTokens = fromNetworkTokens.filter((token: string) =>
     totalTokenList.some((t) => t.symbol === token),
   );
-
-  let repeatNetworkList: string[] = [];
+  let repeatNetworkList: TGetTokenNetworkRelationItem[] = [];
   availableTokens.forEach((token: string) => {
     const _list = currentRelations[token];
     repeatNetworkList = repeatNetworkList.concat(_list);
@@ -43,14 +48,16 @@ export function computeTokenList({
   fromNetwork,
   toNetwork,
   totalTokenList,
+  tokenChainRelation,
 }: {
   fromNetwork?: TNetworkItem;
   toNetwork?: TNetworkItem;
   totalTokenList: TTokenItem[];
+  tokenChainRelation?: TGetTokenNetworkRelationResult;
 }): TTokenItem[] {
-  if (!fromNetwork || !toNetwork) return totalTokenList;
+  if (!fromNetwork || !toNetwork || !tokenChainRelation) return totalTokenList;
 
-  const currentRelations = (NETWORK_TOKEN_RELATIONS as any)[fromNetwork.network];
+  const currentRelations = tokenChainRelation[fromNetwork.network];
   const fromNetworkTokens = Object.keys(currentRelations);
 
   const availableTokens = fromNetworkTokens.filter((token: string) =>
@@ -59,9 +66,13 @@ export function computeTokenList({
 
   const toNetworkTokens: string[] = [];
 
-  availableTokens.forEach((token) => {
-    const _list: string[] = currentRelations[token];
-    if (_list.includes(toNetwork.network)) {
+  availableTokens.forEach((token: string) => {
+    const _list: TGetTokenNetworkRelationItem[] = currentRelations[token];
+    const _networkList: string[] = [];
+    _list.forEach((item) => {
+      _networkList.push(item.network);
+    }, []);
+    if (_networkList.includes(toNetwork.network)) {
       toNetworkTokens.push(token);
     }
   });

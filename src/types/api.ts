@@ -24,11 +24,12 @@ export type TGetTokenNetworkRelationRequest = {
   networkList?: string[];
   tokenList?: string[];
   address?: string;
+  sourceType?: WalletSourceType;
 };
 
 export type TGetTokenNetworkRelationResult = Record<
   string,
-  Record<string, TGetTokenNetworkRelationItem>
+  Record<string, TGetTokenNetworkRelationItem[]>
 >;
 
 export type TGetTokenNetworkRelationItem = {

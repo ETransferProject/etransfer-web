@@ -18,9 +18,15 @@ import { formatApiError } from './error';
 
 export const getTokenNetworkRelation = async (
   params: TGetTokenNetworkRelationRequest,
+  authToken?: string,
 ): Promise<TGetTokenNetworkRelationResult> => {
   try {
-    const res = await request.transfer.getTokenNetworkRelation({ params });
+    const res = await request.transfer.getTokenNetworkRelation({
+      params,
+      headers: {
+        Authorization: authToken || '',
+      },
+    });
     return res.data;
   } catch (error) {
     throw formatApiError(error, 'getTokenNetworkRelation error', false);
