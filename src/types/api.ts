@@ -613,6 +613,7 @@ export enum ApplicationChainStatusEnum {
   Rejected = 'Rejected',
   Reviewed = 'Reviewed',
   PoolInitializing = 'PoolInitializing',
+  PoolInitialized = 'PoolInitialized',
   Integrating = 'Integrating',
   Complete = 'Complete',
   Failed = 'Failed',

@@ -19,6 +19,7 @@ export default function EVMWallet() {
     sendTransaction,
     getBalance,
     createToken,
+    getTransactionReceipt,
   } = useEVM();
 
   const onConnectEVM = useCallback(
@@ -76,6 +77,18 @@ export default function EVMWallet() {
     }
   }, [createToken]);
 
+  const onGetTransactionResult = useCallback(async () => {
+    try {
+      const data = await getTransactionReceipt({
+        txHash: '0x909b859dc9198f95364f662b2637e4f66d7c4569a2402b427f66c211df2f41c9',
+      });
+      // isSuccess: data.status === 'success'
+      console.log('>>>>>> EVM onGetTransactionResult data', data);
+    } catch (error) {
+      console.log('>>>>>> EVM onGetTransactionResult error', error);
+    }
+  }, [getTransactionReceipt]);
+
   return (
     <div>
       {!isConnected ? (
@@ -95,6 +108,7 @@ export default function EVMWallet() {
       <Button onClick={onSignMessage}>Sign Message</Button>
       <Button onClick={onSendTransaction}>Send Transaction</Button>
       <Button onClick={onCreateToken}>Create Token</Button>
+      <Button onClick={onGetTransactionResult}>Get Transaction Result</Button>
     </div>
   );
 }

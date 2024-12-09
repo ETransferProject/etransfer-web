@@ -10,7 +10,7 @@ import {
   useSwitchChain,
   useWriteContract,
 } from 'wagmi';
-import { getBalance } from '@wagmi/core';
+import { getBalance, getTransactionReceipt } from '@wagmi/core';
 import {
   EVM_CONTRACT_FUNCTION_NAME,
   EVM_CREATE_TOKEN_ABI,
@@ -21,7 +21,11 @@ import {
   TELEGRAM_EVM_WALLET_ALLOWANCE,
 } from 'constants/wallet/EVM';
 import { AuthTokenSource } from 'types/api';
-import { CreateTokenOnEVMParams, SendEVMTransactionParams } from 'types/wallet';
+import {
+  CreateTokenOnEVMParams,
+  GetTransactionOnEVM,
+  SendEVMTransactionParams,
+} from 'types/wallet';
 import { stringToHex } from 'utils/format';
 import { getEVMChainInfo } from 'utils/wallet/EVM';
 import { EVMProviderConfig } from 'provider/wallet/EVM';
@@ -159,6 +163,13 @@ export default function useEVM() {
     [writeContractAsync],
   );
 
+  const onCheckTransaction = useCallback(async ({ txHash }: GetTransactionOnEVM) => {
+    const res = await getTransactionReceipt(EVMProviderConfig, {
+      hash: txHash,
+    });
+    return res;
+  }, []);
+
   const evmContext = useMemo(() => {
     return {
       isConnected:
@@ -179,6 +190,7 @@ export default function useEVM() {
       signMessage,
       sendTransaction,
       createToken,
+      getTransactionReceipt: onCheckTransaction,
     };
   }, [
     isConnected,
@@ -191,6 +203,7 @@ export default function useEVM() {
     signMessage,
     sendTransaction,
     createToken,
+    onCheckTransaction,
   ]);
 
   return evmContext;

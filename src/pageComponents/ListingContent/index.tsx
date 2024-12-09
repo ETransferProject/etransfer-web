@@ -84,11 +84,9 @@ export default function ListingContent() {
         // TODO props
         return <CoboCustodyReview networks={[]} />;
       case ListingStep.INITIALIZE_LIQUIDITY_POOL:
-        // TODO props
         return (
           <InitializeLiquidityPool
-            id={''}
-            symbol={''}
+            symbol={symbol}
             onNext={() => setCurrentStep(ListingStep.COMPLETE)}
           />
         );

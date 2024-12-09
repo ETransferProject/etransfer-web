@@ -8,23 +8,23 @@ import { VIEW_PROGRESS } from 'constants/listing';
 import { openWithBlank } from 'utils/common';
 import { CONTACT_US_FORM_URL } from 'constants/index';
 
-export default function CoboCustodyReview({ networks }: { networks: { network: string }[] }) {
+export default function CoboCustodyReview({ networks }: { networks: { name: string }[] }) {
   const router = useRouter();
 
   const networksString = useMemo(() => {
     let str = '';
     if (networks.length === 1) {
-      str = networks[0].network + ' network';
+      str = networks[0].name + ' network';
     } else if (networks.length === 2) {
-      str = networks[0].network + ' and ' + networks[1].network + ' networks';
+      str = networks[0].name + ' and ' + networks[1].name + ' networks';
     } else {
       networks?.forEach((item, index) => {
         if (index === networks.length - 1) {
-          str += 'and ' + item.network + ' networks';
+          str += 'and ' + item.name + ' networks';
         } else if (index === networks.length - 2) {
-          str += item.network + ' ';
+          str += item.name + ' ';
         } else {
-          str += item.network + ', ';
+          str += item.name + ', ';
         }
       });
     }

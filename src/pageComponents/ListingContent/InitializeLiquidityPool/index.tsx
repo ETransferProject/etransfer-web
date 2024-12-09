@@ -11,30 +11,44 @@ import clsx from 'clsx';
 import { openWithBlank, viewTokenAddressInExplore } from 'utils/common';
 import { CONTACT_US_FORM_URL } from 'constants/index';
 import { getApplicationDetail } from 'utils/api/application';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffectOnce } from 'react-use';
-import { TApplicationDetailItemChainTokenInfo } from 'types/api';
+import { ApplicationChainStatusEnum, TApplicationDetailItemChainTokenInfo } from 'types/api';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import myEvents from 'utils/myEvent';
 import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
-import { sleep } from '@etransfer/utils';
+import { sleep, ZERO } from '@etransfer/utils';
 import { useLoading } from 'store/Provider/hooks';
 import useAelf, { useAelfLogin, useShowLoginButtonLoading } from 'hooks/wallet/useAelf';
 import { CONNECT_AELF_WALLET } from 'constants/wallet';
 import EmptyDataBox from 'pageComponents/EmptyDataBox';
-import { WALLET_CONNECTION_REQUIRED } from 'constants/listing';
+import {
+  LISTING_STEP_PATHNAME_MAP,
+  ListingStep,
+  WALLET_CONNECTION_REQUIRED,
+} from 'constants/listing';
+import PartialLoading from 'components/PartialLoading';
+import CommonSpace from 'components/CommonSpace';
 
 export interface InitializeLiquidityPoolProps {
-  id: string;
-  symbol: string;
+  id?: string;
+  symbol?: string;
   onNext?: () => void;
 }
+
+const AlreadyPoolInitializedStatus = [
+  ApplicationChainStatusEnum.Complete,
+  ApplicationChainStatusEnum.Failed,
+  ApplicationChainStatusEnum.Integrating,
+  ApplicationChainStatusEnum.PoolInitialized,
+];
 
 export default function InitializeLiquidityPool({
   id,
   symbol,
   onNext,
 }: InitializeLiquidityPoolProps) {
+  const router = useRouter();
   const { setLoading } = useLoading();
   const { isConnected } = useAelf();
   const handleAelfLogin = useAelfLogin();
@@ -76,6 +90,19 @@ export default function InitializeLiquidityPool({
     viewTokenAddressInExplore(network, symbol as TChainId, address);
   }, []);
 
+  const checkIsInitCompleted = useCallback(
+    (status: ApplicationChainStatusEnum, balanceAmount: string, minAmount: string) => {
+      if (
+        ZERO.plus(balanceAmount).gte(minAmount) ||
+        AlreadyPoolInitializedStatus.includes(status)
+      ) {
+        return true;
+      }
+      return false;
+    },
+    [],
+  );
+
   const renderList = useMemo(() => {
     return (
       <div>
@@ -89,13 +116,15 @@ export default function InitializeLiquidityPool({
                   <NetworkLogo network={item.chainId} />
                   <span className={styles['network-name']}>{item.chainName}</span>
                 </div>
-                {item.balanceAmount === item.minAmount ? (
+                {checkIsInitCompleted(item.status, item.balanceAmount, item.minAmount) ? (
                   <div className={'flex-row-center gap-8'}>
                     <CheckFilled16 />
                     <span>Token pool initialization completed</span>
                   </div>
                 ) : (
                   <div className={clsx('flex-row-center', styles['amount-rate'])}>
+                    <PartialLoading />
+                    <CommonSpace direction="horizontal" size={8} />
                     <span>Received&nbsp;</span>
                     <span className={styles['balance-amount']}>
                       {item.balanceAmount}&nbsp;{formatSymbolDisplay(item.symbol)}
@@ -133,7 +162,7 @@ export default function InitializeLiquidityPool({
         })}
       </div>
     );
-  }, [handleGoExplore, tokenPoolList]);
+  }, [checkIsInitCompleted, handleGoExplore, tokenPoolList]);
 
   const getData = useCallback(
     async (id: string, symbol: string) => {
@@ -176,7 +205,7 @@ export default function InitializeLiquidityPool({
   const routeQuery = useMemo(
     () => ({
       id: searchParams.get('id'),
-      tokenSymbol: searchParams.get('tokenSymbol'),
+      tokenSymbol: searchParams.get('symbol'),
     }),
     [searchParams],
   );
@@ -186,8 +215,18 @@ export default function InitializeLiquidityPool({
       await getData(routeQuery.id, routeQuery.tokenSymbol);
     } else if (id && symbol) {
       await getData(id, symbol);
+    } else {
+      if (routeQuery.tokenSymbol || symbol) {
+        router.push(
+          `/listing/${LISTING_STEP_PATHNAME_MAP[ListingStep.TOKEN_INFORMATION]}?symbol=${
+            routeQuery.tokenSymbol || symbol
+          }`,
+        );
+      } else {
+        router.push(`/listing/${LISTING_STEP_PATHNAME_MAP[ListingStep.TOKEN_INFORMATION]}`);
+      }
     }
-  }, [getData, id, routeQuery.id, routeQuery.tokenSymbol, symbol]);
+  }, [getData, id, routeQuery.id, routeQuery.tokenSymbol, router, symbol]);
   const initRef = useRef(init);
   initRef.current = init;
 
@@ -213,7 +252,7 @@ export default function InitializeLiquidityPool({
         clearInterval(updateDataTimerRef.current);
       }
     };
-  }, [init]);
+  }, [checkIsInitCompleted, init]);
 
   const initForLogout = useCallback(async () => {
     if (updateDataTimerRef.current) {
@@ -267,7 +306,7 @@ export default function InitializeLiquidityPool({
           <EmptyDataBox emptyText={WALLET_CONNECTION_REQUIRED} />
           <CommonButton
             className={styles['submit-button']}
-            onClick={() => handleAelfLogin()}
+            onClick={() => handleAelfLogin(true)}
             loading={isLoginButtonLoading}
             size={CommonButtonSize.Small}>
             {CONNECT_AELF_WALLET}

@@ -98,16 +98,20 @@ export const FOOTER_CONFIG: TFooterConfig = {
       ],
     },
     {
-      group: 'Contacts',
+      group: 'Contact Us',
       icon: ContactsIcon,
       items: [
+        // {
+        //   name: 'Emails',
+        //   link: 'mailto:contact@etransfer.exchange',
+        // },
+        // {
+        //   name: 'Support',
+        //   link: 'https://t.me/etransfer_support',
+        // },
         {
-          name: 'Emails',
-          link: 'mailto:contact@etransfer.exchange',
-        },
-        {
-          name: 'Support',
-          link: 'https://t.me/etransfer_support',
+          name: 'Contact Form',
+          link: 'https://form.etransfer.exchange/contact',
         },
       ],
     },

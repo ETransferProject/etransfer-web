@@ -82,3 +82,7 @@ export interface CreateTokenOnEVMParams {
   symbol: string;
   initialSupply: number;
 }
+
+export interface GetTransactionOnEVM {
+  txHash: `0x${string}`;
+}

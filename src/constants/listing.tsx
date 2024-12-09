@@ -84,6 +84,15 @@ export const LISTING_FORM_PROMPT_CONTENT_MAP: Partial<Record<ListingStep, React.
   ),
 };
 
+export enum ListingProcessStep {
+  SUBMIT_TOKEN_INFO = 0,
+  ISSUE_TOKEN = 1,
+  COBO_CUSTODY_REVIEW = 2,
+  INITIALIZE_LIQUIDITY_POOL = 3,
+  CROSS_CHAIN_INTEGRATION = 4,
+  COMPLETE = 5,
+}
+
 export const VIEW_COBO_CUSTODY_PROGRESS: ICommonStepsProps['stepItems'] = [
   {
     title: 'Submit token info',

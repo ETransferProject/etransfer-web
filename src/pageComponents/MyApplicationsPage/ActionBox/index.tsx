@@ -79,6 +79,7 @@ export default function ActionBox({
       setLoading(true);
       const res = await addApplicationChain({
         symbol,
+        otherChainIds: [chainId],
       });
       const chainList = res.chainList || [];
       const otherChainList = res.otherChainList || [];
@@ -135,6 +136,7 @@ export default function ActionBox({
       </div>
       <ViewProgress
         open={openViewProgress}
+        status={status}
         tokenSymbol={symbol}
         tokenIcon={tokenIcon}
         chainName={chainName}

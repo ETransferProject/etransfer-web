@@ -100,7 +100,7 @@ export default function MyApplicationsPage() {
 
   const initForReLogin = useCallback(async () => {
     getApplicationData({ skip: 0, max: 10 });
-  }, []);
+  }, [getApplicationData]);
   const initForReLoginRef = useRef(initForReLogin);
   initForReLoginRef.current = initForReLogin;
 

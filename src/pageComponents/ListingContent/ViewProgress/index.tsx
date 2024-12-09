@@ -5,17 +5,19 @@ import { useMemo } from 'react';
 import DisplayImage from 'components/DisplayImage';
 import { formatSymbolDisplay } from '@etransfer/ui-react';
 import CommonSteps from 'components/CommonSteps';
-import { VIEW_COBO_CUSTODY_PROGRESS } from 'constants/listing';
+import { ListingProcessStep, VIEW_COBO_CUSTODY_PROGRESS } from 'constants/listing';
 import { GOT_IT } from 'constants/misc';
 import CommonDrawer from 'components/CommonDrawer';
 import { useCommonState } from 'store/Provider/hooks';
 import CommonButton from 'components/CommonButton';
+import { ApplicationChainStatusEnum } from 'types/api';
 
 const ViewProgressTitle = 'View Progress';
 
 export default function ViewProgress({
   className,
   open = false,
+  status,
   tokenSymbol,
   tokenIcon,
   chainName,
@@ -24,6 +26,7 @@ export default function ViewProgress({
 }: {
   className?: string;
   open?: boolean;
+  status: ApplicationChainStatusEnum;
   tokenSymbol: string;
   tokenIcon?: string;
   chainName: string;
@@ -32,11 +35,21 @@ export default function ViewProgress({
 }) {
   const { isPadPX } = useCommonState();
 
-  // const currentStep = useMemo(() => {
-  //   if (status === ApplicationChainStatusEnum.Reviewing) {
-  //     return 2;
-  //   }
-  // }, []);
+  const currentStep = useMemo(() => {
+    if (status === ApplicationChainStatusEnum.Issuing) {
+      return ListingProcessStep.ISSUE_TOKEN;
+    }
+    if (status === ApplicationChainStatusEnum.Reviewing) {
+      return ListingProcessStep.COBO_CUSTODY_REVIEW;
+    }
+    if (status === ApplicationChainStatusEnum.Integrating) {
+      return ListingProcessStep.CROSS_CHAIN_INTEGRATION;
+    }
+    if (status === ApplicationChainStatusEnum.PoolInitializing) {
+      return ListingProcessStep.INITIALIZE_LIQUIDITY_POOL;
+    }
+    return ListingProcessStep.COMPLETE;
+  }, [status]);
 
   const content = useMemo(() => {
     return (
@@ -52,13 +65,13 @@ export default function ViewProgress({
           <CommonSteps
             className={styles['view-progress-steps']}
             stepItems={VIEW_COBO_CUSTODY_PROGRESS}
-            current={2}
+            current={currentStep}
             direction={'vertical'}
           />
         </div>
       </div>
     );
-  }, [chainName, tokenIcon, tokenSymbol]);
+  }, [chainName, currentStep, tokenIcon, tokenSymbol]);
 
   if (isPadPX) {
     return (
