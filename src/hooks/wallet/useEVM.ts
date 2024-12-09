@@ -13,6 +13,8 @@ import {
 import { getBalance } from '@wagmi/core';
 import {
   EVM_CONTRACT_FUNCTION_NAME,
+  EVM_CREATE_TOKEN_ABI,
+  EVM_TOKEN_ABI,
   EVM_WALLET_ALLOWANCE,
   MOBILE_EVM_WALLET_ALLOWANCE,
   PORTKEY_EVM_WALLET_ALLOWANCE,
@@ -104,7 +106,7 @@ export default function useEVM() {
       network,
       tokenContractAddress,
       toAddress,
-      tokenAbi,
+      tokenAbi = EVM_TOKEN_ABI,
       amount,
       decimals,
     }: SendEVMTransactionParams) => {
@@ -138,7 +140,7 @@ export default function useEVM() {
     async ({
       network,
       contractAddress,
-      contractAbi,
+      contractAbi = EVM_CREATE_TOKEN_ABI,
       name,
       symbol,
       initialSupply,

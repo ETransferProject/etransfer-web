@@ -1,11 +1,7 @@
 import { Button } from 'antd';
 import { useCallback } from 'react';
 import useEVM from 'hooks/wallet/useEVM';
-import {
-  EVM_CREATE_TOKEN_ABI,
-  EVM_CREATE_TOKEN_CONTRACT_ADDRESS,
-  EVM_TOKEN_ABI,
-} from 'constants/wallet/EVM';
+import { EVM_CREATE_TOKEN_CONTRACT_ADDRESS } from 'constants/wallet/EVM';
 import { BlockchainNetworkType } from 'constants/network';
 
 const EVM_TO_ADDRESS = '0x08915f275100dfEc26f63624EEACdD41E4040CC0';
@@ -55,7 +51,6 @@ export default function EVMWallet() {
         network: 'SETH',
         tokenContractAddress: EVM_USDT_CONTRACT_ADDRESS_SEPOLIA,
         toAddress: EVM_TO_ADDRESS,
-        tokenAbi: EVM_TOKEN_ABI,
         amount: '0.02',
         decimals: 6,
       });
@@ -70,7 +65,6 @@ export default function EVMWallet() {
       const data = await createToken({
         network: BlockchainNetworkType.SETH,
         contractAddress: EVM_CREATE_TOKEN_CONTRACT_ADDRESS[BlockchainNetworkType.SETH],
-        contractAbi: EVM_CREATE_TOKEN_ABI,
         name: 'Tether USD AU',
         symbol: 'USDT AU',
         initialSupply: 600,
