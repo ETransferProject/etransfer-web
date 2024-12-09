@@ -15,6 +15,7 @@ interface IConnectWalletAndAddressProps {
   account?: string;
   connector?: any;
   isConnectAelfDirectly?: boolean;
+  isGetAuthAfterConnect?: boolean;
 }
 
 export default function ConnectWalletAndAddress({
@@ -24,6 +25,7 @@ export default function ConnectWalletAndAddress({
   account,
   connector,
   isConnectAelfDirectly = false,
+  isGetAuthAfterConnect = false,
 }: IConnectWalletAndAddressProps) {
   const accounts = useGetAelfAccount();
   const handleAelfLogin = useAelfLogin();
@@ -45,20 +47,16 @@ export default function ConnectWalletAndAddress({
     setOpenConnectWalletModal(true);
   }, []);
 
-  const handleAelfConnectedCallback = useCallback(() => {
-    // TODO auth
-  }, []);
-
   const handleConnectWallet = useCallback(async () => {
     if (!walletType) return;
 
     if (isConnectAelfDirectly) {
-      handleAelfLogin(false, handleAelfConnectedCallback);
+      handleAelfLogin(isGetAuthAfterConnect);
     } else {
       setWalletAllowList([walletType]);
       setOpenConnectWalletModal(true);
     }
-  }, [handleAelfConnectedCallback, handleAelfLogin, isConnectAelfDirectly, walletType]);
+  }, [handleAelfLogin, isConnectAelfDirectly, isGetAuthAfterConnect, walletType]);
 
   return (
     <>

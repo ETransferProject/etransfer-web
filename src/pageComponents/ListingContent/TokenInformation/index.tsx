@@ -321,6 +321,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
                 isConnected={isConnected}
                 connector={connector}
                 isConnectAelfDirectly={true}
+                isGetAuthAfterConnect={true}
               />
             </div>
           }>
