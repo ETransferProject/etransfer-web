@@ -217,6 +217,7 @@ export default function WithdrawFooter({
         const managerAddress = await getManagerAddressByWallet(walletInfo as WalletInfo, connector);
         const ownerAddress = accounts?.[currentChainItem.key] || '';
         const transaction = await createTransferTokenTransaction({
+          walletInfo,
           walletType: connector,
           caContractAddress: ADDRESS_MAP[currentChainItem.key][ContractType.CA],
           eTransferContractAddress: currentTokenAddress,
@@ -250,7 +251,22 @@ export default function WithdrawFooter({
     } finally {
       setIsDoubleCheckModalOpen(false);
     }
-  }, [balance, currentSymbol, currentTokenAddress, handleApproveToken, receiveAmount, setLoading]);
+  }, [
+    accounts,
+    address,
+    balance,
+    connector,
+    currentChainItem.key,
+    currentSymbol,
+    currentTokenAddress,
+    currentTokenDecimal,
+    handleApproveToken,
+    handleCreateWithdrawOrder,
+    memo,
+    setLoading,
+    signMessage,
+    walletInfo,
+  ]);
 
   const onSubmit = useCallback(() => {
     if (!currentNetwork) return;
