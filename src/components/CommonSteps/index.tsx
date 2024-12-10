@@ -1,12 +1,13 @@
+import { useMemo } from 'react';
 import clsx from 'clsx';
 import { Steps, StepsProps } from 'antd';
 import PartialLoading from 'components/PartialLoading';
 import { useCommonState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
-import { useMemo } from 'react';
 
 export interface ICommonStepsProps extends Omit<StepsProps, 'labelPlacement' | 'size' | 'items'> {
   stepItems: (Required<StepsProps>['items'][number] & { isLoading?: boolean })[];
+  hideLine?: boolean;
 }
 
 export default function CommonSteps({
@@ -14,6 +15,7 @@ export default function CommonSteps({
   stepItems,
   current,
   direction,
+  hideLine = false,
   ...props
 }: ICommonStepsProps) {
   const { isPadPX } = useCommonState();
@@ -29,12 +31,9 @@ export default function CommonSteps({
       : styles['common-steps-horizontal'];
   }, [stepDirection]);
 
-  const stepItemsWithIcon = stepItems?.map((item, index) => ({
+  const stepItemsWithIcon = stepItems?.map(({ isLoading, ...item }) => ({
     ...item,
-    icon:
-      current === index && item.isLoading ? (
-        <PartialLoading className={styles['common-steps-loading']} />
-      ) : undefined,
+    icon: isLoading ? <PartialLoading className={styles['common-steps-loading']} /> : undefined,
   }));
 
   return (
@@ -44,6 +43,7 @@ export default function CommonSteps({
         stepDirectionClassName,
         styles['common-steps'],
         styles['common-steps-weight'],
+        hideLine && styles['common-steps-hide-line'],
         className,
       )}
       direction={stepDirection}

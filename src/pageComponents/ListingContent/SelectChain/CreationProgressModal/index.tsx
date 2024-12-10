@@ -5,26 +5,33 @@ import CommonSteps, { ICommonStepsProps } from 'components/CommonSteps';
 import Remind, { RemindType } from 'components/Remind';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
 import { useCommonState } from 'store/Provider/hooks';
+import { useGetAllConnectedWalletAccount } from 'hooks/wallet';
+import useEVM from 'hooks/wallet/useEVM';
+import { getApplicationIssue, prepareBindIssue } from 'utils/api/application';
+import { computeWalletType, getWalletSourceType } from 'utils/wallet';
 import {
   ApplicationChainStatusEnum,
   TApplicationChainStatusItem,
   TPrepareBindIssueRequest,
 } from 'types/api';
-import { SelectChainFormKeys, TChains } from 'types/listing';
+import { EVM_CREATE_TOKEN_CONTRACT_ADDRESS } from 'constants/wallet/EVM';
 import styles from './styles.module.scss';
-import { getApplicationIssue, prepareBindIssue } from 'utils/api/application';
 
 export interface ICreationProgressModalProps {
   open: boolean;
-  chains: TChains;
+  chains: TApplicationChainStatusItem[];
   supply: string;
-  handleTryAgain: (errorChains: TChains) => void;
   handleCreateFinish: () => void;
 }
 
+type TTxHash = `0x${string}`;
+
+type TChainItem = TApplicationChainStatusItem & {
+  txHash?: TTxHash;
+};
+
 type TStepItem = ICommonStepsProps['stepItems'][number] & {
-  key: keyof TChains;
-  chain: TApplicationChainStatusItem;
+  chain: TChainItem;
 };
 
 const POLLING_INTERVAL = 15000;
@@ -33,13 +40,17 @@ export default function CreationProgressModal({
   open,
   chains,
   supply,
-  handleTryAgain,
   handleCreateFinish,
 }: ICreationProgressModalProps) {
+  const getAllConnectedWalletAccount = useGetAllConnectedWalletAccount();
+  const { accountListWithWalletType } = getAllConnectedWalletAccount();
+  const { createToken, getTransactionReceipt } = useEVM();
   const { isPadPX } = useCommonState();
-  const poolingTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const poolingTimerForTransactionResultRef = useRef<NodeJS.Timeout | null>(null);
+  const poolingTimerForIssueResultRef = useRef<NodeJS.Timeout | null>(null);
 
   const [isCreateStart, setIsCreateStart] = useState(false);
+  const [isPollingStart, setIsPollingStart] = useState(false);
   const [stepItems, setStepItems] = useState<TStepItem[]>([]);
 
   const isWarning = useMemo(() => {
@@ -55,56 +66,26 @@ export default function CreationProgressModal({
     return stepItems.every((item) => item.status === 'finish');
   }, [stepItems]);
 
-  const errorChains = useMemo(() => {
-    const result: TChains = {
-      [SelectChainFormKeys.AELF_CHAINS]: [],
-      [SelectChainFormKeys.OTHER_CHAINS]: [],
-    };
-    stepItems.forEach(({ key, chain, status }) => {
-      if (status === 'error') {
-        result[key].push(chain);
-      }
-    });
-    return result;
-  }, [stepItems]);
-
-  const getCurrentChain = useCallback(() => {
-    if (stepItems.length === 0) {
-      return 0;
-    }
-    const processIndex = stepItems.findIndex((item) => item.status === 'process');
-    if (processIndex === -1) {
-      return stepItems.length - 1;
-    }
-    return processIndex;
-  }, [stepItems]);
-
   useEffect(() => {
-    const list: TStepItem[] = [];
-    (Object.entries(chains) as [keyof TChains, TApplicationChainStatusItem[]][]).forEach(
-      ([key, chainsItem]) => {
-        chainsItem.forEach((chain) => {
-          list.push({
-            key,
-            chain,
-            title: `Creating token on ${chain.chainId}`,
-          });
-        });
-      },
-    );
-    list.forEach((item, index) => {
-      if (index === 0) {
-        item.status = 'process';
-        item.isLoading = true;
-      } else {
-        item.status = 'wait';
-      }
+    const list: TStepItem[] = chains.map((chain) => ({
+      chain,
+      title: `Creating token on ${chain.chainName}`,
+    }));
+    list.forEach((item) => {
+      item.status = 'process';
+      item.isLoading = true;
     });
     setStepItems(list);
   }, [open, chains]);
 
   useEffect(() => {
-    if (open && isCreateStart && isCreateFinished) {
+    if (open) {
+      setIsCreateStart(true);
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (open && !isCreateStart && isCreateFinished) {
       handleCreateFinish();
     }
   }, [open, isCreateStart, isCreateFinished, handleCreateFinish]);
@@ -112,130 +93,215 @@ export default function CreationProgressModal({
   useEffect(() => {
     if (!open) {
       setIsCreateStart(false);
+      setIsPollingStart(false);
     }
   }, [open]);
 
-  const handleStepChange = useCallback(
-    (step: number, status: ICommonStepsProps['stepItems'][number]['status']) => {
+  const handleStepItemChange = useCallback(
+    ({
+      step,
+      status,
+      issuedId,
+      txHash,
+    }: {
+      step: number;
+      status?: ICommonStepsProps['stepItems'][number]['status'];
+      issuedId?: string;
+      txHash?: TTxHash;
+    }) => {
       setStepItems((prev) => {
-        prev[step].status = status;
-        prev[step].isLoading = false;
-        const nextStep = step + 1;
-        if (nextStep < prev.length) {
-          prev[nextStep].status = 'process';
-          prev[nextStep].isLoading = true;
+        const newStepItems = prev.map((item) => ({ ...item, chain: { ...item.chain } }));
+        if (status) {
+          newStepItems[step].status = status;
+          newStepItems[step].isLoading = status === 'process';
         }
-        return [...prev];
+        if (issuedId) {
+          newStepItems[step].chain.issuedId = issuedId;
+        }
+        if (txHash) {
+          newStepItems[step].chain.txHash = txHash;
+        }
+        return newStepItems;
       });
     },
     [],
   );
 
   const handlePrepareBindIssue = useCallback(
-    async ({ key, chain }: { key: keyof TChains; chain: TApplicationChainStatusItem }) => {
+    async (chain: TChainItem) => {
       try {
-        // TODO: params
-        const params: TPrepareBindIssueRequest = {
-          address: '',
-          symbol: chain.symbol,
-          supply,
-          chainId: '',
-          otherChainId: '',
-        };
-        if (key === SelectChainFormKeys.AELF_CHAINS) {
-          params.chainId = chain.chainId;
-          delete params.otherChainId;
-        } else {
-          params.otherChainId = chain.chainId;
-          // delete params.chainId;
+        const walletType = computeWalletType(chain.chainId);
+        if (!walletType) {
+          throw new Error('No wallet type found');
         }
+        const sourceType = getWalletSourceType(walletType);
+        const address = accountListWithWalletType.find(
+          (item) => item.SourceType === sourceType,
+        )?.Address;
+        if (!address) {
+          throw new Error('No address found');
+        }
+        const params: TPrepareBindIssueRequest = {
+          address,
+          symbol: chain.symbol,
+          // TODO: chainId
+          chainId: 'AELF',
+          otherChainId: chain.chainId,
+          supply,
+        };
         const id = await prepareBindIssue(params);
+        if (!id) {
+          throw new Error('Failed to prepare bind issue');
+        }
         return id;
       } catch (error) {
         console.error(error);
         throw error;
       }
     },
-    [supply],
+    [accountListWithWalletType, supply],
   );
 
   const handleIssue = useCallback(
-    // eslint-disable-next-line no-empty-pattern
-    async ({}: { key: keyof TChains; chain: TApplicationChainStatusItem }) => {
+    async ({ chain }: { chain: TChainItem }) => {
       try {
-        // TODO: issue token
+        const txHash = await createToken({
+          network: chain.chainId,
+          // Currently only supports evm
+          contractAddress: EVM_CREATE_TOKEN_CONTRACT_ADDRESS[chain.chainId],
+          name: chain.tokenName,
+          symbol: chain.symbol,
+          initialSupply: Number(supply),
+        });
+        if (!txHash) {
+          throw new Error('Failed to create token');
+        }
+        return txHash;
       } catch (error) {
         console.error(error);
         throw error;
       }
     },
-    [],
+    [createToken, supply],
   );
 
-  const handlePollingForIssueResult = useCallback(
-    async ({ step, id }: { step: number; id: string }) => {
+  const handlePollingForTransactionResult = useCallback(
+    async (txHash?: TTxHash) => {
+      if (!txHash) {
+        return;
+      }
       try {
-        const isFinished = await getApplicationIssue(id);
-        if (isFinished) {
-          handleStepChange(step, 'finish');
-        } else {
-          if (poolingTimerRef.current) {
-            clearTimeout(poolingTimerRef.current);
+        const data = await getTransactionReceipt({ txHash });
+        if (data?.status !== 'success') {
+          if (poolingTimerForTransactionResultRef.current) {
+            clearTimeout(poolingTimerForTransactionResultRef.current);
           }
-          poolingTimerRef.current = setTimeout(() => {
-            handlePollingForIssueResult({ step, id });
+          poolingTimerForTransactionResultRef.current = setTimeout(async () => {
+            await handlePollingForTransactionResult(txHash);
           }, POLLING_INTERVAL);
         }
       } catch (error) {
         console.error(error);
-        if (poolingTimerRef.current) {
-          clearTimeout(poolingTimerRef.current);
-        }
         throw error;
       }
     },
-    [handleStepChange],
+    [getTransactionReceipt],
   );
 
-  const handleCreate = useCallback(async () => {
-    const currentStep = getCurrentChain();
-    const currentKey = stepItems[currentStep].key;
-    const currentChain = stepItems[currentStep].chain;
+  const handlePollingForIssueResult = useCallback(async (id?: string) => {
+    if (!id) {
+      return;
+    }
     try {
-      if (currentChain.status === ApplicationChainStatusEnum.Unissued) {
-        const id = await handlePrepareBindIssue({
-          key: currentKey,
-          chain: currentChain,
-        });
-        await handleIssue({ key: currentKey, chain: currentChain });
-        await handlePollingForIssueResult({ step: currentStep, id });
-      } else if (currentChain.status === ApplicationChainStatusEnum.Issuing) {
-        // TODO: polling id
-        await handlePollingForIssueResult({ step: currentStep, id: '' });
+      const isFinished = await getApplicationIssue(id);
+      if (!isFinished) {
+        if (poolingTimerForIssueResultRef.current) {
+          clearTimeout(poolingTimerForIssueResultRef.current);
+        }
+        poolingTimerForIssueResultRef.current = setTimeout(async () => {
+          await handlePollingForIssueResult(id);
+        }, POLLING_INTERVAL);
       }
     } catch (error) {
       console.error(error);
-      handleStepChange(currentStep, 'error');
+      throw error;
     }
+  }, []);
+
+  const handlePolling = useCallback(async () => {
+    await Promise.all(
+      stepItems.map(async (item, index) => {
+        if (item.status === 'error' || item.status === 'finish') {
+          return;
+        }
+        try {
+          await handlePollingForTransactionResult(item.chain.txHash);
+          await handlePollingForIssueResult(item.chain.issuedId);
+          handleStepItemChange({ step: index, status: 'finish' });
+        } catch (error) {
+          console.error(error);
+          handleStepItemChange({ step: index, status: 'error' });
+        }
+      }),
+    );
   }, [
-    getCurrentChain,
-    stepItems,
-    handlePrepareBindIssue,
-    handleIssue,
     handlePollingForIssueResult,
-    handleStepChange,
+    handlePollingForTransactionResult,
+    handleStepItemChange,
+    stepItems,
   ]);
 
+  const handleCreate = useCallback(async () => {
+    const create = async (step: number) => {
+      try {
+        const currentChain = stepItems[step].chain;
+        if (currentChain.status === ApplicationChainStatusEnum.Unissued) {
+          const issuedId = await handlePrepareBindIssue(currentChain);
+          const txHash = await handleIssue({ chain: currentChain });
+          handleStepItemChange({ step, issuedId, txHash });
+        }
+      } catch (error) {
+        console.error(error);
+        handleStepItemChange({ step, status: 'error' });
+      }
+    };
+
+    for (let index = 0; index < stepItems.length; index++) {
+      if (stepItems[index].status === 'finish') {
+        continue;
+      }
+      await create(index);
+    }
+    setIsPollingStart(true);
+  }, [stepItems, handlePrepareBindIssue, handleIssue, handleStepItemChange]);
+
   useEffect(() => {
-    if (open && !isCreateStart && stepItems.length > 0) {
-      setIsCreateStart(true);
+    if (open && isCreateStart && stepItems.length > 0) {
+      setIsCreateStart(false);
       handleCreate();
     }
-  }, [open, isCreateStart, handleCreate, stepItems.length]);
+  }, [handleCreate, isCreateStart, open, stepItems.length]);
 
-  const onTryAgainClick = useCallback(() => {
-    handleTryAgain(errorChains);
-  }, [errorChains, handleTryAgain]);
+  useEffect(() => {
+    if (isPollingStart) {
+      setIsPollingStart(false);
+      handlePolling();
+    }
+  }, [isPollingStart, handlePolling]);
+
+  const handleTryAgain = useCallback(() => {
+    setStepItems((prev) => {
+      const newStepItems = prev.map((item) => ({ ...item, chain: { ...item.chain } }));
+      newStepItems.forEach((item) => {
+        if (item.status === 'error') {
+          item.status = 'process';
+          item.isLoading = true;
+        }
+      });
+      return newStepItems;
+    });
+    setIsCreateStart(true);
+  }, []);
 
   const remindProps = useMemo(() => {
     if (isWarning) {
@@ -269,7 +335,7 @@ export default function CreationProgressModal({
 
   const steps: ICommonStepsProps['stepItems'] = useMemo(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    return stepItems.map(({ key, chain, ...rest }) => rest);
+    return stepItems.map(({ chain, ...rest }) => rest);
   }, [stepItems]);
 
   const renderContent = () => {
@@ -278,8 +344,8 @@ export default function CreationProgressModal({
         <CommonSteps
           className={styles['creation-progress-steps']}
           direction="vertical"
+          hideLine
           stepItems={steps}
-          current={getCurrentChain()}
         />
         <Remind {...remindProps} className={styles['creation-progress-remind']} />
         {isWarning && (
@@ -290,7 +356,7 @@ export default function CreationProgressModal({
               onClick={handleCreateFinish}>
               Skip
             </CommonButton>
-            <CommonButton className={styles['creation-progress-button']} onClick={onTryAgainClick}>
+            <CommonButton className={styles['creation-progress-button']} onClick={handleTryAgain}>
               Try again
             </CommonButton>
           </div>

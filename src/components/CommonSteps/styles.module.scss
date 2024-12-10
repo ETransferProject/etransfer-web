@@ -111,6 +111,18 @@
     }
   }
 
+  &.common-steps-hide-line {
+    :global {
+      .ant-steps-item {
+        .ant-steps-item-tail {
+          &::after {
+            background-color: transparent !important;
+          }
+        }
+      }
+    }
+  }
+
   &.common-steps-horizontal {
     :global {
       .ant-steps-item {

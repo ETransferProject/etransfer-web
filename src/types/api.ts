@@ -595,6 +595,7 @@ export type TGetApplicationChainStatusListResult = {
 
 export type TApplicationChainStatusItem = {
   chainId: string;
+  chainName: string;
   status: ApplicationChainStatusEnum;
   checked: boolean;
   totalSupply: number;
@@ -604,6 +605,7 @@ export type TApplicationChainStatusItem = {
   tokenName: string;
   icon: string;
   poolAddress: string;
+  issuedId?: string;
 };
 
 export enum ApplicationChainStatusEnum {

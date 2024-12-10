@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { Form, Checkbox, Row, Col, Input } from 'antd';
 import NetworkLogo from 'components/NetworkLogo';
@@ -20,6 +20,7 @@ import {
   TSelectChainFormValidateData,
   FormValidateStatus,
   TChains,
+  TSearchParams,
 } from 'types/listing';
 import { ApplicationChainStatusEnum, TApplicationChainStatusItem } from 'types/api';
 import {
@@ -36,7 +37,6 @@ import {
   REQUIRED_ERROR_MESSAGE,
   DEFAULT_CHAINS,
 } from 'constants/listing';
-import { QuestionMark16 } from 'assets/images';
 import { useCommonState } from 'store/Provider/hooks';
 import { useLoading } from 'store/Provider/hooks';
 import {
@@ -54,8 +54,8 @@ import { sleep } from '@etransfer/utils';
 
 interface ISelectChainProps {
   symbol?: string;
-  handleNextStep: () => void;
-  handlePrevStep: () => void;
+  handleNextStep: (params?: TSearchParams) => void;
+  handlePrevStep: (params?: TSearchParams) => void;
 }
 
 export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: ISelectChainProps) {
@@ -66,7 +66,6 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
   const setAelfAuthFromStorage = useSetAelfAuthFromStorage();
   const [form] = Form.useForm<TSelectChainFormValues>();
   const tooltipSwitchModalRef = useRef<ICommonTooltipSwitchModalRef>(null);
-  const tryAgainTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const [formData, setFormData] = useState(SELECT_CHAIN_FORM_INITIAL_VALUES);
   const [formValidateData, setFormValidateData] = useState(SELECT_CHAIN_FORM_INITIAL_VALIDATE_DATA);
@@ -75,13 +74,27 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     Pick<ICreationProgressModalProps, 'open' | 'chains'>
   >({
     open: false,
-    chains: DEFAULT_CHAINS,
+    chains: [],
   });
   const [token, setToken] = useState<TTokenItem | undefined>();
   const [isShowInitialSupplyFormItem, setIsShowInitialSupplyFormItem] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
+  const reset = useCallback(() => {
+    setFormData(SELECT_CHAIN_FORM_INITIAL_VALUES);
+    setFormValidateData(SELECT_CHAIN_FORM_INITIAL_VALIDATE_DATA);
+    setChainListData(DEFAULT_CHAINS);
+    setCreationProgressModalProps({
+      open: false,
+      chains: [],
+    });
+    setToken(undefined);
+    setIsShowInitialSupplyFormItem(false);
+    setIsButtonDisabled(true);
+  }, []);
+
   const getToken = useCallback(async () => {
+    if (!symbol) return;
     try {
       const res = await getApplicationTokenList();
       const list = (res.tokenList || []).map((item) => ({
@@ -111,11 +124,6 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
       console.error(error);
     }
   }, [symbol]);
-
-  useEffect(() => {
-    getToken();
-    getChainList();
-  }, [getToken, getChainList]);
 
   const judgeIsChainDisabled = useCallback((status: ApplicationChainStatusEnum): boolean => {
     return SELECT_CHAIN_FORM_CHAIN_DISABLED_STATUS_LIST.includes(status);
@@ -371,16 +379,10 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
   const handleCreateToken = useCallback(() => {
     setCreationProgressModalProps({
       open: true,
-      chains: {
-        [SelectChainFormKeys.AELF_CHAINS]: [
-          ...unissuedChains[SelectChainFormKeys.AELF_CHAINS],
-          ...issuingChains[SelectChainFormKeys.AELF_CHAINS],
-        ],
-        [SelectChainFormKeys.OTHER_CHAINS]: [
-          ...unissuedChains[SelectChainFormKeys.OTHER_CHAINS],
-          ...issuingChains[SelectChainFormKeys.OTHER_CHAINS],
-        ],
-      },
+      chains: [
+        ...unissuedChains[SelectChainFormKeys.OTHER_CHAINS],
+        ...issuingChains[SelectChainFormKeys.OTHER_CHAINS],
+      ],
     });
   }, [issuingChains, unissuedChains]);
 
@@ -393,7 +395,14 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
         otherChainIds: formData[SelectChainFormKeys.OTHER_CHAINS].map((v) => v.chainId),
         symbol: token.symbol,
       });
-      handleNextStep();
+      const aelfNetworks = formData[SelectChainFormKeys.AELF_CHAINS].map((v) => ({
+        name: v.chainName,
+      }));
+      const otherNetworks = formData[SelectChainFormKeys.OTHER_CHAINS].map((v) => ({
+        name: v.chainName,
+      }));
+      const networks = [...aelfNetworks, ...otherNetworks];
+      handleNextStep({ networks: JSON.stringify(networks) });
     } catch (error) {
       console.error(error);
     } finally {
@@ -401,26 +410,10 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     }
   }, [formData, handleNextStep, setLoading, token?.symbol]);
 
-  const handleTryAgain = useCallback((errorChains: TChains) => {
-    setCreationProgressModalProps({
-      open: false,
-      chains: DEFAULT_CHAINS,
-    });
-    if (tryAgainTimerRef.current) {
-      clearTimeout(tryAgainTimerRef.current);
-    }
-    tryAgainTimerRef.current = setTimeout(() => {
-      setCreationProgressModalProps({
-        open: true,
-        chains: errorChains,
-      });
-    }, 100);
-  }, []);
-
   const handleCreateFinish = useCallback(async () => {
     setCreationProgressModalProps({
       open: false,
-      chains: DEFAULT_CHAINS,
+      chains: [],
     });
     await handleAddChain();
   }, [handleAddChain]);
@@ -467,22 +460,26 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
 
   const getCommonFormItemProps = (formKey: SelectChainFormKeys) => {
     return {
-      name: formKey,
       validateStatus: formValidateData[formKey].validateStatus,
       help: formValidateData[formKey].errorMessage,
     };
   };
+
+  const initActions = useCallback(async () => {
+    getToken();
+    getChainList();
+  }, [getChainList, getToken]);
 
   const init = useCallback(async () => {
     try {
       await setAelfAuthFromStorage();
       await sleep(500);
 
-      // TODO get data by api
+      await initActions();
     } catch (error) {
       console.log('SelectChain init', error);
     }
-  }, [setAelfAuthFromStorage]);
+  }, [initActions, setAelfAuthFromStorage]);
   const initRef = useRef(init);
   initRef.current = init;
 
@@ -495,14 +492,14 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
   });
 
   const initForLogout = useCallback(async () => {
-    // TODO
-  }, []);
+    reset();
+  }, [reset]);
   const initLogoutRef = useRef(initForLogout);
   initLogoutRef.current = initForLogout;
 
   const initForReLogin = useCallback(async () => {
-    // TODO
-  }, []);
+    await initActions();
+  }, [initActions]);
   const initForReLoginRef = useRef(initForReLogin);
   initForReLoginRef.current = initForReLogin;
 
@@ -526,16 +523,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     formKey: SelectChainFormKeys.AELF_CHAINS | SelectChainFormKeys.OTHER_CHAINS,
   ) => {
     return (
-      <Form.Item
-        {...getCommonFormItemProps(formKey)}
-        label={
-          <div className={styles['select-chain-chains-label-wrapper']}>
-            <span className={styles['select-chain-label']}>
-              {SELECT_CHAIN_FORM_LABEL_MAP[formKey]}
-            </span>
-            <QuestionMark16 />
-          </div>
-        }>
+      <Form.Item {...getCommonFormItemProps(formKey)} label={SELECT_CHAIN_FORM_LABEL_MAP[formKey]}>
         <Row gutter={[12, 8]}>
           {chainListData[formKey].map((chain) => {
             const isDisabled = judgeIsChainDisabled(chain.status);
@@ -551,7 +539,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
             ) {
               tooltip = SELECT_CHAIN_FORM_CHAIN_TOOLTIP_MAP.CREATED_NOT_LISTED.replace(
                 '{{chainName}}',
-                chain.chainId,
+                chain.chainName,
               );
             }
 
@@ -580,7 +568,9 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
                     }}>
                     <div className={styles['select-chain-checkbox-content']}>
                       <NetworkLogo network={chain.chainId} size="normal" />
-                      <span className={styles['select-chain-checkbox-label']}>{chain.chainId}</span>
+                      <span className={styles['select-chain-checkbox-label']}>
+                        {chain.chainName}
+                      </span>
                     </div>
                     <Checkbox value={chain.chainId} checked={checked} disabled={isDisabled} />
                   </div>
@@ -642,7 +632,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
           <CommonButton
             type={CommonButtonType.Secondary}
             size={CommonButtonSize.Small}
-            onClick={handlePrevStep}>
+            onClick={() => handlePrevStep({ symbol: token?.symbol })}>
             Back
           </CommonButton>
         </div>
@@ -650,7 +640,6 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
       <CreationProgressModal
         {...creationProgressModalProps}
         supply={formData[SelectChainFormKeys.INITIAL_SUPPLY]}
-        handleTryAgain={handleTryAgain}
         handleCreateFinish={handleCreateFinish}
       />
     </>

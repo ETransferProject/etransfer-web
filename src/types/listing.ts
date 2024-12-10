@@ -3,6 +3,7 @@ import { TApplicationChainStatusItem } from './api';
 export type TSearchParams = {
   symbol?: string;
   id?: string;
+  networks?: string;
 };
 
 export enum TokenInformationFormKeys {

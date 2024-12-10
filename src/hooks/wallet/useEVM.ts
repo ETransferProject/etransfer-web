@@ -151,6 +151,18 @@ export default function useEVM() {
     }: CreateTokenOnEVMParams) => {
       const chain = getEVMChainInfo(network);
       if (!chain) return '';
+      if (accountInfo.chainId !== chain.id && accountInfo.connector) {
+        try {
+          await switchChainAsync({ chainId: chain.id, connector: accountInfo.connector });
+        } catch (error) {
+          if (
+            handleErrorMessage(error).includes('rejected') ||
+            handleErrorMessage(error).includes('denied')
+          )
+            SingleMessage.error(handleErrorMessage(USER_REJECT_CONNECT_WALLET_TIP));
+          throw error;
+        }
+      }
       const data = await writeContractAsync({
         chainId: chain.id,
         address: contractAddress,
@@ -160,7 +172,7 @@ export default function useEVM() {
       });
       return data;
     },
-    [writeContractAsync],
+    [accountInfo.chainId, accountInfo.connector, switchChainAsync, writeContractAsync],
   );
 
   const onCheckTransaction = useCallback(async ({ txHash }: GetTransactionOnEVM) => {

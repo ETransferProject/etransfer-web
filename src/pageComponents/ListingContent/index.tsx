@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import queryString from 'query-string';
 import LinkForBlank from 'components/LinkForBlank';
 import CommonSteps from 'components/CommonSteps';
 import TokenInformation from './TokenInformation';
@@ -14,6 +13,7 @@ import { useInitAelfWallet } from 'hooks/wallet/useAelf';
 import CoboCustodyReview from './CoboCustodyReview';
 import ListingComplete from './ListingComplete';
 import InitializeLiquidityPool from './InitializeLiquidityPool';
+import { getListingUrl } from 'utils/listing';
 
 export default function ListingContent() {
   const { isPadPX, isMobilePX } = useCommonState();
@@ -21,6 +21,14 @@ export default function ListingContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const symbol = useMemo(() => searchParams.get('symbol') || undefined, [searchParams]);
+  const networks = useMemo(() => {
+    const str = searchParams.get('networks') || '';
+    try {
+      return str ? JSON.parse(str) : [];
+    } catch (error) {
+      return [];
+    }
+  }, [searchParams]);
 
   const [currentStep, setCurrentStep] = useState<ListingStep>(ListingStep.TOKEN_INFORMATION);
 
@@ -35,35 +43,18 @@ export default function ListingContent() {
     // TODO no 3 and 5 step
   }, [pathname]);
 
-  const getReplaceUrl = (step: ListingStep, params: TSearchParams) => {
-    let search;
-    switch (step) {
-      case ListingStep.TOKEN_INFORMATION:
-        search = queryString.stringify({
-          symbol: params.symbol,
-        });
-        break;
-      case ListingStep.SELECT_CHAIN:
-        search = queryString.stringify({
-          symbol: params.symbol,
-        });
-        break;
-    }
-    return `/listing${LISTING_STEP_PATHNAME_MAP[step]}${search ? '?' + search : ''}`;
-  };
-
-  const handleNextStep = () => {
+  const handleNextStep = (params?: TSearchParams) => {
     const nextStep = currentStep + 1;
     if (nextStep <= ListingStep.COMPLETE) {
-      const replaceUrl = getReplaceUrl(nextStep, { symbol });
+      const replaceUrl = getListingUrl(nextStep, params);
       router.replace(replaceUrl);
     }
   };
 
-  const handlePrevStep = () => {
+  const handlePrevStep = (params?: TSearchParams) => {
     const prevStep = currentStep - 1;
     if (prevStep >= ListingStep.TOKEN_INFORMATION) {
-      const replaceUrl = getReplaceUrl(prevStep, { symbol });
+      const replaceUrl = getListingUrl(prevStep, params);
       router.replace(replaceUrl);
     }
   };
@@ -81,8 +72,7 @@ export default function ListingContent() {
           />
         );
       case ListingStep.COBO_CUSTODY_REVIEW:
-        // TODO props
-        return <CoboCustodyReview networks={[]} />;
+        return <CoboCustodyReview networks={networks} />;
       case ListingStep.INITIALIZE_LIQUIDITY_POOL:
         return (
           <InitializeLiquidityPool

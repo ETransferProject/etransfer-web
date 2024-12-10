@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { Form, Input, InputProps } from 'antd';
+import { useRouter } from 'next/navigation';
 import ConnectWalletAndAddress from 'components/ConnectWalletAndAddress';
 import CommonButton, { CommonButtonSize } from 'components/CommonButton';
 import Remind from 'components/Remind';
@@ -12,6 +13,7 @@ import {
   TTokenInformationFormValidateData,
   FormValidateStatus,
   TTokenItem,
+  TSearchParams,
 } from 'types/listing';
 import {
   TOKEN_INFORMATION_FORM_LABEL_MAP,
@@ -36,10 +38,11 @@ import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
 import { sleep } from '@etransfer/utils';
 import { useEffectOnce } from 'react-use';
 import myEvents from 'utils/myEvent';
+import { getListingUrl } from 'utils/listing';
 
 interface ITokenInformationProps {
   symbol?: string;
-  handleNextStep: () => void;
+  handleNextStep: (params?: TSearchParams) => void;
 }
 
 export default function TokenInformation({ symbol, handleNextStep }: ITokenInformationProps) {
@@ -48,6 +51,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
   const handleAelfLogin = useAelfLogin();
   const setAelfAuthFromStorage = useSetAelfAuthFromStorage();
   const { setLoading } = useLoading();
+  const router = useRouter();
 
   const [formValues, setFormValues] = useState(TOKEN_INFORMATION_FORM_INITIAL_VALUES);
   const [formValidateData, setFormValidateData] = useState(
@@ -55,6 +59,13 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
   );
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [tokenList, setTokenList] = useState<TTokenItem[]>([]);
+
+  const reset = useCallback(() => {
+    setFormValues(TOKEN_INFORMATION_FORM_INITIAL_VALUES);
+    setFormValidateData(TOKEN_INFORMATION_FORM_INITIAL_VALIDATE_DATA);
+    setIsButtonDisabled(true);
+    setTokenList([]);
+  }, []);
 
   const getTokenList = useCallback(async () => {
     try {
@@ -76,31 +87,38 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
     }
   }, [setAelfAuthFromStorage]);
 
-  const init = useCallback(async () => {
-    setLoading(true);
-    const list = await getTokenList();
+  const getTokenInfo = useCallback(async (_symbol: string, _tokenList: TTokenItem[]) => {
     try {
-      if (symbol) {
-        const res = await getApplicationTokenInfo({ symbol });
-        const token = list.find((item) => item.symbol === res.symbol);
-        if (token) {
-          setFormValues({
-            [TokenInformationFormKeys.TOKEN]: token,
-            [TokenInformationFormKeys.OFFICIAL_WEBSITE]: res.officialWebsite,
-            [TokenInformationFormKeys.OFFICIAL_TWITTER]: res.officialTwitter,
-            [TokenInformationFormKeys.TITLE]: res.title,
-            [TokenInformationFormKeys.PERSON_NAME]: res.personName,
-            [TokenInformationFormKeys.TELEGRAM_HANDLER]: res.telegramHandler,
-            [TokenInformationFormKeys.EMAIL]: res.email,
-          });
-        }
+      const res = await getApplicationTokenInfo({ symbol: _symbol });
+      const token = _tokenList.find((item) => item.symbol === res.symbol);
+      if (token) {
+        setFormValues({
+          [TokenInformationFormKeys.TOKEN]: token,
+          [TokenInformationFormKeys.OFFICIAL_WEBSITE]: res.officialWebsite,
+          [TokenInformationFormKeys.OFFICIAL_TWITTER]: res.officialTwitter,
+          [TokenInformationFormKeys.TITLE]: res.title,
+          [TokenInformationFormKeys.PERSON_NAME]: res.personName,
+          [TokenInformationFormKeys.TELEGRAM_HANDLER]: res.telegramHandler,
+          [TokenInformationFormKeys.EMAIL]: res.email,
+        });
+        setFormValidateData((prev) => ({
+          ...TOKEN_INFORMATION_FORM_INITIAL_VALIDATE_DATA,
+          [TokenInformationFormKeys.TOKEN]: prev[TokenInformationFormKeys.TOKEN],
+        }));
       }
     } catch (error) {
       console.error(error);
-    } finally {
-      setLoading(false);
     }
-  }, [getTokenList, setLoading, symbol]);
+  }, []);
+
+  const init = useCallback(async () => {
+    setLoading(true);
+    const list = await getTokenList();
+    if (symbol) {
+      await getTokenInfo(symbol, list);
+    }
+    setLoading(false);
+  }, [getTokenInfo, getTokenList, setLoading, symbol]);
   const initRef = useRef(init);
   initRef.current = init;
 
@@ -156,7 +174,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
   );
 
   const handleSelectToken = useCallback(
-    (item: TTokenItem) => {
+    async (item: TTokenItem) => {
       if (!item.symbol) {
         handleFormDataChange({
           formKey: TokenInformationFormKeys.TOKEN,
@@ -167,6 +185,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
           },
         });
       } else {
+        setLoading(true);
         handleFormDataChange({
           formKey: TokenInformationFormKeys.TOKEN,
           value: item,
@@ -175,9 +194,12 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
             errorMessage: '',
           },
         });
+        router.replace(getListingUrl(ListingStep.TOKEN_INFORMATION, { symbol: item.symbol }));
+        await getTokenInfo(item.symbol, tokenList);
+        setLoading(false);
       }
     },
-    [handleFormDataChange],
+    [handleFormDataChange, router, setLoading, getTokenInfo, tokenList],
   );
 
   const handleCommonInputChange = useCallback(
@@ -254,7 +276,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
     try {
       const isSuccess = await commitTokenInfo(params);
       if (isSuccess) {
-        handleNextStep();
+        handleNextStep({ symbol: params.symbol });
       }
     } catch (error) {
       console.error(error);
@@ -264,7 +286,6 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
   };
 
   const getCommonFormItemProps = (key: TokenInformationFormKeys) => ({
-    name: key,
     validateStatus: formValidateData[key].validateStatus,
     help: formValidateData[key].errorMessage,
   });
@@ -278,14 +299,14 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
   });
 
   const initForLogout = useCallback(async () => {
-    // TODO
-  }, []);
+    reset();
+  }, [reset]);
   const initLogoutRef = useRef(initForLogout);
   initLogoutRef.current = initForLogout;
 
   const initForReLogin = useCallback(async () => {
-    // TODO
-  }, []);
+    await init();
+  }, [init]);
   const initForReLoginRef = useRef(initForReLogin);
   initForReLoginRef.current = initForReLogin;
 
