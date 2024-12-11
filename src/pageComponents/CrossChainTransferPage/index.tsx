@@ -89,6 +89,7 @@ export default function CrossChainTransferPage() {
   const transferInfoRef = useRef(InitialCrossChainTransferInfo);
   const [isTransactionFeeLoading, setIsTransactionFeeLoading] = useState(false);
   const [isUseRecipientAddress, setIsUseRecipientAddress] = useState(false);
+  const isUseRecipientAddressRef = useRef(isUseRecipientAddress);
   const [recipientAddressInput, setRecipientAddressInput] = useState('');
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [amount, setAmount] = useState('');
@@ -128,7 +129,7 @@ export default function CrossChainTransferPage() {
   }, [form]);
 
   const judgeIsSubmitDisabled = useCallback(
-    (currentFormValidateData: typeof formValidateData, _isUseRecipientAddress: boolean) => {
+    (currentFormValidateData: typeof formValidateData) => {
       const isValueUndefined = (value: unknown) => value === undefined || value === '';
       const isDisabled =
         isValueUndefined(receiveAmount) ||
@@ -136,7 +137,7 @@ export default function CrossChainTransferPage() {
           TransferValidateStatus.Error ||
         currentFormValidateData[TransferFormKeys.AMOUNT].validateStatus ===
           TransferValidateStatus.Error ||
-        (_isUseRecipientAddress && isValueUndefined(getRecipientAddressInput())) ||
+        (isUseRecipientAddressRef.current && isValueUndefined(getRecipientAddressInput())) ||
         isValueUndefined(form.getFieldValue(TransferFormKeys.AMOUNT));
       setIsSubmitDisabled(isDisabled);
     },
@@ -147,11 +148,11 @@ export default function CrossChainTransferPage() {
     (updateFormValidateData: Partial<typeof formValidateData>) => {
       setFormValidateData((prev) => {
         const newFormValidateData = { ...prev, ...updateFormValidateData };
-        judgeIsSubmitDisabled(newFormValidateData, isUseRecipientAddress);
+        judgeIsSubmitDisabled(newFormValidateData);
         return newFormValidateData;
       });
     },
-    [judgeIsSubmitDisabled, isUseRecipientAddress],
+    [judgeIsSubmitDisabled],
   );
 
   const searchParams = useSearchParams();
@@ -187,7 +188,7 @@ export default function CrossChainTransferPage() {
         }
 
         // Used to check whether the recipient address is reasonable.
-        const _toAddress = isUseRecipientAddress ? getRecipientAddressInput() : '';
+        const _toAddress = isUseRecipientAddressRef.current ? getRecipientAddressInput() : '';
         if (_toAddress) params.toAddress = _toAddress;
 
         const comment = getCommentInput();
@@ -258,7 +259,6 @@ export default function CrossChainTransferPage() {
       getCommentInput,
       getRecipientAddressInput,
       handleFormValidateDataChange,
-      isUseRecipientAddress,
       tokenSymbol,
       totalTokenList,
     ],
@@ -652,7 +652,10 @@ export default function CrossChainTransferPage() {
   const handleUseRecipientChanged = useCallback(
     (isUse: boolean) => {
       setIsUseRecipientAddress(isUse);
-      judgeIsSubmitDisabled(formValidateData, isUse);
+      isUseRecipientAddressRef.current = isUse;
+      judgeIsSubmitDisabled(formValidateData);
+
+      getTransferDataRef.current('');
     },
     [formValidateData, judgeIsSubmitDisabled],
   );
