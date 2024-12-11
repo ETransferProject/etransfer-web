@@ -24,6 +24,11 @@ export type TTokenItem = {
   holders: number;
 };
 
+export type TTokenConfig = {
+  liquidityInUsd: string;
+  holders: number;
+};
+
 export type TTokenInformationFormValues = {
   [TokenInformationFormKeys.TOKEN]: TTokenItem;
   [TokenInformationFormKeys.OFFICIAL_WEBSITE]: string;
@@ -62,7 +67,7 @@ export type TSelectChainFormValues = TChains & {
 };
 
 export type TSelectChainFormValidateData = {
-  [key in SelectChainFormKeys]: {
+  [SelectChainFormKeys.INITIAL_SUPPLY]: {
     validateStatus: FormValidateStatus;
     errorMessage: string;
   };

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { Form, Checkbox, Row, Col, Input } from 'antd';
 import NetworkLogo from 'components/NetworkLogo';
@@ -24,8 +24,6 @@ import {
 } from 'types/listing';
 import { ApplicationChainStatusEnum, TApplicationChainStatusItem } from 'types/api';
 import {
-  LISTING_FORM_PROMPT_CONTENT_MAP,
-  ListingStep,
   SELECT_CHAIN_FORM_CHAIN_CREATED_NOT_LISTED_STATUS_LIST,
   SELECT_CHAIN_FORM_CHAIN_DISABLED_STATUS_LIST,
   SELECT_CHAIN_FORM_CHAIN_LISTED_STATUS_LIST,
@@ -36,6 +34,8 @@ import {
   SELECT_CHAIN_FORM_PLACEHOLDER_MAP,
   REQUIRED_ERROR_MESSAGE,
   DEFAULT_CHAINS,
+  CONTACT_US_ROW,
+  WALLET_CONNECTION_REQUIRED,
 } from 'constants/listing';
 import { useCommonState } from 'store/Provider/hooks';
 import { useLoading } from 'store/Provider/hooks';
@@ -50,7 +50,16 @@ import { useEffectOnce } from 'react-use';
 import myEvents from 'utils/myEvent';
 import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
 import useAelf, { useAelfLogin } from 'hooks/wallet/useAelf';
+import useEVM from 'hooks/wallet/useEVM';
+import useSolana from 'hooks/wallet/useSolana';
+import useTON from 'hooks/wallet/useTON';
+import useTRON from 'hooks/wallet/useTRON';
 import { sleep } from '@etransfer/utils';
+import EmptyDataBox from 'pageComponents/EmptyDataBox';
+import { CONNECT_AELF_WALLET, CONNECT_WALLET, MY_WALLET } from 'constants/wallet';
+import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
+import { WalletTypeEnum } from 'context/Wallet/types';
+import { isEVMChain, isSolanaChain, isTONChain, isTRONChain } from 'utils/wallet';
 
 interface ISelectChainProps {
   symbol?: string;
@@ -58,10 +67,22 @@ interface ISelectChainProps {
   handlePrevStep: (params?: TSearchParams) => void;
 }
 
+const DEFAULT_CONNECT_WALLET_MODAL_PROPS: {
+  open: boolean;
+  allowList: WalletTypeEnum[];
+} = {
+  open: false,
+  allowList: [],
+};
+
 export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: ISelectChainProps) {
   const { isMobilePX } = useCommonState();
   const { setLoading } = useLoading();
-  const { isConnected } = useAelf();
+  const { isConnected: isAelfConnected } = useAelf();
+  const { isConnected: isEVMConnected } = useEVM();
+  const { isConnected: isSolanaConnected } = useSolana();
+  const { isConnected: isTONConnected } = useTON();
+  const { isConnected: isTRONConnected } = useTRON();
   const handleAelfLogin = useAelfLogin();
   const setAelfAuthFromStorage = useSetAelfAuthFromStorage();
   const [form] = Form.useForm<TSelectChainFormValues>();
@@ -79,6 +100,9 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
   const [token, setToken] = useState<TTokenItem | undefined>();
   const [isShowInitialSupplyFormItem, setIsShowInitialSupplyFormItem] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [connectWalletModalProps, setConnectWalletModalProps] = useState(
+    DEFAULT_CONNECT_WALLET_MODAL_PROPS,
+  );
 
   const reset = useCallback(() => {
     setFormData(SELECT_CHAIN_FORM_INITIAL_VALUES);
@@ -129,6 +153,22 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     return SELECT_CHAIN_FORM_CHAIN_DISABLED_STATUS_LIST.includes(status);
   }, []);
 
+  const hasDisabledAELFChain = useMemo(
+    () =>
+      chainListData[SelectChainFormKeys.AELF_CHAINS].some((chain) =>
+        judgeIsChainDisabled(chain.status),
+      ),
+    [chainListData, judgeIsChainDisabled],
+  );
+
+  const hasDisabledOtherChain = useMemo(
+    () =>
+      chainListData[SelectChainFormKeys.OTHER_CHAINS].some((chain) =>
+        judgeIsChainDisabled(chain.status),
+      ),
+    [chainListData, judgeIsChainDisabled],
+  );
+
   const judgeIsShowInitialSupplyFormItem = useCallback((currentChains: TChains): boolean => {
     return Object.values(currentChains).some((v) =>
       v.some((v) => v.status === ApplicationChainStatusEnum.Unissued),
@@ -137,26 +177,23 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
 
   const judgeIsTokenError = useCallback(() => !token, [token]);
 
-  const judgeIsAELFChainsError = useCallback(
+  const judgeIsChainsError = useCallback(
     ({
-      chains,
-      validateStatus,
+      aelfChains,
+      otherChains,
     }: {
-      chains: TApplicationChainStatusItem[];
-      validateStatus?: FormValidateStatus;
-    }): boolean =>
-      (chains.length === 0 &&
-        chainListData[SelectChainFormKeys.AELF_CHAINS].every(
-          (chain) => !judgeIsChainDisabled(chain.status),
-        )) ||
-      (!!validateStatus && validateStatus === FormValidateStatus.Error),
-    [chainListData, judgeIsChainDisabled],
-  );
-
-  const judgeIsOtherChainsError = useCallback(
-    ({ validateStatus }: { validateStatus?: FormValidateStatus }): boolean =>
-      !!validateStatus && validateStatus === FormValidateStatus.Error,
-    [],
+      aelfChains: TApplicationChainStatusItem[];
+      otherChains: TApplicationChainStatusItem[];
+    }): boolean => {
+      if (!hasDisabledAELFChain) {
+        return aelfChains.length === 0;
+      }
+      if (!hasDisabledOtherChain) {
+        return otherChains.length === 0;
+      }
+      return aelfChains.length === 0 && otherChains.length === 0;
+    },
+    [hasDisabledAELFChain, hasDisabledOtherChain],
   );
 
   const judgeIsInitialSupplyError = useCallback(
@@ -174,32 +211,50 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     [],
   );
 
-  const judgeIsButtonDisabled = useCallback(
-    (
-      currentFormData: TSelectChainFormValues,
-      currentFormValidateData: TSelectChainFormValidateData,
-      _isShowInitialSupplyFormItem: boolean,
-    ) => {
-      const isDisabled =
-        judgeIsTokenError() ||
-        judgeIsAELFChainsError({
-          chains: currentFormData[SelectChainFormKeys.AELF_CHAINS],
-          validateStatus: currentFormValidateData[SelectChainFormKeys.AELF_CHAINS].validateStatus,
-        }) ||
-        judgeIsOtherChainsError({
-          validateStatus: currentFormValidateData[SelectChainFormKeys.OTHER_CHAINS].validateStatus,
+  const unconnectedWallets = useMemo(() => {
+    const list: WalletTypeEnum[] = [];
+    formData[SelectChainFormKeys.OTHER_CHAINS].forEach((item) => {
+      if (isEVMChain(item.chainId) && !isEVMConnected) {
+        list.push(WalletTypeEnum.EVM);
+      } else if (isSolanaChain(item.chainId) && !isSolanaConnected) {
+        list.push(WalletTypeEnum.SOL);
+      } else if (isTRONChain(item.chainId) && !isTRONConnected) {
+        list.push(WalletTypeEnum.TRON);
+      } else if (isTONChain(item.chainId) && !isTONConnected) {
+        list.push(WalletTypeEnum.TON);
+      }
+    });
+    return list;
+  }, [formData, isEVMConnected, isSolanaConnected, isTRONConnected, isTONConnected]);
+
+  const judgeIsButtonDisabled = useCallback(() => {
+    const isDisabled =
+      (judgeIsTokenError() ||
+        judgeIsChainsError({
+          aelfChains: formData[SelectChainFormKeys.AELF_CHAINS],
+          otherChains: formData[SelectChainFormKeys.OTHER_CHAINS],
         }) ||
         judgeIsInitialSupplyError({
-          _isShowInitialSupplyFormItem,
-          value: currentFormData[SelectChainFormKeys.INITIAL_SUPPLY],
-          validateStatus:
-            currentFormValidateData[SelectChainFormKeys.INITIAL_SUPPLY].validateStatus,
-        });
+          _isShowInitialSupplyFormItem: isShowInitialSupplyFormItem,
+          value: formData[SelectChainFormKeys.INITIAL_SUPPLY],
+          validateStatus: formValidateData[SelectChainFormKeys.INITIAL_SUPPLY].validateStatus,
+        })) &&
+      unconnectedWallets.length === 0;
 
-      setIsButtonDisabled(isDisabled);
-    },
-    [judgeIsTokenError, judgeIsAELFChainsError, judgeIsOtherChainsError, judgeIsInitialSupplyError],
-  );
+    setIsButtonDisabled(isDisabled);
+  }, [
+    unconnectedWallets,
+    formData,
+    judgeIsTokenError,
+    judgeIsChainsError,
+    judgeIsInitialSupplyError,
+    isShowInitialSupplyFormItem,
+    formValidateData,
+  ]);
+
+  useEffect(() => {
+    judgeIsButtonDisabled();
+  }, [judgeIsButtonDisabled]);
 
   const handleFormDataChange = useCallback(
     ({
@@ -209,7 +264,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     }: {
       formKey: SelectChainFormKeys;
       value: TSelectChainFormValues[SelectChainFormKeys];
-      validateData?: TSelectChainFormValidateData[SelectChainFormKeys];
+      validateData?: TSelectChainFormValidateData[SelectChainFormKeys.INITIAL_SUPPLY];
     }) => {
       const newFormData = { ...formData, [formKey]: value };
       setFormData(newFormData);
@@ -228,10 +283,8 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
         [SelectChainFormKeys.OTHER_CHAINS]: newFormData[SelectChainFormKeys.OTHER_CHAINS],
       });
       setIsShowInitialSupplyFormItem(_isShowInitialSupplyFormItem);
-
-      judgeIsButtonDisabled(newFormData, newFormValidateData, _isShowInitialSupplyFormItem);
     },
-    [formData, formValidateData, judgeIsButtonDisabled, judgeIsShowInitialSupplyFormItem],
+    [formData, formValidateData, judgeIsShowInitialSupplyFormItem],
   );
 
   const getNewChains = useCallback(
@@ -264,24 +317,12 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
         checked,
       });
 
-      let validateData = {
-        validateStatus: FormValidateStatus.Normal,
-        errorMessage: '',
-      };
-      if (judgeIsAELFChainsError({ chains: newChains })) {
-        validateData = {
-          validateStatus: FormValidateStatus.Error,
-          errorMessage: REQUIRED_ERROR_MESSAGE,
-        };
-      }
-
       handleFormDataChange({
         formKey: SelectChainFormKeys.AELF_CHAINS,
         value: newChains,
-        validateData,
       });
     },
-    [getNewChains, handleFormDataChange, judgeIsAELFChainsError],
+    [getNewChains, handleFormDataChange],
   );
 
   const handleOtherChainsChange = useCallback(
@@ -373,8 +414,11 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
   }, [formData]);
 
   const handleConnectWallets = useCallback(() => {
-    // TODO: connect wallets
-  }, []);
+    setConnectWalletModalProps({
+      open: true,
+      allowList: unconnectedWallets,
+    });
+  }, [unconnectedWallets]);
 
   const handleCreateToken = useCallback(() => {
     setCreationProgressModalProps({
@@ -390,17 +434,21 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     if (!token?.symbol) return;
     setLoading(true);
     try {
-      await addApplicationChain({
+      const data = await addApplicationChain({
         chainIds: formData[SelectChainFormKeys.AELF_CHAINS].map((v) => v.chainId),
         otherChainIds: formData[SelectChainFormKeys.OTHER_CHAINS].map((v) => v.chainId),
         symbol: token.symbol,
       });
-      const aelfNetworks = formData[SelectChainFormKeys.AELF_CHAINS].map((v) => ({
-        name: v.chainName,
-      }));
-      const otherNetworks = formData[SelectChainFormKeys.OTHER_CHAINS].map((v) => ({
-        name: v.chainName,
-      }));
+      const aelfNetworks = formData[SelectChainFormKeys.AELF_CHAINS]
+        .filter((item) => data?.chainList.some((v) => v.chainId === item.chainId))
+        .map((v) => ({
+          name: v.chainName,
+        }));
+      const otherNetworks = formData[SelectChainFormKeys.OTHER_CHAINS]
+        .filter((item) => data?.otherChainList.some((v) => v.chainId === item.chainId))
+        .map((v) => ({
+          name: v.chainName,
+        }));
       const networks = [...aelfNetworks, ...otherNetworks];
       handleNextStep({ networks: JSON.stringify(networks) });
     } catch (error) {
@@ -424,9 +472,11 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     };
 
     if (Object.values(unissuedChains).some((v) => v.length !== 0)) {
-      if (!isConnected) {
+      if (unconnectedWallets.length > 0) {
         props = {
-          children: 'Connect EVM, Tron, Ton Wallets',
+          children: `Connect ${unconnectedWallets.join(', ')} Wallet${
+            unconnectedWallets.length > 1 ? 's' : ''
+          }`,
           onClick: handleConnectWallets,
         };
       } else {
@@ -449,42 +499,34 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
 
     return props;
   }, [
-    isConnected,
-    issuedChains,
-    issuingChains,
     unissuedChains,
-    handleAddChain,
+    issuingChains,
+    issuedChains,
+    unconnectedWallets,
     handleConnectWallets,
     handleCreateToken,
+    handleAddChain,
   ]);
-
-  const getCommonFormItemProps = (formKey: SelectChainFormKeys) => {
-    return {
-      validateStatus: formValidateData[formKey].validateStatus,
-      help: formValidateData[formKey].errorMessage,
-    };
-  };
-
-  const initActions = useCallback(async () => {
-    getToken();
-    getChainList();
-  }, [getChainList, getToken]);
 
   const init = useCallback(async () => {
     try {
+      setLoading(true);
       await setAelfAuthFromStorage();
       await sleep(500);
 
-      await initActions();
+      await getToken();
+      await getChainList();
     } catch (error) {
       console.log('SelectChain init', error);
+    } finally {
+      setLoading(false);
     }
-  }, [initActions, setAelfAuthFromStorage]);
+  }, [getChainList, getToken, setAelfAuthFromStorage, setLoading]);
   const initRef = useRef(init);
   initRef.current = init;
 
   useEffectOnce(() => {
-    if (!isConnected) {
+    if (!isAelfConnected) {
       handleAelfLogin(true, init);
     } else {
       init();
@@ -498,8 +540,8 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
   initLogoutRef.current = initForLogout;
 
   const initForReLogin = useCallback(async () => {
-    await initActions();
-  }, [initActions]);
+    await init();
+  }, [init]);
   const initForReLoginRef = useRef(initForReLogin);
   initForReLoginRef.current = initForReLogin;
 
@@ -523,7 +565,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     formKey: SelectChainFormKeys.AELF_CHAINS | SelectChainFormKeys.OTHER_CHAINS,
   ) => {
     return (
-      <Form.Item {...getCommonFormItemProps(formKey)} label={SELECT_CHAIN_FORM_LABEL_MAP[formKey]}>
+      <Form.Item label={SELECT_CHAIN_FORM_LABEL_MAP[formKey]}>
         <Row gutter={[12, 8]}>
           {chainListData[formKey].map((chain) => {
             const isDisabled = judgeIsChainDisabled(chain.status);
@@ -586,49 +628,72 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
   return (
     <>
       <div className={styles['select-chain']}>
-        <Remind isBorder={false}>
-          {LISTING_FORM_PROMPT_CONTENT_MAP[ListingStep.SELECT_CHAIN]}
-        </Remind>
-        <Form className={styles['select-chain-form']} form={form} layout="vertical">
-          <Form.Item label="Token">
-            <div className={styles['select-chain-token-row']}>
-              <TokenRow symbol={token?.symbol} name={token?.name} icon={token?.icon} />
-            </div>
-          </Form.Item>
-          {renderChainsFormItem(SelectChainFormKeys.AELF_CHAINS)}
-          {renderChainsFormItem(SelectChainFormKeys.OTHER_CHAINS)}
-          {isShowInitialSupplyFormItem && (
-            <Form.Item
-              {...getCommonFormItemProps(SelectChainFormKeys.INITIAL_SUPPLY)}
-              label={
-                <div className={styles['select-chain-initial-supply-label-wrapper']}>
-                  <span className={styles['select-chain-label']}>
-                    {SELECT_CHAIN_FORM_LABEL_MAP[SelectChainFormKeys.INITIAL_SUPPLY]}
-                  </span>
-                  <span className={styles['select-chain-description']}>
-                    {
-                      'The token information on Ethereum, BNS Smart Chain, Arbitrum, Tron, and Ton is the same as that on the aelf chain. You only need to fill in the initial supply of the token on the other chains, and approve all signature requests.'
-                    }
-                  </span>
+        {isAelfConnected ? (
+          <>
+            <Remind isBorder={false}>
+              <p>{'• Please select at least one aelf chain and one other chain.'}</p>
+              <p>
+                {
+                  '• You can select multiple chains simultaneously, and Transfers will be supported between any two selected chains.'
+                }
+              </p>
+              <p>{CONTACT_US_ROW}</p>
+            </Remind>
+            <Form className={styles['select-chain-form']} form={form} layout="vertical">
+              <Form.Item label="Token">
+                <div className={styles['select-chain-token-row']}>
+                  <TokenRow symbol={token?.symbol} name={token?.name} icon={token?.icon} />
                 </div>
-              }>
-              <Input
-                autoComplete="off"
-                allowClear
-                placeholder={SELECT_CHAIN_FORM_PLACEHOLDER_MAP[SelectChainFormKeys.INITIAL_SUPPLY]}
-                value={formData[SelectChainFormKeys.INITIAL_SUPPLY]}
-                onInput={handleInitialSupplyInput}
-                onChange={handleInitialSupplyChange}
-              />
-            </Form.Item>
-          )}
-        </Form>
+              </Form.Item>
+              {renderChainsFormItem(SelectChainFormKeys.AELF_CHAINS)}
+              {renderChainsFormItem(SelectChainFormKeys.OTHER_CHAINS)}
+              {isShowInitialSupplyFormItem && (
+                <Form.Item
+                  validateStatus={
+                    formValidateData[SelectChainFormKeys.INITIAL_SUPPLY].validateStatus
+                  }
+                  help={formValidateData[SelectChainFormKeys.INITIAL_SUPPLY].errorMessage}
+                  label={
+                    <div className={styles['select-chain-initial-supply-label-wrapper']}>
+                      <span className={styles['select-chain-label']}>
+                        {SELECT_CHAIN_FORM_LABEL_MAP[SelectChainFormKeys.INITIAL_SUPPLY]}
+                      </span>
+                      <span className={styles['select-chain-description']}>
+                        {
+                          'The token information on Ethereum, BNS Smart Chain, Arbitrum, Tron, and Ton is the same as that on the aelf chain. You only need to fill in the initial supply of the token on the other chains, and approve all signature requests.'
+                        }
+                      </span>
+                    </div>
+                  }>
+                  <Input
+                    autoComplete="off"
+                    allowClear
+                    placeholder={
+                      SELECT_CHAIN_FORM_PLACEHOLDER_MAP[SelectChainFormKeys.INITIAL_SUPPLY]
+                    }
+                    value={formData[SelectChainFormKeys.INITIAL_SUPPLY]}
+                    onInput={handleInitialSupplyInput}
+                    onChange={handleInitialSupplyChange}
+                  />
+                </Form.Item>
+              )}
+            </Form>
+          </>
+        ) : (
+          <EmptyDataBox emptyText={WALLET_CONNECTION_REQUIRED} />
+        )}
         <div className={styles['select-chain-footer']}>
-          <CommonButton
-            {...getActionButtonProps()}
-            size={CommonButtonSize.Small}
-            disabled={isButtonDisabled}
-          />
+          {isAelfConnected ? (
+            <CommonButton
+              {...getActionButtonProps()}
+              size={CommonButtonSize.Small}
+              disabled={isButtonDisabled}
+            />
+          ) : (
+            <CommonButton size={CommonButtonSize.Small} onClick={() => handleAelfLogin(true, init)}>
+              {CONNECT_AELF_WALLET}
+            </CommonButton>
+          )}
           <CommonButton
             type={CommonButtonType.Secondary}
             size={CommonButtonSize.Small}
@@ -641,6 +706,15 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
         {...creationProgressModalProps}
         supply={formData[SelectChainFormKeys.INITIAL_SUPPLY]}
         handleCreateFinish={handleCreateFinish}
+      />
+      <ConnectWalletModal
+        {...connectWalletModalProps}
+        title={
+          connectWalletModalProps.allowList.length === unconnectedWallets.length
+            ? CONNECT_WALLET
+            : MY_WALLET
+        }
+        onCancel={() => setConnectWalletModalProps(DEFAULT_CONNECT_WALLET_MODAL_PROPS)}
       />
     </>
   );

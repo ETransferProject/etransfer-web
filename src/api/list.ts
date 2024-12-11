@@ -69,9 +69,13 @@ const ApplicationApiList = {
     target: '/api/etransfer/application/prepare-binding-issue',
     baseConfig: { method: 'POST' },
   },
-  getIssue: '/api/etransfer/application/issue',
+  getIssue: {
+    target: '/api/etransfer/application/issue',
+    baseConfig: { method: 'POST' },
+  },
   getMyApplicationList: '/api/etransfer/application/list',
   getApplicationDetail: '/api/etransfer/application/detail',
+  getTokenConfig: '/api/etransfer/application/token/config',
 };
 
 const HistoryApiList = {

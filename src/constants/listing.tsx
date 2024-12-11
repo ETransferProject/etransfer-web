@@ -63,27 +63,6 @@ export const CONTACT_US_ROW = (
   </>
 );
 
-export const LISTING_FORM_PROMPT_CONTENT_MAP: Partial<Record<ListingStep, React.ReactNode>> = {
-  [ListingStep.TOKEN_INFORMATION]: (
-    <div key="0">
-      <p>{'• Only the current token owner on the aelf chain can apply.'}</p>
-      <p>{'• The token must meet the requirements of Liquidity > $1000 and Holders > 1000.'}</p>
-      <p>{CONTACT_US_ROW}</p>
-    </div>
-  ),
-  [ListingStep.SELECT_CHAIN]: (
-    <div key="1">
-      <p>{'• Please select at least one aelf chain and one other chain.'}</p>
-      <p>
-        {
-          '• You can select multiple chains simultaneously, and Transfers will be supported between any two selected chains.f'
-        }
-      </p>
-      <p>{CONTACT_US_ROW}</p>
-    </div>
-  ),
-};
-
 export enum ListingProcessStep {
   SUBMIT_TOKEN_INFO = 0,
   ISSUE_TOKEN = 1,
@@ -179,9 +158,6 @@ export const TOKEN_INFORMATION_FORM_INITIAL_VALIDATE_DATA: TTokenInformationForm
 
 export const REQUIRED_ERROR_MESSAGE = 'This field is required';
 
-export const LIQUIDITY_IN_USD_MIN_VALUE = 1000;
-export const HOLDERS_MIN_VALUE = 1000;
-
 // ================ Select chain ================
 
 export const SELECT_CHAIN_FORM_LABEL_MAP: Record<SelectChainFormKeys, string> = {
@@ -201,14 +177,6 @@ export const SELECT_CHAIN_FORM_INITIAL_VALUES: TSelectChainFormValues = {
 };
 
 export const SELECT_CHAIN_FORM_INITIAL_VALIDATE_DATA: TSelectChainFormValidateData = {
-  [SelectChainFormKeys.AELF_CHAINS]: {
-    validateStatus: FormValidateStatus.Normal,
-    errorMessage: '',
-  },
-  [SelectChainFormKeys.OTHER_CHAINS]: {
-    validateStatus: FormValidateStatus.Normal,
-    errorMessage: '',
-  },
   [SelectChainFormKeys.INITIAL_SUPPLY]: {
     validateStatus: FormValidateStatus.Normal,
     errorMessage: '',

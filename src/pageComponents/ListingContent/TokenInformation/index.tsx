@@ -14,6 +14,7 @@ import {
   FormValidateStatus,
   TTokenItem,
   TSearchParams,
+  TTokenConfig,
 } from 'types/listing';
 import {
   TOKEN_INFORMATION_FORM_LABEL_MAP,
@@ -21,16 +22,15 @@ import {
   TOKEN_INFORMATION_FORM_INITIAL_VALIDATE_DATA,
   TOKEN_INFORMATION_FORM_INITIAL_VALUES,
   REQUIRED_ERROR_MESSAGE,
-  LISTING_FORM_PROMPT_CONTENT_MAP,
   ListingStep,
-  LIQUIDITY_IN_USD_MIN_VALUE,
-  HOLDERS_MIN_VALUE,
+  CONTACT_US_ROW,
 } from 'constants/listing';
 import { SupportedChainId } from 'constants/index';
 import {
   commitTokenInfo,
   getApplicationTokenInfo,
   getApplicationTokenList,
+  getApplicationTokenConfig,
 } from 'utils/api/application';
 import { useLoading } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
@@ -39,6 +39,7 @@ import { sleep } from '@etransfer/utils';
 import { useEffectOnce } from 'react-use';
 import myEvents from 'utils/myEvent';
 import { getListingUrl } from 'utils/listing';
+import { CONNECT_AELF_WALLET } from 'constants/wallet';
 
 interface ITokenInformationProps {
   symbol?: string;
@@ -59,6 +60,32 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
   );
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [tokenList, setTokenList] = useState<TTokenItem[]>([]);
+  const [tokenConfig, setTokenConfig] = useState<TTokenConfig | undefined>();
+
+  const judgeIsButtonDisabled = useCallback(
+    (
+      currentFormData: Partial<TTokenInformationFormValues>,
+      currentFormValidateData: TTokenInformationFormValidateData,
+      currentTokenConfig?: TTokenConfig,
+    ) => {
+      const token = currentFormData[TokenInformationFormKeys.TOKEN];
+      const isTokenValid =
+        !!token?.liquidityInUsd &&
+        !!currentTokenConfig?.liquidityInUsd &&
+        parseFloat(token.liquidityInUsd) > parseFloat(currentTokenConfig.liquidityInUsd) &&
+        !!currentTokenConfig?.holders &&
+        token.holders > currentTokenConfig.holders;
+
+      const isDisabled =
+        Object.values(currentFormData).some((item) => !item) ||
+        Object.values(currentFormValidateData).some(
+          (item) => item.validateStatus === FormValidateStatus.Error,
+        ) ||
+        !isTokenValid;
+      setIsButtonDisabled(isDisabled);
+    },
+    [],
+  );
 
   const reset = useCallback(() => {
     setFormValues(TOKEN_INFORMATION_FORM_INITIAL_VALUES);
@@ -87,38 +114,58 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
     }
   }, [setAelfAuthFromStorage]);
 
-  const getTokenInfo = useCallback(async (_symbol: string, _tokenList: TTokenItem[]) => {
+  const getTokenConfig = useCallback(async (symbol: string) => {
     try {
-      const res = await getApplicationTokenInfo({ symbol: _symbol });
-      const token = _tokenList.find((item) => item.symbol === res.symbol);
-      if (token) {
-        setFormValues({
-          [TokenInformationFormKeys.TOKEN]: token,
-          [TokenInformationFormKeys.OFFICIAL_WEBSITE]: res.officialWebsite,
-          [TokenInformationFormKeys.OFFICIAL_TWITTER]: res.officialTwitter,
-          [TokenInformationFormKeys.TITLE]: res.title,
-          [TokenInformationFormKeys.PERSON_NAME]: res.personName,
-          [TokenInformationFormKeys.TELEGRAM_HANDLER]: res.telegramHandler,
-          [TokenInformationFormKeys.EMAIL]: res.email,
-        });
-        setFormValidateData((prev) => ({
-          ...TOKEN_INFORMATION_FORM_INITIAL_VALIDATE_DATA,
-          [TokenInformationFormKeys.TOKEN]: prev[TokenInformationFormKeys.TOKEN],
-        }));
-      }
+      const config = await getApplicationTokenConfig({ symbol });
+      setTokenConfig(config);
+      return config;
     } catch (error) {
       console.error(error);
+      return undefined;
     }
   }, []);
+
+  const getTokenInfo = useCallback(
+    async (_symbol: string, _tokenList: TTokenItem[], _tokenConfig: TTokenConfig) => {
+      try {
+        const res = await getApplicationTokenInfo({ symbol: _symbol });
+        const token = _tokenList.find((item) => item.symbol === res.symbol);
+        if (token) {
+          const newFormValues = {
+            [TokenInformationFormKeys.TOKEN]: token,
+            [TokenInformationFormKeys.OFFICIAL_WEBSITE]: res.officialWebsite,
+            [TokenInformationFormKeys.OFFICIAL_TWITTER]: res.officialTwitter,
+            [TokenInformationFormKeys.TITLE]: res.title,
+            [TokenInformationFormKeys.PERSON_NAME]: res.personName,
+            [TokenInformationFormKeys.TELEGRAM_HANDLER]: res.telegramHandler,
+            [TokenInformationFormKeys.EMAIL]: res.email,
+          };
+          const newFormValidateData = {
+            ...TOKEN_INFORMATION_FORM_INITIAL_VALIDATE_DATA,
+            [TokenInformationFormKeys.TOKEN]: formValidateData[TokenInformationFormKeys.TOKEN],
+          };
+          setFormValues(newFormValues);
+          setFormValidateData(newFormValidateData);
+          judgeIsButtonDisabled(newFormValues, newFormValidateData, _tokenConfig);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [formValidateData, judgeIsButtonDisabled],
+  );
 
   const init = useCallback(async () => {
     setLoading(true);
     const list = await getTokenList();
     if (symbol) {
-      await getTokenInfo(symbol, list);
+      const config = await getTokenConfig(symbol);
+      if (config) {
+        await getTokenInfo(symbol, list, config);
+      }
     }
     setLoading(false);
-  }, [getTokenInfo, getTokenList, setLoading, symbol]);
+  }, [getTokenConfig, getTokenInfo, getTokenList, setLoading, symbol]);
   const initRef = useRef(init);
   initRef.current = init;
 
@@ -129,27 +176,6 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
       init();
     }
   });
-  const judgeIsButtonDisabled = useCallback(
-    (
-      currentFormData: Partial<TTokenInformationFormValues>,
-      currentFormValidateData: TTokenInformationFormValidateData,
-    ) => {
-      const token = currentFormData[TokenInformationFormKeys.TOKEN];
-      const isTokenValid =
-        !!token?.liquidityInUsd &&
-        parseFloat(token.liquidityInUsd) > LIQUIDITY_IN_USD_MIN_VALUE &&
-        token.holders > HOLDERS_MIN_VALUE;
-
-      const isDisabled =
-        Object.values(currentFormData).some((item) => !item) ||
-        Object.values(currentFormValidateData).some(
-          (item) => item.validateStatus === FormValidateStatus.Error,
-        ) ||
-        !isTokenValid;
-      setIsButtonDisabled(isDisabled);
-    },
-    [],
-  );
 
   const handleFormDataChange = useCallback(
     ({
@@ -168,9 +194,9 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
       };
       setFormValues(newFormValues);
       setFormValidateData(newFormValidateData);
-      judgeIsButtonDisabled(newFormValues, newFormValidateData);
+      judgeIsButtonDisabled(newFormValues, newFormValidateData, tokenConfig);
     },
-    [formValidateData, formValues, judgeIsButtonDisabled],
+    [formValidateData, formValues, judgeIsButtonDisabled, tokenConfig],
   );
 
   const handleSelectToken = useCallback(
@@ -195,11 +221,14 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
           },
         });
         router.replace(getListingUrl(ListingStep.TOKEN_INFORMATION, { symbol: item.symbol }));
-        await getTokenInfo(item.symbol, tokenList);
+        const config = await getTokenConfig(item.symbol);
+        if (config) {
+          await getTokenInfo(item.symbol, tokenList, config);
+        }
         setLoading(false);
       }
     },
-    [handleFormDataChange, router, setLoading, getTokenInfo, tokenList],
+    [handleFormDataChange, router, setLoading, getTokenConfig, getTokenInfo, tokenList],
   );
 
   const handleCommonInputChange = useCallback(
@@ -227,9 +256,42 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
     [handleFormDataChange],
   );
 
+  const handleUrlChange = useCallback(
+    (value: string, key: TokenInformationFormKeys) => {
+      if (!value) {
+        handleFormDataChange({
+          formKey: key,
+          value: value,
+          validateData: {
+            validateStatus: FormValidateStatus.Error,
+            errorMessage: REQUIRED_ERROR_MESSAGE,
+          },
+        });
+      } else if (!value.startsWith('https://')) {
+        handleFormDataChange({
+          formKey: key,
+          value: value,
+          validateData: {
+            validateStatus: FormValidateStatus.Error,
+            errorMessage: 'Please enter a valid URL',
+          },
+        });
+      } else {
+        handleFormDataChange({
+          formKey: key,
+          value: value,
+          validateData: {
+            validateStatus: FormValidateStatus.Normal,
+            errorMessage: '',
+          },
+        });
+      }
+    },
+    [handleFormDataChange],
+  );
+
   const handleEmailChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
+    (value: string) => {
       if (!value) {
         handleFormDataChange({
           formKey: TokenInformationFormKeys.EMAIL,
@@ -329,7 +391,11 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
   return (
     <div className={styles['token-information']}>
       <Remind isBorder={false}>
-        {LISTING_FORM_PROMPT_CONTENT_MAP[ListingStep.TOKEN_INFORMATION]}
+        <p>{'• Only the current token owner on the aelf chain can apply.'}</p>
+        {tokenConfig && (
+          <p>{`• The token must meet the requirements of Liquidity > $${tokenConfig.liquidityInUsd} and Holders > ${tokenConfig.holders}.`}</p>
+        )}
+        <p>{CONTACT_US_ROW}</p>
       </Remind>
       <Form className={styles['token-information-form']} form={form} layout="vertical">
         <Form.Item
@@ -340,7 +406,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
                 {TOKEN_INFORMATION_FORM_LABEL_MAP[TokenInformationFormKeys.TOKEN]}
               </span>
               <ConnectWalletAndAddress
-                network={SupportedChainId.sideChain}
+                network={SupportedChainId.mainChain}
                 isConnected={isConnected}
                 connector={connector}
                 isConnectAelfDirectly={true}
@@ -349,6 +415,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
             </div>
           }>
           <TokenSelect
+            tokenConfig={tokenConfig}
             tokenList={tokenList}
             token={formValues[TokenInformationFormKeys.TOKEN]}
             placeholder={TOKEN_INFORMATION_FORM_PLACEHOLDER_MAP[TokenInformationFormKeys.TOKEN]}
@@ -361,7 +428,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
           <Input
             {...getCommonInputProps(TokenInformationFormKeys.OFFICIAL_WEBSITE)}
             onChange={(e) =>
-              handleCommonInputChange(e.target.value, TokenInformationFormKeys.OFFICIAL_WEBSITE)
+              handleUrlChange(e.target.value, TokenInformationFormKeys.OFFICIAL_WEBSITE)
             }
           />
         </Form.Item>
@@ -371,7 +438,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
           <Input
             {...getCommonInputProps(TokenInformationFormKeys.OFFICIAL_TWITTER)}
             onChange={(e) =>
-              handleCommonInputChange(e.target.value, TokenInformationFormKeys.OFFICIAL_TWITTER)
+              handleUrlChange(e.target.value, TokenInformationFormKeys.OFFICIAL_TWITTER)
             }
           />
         </Form.Item>
@@ -410,17 +477,26 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
           label={TOKEN_INFORMATION_FORM_LABEL_MAP[TokenInformationFormKeys.EMAIL]}>
           <Input
             {...getCommonInputProps(TokenInformationFormKeys.EMAIL)}
-            onChange={handleEmailChange}
+            onChange={(e) => handleEmailChange(e.target.value)}
           />
         </Form.Item>
       </Form>
-      <CommonButton
-        className={styles['token-information-next-button']}
-        size={CommonButtonSize.Small}
-        disabled={isButtonDisabled}
-        onClick={handleSubmit}>
-        Next
-      </CommonButton>
+      {isConnected ? (
+        <CommonButton
+          className={styles['token-information-footer-button']}
+          size={CommonButtonSize.Small}
+          disabled={isButtonDisabled}
+          onClick={handleSubmit}>
+          Next
+        </CommonButton>
+      ) : (
+        <CommonButton
+          className={styles['token-information-footer-button']}
+          size={CommonButtonSize.Small}
+          onClick={() => handleAelfLogin(true, init)}>
+          {CONNECT_AELF_WALLET}
+        </CommonButton>
+      )}
     </div>
   );
 }

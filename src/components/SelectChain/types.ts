@@ -1,18 +1,23 @@
-// import { TDynamicArrowSize } from 'components/DynamicArrow';
+import { TDynamicArrowSize } from 'components/DynamicArrow';
 import { IChainNameItem } from 'constants/index';
 
 type TSelectChainCommon = {
+  menuItems: IChainNameItem[];
   selectedItem: IChainNameItem;
+  getContainer: string;
   className?: string;
   childrenClassName?: string;
+  overlayClassName?: string;
+  isBorder?: boolean;
+  suffixArrowSize?: TDynamicArrowSize;
+  hideDownArrow?: boolean;
 };
 
 export interface DeviceSelectChainProps extends TSelectChainCommon {
-  isExpand: boolean;
-  onClick: () => Promise<void> | void;
+  onClick: (item: IChainNameItem) => Promise<void> | void;
 }
 
 export interface SelectChainProps extends TSelectChainCommon {
-  menuItems: IChainNameItem[];
+  title: string;
   clickCallback: (item: IChainNameItem) => void;
 }

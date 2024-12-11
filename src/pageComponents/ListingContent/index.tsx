@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import LinkForBlank from 'components/LinkForBlank';
 import CommonSteps from 'components/CommonSteps';
+import UnsavedChangesWarningModal from './UnsavedChangesWarningModal';
 import TokenInformation from './TokenInformation';
 import SelectChain from './SelectChain';
 import { BackIcon } from 'assets/images';
@@ -14,6 +14,8 @@ import CoboCustodyReview from './CoboCustodyReview';
 import ListingComplete from './ListingComplete';
 import InitializeLiquidityPool from './InitializeLiquidityPool';
 import { getListingUrl } from 'utils/listing';
+
+let globalCanAccessStep = false;
 
 export default function ListingContent() {
   const { isPadPX, isMobilePX } = useCommonState();
@@ -30,7 +32,11 @@ export default function ListingContent() {
     }
   }, [searchParams]);
 
-  const [currentStep, setCurrentStep] = useState<ListingStep>(ListingStep.TOKEN_INFORMATION);
+  const [currentStep, setCurrentStep] = useState<ListingStep | undefined>();
+  const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
+
+  const isNavigatingRef = useRef(false);
+  const nextUrlRef = useRef('');
 
   useInitAelfWallet();
 
@@ -38,25 +44,72 @@ export default function ListingContent() {
     const step = Object.values(LISTING_STEP_PATHNAME_MAP).findIndex((item) =>
       pathname.includes(item),
     );
-    setCurrentStep(step);
 
-    // TODO no 3 and 5 step
-  }, [pathname]);
+    if (
+      step === ListingStep.TOKEN_INFORMATION ||
+      step === ListingStep.SELECT_CHAIN ||
+      step === ListingStep.INITIALIZE_LIQUIDITY_POOL ||
+      globalCanAccessStep
+    ) {
+      setCurrentStep(step);
+    } else {
+      router.replace('/my-applications');
+    }
+  }, [pathname, router]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (
+        currentStep === ListingStep.TOKEN_INFORMATION ||
+        currentStep === ListingStep.SELECT_CHAIN
+      ) {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [currentStep]);
 
   const handleNextStep = (params?: TSearchParams) => {
+    if (typeof currentStep !== 'number') return;
     const nextStep = currentStep + 1;
     if (nextStep <= ListingStep.COMPLETE) {
+      globalCanAccessStep = true;
+      isNavigatingRef.current = true;
       const replaceUrl = getListingUrl(nextStep, params);
       router.replace(replaceUrl);
     }
   };
 
   const handlePrevStep = (params?: TSearchParams) => {
+    if (typeof currentStep !== 'number') return;
     const prevStep = currentStep - 1;
     if (prevStep >= ListingStep.TOKEN_INFORMATION) {
+      globalCanAccessStep = true;
+      isNavigatingRef.current = true;
       const replaceUrl = getListingUrl(prevStep, params);
       router.replace(replaceUrl);
     }
+  };
+
+  const handleWarningModalConfirm = () => {
+    setIsWarningModalOpen(false);
+    if (nextUrlRef.current === 'back') {
+      isNavigatingRef.current = true;
+      router.back();
+    } else if (nextUrlRef.current) {
+      isNavigatingRef.current = true;
+      router.push(nextUrlRef.current);
+    }
+  };
+
+  const handleWarningModalCancel = () => {
+    setIsWarningModalOpen(false);
+    nextUrlRef.current = '';
   };
 
   const renderForm = () => {
@@ -74,12 +127,7 @@ export default function ListingContent() {
       case ListingStep.COBO_CUSTODY_REVIEW:
         return <CoboCustodyReview networks={networks} />;
       case ListingStep.INITIALIZE_LIQUIDITY_POOL:
-        return (
-          <InitializeLiquidityPool
-            symbol={symbol}
-            onNext={() => setCurrentStep(ListingStep.COMPLETE)}
-          />
-        );
+        return <InitializeLiquidityPool symbol={symbol} onNext={handleNextStep} />;
       case ListingStep.COMPLETE:
         return <ListingComplete />;
       default:
@@ -87,35 +135,52 @@ export default function ListingContent() {
     }
   };
 
+  if (typeof currentStep !== 'number') return null;
+
   return (
-    <div className={styles['listing-container']}>
-      <div className={styles['listing-content']}>
-        {!isPadPX && (
-          <LinkForBlank
-            className={styles['listing-back']}
-            href="/"
-            element={
-              <>
-                <BackIcon />
-                <span className={styles['listing-back-text']}>Back</span>
-              </>
-            }
-          />
-        )}
-        <div className={styles['listing-card-list']}>
-          <div className={styles['listing-card']}>
-            <div className={styles['listing-card-steps-title']}>Listing Application</div>
-            <CommonSteps stepItems={LISTING_STEP_ITEMS} current={currentStep} />
-          </div>
-          {isMobilePX && <div className={styles['listing-card-divider']} />}
-          <div className={styles['listing-card']}>
-            <div className={styles['listing-card-form-title']}>
-              {LISTING_STEP_ITEMS[currentStep].title}
+    <>
+      <div className={styles['listing-container']}>
+        <div className={styles['listing-content']}>
+          {!isPadPX && (
+            <div
+              className={styles['listing-back']}
+              onClick={() => {
+                if (
+                  currentStep === ListingStep.TOKEN_INFORMATION ||
+                  currentStep === ListingStep.SELECT_CHAIN
+                ) {
+                  setIsWarningModalOpen(true);
+                  nextUrlRef.current = window.history.length > 1 ? 'back' : '/';
+                } else if (window.history.length > 1) {
+                  router.back();
+                } else {
+                  router.push('/');
+                }
+              }}>
+              <BackIcon />
+              <span className={styles['listing-back-text']}>Back</span>
             </div>
-            <div className={styles['listing-card-form-content']}>{renderForm()}</div>
+          )}
+          <div className={styles['listing-card-list']}>
+            <div className={styles['listing-card']}>
+              <div className={styles['listing-card-steps-title']}>Listing Application</div>
+              <CommonSteps stepItems={LISTING_STEP_ITEMS} current={currentStep} />
+            </div>
+            {isMobilePX && <div className={styles['listing-card-divider']} />}
+            <div className={styles['listing-card']}>
+              <div className={styles['listing-card-form-title']}>
+                {LISTING_STEP_ITEMS[currentStep].title}
+              </div>
+              <div className={styles['listing-card-form-content']}>{renderForm()}</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      <UnsavedChangesWarningModal
+        open={isWarningModalOpen}
+        onCancel={handleWarningModalCancel}
+        onOk={handleWarningModalConfirm}
+      />
+    </>
   );
 }

@@ -217,13 +217,13 @@ export default function InitializeLiquidityPool({
       await getData(id, symbol);
     } else {
       if (routeQuery.tokenSymbol || symbol) {
-        router.push(
+        router.replace(
           `/listing/${LISTING_STEP_PATHNAME_MAP[ListingStep.TOKEN_INFORMATION]}?symbol=${
             routeQuery.tokenSymbol || symbol
           }`,
         );
       } else {
-        router.push(`/listing/${LISTING_STEP_PATHNAME_MAP[ListingStep.TOKEN_INFORMATION]}`);
+        router.replace(`/listing/${LISTING_STEP_PATHNAME_MAP[ListingStep.TOKEN_INFORMATION]}`);
       }
     }
   }, [getData, id, routeQuery.id, routeQuery.tokenSymbol, router, symbol]);

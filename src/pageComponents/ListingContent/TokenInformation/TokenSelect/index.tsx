@@ -5,14 +5,14 @@ import TokenSelectModal from 'components/TokenSelectModal';
 import LinkForBlank from 'components/LinkForBlank';
 import TokenRow from '../../TokenRow';
 import { CheckFilled16, CloseFilled16 } from 'assets/images';
-import { TTokenItem } from 'types/listing';
+import { TTokenConfig, TTokenItem } from 'types/listing';
 import styles from './styles.module.scss';
-import { HOLDERS_MIN_VALUE, LIQUIDITY_IN_USD_MIN_VALUE } from 'constants/listing';
 
 interface ITokenSelectProps {
   className?: string;
   token?: TTokenItem;
   tokenList: TTokenItem[];
+  tokenConfig?: TTokenConfig;
   placeholder?: string;
   selectCallback?: (item: TTokenItem) => void;
 }
@@ -21,6 +21,7 @@ export default function TokenSelect({
   className,
   token,
   tokenList,
+  tokenConfig,
   placeholder,
   selectCallback,
 }: ITokenSelectProps) {
@@ -54,31 +55,36 @@ export default function TokenSelect({
 
         {token && (
           <div className={styles['token-selected-info-card']}>
-            <div className={styles['token-selected-info-card-row']}>
-              <div className={styles['token-selected-info-card-row-content']}>
-                {getInfoValidateIcon(
-                  !!token?.liquidityInUsd &&
-                    parseFloat(token.liquidityInUsd) > LIQUIDITY_IN_USD_MIN_VALUE,
-                )}
-                <span>{`Liquidity > $${LIQUIDITY_IN_USD_MIN_VALUE}`}</span>
+            {!!tokenConfig?.liquidityInUsd && (
+              <div className={styles['token-selected-info-card-row']}>
+                <div className={styles['token-selected-info-card-row-content']}>
+                  {getInfoValidateIcon(
+                    !!token?.liquidityInUsd &&
+                      parseFloat(token.liquidityInUsd) > parseFloat(tokenConfig.liquidityInUsd),
+                  )}
+                  <span>{`Liquidity > $${tokenConfig.liquidityInUsd}`}</span>
+                </div>
+                <LinkForBlank
+                  className={styles['token-selected-info-card-row-link']}
+                  href={'/'}
+                  element="Add Liquidity"
+                />
               </div>
-              <LinkForBlank
-                className={styles['token-selected-info-card-row-link']}
-                href={'/'}
-                element="Add Liquidity"
-              />
-            </div>
-            <div className={styles['token-selected-info-card-row']}>
-              <div className={styles['token-selected-info-card-row-content']}>
-                {getInfoValidateIcon(!!token?.holders && token.holders > HOLDERS_MIN_VALUE)}
-                <span>{`Holders > ${HOLDERS_MIN_VALUE}`}</span>
+            )}
+            {!!tokenConfig?.holders && (
+              <div className={styles['token-selected-info-card-row']}>
+                <div className={styles['token-selected-info-card-row-content']}>
+                  {getInfoValidateIcon(!!token?.holders && token.holders > tokenConfig.holders)}
+                  <span>{`Holders > ${tokenConfig.holders}`}</span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>
 
       <TokenSelectModal
+        hideAddToken
         open={isShowTokenSelectModal}
         tokenList={tokenList}
         onSelect={onSelectToken}

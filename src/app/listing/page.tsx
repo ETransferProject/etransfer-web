@@ -6,7 +6,7 @@ const ListingPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    router.push('/listing/token-information');
+    router.replace('/listing/token-information');
   }, [router]);
 
   return null;

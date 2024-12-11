@@ -196,6 +196,7 @@ export default function WebContent({
 
           <SelectChainWrapper
             className={styles['selected-chain']}
+            mobileTitle="Deposit To"
             menuItems={menuItems}
             selectedItem={toChainItem}
             chainChanged={toChainChanged}

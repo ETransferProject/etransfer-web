@@ -10,6 +10,7 @@ interface SelectChainWrapperProps {
   menuItems: IChainNameItem[];
   selectedItem: IChainNameItem;
   className?: string;
+  mobileTitle?: string;
   mobileLabel?: string;
   chainChanged: (item: IChainNameItem) => void;
 }
@@ -18,6 +19,7 @@ export default function SelectChainWrapper({
   menuItems,
   selectedItem,
   className,
+  mobileTitle = '',
   mobileLabel,
   chainChanged,
 }: SelectChainWrapperProps) {
@@ -35,11 +37,16 @@ export default function SelectChainWrapper({
       <CommonSpace direction={'horizontal'} size={isPadPX ? 6 : 8} />
 
       <SelectChain
+        getContainer="webDepositChainWrapper"
         menuItems={menuItems}
         selectedItem={selectedItem}
+        isBorder={false}
+        title={mobileTitle}
         clickCallback={chainChanged}
         className={styles['select-chain-container']}
         childrenClassName={styles['select-chain-content']}
+        overlayClassName={styles['select-chain-overlay']}
+        suffixArrowSize={isPadPX ? 'Small' : 'Normal'}
       />
     </div>
   );

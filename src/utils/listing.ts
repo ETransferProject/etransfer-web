@@ -15,6 +15,11 @@ export const getListingUrl = (step: ListingStep, params?: TSearchParams) => {
         symbol: params?.symbol,
       });
       break;
+    case ListingStep.COBO_CUSTODY_REVIEW:
+      search = queryString.stringify({
+        networks: params?.networks,
+      });
+      break;
   }
   return `/listing${LISTING_STEP_PATHNAME_MAP[step]}${search ? '?' + search : ''}`;
 };

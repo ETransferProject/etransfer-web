@@ -605,7 +605,8 @@ export type TApplicationChainStatusItem = {
   tokenName: string;
   icon: string;
   poolAddress: string;
-  issuedId?: string;
+  bindingId?: string;
+  thirdTokenId?: string;
 };
 
 export enum ApplicationChainStatusEnum {
@@ -643,10 +644,19 @@ export type TPrepareBindIssueRequest = {
   symbol: string;
   chainId: string;
   otherChainId?: string;
+  contractAddress: string;
   supply: string;
 };
 
-export type TPrepareBindIssueResult = string; // prepare id
+export type TPrepareBindIssueResult = {
+  bindingId: string;
+  thirdTokenId: string;
+};
+
+export type TGetApplicationIssueRequest = {
+  bindingId: string;
+  thirdTokenId: string;
+};
 
 export type TGetApplicationIssueResult = boolean;
 
@@ -718,4 +728,13 @@ export type TApplicationDetailItemChainTokenInfo = {
   minAmount: string;
   limit24HInUsd: string;
   rejectedTime: number;
+};
+
+export type TGetTokenConfigRequest = {
+  symbol: string;
+};
+
+export type TGetTokenConfigResult = {
+  liquidityInUsd: string;
+  holders: number;
 };

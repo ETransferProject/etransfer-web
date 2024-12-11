@@ -17,6 +17,9 @@ import {
   TGetMyApplicationListResult,
   TPrepareBindIssueRequest,
   TPrepareBindIssueResult,
+  TGetApplicationIssueRequest,
+  TGetTokenConfigRequest,
+  TGetTokenConfigResult,
 } from 'types/api';
 
 export const getApplicationTokenList = async (): Promise<TGetApplicationTokenListResult> => {
@@ -31,9 +34,10 @@ export const getApplicationTokenList = async (): Promise<TGetApplicationTokenLis
 export const commitTokenInfo = async (
   params: TCommitTokenInfoRequest,
 ): Promise<TCommitTokenInfoResult> => {
-  // return true;
   try {
-    const res = await request.application.commitTokenInfo({ params });
+    const res = await request.application.commitTokenInfo({
+      params,
+    });
     return res.data;
   } catch (error) {
     throw formatApiError(error, 'commitTokenInfo error', false);
@@ -44,7 +48,9 @@ export const getApplicationTokenInfo = async (
   params: TGetApplicationTokenInfoRequest,
 ): Promise<TGetApplicationTokenInfoResult> => {
   try {
-    const res = await request.application.getTokenInfo({ params });
+    const res = await request.application.getTokenInfo({
+      params,
+    });
     return res.data;
   } catch (error) {
     throw formatApiError(error, 'getApplicationTokenInfo error', false);
@@ -55,7 +61,9 @@ export const getApplicationChainStatusList = async (
   params: TGetApplicationChainStatusListRequest,
 ): Promise<TGetApplicationChainStatusListResult> => {
   try {
-    const res = await request.application.getChainStatus({ params });
+    const res = await request.application.getChainStatus({
+      params,
+    });
     return res.data;
   } catch (error) {
     throw formatApiError(error, 'getApplicationChainStatusList error', false);
@@ -66,7 +74,9 @@ export const addApplicationChain = async (
   params: TAddApplicationChainRequest,
 ): Promise<TAddApplicationChainResult> => {
   try {
-    const res = await request.application.addChain({ params });
+    const res = await request.application.addChain({
+      params,
+    });
     return res.data;
   } catch (error) {
     throw formatApiError(error, 'addApplicationChain error', false);
@@ -77,16 +87,22 @@ export const prepareBindIssue = async (
   params: TPrepareBindIssueRequest,
 ): Promise<TPrepareBindIssueResult> => {
   try {
-    const res = await request.application.prepareBindIssue({ params });
+    const res = await request.application.prepareBindIssue({
+      params,
+    });
     return res.data;
   } catch (error) {
     throw formatApiError(error, 'prepareBindIssue error', false);
   }
 };
 
-export const getApplicationIssue = async (id: string): Promise<TGetApplicationIssueResult> => {
+export const getApplicationIssue = async (
+  params: TGetApplicationIssueRequest,
+): Promise<TGetApplicationIssueResult> => {
   try {
-    const res = await request.application.getIssue({ query: id });
+    const res = await request.application.getIssue({
+      params,
+    });
     return res.data;
   } catch (error) {
     throw formatApiError(error, 'getApplicationIssue error', false);
@@ -112,5 +128,16 @@ export const getApplicationDetail = async (
     return res.data;
   } catch (error) {
     throw formatApiError(error, 'getApplicationDetail error', false);
+  }
+};
+
+export const getApplicationTokenConfig = async (
+  params: TGetTokenConfigRequest,
+): Promise<TGetTokenConfigResult> => {
+  try {
+    const res = await request.application.getTokenConfig({ params });
+    return res.data;
+  } catch (error) {
+    throw formatApiError(error, 'getTokenConfig error', false);
   }
 };

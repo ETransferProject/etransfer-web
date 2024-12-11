@@ -8,7 +8,7 @@ import { useCommonState } from 'store/Provider/hooks';
 import { useGetAllConnectedWalletAccount } from 'hooks/wallet';
 import useEVM from 'hooks/wallet/useEVM';
 import { getApplicationIssue, prepareBindIssue } from 'utils/api/application';
-import { computeWalletType, getWalletSourceType } from 'utils/wallet';
+import { computeWalletSourceType } from 'utils/wallet';
 import {
   ApplicationChainStatusEnum,
   TApplicationChainStatusItem,
@@ -101,13 +101,15 @@ export default function CreationProgressModal({
     ({
       step,
       status,
-      issuedId,
-      txHash,
+      params,
     }: {
       step: number;
       status?: ICommonStepsProps['stepItems'][number]['status'];
-      issuedId?: string;
-      txHash?: TTxHash;
+      params?: {
+        bindingId?: string;
+        thirdTokenId?: string;
+        txHash?: TTxHash;
+      };
     }) => {
       setStepItems((prev) => {
         const newStepItems = prev.map((item) => ({ ...item, chain: { ...item.chain } }));
@@ -115,11 +117,11 @@ export default function CreationProgressModal({
           newStepItems[step].status = status;
           newStepItems[step].isLoading = status === 'process';
         }
-        if (issuedId) {
-          newStepItems[step].chain.issuedId = issuedId;
-        }
-        if (txHash) {
-          newStepItems[step].chain.txHash = txHash;
+        if (params) {
+          newStepItems[step].chain = {
+            ...newStepItems[step].chain,
+            ...params,
+          };
         }
         return newStepItems;
       });
@@ -130,11 +132,7 @@ export default function CreationProgressModal({
   const handlePrepareBindIssue = useCallback(
     async (chain: TChainItem) => {
       try {
-        const walletType = computeWalletType(chain.chainId);
-        if (!walletType) {
-          throw new Error('No wallet type found');
-        }
-        const sourceType = getWalletSourceType(walletType);
+        const sourceType = computeWalletSourceType(chain.chainId);
         const address = accountListWithWalletType.find(
           (item) => item.SourceType === sourceType,
         )?.Address;
@@ -147,6 +145,8 @@ export default function CreationProgressModal({
           // TODO: chainId
           chainId: 'AELF',
           otherChainId: chain.chainId,
+          // Currently only supports evm
+          contractAddress: EVM_CREATE_TOKEN_CONTRACT_ADDRESS[chain.chainId],
           supply,
         };
         const id = await prepareBindIssue(params);
@@ -208,25 +208,28 @@ export default function CreationProgressModal({
     [getTransactionReceipt],
   );
 
-  const handlePollingForIssueResult = useCallback(async (id?: string) => {
-    if (!id) {
-      return;
-    }
-    try {
-      const isFinished = await getApplicationIssue(id);
-      if (!isFinished) {
-        if (poolingTimerForIssueResultRef.current) {
-          clearTimeout(poolingTimerForIssueResultRef.current);
-        }
-        poolingTimerForIssueResultRef.current = setTimeout(async () => {
-          await handlePollingForIssueResult(id);
-        }, POLLING_INTERVAL);
+  const handlePollingForIssueResult = useCallback(
+    async ({ bindingId, thirdTokenId }: { bindingId?: string; thirdTokenId?: string }) => {
+      if (!bindingId || !thirdTokenId) {
+        return;
       }
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }, []);
+      try {
+        const isFinished = await getApplicationIssue({ bindingId, thirdTokenId });
+        if (!isFinished) {
+          if (poolingTimerForIssueResultRef.current) {
+            clearTimeout(poolingTimerForIssueResultRef.current);
+          }
+          poolingTimerForIssueResultRef.current = setTimeout(async () => {
+            await handlePollingForIssueResult({ bindingId, thirdTokenId });
+          }, POLLING_INTERVAL);
+        }
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
+    [],
+  );
 
   const handlePolling = useCallback(async () => {
     await Promise.all(
@@ -236,7 +239,10 @@ export default function CreationProgressModal({
         }
         try {
           await handlePollingForTransactionResult(item.chain.txHash);
-          await handlePollingForIssueResult(item.chain.issuedId);
+          await handlePollingForIssueResult({
+            bindingId: item.chain.bindingId,
+            thirdTokenId: item.chain.thirdTokenId,
+          });
           handleStepItemChange({ step: index, status: 'finish' });
         } catch (error) {
           console.error(error);
@@ -256,9 +262,9 @@ export default function CreationProgressModal({
       try {
         const currentChain = stepItems[step].chain;
         if (currentChain.status === ApplicationChainStatusEnum.Unissued) {
-          const issuedId = await handlePrepareBindIssue(currentChain);
+          const { bindingId, thirdTokenId } = await handlePrepareBindIssue(currentChain);
           const txHash = await handleIssue({ chain: currentChain });
-          handleStepItemChange({ step, issuedId, txHash });
+          handleStepItemChange({ step, params: { bindingId, thirdTokenId, txHash } });
         }
       } catch (error) {
         console.error(error);
