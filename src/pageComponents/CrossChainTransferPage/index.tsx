@@ -655,7 +655,7 @@ export default function CrossChainTransferPage() {
       isUseRecipientAddressRef.current = isUse;
       judgeIsSubmitDisabled(formValidateData);
 
-      getTransferDataRef.current('');
+      getTransferDataRef.current(amountRef.current);
     },
     [formValidateData, judgeIsSubmitDisabled],
   );
