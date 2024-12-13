@@ -447,12 +447,21 @@ export default function CrossChainTransferPage() {
         account: fromWallet?.account || '',
       });
       if (amount && _maxBalance && ZERO.plus(amount).gt(_maxBalance)) {
-        handleFormValidateDataChange({
-          [TransferFormKeys.AMOUNT]: {
-            validateStatus: TransferValidateStatus.Error,
-            errorMessage: NOT_ENOUGH_ELF_FEE,
-          },
-        });
+        if (ZERO.plus(amount).gt(balance)) {
+          handleFormValidateDataChange({
+            [TransferFormKeys.AMOUNT]: {
+              validateStatus: TransferValidateStatus.Error,
+              errorMessage: '',
+            },
+          });
+        } else {
+          handleFormValidateDataChange({
+            [TransferFormKeys.AMOUNT]: {
+              validateStatus: TransferValidateStatus.Error,
+              errorMessage: NOT_ENOUGH_ELF_FEE,
+            },
+          });
+        }
       } else if (
         amount &&
         ((minAmount && ZERO.plus(amount).lt(minAmount)) ||
