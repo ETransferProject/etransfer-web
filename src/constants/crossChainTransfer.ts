@@ -15,6 +15,8 @@ export const DEFAULT_SEND_TRANSFER_ERROR =
 export const ADDRESS_SHORTER_THAN_USUAL = `The address you entered is shorter than usual. Please double-check to ensure it's the correct address.`;
 export const ADDRESS_NOT_CORRECT = `Please enter a correct address.`;
 export const TRANSACTION_APPROVE_LOADING = 'Please approve the transaction in the wallet...';
+export const NOT_ENOUGH_ELF_FEE =
+  'Not enough ELF for network fee. Please keep enough ELF in your wallet for the fee.';
 
 export const SEND_TRANSFER_ADDRESS_ERROR_CODE_LIST = ['40100', '40101'];
 export const SEND_TRANSFER_ERROR_CODE_LIST = [

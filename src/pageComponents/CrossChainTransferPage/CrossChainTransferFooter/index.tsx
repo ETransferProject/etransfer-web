@@ -40,10 +40,11 @@ import myEvents from 'utils/myEvent';
 import { useSendTxnFromAelfChain } from 'hooks/crossChainTransfer';
 import { isAuthTokenError } from 'utils/api/error';
 import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
-import { computeWalletType, getConnectWalletText } from 'utils/wallet';
+import { computeWalletType, getConnectWalletText, isAelfChain } from 'utils/wallet';
 import { TransferFormKeys, TransferValidateStatus, TTransferFormValidateData } from '../types';
 import { formatSymbolDisplay } from 'utils/format';
 import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
+import { getAelfMaxBalance } from '../utils';
 
 export interface CrossChainTransferFooterProps {
   className?: string;
@@ -457,6 +458,29 @@ export default function CrossChainTransferFooter({
     firstTxnHashRef.current = '';
   }, [clickFailedOk]);
 
+  const [isBalanceNotEnoughTip, setIsBalanceNotEnoughTip] = useState(false);
+  const checkMaxBalance = useCallback(async () => {
+    let _maxBalance = fromBalance;
+    if (isAelfChain(fromNetwork?.network || '') && tokenSymbol === 'ELF') {
+      _maxBalance = await getAelfMaxBalance({
+        balance: fromBalance || '',
+        aelfFee: transferInfo.aelfTransactionFee,
+        fromNetwork: fromNetwork?.network,
+        tokenSymbol,
+        account: fromWallet?.account || '',
+      });
+    }
+    const res = !!amount && (!_maxBalance || ZERO.plus(_maxBalance).lt(amount));
+    setIsBalanceNotEnoughTip(res);
+  }, [
+    amount,
+    fromBalance,
+    fromNetwork?.network,
+    fromWallet?.account,
+    tokenSymbol,
+    transferInfo.aelfTransactionFee,
+  ]);
+
   const btnProps = useMemo(() => {
     const disabled = true,
       loading = false;
@@ -478,7 +502,8 @@ export default function CrossChainTransferFooter({
       };
     }
 
-    if (amount && (!fromBalance || ZERO.plus(fromBalance).lt(amount))) {
+    checkMaxBalance();
+    if (isBalanceNotEnoughTip || formValidateData[TransferFormKeys.AMOUNT].errorMessage) {
       return {
         children: BUTTON_TEXT_INSUFFICIENT_FUNDS,
         onClick: undefined,
@@ -496,8 +521,9 @@ export default function CrossChainTransferFooter({
   }, [
     isFromWalletConnected,
     isToWalletConnected,
-    amount,
-    fromBalance,
+    checkMaxBalance,
+    isBalanceNotEnoughTip,
+    formValidateData,
     isSubmitDisabled,
     onConnectWallet,
     fromNetwork?.network,
