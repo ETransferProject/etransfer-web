@@ -4,6 +4,7 @@ import { RECAPTCHA_SITE_KEY_MAINNET, RECAPTCHA_SITE_KEY_TESTNET } from 'constant
 import GoogleReCaptcha from 'components/GoogleRecaptcha';
 import styles from './styles.module.scss';
 import { NETWORK_TYPE } from 'constants/index';
+import { NetworkEnum } from '@aelf-web-login/wallet-adapter-base';
 
 export default function ReCaptcha() {
   const handleSuccess = useCallback((response: string) => {
@@ -39,7 +40,9 @@ export default function ReCaptcha() {
     <div className={styles.reCaptchaContainer}>
       <GoogleReCaptcha
         siteKey={
-          NETWORK_TYPE === 'TESTNET' ? RECAPTCHA_SITE_KEY_TESTNET : RECAPTCHA_SITE_KEY_MAINNET
+          NETWORK_TYPE === NetworkEnum.TESTNET
+            ? RECAPTCHA_SITE_KEY_TESTNET
+            : RECAPTCHA_SITE_KEY_MAINNET
         }
         theme="light"
         size="normal"

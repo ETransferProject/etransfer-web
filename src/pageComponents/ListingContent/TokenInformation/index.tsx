@@ -40,6 +40,7 @@ import { useEffectOnce } from 'react-use';
 import myEvents from 'utils/myEvent';
 import { getListingUrl } from 'utils/listing';
 import { CONNECT_AELF_WALLET } from 'constants/wallet';
+import { BUTTON_TEXT_NEXT } from 'constants/misc';
 
 interface ITokenInformationProps {
   symbol?: string;
@@ -487,7 +488,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
           size={CommonButtonSize.Small}
           disabled={isButtonDisabled}
           onClick={handleSubmit}>
-          Next
+          {BUTTON_TEXT_NEXT}
         </CommonButton>
       ) : (
         <CommonButton

@@ -9,6 +9,7 @@ import { NetworkStatus, TNetworkItem } from 'types/api';
 import { useCommonState } from 'store/Provider/hooks';
 import { SearchIcon } from 'assets/images';
 import styles from './styles.module.scss';
+import { SELECT_CHAIN } from 'constants/misc';
 
 export type TNetwork = Pick<TNetworkItem, 'network' | 'name'> &
   Omit<Partial<TNetworkItem>, 'network' | 'name'>;
@@ -23,12 +24,11 @@ export interface NetworkSelectModalProps<T extends TNetwork | TNetworkItem> {
   onClose: () => void;
 }
 
-const SelectChain = 'Select Chain';
 const SearchByChainName = 'Search by chain name';
 
 export default function NetworkSelectModal<T extends TNetwork | TNetworkItem>({
   className,
-  modalTitle = SelectChain,
+  modalTitle = SELECT_CHAIN,
   open = false,
   networkList,
   remindContent,

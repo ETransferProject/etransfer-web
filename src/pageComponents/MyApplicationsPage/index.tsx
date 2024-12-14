@@ -10,6 +10,7 @@ import { getMyApplicationList } from 'utils/api/application';
 import LinkForBlank from 'components/LinkForBlank';
 import clsx from 'clsx';
 import myEvents from 'utils/myEvent';
+import { BUTTON_TEXT_BACK } from 'constants/misc';
 
 export default function MyApplicationsPage() {
   const { isPadPX, isMobilePX } = useCommonState();
@@ -129,7 +130,7 @@ export default function MyApplicationsPage() {
           element={
             <>
               <BackIcon />
-              <div className={styles['my-applications-page-back-text']}>Back</div>
+              <div className={styles['my-applications-page-back-text']}>{BUTTON_TEXT_BACK}</div>
             </>
           }
         />

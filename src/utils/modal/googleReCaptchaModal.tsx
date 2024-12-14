@@ -4,6 +4,7 @@ import { RECAPTCHA_SITE_KEY_MAINNET, RECAPTCHA_SITE_KEY_TESTNET } from 'constant
 import { NETWORK_TYPE } from 'constants/index';
 import GoogleReCaptcha from 'components/GoogleRecaptcha';
 import { ReCaptchaType } from 'components/GoogleRecaptcha/types';
+import { NetworkEnum } from '@aelf-web-login/wallet-adapter-base';
 
 type TGoogleReCaptchaResult = { type: ReCaptchaType; data: string | any; error?: any };
 
@@ -11,7 +12,7 @@ const googleReCaptchaModal = async (
   width?: number,
 ): Promise<TGoogleReCaptchaResult | undefined | any> => {
   const RECAPTCHA_SITE_KEY =
-    NETWORK_TYPE === 'TESTNET' ? RECAPTCHA_SITE_KEY_TESTNET : RECAPTCHA_SITE_KEY_MAINNET;
+    NETWORK_TYPE === NetworkEnum.TESTNET ? RECAPTCHA_SITE_KEY_TESTNET : RECAPTCHA_SITE_KEY_MAINNET;
   return new Promise((resolve, reject) => {
     const modal = Modal.info({
       closable: true,

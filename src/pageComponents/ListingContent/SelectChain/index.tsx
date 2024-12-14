@@ -55,11 +55,12 @@ import useSolana from 'hooks/wallet/useSolana';
 import useTON from 'hooks/wallet/useTON';
 import useTRON from 'hooks/wallet/useTRON';
 import { sleep } from '@etransfer/utils';
-import EmptyDataBox from 'pageComponents/EmptyDataBox';
+import EmptyDataBox from 'components/EmptyDataBox';
 import { CONNECT_AELF_WALLET, CONNECT_WALLET, MY_WALLET } from 'constants/wallet';
 import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
 import { WalletTypeEnum } from 'context/Wallet/types';
 import { isEVMChain, isSolanaChain, isTONChain, isTRONChain } from 'utils/wallet';
+import { BUTTON_TEXT_BACK, SELECT_CHAIN } from 'constants/misc';
 
 interface ISelectChainProps {
   symbol?: string;
@@ -468,7 +469,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
 
   const getActionButtonProps = useCallback(() => {
     let props: CommonButtonProps = {
-      children: 'Select Chain',
+      children: SELECT_CHAIN,
     };
 
     if (Object.values(unissuedChains).some((v) => v.length !== 0)) {
@@ -698,7 +699,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
             type={CommonButtonType.Secondary}
             size={CommonButtonSize.Small}
             onClick={() => handlePrevStep({ symbol: token?.symbol })}>
-            Back
+            {BUTTON_TEXT_BACK}
           </CommonButton>
         </div>
       </div>

@@ -8,6 +8,7 @@ import DynamicArrow from 'components/DynamicArrow';
 import clsx from 'clsx';
 import { SideMenuKey } from 'constants/home';
 import NetworkLogo from 'components/NetworkLogo';
+import { SELECT_CHAIN } from 'constants/misc';
 
 type TSelectNetworkProps = {
   networkList: TNetworkItem[];
@@ -68,7 +69,7 @@ export default function SelectNetwork({
                 )}
               </span>
             ) : (
-              <span className={styles['select-network-value-placeholder']}>Select Chain</span>
+              <span className={styles['select-network-value-placeholder']}>{SELECT_CHAIN}</span>
             )}
           </div>
 

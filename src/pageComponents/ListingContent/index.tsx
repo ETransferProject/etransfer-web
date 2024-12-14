@@ -14,6 +14,7 @@ import CoboCustodyReview from './CoboCustodyReview';
 import ListingComplete from './ListingComplete';
 import InitializeLiquidityPool from './InitializeLiquidityPool';
 import { getListingUrl } from 'utils/listing';
+import { BUTTON_TEXT_BACK } from 'constants/misc';
 
 let globalCanAccessStep = false;
 
@@ -158,7 +159,7 @@ export default function ListingContent() {
                 }
               }}>
               <BackIcon />
-              <span className={styles['listing-back-text']}>Back</span>
+              <span className={styles['listing-back-text']}>{BUTTON_TEXT_BACK}</span>
             </div>
           )}
           <div className={styles['listing-card-list']}>

@@ -8,6 +8,7 @@ import { setAddInitOpenNetworkModalCount } from 'store/reducers/deposit/slice';
 import DynamicArrow from 'components/DynamicArrow';
 import NetworkLogo from 'components/NetworkLogo';
 import NetworkSelectModal from 'components/NetworkSelectModal';
+import { SELECT_CHAIN } from 'constants/misc';
 
 type TSelectNetworkProps = {
   label?: string;
@@ -66,7 +67,7 @@ export default function SelectNetwork({
     return (
       <div className={clsx('flex-row-center', styles['select-network-not-selected'])}>
         {isPadPX ? <AddIcon className="flex-shrink-0" /> : <AddMedium className="flex-shrink-0" />}
-        <span className={styles['select-network-value-placeholder']}>Select Chain</span>
+        <span className={styles['select-network-value-placeholder']}>{SELECT_CHAIN}</span>
       </div>
     );
   }, [isPadPX]);

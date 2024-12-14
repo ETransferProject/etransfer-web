@@ -21,7 +21,7 @@ import { sleep, ZERO } from '@etransfer/utils';
 import { useLoading } from 'store/Provider/hooks';
 import useAelf, { useAelfLogin, useShowLoginButtonLoading } from 'hooks/wallet/useAelf';
 import { CONNECT_AELF_WALLET } from 'constants/wallet';
-import EmptyDataBox from 'pageComponents/EmptyDataBox';
+import EmptyDataBox from 'components/EmptyDataBox';
 import {
   LISTING_STEP_PATHNAME_MAP,
   ListingStep,
@@ -29,6 +29,7 @@ import {
 } from 'constants/listing';
 import PartialLoading from 'components/PartialLoading';
 import CommonSpace from 'components/CommonSpace';
+import { BUTTON_TEXT_NEXT } from 'constants/misc';
 
 export interface InitializeLiquidityPoolProps {
   id?: string;
@@ -298,7 +299,7 @@ export default function InitializeLiquidityPool({
             onClick={onNext}
             size={CommonButtonSize.Small}
             disabled={submitDisabled}>
-            Next
+            {BUTTON_TEXT_NEXT}
           </CommonButton>
         </>
       ) : (

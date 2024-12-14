@@ -7,6 +7,7 @@ import { useWithdraw } from 'hooks/withdraw';
 import { useGetAelfAccount } from 'hooks/wallet/useAelf';
 import { setWithdrawChainItem } from 'store/reducers/withdraw/slice';
 import { useEffectOnce } from 'react-use';
+import { SELECT_CHAIN } from 'constants/misc';
 
 interface SelectChainWrapperProps {
   className?: string;
@@ -44,6 +45,7 @@ export default function SelectChainWrapper({
         menuItems={CHAIN_LIST}
         selectedItem={currentChainItem}
         clickCallback={chainChanged}
+        title={SELECT_CHAIN}
       />
     </div>
   );
