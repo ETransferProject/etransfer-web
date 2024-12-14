@@ -4,7 +4,7 @@ import CommonModal from 'components/CommonModal';
 import { useMemo } from 'react';
 import DisplayImage from 'components/DisplayImage';
 import { formatSymbolDisplay } from '@etransfer/ui-react';
-import CommonSteps from 'components/CommonSteps';
+import CommonSteps, { ICommonStepsProps } from 'components/CommonSteps';
 import { ListingProcessStep, VIEW_COBO_CUSTODY_PROGRESS } from 'constants/listing';
 import { GOT_IT } from 'constants/misc';
 import CommonDrawer from 'components/CommonDrawer';
@@ -51,6 +51,18 @@ export default function ViewProgress({
     return ListingProcessStep.COMPLETE;
   }, [status]);
 
+  const formatSteps = useMemo(() => {
+    const _stepItem: ICommonStepsProps['stepItems'] = JSON.parse(
+      JSON.stringify(VIEW_COBO_CUSTODY_PROGRESS),
+    );
+    _stepItem.forEach((item, index) => {
+      if (index === currentStep) {
+        item.isLoading = true;
+      }
+    });
+    return _stepItem;
+  }, []);
+
   const content = useMemo(() => {
     return (
       <div>
@@ -64,7 +76,7 @@ export default function ViewProgress({
         <div className={styles['view-progress-steps-wrapper']}>
           <CommonSteps
             className={styles['view-progress-steps']}
-            stepItems={VIEW_COBO_CUSTODY_PROGRESS}
+            stepItems={formatSteps}
             current={currentStep}
             direction={'vertical'}
           />

@@ -13,6 +13,7 @@ import { getApplicationDisplayInfo } from '../utils';
 import { NO_APPLICATION } from 'constants/listing';
 import { LOADING_TEXT } from 'constants/misc';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
+import { Divider } from 'antd';
 
 const NoDataText = '-- No Data --';
 
@@ -35,59 +36,62 @@ export default function MyApplicationList({
     const { chainTokenInfo, failReason, failTime } = getApplicationDisplayInfo(item);
 
     return (
-      <div className={styles['application-card-container']}>
-        <div className="flex-row-center gap-8">
-          <DisplayImage
-            width={20}
-            height={20}
-            name={item.symbol}
-            src={chainTokenInfo?.icon || ''}
-          />
-          <span className={clsx(styles['token-symbol'])}>{formatSymbolDisplay(item.symbol)}</span>
-        </div>
-        <div className={clsx(styles['row'], 'flex-row-center-between')}>
-          <div className={styles['row-label']}>Chain</div>
-          {chainTokenInfo?.chainId ? (
-            <div className="flex-row-center gap-8">
-              <NetworkLogo network={chainTokenInfo.chainId} size={'small'} />
-              <span>{chainTokenInfo.chainName}</span>
-            </div>
-          ) : (
-            DEFAULT_NULL_VALUE
-          )}
-        </div>
-        <div className={clsx(styles['row'], 'flex-row-center-between')}>
-          <div className={styles['row-label']}>Status</div>
-          {chainTokenInfo?.status ? (
-            <StatusBox
-              className={styles['status-box']}
-              status={chainTokenInfo?.status}
-              failReason={failReason}
+      <>
+        <div className={styles['application-card-container']}>
+          <div className="flex-row-center gap-8">
+            <DisplayImage
+              width={20}
+              height={20}
+              name={item.symbol}
+              src={chainTokenInfo?.icon || ''}
             />
-          ) : (
-            DEFAULT_NULL_VALUE
-          )}
+            <span className={clsx(styles['token-symbol'])}>{formatSymbolDisplay(item.symbol)}</span>
+          </div>
+          <div className={clsx(styles['row'], 'flex-row-center-between')}>
+            <div className={styles['row-label']}>Chain</div>
+            {chainTokenInfo?.chainId ? (
+              <div className="flex-row-center gap-8">
+                <NetworkLogo network={chainTokenInfo.chainId} size={'small'} />
+                <span>{chainTokenInfo.chainName}</span>
+              </div>
+            ) : (
+              DEFAULT_NULL_VALUE
+            )}
+          </div>
+          <div className={clsx(styles['row'], 'flex-row-center-between')}>
+            <div className={styles['row-label']}>Status</div>
+            {chainTokenInfo?.status ? (
+              <StatusBox
+                className={styles['status-box']}
+                status={chainTokenInfo?.status}
+                failReason={failReason}
+              />
+            ) : (
+              DEFAULT_NULL_VALUE
+            )}
+          </div>
+          <div className={clsx(styles['row'], 'flex-row-center-between')}>
+            <div className={styles['row-label']}>Action</div>
+            {chainTokenInfo?.icon &&
+            chainTokenInfo?.chainId &&
+            chainTokenInfo?.chainName &&
+            chainTokenInfo?.status ? (
+              <ActionBox
+                symbol={item.symbol}
+                tokenIcon={chainTokenInfo?.icon}
+                chainId={chainTokenInfo?.chainId}
+                chainName={chainTokenInfo?.chainName}
+                id={item.id}
+                status={chainTokenInfo?.status}
+                rejectedTime={failTime}
+              />
+            ) : (
+              DEFAULT_NULL_VALUE
+            )}
+          </div>
         </div>
-        <div className={clsx(styles['row'], 'flex-row-center-between')}>
-          <div className={styles['row-label']}>Action</div>
-          {chainTokenInfo?.icon &&
-          chainTokenInfo?.chainId &&
-          chainTokenInfo?.chainName &&
-          chainTokenInfo?.status ? (
-            <ActionBox
-              symbol={item.symbol}
-              tokenIcon={chainTokenInfo?.icon}
-              chainId={chainTokenInfo?.chainId}
-              chainName={chainTokenInfo?.chainName}
-              id={item.id}
-              status={chainTokenInfo?.status}
-              rejectedTime={failTime}
-            />
-          ) : (
-            DEFAULT_NULL_VALUE
-          )}
-        </div>
-      </div>
+        <Divider className={styles['divider-style']} />
+      </>
     );
   }, []);
 
