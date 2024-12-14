@@ -1,9 +1,14 @@
+import { ZERO } from '@etransfer/utils';
+import { ContractType } from 'constants/chain';
+import { ADDRESS_MAP, SupportedELFChainId } from 'constants/index';
+import { APPROVE_ELF_FEE } from 'constants/withdraw';
 import {
   TGetTokenNetworkRelationItem,
   TGetTokenNetworkRelationResult,
   TNetworkItem,
   TTokenItem,
 } from 'types/api';
+import { checkIsEnoughAllowance } from 'utils/contract';
 
 function removeDuplicate(arr: TGetTokenNetworkRelationItem[]) {
   const newArr: string[] = [];
@@ -79,4 +84,39 @@ export function computeTokenList({
 
   const result = totalTokenList.filter((token) => toNetworkTokens.includes(token.symbol));
   return result;
+}
+
+export async function getAelfMaxBalance({
+  balance,
+  aelfFee,
+  fromNetwork,
+  tokenSymbol,
+  account,
+}: {
+  balance: string;
+  aelfFee?: string;
+  fromNetwork?: string;
+  tokenSymbol: string;
+  account: string;
+}) {
+  let _maxInput = balance;
+
+  if (_maxInput && aelfFee && ZERO.plus(aelfFee).gt(0)) {
+    const _chainId = fromNetwork as SupportedELFChainId;
+    const isEnoughAllowance = await checkIsEnoughAllowance({
+      chainId: _chainId,
+      symbol: tokenSymbol,
+      address: account,
+      approveTargetAddress: ADDRESS_MAP[_chainId]?.[ContractType.ETRANSFER],
+      amount: _maxInput,
+    });
+    let _maxInputBignumber;
+    if (isEnoughAllowance) {
+      _maxInputBignumber = ZERO.plus(balance).minus(aelfFee);
+    } else {
+      _maxInputBignumber = ZERO.plus(balance).minus(aelfFee).minus(APPROVE_ELF_FEE);
+    }
+    _maxInput = _maxInputBignumber.lt(0) ? '0' : _maxInputBignumber.toFixed();
+  }
+  return _maxInput;
 }

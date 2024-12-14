@@ -54,6 +54,7 @@ import {
   ADDRESS_NOT_CORRECT,
   ADDRESS_SHORTER_THAN_USUAL,
   InitialCrossChainTransferInfo,
+  NOT_ENOUGH_ELF_FEE,
   SEND_TRANSFER_ADDRESS_ERROR_CODE_LIST,
 } from 'constants/crossChainTransfer';
 import { useWallet } from 'context/Wallet';
@@ -64,19 +65,15 @@ import {
   TTransferFormValues,
 } from './types';
 import { isDIDAddressSuffix } from 'utils/aelf/aelfBase';
-import { computeTokenList, computeToNetworkList } from './utils';
+import { computeTokenList, computeToNetworkList, getAelfMaxBalance } from './utils';
 import { getTokenPrices } from 'utils/api/user';
 import BigNumber from 'bignumber.js';
 import { computeWalletType, getWalletSourceType, isAelfChain, isTONChain } from 'utils/wallet';
-import { checkIsEnoughAllowance } from 'utils/contract';
-import { APPROVE_ELF_FEE } from 'constants/withdraw';
-import { ADDRESS_MAP, SupportedELFChainId } from 'constants/index';
 import { useUpdateBalance } from 'hooks/wallet/useUpdateBalance';
 import { useGetAuthTokenFromStorage } from 'hooks/wallet/authToken';
 import { CommonErrorNameType } from 'api/types';
 import { BlockchainNetworkType } from 'constants/network';
 import { isHtmlError } from 'utils/api/error';
-import { ContractType } from 'constants/chain';
 
 export default function CrossChainTransferPage() {
   const dispatch = useAppDispatch();
@@ -108,6 +105,7 @@ export default function CrossChainTransferPage() {
   const transferInfoRef = useRef(InitialCrossChainTransferInfo);
   const [isTransactionFeeLoading, setIsTransactionFeeLoading] = useState(false);
   const [isUseRecipientAddress, setIsUseRecipientAddress] = useState(false);
+  const isUseRecipientAddressRef = useRef(isUseRecipientAddress);
   const [recipientAddressInput, setRecipientAddressInput] = useState('');
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [amount, setAmount] = useState('');
@@ -147,7 +145,7 @@ export default function CrossChainTransferPage() {
   }, [form]);
 
   const judgeIsSubmitDisabled = useCallback(
-    (currentFormValidateData: typeof formValidateData, _isUseRecipientAddress: boolean) => {
+    (currentFormValidateData: typeof formValidateData) => {
       const isValueUndefined = (value: unknown) => value === undefined || value === '';
       const isDisabled =
         isValueUndefined(receiveAmount) ||
@@ -155,7 +153,7 @@ export default function CrossChainTransferPage() {
           TransferValidateStatus.Error ||
         currentFormValidateData[TransferFormKeys.AMOUNT].validateStatus ===
           TransferValidateStatus.Error ||
-        (_isUseRecipientAddress && isValueUndefined(getRecipientAddressInput())) ||
+        (isUseRecipientAddressRef.current && isValueUndefined(getRecipientAddressInput())) ||
         isValueUndefined(form.getFieldValue(TransferFormKeys.AMOUNT));
       setIsSubmitDisabled(isDisabled);
     },
@@ -166,11 +164,11 @@ export default function CrossChainTransferPage() {
     (updateFormValidateData: Partial<typeof formValidateData>) => {
       setFormValidateData((prev) => {
         const newFormValidateData = { ...prev, ...updateFormValidateData };
-        judgeIsSubmitDisabled(newFormValidateData, isUseRecipientAddress);
+        judgeIsSubmitDisabled(newFormValidateData);
         return newFormValidateData;
       });
     },
-    [judgeIsSubmitDisabled, isUseRecipientAddress],
+    [judgeIsSubmitDisabled],
   );
 
   const searchParams = useSearchParams();
@@ -206,7 +204,7 @@ export default function CrossChainTransferPage() {
         }
 
         // Used to check whether the recipient address is reasonable.
-        const _toAddress = isUseRecipientAddress ? getRecipientAddressInput() : '';
+        const _toAddress = isUseRecipientAddressRef.current ? getRecipientAddressInput() : '';
         if (_toAddress) params.toAddress = _toAddress;
 
         const comment = getCommentInput();
@@ -277,7 +275,6 @@ export default function CrossChainTransferPage() {
       getCommentInput,
       getRecipientAddressInput,
       handleFormValidateDataChange,
-      isUseRecipientAddress,
       tokenSymbol,
       totalTokenList,
     ],
@@ -469,28 +466,82 @@ export default function CrossChainTransferPage() {
     }
   }, [form, getRecipientAddressInput, handleFormValidateDataChange]);
 
-  const judgeAmountValidateStatus = useCallback(() => {
-    if (
-      amount &&
-      ((balance && ZERO.plus(amount).gt(balance)) ||
-        (minAmount && ZERO.plus(amount).lt(minAmount)) ||
-        (transferInfo.remainingLimit && ZERO.plus(amount).gt(transferInfo.remainingLimit)))
-    ) {
-      handleFormValidateDataChange({
-        [TransferFormKeys.AMOUNT]: {
-          validateStatus: TransferValidateStatus.Error,
-          errorMessage: '',
-        },
+  const judgeAmountValidateStatus = useCallback(async () => {
+    if (isAelfChain(fromNetwork?.network || '') && tokenSymbol === 'ELF') {
+      const _maxBalance = await getAelfMaxBalance({
+        balance,
+        aelfFee: transferInfoRef.current?.aelfTransactionFee,
+        fromNetwork: fromNetwork?.network,
+        tokenSymbol,
+        account: fromWallet?.account || '',
       });
+      if (amount && _maxBalance && ZERO.plus(amount).gt(_maxBalance)) {
+        if (ZERO.plus(amount).gt(balance)) {
+          handleFormValidateDataChange({
+            [TransferFormKeys.AMOUNT]: {
+              validateStatus: TransferValidateStatus.Error,
+              errorMessage: '',
+            },
+          });
+        } else {
+          handleFormValidateDataChange({
+            [TransferFormKeys.AMOUNT]: {
+              validateStatus: TransferValidateStatus.Error,
+              errorMessage: NOT_ENOUGH_ELF_FEE,
+            },
+          });
+        }
+      } else if (
+        amount &&
+        ((minAmount && ZERO.plus(amount).lt(minAmount)) ||
+          (transferInfo.remainingLimit && ZERO.plus(amount).gt(transferInfo.remainingLimit)))
+      ) {
+        handleFormValidateDataChange({
+          [TransferFormKeys.AMOUNT]: {
+            validateStatus: TransferValidateStatus.Error,
+            errorMessage: '',
+          },
+        });
+      } else {
+        handleFormValidateDataChange({
+          [TransferFormKeys.AMOUNT]: {
+            validateStatus: TransferValidateStatus.Normal,
+            errorMessage: '',
+          },
+        });
+      }
     } else {
-      handleFormValidateDataChange({
-        [TransferFormKeys.AMOUNT]: {
-          validateStatus: TransferValidateStatus.Normal,
-          errorMessage: '',
-        },
-      });
+      if (
+        amount &&
+        ((balance && ZERO.plus(amount).gt(balance)) ||
+          (minAmount && ZERO.plus(amount).lt(minAmount)) ||
+          (transferInfo.remainingLimit && ZERO.plus(amount).gt(transferInfo.remainingLimit)))
+      ) {
+        handleFormValidateDataChange({
+          [TransferFormKeys.AMOUNT]: {
+            validateStatus: TransferValidateStatus.Error,
+            errorMessage: '',
+          },
+        });
+      } else {
+        handleFormValidateDataChange({
+          [TransferFormKeys.AMOUNT]: {
+            validateStatus: TransferValidateStatus.Normal,
+            errorMessage: '',
+          },
+        });
+      }
     }
-  }, [amount, balance, handleFormValidateDataChange, minAmount, transferInfo.remainingLimit]);
+  }, [
+    amount,
+    balance,
+    fromNetwork?.network,
+    fromWallet?.account,
+    handleFormValidateDataChange,
+    minAmount,
+    tokenSymbol,
+    transferInfo.remainingLimit,
+  ]);
 
   useEffect(() => {
     judgeAmountValidateStatus();
@@ -596,7 +647,6 @@ export default function CrossChainTransferPage() {
       getAmountUSD();
     } catch (error) {
       console.log('handleAmountBlur error', error);
-      // SingleMessage.error(handleErrorMessage(error));
     }
   }, [getAmountUSD]);
 
@@ -605,40 +655,13 @@ export default function CrossChainTransferPage() {
       try {
         setLoading(true);
         await getTransferDataRef.current(amountRef.current);
-        let _maxInput = balance;
-        const aelfFee = transferInfoRef.current?.aelfTransactionFee;
-        if (_maxInput && aelfFee && ZERO.plus(aelfFee).gt(0)) {
-          const _chainId = fromNetwork?.network as SupportedELFChainId;
-          const isEnoughAllowance = await checkIsEnoughAllowance({
-            chainId: _chainId,
-            symbol: tokenSymbol,
-            address: fromWallet?.account || '',
-            approveTargetAddress: ADDRESS_MAP[_chainId]?.[ContractType.ETRANSFER],
-            amount: _maxInput,
-          });
-          console.log(
-            '>>>>>> isEnoughAllowance',
-            isEnoughAllowance,
-            JSON.parse(
-              JSON.stringify({
-                chainId: _chainId,
-                symbol: tokenSymbol,
-                address: fromWallet?.account || '',
-                approveTargetAddress: ADDRESS_MAP[_chainId]?.[ContractType.ETRANSFER],
-                amount: _maxInput,
-              }),
-            ),
-          );
-          let _maxInputBignumber;
-          if (isEnoughAllowance) {
-            console.log('>>>>>> isEnoughAllowance true');
-            _maxInputBignumber = ZERO.plus(balance).minus(aelfFee);
-          } else {
-            console.log('>>>>>> isEnoughAllowance false');
-            _maxInputBignumber = ZERO.plus(balance).minus(aelfFee).minus(APPROVE_ELF_FEE);
-          }
-          _maxInput = _maxInputBignumber.lt(0) ? '0' : _maxInputBignumber.toFixed();
-        }
+        const _maxInput = await getAelfMaxBalance({
+          balance,
+          aelfFee: transferInfoRef.current?.aelfTransactionFee,
+          fromNetwork: fromNetwork?.network,
+          tokenSymbol,
+          account: fromWallet?.account || '',
+        });
 
         form.setFieldValue(TransferFormKeys.AMOUNT, _maxInput);
         handleAmountChange(_maxInput);
@@ -667,7 +690,10 @@ export default function CrossChainTransferPage() {
   const handleUseRecipientChanged = useCallback(
     (isUse: boolean) => {
       setIsUseRecipientAddress(isUse);
-      judgeIsSubmitDisabled(formValidateData, isUse);
+      isUseRecipientAddressRef.current = isUse;
+      judgeIsSubmitDisabled(formValidateData);
+
+      getTransferDataRef.current(amountRef.current);
     },
     [formValidateData, judgeIsSubmitDisabled],
   );
