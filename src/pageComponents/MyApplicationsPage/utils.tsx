@@ -1,10 +1,16 @@
 import { ApplicationChainStatusEnum, TMyApplicationItem } from 'types/api';
 
 export const getApplicationDisplayInfo = (data: TMyApplicationItem) => {
-  const chainTokenInfo = data.otherChainTokenInfo.chainId
-    ? data.otherChainTokenInfo
+  const chainTokenInfo = data?.otherChainTokenInfo?.chainId
+    ? data?.otherChainTokenInfo
     : data?.chainTokenInfo?.[0];
-
+  if (!chainTokenInfo) {
+    return {
+      chainTokenInfo: undefined,
+      failTime: '',
+      failReason: '',
+    };
+  }
   const getFailResult = () => {
     switch (chainTokenInfo.status) {
       case ApplicationChainStatusEnum.Rejected:

@@ -11,10 +11,14 @@ import LinkForBlank from 'components/LinkForBlank';
 import clsx from 'clsx';
 import myEvents from 'utils/myEvent';
 import { BUTTON_TEXT_BACK } from 'constants/misc';
+import useAelf, { useAelfLogin, useInitAelfWallet } from 'hooks/wallet/useAelf';
 
 export default function MyApplicationsPage() {
   const { isPadPX, isMobilePX } = useCommonState();
   const { setLoading } = useLoading();
+  const { isConnected } = useAelf();
+  const handleAelfLogin = useAelfLogin();
+  useInitAelfWallet();
   const [applicationList, setApplicationList] = useState<any[]>([]);
 
   // pagination
@@ -87,7 +91,11 @@ export default function MyApplicationsPage() {
   }, [getApplicationData]);
 
   useEffectOnce(() => {
-    init();
+    if (!isConnected) {
+      handleAelfLogin(true, init);
+    } else {
+      init();
+    }
   });
 
   const initForLogout = useCallback(async () => {

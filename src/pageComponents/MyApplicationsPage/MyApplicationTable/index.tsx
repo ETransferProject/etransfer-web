@@ -10,6 +10,7 @@ import ActionBox from '../ActionBox';
 import { TMyApplicationItem } from 'types/api';
 import { getApplicationDisplayInfo } from '../utils';
 import { NO_APPLICATION } from 'constants/listing';
+import { DEFAULT_NULL_VALUE } from 'constants/index';
 
 const MyApplicationTableColumns = [
   {
@@ -20,7 +21,7 @@ const MyApplicationTableColumns = [
       const { chainTokenInfo } = getApplicationDisplayInfo(item);
       return (
         <div className="flex-row-center gap-8">
-          <DisplayImage width={24} height={24} name={symbol} src={chainTokenInfo.icon} />
+          <DisplayImage width={24} height={24} name={symbol} src={chainTokenInfo?.icon || ''} />
           <span className={clsx(styles['token-symbol'])}>{formatSymbolDisplay(symbol)}</span>
         </div>
       );
@@ -32,11 +33,13 @@ const MyApplicationTableColumns = [
     key: 'networkName',
     render: (_: any, item: TMyApplicationItem) => {
       const { chainTokenInfo } = getApplicationDisplayInfo(item);
-      return (
+      return chainTokenInfo?.chainId ? (
         <div className="flex-row-center gap-8">
-          <NetworkLogo network={chainTokenInfo.chainId} />
-          <span>{chainTokenInfo.chainName}</span>
+          <NetworkLogo network={chainTokenInfo?.chainId} />
+          <span>{chainTokenInfo?.chainName}</span>
         </div>
+      ) : (
+        DEFAULT_NULL_VALUE
       );
     },
   },
@@ -47,7 +50,11 @@ const MyApplicationTableColumns = [
     width: '112px',
     render: (_: any, item: TMyApplicationItem) => {
       const { chainTokenInfo, failReason } = getApplicationDisplayInfo(item);
-      return <StatusBox status={chainTokenInfo.status} failReason={failReason} />;
+      return chainTokenInfo?.status ? (
+        <StatusBox status={chainTokenInfo?.status} failReason={failReason} />
+      ) : (
+        DEFAULT_NULL_VALUE
+      );
     },
   },
   {
@@ -56,7 +63,10 @@ const MyApplicationTableColumns = [
     key: 'action',
     render: (_: any, item: TMyApplicationItem) => {
       const { chainTokenInfo } = getApplicationDisplayInfo(item);
-      return (
+      return chainTokenInfo?.status &&
+        chainTokenInfo?.icon &&
+        chainTokenInfo.chainId &&
+        chainTokenInfo.chainName ? (
         <ActionBox
           status={chainTokenInfo.status}
           symbol={item.symbol}
@@ -66,6 +76,8 @@ const MyApplicationTableColumns = [
           id={item.id}
           rejectedTime={chainTokenInfo.rejectedTime}
         />
+      ) : (
+        DEFAULT_NULL_VALUE
       );
     },
   },
