@@ -136,7 +136,7 @@ export default function EVMWallet() {
         onChange={(e) => setInitialSupply(e.target.value)}
       />
       <CommonSpace direction="vertical" size={8} />
-      <Button onClick={onCreateToken} disabled={!tokenName && !tokenSymbol && !initialSupply}>
+      <Button onClick={onCreateToken} disabled={!tokenName || !tokenSymbol || !initialSupply}>
         Create Token
       </Button>
       <hr style={{ marginTop: 20, marginBottom: 20 }} />
