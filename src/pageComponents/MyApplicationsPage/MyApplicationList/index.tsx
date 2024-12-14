@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import EmptyDataBox from 'pageComponents/EmptyDataBox';
+import EmptyDataBox from 'components/EmptyDataBox';
 import { useCallback, useMemo } from 'react';
 import DisplayImage from 'components/DisplayImage';
 import { formatSymbolDisplay } from 'utils/format';

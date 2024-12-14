@@ -70,7 +70,6 @@ export const AELF_NODES = {
   tDVW: tDVW_Test.CHAIN_INFO,
 };
 
-// testnet-jenkins
 export const ETransferHost = 'https://test-app.etransfer.exchange';
 export const ETransferAuthHost = 'https://test-app.etransfer.exchange';
 export const WebLoginGraphqlUrl = 'https://test-indexer-api.aefinder.io/api/app/graphql/portkey';

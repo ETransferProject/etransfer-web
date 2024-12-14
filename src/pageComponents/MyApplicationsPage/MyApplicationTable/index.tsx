@@ -1,7 +1,7 @@
 import { Table } from 'antd';
 import clsx from 'clsx';
 import DisplayImage from 'components/DisplayImage';
-import EmptyDataBox from 'pageComponents/EmptyDataBox';
+import EmptyDataBox from 'components/EmptyDataBox';
 import { formatSymbolDisplay } from 'utils/format';
 import styles from './styles.module.scss';
 import NetworkLogo from 'components/NetworkLogo';

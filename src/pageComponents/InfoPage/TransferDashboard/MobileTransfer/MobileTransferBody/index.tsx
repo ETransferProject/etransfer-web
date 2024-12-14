@@ -9,7 +9,7 @@ import Amount from '../../ColumnComponents/Amount';
 import Time from '../../ColumnComponents/Time';
 import WalletAddress from '../../ColumnComponents/WalletAddress';
 import clsx from 'clsx';
-import EmptyDataBox from 'pageComponents/EmptyDataBox';
+import EmptyDataBox from 'components/EmptyDataBox';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { setSelectedTransfer } from 'store/reducers/infoDashboard/slice';
 import myEvents from 'utils/myEvent';

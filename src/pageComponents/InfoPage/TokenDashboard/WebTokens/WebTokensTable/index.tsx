@@ -1,7 +1,7 @@
 import { useInfoDashboardState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { Table } from 'antd';
-import EmptyDataBox from 'pageComponents/EmptyDataBox';
+import EmptyDataBox from 'components/EmptyDataBox';
 import TokenBox from '../../ColumnComponents/TokenBox';
 import Networks from '../../ColumnComponents/Networks';
 import Volume from '../../ColumnComponents/Volume';
