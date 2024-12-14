@@ -70,7 +70,7 @@ const ApplicationApiList = {
     baseConfig: { method: 'POST' },
   },
   getIssue: {
-    target: '/api/etransfer/application/issue',
+    target: '/api/etransfer/application/issue-binding',
     baseConfig: { method: 'POST' },
   },
   getMyApplicationList: '/api/etransfer/application/list',

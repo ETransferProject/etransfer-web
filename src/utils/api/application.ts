@@ -36,7 +36,7 @@ export const commitTokenInfo = async (
 ): Promise<TCommitTokenInfoResult> => {
   try {
     const res = await request.application.commitTokenInfo({
-      params,
+      data: params,
     });
     return res.data;
   } catch (error) {
@@ -75,7 +75,7 @@ export const addApplicationChain = async (
 ): Promise<TAddApplicationChainResult> => {
   try {
     const res = await request.application.addChain({
-      params,
+      data: params,
     });
     return res.data;
   } catch (error) {
@@ -88,7 +88,7 @@ export const prepareBindIssue = async (
 ): Promise<TPrepareBindIssueResult> => {
   try {
     const res = await request.application.prepareBindIssue({
-      params,
+      data: params,
     });
     return res.data;
   } catch (error) {
@@ -101,7 +101,7 @@ export const getApplicationIssue = async (
 ): Promise<TGetApplicationIssueResult> => {
   try {
     const res = await request.application.getIssue({
-      params,
+      data: params,
     });
     return res.data;
   } catch (error) {
