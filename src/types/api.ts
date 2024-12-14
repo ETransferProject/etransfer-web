@@ -675,8 +675,8 @@ export type TMyApplicationItem = {
   symbol: string;
   status: ApplicationChainStatusEnum;
   updateTime: number;
-  chainTokenInfo: TMyApplicationChainTokenInfo[];
-  otherChainTokenInfo: TMyApplicationChainTokenInfo;
+  chainTokenInfo?: TMyApplicationChainTokenInfo[];
+  otherChainTokenInfo?: TMyApplicationChainTokenInfo;
 };
 
 export type TMyApplicationChainTokenInfo = {
@@ -709,8 +709,8 @@ export type TApplicationDetailItem = {
   status: ApplicationChainStatusEnum;
   createTime: number;
   updateTime: number;
-  chainTokenInfo: TApplicationDetailItemChainTokenInfo[];
-  otherChainTokenInfo: TApplicationDetailItemChainTokenInfo;
+  chainTokenInfo?: TApplicationDetailItemChainTokenInfo[];
+  otherChainTokenInfo?: TApplicationDetailItemChainTokenInfo;
 };
 
 export type TApplicationDetailItemChainTokenInfo = {

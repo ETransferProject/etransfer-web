@@ -175,13 +175,19 @@ export default function InitializeLiquidityPool({
         await sleep(500);
         const res = await getApplicationDetail({ symbol, id });
 
-        const chainTokenInfos = res.items[0].chainTokenInfo;
-        const otherChainTokenInfos = res.items[0].otherChainTokenInfo;
-        const concatList = chainTokenInfos.concat([otherChainTokenInfos]);
+        const chainTokenInfos = res.items[0]?.chainTokenInfo || [];
+        const otherChainTokenInfos = res.items[0]?.otherChainTokenInfo;
+        let concatList = [];
+        if (otherChainTokenInfos) {
+          concatList = chainTokenInfos?.concat([otherChainTokenInfos]);
+        } else {
+          concatList = chainTokenInfos;
+        }
+
         setTokenPoolList(concatList);
         setTokenInfo({
           symbol: res.items[0].symbol,
-          limit24HInUsd: otherChainTokenInfos.limit24HInUsd || chainTokenInfos[0].limit24HInUsd,
+          limit24HInUsd: otherChainTokenInfos?.limit24HInUsd || chainTokenInfos[0].limit24HInUsd,
         });
 
         // submit but disable

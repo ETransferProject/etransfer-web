@@ -44,7 +44,8 @@ export default function ActionBox({
 
   const isNeedInitTokenPool = useMemo(() => {
     return (
-      status === ApplicationChainStatusEnum.PoolInitializing || ApplicationChainStatusEnum.Reviewed
+      status === ApplicationChainStatusEnum.PoolInitializing ||
+      status === ApplicationChainStatusEnum.Reviewed
     );
   }, [status]);
 

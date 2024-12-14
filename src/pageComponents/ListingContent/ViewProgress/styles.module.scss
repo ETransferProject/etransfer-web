@@ -58,8 +58,17 @@
   .view-progress-steps {
     :global {
       .ant-steps-item {
+        &:last-child {
+          .ant-steps-item-content {
+            min-height: auto;
+          }
+        }
+        &:not(:last-child) {
+          .ant-steps-item-content {
+            min-height: 80px !important;
+          }
+        }
         .ant-steps-item-content {
-          min-height: 80px;
           .ant-steps-item-title {
             margin-top: 2px;
           }
