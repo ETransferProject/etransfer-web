@@ -74,7 +74,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
         !!token?.liquidityInUsd &&
         !!currentTokenConfig?.liquidityInUsd &&
         parseFloat(token.liquidityInUsd) > parseFloat(currentTokenConfig.liquidityInUsd) &&
-        !!currentTokenConfig?.holders &&
+        currentTokenConfig?.holders !== undefined &&
         token.holders > currentTokenConfig.holders;
 
       const isDisabled =

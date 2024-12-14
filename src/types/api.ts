@@ -630,8 +630,8 @@ export type TAddApplicationChainRequest = {
 };
 
 export type TAddApplicationChainResult = {
-  chainList: TAddApplicationChainResultChainItem[];
-  otherChainList: TAddApplicationChainResultChainItem[];
+  chainList?: TAddApplicationChainResultChainItem[];
+  otherChainList?: TAddApplicationChainResultChainItem[];
 };
 
 export type TAddApplicationChainResultChainItem = {

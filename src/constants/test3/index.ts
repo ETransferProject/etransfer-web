@@ -76,6 +76,7 @@ export const ETransferAuthHost = '';
 export const WebLoginGraphqlUrl = '/v2/graphql';
 export const WebLoginServiceUrl = 'http://192.168.67.127:5001';
 export const WebLoginConnectUrl = 'http://192.168.67.127:8080';
+export const AwakenHost = 'https://test-app.awaken.finance/';
 
 // test3-dev
 // export const ETransferHost = 'http://192.168.64.151:5011';

@@ -63,7 +63,7 @@ export default function CreationProgressModal({
   }, [stepItems]);
 
   const isCreateFinished = useMemo(() => {
-    return stepItems.every((item) => item.status === 'finish');
+    return stepItems.length > 0 && stepItems.every((item) => item.status === 'finish');
   }, [stepItems]);
 
   useEffect(() => {
@@ -134,7 +134,7 @@ export default function CreationProgressModal({
       try {
         const sourceType = computeWalletSourceType(chain.chainId);
         const address = accountListWithWalletType.find(
-          (item) => item.SourceType === sourceType,
+          (item) => item.SourceType === sourceType.toLocaleLowerCase(),
         )?.Address;
         if (!address) {
           throw new Error('No address found');
@@ -262,8 +262,8 @@ export default function CreationProgressModal({
       try {
         const currentChain = stepItems[step].chain;
         if (currentChain.status === ApplicationChainStatusEnum.Unissued) {
-          const { bindingId, thirdTokenId } = await handlePrepareBindIssue(currentChain);
           const txHash = await handleIssue({ chain: currentChain });
+          const { bindingId, thirdTokenId } = await handlePrepareBindIssue(currentChain);
           handleStepItemChange({ step, params: { bindingId, thirdTokenId, txHash } });
         }
       } catch (error) {

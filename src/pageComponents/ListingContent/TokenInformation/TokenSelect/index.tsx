@@ -6,6 +6,7 @@ import LinkForBlank from 'components/LinkForBlank';
 import TokenRow from '../../TokenRow';
 import { CheckFilled16, CloseFilled16 } from 'assets/images';
 import { TTokenConfig, TTokenItem } from 'types/listing';
+import { AwakenHost } from 'constants/index';
 import styles from './styles.module.scss';
 
 interface ITokenSelectProps {
@@ -66,12 +67,12 @@ export default function TokenSelect({
                 </div>
                 <LinkForBlank
                   className={styles['token-selected-info-card-row-link']}
-                  href={'/'}
+                  href={AwakenHost}
                   element="Add Liquidity"
                 />
               </div>
             )}
-            {!!tokenConfig?.holders && (
+            {tokenConfig?.holders !== undefined && (
               <div className={styles['token-selected-info-card-row']}>
                 <div className={styles['token-selected-info-card-row-content']}>
                   {getInfoValidateIcon(!!token?.holders && token.holders > tokenConfig.holders)}

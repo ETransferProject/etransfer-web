@@ -186,11 +186,11 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
       aelfChains: TApplicationChainStatusItem[];
       otherChains: TApplicationChainStatusItem[];
     }): boolean => {
-      if (!hasDisabledAELFChain) {
-        return aelfChains.length === 0;
-      }
-      if (!hasDisabledOtherChain) {
-        return otherChains.length === 0;
+      if (
+        (!hasDisabledAELFChain && aelfChains.length === 0) ||
+        (!hasDisabledOtherChain && otherChains.length === 0)
+      ) {
+        return true;
       }
       return aelfChains.length === 0 && otherChains.length === 0;
     },
@@ -440,13 +440,16 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
         otherChainIds: formData[SelectChainFormKeys.OTHER_CHAINS].map((v) => v.chainId),
         symbol: token.symbol,
       });
+      if (!data?.chainList && !data?.otherChainList) {
+        throw new Error('Failed to add chain');
+      }
       const aelfNetworks = formData[SelectChainFormKeys.AELF_CHAINS]
-        .filter((item) => data?.chainList.some((v) => v.chainId === item.chainId))
+        .filter((item) => data?.chainList?.some((v) => v.chainId === item.chainId))
         .map((v) => ({
           name: v.chainName,
         }));
       const otherNetworks = formData[SelectChainFormKeys.OTHER_CHAINS]
-        .filter((item) => data?.otherChainList.some((v) => v.chainId === item.chainId))
+        .filter((item) => data?.otherChainList?.some((v) => v.chainId === item.chainId))
         .map((v) => ({
           name: v.chainName,
         }));

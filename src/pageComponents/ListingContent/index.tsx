@@ -80,7 +80,6 @@ export default function ListingContent() {
     const nextStep = currentStep + 1;
     if (nextStep <= ListingStep.COMPLETE) {
       globalCanAccessStep = true;
-      isNavigatingRef.current = true;
       const replaceUrl = getListingUrl(nextStep, params);
       router.replace(replaceUrl);
     }
@@ -91,7 +90,6 @@ export default function ListingContent() {
     const prevStep = currentStep - 1;
     if (prevStep >= ListingStep.TOKEN_INFORMATION) {
       globalCanAccessStep = true;
-      isNavigatingRef.current = true;
       const replaceUrl = getListingUrl(prevStep, params);
       router.replace(replaceUrl);
     }
