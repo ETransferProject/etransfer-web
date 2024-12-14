@@ -221,6 +221,7 @@ export default function WithdrawFooter({
         const managerAddress = await getManagerAddressByWallet(walletInfo as WalletInfo, connector);
         const ownerAddress = accounts?.[currentChainItem.key] || '';
         const transaction = await createTransferTokenTransaction({
+          walletInfo,
           walletType: connector,
           caContractAddress: ADDRESS_MAP[currentChainItem.key][ContractType.CA],
           eTransferContractAddress: currentTokenAddress,

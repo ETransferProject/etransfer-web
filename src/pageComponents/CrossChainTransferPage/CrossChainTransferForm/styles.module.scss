@@ -2,6 +2,23 @@
 @import '/src/assets/theme/font.scss';
 @import '/src/assets/theme/breakpoint.scss';
 
+.cross-chain-transfer-body {
+  :global {
+    .ant-form-item-explain-error,
+    .ant-form-item-explain-warning {
+      margin-top: 4px;
+      font-size: 14px;
+      line-height: 22px;
+    }
+    .ant-form-item-explain-error {
+      color: $error;
+    }
+    .ant-form-item-explain-warning {
+      color: $warning;
+    }
+  }
+}
+
 .network-and-wallet-section {
   position: relative;
 }

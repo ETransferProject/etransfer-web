@@ -4,7 +4,7 @@ import { ContractMethodName, ManagerForwardCall } from 'constants/contract';
 import BigNumber from 'bignumber.js';
 import { timesDecimals } from './calculate';
 import { AllSupportedELFChainId, ContractType } from 'constants/chain';
-import { sleep } from '@portkey/utils';
+import { sleep, zeroFill } from '@portkey/utils';
 import {
   GetRawTx,
   getAElf,
@@ -18,6 +18,7 @@ import {
   ICallContractParams,
   TSignatureParams,
   WalletTypeEnum as AelfWalletTypeEnum,
+  TWalletInfo,
 } from '@aelf-web-login/wallet-adapter-base';
 import {
   getTokenContract,
@@ -25,6 +26,7 @@ import {
   getAllowance,
   getTokenInfo,
 } from '@etransfer/utils';
+import { ExtraInfoForDiscover } from 'types/wallet';
 
 type CreateHandleManagerForwardCall = {
   caContractAddress: string;
@@ -163,6 +165,7 @@ export async function getTxResult(
 }
 
 export const handleTransaction = async ({
+  walletInfo,
   walletType,
   blockHeightInput,
   blockHashInput,
@@ -173,6 +176,7 @@ export const handleTransaction = async ({
   caAddress,
   getSignature,
 }: GetRawTx & {
+  walletInfo: TWalletInfo;
   walletType: AelfWalletTypeEnum;
   caAddress: string;
   getSignature: TGetSignature;
@@ -191,22 +195,44 @@ export const handleTransaction = async ({
   const ser = AElf.pbUtils.Transaction.encode(rawTx).finish();
 
   let signInfo: string;
-  if (walletType !== AelfWalletTypeEnum.aa) {
-    // nightElf or discover
+  if (walletType === AelfWalletTypeEnum.elf) {
+    // nightElf
     signInfo = AElf.utils.sha256(ser);
   } else {
-    // portkey sdk
+    // portkey sdk and discover
     signInfo = Buffer.from(ser).toString('hex');
   }
 
   // signature
-  const signatureRes = await getSignature({
-    appName: APP_NAME,
-    address: removeELFAddressSuffix(caAddress),
-    signInfo,
-  });
+  let signatureStr = '';
+  if (walletType === AelfWalletTypeEnum.discover) {
+    // discover
+    const discoverInfo = walletInfo?.extraInfo as ExtraInfoForDiscover;
+    if ((discoverInfo?.provider as any).methodCheck('wallet_getTransactionSignature')) {
+      const sin = await discoverInfo?.provider?.request({
+        method: 'wallet_getTransactionSignature',
+        payload: { hexData: signInfo },
+      });
+      signatureStr = [zeroFill(sin.r), zeroFill(sin.s), `0${sin.recoveryParam.toString()}`].join(
+        '',
+      );
+    } else {
+      const signatureRes = await getSignature({
+        appName: APP_NAME,
+        address: removeELFAddressSuffix(caAddress),
+        signInfo,
+      });
+      signatureStr = signatureRes?.signature || '';
+    }
+  } else {
+    const signatureRes = await getSignature({
+      appName: APP_NAME,
+      address: removeELFAddressSuffix(caAddress),
+      signInfo,
+    });
+    signatureStr = signatureRes?.signature || '';
+  }
 
-  const signatureStr = signatureRes?.signature || '';
   if (!signatureStr) return;
 
   let tx = {
@@ -347,6 +373,7 @@ export type TGetSignatureResult = {
 };
 
 export interface CreateTransferTokenTransactionParams {
+  walletInfo: TWalletInfo;
   walletType: AelfWalletTypeEnum;
   caContractAddress: string;
   eTransferContractAddress: string;
@@ -361,6 +388,7 @@ export interface CreateTransferTokenTransactionParams {
 }
 
 export const createTransferTokenTransaction = async ({
+  walletInfo,
   walletType,
   caContractAddress,
   eTransferContractAddress,
@@ -398,6 +426,7 @@ export const createTransferTokenTransaction = async ({
 
   if (walletType === AelfWalletTypeEnum.elf) {
     const transaction = await handleTransaction({
+      walletInfo,
       walletType,
       blockHeightInput: BestChainHeight,
       blockHashInput: BestChainHash,
@@ -413,6 +442,7 @@ export const createTransferTokenTransaction = async ({
   }
 
   const transaction = await handleTransaction({
+    walletInfo,
     walletType,
     blockHeightInput: BestChainHeight,
     blockHashInput: BestChainHash,

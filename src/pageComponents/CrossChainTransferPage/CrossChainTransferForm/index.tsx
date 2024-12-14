@@ -380,6 +380,9 @@ export default function CrossChainTransferForm({
           </div>
         </div>
       </div>
+      <div className="ant-form-item-explain-error">
+        {formValidateData[TransferFormKeys.AMOUNT].errorMessage}
+      </div>
 
       <CommonSpace direction={'vertical'} size={12} />
 

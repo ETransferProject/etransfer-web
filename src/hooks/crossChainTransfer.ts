@@ -201,6 +201,7 @@ export function useSendTxnFromAelfChain() {
         const managerAddress = await getManagerAddressByWallet(walletInfo as WalletInfo, connector);
         const ownerAddress = accounts?.[chainId] || '';
         const transaction = await createTransferTokenTransaction({
+          walletInfo,
           walletType: connector,
           caContractAddress: ADDRESS_MAP[chainId][ContractType.CA],
           eTransferContractAddress: currentEtransferContractAddress,
