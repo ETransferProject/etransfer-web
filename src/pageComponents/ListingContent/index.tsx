@@ -24,6 +24,7 @@ export default function ListingContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const symbol = useMemo(() => searchParams.get('symbol') || undefined, [searchParams]);
+  const id = useMemo(() => searchParams.get('id') || undefined, [searchParams]);
   const networks = useMemo(() => {
     const str = searchParams.get('networks') || '';
     try {
@@ -126,7 +127,7 @@ export default function ListingContent() {
       case ListingStep.COBO_CUSTODY_REVIEW:
         return <CoboCustodyReview networks={networks} />;
       case ListingStep.INITIALIZE_LIQUIDITY_POOL:
-        return <InitializeLiquidityPool symbol={symbol} onNext={handleNextStep} />;
+        return <InitializeLiquidityPool symbol={symbol} id={id} onNext={handleNextStep} />;
       case ListingStep.COMPLETE:
         return <ListingComplete />;
       default:

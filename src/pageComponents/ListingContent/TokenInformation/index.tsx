@@ -35,7 +35,8 @@ import {
 import { useLoading } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
-import { sleep } from '@etransfer/utils';
+import { handleErrorMessage, sleep } from '@etransfer/utils';
+import { SingleMessage } from '@etransfer/ui-react';
 import { useEffectOnce } from 'react-use';
 import myEvents from 'utils/myEvent';
 import { getListingUrl } from 'utils/listing';
@@ -115,9 +116,9 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
     }
   }, [setAelfAuthFromStorage]);
 
-  const getTokenConfig = useCallback(async (symbol: string) => {
+  const getTokenConfig = useCallback(async (_symbol: string) => {
     try {
-      const config = await getApplicationTokenConfig({ symbol });
+      const config = await getApplicationTokenConfig({ symbol: _symbol });
       setTokenConfig(config);
       return config;
     } catch (error) {
@@ -130,17 +131,20 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
     async (_symbol: string, _tokenList: TTokenItem[], _tokenConfig: TTokenConfig) => {
       try {
         const res = await getApplicationTokenInfo({ symbol: _symbol });
-        const token = _tokenList.find((item) => item.symbol === res.symbol);
+        const token = _tokenList.find((item) => item.symbol === _symbol);
         if (token) {
           const newFormValues = {
+            ...TOKEN_INFORMATION_FORM_INITIAL_VALUES,
             [TokenInformationFormKeys.TOKEN]: token,
-            [TokenInformationFormKeys.OFFICIAL_WEBSITE]: res.officialWebsite,
-            [TokenInformationFormKeys.OFFICIAL_TWITTER]: res.officialTwitter,
-            [TokenInformationFormKeys.TITLE]: res.title,
-            [TokenInformationFormKeys.PERSON_NAME]: res.personName,
-            [TokenInformationFormKeys.TELEGRAM_HANDLER]: res.telegramHandler,
-            [TokenInformationFormKeys.EMAIL]: res.email,
           };
+          if (res) {
+            newFormValues[TokenInformationFormKeys.OFFICIAL_WEBSITE] = res.officialWebsite;
+            newFormValues[TokenInformationFormKeys.OFFICIAL_TWITTER] = res.officialTwitter;
+            newFormValues[TokenInformationFormKeys.TITLE] = res.title;
+            newFormValues[TokenInformationFormKeys.PERSON_NAME] = res.personName;
+            newFormValues[TokenInformationFormKeys.TELEGRAM_HANDLER] = res.telegramHandler;
+            newFormValues[TokenInformationFormKeys.EMAIL] = res.email;
+          }
           const newFormValidateData = {
             ...TOKEN_INFORMATION_FORM_INITIAL_VALIDATE_DATA,
             [TokenInformationFormKeys.TOKEN]: formValidateData[TokenInformationFormKeys.TOKEN],
@@ -342,7 +346,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
         handleNextStep({ symbol: params.symbol });
       }
     } catch (error) {
-      console.error(error);
+      SingleMessage.error(handleErrorMessage(error));
     } finally {
       setLoading(false);
     }

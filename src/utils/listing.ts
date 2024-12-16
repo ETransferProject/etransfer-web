@@ -20,6 +20,12 @@ export const getListingUrl = (step: ListingStep, params?: TSearchParams) => {
         networks: params?.networks,
       });
       break;
+    case ListingStep.INITIALIZE_LIQUIDITY_POOL:
+      search = queryString.stringify({
+        symbol: params?.symbol,
+        id: params?.id,
+      });
+      break;
   }
   return `/listing${LISTING_STEP_PATHNAME_MAP[step]}${search ? '?' + search : ''}`;
 };

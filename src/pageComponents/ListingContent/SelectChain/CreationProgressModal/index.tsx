@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { SingleMessage } from '@etransfer/ui-react';
+import { handleErrorMessage } from '@etransfer/utils';
 import CommonDrawer from 'components/CommonDrawer';
 import CommonModal from 'components/CommonModal';
 import CommonSteps, { ICommonStepsProps } from 'components/CommonSteps';
@@ -14,6 +16,7 @@ import {
   TApplicationChainStatusItem,
   TPrepareBindIssueRequest,
 } from 'types/api';
+import { USER_REJECT_CONNECT_WALLET_TIP } from 'constants/wallet';
 import { EVM_CREATE_TOKEN_CONTRACT_ADDRESS } from 'constants/wallet/EVM';
 import styles from './styles.module.scss';
 
@@ -247,7 +250,7 @@ export default function CreationProgressModal({
           });
           handleStepItemChange({ step: index, status: 'finish' });
         } catch (error) {
-          console.error(error);
+          SingleMessage.error(handleErrorMessage(error));
           handleStepItemChange({ step: index, status: 'error' });
         }
       }),
@@ -269,7 +272,12 @@ export default function CreationProgressModal({
           handleStepItemChange({ step, params: { bindingId, thirdTokenId, txHash } });
         }
       } catch (error) {
-        console.error(error);
+        const handledErrorMessage = handleErrorMessage(error);
+        if (handledErrorMessage.includes('rejected') || handledErrorMessage.includes('denied')) {
+          SingleMessage.error(USER_REJECT_CONNECT_WALLET_TIP);
+        } else {
+          SingleMessage.error(handledErrorMessage);
+        }
         handleStepItemChange({ step, status: 'error' });
       }
     };
