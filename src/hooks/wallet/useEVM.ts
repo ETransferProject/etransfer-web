@@ -176,7 +176,7 @@ export default function useEVM() {
   const onCheckTransaction = useCallback(
     async ({ txHash, network }: GetTransactionOnEVM) => {
       const chain = await getCurrentChainInfo(network);
-      if (!chain) return '';
+      if (!chain) return;
 
       const res = await getTransactionReceipt(EVMProviderConfig, {
         hash: txHash,

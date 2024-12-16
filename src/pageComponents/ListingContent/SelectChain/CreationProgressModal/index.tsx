@@ -142,7 +142,6 @@ export default function CreationProgressModal({
         const params: TPrepareBindIssueRequest = {
           address,
           symbol: chain.symbol,
-          // TODO: chainId
           chainId: 'AELF',
           otherChainId: chain.chainId,
           // Currently only supports evm
@@ -186,18 +185,18 @@ export default function CreationProgressModal({
   );
 
   const handlePollingForTransactionResult = useCallback(
-    async (txHash?: TTxHash) => {
+    async ({ txHash, chainId }: { txHash?: TTxHash; chainId: string }) => {
       if (!txHash) {
         return;
       }
       try {
-        const data = await getTransactionReceipt({ txHash });
+        const data = await getTransactionReceipt({ txHash, network: chainId });
         if (data?.status !== 'success') {
           if (poolingTimerForTransactionResultRef.current) {
             clearTimeout(poolingTimerForTransactionResultRef.current);
           }
           poolingTimerForTransactionResultRef.current = setTimeout(async () => {
-            await handlePollingForTransactionResult(txHash);
+            await handlePollingForTransactionResult({ txHash, chainId });
           }, POLLING_INTERVAL);
         }
       } catch (error) {
@@ -238,7 +237,10 @@ export default function CreationProgressModal({
           return;
         }
         try {
-          await handlePollingForTransactionResult(item.chain.txHash);
+          await handlePollingForTransactionResult({
+            txHash: item.chain.txHash,
+            chainId: item.chain.chainId,
+          });
           await handlePollingForIssueResult({
             bindingId: item.chain.bindingId,
             thirdTokenId: item.chain.thirdTokenId,
