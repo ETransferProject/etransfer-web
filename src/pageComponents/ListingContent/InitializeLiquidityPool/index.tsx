@@ -2,7 +2,7 @@ import Remind from 'components/Remind';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styles from './styles.module.scss';
 import NetworkLogo from 'components/NetworkLogo';
-import { formatSymbolDisplay } from 'utils/format';
+import { formatSymbolDisplay, formatWithCommas } from 'utils/format';
 import Copy from 'components/Copy';
 import CommonQRCode from 'components/CommonQRCode';
 import CommonButton, { CommonButtonSize } from 'components/CommonButton';
@@ -73,9 +73,9 @@ export default function InitializeLiquidityPool({
           </div>
           <div className={styles['tip-row']}>• Transferring other tokens will be invalid.</div>
           <div className={styles['tip-row']}>
-            {`• The 24-hour transfer limit for the ${formatSymbolDisplay(tokenInfo.symbol)} is $${
-              tokenInfo.limit24HInUsd
-            }.`}
+            {`• The 24-hour transfer limit for the ${formatSymbolDisplay(
+              tokenInfo.symbol,
+            )} is $${formatWithCommas({ amount: tokenInfo.limit24HInUsd })}.`}
           </div>
           <div className={styles['tip-row']}>
             {`• If you need any support, please `}
@@ -131,11 +131,18 @@ export default function InitializeLiquidityPool({
                     <CommonSpace direction="horizontal" size={8} />
                     <span>Received&nbsp;</span>
                     <span className={styles['balance-amount']}>
-                      {item.balanceAmount || DEFAULT_NULL_VALUE}&nbsp;
+                      {item.balanceAmount
+                        ? formatWithCommas({ amount: item.balanceAmount })
+                        : DEFAULT_NULL_VALUE}
+                      &nbsp;
                       {formatSymbolDisplay(item.symbol)}
                     </span>
                     <span>
-                      /{item.minAmount || DEFAULT_NULL_VALUE}&nbsp;
+                      /
+                      {item.minAmount
+                        ? formatWithCommas({ amount: item.minAmount })
+                        : DEFAULT_NULL_VALUE}
+                      &nbsp;
                       {formatSymbolDisplay(item.symbol)}
                     </span>
                   </div>

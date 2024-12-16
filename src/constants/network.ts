@@ -31,7 +31,7 @@ export enum ExploreUrlNotAelf {
   Solana = 'https://explorer.solana.com',
   TRX = 'https://tronscan.io',
   BSC = 'https://bscscan.com',
-  TBSC = 'https://bscscan.com',
+  TBSC = 'https://testnet.bscscan.com',
   AVAXC = 'https://subnets.avax.network/c-chain',
   TON = 'https://tonscan.org',
   BASE = 'https://basescan.org',
