@@ -65,14 +65,12 @@ export default function ActionBox({
     router.push(
       `/listing/${
         LISTING_STEP_PATHNAME_MAP[ListingStep.INITIALIZE_LIQUIDITY_POOL]
-      }?tokenSymbol=${symbol}&id=${id}`,
+      }?symbol=${symbol}&id=${id}`,
     );
   }, [id, router, symbol]);
 
   const handleLaunchOnOtherChain = useCallback(() => {
-    router.push(
-      `/listing/${LISTING_STEP_PATHNAME_MAP[ListingStep.SELECT_CHAIN]}?tokenSymbol=${symbol}`,
-    );
+    router.push(`/listing/${LISTING_STEP_PATHNAME_MAP[ListingStep.SELECT_CHAIN]}?symbol=${symbol}`);
   }, [router, symbol]);
 
   const handleReapply = useCallback(async () => {

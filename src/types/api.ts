@@ -698,9 +698,7 @@ export type TGetApplicationDetailRequest = {
   network?: string;
 };
 
-export type TGetApplicationDetailResult = {
-  items: TApplicationDetailItem[];
-};
+export type TGetApplicationDetailResult = TApplicationDetailItem[];
 
 export type TApplicationDetailItem = {
   id: string;
