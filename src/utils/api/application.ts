@@ -100,7 +100,7 @@ export const getApplicationIssue = async (
   params: TGetApplicationIssueRequest,
 ): Promise<TGetApplicationIssueResult> => {
   try {
-    const res = await request.application.getIssue({ params });
+    const res = await request.application.getIssue({ data: params });
     return res.data;
   } catch (error) {
     throw formatApiError(error, 'getApplicationIssue error', false);
