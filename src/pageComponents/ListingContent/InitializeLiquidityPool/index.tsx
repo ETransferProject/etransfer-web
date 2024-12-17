@@ -157,7 +157,7 @@ export default function InitializeLiquidityPool({
                       <span
                         className={styles['action-bold']}
                         onClick={() =>
-                          handleGoExplore(item.chainId, item.symbol, item.contractAddress)
+                          handleGoExplore(item.chainId, item.symbol, item.tokenContractAddress)
                         }>
                         {formatSymbolDisplay(item.symbol)}
                       </span>
