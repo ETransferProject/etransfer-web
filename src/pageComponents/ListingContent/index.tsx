@@ -150,11 +150,11 @@ export default function ListingContent() {
                   currentStep === ListingStep.SELECT_CHAIN
                 ) {
                   setIsWarningModalOpen(true);
-                  nextUrlRef.current = window.history.length > 1 ? 'back' : '/';
+                  nextUrlRef.current = window.history.length > 1 ? 'back' : '/cross-chain-transfer';
                 } else if (window.history.length > 1) {
                   router.back();
                 } else {
-                  router.push('/');
+                  router.push('/cross-chain-transfer');
                 }
               }}>
               <BackIcon />

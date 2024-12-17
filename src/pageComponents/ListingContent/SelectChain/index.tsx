@@ -92,7 +92,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
   const handleAelfLogin = useAelfLogin();
   const setAelfAuthFromStorage = useSetAelfAuthFromStorage();
   const [form] = Form.useForm<TSelectChainFormValues>();
-  const tooltipSwitchModalRef = useRef<ICommonTooltipSwitchModalRef>(null);
+  const tooltipSwitchModalsRef = useRef<Record<string, ICommonTooltipSwitchModalRef | null>>({});
 
   const [formData, setFormData] = useState(SELECT_CHAIN_FORM_INITIAL_VALUES);
   const [formValidateData, setFormValidateData] = useState(SELECT_CHAIN_FORM_INITIAL_VALIDATE_DATA);
@@ -624,7 +624,11 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
 
             return (
               <Col key={chain.chainId} span={isMobilePX ? 24 : 8}>
-                <CommonTooltipSwitchModal ref={tooltipSwitchModalRef} tip={tooltip}>
+                <CommonTooltipSwitchModal
+                  ref={(ref) => {
+                    tooltipSwitchModalsRef.current[chain.chainId] = ref;
+                  }}
+                  tip={tooltip}>
                   <div
                     className={clsx(
                       styles['select-chain-checkbox-item'],
@@ -633,7 +637,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
                     )}
                     onClick={() => {
                       if (tooltip) {
-                        tooltipSwitchModalRef.current?.open();
+                        tooltipSwitchModalsRef.current[chain.chainId]?.open();
                       }
                       handleChainsChange({
                         chain,

@@ -1,9 +1,11 @@
 import { useMemo, useState, useImperativeHandle, forwardRef, useCallback } from 'react';
+import clsx from 'clsx';
 import { TooltipProps } from 'antd';
 import CommonTooltip from 'components/CommonTooltip';
 import CommonModal, { CommonModalProps } from 'components/CommonModal';
 import { useCommonState } from 'store/Provider/hooks';
 import { GOT_IT } from 'constants/misc';
+import styles from './styles.module.scss';
 
 export interface ICommonTooltipSwitchModalRef {
   open: () => void;
@@ -27,8 +29,10 @@ const CommonTooltipSwitchModal = forwardRef<
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleModalOpen = useCallback(() => {
-    setIsModalOpen(true);
-  }, []);
+    if (!isTooltip) {
+      setIsModalOpen(true);
+    }
+  }, [isTooltip]);
 
   const handleModalClose = useCallback(() => {
     setIsModalOpen(false);
@@ -45,6 +49,7 @@ const CommonTooltipSwitchModal = forwardRef<
       </CommonTooltip>
       <CommonModal
         {...modalProps}
+        className={clsx(styles['common-tooltip-switch-modal'], modalProps?.className)}
         width={'300px'}
         hideCancelButton
         okText={GOT_IT}

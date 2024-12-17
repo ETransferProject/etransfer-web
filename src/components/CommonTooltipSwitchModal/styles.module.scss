@@ -1,0 +1,9 @@
+@import 'src/assets/theme/color.scss';
+
+.common-tooltip-switch-modal {
+  :global {
+    .ant-modal-body {
+      color: $primary-text;
+    }
+  }
+}

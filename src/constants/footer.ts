@@ -93,7 +93,7 @@ export const FOOTER_CONFIG: TFooterConfig = {
         },
         {
           name: 'My Applications',
-          link: '/listing',
+          link: '/my-applications',
         },
       ],
     },
