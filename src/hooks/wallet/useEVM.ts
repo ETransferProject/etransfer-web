@@ -105,17 +105,10 @@ export default function useEVM() {
     };
   }, [accountInfo.address, signMessageAsync]);
 
-  const sendTransaction = useCallback(
-    async ({
-      network,
-      tokenContractAddress,
-      toAddress,
-      tokenAbi = EVM_TOKEN_ABI,
-      amount,
-      decimals,
-    }: SendEVMTransactionParams) => {
-      const chain = getEVMChainInfo(network);
-      if (!chain) return '';
+  const getCurrentChainInfo = useCallback(
+    async (targetNetwork: string) => {
+      const chain = getEVMChainInfo(targetNetwork);
+      if (!chain) return;
       if (accountInfo.chainId !== chain.id && accountInfo.connector) {
         try {
           await switchChainAsync({ chainId: chain.id, connector: accountInfo.connector });
@@ -128,6 +121,22 @@ export default function useEVM() {
           throw error;
         }
       }
+      return chain;
+    },
+    [accountInfo.chainId, accountInfo.connector, switchChainAsync],
+  );
+
+  const sendTransaction = useCallback(
+    async ({
+      network,
+      tokenContractAddress,
+      toAddress,
+      tokenAbi = EVM_TOKEN_ABI,
+      amount,
+      decimals,
+    }: SendEVMTransactionParams) => {
+      const chain = await getCurrentChainInfo(network);
+      if (!chain) return '';
       const data = await writeContractAsync({
         chainId: chain.id,
         address: tokenContractAddress,
@@ -137,7 +146,7 @@ export default function useEVM() {
       });
       return data;
     },
-    [accountInfo.chainId, accountInfo.connector, switchChainAsync, writeContractAsync],
+    [getCurrentChainInfo, writeContractAsync],
   );
 
   const createToken = useCallback(
@@ -149,20 +158,9 @@ export default function useEVM() {
       symbol,
       initialSupply,
     }: CreateTokenOnEVMParams) => {
-      const chain = getEVMChainInfo(network);
+      const chain = await getCurrentChainInfo(network);
       if (!chain) return '';
-      if (accountInfo.chainId !== chain.id && accountInfo.connector) {
-        try {
-          await switchChainAsync({ chainId: chain.id, connector: accountInfo.connector });
-        } catch (error) {
-          if (
-            handleErrorMessage(error).includes('rejected') ||
-            handleErrorMessage(error).includes('denied')
-          )
-            SingleMessage.error(handleErrorMessage(USER_REJECT_CONNECT_WALLET_TIP));
-          throw error;
-        }
-      }
+
       const data = await writeContractAsync({
         chainId: chain.id,
         address: contractAddress,
@@ -172,15 +170,22 @@ export default function useEVM() {
       });
       return data;
     },
-    [accountInfo.chainId, accountInfo.connector, switchChainAsync, writeContractAsync],
+    [getCurrentChainInfo, writeContractAsync],
   );
 
-  const onCheckTransaction = useCallback(async ({ txHash }: GetTransactionOnEVM) => {
-    const res = await getTransactionReceipt(EVMProviderConfig, {
-      hash: txHash,
-    });
-    return res;
-  }, []);
+  const onCheckTransaction = useCallback(
+    async ({ txHash, network }: GetTransactionOnEVM) => {
+      const chain = await getCurrentChainInfo(network);
+      if (!chain) return;
+
+      const res = await getTransactionReceipt(EVMProviderConfig, {
+        hash: txHash,
+        chainId: chain.id,
+      });
+      return res;
+    },
+    [getCurrentChainInfo],
+  );
 
   const evmContext = useMemo(() => {
     return {

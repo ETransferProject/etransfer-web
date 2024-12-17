@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { SingleMessage } from '@etransfer/ui-react';
+import { handleErrorMessage } from '@etransfer/utils';
 import CommonDrawer from 'components/CommonDrawer';
 import CommonModal from 'components/CommonModal';
 import CommonSteps, { ICommonStepsProps } from 'components/CommonSteps';
@@ -14,6 +16,7 @@ import {
   TApplicationChainStatusItem,
   TPrepareBindIssueRequest,
 } from 'types/api';
+import { USER_REJECT_CONNECT_WALLET_TIP } from 'constants/wallet';
 import { EVM_CREATE_TOKEN_CONTRACT_ADDRESS } from 'constants/wallet/EVM';
 import styles from './styles.module.scss';
 
@@ -63,7 +66,7 @@ export default function CreationProgressModal({
   }, [stepItems]);
 
   const isCreateFinished = useMemo(() => {
-    return stepItems.every((item) => item.status === 'finish');
+    return stepItems.length > 0 && stepItems.every((item) => item.status === 'finish');
   }, [stepItems]);
 
   useEffect(() => {
@@ -134,7 +137,7 @@ export default function CreationProgressModal({
       try {
         const sourceType = computeWalletSourceType(chain.chainId);
         const address = accountListWithWalletType.find(
-          (item) => item.SourceType === sourceType,
+          (item) => item.SourceType === sourceType.toLocaleLowerCase(),
         )?.Address;
         if (!address) {
           throw new Error('No address found');
@@ -142,7 +145,6 @@ export default function CreationProgressModal({
         const params: TPrepareBindIssueRequest = {
           address,
           symbol: chain.symbol,
-          // TODO: chainId
           chainId: 'AELF',
           otherChainId: chain.chainId,
           // Currently only supports evm
@@ -186,18 +188,18 @@ export default function CreationProgressModal({
   );
 
   const handlePollingForTransactionResult = useCallback(
-    async (txHash?: TTxHash) => {
+    async ({ txHash, chainId }: { txHash?: TTxHash; chainId: string }) => {
       if (!txHash) {
         return;
       }
       try {
-        const data = await getTransactionReceipt({ txHash });
+        const data = await getTransactionReceipt({ txHash, network: chainId });
         if (data?.status !== 'success') {
           if (poolingTimerForTransactionResultRef.current) {
             clearTimeout(poolingTimerForTransactionResultRef.current);
           }
           poolingTimerForTransactionResultRef.current = setTimeout(async () => {
-            await handlePollingForTransactionResult(txHash);
+            await handlePollingForTransactionResult({ txHash, chainId });
           }, POLLING_INTERVAL);
         }
       } catch (error) {
@@ -238,14 +240,17 @@ export default function CreationProgressModal({
           return;
         }
         try {
-          await handlePollingForTransactionResult(item.chain.txHash);
+          await handlePollingForTransactionResult({
+            txHash: item.chain.txHash,
+            chainId: item.chain.chainId,
+          });
           await handlePollingForIssueResult({
             bindingId: item.chain.bindingId,
             thirdTokenId: item.chain.thirdTokenId,
           });
           handleStepItemChange({ step: index, status: 'finish' });
         } catch (error) {
-          console.error(error);
+          SingleMessage.error(handleErrorMessage(error));
           handleStepItemChange({ step: index, status: 'error' });
         }
       }),
@@ -262,12 +267,17 @@ export default function CreationProgressModal({
       try {
         const currentChain = stepItems[step].chain;
         if (currentChain.status === ApplicationChainStatusEnum.Unissued) {
-          const { bindingId, thirdTokenId } = await handlePrepareBindIssue(currentChain);
           const txHash = await handleIssue({ chain: currentChain });
+          const { bindingId, thirdTokenId } = await handlePrepareBindIssue(currentChain);
           handleStepItemChange({ step, params: { bindingId, thirdTokenId, txHash } });
         }
       } catch (error) {
-        console.error(error);
+        const handledErrorMessage = handleErrorMessage(error);
+        if (handledErrorMessage.includes('rejected') || handledErrorMessage.includes('denied')) {
+          SingleMessage.error(USER_REJECT_CONNECT_WALLET_TIP);
+        } else {
+          SingleMessage.error(handledErrorMessage);
+        }
         handleStepItemChange({ step, status: 'error' });
       }
     };

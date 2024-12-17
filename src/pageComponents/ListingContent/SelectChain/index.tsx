@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
+import { useRouter } from 'next/navigation';
+import { SingleMessage } from '@etransfer/ui-react';
 import { Form, Checkbox, Row, Col, Input } from 'antd';
 import NetworkLogo from 'components/NetworkLogo';
 import CommonButton, {
@@ -36,6 +38,7 @@ import {
   DEFAULT_CHAINS,
   CONTACT_US_ROW,
   WALLET_CONNECTION_REQUIRED,
+  ListingStep,
 } from 'constants/listing';
 import { useCommonState } from 'store/Provider/hooks';
 import { useLoading } from 'store/Provider/hooks';
@@ -54,13 +57,14 @@ import useEVM from 'hooks/wallet/useEVM';
 import useSolana from 'hooks/wallet/useSolana';
 import useTON from 'hooks/wallet/useTON';
 import useTRON from 'hooks/wallet/useTRON';
-import { sleep } from '@etransfer/utils';
+import { handleErrorMessage, sleep } from '@etransfer/utils';
 import EmptyDataBox from 'components/EmptyDataBox';
 import { CONNECT_AELF_WALLET, CONNECT_WALLET, MY_WALLET } from 'constants/wallet';
 import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
 import { WalletTypeEnum } from 'context/Wallet/types';
 import { isEVMChain, isSolanaChain, isTONChain, isTRONChain } from 'utils/wallet';
 import { BUTTON_TEXT_BACK, SELECT_CHAIN } from 'constants/misc';
+import { getListingUrl } from 'utils/listing';
 
 interface ISelectChainProps {
   symbol?: string;
@@ -77,6 +81,7 @@ const DEFAULT_CONNECT_WALLET_MODAL_PROPS: {
 };
 
 export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: ISelectChainProps) {
+  const router = useRouter();
   const { isMobilePX } = useCommonState();
   const { setLoading } = useLoading();
   const { isConnected: isAelfConnected } = useAelf();
@@ -186,13 +191,14 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
       aelfChains: TApplicationChainStatusItem[];
       otherChains: TApplicationChainStatusItem[];
     }): boolean => {
-      if (!hasDisabledAELFChain) {
-        return aelfChains.length === 0;
+      const isAelfSelected = hasDisabledAELFChain || aelfChains.length > 0;
+      const isOtherSelected = hasDisabledOtherChain || otherChains.length > 0;
+      const hasValue = aelfChains.length > 0 || otherChains.length > 0;
+
+      if (isAelfSelected && isOtherSelected && hasValue) {
+        return false;
       }
-      if (!hasDisabledOtherChain) {
-        return otherChains.length === 0;
-      }
-      return aelfChains.length === 0 && otherChains.length === 0;
+      return true;
     },
     [hasDisabledAELFChain, hasDisabledOtherChain],
   );
@@ -431,6 +437,26 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     });
   }, [issuingChains, unissuedChains]);
 
+  const handleJump = useCallback(
+    ({ networksString, id, _symbol }: { networksString: string; id?: string; _symbol: string }) => {
+      if (
+        id &&
+        hasDisabledAELFChain &&
+        formData[SelectChainFormKeys.AELF_CHAINS].length !== 0 &&
+        formData[SelectChainFormKeys.OTHER_CHAINS].length === 0
+      ) {
+        const replaceUrl = getListingUrl(ListingStep.INITIALIZE_LIQUIDITY_POOL, {
+          symbol: _symbol,
+          id,
+        });
+        router.replace(replaceUrl);
+      } else {
+        handleNextStep({ networks: networksString });
+      }
+    },
+    [formData, hasDisabledAELFChain, router, handleNextStep],
+  );
+
   const handleAddChain = useCallback(async () => {
     if (!token?.symbol) return;
     setLoading(true);
@@ -440,24 +466,29 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
         otherChainIds: formData[SelectChainFormKeys.OTHER_CHAINS].map((v) => v.chainId),
         symbol: token.symbol,
       });
+      if (!data?.chainList && !data?.otherChainList) {
+        throw new Error('Failed to add chain');
+      }
       const aelfNetworks = formData[SelectChainFormKeys.AELF_CHAINS]
-        .filter((item) => data?.chainList.some((v) => v.chainId === item.chainId))
+        .filter((item) => data?.chainList?.some((v) => v.chainId === item.chainId))
         .map((v) => ({
           name: v.chainName,
         }));
       const otherNetworks = formData[SelectChainFormKeys.OTHER_CHAINS]
-        .filter((item) => data?.otherChainList.some((v) => v.chainId === item.chainId))
+        .filter((item) => data?.otherChainList?.some((v) => v.chainId === item.chainId))
         .map((v) => ({
           name: v.chainName,
         }));
       const networks = [...aelfNetworks, ...otherNetworks];
-      handleNextStep({ networks: JSON.stringify(networks) });
+      const networksString = JSON.stringify(networks);
+      const id = data?.chainList?.[0]?.id;
+      handleJump({ networksString, id, _symbol: token.symbol });
     } catch (error) {
-      console.error(error);
+      SingleMessage.error(handleErrorMessage(error));
     } finally {
       setLoading(false);
     }
-  }, [formData, handleNextStep, setLoading, token?.symbol]);
+  }, [formData, handleJump, setLoading, token?.symbol]);
 
   const handleCreateFinish = useCallback(async () => {
     setCreationProgressModalProps({
@@ -642,9 +673,11 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
             </Remind>
             <Form className={styles['select-chain-form']} form={form} layout="vertical">
               <Form.Item label="Token">
-                <div className={styles['select-chain-token-row']}>
-                  <TokenRow symbol={token?.symbol} name={token?.name} icon={token?.icon} />
-                </div>
+                {token && (
+                  <div className={styles['select-chain-token-row']}>
+                    <TokenRow symbol={token.symbol} name={token.name} icon={token.icon} />
+                  </div>
+                )}
               </Form.Item>
               {renderChainsFormItem(SelectChainFormKeys.AELF_CHAINS)}
               {renderChainsFormItem(SelectChainFormKeys.OTHER_CHAINS)}

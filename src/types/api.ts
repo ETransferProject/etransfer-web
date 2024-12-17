@@ -630,8 +630,8 @@ export type TAddApplicationChainRequest = {
 };
 
 export type TAddApplicationChainResult = {
-  chainList: TAddApplicationChainResultChainItem[];
-  otherChainList: TAddApplicationChainResultChainItem[];
+  chainList?: TAddApplicationChainResultChainItem[];
+  otherChainList?: TAddApplicationChainResultChainItem[];
 };
 
 export type TAddApplicationChainResultChainItem = {
@@ -698,9 +698,7 @@ export type TGetApplicationDetailRequest = {
   network?: string;
 };
 
-export type TGetApplicationDetailResult = {
-  items: TApplicationDetailItem[];
-};
+export type TGetApplicationDetailResult = TApplicationDetailItem[];
 
 export type TApplicationDetailItem = {
   id: string;
@@ -723,6 +721,7 @@ export type TApplicationDetailItemChainTokenInfo = {
   icon: string;
   poolAddress: string;
   contractAddress: string;
+  tokenContractAddress: string;
   status: ApplicationChainStatusEnum;
   balanceAmount: string;
   minAmount: string;

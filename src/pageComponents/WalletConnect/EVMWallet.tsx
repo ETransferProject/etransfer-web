@@ -82,12 +82,13 @@ export default function EVMWallet() {
     } catch (error) {
       console.log('>>>>>> EVM onCreateToken error', error);
     }
-  }, [createToken]);
+  }, [createToken, initialSupply, tokenName, tokenSymbol]);
 
   const onGetTransactionResult = useCallback(async () => {
     try {
       const data = await getTransactionReceipt({
-        txHash: '0x909b859dc9198f95364f662b2637e4f66d7c4569a2402b427f66c211df2f41c9',
+        txHash: '0xea625f37098ede4eb548d506609dc799816c58f0dd9a56e7accdeac2c3e4758c',
+        network: BlockchainNetworkType.SETH,
       });
       // isSuccess: data.status === 'success'
       console.log('>>>>>> EVM onGetTransactionResult data', data);

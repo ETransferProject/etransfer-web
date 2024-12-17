@@ -2,14 +2,14 @@ import Remind from 'components/Remind';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styles from './styles.module.scss';
 import NetworkLogo from 'components/NetworkLogo';
-import { formatSymbolDisplay } from 'utils/format';
+import { formatSymbolDisplay, formatWithCommas } from 'utils/format';
 import Copy from 'components/Copy';
 import CommonQRCode from 'components/CommonQRCode';
 import CommonButton, { CommonButtonSize } from 'components/CommonButton';
 import { CheckFilled16 } from 'assets/images';
 import clsx from 'clsx';
 import { openWithBlank, viewTokenAddressInExplore } from 'utils/common';
-import { CONTACT_US_FORM_URL } from 'constants/index';
+import { CONTACT_US_FORM_URL, DEFAULT_NULL_VALUE } from 'constants/index';
 import { getApplicationDetail } from 'utils/api/application';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffectOnce } from 'react-use';
@@ -44,6 +44,8 @@ const AlreadyPoolInitializedStatus = [
   ApplicationChainStatusEnum.PoolInitialized,
 ];
 
+const ToolPoolInitCompleted = 'Token pool initialization completed';
+
 export default function InitializeLiquidityPool({
   id,
   symbol,
@@ -71,12 +73,12 @@ export default function InitializeLiquidityPool({
           </div>
           <div className={styles['tip-row']}>• Transferring other tokens will be invalid.</div>
           <div className={styles['tip-row']}>
-            {`• The 24-hour transfer limit for the ${formatSymbolDisplay(tokenInfo.symbol)} is $${
-              tokenInfo.limit24HInUsd
-            }.`}
+            {`• The 24-hour transfer limit for the ${formatSymbolDisplay(
+              tokenInfo.symbol,
+            )} is $${formatWithCommas({ amount: tokenInfo.limit24HInUsd })}.`}
           </div>
           <div className={styles['tip-row']}>
-            {`If you need any support, please `}
+            {`• If you need any support, please `}
             <span
               className={styles['action']}
               onClick={() => openWithBlank(CONTACT_US_FORM_URL)}>{`contact us`}</span>
@@ -93,6 +95,7 @@ export default function InitializeLiquidityPool({
 
   const checkIsInitCompleted = useCallback(
     (status: ApplicationChainStatusEnum, balanceAmount: string, minAmount: string) => {
+      if (!balanceAmount || !minAmount) return false;
       if (
         ZERO.plus(balanceAmount).gte(minAmount) ||
         AlreadyPoolInitializedStatus.includes(status)
@@ -120,7 +123,7 @@ export default function InitializeLiquidityPool({
                 {checkIsInitCompleted(item.status, item.balanceAmount, item.minAmount) ? (
                   <div className={'flex-row-center gap-8'}>
                     <CheckFilled16 />
-                    <span>Token pool initialization completed</span>
+                    <span>{ToolPoolInitCompleted}</span>
                   </div>
                 ) : (
                   <div className={clsx('flex-row-center', styles['amount-rate'])}>
@@ -128,36 +131,47 @@ export default function InitializeLiquidityPool({
                     <CommonSpace direction="horizontal" size={8} />
                     <span>Received&nbsp;</span>
                     <span className={styles['balance-amount']}>
-                      {item.balanceAmount}&nbsp;{formatSymbolDisplay(item.symbol)}
+                      {item.balanceAmount
+                        ? formatWithCommas({ amount: item.balanceAmount })
+                        : DEFAULT_NULL_VALUE}
+                      &nbsp;
+                      {formatSymbolDisplay(item.symbol)}
                     </span>
                     <span>
-                      /{item.minAmount}&nbsp;{formatSymbolDisplay(item.symbol)}
+                      /
+                      {item.minAmount
+                        ? formatWithCommas({ amount: item.minAmount })
+                        : DEFAULT_NULL_VALUE}
+                      &nbsp;
+                      {formatSymbolDisplay(item.symbol)}
                     </span>
                   </div>
                 )}
               </div>
-              <div className={styles['address-info']}>
-                <CommonQRCode size={120} value={item.poolAddress} logoUrl={item.icon} />
-                <div>
-                  <div className={styles['address-desc']}>
-                    <span>Please transfer&nbsp;</span>
-                    <span
-                      className={styles['action-bold']}
-                      onClick={() =>
-                        handleGoExplore(item.chainId, item.symbol, item.contractAddress)
-                      }>
-                      {formatSymbolDisplay(item.symbol)}
-                    </span>
-                    <span>&nbsp;on the&nbsp;</span>
-                    <span>{item.chainName}</span>
-                    <span>to the following address to complete fund initialization.</span>
-                  </div>
-                  <div className="flex-row-center gap-8">
-                    <div className={styles['address']}>{item.poolAddress}</div>
-                    <Copy toCopy={item.poolAddress} className="flex-shrink-0" />
+              {item.poolAddress && (
+                <div className={styles['address-info']}>
+                  <CommonQRCode size={120} value={item.poolAddress} logoUrl={item.icon} />
+                  <div>
+                    <div className={styles['address-desc']}>
+                      <span>Please transfer&nbsp;</span>
+                      <span
+                        className={styles['action-bold']}
+                        onClick={() =>
+                          handleGoExplore(item.chainId, item.symbol, item.tokenContractAddress)
+                        }>
+                        {formatSymbolDisplay(item.symbol)}
+                      </span>
+                      <span>&nbsp;on the&nbsp;</span>
+                      <span>{item.chainName}</span>
+                      <span>to the following address to complete fund initialization.</span>
+                    </div>
+                    <div className="flex-row-center gap-8">
+                      <div className={styles['address']}>{item.poolAddress}</div>
+                      <Copy toCopy={item.poolAddress} className="flex-shrink-0" />
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           );
         })}
@@ -166,17 +180,17 @@ export default function InitializeLiquidityPool({
   }, [checkIsInitCompleted, handleGoExplore, tokenPoolList]);
 
   const getData = useCallback(
-    async (id: string, symbol: string) => {
+    async (id: string, symbol: string, isLoading = true) => {
       if (!isConnected) return;
       try {
-        setLoading(true);
+        isLoading && setLoading(true);
 
         await setAelfAuthFromStorage();
         await sleep(500);
         const res = await getApplicationDetail({ symbol, id });
 
-        const chainTokenInfos = res.items[0]?.chainTokenInfo || [];
-        const otherChainTokenInfos = res.items[0]?.otherChainTokenInfo;
+        const chainTokenInfos = res[0]?.chainTokenInfo || [];
+        const otherChainTokenInfos = res[0]?.otherChainTokenInfo;
         let concatList = [];
         if (otherChainTokenInfos) {
           concatList = chainTokenInfos?.concat([otherChainTokenInfos]);
@@ -186,8 +200,9 @@ export default function InitializeLiquidityPool({
 
         setTokenPoolList(concatList);
         setTokenInfo({
-          symbol: res.items[0].symbol,
-          limit24HInUsd: otherChainTokenInfos?.limit24HInUsd || chainTokenInfos[0].limit24HInUsd,
+          symbol: res[0].symbol,
+          limit24HInUsd:
+            otherChainTokenInfos?.limit24HInUsd || chainTokenInfos[0]?.limit24HInUsd || '0.00',
         });
 
         // submit but disable
@@ -217,23 +232,26 @@ export default function InitializeLiquidityPool({
     [searchParams],
   );
 
-  const init = useCallback(async () => {
-    if (routeQuery.id && routeQuery.tokenSymbol) {
-      await getData(routeQuery.id, routeQuery.tokenSymbol);
-    } else if (id && symbol) {
-      await getData(id, symbol);
-    } else {
-      if (routeQuery.tokenSymbol || symbol) {
-        router.replace(
-          `/listing/${LISTING_STEP_PATHNAME_MAP[ListingStep.TOKEN_INFORMATION]}?symbol=${
-            routeQuery.tokenSymbol || symbol
-          }`,
-        );
+  const init = useCallback(
+    async (isLoading = true) => {
+      if (routeQuery.id && routeQuery.tokenSymbol) {
+        await getData(routeQuery.id, routeQuery.tokenSymbol, isLoading);
+      } else if (id && symbol) {
+        await getData(id, symbol, isLoading);
       } else {
-        router.replace(`/listing/${LISTING_STEP_PATHNAME_MAP[ListingStep.TOKEN_INFORMATION]}`);
+        if (routeQuery.tokenSymbol || symbol) {
+          router.replace(
+            `/listing/${LISTING_STEP_PATHNAME_MAP[ListingStep.TOKEN_INFORMATION]}?symbol=${
+              routeQuery.tokenSymbol || symbol
+            }`,
+          );
+        } else {
+          router.replace(`/listing/${LISTING_STEP_PATHNAME_MAP[ListingStep.TOKEN_INFORMATION]}`);
+        }
       }
-    }
-  }, [getData, id, routeQuery.id, routeQuery.tokenSymbol, router, symbol]);
+    },
+    [getData, id, routeQuery.id, routeQuery.tokenSymbol, router, symbol],
+  );
   const initRef = useRef(init);
   initRef.current = init;
 
@@ -251,7 +269,7 @@ export default function InitializeLiquidityPool({
       clearInterval(updateDataTimerRef.current);
     }
     updateDataTimerRef.current = setInterval(async () => {
-      await init();
+      await initRef.current(false);
     }, 15 * 1000);
 
     return () => {
@@ -259,7 +277,7 @@ export default function InitializeLiquidityPool({
         clearInterval(updateDataTimerRef.current);
       }
     };
-  }, [checkIsInitCompleted, init]);
+  }, []);
 
   const initForLogout = useCallback(async () => {
     if (updateDataTimerRef.current) {
