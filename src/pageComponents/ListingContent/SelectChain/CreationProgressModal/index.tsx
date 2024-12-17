@@ -16,7 +16,6 @@ import {
   TApplicationChainStatusItem,
   TPrepareBindIssueRequest,
 } from 'types/api';
-import { USER_REJECT_CONNECT_WALLET_TIP } from 'constants/wallet';
 import { EVM_CREATE_TOKEN_CONTRACT_ADDRESS } from 'constants/wallet/EVM';
 import styles from './styles.module.scss';
 
@@ -31,6 +30,7 @@ type TTxHash = `0x${string}`;
 
 type TChainItem = TApplicationChainStatusItem & {
   txHash?: TTxHash;
+  isCreated?: boolean;
 };
 
 type TStepItem = ICommonStepsProps['stepItems'][number] & {
@@ -49,8 +49,8 @@ export default function CreationProgressModal({
   const { accountListWithWalletType } = getAllConnectedWalletAccount();
   const { createToken, getTransactionReceipt } = useEVM();
   const { isPadPX } = useCommonState();
-  const poolingTimerForTransactionResultRef = useRef<NodeJS.Timeout | null>(null);
-  const poolingTimerForIssueResultRef = useRef<NodeJS.Timeout | null>(null);
+  const poolingTimerForTransactionResultRef = useRef<Record<TTxHash, NodeJS.Timeout | null>>({});
+  const poolingTimerForIssueResultRef = useRef<Record<string, NodeJS.Timeout | null>>({});
 
   const [isCreateStart, setIsCreateStart] = useState(false);
   const [isPollingStart, setIsPollingStart] = useState(false);
@@ -112,6 +112,7 @@ export default function CreationProgressModal({
         bindingId?: string;
         thirdTokenId?: string;
         txHash?: TTxHash;
+        isCreated?: boolean;
       };
     }) => {
       setStepItems((prev) => {
@@ -156,7 +157,8 @@ export default function CreationProgressModal({
           throw new Error('Failed to prepare bind issue');
         }
         return id;
-      } catch (error) {
+      } catch (error: any) {
+        error.shouldShowMessage = true;
         console.error(error);
         throw error;
       }
@@ -192,22 +194,40 @@ export default function CreationProgressModal({
       if (!txHash) {
         return Promise.resolve();
       }
+
+      const setPollingTimeout = (callback: () => void) => {
+        if (poolingTimerForTransactionResultRef.current[txHash]) {
+          clearTimeout(poolingTimerForTransactionResultRef.current[txHash]);
+        }
+        poolingTimerForTransactionResultRef.current[txHash] = setTimeout(
+          callback,
+          POLLING_INTERVAL,
+        );
+      };
+
       try {
         const data = await getTransactionReceipt({ txHash, network: chainId });
         if (data?.status !== 'success') {
-          if (poolingTimerForTransactionResultRef.current) {
-            clearTimeout(poolingTimerForTransactionResultRef.current);
-          }
           return new Promise<void>((resolve) => {
-            poolingTimerForTransactionResultRef.current = setTimeout(async () => {
+            setPollingTimeout(async () => {
               await handlePollingForTransactionResult({ txHash, chainId });
               resolve();
-            }, POLLING_INTERVAL);
+            });
           });
         }
-      } catch (error) {
-        console.error(error);
-        throw error;
+      } catch (error: any) {
+        const handledErrorMessage = handleErrorMessage(error);
+        if (handledErrorMessage.includes('could not be found')) {
+          return new Promise<void>((resolve) => {
+            setPollingTimeout(async () => {
+              await handlePollingForTransactionResult({ txHash, chainId });
+              resolve();
+            });
+          });
+        } else {
+          console.error(error);
+          throw error;
+        }
       }
     },
     [getTransactionReceipt],
@@ -221,17 +241,18 @@ export default function CreationProgressModal({
       try {
         const isFinished = await getApplicationIssue({ bindingId, thirdTokenId });
         if (!isFinished) {
-          if (poolingTimerForIssueResultRef.current) {
-            clearTimeout(poolingTimerForIssueResultRef.current);
+          if (poolingTimerForIssueResultRef.current[bindingId]) {
+            clearTimeout(poolingTimerForIssueResultRef.current[bindingId]);
           }
           return new Promise<void>((resolve) => {
-            poolingTimerForIssueResultRef.current = setTimeout(async () => {
+            poolingTimerForIssueResultRef.current[bindingId] = setTimeout(async () => {
               await handlePollingForIssueResult({ bindingId, thirdTokenId });
               resolve();
             }, POLLING_INTERVAL);
           });
         }
-      } catch (error) {
+      } catch (error: any) {
+        error.shouldShowMessage = true;
         console.error(error);
         throw error;
       }
@@ -255,8 +276,10 @@ export default function CreationProgressModal({
             thirdTokenId: item.chain.thirdTokenId,
           });
           handleStepItemChange({ step: index, status: 'finish' });
-        } catch (error) {
-          SingleMessage.error(handleErrorMessage(error));
+        } catch (error: any) {
+          if (error.shouldShowMessage) {
+            SingleMessage.error(handleErrorMessage(error));
+          }
           handleStepItemChange({ step: index, status: 'error' });
         }
       }),
@@ -275,21 +298,21 @@ export default function CreationProgressModal({
         if (currentChain.status === ApplicationChainStatusEnum.Unissued) {
           const txHash = await handleIssue({ chain: currentChain });
           const { bindingId, thirdTokenId } = await handlePrepareBindIssue(currentChain);
-          handleStepItemChange({ step, params: { bindingId, thirdTokenId, txHash } });
+          handleStepItemChange({
+            step,
+            params: { bindingId, thirdTokenId, txHash, isCreated: true },
+          });
         }
-      } catch (error) {
-        const handledErrorMessage = handleErrorMessage(error);
-        if (handledErrorMessage.includes('rejected') || handledErrorMessage.includes('denied')) {
-          SingleMessage.error(USER_REJECT_CONNECT_WALLET_TIP);
-        } else {
-          SingleMessage.error(handledErrorMessage);
+      } catch (error: any) {
+        if (error.shouldShowMessage) {
+          SingleMessage.error(handleErrorMessage(error));
         }
         handleStepItemChange({ step, status: 'error' });
       }
     };
 
     for (let index = 0; index < stepItems.length; index++) {
-      if (stepItems[index].status === 'finish') {
+      if (stepItems[index].status === 'finish' || stepItems[index].chain.isCreated) {
         continue;
       }
       await create(index);
