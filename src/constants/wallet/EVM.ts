@@ -9,8 +9,8 @@ export const EVM_CREATE_TOKEN_CONTRACT_ADDRESS: Record<string, `0x${string}`> = 
   [BlockchainNetworkType.Ethereum]: '0x',
   [BlockchainNetworkType.Optimism]: '0x',
   [BlockchainNetworkType.Polygon]: '0x',
-  [BlockchainNetworkType.SETH]: '0x5F7f441F1d4123b144AB4cf108f248f2c1129172',
-  [BlockchainNetworkType.TBinance]: '0xFe10E8D171E0F5D4984cd9fF391Fe6c3BC36f240',
+  [BlockchainNetworkType.SETH]: '0x6bAbB9f5Ef13B7bf2a7cE65756f9adb3dE84f919',
+  [BlockchainNetworkType.TBinance]: '0xb4C06d88bf9F6C20FD755B35Bb6bAd5ED7c51494',
 };
 
 export enum EVM_CONTRACT_FUNCTION_NAME {
