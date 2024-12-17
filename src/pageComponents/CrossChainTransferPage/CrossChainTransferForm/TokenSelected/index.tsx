@@ -1,4 +1,4 @@
-import { SelectImage } from 'components/SelectToken/TokenCard';
+import DisplayImage from 'components/DisplayImage';
 import styles from './styles.module.scss';
 import DynamicArrow from 'components/DynamicArrow';
 import { useCrossChainTransfer } from 'store/Provider/hooks';
@@ -45,11 +45,10 @@ export default function TokenSelected({
       <div
         className={clsx('flex-row-center', styles['token-selected'], className)}
         onClick={() => setIsShowTokenSelectModal(true)}>
-        <SelectImage
+        <DisplayImage
           className={styles['token-logo']}
-          icon={icon}
-          open={true}
-          symbol={formatSymbolDisplay(symbol)}
+          src={icon}
+          name={formatSymbolDisplay(symbol)}
         />
         <span className={styles['token-selected-name']}>{formatSymbolDisplay(symbol)}</span>
         <DynamicArrow

@@ -7,6 +7,7 @@ interface DisplayImageProps {
   name: string;
   src?: string;
   className?: string;
+  defaultIconClassName?: string;
   width?: number;
   height?: number;
   alt?: string;
@@ -17,6 +18,7 @@ export default function DisplayImage({
   name,
   src,
   className,
+  defaultIconClassName,
   width = 24,
   height = 24,
   alt,
@@ -33,7 +35,12 @@ export default function DisplayImage({
       )}
       style={{ width, height }}>
       <div
-        className={clsx('row-center', 'flex-shrink-0', styles['default-text'])}
+        className={clsx(
+          'row-center',
+          'flex-shrink-0',
+          styles['default-text'],
+          defaultIconClassName,
+        )}
         style={{ width, height, lineHeight: height + 'px' }}>
         {name?.charAt(0)}
       </div>

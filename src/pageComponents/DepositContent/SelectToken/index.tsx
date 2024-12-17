@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import { useAppDispatch, useCommonState, useDepositState } from 'store/Provider/hooks';
 import { AddBigIcon } from 'assets/images';
 import clsx from 'clsx';
-import { SelectImage } from 'components/SelectToken/TokenCard';
+import DisplayImage from 'components/DisplayImage';
 import { TDepositTokenItem } from 'types/api';
 import { setAddInitOpenTokenModalCount } from 'store/reducers/deposit/slice';
 import DynamicArrow from 'components/DynamicArrow';
@@ -79,11 +79,11 @@ export default function SelectToken({
         <div className={styles['select-token-value-row']}>
           {selected?.symbol ? (
             <span className={clsx('flex-row-center', styles['select-token-value-selected'])}>
-              <SelectImage
-                open={true}
-                symbol={symbolFormat}
-                icon={selected.icon}
-                size={isPadPX ? 28 : 24}
+              <DisplayImage
+                name={symbolFormat}
+                src={selected.icon}
+                width={isPadPX ? 28 : 24}
+                height={isPadPX ? 28 : 24}
               />
               <span className={styles['primary']}>{symbolFormat}</span>
               <span className={styles['secondary']}>{selected.name}</span>

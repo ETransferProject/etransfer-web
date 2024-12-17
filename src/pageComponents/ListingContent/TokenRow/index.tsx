@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { SelectImage } from 'components/SelectToken/TokenCard';
+import DisplayImage from 'components/DisplayImage';
 import { formatSymbolDisplay } from 'utils/format';
 import styles from './styles.module.scss';
 
@@ -13,12 +13,12 @@ interface ITokenRowProps {
 export default function TokenRow({ className, symbol = '', name = '', icon = '' }: ITokenRowProps) {
   return (
     <div className={clsx(styles['token-row'], className)}>
-      <SelectImage
+      <DisplayImage
         className={styles['token-logo']}
-        size={20}
-        icon={icon}
-        symbol={formatSymbolDisplay(symbol)}
-        open
+        width={20}
+        height={20}
+        src={icon}
+        name={formatSymbolDisplay(symbol)}
       />
       <span className={styles['token-symbol']}>{formatSymbolDisplay(symbol)}</span>
       <span className={styles['token-name']}>{name}</span>

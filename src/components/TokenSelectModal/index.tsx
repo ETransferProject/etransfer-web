@@ -4,7 +4,7 @@ import { Input } from 'antd';
 import CommonModal from 'components/CommonModal';
 import CommonDrawer from 'components/CommonDrawer';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
-import { SelectImage } from 'components/SelectToken/TokenCard';
+import DisplayImage from 'components/DisplayImage';
 import { formatSymbolDisplay } from 'utils/format';
 import { AddBlueIcon, SearchIcon } from 'assets/images';
 import { useCommonState } from 'store/Provider/hooks';
@@ -77,11 +77,7 @@ export default function TokenSelectModal<T>({
                 key={'TokenSelectModal-item-' + index}
                 onClick={() => onSelect(item)}
                 className={clsx('flex-row-center', styles['token-item'])}>
-                <SelectImage
-                  icon={item.icon}
-                  open={true}
-                  symbol={formatSymbolDisplay(item.symbol)}
-                />
+                <DisplayImage src={item.icon} name={formatSymbolDisplay(item.symbol)} />
                 <span className={styles['token-item-symbol']}>
                   {formatSymbolDisplay(item.symbol)}
                 </span>

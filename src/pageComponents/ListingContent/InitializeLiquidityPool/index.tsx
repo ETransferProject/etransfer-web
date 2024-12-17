@@ -198,6 +198,11 @@ export default function InitializeLiquidityPool({
           concatList = chainTokenInfos;
         }
 
+        if (concatList.length === 0) {
+          router.push('/my-applications');
+          return;
+        }
+
         setTokenPoolList(concatList);
         setTokenInfo({
           symbol: res[0].symbol,
@@ -220,7 +225,7 @@ export default function InitializeLiquidityPool({
         setLoading(false);
       }
     },
-    [isConnected, setAelfAuthFromStorage, setLoading],
+    [isConnected, router, setAelfAuthFromStorage, setLoading],
   );
 
   const searchParams = useSearchParams();

@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { SelectImage } from 'components/SelectToken/TokenCard';
+import DisplayImage from 'components/DisplayImage';
 import { formatSymbolDisplay } from 'utils/format';
 import styles from './styles.module.scss';
 
@@ -12,13 +12,13 @@ interface ITokenBoxProps {
 export default function TokenBox({ className, icon, symbol }: ITokenBoxProps) {
   return (
     <div className={clsx('flex-row-center', styles['token-box'], className)}>
-      <SelectImage
+      <DisplayImage
         className={styles['token-box-icon']}
         defaultIconClassName={styles['token-box-default-icon']}
-        size={16}
-        icon={icon}
-        open
-        symbol={formatSymbolDisplay(symbol)}
+        width={16}
+        height={16}
+        src={icon}
+        name={formatSymbolDisplay(symbol)}
       />
       <span>{formatSymbolDisplay(symbol)}</span>
     </div>
