@@ -89,7 +89,7 @@ export const FOOTER_CONFIG: TFooterConfig = {
       items: [
         {
           name: 'Listing Application',
-          link: '/listing',
+          link: '/listing/token-information',
         },
         {
           name: 'My Applications',

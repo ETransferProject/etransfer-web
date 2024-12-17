@@ -231,7 +231,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
         list.push(WalletTypeEnum.TON);
       }
     });
-    return list;
+    return [...new Set(list)];
   }, [formData, isEVMConnected, isSolanaConnected, isTRONConnected, isTONConnected]);
 
   const judgeIsButtonDisabled = useCallback(() => {
@@ -698,7 +698,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
                       </span>
                       <span className={styles['select-chain-description']}>
                         {
-                          'The token information on Ethereum, BNS Smart Chain, Arbitrum, Tron, and Ton is the same as that on the aelf chain. You only need to fill in the initial supply of the token on the other chains, and approve all signature requests.'
+                          'The token information on Ethereum, BNS Smart Chain, Arbitrum, Tron, and Ton is the same as that on the aelf chain. You only need to fill in the issuance amount of the token on the other chains.'
                         }
                       </span>
                     </div>

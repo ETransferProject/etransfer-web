@@ -190,7 +190,7 @@ export default function CreationProgressModal({
   const handlePollingForTransactionResult = useCallback(
     async ({ txHash, chainId }: { txHash?: TTxHash; chainId: string }) => {
       if (!txHash) {
-        return;
+        return Promise.resolve();
       }
       try {
         const data = await getTransactionReceipt({ txHash, network: chainId });
@@ -198,9 +198,12 @@ export default function CreationProgressModal({
           if (poolingTimerForTransactionResultRef.current) {
             clearTimeout(poolingTimerForTransactionResultRef.current);
           }
-          poolingTimerForTransactionResultRef.current = setTimeout(async () => {
-            await handlePollingForTransactionResult({ txHash, chainId });
-          }, POLLING_INTERVAL);
+          return new Promise<void>((resolve) => {
+            poolingTimerForTransactionResultRef.current = setTimeout(async () => {
+              await handlePollingForTransactionResult({ txHash, chainId });
+              resolve();
+            }, POLLING_INTERVAL);
+          });
         }
       } catch (error) {
         console.error(error);
@@ -213,7 +216,7 @@ export default function CreationProgressModal({
   const handlePollingForIssueResult = useCallback(
     async ({ bindingId, thirdTokenId }: { bindingId?: string; thirdTokenId?: string }) => {
       if (!bindingId || !thirdTokenId) {
-        return;
+        return Promise.resolve();
       }
       try {
         const isFinished = await getApplicationIssue({ bindingId, thirdTokenId });
@@ -221,9 +224,12 @@ export default function CreationProgressModal({
           if (poolingTimerForIssueResultRef.current) {
             clearTimeout(poolingTimerForIssueResultRef.current);
           }
-          poolingTimerForIssueResultRef.current = setTimeout(async () => {
-            await handlePollingForIssueResult({ bindingId, thirdTokenId });
-          }, POLLING_INTERVAL);
+          return new Promise<void>((resolve) => {
+            poolingTimerForIssueResultRef.current = setTimeout(async () => {
+              await handlePollingForIssueResult({ bindingId, thirdTokenId });
+              resolve();
+            }, POLLING_INTERVAL);
+          });
         }
       } catch (error) {
         console.error(error);

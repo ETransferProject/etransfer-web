@@ -55,7 +55,7 @@ export default function TokenSelectModal<T>({
   }, [tokenList, searchKeyword]);
 
   const handleAddToken = useCallback(() => {
-    router.push('/listing');
+    router.push('/listing/token-information');
   }, [router]);
 
   const content = useMemo(() => {
