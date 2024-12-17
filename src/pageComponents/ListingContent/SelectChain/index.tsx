@@ -46,20 +46,21 @@ import {
   getApplicationTokenList,
   getApplicationChainStatusList,
   addApplicationChain,
+  getApplicationTokenInfo,
 } from 'utils/api/application';
 import { formatWithCommas, parseWithCommas, parseWithStringCommas } from 'utils/format';
 import styles from './styles.module.scss';
 import { useEffectOnce } from 'react-use';
 import myEvents from 'utils/myEvent';
 import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
-import useAelf, { useAelfLogin } from 'hooks/wallet/useAelf';
+import useAelf from 'hooks/wallet/useAelf';
 import useEVM from 'hooks/wallet/useEVM';
 import useSolana from 'hooks/wallet/useSolana';
 import useTON from 'hooks/wallet/useTON';
 import useTRON from 'hooks/wallet/useTRON';
 import { handleErrorMessage, sleep } from '@etransfer/utils';
 import EmptyDataBox from 'components/EmptyDataBox';
-import { CONNECT_AELF_WALLET, CONNECT_WALLET, MY_WALLET } from 'constants/wallet';
+import { CONNECT_WALLET, MY_WALLET } from 'constants/wallet';
 import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
 import { WalletTypeEnum } from 'context/Wallet/types';
 import { isEVMChain, isSolanaChain, isTONChain, isTRONChain } from 'utils/wallet';
@@ -89,7 +90,6 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
   const { isConnected: isSolanaConnected } = useSolana();
   const { isConnected: isTONConnected } = useTON();
   const { isConnected: isTRONConnected } = useTRON();
-  const handleAelfLogin = useAelfLogin();
   const setAelfAuthFromStorage = useSetAelfAuthFromStorage();
   const [form] = Form.useForm<TSelectChainFormValues>();
   const tooltipSwitchModalsRef = useRef<Record<string, ICommonTooltipSwitchModalRef | null>>({});
@@ -110,49 +110,41 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     DEFAULT_CONNECT_WALLET_MODAL_PROPS,
   );
 
-  const reset = useCallback(() => {
-    setFormData(SELECT_CHAIN_FORM_INITIAL_VALUES);
-    setFormValidateData(SELECT_CHAIN_FORM_INITIAL_VALIDATE_DATA);
-    setChainListData(DEFAULT_CHAINS);
-    setCreationProgressModalProps({
-      open: false,
-      chains: [],
-    });
-    setToken(undefined);
-    setIsShowInitialSupplyFormItem(false);
-    setIsButtonDisabled(true);
-  }, []);
+  const handleBackStep = useCallback(() => {
+    handlePrevStep({ symbol });
+  }, [handlePrevStep, symbol]);
 
   const getToken = useCallback(async () => {
     if (!symbol) return;
-    try {
-      const res = await getApplicationTokenList();
-      const list = (res.tokenList || []).map((item) => ({
-        name: item.tokenName,
-        symbol: item.symbol,
-        icon: item.tokenImage,
-        liquidityInUsd: item.liquidityInUsd,
-        holders: item.holders,
-      }));
-      const _token = list.find((item) => item.symbol === symbol);
-      setToken(_token);
-    } catch (error) {
-      console.error(error);
+    const res = await getApplicationTokenList();
+    const list = (res.tokenList || []).map((item) => ({
+      name: item.tokenName,
+      symbol: item.symbol,
+      icon: item.tokenImage,
+      liquidityInUsd: item.liquidityInUsd,
+      holders: item.holders,
+    }));
+    const _token = list.find((item) => item.symbol === symbol);
+    if (_token) {
+      const tokenInfo = await getApplicationTokenInfo({ symbol });
+      if (tokenInfo) {
+        setToken(_token);
+      } else {
+        throw new Error('Failed to get token info');
+      }
+    } else {
+      throw new Error('Token not found');
     }
   }, [symbol]);
 
   const getChainList = useCallback(async () => {
     if (!symbol) return;
-    try {
-      const res = await getApplicationChainStatusList({ symbol });
-      const listData = {
-        [SelectChainFormKeys.AELF_CHAINS]: res.chainList || [],
-        [SelectChainFormKeys.OTHER_CHAINS]: res.otherChainList || [],
-      };
-      setChainListData(listData);
-    } catch (error) {
-      console.error(error);
-    }
+    const res = await getApplicationChainStatusList({ symbol });
+    const listData = {
+      [SelectChainFormKeys.AELF_CHAINS]: res.chainList || [],
+      [SelectChainFormKeys.OTHER_CHAINS]: res.otherChainList || [],
+    };
+    setChainListData(listData);
   }, [symbol]);
 
   const judgeIsChainDisabled = useCallback((status: ApplicationChainStatusEnum): boolean => {
@@ -550,45 +542,35 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
       await getChainList();
     } catch (error) {
       console.log('SelectChain init', error);
+      handleBackStep();
     } finally {
       setLoading(false);
     }
-  }, [getChainList, getToken, setAelfAuthFromStorage, setLoading]);
+  }, [getChainList, getToken, handleBackStep, setAelfAuthFromStorage, setLoading]);
   const initRef = useRef(init);
   initRef.current = init;
 
   useEffectOnce(() => {
-    if (!isAelfConnected) {
-      handleAelfLogin(true, init);
+    if (!isAelfConnected || !symbol) {
+      handleBackStep();
     } else {
       init();
     }
   });
 
   const initForLogout = useCallback(async () => {
-    reset();
-  }, [reset]);
+    handleBackStep();
+  }, [handleBackStep]);
   const initLogoutRef = useRef(initForLogout);
   initLogoutRef.current = initForLogout;
 
-  const initForReLogin = useCallback(async () => {
-    await init();
-  }, [init]);
-  const initForReLoginRef = useRef(initForReLogin);
-  initForReLoginRef.current = initForReLogin;
-
   useEffectOnce(() => {
-    // log in
-    const { remove: removeLoginSuccess } = myEvents.LoginSuccess.addListener(() =>
-      initForReLoginRef.current(),
-    );
     // log out \ exit
     const { remove: removeLogoutSuccess } = myEvents.LogoutSuccess.addListener(() => {
       initLogoutRef.current();
     });
 
     return () => {
-      removeLoginSuccess();
       removeLogoutSuccess();
     };
   });
@@ -721,21 +703,17 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
           <EmptyDataBox emptyText={WALLET_CONNECTION_REQUIRED} />
         )}
         <div className={styles['select-chain-footer']}>
-          {isAelfConnected ? (
+          {isAelfConnected && (
             <CommonButton
               {...getActionButtonProps()}
               size={CommonButtonSize.Small}
               disabled={isButtonDisabled}
             />
-          ) : (
-            <CommonButton size={CommonButtonSize.Small} onClick={() => handleAelfLogin(true, init)}>
-              {CONNECT_AELF_WALLET}
-            </CommonButton>
           )}
           <CommonButton
             type={CommonButtonType.Secondary}
             size={CommonButtonSize.Small}
-            onClick={() => handlePrevStep({ symbol: token?.symbol })}>
+            onClick={handleBackStep}>
             {BUTTON_TEXT_BACK}
           </CommonButton>
         </div>
