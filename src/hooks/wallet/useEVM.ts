@@ -208,6 +208,7 @@ export default function useEVM() {
       sendTransaction,
       createToken,
       getTransactionReceipt: onCheckTransaction,
+      getCurrentChainInfo,
     };
   }, [
     isConnected,
@@ -221,6 +222,7 @@ export default function useEVM() {
     sendTransaction,
     createToken,
     onCheckTransaction,
+    getCurrentChainInfo,
   ]);
 
   return evmContext;

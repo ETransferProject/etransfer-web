@@ -11,6 +11,7 @@ import { useGetAllConnectedWalletAccount } from 'hooks/wallet';
 import useEVM from 'hooks/wallet/useEVM';
 import { getApplicationIssue, prepareBindIssue } from 'utils/api/application';
 import { computeWalletSourceType } from 'utils/wallet';
+import { getTransactionReceiptAutoRetry } from 'utils/evm';
 import {
   ApplicationChainStatusEnum,
   TApplicationChainStatusItem,
@@ -47,9 +48,8 @@ export default function CreationProgressModal({
 }: ICreationProgressModalProps) {
   const getAllConnectedWalletAccount = useGetAllConnectedWalletAccount();
   const { accountListWithWalletType } = getAllConnectedWalletAccount();
-  const { createToken, getTransactionReceipt } = useEVM();
+  const { createToken, getCurrentChainInfo } = useEVM();
   const { isPadPX } = useCommonState();
-  const poolingTimerForTransactionResultRef = useRef<Record<TTxHash, NodeJS.Timeout | null>>({});
   const poolingTimerForIssueResultRef = useRef<Record<string, NodeJS.Timeout | null>>({});
 
   const [isCreateStart, setIsCreateStart] = useState(false);
@@ -189,50 +189,6 @@ export default function CreationProgressModal({
     [createToken, supply],
   );
 
-  const handlePollingForTransactionResult = useCallback(
-    async ({ txHash, chainId }: { txHash?: TTxHash; chainId: string }) => {
-      if (!txHash) {
-        return Promise.resolve();
-      }
-
-      const setPollingTimeout = (callback: () => void) => {
-        if (poolingTimerForTransactionResultRef.current[txHash]) {
-          clearTimeout(poolingTimerForTransactionResultRef.current[txHash]);
-        }
-        poolingTimerForTransactionResultRef.current[txHash] = setTimeout(
-          callback,
-          POLLING_INTERVAL,
-        );
-      };
-
-      try {
-        const data = await getTransactionReceipt({ txHash, network: chainId });
-        if (data?.status !== 'success') {
-          return new Promise<void>((resolve) => {
-            setPollingTimeout(async () => {
-              await handlePollingForTransactionResult({ txHash, chainId });
-              resolve();
-            });
-          });
-        }
-      } catch (error: any) {
-        const handledErrorMessage = handleErrorMessage(error);
-        if (handledErrorMessage.includes('could not be found')) {
-          return new Promise<void>((resolve) => {
-            setPollingTimeout(async () => {
-              await handlePollingForTransactionResult({ txHash, chainId });
-              resolve();
-            });
-          });
-        } else {
-          console.error(error);
-          throw error;
-        }
-      }
-    },
-    [getTransactionReceipt],
-  );
-
   const handlePollingForIssueResult = useCallback(
     async ({ bindingId, thirdTokenId }: { bindingId?: string; thirdTokenId?: string }) => {
       if (!bindingId || !thirdTokenId) {
@@ -267,10 +223,15 @@ export default function CreationProgressModal({
           return;
         }
         try {
-          await handlePollingForTransactionResult({
-            txHash: item.chain.txHash,
-            chainId: item.chain.chainId,
-          });
+          if (item.chain.txHash) {
+            const chain = await getCurrentChainInfo(item.chain.chainId);
+            if (chain) {
+              await getTransactionReceiptAutoRetry({
+                hash: item.chain.txHash,
+                chainId: chain.id,
+              });
+            }
+          }
           await handlePollingForIssueResult({
             bindingId: item.chain.bindingId,
             thirdTokenId: item.chain.thirdTokenId,
@@ -284,12 +245,7 @@ export default function CreationProgressModal({
         }
       }),
     );
-  }, [
-    handlePollingForIssueResult,
-    handlePollingForTransactionResult,
-    handleStepItemChange,
-    stepItems,
-  ]);
+  }, [handlePollingForIssueResult, handleStepItemChange, getCurrentChainInfo, stepItems]);
 
   const handleCreate = useCallback(async () => {
     const create = async (step: number) => {
