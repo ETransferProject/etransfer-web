@@ -675,6 +675,10 @@ export type TMyApplicationItem = {
   symbol: string;
   status: ApplicationChainStatusEnum;
   updateTime: number;
+  rejectedTime?: number; // status === ApplicationChainStatusEnum.Rejected
+  rejectedReason?: string; // status === ApplicationChainStatusEnum.Rejected
+  failedTime?: number; // status === ApplicationChainStatusEnum.Failed
+  failedReason?: string; // status === ApplicationChainStatusEnum.Failed
   chainTokenInfo?: TMyApplicationChainTokenInfo[];
   otherChainTokenInfo?: TMyApplicationChainTokenInfo;
 };
@@ -686,10 +690,6 @@ export type TMyApplicationChainTokenInfo = {
   icon: string;
   poolAddress: string;
   status: ApplicationChainStatusEnum;
-  rejectedTime?: number; // status === ApplicationChainStatusEnum.Rejected
-  rejectedReason?: string; // status === ApplicationChainStatusEnum.Rejected
-  failedTime?: number; // status === ApplicationChainStatusEnum.Failed
-  failedReason?: string; // status === ApplicationChainStatusEnum.Failed
 };
 
 export type TGetApplicationDetailRequest = {

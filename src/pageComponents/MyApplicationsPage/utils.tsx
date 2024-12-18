@@ -7,7 +7,7 @@ export const getApplicationDisplayInfo = (data: TMyApplicationItem) => {
   if (!chainTokenInfo) {
     return {
       chainTokenInfo: undefined,
-      failTime: '',
+      failTime: 0,
       failReason: '',
     };
   }
@@ -15,13 +15,13 @@ export const getApplicationDisplayInfo = (data: TMyApplicationItem) => {
     switch (chainTokenInfo.status) {
       case ApplicationChainStatusEnum.Rejected:
         return {
-          time: chainTokenInfo.rejectedTime,
-          reason: chainTokenInfo.rejectedReason,
+          time: data.rejectedTime,
+          reason: data.rejectedReason,
         };
       case ApplicationChainStatusEnum.Failed:
         return {
-          time: chainTokenInfo.failedTime,
-          reason: chainTokenInfo.failedReason,
+          time: data.failedTime,
+          reason: data.failedReason,
         };
       default:
         return {

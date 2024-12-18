@@ -74,7 +74,7 @@ const MyApplicationTableColumns = [
           chainId={chainTokenInfo.chainId}
           chainName={chainTokenInfo.chainName}
           id={item.id}
-          rejectedTime={chainTokenInfo.rejectedTime}
+          rejectedTime={item.rejectedTime}
         />
       ) : (
         DEFAULT_NULL_VALUE
