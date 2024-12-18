@@ -114,7 +114,7 @@ export default function ActionBox({
     return (
       <div
         className={isReapplyDisable ? styles['action-disable'] : styles['action']}
-        onClick={handleReapply}>
+        onClick={isReapplyDisable ? undefined : handleReapply}>
         Reapply
       </div>
     );

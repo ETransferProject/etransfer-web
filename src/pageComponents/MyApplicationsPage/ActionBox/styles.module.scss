@@ -4,3 +4,8 @@
   color: $brand;
   cursor: pointer;
 }
+
+.action-disable {
+  color: $disable;
+  cursor: not-allowed;
+}
