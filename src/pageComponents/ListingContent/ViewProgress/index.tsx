@@ -36,18 +36,33 @@ export default function ViewProgress({
   const { isPadPX } = useCommonState();
 
   const currentStep = useMemo(() => {
+    if (status === ApplicationChainStatusEnum.Unissued) {
+      return ListingProcessStep.SUBMIT_TOKEN_INFO;
+    }
     if (status === ApplicationChainStatusEnum.Issuing) {
       return ListingProcessStep.ISSUE_TOKEN;
     }
-    if (status === ApplicationChainStatusEnum.Reviewing) {
+    if (
+      status === ApplicationChainStatusEnum.Issued ||
+      status === ApplicationChainStatusEnum.Reviewing
+    ) {
       return ListingProcessStep.COBO_CUSTODY_REVIEW;
     }
-    if (status === ApplicationChainStatusEnum.Integrating) {
-      return ListingProcessStep.CROSS_CHAIN_INTEGRATION;
-    }
-    if (status === ApplicationChainStatusEnum.PoolInitializing) {
+    if (
+      status === ApplicationChainStatusEnum.Reviewed ||
+      status === ApplicationChainStatusEnum.PoolInitializing
+    ) {
       return ListingProcessStep.INITIALIZE_LIQUIDITY_POOL;
     }
+    if (
+      status === ApplicationChainStatusEnum.PoolInitialized ||
+      status === ApplicationChainStatusEnum.Integrating
+    ) {
+      return ListingProcessStep.CROSS_CHAIN_INTEGRATION;
+    }
+
+    // ApplicationChainStatusEnum.Rejected;
+    // ApplicationChainStatusEnum.Failed;
     return ListingProcessStep.COMPLETE;
   }, [status]);
 
@@ -61,7 +76,7 @@ export default function ViewProgress({
       }
     });
     return _stepItem;
-  }, []);
+  }, [currentStep]);
 
   const content = useMemo(() => {
     return (
@@ -83,7 +98,7 @@ export default function ViewProgress({
         </div>
       </div>
     );
-  }, [chainName, currentStep, tokenIcon, tokenSymbol]);
+  }, [chainName, currentStep, formatSteps, tokenIcon, tokenSymbol]);
 
   if (isPadPX) {
     return (

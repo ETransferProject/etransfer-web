@@ -96,9 +96,9 @@ export default function ActionBox({
 
   useEffectOnce(() => {
     if (rejectedTime && rejectedTime + TwoDaysTimestamp >= Date.now()) {
-      setIsReapplyDisable(false);
-    } else {
       setIsReapplyDisable(true);
+    } else {
+      setIsReapplyDisable(false);
     }
   });
 

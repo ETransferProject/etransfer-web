@@ -62,7 +62,7 @@ const MyApplicationTableColumns = [
     dataIndex: 'action',
     key: 'action',
     render: (_: any, item: TMyApplicationItem) => {
-      const { chainTokenInfo } = getApplicationDisplayInfo(item);
+      const { chainTokenInfo, failTime } = getApplicationDisplayInfo(item);
       return chainTokenInfo?.status &&
         chainTokenInfo?.icon &&
         chainTokenInfo.chainId &&
@@ -74,7 +74,7 @@ const MyApplicationTableColumns = [
           chainId={chainTokenInfo.chainId}
           chainName={chainTokenInfo.chainName}
           id={item.id}
-          rejectedTime={item.rejectedTime}
+          rejectedTime={failTime}
         />
       ) : (
         DEFAULT_NULL_VALUE

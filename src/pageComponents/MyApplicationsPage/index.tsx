@@ -19,7 +19,8 @@ export default function MyApplicationsPage() {
   const { isConnected } = useAelf();
   const handleAelfLogin = useAelfLogin();
   useInitAelfWallet();
-  const [applicationList, setApplicationList] = useState<any[]>([]);
+  const [currentApplicationList, setCurrentApplicationList] = useState<any[]>([]);
+  const [totalApplicationList, setTotalApplicationList] = useState<any[]>([]);
 
   // pagination
   const [skipPageCount, setSkipPageCount] = useState(0);
@@ -39,7 +40,17 @@ export default function MyApplicationsPage() {
           skipCount: currentSkipCount,
           maxResultCount: currentMaxCount,
         });
-        setApplicationList(res.items);
+
+        setCurrentApplicationList(res.items);
+
+        let _totalList = [];
+        if (currentSkipCount === 0) {
+          _totalList = res.items;
+        } else {
+          _totalList = [...totalApplicationList, ...res.items];
+        }
+        setTotalApplicationList(_totalList);
+
         setTotalCount(res.totalCount);
       } catch (error) {
         console.log('>>>>>> getApplicationData error', error);
@@ -47,7 +58,7 @@ export default function MyApplicationsPage() {
         setLoading(false);
       }
     },
-    [maxResultCount, setLoading, skipPageCount],
+    [maxResultCount, setLoading, skipPageCount, totalApplicationList],
   );
 
   // web get page date
@@ -78,13 +89,13 @@ export default function MyApplicationsPage() {
 
   // mobile get next page
   const handleNextPage = useDebounceCallback(async () => {
-    if (applicationList.length < totalCount) {
+    if (totalApplicationList.length < totalCount) {
       setSkipPageCount(skipPageCount + 1);
       await getApplicationData({
         skip: skipPageCount + 1,
       });
     }
-  }, [applicationList.length, getApplicationData, skipPageCount, totalCount]);
+  }, [getApplicationData, skipPageCount, totalApplicationList.length, totalCount]);
 
   const init = useCallback(async () => {
     getApplicationData({});
@@ -99,7 +110,8 @@ export default function MyApplicationsPage() {
   });
 
   const initForLogout = useCallback(async () => {
-    setApplicationList([]);
+    setCurrentApplicationList([]);
+    setTotalApplicationList([]);
     setSkipPageCount(0);
     setMaxResultCount(10);
     setTotalCount(0);
@@ -147,12 +159,12 @@ export default function MyApplicationsPage() {
       <div
         className={clsx(
           styles['my-applications-page-body'],
-          applicationList.length === 0 && styles['my-applications-page-body-white'],
+          totalApplicationList.length === 0 && styles['my-applications-page-body-white'],
         )}>
         {isMobilePX ? (
           <MyApplicationList
             totalCount={totalCount}
-            applicationList={applicationList}
+            applicationList={totalApplicationList}
             onNextPage={handleNextPage}
           />
         ) : (
@@ -160,7 +172,7 @@ export default function MyApplicationsPage() {
             <div className={styles['my-applications-page-title']}>My Applications</div>
             <MyApplicationTable
               totalCount={totalCount}
-              applicationList={applicationList}
+              applicationList={currentApplicationList}
               tableOnChange={tableOnChange}
               maxResultCount={maxResultCount}
               skipPageCount={skipPageCount}
