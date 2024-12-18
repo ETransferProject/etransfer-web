@@ -495,7 +495,10 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
       children: SELECT_CHAIN,
     };
 
-    if (Object.values(unissuedChains).some((v) => v.length !== 0)) {
+    if (
+      Object.values(unissuedChains).some((v) => v.length !== 0) ||
+      Object.values(issuingChains).some((v) => v.length !== 0)
+    ) {
       if (unconnectedWallets.length > 0) {
         props = {
           children: `Connect ${unconnectedWallets.join(', ')} Wallet${
@@ -509,11 +512,6 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
           onClick: handleCreateToken,
         };
       }
-    } else if (Object.values(issuingChains).some((v) => v.length !== 0)) {
-      props = {
-        children: 'Initialize Token Pool',
-        onClick: handleCreateToken,
-      };
     } else if (Object.values(issuedChains).some((v) => v.length !== 0)) {
       props = {
         children: 'Submit',
