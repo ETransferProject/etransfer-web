@@ -1,18 +1,15 @@
 @import '/src/assets/theme/color.scss';
 @import '/src/assets/theme/font.scss';
 
-.remind {
-  align-items: flex-start;
-  margin-bottom: 32px;
-  .remind-icon {
-    margin-top: 3px;
-  }
-
-  .tip-row {
-    font-size: 14px;
-    line-height: 22px;
-    color: $primary-text;
-  }
+.tip-row-pad {
+  font-size: 14px;
+  line-height: 22px;
+  color: $primary-text;
+}
+.tip-row-web {
+  font-size: 12px;
+  line-height: 20px;
+  color: $white-text;
 }
 
 .network-name {

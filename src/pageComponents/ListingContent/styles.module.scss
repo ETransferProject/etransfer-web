@@ -50,6 +50,9 @@
 }
 
 .listing-card-form-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 12px;
   @extend .font-family-medium;
   font-size: 20px;

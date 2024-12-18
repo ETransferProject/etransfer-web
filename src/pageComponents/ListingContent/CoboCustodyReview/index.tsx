@@ -1,12 +1,9 @@
-import Remind from 'components/Remind';
 import styles from './styles.module.scss';
 import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { CoboCustodyReviewStatusIcon } from 'assets/images';
 import clsx from 'clsx';
 import { VIEW_PROGRESS } from 'constants/listing';
-import { openWithBlank } from 'utils/common';
-import { CONTACT_US_FORM_URL } from 'constants/index';
 
 export default function CoboCustodyReview({ networks }: { networks: { name: string }[] }) {
   const router = useRouter();
@@ -36,35 +33,8 @@ export default function CoboCustodyReview({ networks }: { networks: { name: stri
     router.push('/my-applications');
   }, [router]);
 
-  const renderRemind = useMemo(() => {
-    return (
-      <Remind className={styles['remind']} iconClassName={styles['remind-icon']} isBorder={false}>
-        <div>
-          <div className={styles['tip-row']}>
-            {`• You can see the progress in ‘`}
-            <span className={styles['action']} onClick={handleGoMyApplications}>
-              {`My Applications`}
-            </span>
-            {`’.`}
-          </div>
-          <div className={styles['tip-row']}>
-            {`• Once approved, please add liquidity to complete the listing.`}
-          </div>
-          <div className={styles['tip-row']}>
-            {`• If you need any support, please `}
-            <span className={styles['action']} onClick={() => openWithBlank(CONTACT_US_FORM_URL)}>
-              {`contact us`}
-            </span>
-            {` .`}
-          </div>
-        </div>
-      </Remind>
-    );
-  }, [handleGoMyApplications]);
-
   return (
     <div className={styles['cobo-custody-review']}>
-      {renderRemind}
       <div className={styles['cobo-custody-review-body']}>
         <CoboCustodyReviewStatusIcon />
         <div className={styles['cobo-custody-review-text']}>

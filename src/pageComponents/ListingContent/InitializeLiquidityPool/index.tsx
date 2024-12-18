@@ -1,4 +1,3 @@
-import Remind from 'components/Remind';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styles from './styles.module.scss';
 import NetworkLogo from 'components/NetworkLogo';
@@ -8,8 +7,8 @@ import CommonQRCode from 'components/CommonQRCode';
 import CommonButton, { CommonButtonSize } from 'components/CommonButton';
 import { CheckFilled16 } from 'assets/images';
 import clsx from 'clsx';
-import { openWithBlank, viewTokenAddressInExplore } from 'utils/common';
-import { CONTACT_US_FORM_URL, DEFAULT_NULL_VALUE } from 'constants/index';
+import { viewTokenAddressInExplore } from 'utils/common';
+import { DEFAULT_NULL_VALUE } from 'constants/index';
 import { getApplicationDetail } from 'utils/api/application';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffectOnce } from 'react-use';
@@ -18,7 +17,7 @@ import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import myEvents from 'utils/myEvent';
 import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
 import { sleep, ZERO } from '@etransfer/utils';
-import { useLoading } from 'store/Provider/hooks';
+import { useCommonState, useLoading } from 'store/Provider/hooks';
 import useAelf, { useAelfLogin, useShowLoginButtonLoading } from 'hooks/wallet/useAelf';
 import { CONNECT_AELF_WALLET } from 'constants/wallet';
 import EmptyDataBox from 'components/EmptyDataBox';
@@ -30,10 +29,12 @@ import {
 import PartialLoading from 'components/PartialLoading';
 import CommonSpace from 'components/CommonSpace';
 import { BUTTON_TEXT_NEXT } from 'constants/misc';
+import ListingTip from '../ListingTip';
 
 export interface InitializeLiquidityPoolProps {
   id?: string;
   symbol?: string;
+  onGetTipNode?: (node: React.ReactNode) => void;
   onNext?: () => void;
 }
 
@@ -49,9 +50,11 @@ const ToolPoolInitCompleted = 'Token pool initialization completed';
 export default function InitializeLiquidityPool({
   id,
   symbol,
+  onGetTipNode,
   onNext,
 }: InitializeLiquidityPoolProps) {
   const router = useRouter();
+  const { isPadPX } = useCommonState();
   const { setLoading } = useLoading();
   const { isConnected } = useAelf();
   const handleAelfLogin = useAelfLogin();
@@ -62,32 +65,28 @@ export default function InitializeLiquidityPool({
   const [tokenPoolList, setTokenPoolList] = useState<TApplicationDetailItemChainTokenInfo[]>([]);
   const [submitDisabled, setSubmitDisable] = useState(true);
 
-  const renderRemind = useMemo(() => {
-    return (
-      <Remind className={styles['remind']} iconClassName={styles['remind-icon']} isBorder={false}>
-        <div>
-          <div className={styles['tip-row']}>
-            {`• Please transfer the ${formatSymbolDisplay(
-              tokenInfo.symbol,
-            )} for each chain into the liquidity pool.`}
-          </div>
-          <div className={styles['tip-row']}>• Transferring other tokens will be invalid.</div>
-          <div className={styles['tip-row']}>
-            {`• The 24-hour transfer limit for the ${formatSymbolDisplay(
-              tokenInfo.symbol,
-            )} is $${formatWithCommas({ amount: tokenInfo.limit24HInUsd })}.`}
-          </div>
-          <div className={styles['tip-row']}>
-            {`• If you need any support, please `}
-            <span
-              className={styles['action']}
-              onClick={() => openWithBlank(CONTACT_US_FORM_URL)}>{`contact us`}</span>
-            {`.`}
-          </div>
-        </div>
-      </Remind>
-    );
-  }, [tokenInfo.limit24HInUsd, tokenInfo.symbol]);
+  onGetTipNode?.(
+    <>
+      {tokenInfo.symbol && tokenInfo.limit24HInUsd ? (
+        <ListingTip
+          title="Transfer limits"
+          tip={
+            <>
+              <div className={isPadPX ? styles['tip-row-pad'] : styles['tip-row-web']}>
+                {`1. The 24-hour transfer limit for the ${formatSymbolDisplay(
+                  tokenInfo.symbol,
+                )} is $${formatWithCommas({ amount: tokenInfo.limit24HInUsd })}.`}
+              </div>
+              <div
+                className={
+                  isPadPX ? styles['tip-row-pad'] : styles['tip-row-web']
+                }>{`2. Adding liquidity may take a few minutes for network confirmation.`}</div>
+            </>
+          }
+        />
+      ) : null}
+    </>,
+  );
 
   const handleGoExplore = useCallback((network: string, symbol?: string, address?: string) => {
     viewTokenAddressInExplore(network, symbol as TChainId, address);
@@ -321,7 +320,6 @@ export default function InitializeLiquidityPool({
     <div className={styles['initialize-liquidity-pool']}>
       {isConnected ? (
         <>
-          {renderRemind}
           {renderList}
           <CommonButton
             className={styles['submit-button']}

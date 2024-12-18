@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import CommonSteps from 'components/CommonSteps';
 import UnsavedChangesWarningModal from './UnsavedChangesWarningModal';
@@ -76,25 +76,31 @@ export default function ListingContent() {
     };
   }, [currentStep]);
 
-  const handleNextStep = (params?: TSearchParams) => {
-    if (typeof currentStep !== 'number') return;
-    const nextStep = currentStep + 1;
-    if (nextStep <= ListingStep.COMPLETE) {
-      globalCanAccessStep = true;
-      const replaceUrl = getListingUrl(nextStep, params);
-      router.replace(replaceUrl);
-    }
-  };
+  const handleNextStep = useCallback(
+    (params?: TSearchParams) => {
+      if (typeof currentStep !== 'number') return;
+      const nextStep = currentStep + 1;
+      if (nextStep <= ListingStep.COMPLETE) {
+        globalCanAccessStep = true;
+        const replaceUrl = getListingUrl(nextStep, params);
+        router.replace(replaceUrl);
+      }
+    },
+    [currentStep, router],
+  );
 
-  const handlePrevStep = (params?: TSearchParams) => {
-    if (typeof currentStep !== 'number') return;
-    const prevStep = currentStep - 1;
-    if (prevStep >= ListingStep.TOKEN_INFORMATION) {
-      globalCanAccessStep = true;
-      const replaceUrl = getListingUrl(prevStep, params);
-      router.replace(replaceUrl);
-    }
-  };
+  const handlePrevStep = useCallback(
+    (params?: TSearchParams) => {
+      if (typeof currentStep !== 'number') return;
+      const prevStep = currentStep - 1;
+      if (prevStep >= ListingStep.TOKEN_INFORMATION) {
+        globalCanAccessStep = true;
+        const replaceUrl = getListingUrl(prevStep, params);
+        router.replace(replaceUrl);
+      }
+    },
+    [currentStep, router],
+  );
 
   const handleWarningModalConfirm = () => {
     setIsWarningModalOpen(false);
@@ -112,7 +118,17 @@ export default function ListingContent() {
     nextUrlRef.current = '';
   };
 
-  const renderForm = () => {
+  const [tipNode, setTipNode] = useState<React.ReactNode>(null);
+  const getInitializeLiquidityPoolTipNode = useCallback(
+    (node: React.ReactNode) => {
+      if (currentStep === ListingStep.INITIALIZE_LIQUIDITY_POOL) {
+        setTipNode(node);
+      }
+    },
+    [currentStep],
+  );
+
+  const renderMainContent = useMemo(() => {
     switch (currentStep) {
       case ListingStep.TOKEN_INFORMATION:
         return <TokenInformation symbol={symbol} handleNextStep={handleNextStep} />;
@@ -127,13 +143,28 @@ export default function ListingContent() {
       case ListingStep.COBO_CUSTODY_REVIEW:
         return <CoboCustodyReview networks={networks} />;
       case ListingStep.INITIALIZE_LIQUIDITY_POOL:
-        return <InitializeLiquidityPool symbol={symbol} id={id} onNext={handleNextStep} />;
+        return (
+          <InitializeLiquidityPool
+            symbol={symbol}
+            id={id}
+            onGetTipNode={getInitializeLiquidityPoolTipNode}
+            onNext={handleNextStep}
+          />
+        );
       case ListingStep.COMPLETE:
         return <ListingComplete />;
       default:
         return null;
     }
-  };
+  }, [
+    currentStep,
+    getInitializeLiquidityPoolTipNode,
+    handleNextStep,
+    handlePrevStep,
+    id,
+    networks,
+    symbol,
+  ]);
 
   if (typeof currentStep !== 'number') return null;
 
@@ -170,8 +201,9 @@ export default function ListingContent() {
             <div className={styles['listing-card']}>
               <div className={styles['listing-card-form-title']}>
                 {LISTING_STEP_ITEMS[currentStep].title}
+                {tipNode}
               </div>
-              <div className={styles['listing-card-form-content']}>{renderForm()}</div>
+              <div className={styles['listing-card-form-content']}>{renderMainContent}</div>
             </div>
           </div>
         </div>

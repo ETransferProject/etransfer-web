@@ -1,4 +1,4 @@
-import { useMemo, useState, useImperativeHandle, forwardRef, useCallback } from 'react';
+import { useMemo, useState, useImperativeHandle, forwardRef, useCallback, useEffect } from 'react';
 import clsx from 'clsx';
 import { TooltipProps } from 'antd';
 import CommonTooltip from 'components/CommonTooltip';
@@ -6,6 +6,7 @@ import CommonModal, { CommonModalProps } from 'components/CommonModal';
 import { useCommonState } from 'store/Provider/hooks';
 import { GOT_IT } from 'constants/misc';
 import styles from './styles.module.scss';
+import { CloseMedium } from 'assets/images';
 
 export interface ICommonTooltipSwitchModalRef {
   open: () => void;
@@ -14,14 +15,16 @@ export interface ICommonTooltipSwitchModalRef {
 interface ICommonTooltipSwitchModalProps {
   tooltipProps?: Pick<TooltipProps, 'className'>;
   modalProps?: Pick<CommonModalProps, 'className' | 'title'>;
-  tip: string;
+  modalWidth?: number;
+  tip: React.ReactNode;
   children: React.ReactNode;
+  modalFooterClassName?: string;
 }
 
 const CommonTooltipSwitchModal = forwardRef<
   ICommonTooltipSwitchModalRef,
   ICommonTooltipSwitchModalProps
->(({ tooltipProps, modalProps, tip, children }, ref) => {
+>(({ tooltipProps, modalProps, modalWidth = 335, tip, children, modalFooterClassName }, ref) => {
   const { isPadPX } = useCommonState();
 
   const isTooltip = useMemo(() => !isPadPX, [isPadPX]);
@@ -42,6 +45,12 @@ const CommonTooltipSwitchModal = forwardRef<
     open: handleModalOpen,
   }));
 
+  useEffect(() => {
+    if (!isPadPX) {
+      handleModalClose();
+    }
+  }, [handleModalClose, isPadPX]);
+
   return (
     <>
       <CommonTooltip {...tooltipProps} placement="top" title={isTooltip && tip}>
@@ -50,7 +59,9 @@ const CommonTooltipSwitchModal = forwardRef<
       <CommonModal
         {...modalProps}
         className={clsx(styles['common-tooltip-switch-modal'], modalProps?.className)}
-        width={'300px'}
+        footerClassName={clsx(styles['common-tooltip-switch-modal-footer'], modalFooterClassName)}
+        width={modalWidth}
+        closeIcon={<CloseMedium />}
         hideCancelButton
         okText={GOT_IT}
         open={isModalOpen}
