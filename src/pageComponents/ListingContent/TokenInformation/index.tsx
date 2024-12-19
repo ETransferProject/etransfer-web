@@ -222,7 +222,7 @@ export default function TokenInformation({
       validateData,
     }: {
       formKey: TokenInformationFormKeys;
-      value: TTokenInformationFormValues[TokenInformationFormKeys];
+      value?: TTokenInformationFormValues[TokenInformationFormKeys];
       validateData: TTokenInformationFormValidateData[TokenInformationFormKeys];
     }) => {
       const newFormValues = { ...formValues, [formKey]: value };
@@ -239,20 +239,13 @@ export default function TokenInformation({
 
   const handleSelectToken = useCallback(
     async (item: TTokenItem) => {
-      if (!item.symbol) {
+      setLoading(true);
+      const list = await getTokenList();
+      const newItem = list.find((v) => v.symbol === item.symbol);
+      if (newItem) {
         handleFormDataChange({
           formKey: TokenInformationFormKeys.TOKEN,
-          value: item,
-          validateData: {
-            validateStatus: FormValidateStatus.Error,
-            errorMessage: REQUIRED_ERROR_MESSAGE,
-          },
-        });
-      } else {
-        setLoading(true);
-        handleFormDataChange({
-          formKey: TokenInformationFormKeys.TOKEN,
-          value: item,
+          value: newItem,
           validateData: {
             validateStatus: FormValidateStatus.Normal,
             errorMessage: '',
@@ -261,12 +254,21 @@ export default function TokenInformation({
         router.replace(getListingUrl(ListingStep.TOKEN_INFORMATION, { symbol: item.symbol }));
         const config = await getTokenConfig(item.symbol);
         if (config) {
-          await getTokenInfo(item.symbol, tokenList, config);
+          await getTokenInfo(item.symbol, list, config);
         }
-        setLoading(false);
+      } else {
+        handleFormDataChange({
+          formKey: TokenInformationFormKeys.TOKEN,
+          value: undefined,
+          validateData: {
+            validateStatus: FormValidateStatus.Error,
+            errorMessage: REQUIRED_ERROR_MESSAGE,
+          },
+        });
       }
+      setLoading(false);
     },
-    [handleFormDataChange, router, setLoading, getTokenConfig, getTokenInfo, tokenList],
+    [handleFormDataChange, router, setLoading, getTokenConfig, getTokenInfo, getTokenList],
   );
 
   const handleCommonInputChange = useCallback(
