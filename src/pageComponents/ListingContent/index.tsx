@@ -121,7 +121,11 @@ export default function ListingContent() {
   const [tipNode, setTipNode] = useState<React.ReactNode>(null);
   const getInitializeLiquidityPoolTipNode = useCallback(
     (node: React.ReactNode) => {
-      if (currentStep === ListingStep.INITIALIZE_LIQUIDITY_POOL) {
+      if (
+        currentStep === ListingStep.TOKEN_INFORMATION ||
+        currentStep === ListingStep.SELECT_CHAIN ||
+        currentStep === ListingStep.INITIALIZE_LIQUIDITY_POOL
+      ) {
         setTipNode(node);
       }
     },
@@ -131,13 +135,20 @@ export default function ListingContent() {
   const renderMainContent = useMemo(() => {
     switch (currentStep) {
       case ListingStep.TOKEN_INFORMATION:
-        return <TokenInformation symbol={symbol} handleNextStep={handleNextStep} />;
+        return (
+          <TokenInformation
+            symbol={symbol}
+            handleNextStep={handleNextStep}
+            onGetTipNode={getInitializeLiquidityPoolTipNode}
+          />
+        );
       case ListingStep.SELECT_CHAIN:
         return (
           <SelectChain
             symbol={symbol}
             handleNextStep={handleNextStep}
             handlePrevStep={handlePrevStep}
+            onGetTipNode={getInitializeLiquidityPoolTipNode}
           />
         );
       case ListingStep.COBO_CUSTODY_REVIEW:

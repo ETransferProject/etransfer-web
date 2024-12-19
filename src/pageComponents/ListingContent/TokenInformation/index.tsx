@@ -3,7 +3,7 @@ import { Form, Input, InputProps } from 'antd';
 import { useRouter } from 'next/navigation';
 import ConnectWalletAndAddress from 'components/ConnectWalletAndAddress';
 import CommonButton, { CommonButtonSize } from 'components/CommonButton';
-import Remind from 'components/Remind';
+import ListingTip from '../ListingTip';
 import TokenSelect from './TokenSelect';
 import useAelf, { useAelfLogin } from 'hooks/wallet/useAelf';
 import { TCommitTokenInfoRequest } from 'types/api';
@@ -23,7 +23,6 @@ import {
   TOKEN_INFORMATION_FORM_INITIAL_VALUES,
   REQUIRED_ERROR_MESSAGE,
   ListingStep,
-  CONTACT_US_ROW,
 } from 'constants/listing';
 import { SupportedChainId } from 'constants/index';
 import {
@@ -32,7 +31,7 @@ import {
   getApplicationTokenList,
   getApplicationTokenConfig,
 } from 'utils/api/application';
-import { useLoading } from 'store/Provider/hooks';
+import { useCommonState, useLoading } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
 import { handleErrorMessage, sleep } from '@etransfer/utils';
@@ -46,9 +45,15 @@ import { BUTTON_TEXT_NEXT } from 'constants/misc';
 interface ITokenInformationProps {
   symbol?: string;
   handleNextStep: (params?: TSearchParams) => void;
+  onGetTipNode: (node: React.ReactNode) => void;
 }
 
-export default function TokenInformation({ symbol, handleNextStep }: ITokenInformationProps) {
+export default function TokenInformation({
+  symbol,
+  handleNextStep,
+  onGetTipNode,
+}: ITokenInformationProps) {
+  const { isPadPX } = useCommonState();
   const [form] = Form.useForm<TTokenInformationFormValues>();
   const { isConnected, connector } = useAelf();
   const handleAelfLogin = useAelfLogin();
@@ -63,6 +68,23 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [tokenList, setTokenList] = useState<TTokenItem[]>([]);
   const [tokenConfig, setTokenConfig] = useState<TTokenConfig | undefined>();
+
+  onGetTipNode(
+    <>
+      {tokenConfig?.liquidityInUsd && typeof tokenConfig?.holders !== 'undefined' ? (
+        <ListingTip
+          title="Token Requirements"
+          tip={
+            <>
+              <p>The token must meet the requirements of:</p>
+              <p>{`${!isPadPX ? '1. ' : ''}Liquidity > $${tokenConfig?.liquidityInUsd}`}</p>
+              <p>{`${!isPadPX ? '2. ' : ''}Holders > ${tokenConfig?.holders}`}</p>
+            </>
+          }
+        />
+      ) : null}
+    </>,
+  );
 
   const judgeIsButtonDisabled = useCallback(
     (
@@ -405,13 +427,6 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
 
   return (
     <div className={styles['token-information']}>
-      <Remind isBorder={false}>
-        <p>{'• Only the current token owner on the aelf chain can apply.'}</p>
-        {tokenConfig && (
-          <p>{`• The token must meet the requirements of Liquidity > $${tokenConfig.liquidityInUsd} and Holders > ${tokenConfig.holders}.`}</p>
-        )}
-        <p>{CONTACT_US_ROW}</p>
-      </Remind>
       <Form className={styles['token-information-form']} form={form} layout="vertical">
         <Form.Item
           {...getCommonFormItemProps(TokenInformationFormKeys.TOKEN)}

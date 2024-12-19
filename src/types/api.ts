@@ -599,12 +599,10 @@ export type TApplicationChainStatusItem = {
   status: ApplicationChainStatusEnum;
   checked: boolean;
   totalSupply: number;
-  decimals: number;
   contractAddress: string;
   symbol: string;
   tokenName: string;
   icon: string;
-  poolAddress: string;
   bindingId?: string;
   thirdTokenId?: string;
   rejectedTime?: number;

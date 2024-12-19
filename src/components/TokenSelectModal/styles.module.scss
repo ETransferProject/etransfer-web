@@ -108,6 +108,14 @@
   }
 }
 
+.token-item-symbol,
+.token-item-name {
+  flex-shrink: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .token-item-symbol {
   margin-left: 8px;
   margin-right: 8px;

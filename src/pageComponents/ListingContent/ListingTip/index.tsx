@@ -13,7 +13,7 @@ export default function ListingTip({ tip, title }: { tip: React.ReactNode; title
       ref={(ref) => {
         tooltipSwitchModalsRef.current = ref;
       }}
-      modalProps={{ title }}
+      modalProps={{ title, zIndex: 300 }}
       tip={tip}>
       <div className={styles['tip-title']} onClick={() => tooltipSwitchModalsRef.current?.open()}>
         <InfoLineIcon className={styles['tip-title-icon']} />

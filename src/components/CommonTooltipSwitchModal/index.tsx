@@ -14,7 +14,7 @@ export interface ICommonTooltipSwitchModalRef {
 
 interface ICommonTooltipSwitchModalProps {
   tooltipProps?: Pick<TooltipProps, 'className'>;
-  modalProps?: Pick<CommonModalProps, 'className' | 'title'>;
+  modalProps?: Pick<CommonModalProps, 'className' | 'title' | 'zIndex'>;
   modalWidth?: number;
   tip: React.ReactNode;
   children: React.ReactNode;

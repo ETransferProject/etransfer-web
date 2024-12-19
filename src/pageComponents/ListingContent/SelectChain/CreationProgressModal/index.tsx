@@ -6,6 +6,7 @@ import CommonModal from 'components/CommonModal';
 import CommonSteps, { ICommonStepsProps } from 'components/CommonSteps';
 import Remind, { RemindType } from 'components/Remind';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
+import ListingTip from 'pageComponents/ListingContent/ListingTip';
 import { useCommonState } from 'store/Provider/hooks';
 import { useGetAllConnectedWalletAccount } from 'hooks/wallet';
 import useEVM from 'hooks/wallet/useEVM';
@@ -307,42 +308,21 @@ export default function CreationProgressModal({
     setIsCreateStart(true);
   }, []);
 
-  const remindProps = useMemo(() => {
-    if (isWarning) {
-      const networkList = stepItems
-        .filter((item) => item.status === 'error')
-        .map((item) => item.chain.chainId);
-
-      const formattedNetworkList =
-        networkList.length > 1
-          ? `${networkList.slice(0, -1).join(', ')} and ${networkList[networkList.length - 1]}`
-          : networkList[0];
-
-      return {
-        type: RemindType.WARNING,
-        children: `Token creation on the ${formattedNetworkList} networks failed. Would you like to initiate the transaction again.`,
-      };
-    }
-    return {
-      isBorder: false,
-      children: (
-        <>
-          <p>• Please approve the transaction in your wallet to create tokens on each chain.</p>
-          <p>
-            • If no wallet popup appears, please open your wallet manually to approve the
-            transaction.
-          </p>
-        </>
-      ),
-    };
-  }, [isWarning, stepItems]);
-
   const steps: ICommonStepsProps['stepItems'] = useMemo(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return stepItems.map(({ chain, ...rest }) => rest);
   }, [stepItems]);
 
   const renderContent = () => {
+    const networkList = stepItems
+      .filter((item) => item.status === 'error')
+      .map((item) => item.chain.chainId);
+
+    const formattedNetworkList =
+      networkList.length > 1
+        ? `${networkList.slice(0, -1).join(', ')} and ${networkList[networkList.length - 1]}`
+        : networkList[0];
+
     return (
       <>
         <CommonSteps
@@ -351,19 +331,23 @@ export default function CreationProgressModal({
           hideLine
           stepItems={steps}
         />
-        <Remind {...remindProps} className={styles['creation-progress-remind']} />
         {isWarning && (
-          <div className={styles['creation-progress-button-wrapper']}>
-            <CommonButton
-              className={styles['creation-progress-button']}
-              type={CommonButtonType.Secondary}
-              onClick={handleCreateFinish}>
-              Skip
-            </CommonButton>
-            <CommonButton className={styles['creation-progress-button']} onClick={handleTryAgain}>
-              Try again
-            </CommonButton>
-          </div>
+          <>
+            <Remind type={RemindType.WARNING} className={styles['creation-progress-remind']}>
+              {`Token creation on the ${formattedNetworkList} networks failed. Would you like to initiate the transaction again.`}
+            </Remind>
+            <div className={styles['creation-progress-button-wrapper']}>
+              <CommonButton
+                className={styles['creation-progress-button']}
+                type={CommonButtonType.Secondary}
+                onClick={handleCreateFinish}>
+                Skip
+              </CommonButton>
+              <CommonButton className={styles['creation-progress-button']} onClick={handleTryAgain}>
+                Try again
+              </CommonButton>
+            </div>
+          </>
         )}
       </>
     );
@@ -371,7 +355,27 @@ export default function CreationProgressModal({
 
   const commonProps = useMemo(() => {
     return {
-      title: 'Token Creation in Progress',
+      title: (
+        <div className={styles['creation-progress-title-wrapper']}>
+          <span className={styles['creation-progress-title']}>Token Creation in Progress</span>
+          <ListingTip
+            tip={
+              <>
+                <p>Tips:</p>
+                <ul className="list-style-decimal">
+                  <li>
+                    Please approve the transaction in your wallet to create tokens on each chain.
+                  </li>
+                  <li>
+                    If no wallet popup appears, please open your wallet manually to approve the
+                    transaction.
+                  </li>
+                </ul>
+              </>
+            }
+          />
+        </div>
+      ),
       closable: false,
       open,
     };
