@@ -1,6 +1,13 @@
 @import '/src/assets/theme/color.scss';
 @import '/src/assets/theme/font.scss';
 
+.component-title {
+  @extend .font-family-medium;
+  font-size: 20px;
+  line-height: 28px;
+  margin-bottom: 12px;
+}
+
 .remind {
   align-items: flex-start;
   .remind-icon {

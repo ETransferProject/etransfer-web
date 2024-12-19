@@ -8,11 +8,6 @@ This request will not trigger a blockchain transaction or cost any gas fees.
 Nonce:
 ${Date.now()}`;
 
-  console.log(
-    '>>>>>> current plain_text',
-    Buffer.from(plainText).toString('hex').replace('0x', ''),
-  );
-
   return {
     plainTextOrigin: plainText,
     plainTextHex: Buffer.from(plainText).toString('hex').replace('0x', ''),

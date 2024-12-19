@@ -30,11 +30,11 @@ import PartialLoading from 'components/PartialLoading';
 import CommonSpace from 'components/CommonSpace';
 import { BUTTON_TEXT_NEXT } from 'constants/misc';
 import ListingTip from '../ListingTip';
+import DisplayImage from 'components/DisplayImage';
 
 export interface InitializeLiquidityPoolProps {
   id?: string;
   symbol?: string;
-  onGetTipNode?: (node: React.ReactNode) => void;
   onNext?: () => void;
 }
 
@@ -50,7 +50,6 @@ const ToolPoolInitCompleted = 'Token pool initialization completed';
 export default function InitializeLiquidityPool({
   id,
   symbol,
-  onGetTipNode,
   onNext,
 }: InitializeLiquidityPoolProps) {
   const router = useRouter();
@@ -61,32 +60,30 @@ export default function InitializeLiquidityPool({
   const setAelfAuthFromStorage = useSetAelfAuthFromStorage();
   // Fix: It takes too long to obtain NightElf walletInfo, and the user mistakenly clicks the login button during this period.
   const isLoginButtonLoading = useShowLoginButtonLoading();
-  const [tokenInfo, setTokenInfo] = useState({ symbol: '', limit24HInUsd: '' });
+  const [tokenInfo, setTokenInfo] = useState({ symbol: '', limit24HInUsd: '', icon: '' });
   const [tokenPoolList, setTokenPoolList] = useState<TApplicationDetailItemChainTokenInfo[]>([]);
   const [submitDisabled, setSubmitDisable] = useState(true);
 
-  onGetTipNode?.(
-    <>
-      {tokenInfo.symbol && tokenInfo.limit24HInUsd ? (
-        <ListingTip
-          title="Transfer limits"
-          tip={
-            <>
-              <div className={isPadPX ? styles['tip-row-pad'] : styles['tip-row-web']}>
-                {`1. The 24-hour transfer limit for the ${formatSymbolDisplay(
-                  tokenInfo.symbol,
-                )} is $${formatWithCommas({ amount: tokenInfo.limit24HInUsd })}.`}
-              </div>
-              <div
-                className={
-                  isPadPX ? styles['tip-row-pad'] : styles['tip-row-web']
-                }>{`2. Adding liquidity may take a few minutes for network confirmation.`}</div>
-            </>
-          }
-        />
-      ) : null}
-    </>,
-  );
+  const tipNode = useMemo(() => {
+    return tokenInfo.symbol && tokenInfo.limit24HInUsd ? (
+      <ListingTip
+        title="Transfer limits"
+        tip={
+          <>
+            <div className={isPadPX ? styles['tip-row-pad'] : styles['tip-row-web']}>
+              {`1. The 24-hour transfer limit for the ${formatSymbolDisplay(
+                tokenInfo.symbol,
+              )} is $${formatWithCommas({ amount: tokenInfo.limit24HInUsd })}.`}
+            </div>
+            <div
+              className={
+                isPadPX ? styles['tip-row-pad'] : styles['tip-row-web']
+              }>{`2. Adding liquidity may take a few minutes for network confirmation.`}</div>
+          </>
+        }
+      />
+    ) : null;
+  }, [isPadPX, tokenInfo.limit24HInUsd, tokenInfo.symbol]);
 
   const handleGoExplore = useCallback((network: string, symbol?: string, address?: string) => {
     viewTokenAddressInExplore(network, symbol as TChainId, address);
@@ -162,7 +159,7 @@ export default function InitializeLiquidityPool({
                       </span>
                       <span>&nbsp;on the&nbsp;</span>
                       <span>{item.chainName}</span>
-                      <span>to the following address to complete fund initialization.</span>
+                      <span>&nbsp;to the following address to complete fund initialization.</span>
                     </div>
                     <div className="flex-row-center gap-8">
                       <div className={styles['address']}>{item.poolAddress}</div>
@@ -205,6 +202,7 @@ export default function InitializeLiquidityPool({
         setTokenPoolList(concatList);
         setTokenInfo({
           symbol: res[0].symbol,
+          icon: concatList[0].icon,
           limit24HInUsd:
             otherChainTokenInfos?.limit24HInUsd || chainTokenInfos[0]?.limit24HInUsd || '0.00',
         });
@@ -299,7 +297,7 @@ export default function InitializeLiquidityPool({
       clearInterval(updateDataTimerRef.current);
     }
     setTokenPoolList([]);
-    setTokenInfo({ symbol: '', limit24HInUsd: '' });
+    setTokenInfo({ symbol: '', limit24HInUsd: '', icon: '' });
     setSubmitDisable(true);
   }, []);
   const initLogoutRef = useRef(initForLogout);
@@ -329,6 +327,21 @@ export default function InitializeLiquidityPool({
 
   return (
     <div className={styles['initialize-liquidity-pool']}>
+      <div className={styles['component-title-wrapper']}>
+        <div className={styles['component-title']}>
+          {`Initialize`}
+          {tokenInfo.symbol && (
+            <>
+              <CommonSpace direction={'horizontal'} size={4} />
+              <DisplayImage name={formatSymbolDisplay(tokenInfo.symbol)} src={tokenInfo.icon} />
+              <CommonSpace direction={'horizontal'} size={4} />
+              {formatSymbolDisplay(tokenInfo.symbol)}
+            </>
+          )}
+          {` token pool`}
+        </div>
+        {tipNode}
+      </div>
       {isConnected ? (
         <>
           {renderList}

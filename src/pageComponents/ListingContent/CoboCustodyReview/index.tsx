@@ -35,6 +35,7 @@ export default function CoboCustodyReview({ networks }: { networks: { name: stri
 
   return (
     <div className={styles['cobo-custody-review']}>
+      <div className={styles['component-title']}>{`Cobo Custody Review`}</div>
       <div className={styles['cobo-custody-review-body']}>
         <CoboCustodyReviewStatusIcon />
         <div className={styles['cobo-custody-review-text']}>

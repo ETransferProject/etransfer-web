@@ -1,8 +1,15 @@
 @import '/src/assets/theme/color.scss';
 @import '/src/assets/theme/font.scss';
 
-.listing-complete-container {
+.listing-complete-body {
   padding: 48px 24px;
+}
+
+.component-title {
+  @extend .font-family-medium;
+  font-size: 20px;
+  line-height: 28px;
+  margin-bottom: 12px;
 }
 
 .title {
@@ -10,6 +17,7 @@
   line-height: 24px;
   @extend .font-family-medium;
   margin-top: 8px;
+  margin-bottom: 4px;
 }
 
 .content {
