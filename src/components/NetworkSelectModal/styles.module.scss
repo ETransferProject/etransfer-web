@@ -52,6 +52,7 @@
           font-weight: $font-family-medium-weight;
           font-family: $font-family-medium-family;
           line-height: 28px;
+          text-align: left;
         }
       }
       .ant-modal-body {
@@ -89,17 +90,33 @@
   }
 }
 
+.network-tip {
+  margin: 0 24px;
+  @include media-mobile {
+    margin: 0 16px;
+  }
+}
+
 .network-list {
   height: calc(100% - 48px);
   overflow-y: auto;
 }
 
 .network-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   height: 72px;
   padding: 13px 0;
   margin: 0 24px;
   border-bottom: 1px solid $dividers;
   @include media-mobile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    height: 82px;
+    padding: 12px 0;
     margin: 0 16px;
   }
 }
@@ -113,6 +130,10 @@
 .network-item-key {
   font-size: 16px;
   @extend .font-family-medium;
+  @include media-mobile {
+    font-size: 14px;
+    line-height: 22px;
+  }
 }
 
 .network-item-suspended {
@@ -125,14 +146,35 @@
   line-height: 22px;
 }
 
+.network-multi-confirm-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  @include media-mobile {
+    align-items: flex-start;
+    gap: 2px;
+    margin-left: 28px;
+  }
+}
+
 .network-multi-confirm-time {
   font-size: 16px;
   line-height: 24px;
   @extend .font-family-medium;
+  @include media-mobile {
+    font-size: 12px;
+    line-height: 16px;
+    color: $secondary-text;
+    @include font-family-regular-mixin;
+  }
 }
 
 .network-multi-confirm {
   font-size: 14px;
   line-height: 22px;
   color: $secondary-text;
+  @include media-mobile {
+    font-size: 12px;
+    line-height: 16px;
+  }
 }

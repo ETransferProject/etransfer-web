@@ -1,34 +1,41 @@
 import { useMemo, useState, useEffect } from 'react';
+import clsx from 'clsx';
+import { Input } from 'antd';
 import CommonModal from 'components/CommonModal';
+import CommonDrawer from 'components/CommonDrawer';
+import Remind, { RemindType } from 'components/Remind';
 import NetworkLogo from 'components/NetworkLogo';
 import { NetworkStatus, TNetworkItem } from 'types/api';
-import styles from './styles.module.scss';
-import { Input } from 'antd';
-import clsx from 'clsx';
 import { useCommonState } from 'store/Provider/hooks';
-import CommonDrawer from 'components/CommonDrawer';
 import { SearchIcon } from 'assets/images';
+import styles from './styles.module.scss';
+import { SELECT_CHAIN } from 'constants/misc';
 
-export interface NetworkSelectModalProps {
+export type TNetwork = Pick<TNetworkItem, 'network' | 'name'> &
+  Omit<Partial<TNetworkItem>, 'network' | 'name'>;
+
+export interface NetworkSelectModalProps<T extends TNetwork | TNetworkItem> {
   className?: string;
-  modalTitle: string;
+  modalTitle?: string;
   open: boolean;
-  networkList: TNetworkItem[];
-  onSelect: (item: TNetworkItem) => Promise<void>;
+  networkList: T[];
+  remindContent?: string;
+  onSelect: (item: T) => Promise<void>;
   onClose: () => void;
 }
 
 const SearchByChainName = 'Search by chain name';
 
-export default function NetworkSelectModal({
+export default function NetworkSelectModal<T extends TNetwork | TNetworkItem>({
   className,
-  modalTitle,
+  modalTitle = SELECT_CHAIN,
   open = false,
   networkList,
+  remindContent,
   onSelect,
   onClose,
-}: NetworkSelectModalProps) {
-  const { isPadPX } = useCommonState();
+}: NetworkSelectModalProps<T>) {
+  const { isPadPX, isMobilePX } = useCommonState();
   const [searchKeyword, setSearchKeyword] = useState('');
 
   useEffect(() => {
@@ -56,39 +63,44 @@ export default function NetworkSelectModal({
             onChange={(e) => setSearchKeyword(e.target.value)}
           />
         </div>
+        {remindContent && (
+          <Remind className={styles['network-tip']} type={RemindType.INFO} isCard isBorder={false}>
+            {remindContent}
+          </Remind>
+        )}
         <div className={styles['network-list']}>
           {filteredNetworkList.map((item, index) => {
             return (
               <div
                 key={'NetworkSelectModal-item-' + index}
                 className={clsx(
-                  'flex-row-center-between gap-8',
                   styles['network-item'],
                   item.status === NetworkStatus.Offline && styles['network-item-disabled'],
                 )}
                 onClick={() => onSelect(item)}>
                 <div className="flex-row-center gap-8">
-                  <NetworkLogo network={item.network} />
+                  <NetworkLogo network={item.network} size={isMobilePX ? 'normal' : 'big'} />
                   <span className={styles['network-item-key']}>{item.name}</span>
                   {item.status === NetworkStatus.Offline && (
                     <span className={styles['network-item-suspended']}>Suspended</span>
                   )}
                 </div>
 
-                <div className="flex-column-end">
-                  <span
-                    className={
-                      styles['network-multi-confirm-time']
-                    }>{`≈ ${item.multiConfirmTime}`}</span>
-                  <span className={styles['network-multi-confirm']}>{item.multiConfirm}</span>
-                </div>
+                {!!item.multiConfirmTime && (
+                  <div className={styles['network-multi-confirm-wrap']}>
+                    <span className={styles['network-multi-confirm-time']}>{`${
+                      isMobilePX ? 'Arrival Time ' : ''
+                    }≈ ${item.multiConfirmTime}`}</span>
+                    <span className={styles['network-multi-confirm']}>{item.multiConfirm}</span>
+                  </div>
+                )}
               </div>
             );
           })}
         </div>
       </>
     );
-  }, [filteredNetworkList, onSelect, searchKeyword]);
+  }, [filteredNetworkList, isMobilePX, onSelect, searchKeyword, remindContent]);
 
   if (isPadPX) {
     return (

@@ -92,6 +92,7 @@ export default function CrossChainTransferForm({
     tokenList,
     totalNetworkList,
     totalTokenList,
+    tokenChainRelation,
   } = useCrossChainTransfer();
   const fromWalletTypeRef = useRef(fromWalletType);
   fromWalletTypeRef.current = fromWalletType;
@@ -133,7 +134,12 @@ export default function CrossChainTransferForm({
 
       // compute toNetwork
       if (!totalNetworkList) return;
-      const toNetworkList = computeToNetworkList(item, totalNetworkList, totalTokenList);
+      const toNetworkList = computeToNetworkList(
+        item,
+        totalNetworkList,
+        totalTokenList,
+        tokenChainRelation,
+      );
       dispatch(setToNetworkList(toNetworkList));
 
       const _toNetwork = newToNetwork || toNetwork;
@@ -161,6 +167,7 @@ export default function CrossChainTransferForm({
         fromNetwork: item,
         toNetwork: toNetworkNew,
         totalTokenList,
+        tokenChainRelation,
       });
       dispatch(setTokenList(allowTokenList));
       const exitToken = allowTokenList.find((item) => item.symbol === tokenSymbol);
@@ -175,7 +182,15 @@ export default function CrossChainTransferForm({
 
       onFromNetworkChanged?.(item, toNetworkNew, _tokenNew);
     },
-    [dispatch, onFromNetworkChanged, toNetwork, tokenSymbol, totalNetworkList, totalTokenList],
+    [
+      dispatch,
+      onFromNetworkChanged,
+      toNetwork,
+      tokenChainRelation,
+      tokenSymbol,
+      totalNetworkList,
+      totalTokenList,
+    ],
   );
 
   const handleToNetworkChange = useCallback(
@@ -196,6 +211,7 @@ export default function CrossChainTransferForm({
         fromNetwork: fromNetworkRef.current,
         toNetwork: item,
         totalTokenList,
+        tokenChainRelation,
       });
       dispatch(setTokenList(allowTokenList));
       const exitToken = allowTokenList.find((item) => item.symbol === tokenSymbol);
@@ -210,7 +226,7 @@ export default function CrossChainTransferForm({
 
       onToNetworkChanged?.(item, _tokenNew);
     },
-    [dispatch, onToNetworkChanged, tokenSymbol, totalTokenList],
+    [dispatch, onToNetworkChanged, tokenChainRelation, tokenSymbol, totalTokenList],
   );
 
   const handleSelectToken = useCallback(

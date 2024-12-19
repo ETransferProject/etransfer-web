@@ -22,7 +22,9 @@
     }
 
     .ant-drawer-body {
-      padding: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 0 0 16px;
     }
   }
 }
@@ -52,11 +54,14 @@
           font-weight: $font-family-medium-weight;
           font-family: $font-family-medium-family;
           line-height: 28px;
+          text-align: left;
         }
       }
       .ant-modal-body {
+        display: flex;
+        flex-direction: column;
         padding: 0;
-        height: calc(100% - 86px);
+        height: calc(100% - (68px + 24px));
       }
     }
   }
@@ -90,7 +95,7 @@
 }
 
 .token-list {
-  height: calc(100% - 48px);
+  flex: 1;
   overflow-y: auto;
 }
 
@@ -103,7 +108,16 @@
   }
 }
 
+.token-item-symbol,
+.token-item-name {
+  flex-shrink: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .token-item-symbol {
+  margin-left: 8px;
   margin-right: 8px;
   font-size: 16px;
   @extend .font-family-medium;
@@ -112,4 +126,24 @@
 .token-item-name {
   font-size: 14px;
   color: $secondary-text;
+}
+
+.token-select-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 48px);
+  margin: 24px 24px 0;
+  @include media-mobile {
+    width: calc(100% - 32px);
+    margin: 16px 16px 0;
+  }
+  &,
+  &:hover,
+  &:focus,
+  &:active {
+    background-color: $brand-bg;
+    color: $brand;
+  }
 }

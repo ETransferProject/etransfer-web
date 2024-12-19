@@ -1,7 +1,9 @@
 import { Button } from 'antd';
 import { useCallback } from 'react';
 import useTRON from 'hooks/wallet/useTRON';
-import { TRON_TO_ADDRESS, TRON_USDT_CONTRACT_ADDRESS_TRC20 } from 'constants/wallet/TRON';
+
+const TRON_TO_ADDRESS = 'TWMND3GoXuJkuLBvHAjChgSGoB8yqiZDkj';
+const TRON_USDT_CONTRACT_ADDRESS_TRC20 = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'; // 'TXYZ9Kxg8AFhA4TvnYFZgDmdxyTtbpaK8Y'; // USDT contractAddress (TRC20)
 
 export default function TRONWallet() {
   const { account, isConnected, connect, disconnect, getBalance, signMessage, sendTransaction } =

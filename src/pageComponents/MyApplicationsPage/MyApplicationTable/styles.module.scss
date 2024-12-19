@@ -1,0 +1,38 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+
+.my-application-table {
+  .token-symbol {
+    max-width: 152px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  :global {
+    .ant-table-thead {
+      height: 48px;
+      .ant-table-cell {
+        color: $secondary-text;
+        background-color: $page-bg;
+      }
+    }
+    .ant-table-thead > tr > th {
+      padding: 12px 0 12px 12px;
+    }
+    .ant-table-tbody > tr > td {
+      box-sizing: border-box;
+      height: 72px;
+      padding: 12px 0 12px 12px;
+    }
+    .ant-table-thead > tr > th::before {
+      display: none;
+    }
+    .ant-pagination-item-active {
+      border-color: $brand;
+      a {
+        color: $brand;
+      }
+    }
+  }
+}

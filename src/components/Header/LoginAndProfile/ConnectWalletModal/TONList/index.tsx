@@ -14,8 +14,14 @@ import { WalletTypeEnum } from 'context/Wallet/types';
 import { useAfterDisconnect } from 'hooks/wallet';
 import { useSetWalletType } from 'hooks/crossChainTransfer';
 
-export default function TONWalletList() {
-  const { account, connect, disconnect, isConnected } = useTON();
+export default function TONWalletList({
+  connectedCallback,
+  disConnectedCallback,
+}: {
+  connectedCallback?: (walletType: WalletTypeEnum) => void;
+  disConnectedCallback?: (walletType: WalletTypeEnum) => void;
+}) {
+  const { account, connect, disconnect, isConnected, walletType } = useTON();
   const setWalletType = useSetWalletType();
   // const [isConnectLoading, setIsConnectLoading] = useState(false);
   const [isShowCopy, setIsShowCopy] = useState(false);
@@ -35,15 +41,17 @@ export default function TONWalletList() {
     try {
       // setIsConnectLoading(true);
       if (isConnected) {
-        setWalletType(WalletTypeEnum.TON);
+        setWalletType(walletType);
+        connectedCallback?.(walletType);
         return;
       }
       await connect(CONNECT_TON_LIST_CONFIG.key);
-      setWalletType(WalletTypeEnum.TON);
+      setWalletType(walletType);
+      connectedCallback?.(walletType);
     } catch (error) {
       // setIsConnectLoading(false);
     }
-  }, [connect, isConnected, setWalletType]);
+  }, [connect, connectedCallback, isConnected, setWalletType, walletType]);
 
   // useEffect(() => {
   //   if (isConnected) {
@@ -58,9 +66,10 @@ export default function TONWalletList() {
 
       const _account = account || '';
       await disconnect();
-      afterDisconnect(_account, WalletTypeEnum.TON);
+      afterDisconnect(_account, walletType);
+      disConnectedCallback?.(walletType);
     },
-    [account, afterDisconnect, disconnect],
+    [account, afterDisconnect, disConnectedCallback, disconnect, walletType],
   );
 
   const renderAccount = useCallback(

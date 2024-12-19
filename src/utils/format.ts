@@ -81,7 +81,12 @@ export const replaceCharacter = (str: string, replaced: string, replacedBy: stri
 };
 
 export const formatSymbolDisplay = (str: string) => {
-  return replaceCharacter(str, '-1', '');
+  if (!str) return '';
+
+  // Prevent malicious tampering of the token display issued by users
+  if (str?.includes('SGR-1')) return replaceCharacter(str, '-1', '');
+
+  return str;
 };
 
 export const formatNetworkName = (item: string) => {

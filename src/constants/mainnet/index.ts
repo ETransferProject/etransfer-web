@@ -75,6 +75,7 @@ export const ETransferAuthHost = 'https://app.etransfer.exchange';
 export const WebLoginGraphqlUrl = 'https://indexer-api.aefinder.io/api/app/graphql/portkey';
 export const WebLoginServiceUrl = 'https://aa-portkey.portkey.finance';
 export const WebLoginConnectUrl = 'https://auth-aa-portkey.portkey.finance';
+export const AwakenHost = 'https://app.awaken.finance/';
 
 export const ADDRESS_MAP = {
   [SupportedELFChainId.AELF]: {

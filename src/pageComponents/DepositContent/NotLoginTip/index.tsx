@@ -2,7 +2,7 @@ import { InfoBrandIcon } from 'assets/images';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { CONNECT_AELF_WALLET, UNLOCK } from 'constants/wallet/index';
-import useAelf, { useLogin } from 'hooks/wallet/useAelf';
+import useAelf, { useAelfLogin } from 'hooks/wallet/useAelf';
 
 export default function NotLoginTip({
   isShowIcon = true,
@@ -12,7 +12,7 @@ export default function NotLoginTip({
   isCard?: boolean;
 }) {
   const { isConnected, isLocking } = useAelf();
-  const handleLogin = useLogin();
+  const handleAelfLogin = useAelfLogin();
 
   if (isConnected) return null;
 
@@ -25,7 +25,7 @@ export default function NotLoginTip({
       {isShowIcon && <InfoBrandIcon className="flex-shrink-0" />}
       <span className={styles['text']}>
         <span>{`Please `}</span>
-        <span className={styles['action']} onClick={handleLogin}>
+        <span className={styles['action']} onClick={() => handleAelfLogin()}>
           {isLocking ? UNLOCK : CONNECT_AELF_WALLET.toLocaleLowerCase()}
         </span>
         <span>{` to get the deposit address.`}</span>

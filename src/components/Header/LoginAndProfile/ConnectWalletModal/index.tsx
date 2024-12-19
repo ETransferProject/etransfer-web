@@ -24,26 +24,55 @@ export default function ConnectWalletModal({
   ],
   drawerZIndex = 80,
   onCancel,
+  connectedCallback,
+  disConnectedCallback,
 }: {
   open: boolean;
   title?: string;
   allowList?: WalletTypeEnum[];
   drawerZIndex?: number;
   onCancel: () => void;
+  connectedCallback?: (walletType: WalletTypeEnum) => void;
+  disConnectedCallback?: (walletType: WalletTypeEnum) => void;
 }) {
   const { isPadPX } = useCommonState();
 
   const content = useMemo(() => {
     return (
       <div>
-        {allowList?.includes(WalletTypeEnum.AELF) && <AelfWalletList />}
-        {allowList?.includes(WalletTypeEnum.EVM) && <EVMWalletList />}
-        {allowList?.includes(WalletTypeEnum.SOL) && <SolanaWalletList />}
-        {allowList?.includes(WalletTypeEnum.TRON) && <TRONWalletList />}
-        {allowList?.includes(WalletTypeEnum.TON) && <TONWalletList />}
+        {allowList?.includes(WalletTypeEnum.AELF) && (
+          <AelfWalletList
+            connectedCallback={connectedCallback}
+            disConnectedCallback={disConnectedCallback}
+          />
+        )}
+        {allowList?.includes(WalletTypeEnum.EVM) && (
+          <EVMWalletList
+            connectedCallback={connectedCallback}
+            disConnectedCallback={disConnectedCallback}
+          />
+        )}
+        {allowList?.includes(WalletTypeEnum.SOL) && (
+          <SolanaWalletList
+            connectedCallback={connectedCallback}
+            disConnectedCallback={disConnectedCallback}
+          />
+        )}
+        {allowList?.includes(WalletTypeEnum.TRON) && (
+          <TRONWalletList
+            connectedCallback={connectedCallback}
+            disConnectedCallback={disConnectedCallback}
+          />
+        )}
+        {allowList?.includes(WalletTypeEnum.TON) && (
+          <TONWalletList
+            connectedCallback={connectedCallback}
+            disConnectedCallback={disConnectedCallback}
+          />
+        )}
       </div>
     );
-  }, [allowList]);
+  }, [allowList, connectedCallback, disConnectedCallback]);
 
   if (isPadPX) {
     return (

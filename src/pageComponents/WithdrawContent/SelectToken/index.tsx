@@ -5,7 +5,7 @@ import TokenSelectDrawer from 'components/SelectToken/TokenSelectDrawer';
 import TokenSelectDropdown from 'components/SelectToken/TokenSelectDropdown';
 import DynamicArrow from 'components/DynamicArrow';
 import clsx from 'clsx';
-import { SelectImage } from 'components/SelectToken/TokenCard';
+import DisplayImage from 'components/DisplayImage';
 import { TTokenItem } from 'types/api';
 import { setCurrentSymbol } from 'store/reducers/withdraw/slice';
 import { formatSymbolDisplay } from 'utils/format';
@@ -59,11 +59,7 @@ export default function SelectToken({
           <div className={styles['select-token-value']}>
             {selected?.symbol ? (
               <span className={clsx('flex-row-center', styles['select-token-value-selected'])}>
-                <SelectImage
-                  open={true}
-                  symbol={formatSymbolDisplay(selected.symbol)}
-                  icon={selected.icon}
-                />
+                <DisplayImage name={formatSymbolDisplay(selected.symbol)} src={selected.icon} />
                 <span className={styles['primary']}>{formatSymbolDisplay(selected.symbol)}</span>
                 <span className={styles['secondary']}>{selected.name}</span>
               </span>

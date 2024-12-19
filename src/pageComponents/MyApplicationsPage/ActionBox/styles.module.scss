@@ -1,0 +1,11 @@
+@import '/src/assets/theme/color.scss';
+
+.action {
+  color: $brand;
+  cursor: pointer;
+}
+
+.action-disable {
+  color: $disable;
+  cursor: not-allowed;
+}

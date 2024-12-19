@@ -8,7 +8,7 @@ import { useCommonState } from 'store/Provider/hooks';
 import {
   NetworkListSkeletonForMobile,
   NetworkListSkeletonForWeb,
-} from 'pageComponents/Skeleton/NetworkListSkeleton';
+} from 'components/Skeleton/NetworkListSkeleton';
 
 export interface TNetworkSelectProps {
   className?: string;

@@ -4,7 +4,7 @@ import NetworkLogo from 'components/NetworkLogo';
 import { useCallback, useMemo, useState } from 'react';
 import { TNetworkItem } from 'types/api';
 import DynamicArrow from 'components/DynamicArrow';
-import NetworkSelectModal from '../NetworkSelectModal';
+import NetworkSelectModal from 'components/NetworkSelectModal';
 
 export interface NetworkSelectedProps {
   className?: string;
