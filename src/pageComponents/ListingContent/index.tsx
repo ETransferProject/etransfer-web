@@ -118,64 +118,28 @@ export default function ListingContent() {
     nextUrlRef.current = '';
   };
 
-  const [tipNode, setTipNode] = useState<React.ReactNode>(null);
-  const getInitializeLiquidityPoolTipNode = useCallback(
-    (node: React.ReactNode) => {
-      if (
-        currentStep === ListingStep.TOKEN_INFORMATION ||
-        currentStep === ListingStep.SELECT_CHAIN ||
-        currentStep === ListingStep.INITIALIZE_LIQUIDITY_POOL
-      ) {
-        setTipNode(node);
-      }
-    },
-    [currentStep],
-  );
-
   const renderMainContent = useMemo(() => {
     switch (currentStep) {
       case ListingStep.TOKEN_INFORMATION:
-        return (
-          <TokenInformation
-            symbol={symbol}
-            handleNextStep={handleNextStep}
-            onGetTipNode={getInitializeLiquidityPoolTipNode}
-          />
-        );
+        return <TokenInformation symbol={symbol} handleNextStep={handleNextStep} />;
       case ListingStep.SELECT_CHAIN:
         return (
           <SelectChain
             symbol={symbol}
             handleNextStep={handleNextStep}
             handlePrevStep={handlePrevStep}
-            onGetTipNode={getInitializeLiquidityPoolTipNode}
           />
         );
       case ListingStep.COBO_CUSTODY_REVIEW:
         return <CoboCustodyReview networks={networks} />;
       case ListingStep.INITIALIZE_LIQUIDITY_POOL:
-        return (
-          <InitializeLiquidityPool
-            symbol={symbol}
-            id={id}
-            onGetTipNode={getInitializeLiquidityPoolTipNode}
-            onNext={handleNextStep}
-          />
-        );
+        return <InitializeLiquidityPool symbol={symbol} id={id} onNext={handleNextStep} />;
       case ListingStep.COMPLETE:
         return <ListingComplete />;
       default:
         return null;
     }
-  }, [
-    currentStep,
-    getInitializeLiquidityPoolTipNode,
-    handleNextStep,
-    handlePrevStep,
-    id,
-    networks,
-    symbol,
-  ]);
+  }, [currentStep, handleNextStep, handlePrevStep, id, networks, symbol]);
 
   if (typeof currentStep !== 'number') return null;
 
@@ -210,10 +174,6 @@ export default function ListingContent() {
             </div>
             {isMobilePX && <div className={styles['listing-card-divider']} />}
             <div className={styles['listing-card']}>
-              <div className={styles['listing-card-form-title']}>
-                {LISTING_STEP_ITEMS[currentStep].title}
-                {tipNode}
-              </div>
               <div className={styles['listing-card-form-content']}>{renderMainContent}</div>
             </div>
           </div>

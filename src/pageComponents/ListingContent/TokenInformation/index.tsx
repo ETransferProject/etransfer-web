@@ -23,6 +23,7 @@ import {
   TOKEN_INFORMATION_FORM_INITIAL_VALUES,
   REQUIRED_ERROR_MESSAGE,
   ListingStep,
+  LISTING_STEP_ITEMS,
 } from 'constants/listing';
 import { SupportedChainId } from 'constants/index';
 import {
@@ -45,14 +46,9 @@ import { BUTTON_TEXT_NEXT } from 'constants/misc';
 interface ITokenInformationProps {
   symbol?: string;
   handleNextStep: (params?: TSearchParams) => void;
-  onGetTipNode: (node: React.ReactNode) => void;
 }
 
-export default function TokenInformation({
-  symbol,
-  handleNextStep,
-  onGetTipNode,
-}: ITokenInformationProps) {
+export default function TokenInformation({ symbol, handleNextStep }: ITokenInformationProps) {
   const { isPadPX } = useCommonState();
   const [form] = Form.useForm<TTokenInformationFormValues>();
   const { isConnected, connector } = useAelf();
@@ -68,23 +64,6 @@ export default function TokenInformation({
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [tokenList, setTokenList] = useState<TTokenItem[]>([]);
   const [tokenConfig, setTokenConfig] = useState<TTokenConfig | undefined>();
-
-  onGetTipNode(
-    <>
-      {tokenConfig?.liquidityInUsd && typeof tokenConfig?.holders !== 'undefined' ? (
-        <ListingTip
-          title="Token Requirements"
-          tip={
-            <>
-              <p>The token must meet the requirements of:</p>
-              <p>{`${!isPadPX ? '1. ' : ''}Liquidity > $${tokenConfig?.liquidityInUsd}`}</p>
-              <p>{`${!isPadPX ? '2. ' : ''}Holders > ${tokenConfig?.holders}`}</p>
-            </>
-          }
-        />
-      ) : null}
-    </>,
-  );
 
   const judgeIsButtonDisabled = useCallback(
     (
@@ -430,6 +409,23 @@ export default function TokenInformation({
 
   return (
     <div className={styles['token-information']}>
+      <div className={styles['token-information-title-wrapper']}>
+        <span className={styles['token-information-title']}>
+          {LISTING_STEP_ITEMS[ListingStep.TOKEN_INFORMATION].title}
+        </span>
+        {tokenConfig?.liquidityInUsd && typeof tokenConfig?.holders !== 'undefined' && (
+          <ListingTip
+            title="Token Requirements"
+            tip={
+              <>
+                <p>The token must meet the requirements of:</p>
+                <p>{`${!isPadPX ? '1. ' : ''}Liquidity > $${tokenConfig?.liquidityInUsd}`}</p>
+                <p>{`${!isPadPX ? '2. ' : ''}Holders > ${tokenConfig?.holders}`}</p>
+              </>
+            }
+          />
+        )}
+      </div>
       <Form className={styles['token-information-form']} form={form} layout="vertical">
         <Form.Item
           {...getCommonFormItemProps(TokenInformationFormKeys.TOKEN)}

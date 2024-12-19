@@ -39,6 +39,7 @@ import {
   DEFAULT_CHAINS,
   WALLET_CONNECTION_REQUIRED,
   ListingStep,
+  LISTING_STEP_ITEMS,
 } from 'constants/listing';
 import { useCommonState } from 'store/Provider/hooks';
 import { useLoading } from 'store/Provider/hooks';
@@ -71,7 +72,6 @@ interface ISelectChainProps {
   symbol?: string;
   handleNextStep: (params?: TSearchParams) => void;
   handlePrevStep: (params?: TSearchParams) => void;
-  onGetTipNode: (node: React.ReactNode) => void;
 }
 
 const DEFAULT_CONNECT_WALLET_MODAL_PROPS: {
@@ -84,12 +84,7 @@ const DEFAULT_CONNECT_WALLET_MODAL_PROPS: {
 
 const REJECTED_CHAIN_DISABLED_HOURS = 48;
 
-export default function SelectChain({
-  symbol,
-  handleNextStep,
-  handlePrevStep,
-  onGetTipNode,
-}: ISelectChainProps) {
+export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: ISelectChainProps) {
   const router = useRouter();
   const { isMobilePX } = useCommonState();
   const { setLoading } = useLoading();
@@ -116,24 +111,6 @@ export default function SelectChain({
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [connectWalletModalProps, setConnectWalletModalProps] = useState(
     DEFAULT_CONNECT_WALLET_MODAL_PROPS,
-  );
-
-  onGetTipNode(
-    <ListingTip
-      title="Chain Guide"
-      tip={
-        <>
-          <p>Tips:</p>
-          <ul className="list-style-decimal">
-            <li>Please select at least one aelf chain and one other chain.</li>
-            <li>
-              You can select multiple chains simultaneously, and Transfers will be supported between
-              any two selected chains.
-            </li>
-          </ul>
-        </>
-      }
-    />,
   );
 
   const handleBackStep = useCallback(() => {
@@ -697,6 +674,26 @@ export default function SelectChain({
   return (
     <>
       <div className={styles['select-chain']}>
+        <div className={styles['select-chain-title-wrapper']}>
+          <span className={styles['select-chain-title']}>
+            {LISTING_STEP_ITEMS[ListingStep.SELECT_CHAIN].title}
+          </span>
+          <ListingTip
+            title="Chain Guide"
+            tip={
+              <>
+                <p>Tips:</p>
+                <ul className="list-style-decimal">
+                  <li>Please select at least one aelf chain and one other chain.</li>
+                  <li>
+                    You can select multiple chains simultaneously, and Transfers will be supported
+                    between any two selected chains.
+                  </li>
+                </ul>
+              </>
+            }
+          />
+        </div>
         {isAelfConnected ? (
           <Form className={styles['select-chain-form']} form={form} layout="vertical">
             <Form.Item label="Token">
