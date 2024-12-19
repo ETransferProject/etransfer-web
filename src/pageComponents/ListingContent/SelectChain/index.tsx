@@ -145,15 +145,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     const res = await getApplicationChainStatusList({ symbol });
     const listData = {
       [SelectChainFormKeys.AELF_CHAINS]: res.chainList || [],
-      [SelectChainFormKeys.OTHER_CHAINS]:
-        res.otherChainList.map((item) => ({
-          ...item,
-          rejectedTime: moment()
-            .subtract(REJECTED_CHAIN_DISABLED_HOURS, 'hours')
-            .toDate()
-            .getTime(),
-          status: ApplicationChainStatusEnum.Rejected,
-        })) || [],
+      [SelectChainFormKeys.OTHER_CHAINS]: res.otherChainList || [],
     };
     setChainListData(listData);
   }, [symbol]);
