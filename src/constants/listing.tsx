@@ -196,7 +196,6 @@ export const SELECT_CHAIN_FORM_CHAIN_NOT_CREATED_STATUS_LIST = [
 
 export const SELECT_CHAIN_FORM_CHAIN_CREATED_NOT_LISTED_STATUS_LIST = [
   ApplicationChainStatusEnum.Reviewing,
-  ApplicationChainStatusEnum.Rejected,
   ApplicationChainStatusEnum.Reviewed,
   ApplicationChainStatusEnum.PoolInitializing,
   ApplicationChainStatusEnum.Integrating,
@@ -213,4 +212,5 @@ export const SELECT_CHAIN_FORM_CHAIN_DISABLED_STATUS_LIST = [
 export const SELECT_CHAIN_FORM_CHAIN_TOOLTIP_MAP = {
   LISTED: 'The token is already listed on ETransfer.',
   CREATED_NOT_LISTED: 'The token has been created on {{chainName}}.',
+  REJECTED: 'The token has been rejected by Cobo. Please reapply in {{hours}} hours.',
 };

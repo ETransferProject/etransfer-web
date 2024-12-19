@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
+import moment from 'moment';
 import { useRouter } from 'next/navigation';
 import { SingleMessage } from '@etransfer/ui-react';
 import { Form, Checkbox, Row, Col, Input } from 'antd';
@@ -81,6 +82,8 @@ const DEFAULT_CONNECT_WALLET_MODAL_PROPS: {
   allowList: [],
 };
 
+const REJECTED_CHAIN_DISABLED_HOURS = 48;
+
 export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: ISelectChainProps) {
   const router = useRouter();
   const { isMobilePX } = useCommonState();
@@ -142,19 +145,47 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     const res = await getApplicationChainStatusList({ symbol });
     const listData = {
       [SelectChainFormKeys.AELF_CHAINS]: res.chainList || [],
-      [SelectChainFormKeys.OTHER_CHAINS]: res.otherChainList || [],
+      [SelectChainFormKeys.OTHER_CHAINS]:
+        res.otherChainList.map((item) => ({
+          ...item,
+          rejectedTime: moment()
+            .subtract(REJECTED_CHAIN_DISABLED_HOURS, 'hours')
+            .toDate()
+            .getTime(),
+          status: ApplicationChainStatusEnum.Rejected,
+        })) || [],
     };
     setChainListData(listData);
   }, [symbol]);
 
-  const judgeIsChainDisabled = useCallback((status: ApplicationChainStatusEnum): boolean => {
-    return SELECT_CHAIN_FORM_CHAIN_DISABLED_STATUS_LIST.includes(status);
+  const getRejectedChainDisabledRemainingHours = useCallback((rejectedTime: number): number => {
+    const elapsedHours = moment().diff(moment(rejectedTime), 'hours', true);
+    const remainingHours = Math.ceil(REJECTED_CHAIN_DISABLED_HOURS - elapsedHours);
+    return remainingHours;
   }, []);
+
+  const judgeIsRejectedChainDisabled = useCallback(
+    (rejectedTime?: number): boolean => {
+      return !!(rejectedTime && getRejectedChainDisabledRemainingHours(rejectedTime) > 0);
+    },
+    [getRejectedChainDisabledRemainingHours],
+  );
+
+  const judgeIsChainDisabled = useCallback(
+    (status: ApplicationChainStatusEnum, rejectedTime?: number): boolean => {
+      return (
+        SELECT_CHAIN_FORM_CHAIN_DISABLED_STATUS_LIST.includes(status) ||
+        (status === ApplicationChainStatusEnum.Rejected &&
+          judgeIsRejectedChainDisabled(rejectedTime))
+      );
+    },
+    [judgeIsRejectedChainDisabled],
+  );
 
   const hasDisabledAELFChain = useMemo(
     () =>
       chainListData[SelectChainFormKeys.AELF_CHAINS].some((chain) =>
-        judgeIsChainDisabled(chain.status),
+        judgeIsChainDisabled(chain.status, chain.rejectedTime),
       ),
     [chainListData, judgeIsChainDisabled],
   );
@@ -162,14 +193,18 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
   const hasDisabledOtherChain = useMemo(
     () =>
       chainListData[SelectChainFormKeys.OTHER_CHAINS].some((chain) =>
-        judgeIsChainDisabled(chain.status),
+        judgeIsChainDisabled(chain.status, chain.rejectedTime),
       ),
     [chainListData, judgeIsChainDisabled],
   );
 
   const judgeIsShowInitialSupplyFormItem = useCallback((currentChains: TChains): boolean => {
     return Object.values(currentChains).some((v) =>
-      v.some((v) => v.status === ApplicationChainStatusEnum.Unissued),
+      v.some(
+        (v) =>
+          v.status === ApplicationChainStatusEnum.Unissued ||
+          v.status === ApplicationChainStatusEnum.Rejected,
+      ),
     );
   }, []);
 
@@ -383,7 +418,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     [handleFormDataChange],
   );
 
-  const { unissuedChains, issuingChains, issuedChains } = useMemo(() => {
+  const { unissuedChains, issuingChains, issuedChains, rejectedEnabledChains } = useMemo(() => {
     const unissuedChains = {
       [SelectChainFormKeys.AELF_CHAINS]: formData[SelectChainFormKeys.AELF_CHAINS].filter(
         (chain) => chain.status === ApplicationChainStatusEnum.Unissued,
@@ -408,8 +443,15 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
         (chain) => chain.status === ApplicationChainStatusEnum.Issued,
       ),
     };
-
-    return { unissuedChains, issuingChains, issuedChains };
+    const rejectedEnabledChains = {
+      [SelectChainFormKeys.AELF_CHAINS]: formData[SelectChainFormKeys.AELF_CHAINS].filter(
+        (chain) => chain.status === ApplicationChainStatusEnum.Rejected,
+      ),
+      [SelectChainFormKeys.OTHER_CHAINS]: formData[SelectChainFormKeys.OTHER_CHAINS].filter(
+        (chain) => chain.status === ApplicationChainStatusEnum.Rejected,
+      ),
+    };
+    return { unissuedChains, issuingChains, issuedChains, rejectedEnabledChains };
   }, [formData]);
 
   const handleConnectWallets = useCallback(() => {
@@ -425,9 +467,10 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
       chains: [
         ...unissuedChains[SelectChainFormKeys.OTHER_CHAINS],
         ...issuingChains[SelectChainFormKeys.OTHER_CHAINS],
+        ...rejectedEnabledChains[SelectChainFormKeys.OTHER_CHAINS],
       ],
     });
-  }, [issuingChains, unissuedChains]);
+  }, [issuingChains, unissuedChains, rejectedEnabledChains]);
 
   const handleJump = useCallback(
     ({ networksString, id, _symbol }: { networksString: string; id?: string; _symbol: string }) => {
@@ -497,7 +540,8 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
 
     if (
       Object.values(unissuedChains).some((v) => v.length !== 0) ||
-      Object.values(issuingChains).some((v) => v.length !== 0)
+      Object.values(issuingChains).some((v) => v.length !== 0) ||
+      Object.values(rejectedEnabledChains).some((v) => v.length !== 0)
     ) {
       if (unconnectedWallets.length > 0) {
         props = {
@@ -524,6 +568,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     unissuedChains,
     issuingChains,
     issuedChains,
+    rejectedEnabledChains,
     unconnectedWallets,
     handleConnectWallets,
     handleCreateToken,
@@ -580,21 +625,31 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
       <Form.Item label={SELECT_CHAIN_FORM_LABEL_MAP[formKey]}>
         <Row gutter={[12, 8]}>
           {chainListData[formKey].map((chain) => {
-            const isDisabled = judgeIsChainDisabled(chain.status);
+            const isDisabled = judgeIsChainDisabled(chain.status, chain.rejectedTime);
 
             const checked =
               isDisabled || formData[formKey]?.some((v) => v.chainId === chain.chainId);
 
             let tooltip = '';
-            if (SELECT_CHAIN_FORM_CHAIN_LISTED_STATUS_LIST.includes(chain.status)) {
-              tooltip = SELECT_CHAIN_FORM_CHAIN_TOOLTIP_MAP.LISTED;
-            } else if (
-              SELECT_CHAIN_FORM_CHAIN_CREATED_NOT_LISTED_STATUS_LIST.includes(chain.status)
-            ) {
-              tooltip = SELECT_CHAIN_FORM_CHAIN_TOOLTIP_MAP.CREATED_NOT_LISTED.replace(
-                '{{chainName}}',
-                chain.chainName,
-              );
+            if (isDisabled) {
+              if (SELECT_CHAIN_FORM_CHAIN_LISTED_STATUS_LIST.includes(chain.status)) {
+                tooltip = SELECT_CHAIN_FORM_CHAIN_TOOLTIP_MAP.LISTED;
+              } else if (
+                SELECT_CHAIN_FORM_CHAIN_CREATED_NOT_LISTED_STATUS_LIST.includes(chain.status)
+              ) {
+                tooltip = SELECT_CHAIN_FORM_CHAIN_TOOLTIP_MAP.CREATED_NOT_LISTED.replace(
+                  '{{chainName}}',
+                  chain.chainName,
+                );
+              } else if (
+                chain.status === ApplicationChainStatusEnum.Rejected &&
+                chain.rejectedTime
+              ) {
+                tooltip = SELECT_CHAIN_FORM_CHAIN_TOOLTIP_MAP.REJECTED.replace(
+                  '{{hours}}',
+                  getRejectedChainDisabledRemainingHours(chain.rejectedTime).toString(),
+                );
+              }
             }
 
             let handleChainsChange = handleAELFChainsChange;

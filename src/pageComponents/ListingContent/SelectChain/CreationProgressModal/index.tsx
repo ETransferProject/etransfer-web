@@ -251,7 +251,10 @@ export default function CreationProgressModal({
     const create = async (step: number) => {
       try {
         const currentChain = stepItems[step].chain;
-        if (currentChain.status === ApplicationChainStatusEnum.Unissued) {
+        if (
+          currentChain.status === ApplicationChainStatusEnum.Unissued ||
+          currentChain.status === ApplicationChainStatusEnum.Rejected
+        ) {
           const txHash = await handleIssue({ chain: currentChain });
           const { bindingId, thirdTokenId } = await handlePrepareBindIssue(currentChain);
           handleStepItemChange({

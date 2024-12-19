@@ -607,6 +607,7 @@ export type TApplicationChainStatusItem = {
   poolAddress: string;
   bindingId?: string;
   thirdTokenId?: string;
+  rejectedTime?: number;
 };
 
 export enum ApplicationChainStatusEnum {
