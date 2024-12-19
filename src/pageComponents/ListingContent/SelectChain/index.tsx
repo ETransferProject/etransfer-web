@@ -518,13 +518,17 @@ export default function SelectChain({
     }
   }, [formData, handleJump, setLoading, token?.symbol]);
 
-  const handleCreateFinish = useCallback(async () => {
+  const handleCreationProgressModalClose = useCallback(() => {
     setCreationProgressModalProps({
       open: false,
       chains: [],
     });
+  }, []);
+
+  const handleCreateFinish = useCallback(async () => {
+    handleCreationProgressModalClose();
     await handleAddChain();
-  }, [handleAddChain]);
+  }, [handleAddChain, handleCreationProgressModalClose]);
 
   const getActionButtonProps = useCallback(() => {
     let props: CommonButtonProps = {
@@ -754,8 +758,11 @@ export default function SelectChain({
       </div>
       <CreationProgressModal
         {...creationProgressModalProps}
+        isFirstTimeCreation={!hasDisabledAELFChain || !hasDisabledOtherChain}
+        isSelectAelfChains={formData[SelectChainFormKeys.AELF_CHAINS].length !== 0}
         supply={formData[SelectChainFormKeys.INITIAL_SUPPLY]}
         handleCreateFinish={handleCreateFinish}
+        handleClose={handleCreationProgressModalClose}
       />
       <ConnectWalletModal
         {...connectWalletModalProps}

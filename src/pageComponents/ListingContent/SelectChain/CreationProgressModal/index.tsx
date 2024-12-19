@@ -25,7 +25,10 @@ export interface ICreationProgressModalProps {
   open: boolean;
   chains: TApplicationChainStatusItem[];
   supply: string;
+  isFirstTimeCreation: boolean;
+  isSelectAelfChains: boolean;
   handleCreateFinish: () => void;
+  handleClose: () => void;
 }
 
 type TTxHash = `0x${string}`;
@@ -45,7 +48,10 @@ export default function CreationProgressModal({
   open,
   chains,
   supply,
+  isFirstTimeCreation,
+  isSelectAelfChains,
   handleCreateFinish,
+  handleClose,
 }: ICreationProgressModalProps) {
   const getAllConnectedWalletAccount = useGetAllConnectedWalletAccount();
   const { accountListWithWalletType } = getAllConnectedWalletAccount();
@@ -69,6 +75,14 @@ export default function CreationProgressModal({
   const isCreateFinished = useMemo(() => {
     return stepItems.length > 0 && stepItems.every((item) => item.status === 'finish');
   }, [stepItems]);
+
+  const isEveryChainError = useMemo(() => {
+    return stepItems.length > 0 && stepItems.every((item) => item.status === 'error');
+  }, [stepItems]);
+
+  const showCloseButton = useMemo(() => {
+    return isEveryChainError && (isFirstTimeCreation || !isSelectAelfChains);
+  }, [isEveryChainError, isSelectAelfChains, isFirstTimeCreation]);
 
   useEffect(() => {
     const list: TStepItem[] = chains.map((chain) => ({
@@ -337,8 +351,8 @@ export default function CreationProgressModal({
               <CommonButton
                 className={styles['creation-progress-button']}
                 type={CommonButtonType.Secondary}
-                onClick={handleCreateFinish}>
-                Skip
+                onClick={showCloseButton ? handleClose : handleCreateFinish}>
+                {showCloseButton ? 'Close' : 'Skip'}
               </CommonButton>
               <CommonButton className={styles['creation-progress-button']} onClick={handleTryAgain}>
                 Try again
