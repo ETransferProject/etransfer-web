@@ -200,7 +200,7 @@ export default function SelectChain({
   const hasDisabledAELFChain = useMemo(
     () =>
       chainListData[SelectChainFormKeys.AELF_CHAINS].some((chain) =>
-        judgeIsChainDisabled(chain.status, chain.rejectedTime),
+        judgeIsChainDisabled(chain.status),
       ),
     [chainListData, judgeIsChainDisabled],
   );
@@ -215,11 +215,7 @@ export default function SelectChain({
 
   const judgeIsShowInitialSupplyFormItem = useCallback(
     (currentOtherChains: TApplicationChainStatusItem[]): boolean => {
-      return currentOtherChains.some(
-        (v) =>
-          v.status === ApplicationChainStatusEnum.Unissued ||
-          v.status === ApplicationChainStatusEnum.Rejected,
-      );
+      return currentOtherChains.some((v) => v.status === ApplicationChainStatusEnum.Unissued);
     },
     [],
   );
@@ -465,9 +461,9 @@ export default function SelectChain({
   const handleCreateToken = useCallback(() => {
     setCreationProgressModalProps({
       open: true,
-      chains: [...unissuedOtherChains, ...issuingOtherChains, ...rejectedEnabledOtherChains],
+      chains: [...unissuedOtherChains, ...issuingOtherChains],
     });
-  }, [issuingOtherChains, unissuedOtherChains, rejectedEnabledOtherChains]);
+  }, [issuingOtherChains, unissuedOtherChains]);
 
   const handleJump = useCallback(
     ({ networksString, id, _symbol }: { networksString: string; id?: string; _symbol: string }) => {
@@ -535,11 +531,7 @@ export default function SelectChain({
       children: SELECT_CHAIN,
     };
 
-    if (
-      unissuedOtherChains.length !== 0 ||
-      issuingOtherChains.length !== 0 ||
-      rejectedEnabledOtherChains.length !== 0
-    ) {
+    if (unissuedOtherChains.length !== 0 || issuingOtherChains.length !== 0) {
       if (unconnectedWallets.length > 0) {
         props = {
           children: `Connect ${unconnectedWallets.join(', ')} Wallet${
@@ -555,6 +547,7 @@ export default function SelectChain({
       }
     } else if (
       formData[SelectChainFormKeys.AELF_CHAINS].length !== 0 ||
+      rejectedEnabledOtherChains.length !== 0 ||
       Object.values(issuedChains).some((v) => v.length !== 0)
     ) {
       props = {
