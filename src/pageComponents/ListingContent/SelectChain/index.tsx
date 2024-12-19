@@ -591,10 +591,9 @@ export default function SelectChain({
       setLoading(false);
     }
   }, [getChainList, getToken, handleBackStep, setAelfAuthFromStorage, setLoading]);
-  const initRef = useRef(init);
-  initRef.current = init;
 
   useEffectOnce(() => {
+    setLoading(true);
     if (!isAelfConnected || !symbol) {
       handleBackStep();
     } else {
@@ -603,8 +602,9 @@ export default function SelectChain({
   });
 
   const initForLogout = useCallback(async () => {
+    setLoading(true);
     handleBackStep();
-  }, [handleBackStep]);
+  }, [handleBackStep, setLoading]);
   const initLogoutRef = useRef(initForLogout);
   initLogoutRef.current = initForLogout;
 

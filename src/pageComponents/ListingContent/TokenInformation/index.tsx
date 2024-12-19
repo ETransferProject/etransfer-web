@@ -206,10 +206,11 @@ export default function TokenInformation({
   const connectAndInitRef = useRef(connectAndInit);
   connectAndInitRef.current = connectAndInit;
   const connectAndInitSleep = useCallback(async () => {
+    setLoading(true);
     // Delay 3s to determine the login status, because the login data is acquired slowly, to prevent the login pop-up window from being displayed first and then automatically logging in successfully later.
     await sleep(3000);
     connectAndInitRef.current();
-  }, []);
+  }, [setLoading]);
   useEffectOnce(() => {
     connectAndInitSleep();
   });
