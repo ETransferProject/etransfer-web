@@ -107,7 +107,7 @@ export default function MyApplicationsPage() {
 
   const connectAndInit = useCallback(() => {
     if (!isConnected) {
-      handleAelfLogin(true, init);
+      handleAelfLogin(true, init, true);
     } else {
       init();
     }

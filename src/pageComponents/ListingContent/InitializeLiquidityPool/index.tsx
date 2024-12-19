@@ -261,7 +261,7 @@ export default function InitializeLiquidityPool({
 
   const connectAndInit = useCallback(() => {
     if (!isConnected) {
-      handleAelfLogin(true, initRef.current);
+      handleAelfLogin(true, initRef.current, true);
     } else {
       initRef.current();
     }

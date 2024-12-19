@@ -125,7 +125,11 @@ export function useAelfLogin() {
   getAuthRef.current = getAuth;
 
   return useCallback(
-    async (isNeedGetJWT = false, handleConnectedCallback?: () => Promise<void> | void) => {
+    async (
+      isNeedGetJWT = false,
+      handleConnectedCallback?: () => Promise<void> | void,
+      isStopLoading = false,
+    ) => {
       try {
         if (isConnected) {
           setWalletType(WalletTypeEnum.AELF);
@@ -135,7 +139,9 @@ export function useAelfLogin() {
           await handleConnectedCallback?.();
           return;
         }
-
+        if (isStopLoading) {
+          setLoading(false);
+        }
         await connectWallet();
         setWalletType(WalletTypeEnum.AELF);
         if (isNeedGetJWT) {

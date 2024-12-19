@@ -198,7 +198,7 @@ export default function TokenInformation({
 
   const connectAndInit = useCallback(() => {
     if (!isConnected) {
-      handleAelfLogin(true, initRef.current);
+      handleAelfLogin(true, initRef.current, true);
     } else {
       initRef.current();
     }
