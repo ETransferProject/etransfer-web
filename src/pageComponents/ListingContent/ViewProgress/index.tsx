@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import CommonModal from 'components/CommonModal';
 import { useMemo } from 'react';
 import DisplayImage from 'components/DisplayImage';
-import { formatSymbolDisplay } from '@etransfer/ui-react';
+import { formatSymbolDisplay } from 'utils/format';
 import CommonSteps, { ICommonStepsProps } from 'components/CommonSteps';
 import { ListingProcessStep, VIEW_COBO_CUSTODY_PROGRESS } from 'constants/listing';
 import { GOT_IT } from 'constants/misc';
