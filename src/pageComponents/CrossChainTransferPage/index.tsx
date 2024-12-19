@@ -41,7 +41,7 @@ import {
   setTotalTokenList,
   setToWalletType,
 } from 'store/reducers/crossChainTransfer/slice';
-import { formatSymbolDisplay, SingleMessage } from '@etransfer/ui-react';
+import { SingleMessage } from '@etransfer/ui-react';
 import {
   handleErrorMessage,
   isAuthTokenError,
@@ -74,6 +74,7 @@ import { useGetAuthTokenFromStorage } from 'hooks/wallet/authToken';
 import { CommonErrorNameType } from 'api/types';
 import { BlockchainNetworkType } from 'constants/network';
 import { isHtmlError } from 'utils/api/error';
+import { formatSymbolDisplay } from 'utils/format';
 
 export default function CrossChainTransferPage() {
   const dispatch = useAppDispatch();

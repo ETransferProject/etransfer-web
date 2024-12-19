@@ -12,12 +12,15 @@ import clsx from 'clsx';
 import myEvents from 'utils/myEvent';
 import { BUTTON_TEXT_BACK } from 'constants/misc';
 import useAelf, { useAelfLogin, useInitAelfWallet } from 'hooks/wallet/useAelf';
+import { sleep } from '@etransfer/utils';
+import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
 
 export default function MyApplicationsPage() {
   const { isPadPX, isMobilePX } = useCommonState();
   const { setLoading } = useLoading();
   const { isConnected } = useAelf();
   const handleAelfLogin = useAelfLogin();
+  const setAelfAuthFromStorage = useSetAelfAuthFromStorage();
   useInitAelfWallet();
   const [currentApplicationList, setCurrentApplicationList] = useState<any[]>([]);
   const [totalApplicationList, setTotalApplicationList] = useState<any[]>([]);
@@ -32,7 +35,8 @@ export default function MyApplicationsPage() {
       console.log(skip, max);
       try {
         setLoading(true);
-
+        await setAelfAuthFromStorage();
+        await sleep(500);
         const currentSkipPageCount = typeof skip !== 'number' ? skipPageCount : skip;
         const currentMaxCount = typeof max !== 'number' ? maxResultCount : max;
         const currentSkipCount = currentSkipPageCount * currentMaxCount;
@@ -58,7 +62,7 @@ export default function MyApplicationsPage() {
         setLoading(false);
       }
     },
-    [maxResultCount, setLoading, skipPageCount, totalApplicationList],
+    [maxResultCount, setAelfAuthFromStorage, setLoading, skipPageCount, totalApplicationList],
   );
 
   // web get page date
@@ -101,12 +105,23 @@ export default function MyApplicationsPage() {
     getApplicationData({});
   }, [getApplicationData]);
 
-  useEffectOnce(() => {
+  const connectAndInit = useCallback(() => {
     if (!isConnected) {
       handleAelfLogin(true, init);
     } else {
       init();
     }
+  }, [handleAelfLogin, init, isConnected]);
+  const connectAndInitRef = useRef(connectAndInit);
+  connectAndInitRef.current = connectAndInit;
+  const connectAndInitSleep = useCallback(async () => {
+    // Delay 3s to determine the login status, because the login data is acquired slowly, to prevent the login pop-up window from being displayed first and then automatically logging in successfully later.
+    await sleep(3000);
+    connectAndInitRef.current();
+  }, []);
+
+  useEffectOnce(() => {
+    connectAndInitSleep();
   });
 
   const initForLogout = useCallback(async () => {
