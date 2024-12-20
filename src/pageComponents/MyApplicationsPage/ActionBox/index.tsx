@@ -13,7 +13,8 @@ const TwoDaysTimestamp = 48 * 60 * 60 * 1000;
 export default function ActionBox({
   symbol,
   tokenIcon,
-  chainId,
+  otherChainId,
+  aelfChainIds = [],
   chainName,
   id,
   status,
@@ -21,7 +22,8 @@ export default function ActionBox({
 }: {
   symbol: string;
   tokenIcon?: string;
-  chainId: string;
+  otherChainId: string;
+  aelfChainIds?: string[];
   chainName: string;
   id: string;
   status: ApplicationChainStatusEnum;
@@ -78,13 +80,14 @@ export default function ActionBox({
       setLoading(true);
       const res = await addApplicationChain({
         symbol,
-        otherChainIds: [chainId],
+        chainIds: aelfChainIds,
+        otherChainIds: [otherChainId],
       });
-      const chainList = res.chainList || [];
-      const otherChainList = res.otherChainList || [];
-      const concatChainList = chainList.concat(otherChainList);
-      const target = concatChainList.find((item) => item.chainId === chainId);
-      if (target?.id) {
+      const _chainList = res.chainList || [];
+      const _otherChainList = res.otherChainList || [];
+      const _concatChainList = _chainList.concat(_otherChainList);
+      const _targetChainIds = aelfChainIds?.concat([otherChainId]);
+      if (_concatChainList.length === _targetChainIds.length) {
         setIsReapplyDisable(true);
       }
     } catch (error) {
@@ -92,7 +95,7 @@ export default function ActionBox({
     } finally {
       setLoading(false);
     }
-  }, [chainId, setLoading, symbol]);
+  }, [aelfChainIds, otherChainId, setLoading, symbol]);
 
   useEffectOnce(() => {
     if (rejectedTime && rejectedTime + TwoDaysTimestamp >= Date.now()) {

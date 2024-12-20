@@ -9,8 +9,17 @@ export const getApplicationDisplayInfo = (data: TMyApplicationItem) => {
       chainTokenInfo: undefined,
       failTime: 0,
       failReason: '',
+      aelfChainIds: [],
+      otherChainId: '',
     };
   }
+
+  const aelfChainIds: string[] = [];
+  data?.chainTokenInfo?.forEach((item) => {
+    aelfChainIds.push(item.chainId);
+  }, []);
+  const otherChainId = data?.otherChainTokenInfo?.chainId || '';
+
   const getFailResult = () => {
     switch (chainTokenInfo.status) {
       case ApplicationChainStatusEnum.Rejected:
@@ -33,6 +42,8 @@ export const getApplicationDisplayInfo = (data: TMyApplicationItem) => {
 
   return {
     chainTokenInfo,
+    aelfChainIds,
+    otherChainId,
     failTime: getFailResult().time,
     failReason: getFailResult().reason,
   };

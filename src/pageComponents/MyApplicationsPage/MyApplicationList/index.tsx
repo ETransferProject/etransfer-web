@@ -33,7 +33,8 @@ export default function MyApplicationList({
     [applicationList.length, totalCount],
   );
   const renderApplicationCard = useCallback((item: TMyApplicationItem) => {
-    const { chainTokenInfo, failReason, failTime } = getApplicationDisplayInfo(item);
+    const { chainTokenInfo, aelfChainIds, otherChainId, failReason, failTime } =
+      getApplicationDisplayInfo(item);
 
     return (
       <>
@@ -79,7 +80,8 @@ export default function MyApplicationList({
               <ActionBox
                 symbol={item.symbol}
                 tokenIcon={chainTokenInfo?.icon}
-                chainId={chainTokenInfo?.chainId}
+                aelfChainIds={aelfChainIds}
+                otherChainId={otherChainId}
                 chainName={chainTokenInfo?.chainName}
                 id={item.id}
                 status={chainTokenInfo?.status}
