@@ -27,7 +27,7 @@ export interface ICreationProgressModalProps {
   supply: string;
   isFirstTimeCreation: boolean;
   isSelectAelfChains: boolean;
-  handleCreateFinish: () => void;
+  handleCreateFinish: (params?: { errorOtherChainIds?: string[] }) => void;
   handleClose: () => void;
 }
 
@@ -319,6 +319,13 @@ export default function CreationProgressModal({
     setIsCreateStart(true);
   }, []);
 
+  const handleSkip = useCallback(() => {
+    const errorOtherChainIds = stepItems
+      .filter((item) => item.status === 'error')
+      .map((item) => item.chain.chainId);
+    handleCreateFinish({ errorOtherChainIds });
+  }, [stepItems, handleCreateFinish]);
+
   const steps: ICommonStepsProps['stepItems'] = useMemo(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return stepItems.map(({ chain, ...rest }) => rest);
@@ -351,7 +358,7 @@ export default function CreationProgressModal({
               <CommonButton
                 className={styles['creation-progress-button']}
                 type={CommonButtonType.Secondary}
-                onClick={showCloseButton ? handleClose : handleCreateFinish}>
+                onClick={showCloseButton ? handleClose : handleSkip}>
                 {showCloseButton ? 'Close' : 'Skip'}
               </CommonButton>
               <CommonButton className={styles['creation-progress-button']} onClick={handleTryAgain}>

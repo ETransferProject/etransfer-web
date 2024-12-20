@@ -471,38 +471,43 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     [formData, hasDisabledAELFChain, router, handleNextStep],
   );
 
-  const handleAddChain = useCallback(async () => {
-    if (!token?.symbol) return;
-    setLoading(true);
-    try {
-      const data = await addApplicationChain({
-        chainIds: formData[SelectChainFormKeys.AELF_CHAINS].map((v) => v.chainId),
-        otherChainIds: formData[SelectChainFormKeys.OTHER_CHAINS].map((v) => v.chainId),
-        symbol: token.symbol,
-      });
-      if (!data?.chainList && !data?.otherChainList) {
-        throw new Error('Failed to add chain');
+  const handleAddChain = useCallback(
+    async ({ errorOtherChainIds }: { errorOtherChainIds?: string[] } = {}) => {
+      if (!token?.symbol) return;
+      setLoading(true);
+      try {
+        const data = await addApplicationChain({
+          chainIds: formData[SelectChainFormKeys.AELF_CHAINS].map((v) => v.chainId),
+          otherChainIds: formData[SelectChainFormKeys.OTHER_CHAINS]
+            .filter((v) => !errorOtherChainIds?.includes(v.chainId))
+            .map((v) => v.chainId),
+          symbol: token.symbol,
+        });
+        if (!data?.chainList && !data?.otherChainList) {
+          throw new Error('Failed to add chain');
+        }
+        const aelfNetworks = formData[SelectChainFormKeys.AELF_CHAINS]
+          .filter((item) => data?.chainList?.some((v) => v.chainId === item.chainId))
+          .map((v) => ({
+            name: v.chainName,
+          }));
+        const otherNetworks = formData[SelectChainFormKeys.OTHER_CHAINS]
+          .filter((item) => data?.otherChainList?.some((v) => v.chainId === item.chainId))
+          .map((v) => ({
+            name: v.chainName,
+          }));
+        const networks = [...aelfNetworks, ...otherNetworks];
+        const networksString = JSON.stringify(networks);
+        const id = data?.chainList?.[0]?.id;
+        handleJump({ networksString, id, _symbol: token.symbol });
+      } catch (error) {
+        SingleMessage.error(handleErrorMessage(error));
+      } finally {
+        setLoading(false);
       }
-      const aelfNetworks = formData[SelectChainFormKeys.AELF_CHAINS]
-        .filter((item) => data?.chainList?.some((v) => v.chainId === item.chainId))
-        .map((v) => ({
-          name: v.chainName,
-        }));
-      const otherNetworks = formData[SelectChainFormKeys.OTHER_CHAINS]
-        .filter((item) => data?.otherChainList?.some((v) => v.chainId === item.chainId))
-        .map((v) => ({
-          name: v.chainName,
-        }));
-      const networks = [...aelfNetworks, ...otherNetworks];
-      const networksString = JSON.stringify(networks);
-      const id = data?.chainList?.[0]?.id;
-      handleJump({ networksString, id, _symbol: token.symbol });
-    } catch (error) {
-      SingleMessage.error(handleErrorMessage(error));
-    } finally {
-      setLoading(false);
-    }
-  }, [formData, handleJump, setLoading, token?.symbol]);
+    },
+    [formData, handleJump, setLoading, token?.symbol],
+  );
 
   const handleCreationProgressModalClose = useCallback(() => {
     setCreationProgressModalProps({
@@ -511,10 +516,13 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     });
   }, []);
 
-  const handleCreateFinish = useCallback(async () => {
-    handleCreationProgressModalClose();
-    await handleAddChain();
-  }, [handleAddChain, handleCreationProgressModalClose]);
+  const handleCreateFinish = useCallback(
+    async ({ errorOtherChainIds }: { errorOtherChainIds?: string[] } = {}) => {
+      handleCreationProgressModalClose();
+      await handleAddChain({ errorOtherChainIds });
+    },
+    [handleAddChain, handleCreationProgressModalClose],
+  );
 
   const getActionButtonProps = useCallback(() => {
     let props: CommonButtonProps = {
@@ -542,7 +550,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     ) {
       props = {
         children: 'Submit',
-        onClick: handleAddChain,
+        onClick: () => handleAddChain(),
       };
     }
 
