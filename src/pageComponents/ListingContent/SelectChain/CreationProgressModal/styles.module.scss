@@ -29,7 +29,6 @@
       }
     }
   }
-
 }
 
 .creation-progress-modal {
@@ -62,6 +61,11 @@
 
 .creation-progress-steps {
   margin-top: 16px;
+  :global {
+    .ant-steps-item-title {
+      font-size: 14px;
+    }
+  }
 }
 
 .creation-progress-remind {

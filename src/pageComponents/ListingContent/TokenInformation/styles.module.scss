@@ -17,6 +17,12 @@
 .token-information-form {
   padding: 32px 0 8px;
 
+  :global {
+    .ant-form-item:has(.ant-form-item-explain) {
+      margin-bottom: 0;
+    }
+  }
+
   .token-information-form-label-wrapper {
     display: flex;
     align-items: center;

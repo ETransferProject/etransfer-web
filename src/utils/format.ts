@@ -122,3 +122,11 @@ export function stringToHex(str: string) {
   }
   return val;
 }
+
+export const formatListWithAnd = (items: string[]): string => {
+  if (items.length > 1) {
+    const lastItem = items.pop();
+    return `${items.join(', ')} and ${lastItem}`;
+  }
+  return items.join(', ');
+};

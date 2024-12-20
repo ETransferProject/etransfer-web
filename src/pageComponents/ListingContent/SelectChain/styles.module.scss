@@ -19,6 +19,9 @@
   :global {
     .ant-form-item {
       margin-bottom: 32px;
+      &:has(.ant-form-item-explain) {
+        margin-bottom: 0;
+      }
     }
   }
 }

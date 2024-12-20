@@ -49,7 +49,12 @@ import {
   addApplicationChain,
   getApplicationTokenInfo,
 } from 'utils/api/application';
-import { formatWithCommas, parseWithCommas, parseWithStringCommas } from 'utils/format';
+import {
+  formatListWithAnd,
+  formatWithCommas,
+  parseWithCommas,
+  parseWithStringCommas,
+} from 'utils/format';
 import styles from './styles.module.scss';
 import { useEffectOnce } from 'react-use';
 import myEvents from 'utils/myEvent';
@@ -67,6 +72,7 @@ import { WalletTypeEnum } from 'context/Wallet/types';
 import { isEVMChain, isSolanaChain, isTONChain, isTRONChain } from 'utils/wallet';
 import { BUTTON_TEXT_BACK, SELECT_CHAIN } from 'constants/misc';
 import { getListingUrl } from 'utils/listing';
+import { LANG_MAX, ZERO } from 'constants/calculate';
 
 interface ISelectChainProps {
   symbol?: string;
@@ -386,22 +392,25 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
       const value = e.target.value;
       const valueNotComma = parseWithCommas(value);
 
-      let validateData = {
-        validateStatus: FormValidateStatus.Normal,
-        errorMessage: '',
-      };
       if (!valueNotComma) {
-        validateData = {
-          validateStatus: FormValidateStatus.Error,
-          errorMessage: REQUIRED_ERROR_MESSAGE,
-        };
+        handleFormDataChange({
+          formKey: SelectChainFormKeys.INITIAL_SUPPLY,
+          value: '',
+          validateData: {
+            validateStatus: FormValidateStatus.Error,
+            errorMessage: REQUIRED_ERROR_MESSAGE,
+          },
+        });
+      } else if (ZERO.plus(valueNotComma).lte(LANG_MAX)) {
+        handleFormDataChange({
+          formKey: SelectChainFormKeys.INITIAL_SUPPLY,
+          value: valueNotComma,
+          validateData: {
+            validateStatus: FormValidateStatus.Normal,
+            errorMessage: '',
+          },
+        });
       }
-
-      handleFormDataChange({
-        formKey: SelectChainFormKeys.INITIAL_SUPPLY,
-        value: valueNotComma,
-        validateData,
-      });
     },
     [handleFormDataChange],
   );
@@ -714,11 +723,18 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
                     <span className={styles['select-chain-label']}>
                       {SELECT_CHAIN_FORM_LABEL_MAP[SelectChainFormKeys.INITIAL_SUPPLY]}
                     </span>
-                    <span className={styles['select-chain-description']}>
-                      {
-                        'The token information on Ethereum, BNS Smart Chain, Arbitrum, Tron, and Ton is the same as that on the aelf chain. You only need to fill in the issuance amount of the token on the other chains.'
-                      }
-                    </span>
+                    <div className={styles['select-chain-description']}>
+                      <p>
+                        {`The token information on ${formatListWithAnd(
+                          formData[SelectChainFormKeys.OTHER_CHAINS].map((v) => v.chainName),
+                        )} is the same as that on the aelf chain.`}
+                      </p>
+                      <p>
+                        {
+                          'You only need to fill in the issuance amount of the token on the other chains.'
+                        }
+                      </p>
+                    </div>
                   </div>
                 }>
                 <Input

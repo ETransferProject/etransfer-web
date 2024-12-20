@@ -370,9 +370,10 @@ export default function CreationProgressModal({
         <div className={styles['creation-progress-title-wrapper']}>
           <span className={styles['creation-progress-title']}>Token Creation in Progress</span>
           <ListingTip
+            modalTitle={isPadPX ? 'Tips' : ''}
             tip={
               <>
-                <p>Tips:</p>
+                {!isPadPX && <p>Tips:</p>}
                 <ul className="list-style-decimal">
                   <li>
                     Please approve the transaction in your wallet to create tokens on each chain.
@@ -390,7 +391,7 @@ export default function CreationProgressModal({
       closable: false,
       open,
     };
-  }, [open]);
+  }, [open, isPadPX]);
 
   if (isPadPX) {
     return (
