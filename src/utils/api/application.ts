@@ -146,7 +146,7 @@ export const changeApplicationStatus = async (
   params: TChangeApplicationStatusRequest,
 ): Promise<TChangeApplicationStatusResult> => {
   try {
-    const res = await request.application.changeStatus({ params });
+    const res = await request.application.changeStatus({ data: params });
     return res.data;
   } catch (error) {
     throw formatApiError(error, 'changeApplicationStatus error', false);
