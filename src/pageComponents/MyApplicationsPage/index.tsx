@@ -15,6 +15,10 @@ import useAelf, { useAelfLogin, useInitAelfWallet } from 'hooks/wallet/useAelf';
 import { sleep } from '@etransfer/utils';
 import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
 
+const DefaultSkipCount = 0;
+const DefaultMaxResultCount = 10;
+const DefaultTotalCount = 0;
+
 export default function MyApplicationsPage() {
   const { isPadPX, isMobilePX } = useCommonState();
   const { setLoading } = useLoading();
@@ -26,13 +30,12 @@ export default function MyApplicationsPage() {
   const [totalApplicationList, setTotalApplicationList] = useState<any[]>([]);
 
   // pagination
-  const [skipPageCount, setSkipPageCount] = useState(0);
-  const [maxResultCount, setMaxResultCount] = useState(10);
-  const [totalCount, setTotalCount] = useState(0);
+  const [skipPageCount, setSkipPageCount] = useState(DefaultSkipCount);
+  const [maxResultCount, setMaxResultCount] = useState(DefaultMaxResultCount);
+  const [totalCount, setTotalCount] = useState(DefaultTotalCount);
 
   const getApplicationData = useCallback(
     async ({ skip, max }: { skip?: number; max?: number }) => {
-      console.log(skip, max);
       try {
         setLoading(true);
         await setAelfAuthFromStorage();
@@ -77,9 +80,9 @@ export default function MyApplicationsPage() {
       }
       if (maxResultCount !== pageSize) {
         // pageSize change and skipCount need init
-        skip = 0;
+        skip = DefaultSkipCount;
         max = pageSize;
-        setSkipPageCount(0);
+        setSkipPageCount(DefaultSkipCount);
         setMaxResultCount(pageSize);
       }
 
@@ -105,6 +108,10 @@ export default function MyApplicationsPage() {
     getApplicationData({});
   }, [getApplicationData]);
 
+  const handleResetList = useCallback(async () => {
+    await getApplicationData({ skip: DefaultSkipCount, max: DefaultMaxResultCount });
+  }, [getApplicationData]);
+
   const connectAndInit = useCallback(() => {
     if (!isConnected) {
       handleAelfLogin(true, init, true);
@@ -128,15 +135,15 @@ export default function MyApplicationsPage() {
   const initForLogout = useCallback(async () => {
     setCurrentApplicationList([]);
     setTotalApplicationList([]);
-    setSkipPageCount(0);
-    setMaxResultCount(10);
-    setTotalCount(0);
+    setSkipPageCount(DefaultSkipCount);
+    setMaxResultCount(DefaultMaxResultCount);
+    setTotalCount(DefaultSkipCount);
   }, []);
   const initLogoutRef = useRef(initForLogout);
   initLogoutRef.current = initForLogout;
 
   const initForReLogin = useCallback(async () => {
-    getApplicationData({ skip: 0, max: 10 });
+    getApplicationData({ skip: DefaultSkipCount, max: DefaultMaxResultCount });
   }, [getApplicationData]);
   const initForReLoginRef = useRef(initForReLogin);
   initForReLoginRef.current = initForReLogin;
@@ -182,6 +189,7 @@ export default function MyApplicationsPage() {
             totalCount={totalCount}
             applicationList={totalApplicationList}
             onNextPage={handleNextPage}
+            onResetList={handleResetList}
           />
         ) : (
           <>
@@ -192,6 +200,7 @@ export default function MyApplicationsPage() {
               tableOnChange={tableOnChange}
               maxResultCount={maxResultCount}
               skipPageCount={skipPageCount}
+              onResetList={handleResetList}
             />
           </>
         )}
