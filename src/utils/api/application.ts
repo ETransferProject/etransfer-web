@@ -20,6 +20,8 @@ import {
   TGetApplicationIssueRequest,
   TGetTokenConfigRequest,
   TGetTokenConfigResult,
+  TChangeApplicationStatusRequest,
+  TChangeApplicationStatusResult,
 } from 'types/api';
 
 export const getApplicationTokenList = async (): Promise<TGetApplicationTokenListResult> => {
@@ -137,5 +139,16 @@ export const getApplicationTokenConfig = async (
     return res.data;
   } catch (error) {
     throw formatApiError(error, 'getTokenConfig error', false);
+  }
+};
+
+export const changeApplicationStatus = async (
+  params: TChangeApplicationStatusRequest,
+): Promise<TChangeApplicationStatusResult> => {
+  try {
+    const res = await request.application.changeStatus({ params });
+    return res.data;
+  } catch (error) {
+    throw formatApiError(error, 'changeApplicationStatus error', false);
   }
 };

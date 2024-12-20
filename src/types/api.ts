@@ -736,3 +736,11 @@ export type TGetTokenConfigResult = {
   liquidityInUsd: string;
   holders: number;
 };
+
+export type TChangeApplicationStatusRequest = {
+  symbol: string;
+  id?: string;
+  chainId?: string;
+};
+
+export type TChangeApplicationStatusResult = boolean;

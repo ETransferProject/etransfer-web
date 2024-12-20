@@ -18,6 +18,8 @@ export const NO_APPLICATION = 'No application';
 
 export const WALLET_CONNECTION_REQUIRED = 'Wallet connection required';
 
+export const SERVICE_BUSY_TIP = 'The service is busy. Please try again later.';
+
 export enum ListingStep {
   TOKEN_INFORMATION = 0,
   SELECT_CHAIN = 1,

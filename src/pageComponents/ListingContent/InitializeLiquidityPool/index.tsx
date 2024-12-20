@@ -9,7 +9,7 @@ import { CheckFilled16 } from 'assets/images';
 import clsx from 'clsx';
 import { viewTokenAddressInExplore } from 'utils/common';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
-import { getApplicationDetail } from 'utils/api/application';
+import { changeApplicationStatus, getApplicationDetail } from 'utils/api/application';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffectOnce } from 'react-use';
 import { ApplicationChainStatusEnum, TApplicationDetailItemChainTokenInfo } from 'types/api';
@@ -24,13 +24,15 @@ import EmptyDataBox from 'components/EmptyDataBox';
 import {
   LISTING_STEP_PATHNAME_MAP,
   ListingStep,
+  SERVICE_BUSY_TIP,
   WALLET_CONNECTION_REQUIRED,
 } from 'constants/listing';
 import PartialLoading from 'components/PartialLoading';
 import CommonSpace from 'components/CommonSpace';
-import { BUTTON_TEXT_NEXT } from 'constants/misc';
+import { BUTTON_TEXT_SUBMIT } from 'constants/misc';
 import ListingTip from '../ListingTip';
 import DisplayImage from 'components/DisplayImage';
+import { SingleMessage } from '@etransfer/ui-react';
 
 export interface InitializeLiquidityPoolProps {
   id?: string;
@@ -53,6 +55,14 @@ export default function InitializeLiquidityPool({
   onNext,
 }: InitializeLiquidityPoolProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const routeQuery = useMemo(
+    () => ({
+      id: searchParams.get('id'),
+      tokenSymbol: searchParams.get('symbol'),
+    }),
+    [searchParams],
+  );
   const { isPadPX } = useCommonState();
   const { setLoading } = useLoading();
   const { isConnected } = useAelf();
@@ -60,6 +70,11 @@ export default function InitializeLiquidityPool({
   const setAelfAuthFromStorage = useSetAelfAuthFromStorage();
   // Fix: It takes too long to obtain NightElf walletInfo, and the user mistakenly clicks the login button during this period.
   const isLoginButtonLoading = useShowLoginButtonLoading();
+  const currentSymbol = useMemo(
+    () => routeQuery.tokenSymbol || symbol || '',
+    [routeQuery.tokenSymbol, symbol],
+  );
+  const currentId = useMemo(() => routeQuery.id || id || '', [routeQuery.id, id]);
   const [tokenInfo, setTokenInfo] = useState({ symbol: '', limit24HInUsd: '', icon: '' });
   const [tokenPoolList, setTokenPoolList] = useState<TApplicationDetailItemChainTokenInfo[]>([]);
   const [submitDisabled, setSubmitDisable] = useState(true);
@@ -225,34 +240,23 @@ export default function InitializeLiquidityPool({
     [isConnected, router, setAelfAuthFromStorage, setLoading],
   );
 
-  const searchParams = useSearchParams();
-  const routeQuery = useMemo(
-    () => ({
-      id: searchParams.get('id'),
-      tokenSymbol: searchParams.get('symbol'),
-    }),
-    [searchParams],
-  );
-
   const init = useCallback(
     async (isLoading = true) => {
-      if (routeQuery.id && routeQuery.tokenSymbol) {
-        await getData(routeQuery.id, routeQuery.tokenSymbol, isLoading);
-      } else if (id && symbol) {
-        await getData(id, symbol, isLoading);
+      if (currentId && currentSymbol) {
+        await getData(currentId, currentSymbol, isLoading);
       } else {
-        if (routeQuery.tokenSymbol || symbol) {
+        if (currentSymbol) {
           router.replace(
-            `/listing/${LISTING_STEP_PATHNAME_MAP[ListingStep.TOKEN_INFORMATION]}?symbol=${
-              routeQuery.tokenSymbol || symbol
-            }`,
+            `/listing/${
+              LISTING_STEP_PATHNAME_MAP[ListingStep.TOKEN_INFORMATION]
+            }?symbol=${currentSymbol}`,
           );
         } else {
           router.replace(`/listing/${LISTING_STEP_PATHNAME_MAP[ListingStep.TOKEN_INFORMATION]}`);
         }
       }
     },
-    [getData, id, routeQuery.id, routeQuery.tokenSymbol, router, symbol],
+    [currentId, currentSymbol, getData, router],
   );
   const initRef = useRef(init);
   initRef.current = init;
@@ -325,6 +329,19 @@ export default function InitializeLiquidityPool({
     };
   });
 
+  const onSubmit = useCallback(async () => {
+    try {
+      const res = await changeApplicationStatus({ symbol: currentSymbol, id: currentId });
+      if (res) {
+        onNext?.();
+      } else {
+        SingleMessage.error(SERVICE_BUSY_TIP);
+      }
+    } catch (error) {
+      SingleMessage.error(SERVICE_BUSY_TIP);
+    }
+  }, [currentId, currentSymbol, onNext]);
+
   return (
     <div className={styles['initialize-liquidity-pool']}>
       <div className={styles['component-title-wrapper']}>
@@ -347,10 +364,10 @@ export default function InitializeLiquidityPool({
           {renderList}
           <CommonButton
             className={styles['submit-button']}
-            onClick={onNext}
+            onClick={onSubmit}
             size={CommonButtonSize.Small}
             disabled={submitDisabled}>
-            {BUTTON_TEXT_NEXT}
+            {BUTTON_TEXT_SUBMIT}
           </CommonButton>
         </>
       ) : (

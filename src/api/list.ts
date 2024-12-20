@@ -76,6 +76,7 @@ const ApplicationApiList = {
   getMyApplicationList: '/api/etransfer/application/list',
   getApplicationDetail: '/api/etransfer/application/detail',
   getTokenConfig: '/api/etransfer/application/token/config',
+  changeStatus: '/api/etransfer/application/change-status',
 };
 
 const HistoryApiList = {

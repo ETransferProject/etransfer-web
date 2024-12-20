@@ -30,4 +30,6 @@ export const SELECT_CHAIN = 'Select Chain';
 
 export const BUTTON_TEXT_NEXT = 'Next';
 
+export const BUTTON_TEXT_SUBMIT = 'Submit';
+
 export const BUTTON_TEXT_BACK = 'Back';
