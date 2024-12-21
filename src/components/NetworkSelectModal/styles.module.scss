@@ -22,6 +22,8 @@
     }
 
     .ant-drawer-body {
+      display: flex;
+      flex-direction: column;
       padding: 0;
     }
   }
@@ -56,6 +58,8 @@
         }
       }
       .ant-modal-body {
+        display: flex;
+        flex-direction: column;
         padding: 0;
         height: calc(100% - 86px);
       }
@@ -98,7 +102,6 @@
 }
 
 .network-list {
-  height: calc(100% - 48px);
   overflow-y: auto;
 }
 
