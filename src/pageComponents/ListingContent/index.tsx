@@ -15,6 +15,7 @@ import ListingComplete from './ListingComplete';
 import InitializeLiquidityPool from './InitializeLiquidityPool';
 import { getListingUrl } from 'utils/listing';
 import { BUTTON_TEXT_BACK } from 'constants/misc';
+import { isMobileDevices } from 'utils/isMobile';
 
 let globalCanAccessStep = false;
 
@@ -60,6 +61,8 @@ export default function ListingContent() {
   }, [pathname, router]);
 
   useEffect(() => {
+    if (isMobileDevices()) return;
+
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (
         currentStep === ListingStep.TOKEN_INFORMATION ||
