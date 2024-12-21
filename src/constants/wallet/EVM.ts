@@ -1,16 +1,44 @@
 import { Coinbase, Metamask, WalletConnect } from 'assets/images';
+import { BlockchainNetworkType } from 'constants/network';
 
-export const EVM_TO_ADDRESS = '0x08915f275100dfEc26f63624EEACdD41E4040CC0';
-// export const EVM_USDT_CONTRACT_ADDRESS_MAINNET = '0xdac17f958d2ee523a2206206994597c13d831ec7';
-export const EVM_USDT_CONTRACT_ADDRESS_SEPOLIA = '0x60eeCc4d19f65B9EaDe628F2711C543eD1cE6679';
-// export const EVM_ELF_CONTRACT_ADDRESS = '0x8add57b8ad6c291bc3e3fff89f767fca08e0e7ab';
+export const EVM_CREATE_TOKEN_CONTRACT_ADDRESS: Record<string, `0x${string}`> = {
+  [BlockchainNetworkType.Arbitrum]: '0xFe10E8D171E0F5D4984cd9fF391Fe6c3BC36f240',
+  [BlockchainNetworkType.Avax]: '0xFe10E8D171E0F5D4984cd9fF391Fe6c3BC36f240',
+  [BlockchainNetworkType.BASE]: '0xFe10E8D171E0F5D4984cd9fF391Fe6c3BC36f240',
+  [BlockchainNetworkType.Binance]: '0xFe10E8D171E0F5D4984cd9fF391Fe6c3BC36f240',
+  [BlockchainNetworkType.Ethereum]: '0xD6B9b31280c9fd553Ae74100589C64B11ae30CFb',
+  [BlockchainNetworkType.Optimism]: '0xFe10E8D171E0F5D4984cd9fF391Fe6c3BC36f240',
+  [BlockchainNetworkType.Polygon]: '0x36dD3cEF201C9ED13ef65fBbC8eC9BC9A1B297cd',
+  [BlockchainNetworkType.SETH]: '0x6bAbB9f5Ef13B7bf2a7cE65756f9adb3dE84f919',
+  [BlockchainNetworkType.TBinance]: '0xb4C06d88bf9F6C20FD755B35Bb6bAd5ED7c51494',
+};
+
+export enum EVM_CONTRACT_FUNCTION_NAME {
+  transfer = 'transfer',
+  createToken = 'createToken',
+}
+
 export const EVM_TOKEN_ABI = [
   {
     inputs: [
       { internalType: 'address', name: 'recipient', type: 'address' },
       { internalType: 'uint256', name: 'amount', type: 'uint256' },
     ],
-    name: 'transfer',
+    name: EVM_CONTRACT_FUNCTION_NAME.transfer,
+    outputs: [], // { internalType: 'bool', name: '', type: 'bool' }
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+];
+
+export const EVM_CREATE_TOKEN_ABI = [
+  {
+    inputs: [
+      { internalType: 'string', name: 'name', type: 'string' },
+      { internalType: 'string', name: 'symbol', type: 'string' },
+      { internalType: 'uint256', name: 'initialSupply', type: 'uint256' },
+    ],
+    name: EVM_CONTRACT_FUNCTION_NAME.createToken,
     outputs: [], // { internalType: 'bool', name: '', type: 'bool' }
     stateMutability: 'nonpayable',
     type: 'function',

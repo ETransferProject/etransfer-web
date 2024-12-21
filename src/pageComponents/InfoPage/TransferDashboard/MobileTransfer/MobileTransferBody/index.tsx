@@ -9,12 +9,13 @@ import Amount from '../../ColumnComponents/Amount';
 import Time from '../../ColumnComponents/Time';
 import WalletAddress from '../../ColumnComponents/WalletAddress';
 import clsx from 'clsx';
-import EmptyDataBox from 'pageComponents/EmptyDataBox';
+import EmptyDataBox from 'components/EmptyDataBox';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { setSelectedTransfer } from 'store/reducers/infoDashboard/slice';
 import myEvents from 'utils/myEvent';
 import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
 import { BusinessType } from 'types/api';
+import { LOADING_TEXT } from 'constants/misc';
 
 const NoDataText = '-- No Data --';
 
@@ -126,7 +127,7 @@ export default function MobileTransferBody({
           scrollableTarget={'etransferWebWrapper'}
           loader={
             <h4 className={clsx(styles['transfer-loader-message'])}>
-              {hasMore ? ' Loading... ' : NoDataText}
+              {hasMore ? LOADING_TEXT : NoDataText}
             </h4>
           }
           endMessage={<p className={clsx(styles['transfer-end-message'])}>{NoDataText}</p>}>

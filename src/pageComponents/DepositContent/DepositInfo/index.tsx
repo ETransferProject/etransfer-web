@@ -5,7 +5,7 @@ import { CONTRACT_ADDRESS, MINIMUM_DEPOSIT } from 'constants/deposit';
 import { useCommonState, useDepositState } from 'store/Provider/hooks';
 import { QuestionMarkIcon } from 'assets/images';
 import { formatStr2Ellipsis, formatSymbolDisplay } from 'utils/format';
-import ViewContractAddressModal from 'pageComponents/Modal/ViewContractAddressModal';
+import ViewContractAddressModal from 'components/Modal/ViewContractAddressModal';
 import { openWithBlank } from 'utils/common';
 import { valueFixed2LessThanMin } from 'utils/calculate';
 import { CommonModalProps } from 'components/CommonModal';

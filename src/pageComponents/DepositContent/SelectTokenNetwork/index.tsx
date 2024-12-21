@@ -11,7 +11,6 @@ type TSelectTokenNetwork = {
   label: string;
   tokenSelected?: TDepositTokenItem;
   networkSelected?: TNetworkItem;
-  isShowNetworkLoading?: boolean;
   networkSelectCallback: (item: TNetworkItem) => Promise<void>;
   tokenSelectCallback: (item: TDepositTokenItem) => void;
 };
@@ -19,7 +18,6 @@ export default function SelectTokenNetwork({
   label,
   tokenSelected,
   networkSelected,
-  isShowNetworkLoading,
   networkSelectCallback,
   tokenSelectCallback,
 }: TSelectTokenNetwork) {
@@ -36,12 +34,10 @@ export default function SelectTokenNetwork({
         label={label}
         networkList={newFromNetworkList || []}
         selected={networkSelected}
-        isShowLoading={isShowNetworkLoading}
         selectCallback={networkSelectCallback}
       />
       <CommonSpace direction="vertical" size={20} />
       <SelectToken
-        title="Deposit Token"
         tokenList={fromTokenList}
         selected={tokenSelected}
         selectCallback={tokenSelectCallback}

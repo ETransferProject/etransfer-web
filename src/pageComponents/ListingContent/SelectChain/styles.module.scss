@@ -1,0 +1,110 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/breakpoint.scss';
+
+.select-chain-title-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .select-chain-title {
+    @extend .font-family-medium;
+    font-size: 20px;
+    line-height: 28px;
+  }
+}
+
+.select-chain-form {
+  padding: 32px 0 0;
+  :global {
+    .ant-form-item {
+      margin-bottom: 32px;
+      &:has(.ant-form-item-explain) {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+.select-chain-token-row {
+  padding: 9px 12px;
+  border-radius: 6px;
+  background-color: $normal-bg;
+}
+
+.select-chain-checkbox-list {
+  display: flex;
+  gap: 12px;
+}
+
+.select-chain-checkbox-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid $dividers;
+  cursor: pointer;
+
+  &.select-chain-checkbox-item-checked,
+  &.select-chain-checkbox-item-disabled {
+    background-color: $hover-bg;
+  }
+
+  &.select-chain-checkbox-item-disabled {
+    cursor: not-allowed;
+  }
+
+  .select-chain-checkbox-content {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .select-chain-checkbox-label {
+    @extend .font-family-medium;
+  }
+
+  :global {
+    .ant-checkbox-inner,
+    .ant-checkbox::after {
+      border-radius: 4px;
+    }
+  }
+}
+
+.select-chain-chains-label-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.select-chain-initial-supply-label-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.select-chain-label {
+  @extend .font-family-medium;
+}
+
+.select-chain-description {
+  @extend .font-family-regular;
+  color: $secondary-text;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.select-chain-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@include media-mobile {
+  .select-chain-footer {
+    padding-bottom: 32px;
+  }
+}

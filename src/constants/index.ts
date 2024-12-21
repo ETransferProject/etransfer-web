@@ -32,3 +32,5 @@ export const TOKEN_INFO_USDT = {
 };
 
 export const ETRANSFER_WEBSITE_URL = 'https://etransfer.exchange';
+
+export const CONTACT_US_FORM_URL = 'https://form.etransfer.exchange/contact';

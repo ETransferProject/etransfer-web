@@ -17,7 +17,7 @@ import { setSkipCount, setHasMore } from 'store/reducers/records/slice';
 import TxHashBox from 'pageComponents/HistoryContent/TxHashBox';
 import { Fragment, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { COBO_CUSTODY } from 'constants/misc';
+import { COBO_CUSTODY, LOADING_TEXT } from 'constants/misc';
 import CreateTimeBox from 'pageComponents/HistoryContent/CreateTimeBox';
 
 const NoDataText = '-- No Data --';
@@ -70,7 +70,7 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
     } else {
       dispatch(setHasMore(false));
     }
-  }, []);
+  }, [dispatch, hasMore, maxResultCount, requestRecordsList, skipCount, totalCount]);
 
   const router = useRouter();
   const handleClick = useCallback(
@@ -89,7 +89,7 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
         scrollableTarget="scrollableDiv"
         loader={
           <h4 className={clsx(styles['records-loader-message'])}>
-            {hasMore ? ' Loading... ' : NoDataText}
+            {hasMore ? LOADING_TEXT : NoDataText}
           </h4>
         }
         endMessage={

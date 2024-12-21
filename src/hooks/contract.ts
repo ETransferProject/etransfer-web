@@ -4,10 +4,10 @@ import { useCallback } from 'react';
 import { handleWebLoginErrorMessage } from 'utils/api/error';
 import { divDecimals } from 'utils/calculate';
 import { getBalance } from 'utils/contract';
-import { useGetAccount } from './wallet/useAelf';
+import { useGetAelfAccount } from './wallet/useAelf';
 
 export function useGetBalanceDivDecimals() {
-  const accounts = useGetAccount();
+  const accounts = useGetAelfAccount();
 
   return useCallback(
     async (symbol: string, decimals: string | number, chainId: SupportedELFChainId) => {

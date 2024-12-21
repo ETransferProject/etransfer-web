@@ -13,8 +13,14 @@ import { TelegramPlatform } from 'utils/telegram';
 import { useAfterDisconnect } from 'hooks/wallet';
 import { useSetWalletType } from 'hooks/crossChainTransfer';
 
-export default function TRONWalletList() {
-  const { account, isConnected, isConnecting, connect, disconnect } = useTRON();
+export default function TRONWalletList({
+  connectedCallback,
+  disConnectedCallback,
+}: {
+  connectedCallback?: (walletType: WalletTypeEnum) => void;
+  disConnectedCallback?: (walletType: WalletTypeEnum) => void;
+}) {
+  const { account, isConnected, isConnecting, connect, disconnect, walletType } = useTRON();
   const [isShowCopy, setIsShowCopy] = useState(false);
   const isTelegramPlatform = TelegramPlatform.isTelegramPlatform();
   const setWalletType = useSetWalletType();
@@ -22,15 +28,17 @@ export default function TRONWalletList() {
   const onConnect = useCallback(async () => {
     try {
       if (isConnected || isTelegramPlatform) {
-        setWalletType(WalletTypeEnum.TRON);
+        setWalletType(walletType);
+        connectedCallback?.(walletType);
         return;
       }
       await connect();
-      setWalletType(WalletTypeEnum.TRON);
+      setWalletType(walletType);
+      connectedCallback?.(walletType);
     } catch (error) {
       console.log('>>>>>> TRONWalletList onConnect error', error);
     }
-  }, [connect, isConnected, isTelegramPlatform, setWalletType]);
+  }, [connect, connectedCallback, isConnected, isTelegramPlatform, setWalletType, walletType]);
 
   const afterDisconnect = useAfterDisconnect();
   const onDisconnect = useCallback(
@@ -40,9 +48,10 @@ export default function TRONWalletList() {
       const _account = account || '';
       await disconnect();
 
-      afterDisconnect(_account, WalletTypeEnum.TRON);
+      afterDisconnect(_account, walletType);
+      disConnectedCallback?.(walletType);
     },
-    [account, afterDisconnect, disconnect],
+    [account, afterDisconnect, disConnectedCallback, disconnect, walletType],
   );
 
   const renderAccount = useCallback(

@@ -4,7 +4,7 @@ import MobileSelectChain from './MobileSelectChain';
 import { IChainNameItem } from 'constants/index';
 import { useCommonState } from 'store/Provider/hooks';
 import { DeviceSelectChainProps, SelectChainProps } from './types';
-import SynchronizingChainModal from 'pageComponents/Modal/SynchronizingChainModal';
+import SynchronizingChainModal from 'components/Modal/SynchronizingChainModal';
 
 export default function SelectChain({
   title,

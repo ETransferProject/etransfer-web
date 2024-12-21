@@ -4,6 +4,7 @@ import {
   NetworkSelectForMobile,
   TNetworkSelectProps,
 } from 'components/SelectNetwork/NetworkSelect';
+import { SELECT_CHAIN } from 'constants/misc';
 
 export default function NetworkSelectDrawer({
   type,
@@ -18,7 +19,7 @@ export default function NetworkSelectDrawer({
     <CommonDrawer
       destroyOnClose
       placement="bottom"
-      title="Select Network"
+      title={SELECT_CHAIN}
       closable={true}
       height="88%"
       {...props}>

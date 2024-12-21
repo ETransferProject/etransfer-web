@@ -15,7 +15,7 @@ import { formatDIDAddress } from 'utils/aelf/aelfBase';
 import { SupportedELFChainId } from 'constants/index';
 import CommonTooltip from 'components/CommonTooltip';
 import { useCommonState } from 'store/Provider/hooks';
-import { useGetAccount } from 'hooks/wallet/useAelf';
+import { useGetAelfAccount } from 'hooks/wallet/useAelf';
 import NetworkLogo from 'components/NetworkLogo';
 import { COBO_CUSTODY } from 'constants/misc';
 
@@ -37,7 +37,7 @@ export default function AddressBox({
   toChainId,
 }: TAddressBoxProps) {
   const { isPadPX } = useCommonState();
-  const accounts = useGetAccount();
+  const accounts = useGetAelfAccount();
   const chainId = useMemo(() => {
     return type === 'To' ? toChainId : fromChainId;
   }, [fromChainId, toChainId, type]);

@@ -1,6 +1,6 @@
 import { useAppDispatch, useInfoDashboardState } from 'store/Provider/hooks';
 import { Table } from 'antd';
-import EmptyDataBox from 'pageComponents/EmptyDataBox';
+import EmptyDataBox from 'components/EmptyDataBox';
 import { TTransferDashboardData } from 'types/infoDashboard';
 import FromToToken from '../../ColumnComponents/FromToToken';
 import FromToChain from '../../ColumnComponents/FromToChain';

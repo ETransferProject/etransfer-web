@@ -33,6 +33,17 @@
   line-height: 22px;
 }
 
+.left-community-menu {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.left-community-menu-item {
+  cursor: pointer;
+}
+
 .right {
   flex: 10;
   gap: 16px;

@@ -42,8 +42,8 @@ import { SideMenuKey } from 'constants/home';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
-import { useSetAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
-import useAelf, { useInitWallet } from 'hooks/wallet/useAelf';
+import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
+import useAelf, { useInitAelfWallet } from 'hooks/wallet/useAelf';
 import { addAelfNetwork, deleteAelfNetwork } from 'utils/deposit';
 import { AelfChainIdList } from 'constants/chain';
 import { useCheckTxn } from 'hooks/deposit';
@@ -57,7 +57,6 @@ export type TDepositContentProps = {
   qrCodeValue: string;
   tokenLogoUrl?: string;
   showRetry?: boolean;
-  isShowNetworkLoading?: boolean;
   toTokenSelected?: TToTokenItem;
   isCheckTxnLoading?: boolean;
   depositProcessingCount?: number;
@@ -80,7 +79,7 @@ type TGetNetworkData = {
 export default function Content() {
   const dispatch = useAppDispatch();
   const { isPadPX } = useCommonState();
-  useInitWallet();
+  useInitAelfWallet();
   const { depositProcessingCount, transferProcessingCount } = useRecordsState();
   const {
     fromNetwork,
@@ -97,7 +96,6 @@ export default function Content() {
   const isConnectedRef = useRef(isConnected);
   isConnectedRef.current = isConnected;
   const { setLoading } = useLoading();
-  const [isShowNetworkLoading, setIsShowNetworkLoading] = useState(false);
   const fromNetworkRef = useRef<string>();
   const [depositInfo, setDepositInfo] = useState<TDepositInfo>(INIT_DEPOSIT_INFO);
   const [isGetRetry, setIsGetRetry] = useState(false);
@@ -228,7 +226,6 @@ export default function Content() {
   const getNetworkData = useCallback(
     async ({ chainId, symbol, toSymbol }: TGetNetworkData) => {
       try {
-        setIsShowNetworkLoading(true);
         const lastSymbol = symbol || fromTokenSymbol;
         const lastToSymbol = toSymbol || toTokenSymbol;
         const { networkList: networkListOrigin } = await getNetworkList({
@@ -259,7 +256,6 @@ export default function Content() {
         }
         await getDepositData(chainId, lastSymbol, lastToSymbol);
       } catch (error: any) {
-        setIsShowNetworkLoading(false);
         if (isAuthTokenError(error)) {
           is401Ref.current = true;
         } else {
@@ -272,8 +268,6 @@ export default function Content() {
         ) {
           SingleMessage.error(handleErrorMessage(error));
         }
-      } finally {
-        setIsShowNetworkLoading(false);
       }
     },
     [dispatch, fromTokenSymbol, getDepositData, toTokenSymbol],
@@ -454,7 +448,7 @@ export default function Content() {
     [searchParams],
   );
 
-  const setAuthFromStorage = useSetAuthFromStorage();
+  const setAelfAuthFromStorage = useSetAelfAuthFromStorage();
   const init = useCallback(async () => {
     let chainId = toChainItem.key;
     let fromSymbol = fromTokenSymbol;
@@ -497,7 +491,7 @@ export default function Content() {
         fromNetworkRef.current = fromNetwork?.network;
       }
 
-      await setAuthFromStorage();
+      await setAelfAuthFromStorage();
       await sleep(500);
       // get new network data, when refresh page and switch side menu
       await getNetworkData({ chainId, symbol: fromSymbol, toSymbol });
@@ -519,7 +513,7 @@ export default function Content() {
     routeQuery.depositFromNetwork,
     routeQuery.depositToToken,
     routeQuery.tokenSymbol,
-    setAuthFromStorage,
+    setAelfAuthFromStorage,
     setLoading,
     toChainItem.key,
     toTokenSymbol,
@@ -622,7 +616,6 @@ export default function Content() {
       depositInfo={depositInfo}
       qrCodeValue={depositInfo.depositAddress}
       showRetry={showRetry}
-      isShowNetworkLoading={isShowNetworkLoading}
       isCheckTxnLoading={isCheckTxnLoading}
       depositProcessingCount={depositProcessingCount}
       transferProcessingCount={transferProcessingCount}
@@ -645,7 +638,6 @@ export default function Content() {
       depositInfo={depositInfo}
       qrCodeValue={depositInfo.depositAddress}
       showRetry={showRetry}
-      isShowNetworkLoading={isShowNetworkLoading}
       isCheckTxnLoading={isCheckTxnLoading}
       depositProcessingCount={depositProcessingCount}
       transferProcessingCount={transferProcessingCount}

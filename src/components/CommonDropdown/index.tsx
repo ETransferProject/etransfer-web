@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import styles from './styles.module.scss';
 
 export interface CommonDropdownProps extends DropdownProps {
-  getContainer: string;
+  getContainer?: string;
   childrenClassName?: string;
   isBorder?: boolean;
   menu?: Omit<MenuProps, 'onClick'>;

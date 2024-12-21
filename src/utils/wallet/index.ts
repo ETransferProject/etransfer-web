@@ -188,6 +188,16 @@ export function getWalletSourceType(walletType: WalletTypeEnum) {
   }
 }
 
+export function computeWalletSourceType(network: string) {
+  if (network) {
+    const walletType = computeWalletType(network);
+    if (walletType) {
+      return getWalletSourceType(walletType);
+    }
+  }
+  return '';
+}
+
 export const getConnectWalletText = (network?: string) => {
   const walletType = computeWalletType(network || '');
   const walletTypeText = WALLET_TYPE_TEXT[walletType as WalletTypeEnum];
