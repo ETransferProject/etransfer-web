@@ -583,13 +583,23 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     }
   }, [getChainList, getToken, handleBackStep, setAelfAuthFromStorage, setLoading]);
 
-  useEffectOnce(() => {
-    setLoading(true);
+  const connectAndInit = useCallback(() => {
     if (!isAelfConnected || !symbol) {
       handleBackStep();
     } else {
       init();
     }
+  }, [handleBackStep, init, isAelfConnected, symbol]);
+  const connectAndInitRef = useRef(connectAndInit);
+  connectAndInitRef.current = connectAndInit;
+  const connectAndInitSleep = useCallback(async () => {
+    setLoading(true);
+    // Delay 3s to determine the login status, because the login data is acquired slowly, to prevent the login pop-up window from being displayed first and then automatically logging in successfully later.
+    await sleep(3000);
+    connectAndInitRef.current();
+  }, [setLoading]);
+  useEffectOnce(() => {
+    connectAndInitSleep();
   });
 
   const initForLogout = useCallback(async () => {
