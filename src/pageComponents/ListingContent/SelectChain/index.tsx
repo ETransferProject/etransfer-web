@@ -73,6 +73,7 @@ import { isEVMChain, isSolanaChain, isTONChain, isTRONChain } from 'utils/wallet
 import { BUTTON_TEXT_BACK, SELECT_CHAIN } from 'constants/misc';
 import { getListingUrl } from 'utils/listing';
 import { LANG_MAX, ZERO } from 'constants/calculate';
+import { handleInputFocus } from 'utils/common';
 
 interface ISelectChainProps {
   symbol?: string;
@@ -756,6 +757,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
                   </div>
                 }>
                 <Input
+                  id="initialSupplyInput"
                   autoComplete="off"
                   allowClear
                   placeholder={
@@ -764,6 +766,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
                   value={formData[SelectChainFormKeys.INITIAL_SUPPLY]}
                   onInput={handleInitialSupplyInput}
                   onChange={handleInitialSupplyChange}
+                  onFocus={() => handleInputFocus('initialSupplyInput')}
                 />
               </Form.Item>
             )}

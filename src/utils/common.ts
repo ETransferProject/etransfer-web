@@ -1,4 +1,5 @@
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
+import { devices, sleep } from '@portkey/utils';
 import { EXPLORE_CONFIG } from 'constants/index';
 import {
   AelfExploreType,
@@ -8,6 +9,7 @@ import {
   OtherExploreType,
 } from 'constants/network';
 import { isAelfChain } from './wallet';
+import { TelegramPlatform } from './telegram';
 
 export function getAelfExploreLink(data: string, type: AelfExploreType, chainId: TChainId): string {
   const prefix = EXPLORE_CONFIG[chainId];
@@ -124,4 +126,16 @@ export const viewTokenAddressInExplore = (
   address?: string,
 ) => {
   openWithBlank(getTokenAddressExploreHref(network, chainId, address));
+};
+
+export const handleInputFocus = async (id: string) => {
+  const isAndroid = devices.isMobile().android;
+  if (!TelegramPlatform.isTelegramPlatform() && isAndroid) {
+    // The keyboard does not block the input box
+    await sleep(200);
+    document.getElementById(id)?.scrollIntoView({
+      block: 'center',
+      behavior: 'smooth',
+    });
+  }
 };

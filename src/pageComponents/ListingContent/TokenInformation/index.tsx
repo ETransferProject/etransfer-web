@@ -42,6 +42,7 @@ import myEvents from 'utils/myEvent';
 import { getListingUrl } from 'utils/listing';
 import { CONNECT_AELF_WALLET } from 'constants/wallet';
 import { BUTTON_TEXT_NEXT } from 'constants/misc';
+import { handleInputFocus } from 'utils/common';
 
 interface ITokenInformationProps {
   symbol?: string;
@@ -378,13 +379,18 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
     help: formValidateData[key].errorMessage,
   });
 
-  const getCommonInputProps = (key: TokenInformationFormKeys): Partial<InputProps> => ({
-    size: 'large',
-    allowClear: true,
-    autoComplete: 'off',
-    placeholder: TOKEN_INFORMATION_FORM_PLACEHOLDER_MAP[key],
-    value: formValues[key] as string,
-  });
+  const getCommonInputProps = (key: TokenInformationFormKeys): Partial<InputProps> => {
+    const id = `tokenInformationInput_${key}`;
+    return {
+      size: 'large',
+      allowClear: true,
+      autoComplete: 'off',
+      placeholder: TOKEN_INFORMATION_FORM_PLACEHOLDER_MAP[key],
+      value: formValues[key] as string,
+      id,
+      onFocus: () => handleInputFocus(id),
+    };
+  };
 
   const initForLogout = useCallback(async () => {
     reset();
