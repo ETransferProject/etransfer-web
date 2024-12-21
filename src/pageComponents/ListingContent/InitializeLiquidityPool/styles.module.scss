@@ -1,5 +1,6 @@
 @import '/src/assets/theme/breakpoint.scss';
 @import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/constants.scss';
 @import '/src/assets/theme/font.scss';
 
 .component-title-wrapper {
@@ -34,6 +35,11 @@
   @extend .font-family-medium;
 }
 
+.component-title-symbol {
+  word-break: break-all;
+  @include text-overflow(1);
+}
+
 .tip-row-pad {
   font-size: 14px;
   line-height: 22px;
@@ -58,6 +64,11 @@
 
 .balance-amount {
   color: $brand;
+}
+
+.symbol {
+  word-break: break-all;
+  @include text-overflow(1);
 }
 
 .action {

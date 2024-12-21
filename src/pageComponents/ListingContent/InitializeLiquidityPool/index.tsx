@@ -63,7 +63,7 @@ export default function InitializeLiquidityPool({
     }),
     [searchParams],
   );
-  const { isPadPX } = useCommonState();
+  const { isPadPX, isMobilePX } = useCommonState();
   const { setLoading } = useLoading();
   const { isConnected } = useAelf();
   const handleAelfLogin = useAelfLogin();
@@ -118,6 +118,10 @@ export default function InitializeLiquidityPool({
     [],
   );
 
+  const formatBalanceAmount = useCallback((amount: string) => {
+    return formatWithCommas({ amount: parseFloat(Number(amount).toFixed(6)) });
+  }, []);
+
   const renderList = useMemo(() => {
     return (
       <div>
@@ -126,7 +130,7 @@ export default function InitializeLiquidityPool({
             <div
               key={'initialize-liquidity-pool-list-' + index}
               className={styles['initialize-liquidity-pool-item']}>
-              <div className="flex-row-center-between">
+              <div className={isMobilePX ? 'flex-column gap-8' : 'flex-row-center-between gap-8'}>
                 <div className="flex-row-center gap-8">
                   <NetworkLogo network={item.chainId} />
                   <span className={styles['network-name']}>{item.chainName}</span>
@@ -143,19 +147,18 @@ export default function InitializeLiquidityPool({
                     <span>Received&nbsp;</span>
                     <span className={styles['balance-amount']}>
                       {item.balanceAmount
-                        ? formatWithCommas({ amount: item.balanceAmount })
+                        ? formatBalanceAmount(item.balanceAmount)
                         : DEFAULT_NULL_VALUE}
-                      &nbsp;
-                      {formatSymbolDisplay(item.symbol)}
+                      {!isMobilePX && <>&nbsp;{formatSymbolDisplay(item.symbol)}</>}
                     </span>
+                    <span>/</span>
                     <span>
-                      /
                       {item.minAmount
                         ? formatWithCommas({ amount: item.minAmount })
                         : DEFAULT_NULL_VALUE}
                       &nbsp;
-                      {formatSymbolDisplay(item.symbol)}
                     </span>
+                    <span className={styles['symbol']}>{formatSymbolDisplay(item.symbol)}</span>
                   </div>
                 )}
               </div>
@@ -188,7 +191,7 @@ export default function InitializeLiquidityPool({
         })}
       </div>
     );
-  }, [checkIsInitCompleted, handleGoExplore, tokenPoolList]);
+  }, [checkIsInitCompleted, formatBalanceAmount, handleGoExplore, isMobilePX, tokenPoolList]);
 
   const getData = useCallback(
     async (id: string, symbol: string, isLoading = true) => {
@@ -346,16 +349,18 @@ export default function InitializeLiquidityPool({
     <div className={styles['initialize-liquidity-pool']}>
       <div className={styles['component-title-wrapper']}>
         <div className={styles['component-title']}>
-          {`Initialize`}
+          <span>Initialize</span>
           {tokenInfo.symbol && (
             <>
-              <CommonSpace direction={'horizontal'} size={4} />
+              <CommonSpace className="flex-shrink-0" direction={'horizontal'} size={4} />
               <DisplayImage name={formatSymbolDisplay(tokenInfo.symbol)} src={tokenInfo.icon} />
-              <CommonSpace direction={'horizontal'} size={4} />
-              {formatSymbolDisplay(tokenInfo.symbol)}
+              <CommonSpace className="flex-shrink-0" direction={'horizontal'} size={4} />
+              <span className={styles['component-title-symbol']}>
+                {formatSymbolDisplay(tokenInfo.symbol)}
+              </span>
             </>
           )}
-          {` token pool`}
+          <span className="flex-shrink-0">&nbsp;token pool</span>
         </div>
         {tipNode}
       </div>

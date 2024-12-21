@@ -2,13 +2,13 @@ import { Coinbase, Metamask, WalletConnect } from 'assets/images';
 import { BlockchainNetworkType } from 'constants/network';
 
 export const EVM_CREATE_TOKEN_CONTRACT_ADDRESS: Record<string, `0x${string}`> = {
-  [BlockchainNetworkType.Arbitrum]: '0x',
-  [BlockchainNetworkType.Avax]: '0x',
-  [BlockchainNetworkType.BASE]: '0x',
-  [BlockchainNetworkType.Binance]: '0x',
-  [BlockchainNetworkType.Ethereum]: '0x',
-  [BlockchainNetworkType.Optimism]: '0x',
-  [BlockchainNetworkType.Polygon]: '0x',
+  [BlockchainNetworkType.Arbitrum]: '0xFe10E8D171E0F5D4984cd9fF391Fe6c3BC36f240',
+  [BlockchainNetworkType.Avax]: '0xFe10E8D171E0F5D4984cd9fF391Fe6c3BC36f240',
+  [BlockchainNetworkType.BASE]: '0xFe10E8D171E0F5D4984cd9fF391Fe6c3BC36f240',
+  [BlockchainNetworkType.Binance]: '0xFe10E8D171E0F5D4984cd9fF391Fe6c3BC36f240',
+  [BlockchainNetworkType.Ethereum]: '0xD6B9b31280c9fd553Ae74100589C64B11ae30CFb',
+  [BlockchainNetworkType.Optimism]: '0xFe10E8D171E0F5D4984cd9fF391Fe6c3BC36f240',
+  [BlockchainNetworkType.Polygon]: '0x36dD3cEF201C9ED13ef65fBbC8eC9BC9A1B297cd',
   [BlockchainNetworkType.SETH]: '0x6bAbB9f5Ef13B7bf2a7cE65756f9adb3dE84f919',
   [BlockchainNetworkType.TBinance]: '0xb4C06d88bf9F6C20FD755B35Bb6bAd5ED7c51494',
 };

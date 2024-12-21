@@ -108,7 +108,7 @@ export default function MyApplicationTable({
     <Table
       className={styles['my-application-table']}
       size={'large'}
-      rowKey={(row) => row.symbol}
+      rowKey={'id'}
       dataSource={applicationList}
       columns={MyApplicationTableColumns}
       scroll={{ x: 670 }}
