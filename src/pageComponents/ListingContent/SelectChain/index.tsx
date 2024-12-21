@@ -136,7 +136,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     const _token = list.find((item) => item.symbol === symbol);
     if (_token) {
       const tokenInfo = await getApplicationTokenInfo({ symbol });
-      if (tokenInfo) {
+      if (tokenInfo && tokenInfo.symbol) {
         setToken(_token);
       } else {
         throw new Error('Failed to get token info');

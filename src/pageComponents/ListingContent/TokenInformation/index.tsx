@@ -138,7 +138,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
             ...TOKEN_INFORMATION_FORM_INITIAL_VALUES,
             [TokenInformationFormKeys.TOKEN]: token,
           };
-          if (res) {
+          if (res && res.symbol) {
             newFormValues[TokenInformationFormKeys.OFFICIAL_WEBSITE] = res.officialWebsite;
             newFormValues[TokenInformationFormKeys.OFFICIAL_TWITTER] = res.officialTwitter;
             newFormValues[TokenInformationFormKeys.TITLE] = res.title;
