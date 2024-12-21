@@ -129,7 +129,7 @@ export const viewTokenAddressInExplore = (
 };
 
 export const handleInputFocus = async (id: string) => {
-  const isAndroid = devices.isMobile().android;
+  const isAndroid = devices.isMobile().android.device;
   if (!TelegramPlatform.isTelegramPlatform() && isAndroid) {
     // The keyboard does not block the input box
     await sleep(200);

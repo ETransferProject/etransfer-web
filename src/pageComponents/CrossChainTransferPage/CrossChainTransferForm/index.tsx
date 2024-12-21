@@ -12,9 +12,6 @@ import {
   parseWithCommas,
   parseWithStringCommas,
 } from 'utils/format';
-import { TelegramPlatform } from 'utils/telegram';
-import { sleep } from '@etransfer/utils';
-import { devices } from '@portkey/utils';
 import {
   InitialCrossChainTransferState,
   setFromNetwork,
@@ -39,6 +36,7 @@ import { TRANSFER_SEND_RECIPIENT_TIP } from 'constants/crossChainTransfer';
 import CommentFormItemLabel from './CommentFormItemLabel';
 import { computeTokenList, computeToNetworkList } from '../utils';
 import { computeWalletType } from 'utils/wallet';
+import { handleInputFocus } from 'utils/common';
 
 export interface CrossChainTransferFormProps {
   form: FormInstance<TTransferFormValues>;
@@ -80,7 +78,6 @@ export default function CrossChainTransferForm({
   onRecipientAddressChange,
   onRecipientAddressBlur,
 }: CrossChainTransferFormProps) {
-  const isAndroid = devices.isMobile().android;
   const dispatch = useAppDispatch();
   const [{ fromWallet }] = useWallet();
   const {
@@ -335,16 +332,7 @@ export default function CrossChainTransferForm({
                   event.target.value = beforePoint + afterPoint;
                 }
               }}
-              onFocus={async () => {
-                if (!TelegramPlatform.isTelegramPlatform() && isAndroid) {
-                  // The keyboard does not block the input box
-                  await sleep(200);
-                  document.getElementById('inputAmountWrapper')?.scrollIntoView({
-                    block: 'center',
-                    behavior: 'smooth',
-                  });
-                }
-              }}
+              onFocus={() => handleInputFocus('inputAmountWrapper')}
               onChange={(event: any) => {
                 const value = event.target?.value;
                 const valueNotComma = parseWithCommas(value);
