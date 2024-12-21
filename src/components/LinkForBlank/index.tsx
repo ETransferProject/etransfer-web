@@ -8,12 +8,14 @@ interface ILinkForBlankProps {
   element?: ReactNode;
 }
 export default function LinkForBlank({ href, className, ariaLabel, element }: ILinkForBlankProps) {
+  const isExternalLink = !href.startsWith('/');
+  const target = isExternalLink ? '_blank' : '_self';
   return (
     <Link
       href={href}
       passHref
       className={className}
-      target="_blank"
+      target={target}
       aria-label={ariaLabel}
       rel="noopener noreferrer">
       {element}

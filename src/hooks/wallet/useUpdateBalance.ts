@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useGetAccount } from './useAelf';
+import { useGetAelfAccount } from './useAelf';
 import { TTokenItem } from 'types/api';
 // import { SingleMessage } from '@etransfer/ui-react';
 // import { handleErrorMessage } from '@etransfer/utils';
@@ -19,7 +19,7 @@ export function useUpdateBalance() {
   const [decimalsFromWallet, setDecimalsFromWallet] = useState<string | number>('');
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
   const getBalanceTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const accounts = useGetAccount(); // aelf account
+  const accounts = useGetAelfAccount(); // aelf account
 
   const currentToken = useMemo(() => {
     const item = totalTokenList?.find((item) => item.symbol === tokenSymbol);
@@ -33,8 +33,10 @@ export function useUpdateBalance() {
       tokenContractAddress: string,
       network?: string,
       item?: TTokenItem,
-    ) => {
-      if (!network || !fromWallet || !fromWallet?.isConnected) return '0';
+    ): Promise<{ value: string; decimals?: string | number }> => {
+      if (!network || !fromWallet || !fromWallet?.isConnected) {
+        return { value: '0' };
+      }
 
       try {
         const symbol = item?.symbol || tokenSymbol;
@@ -47,7 +49,7 @@ export function useUpdateBalance() {
 
           const chainId = network as SupportedELFChainId;
           const caAddress = accounts?.[chainId];
-          if (!caAddress) return '';
+          if (!caAddress) return { value: '0' };
           isLoading && setIsBalanceLoading(true);
           _balance = await getAelfBalance({
             symbol: symbol,
@@ -66,26 +68,29 @@ export function useUpdateBalance() {
           _formatBalance = divDecimals(_balanceRes.value, _walletDecimals).toFixed(6);
         } else if (isSolanaChain(network)) {
           // Solana
-          if (!tokenContractAddress) return '';
+          if (!tokenContractAddress) return { value: '0' };
           const _balanceRes = await fromWallet?.getBalance({ tokenContractAddress });
           _walletDecimals = _balanceRes.decimals || decimal;
           _formatBalance = divDecimals(_balanceRes.value, _walletDecimals).toFixed(6);
         } else if (isTONChain(network)) {
           // TON
-          if (!tokenContractAddress) return '';
+          if (!tokenContractAddress) return { value: '0' };
           const _balanceRes = await fromWallet?.getBalance({ tokenContractAddress });
           _walletDecimals = _balanceRes.decimals || decimal;
           _formatBalance = divDecimals(_balanceRes.value, _walletDecimals).toFixed(6);
         } else {
           // TRON
-          if (!tokenContractAddress) return '';
+          if (!tokenContractAddress) return { value: '0' };
           const _balanceRes = await fromWallet?.getBalance({ tokenContractAddress });
           _formatBalance = ZERO.plus(_balanceRes.value).toFixed(6);
         }
         const _parseFloat = parseFloat(_formatBalance).toString();
         setBalance(_parseFloat);
         setDecimalsFromWallet(_walletDecimals);
-        return _parseFloat;
+        return {
+          value: _parseFloat,
+          decimals: _walletDecimals,
+        };
       } catch (error) {
         console.log('getBalance error', error);
         return { value: '0' };

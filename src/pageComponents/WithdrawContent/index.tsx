@@ -54,7 +54,7 @@ import {
 import { CommonErrorNameType } from 'api/types';
 import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
 import { handleErrorMessage } from '@etransfer/utils';
-import useAelf, { useGetAccount } from 'hooks/wallet/useAelf';
+import useAelf, { useGetAelfAccount } from 'hooks/wallet/useAelf';
 import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
 import {
   formatSymbolDisplay,
@@ -62,7 +62,7 @@ import {
   parseWithCommas,
   parseWithStringCommas,
 } from 'utils/format';
-import { devices, sleep } from '@portkey/utils';
+import { sleep } from '@portkey/utils';
 import { useWithdraw } from 'hooks/withdraw';
 import { isAuthTokenError, isHtmlError, isWriteOperationError } from 'utils/api/error';
 import myEvents from 'utils/myEvent';
@@ -77,14 +77,14 @@ import { setActiveMenuKey } from 'store/reducers/common/slice';
 import FAQ from 'components/FAQ';
 import { FAQ_WITHDRAW } from 'constants/footer';
 import { PortkeyVersion } from 'constants/wallet/index';
-import { TelegramPlatform } from 'utils/telegram';
-import { useSetAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
+import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
 import WithdrawFooter from './WithdrawFooter';
 import RemainingLimit from './RemainingLimit';
 import CommentFormItemLabel from './CommentFormItemLabel';
 import { BlockchainNetworkType } from 'constants/network';
 import { MEMO_REG } from 'utils/reg';
 import { ProcessingTip } from 'components/Tips/ProcessingTip';
+import { handleInputFocus } from 'utils/common';
 
 enum ValidateStatus {
   Error = 'error',
@@ -117,14 +117,13 @@ const FORM_VALIDATE_DATA = {
 
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
-  const isAndroid = devices.isMobile().android;
   const { isPadPX, isMobilePX } = useCommonState();
   const { depositProcessingCount, withdrawProcessingCount } = useRecordsState();
   const { isConnected } = useAelf();
   const isConnectedRef = useRef(isConnected);
   isConnectedRef.current = isConnected;
   const withdraw = useWithdrawState();
-  const accounts = useGetAccount();
+  const accounts = useGetAelfAccount();
   const { currentSymbol, tokenList, currentChainItem } = useWithdraw();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem || CHAIN_LIST[0]);
   const { setLoading } = useLoading();
@@ -810,10 +809,10 @@ export default function WithdrawContent() {
     [searchParams],
   );
 
-  const setAuthFromStorage = useSetAuthFromStorage();
+  const setAelfAuthFromStorage = useSetAelfAuthFromStorage();
   const init = useCallback(async () => {
     try {
-      await setAuthFromStorage();
+      await setAelfAuthFromStorage();
       await sleep(500);
 
       let newCurrentSymbol = currentSymbol;
@@ -878,7 +877,7 @@ export default function WithdrawContent() {
     routeQuery.chainId,
     routeQuery.tokenSymbol,
     routeQuery.withdrawAddress,
-    setAuthFromStorage,
+    setAelfAuthFromStorage,
     setLoading,
     tokenList,
     withdraw,
@@ -1038,7 +1037,6 @@ export default function WithdrawContent() {
           </div>
         )}
         <SelectChainWrapper
-          mobileTitle="Withdraw from"
           mobileLabel="from"
           webLabel={'Withdraw Assets from'}
           chainChanged={(item: IChainNameItem) => handleChainChanged(item)}
@@ -1195,16 +1193,7 @@ export default function WithdrawContent() {
                       event.target.value = beforePoint + afterPoint;
                     }
                   }}
-                  onFocus={async () => {
-                    if (!TelegramPlatform.isTelegramPlatform() && isAndroid) {
-                      // The keyboard does not block the input box
-                      await sleep(200);
-                      document.getElementById('inputAmountWrapper')?.scrollIntoView({
-                        block: 'center',
-                        behavior: 'smooth',
-                      });
-                    }
-                  }}
+                  onFocus={() => handleInputFocus('inputAmountWrapper')}
                   onChange={(event: any) => {
                     const value = event.target?.value;
                     const valueNotComma = parseWithCommas(value);
@@ -1271,7 +1260,6 @@ export default function WithdrawContent() {
     handleClickProcessingTip,
     handleNetworkChanged,
     handleTokenChange,
-    isAndroid,
     isConnected,
     isNetworkDisable,
     isPadPX,

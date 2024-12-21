@@ -39,6 +39,7 @@ const WithdrawApiList = {
 };
 
 const TransferApiList = {
+  getTokenNetworkRelation: '/api/etransfer/network/tokens',
   getTokenList: '/api/etransfer/token/list',
   getNetworkList: '/api/etransfer/network/list',
   getTransferInfo: '/api/etransfer/transfer/info',
@@ -49,6 +50,35 @@ const TransferApiList = {
   updateTransferOrder: {
     target: '/api/etransfer/transfer',
     baseConfig: { method: 'PUT' },
+  },
+};
+
+const ApplicationApiList = {
+  getTokenList: '/api/etransfer/application/tokens',
+  commitTokenInfo: {
+    target: '/api/etransfer/application/commit-basic-info',
+    baseConfig: { method: 'POST' },
+  },
+  getTokenInfo: '/api/etransfer/application/user-token-access-info',
+  getChainStatus: '/api/etransfer/application/check-chain-access-status',
+  addChain: {
+    target: '/api/etransfer/application/add-chain',
+    baseConfig: { method: 'POST' },
+  },
+  prepareBindIssue: {
+    target: '/api/etransfer/application/prepare-binding-issue',
+    baseConfig: { method: 'POST' },
+  },
+  getIssue: {
+    target: '/api/etransfer/application/issue-binding',
+    baseConfig: { method: 'POST' },
+  },
+  getMyApplicationList: '/api/etransfer/application/list',
+  getApplicationDetail: '/api/etransfer/application/detail',
+  getTokenConfig: '/api/etransfer/application/token/config',
+  changeStatus: {
+    target: '/api/etransfer/application/change-status',
+    baseConfig: { method: 'POST' },
   },
 };
 
@@ -84,6 +114,7 @@ export const EXPAND_APIS = {
   records: HistoryApiList,
   user: UserApiList,
   infoDashboard: InfoDashboard,
+  application: ApplicationApiList,
 };
 
 export type EXPAND_REQ_TYPES = {

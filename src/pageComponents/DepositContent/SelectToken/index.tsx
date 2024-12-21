@@ -1,33 +1,26 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './styles.module.scss';
 import { useAppDispatch, useCommonState, useDepositState } from 'store/Provider/hooks';
-import TokenSelectDrawer from 'components/SelectToken/TokenSelectDrawer';
-import TokenSelectDropdown from 'components/SelectToken/TokenSelectDropdown';
 import { AddBigIcon } from 'assets/images';
 import clsx from 'clsx';
-import { SelectImage } from 'components/SelectToken/TokenCard';
+import DisplayImage from 'components/DisplayImage';
 import { TDepositTokenItem } from 'types/api';
 import { setAddInitOpenTokenModalCount } from 'store/reducers/deposit/slice';
 import DynamicArrow from 'components/DynamicArrow';
 import { formatSymbolDisplay } from 'utils/format';
+import TokenSelectModal from 'components/TokenSelectModal';
 
 type TSelectTokenProps = {
-  title?: string;
   tokenList?: TDepositTokenItem[];
   selected?: TDepositTokenItem;
-  isDisabled?: boolean;
-  isShowLoading?: boolean;
   className?: string;
   onChange?: (item: TDepositTokenItem) => void;
   selectCallback: (item: TDepositTokenItem) => void;
 };
 
 export default function SelectToken({
-  title,
   tokenList,
   selected,
-  isDisabled,
-  isShowLoading,
   className,
   onChange,
   selectCallback,
@@ -86,11 +79,11 @@ export default function SelectToken({
         <div className={styles['select-token-value-row']}>
           {selected?.symbol ? (
             <span className={clsx('flex-row-center', styles['select-token-value-selected'])}>
-              <SelectImage
-                open={true}
-                symbol={symbolFormat}
-                icon={selected.icon}
-                size={isPadPX ? 28 : 24}
+              <DisplayImage
+                name={symbolFormat}
+                src={selected.icon}
+                width={isPadPX ? 28 : 24}
+                height={isPadPX ? 28 : 24}
               />
               <span className={styles['primary']}>{symbolFormat}</span>
               <span className={styles['secondary']}>{selected.name}</span>
@@ -102,29 +95,12 @@ export default function SelectToken({
         </div>
       </div>
 
-      {isPadPX ? (
-        <TokenSelectDrawer
-          open={isShowTokenSelectDropdown}
-          onClose={() => setIsShowTokenSelectDropdown(false)}
-          title={title}
-          tokenList={tokenList}
-          selectedToken={selected?.symbol}
-          isDisabled={isDisabled}
-          isShowLoading={isShowLoading}
-          onSelect={onSelectToken}
-        />
-      ) : (
-        <TokenSelectDropdown
-          className={styles['deposit-token-select-dropdown']}
-          open={isShowTokenSelectDropdown}
-          tokenList={tokenList}
-          selectedToken={selected?.symbol}
-          isDisabled={isDisabled}
-          isShowLoading={isShowLoading}
-          onSelect={onSelectToken}
-          onClose={() => setIsShowTokenSelectDropdown(false)}
-        />
-      )}
+      <TokenSelectModal
+        open={isShowTokenSelectDropdown}
+        onClose={() => setIsShowTokenSelectDropdown(false)}
+        tokenList={tokenList || []}
+        onSelect={onSelectToken}
+      />
     </div>
   );
 }

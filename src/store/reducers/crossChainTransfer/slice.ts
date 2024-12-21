@@ -6,7 +6,7 @@ import {
   TRANSFER_DEFAULT_TO_NETWORK,
 } from 'constants/index';
 import { WalletTypeEnum } from 'context/Wallet/types';
-import { TNetworkItem, TTokenItem } from 'types/api';
+import { TGetTokenNetworkRelationResult, TNetworkItem, TTokenItem } from 'types/api';
 
 export type TCrossChainTransferState = {
   tokenSymbol: string;
@@ -19,6 +19,7 @@ export type TCrossChainTransferState = {
   toNetworkList?: TNetworkItem[];
   totalNetworkList?: TNetworkItem[];
 
+  tokenChainRelation?: TGetTokenNetworkRelationResult;
   recipientAddress?: string;
 
   fromWalletType?: WalletTypeEnum;
@@ -61,6 +62,9 @@ export const CrossChainTransferSlice = createSlice({
     setTotalNetworkList: (state, action: PayloadAction<TNetworkItem[]>) => {
       state.totalNetworkList = action.payload;
     },
+    setTokenChainRelation: (state, action: PayloadAction<TGetTokenNetworkRelationResult>) => {
+      state.tokenChainRelation = action.payload;
+    },
     setRecipientAddress: (state, action: PayloadAction<string | undefined>) => {
       state.recipientAddress = action.payload;
     },
@@ -85,6 +89,7 @@ export const {
   setToNetwork,
   setToNetworkList,
   setTotalNetworkList,
+  setTokenChainRelation,
   setRecipientAddress,
   setFromWalletType,
   setToWalletType,

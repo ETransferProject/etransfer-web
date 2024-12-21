@@ -27,11 +27,13 @@ const Layout = ({
   isShowHeader = false,
   isShowSider = false,
   isShowFooter = false,
+  isFullWidth = false,
 }: {
   children: React.ReactNode;
   isShowHeader?: boolean;
   isShowSider?: boolean;
   isShowFooter?: boolean;
+  isFullWidth?: boolean;
 }) => {
   const pathname = usePathname();
   useEffect((): any => {
@@ -86,11 +88,12 @@ const Layout = ({
         )}>
         {isShowSider && !isPadPX && <Sider />}
         <div
-          className={
+          className={clsx(
             pathname !== '/'
               ? clsx('etransfer-web-content', !isTelegramPlatform && 'etransfer-web-content-not-tg')
-              : 'etransfer-web-notLogin'
-          }>
+              : 'etransfer-web-notLogin',
+            isFullWidth && 'etransfer-web-content-full-width',
+          )}>
           <Suspense fallback={<Loading />}>{children}</Suspense>
         </div>
       </div>

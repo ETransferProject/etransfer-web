@@ -6,6 +6,7 @@ import {
   // DiscordIcon,
   FooterLogo,
   LegalIcon,
+  ListingIcon,
   QuestionMarkLarge,
   TelegramBigIcon,
   TelegramIcon,
@@ -83,16 +84,34 @@ export const FOOTER_CONFIG: TFooterConfig = {
       ],
     },
     {
-      group: 'Contacts',
-      icon: ContactsIcon,
+      group: 'Listing',
+      icon: ListingIcon,
       items: [
         {
-          name: 'Emails',
-          link: 'mailto:contact@etransfer.exchange',
+          name: 'Listing Application',
+          link: '/listing/token-information',
         },
         {
-          name: 'Support',
-          link: 'https://t.me/etransfer_support',
+          name: 'My Applications',
+          link: '/my-applications',
+        },
+      ],
+    },
+    {
+      group: 'Contact Us',
+      icon: ContactsIcon,
+      items: [
+        // {
+        //   name: 'Emails',
+        //   link: 'mailto:contact@etransfer.exchange',
+        // },
+        // {
+        //   name: 'Support',
+        //   link: 'https://t.me/etransfer_support',
+        // },
+        {
+          name: 'Contact Form',
+          link: 'https://form.etransfer.exchange/contact',
         },
       ],
     },

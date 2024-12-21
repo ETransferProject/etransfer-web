@@ -227,7 +227,7 @@ export function useAelfAuthToken() {
   return { getAuth, queryAuth, loginSuccessActive };
 }
 
-export function useSetAuthFromStorage() {
+export function useSetAelfAuthFromStorage() {
   const { connector, walletInfo } = useAelf();
 
   return useCallback(async () => {

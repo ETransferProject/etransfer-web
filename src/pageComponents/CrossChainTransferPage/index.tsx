@@ -15,17 +15,24 @@ import {
   BusinessType,
   NetworkStatus,
   TCrossChainTransferInfo,
+  TGetTokenNetworkRelationResult,
   TGetTransferInfoRequest,
   TNetworkItem,
   TTokenItem,
 } from 'types/api';
-import { getTransferNetworkList, getTokenList, getTransferInfo } from 'utils/api/transfer';
+import {
+  getTransferNetworkList,
+  getTokenList,
+  getTransferInfo,
+  getTokenNetworkRelation,
+} from 'utils/api/transfer';
 import {
   InitialCrossChainTransferState,
   setFromNetwork,
   setFromNetworkList,
   setFromWalletType,
   setRecipientAddress,
+  setTokenChainRelation,
   setTokenList,
   setTokenSymbol,
   setToNetwork,
@@ -34,7 +41,7 @@ import {
   setTotalTokenList,
   setToWalletType,
 } from 'store/reducers/crossChainTransfer/slice';
-import { formatSymbolDisplay, SingleMessage } from '@etransfer/ui-react';
+import { SingleMessage } from '@etransfer/ui-react';
 import {
   handleErrorMessage,
   isAuthTokenError,
@@ -67,16 +74,26 @@ import { useGetAuthTokenFromStorage } from 'hooks/wallet/authToken';
 import { CommonErrorNameType } from 'api/types';
 import { BlockchainNetworkType } from 'constants/network';
 import { isHtmlError } from 'utils/api/error';
+import { formatSymbolDisplay } from 'utils/format';
 
 export default function CrossChainTransferPage() {
   const dispatch = useAppDispatch();
   const { isPadPX } = useCommonState();
   const { setLoading } = useLoading();
   const [{ fromWallet }] = useWallet();
-  const { fromWalletType, fromNetwork, toNetwork, tokenSymbol, totalTokenList } =
-    useCrossChainTransfer();
+  const {
+    fromWalletType,
+    fromNetwork,
+    toNetwork,
+    tokenSymbol,
+    totalTokenList,
+    tokenChainRelation,
+  } = useCrossChainTransfer();
   const fromNetworkRef = useRef<TNetworkItem | undefined>(fromNetwork);
   const toNetworkRef = useRef<TNetworkItem | undefined>(toNetwork);
+  const tokenChainRelationRef = useRef<TGetTokenNetworkRelationResult | undefined>(
+    tokenChainRelation,
+  );
   const tokenSymbolRef = useRef(tokenSymbol);
   const totalTokenListRef = useRef<TTokenItem[]>([]);
   const [form] = Form.useForm<TTransferFormValues>();
@@ -274,6 +291,7 @@ export default function CrossChainTransferPage() {
           fromNetwork: fromNetworkRef.current,
           toNetwork: toNetworkRef.current,
           totalTokenList: totalTokenListRef.current,
+          tokenChainRelation: tokenChainRelationRef.current,
         });
         dispatch(setTokenList(allowTokenList));
 
@@ -340,6 +358,7 @@ export default function CrossChainTransferPage() {
           fromNetworkRef.current,
           networkList,
           totalTokenListRef.current,
+          tokenChainRelationRef.current,
         );
         console.log('computeToNetworkList toNetworkList', toNetworkList);
         dispatch(setToNetworkList(toNetworkList));
@@ -375,6 +394,17 @@ export default function CrossChainTransferPage() {
     routeQuery.toNetwork,
     toNetwork?.network,
   ]);
+
+  const getTokenChainRelation = useCallback(async () => {
+    try {
+      const authToken = await getAuthTokenFromStorage(fromWalletType);
+      const tokenChainRelation = await getTokenNetworkRelation({}, authToken);
+      tokenChainRelationRef.current = tokenChainRelation;
+      dispatch(setTokenChainRelation(tokenChainRelation));
+    } catch (error) {
+      console.log('getTokenChainRelation error', error);
+    }
+  }, [dispatch, fromWalletType, getAuthTokenFromStorage]);
 
   const handleRecipientAddressChange = useCallback(
     (value: string | null) => {
@@ -700,6 +730,7 @@ export default function CrossChainTransferPage() {
 
   const init = useCallback(async () => {
     await getTotalTokenList();
+    await getTokenChainRelation();
     await getNetworkData();
     await getTokenData();
     getAmountUSD();
@@ -709,7 +740,14 @@ export default function CrossChainTransferPage() {
       fromNetworkRef.current?.network || '',
       currentTokenRef.current,
     );
-  }, [getAmountUSD, getBalanceInterval, getNetworkData, getTokenData, getTotalTokenList]);
+  }, [
+    getAmountUSD,
+    getBalanceInterval,
+    getNetworkData,
+    getTokenChainRelation,
+    getTokenData,
+    getTotalTokenList,
+  ]);
   const initRef = useRef(init);
   initRef.current = init;
 

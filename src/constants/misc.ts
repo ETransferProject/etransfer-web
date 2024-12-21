@@ -6,6 +6,8 @@ export const SIGNATURE_MISSING_TIP = 'Signature missing/expired, please log in a
 
 export const GOT_IT = 'Got it';
 
+export const LOADING_TEXT = 'Loading...';
+
 export const API_VERSION = 'v3.0.0';
 
 export const ETRANSFER_LOGO =
@@ -23,3 +25,11 @@ export const DATE_FORMATE = 'YYYY-MM-DD';
 export const DATE_FORMATE_MMM_D_YYYY = 'MMM D, YYYY';
 
 export const TIME_FORMATE_MMM_D_YYYY_HH_mm_ss = 'MMM D, YYYY HH:mm:ss';
+
+export const SELECT_CHAIN = 'Select Chain';
+
+export const BUTTON_TEXT_NEXT = 'Next';
+
+export const BUTTON_TEXT_SUBMIT = 'Submit';
+
+export const BUTTON_TEXT_BACK = 'Back';

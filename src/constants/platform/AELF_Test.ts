@@ -1,6 +1,7 @@
 export const CHAIN_INFO = {
   chainId: 'AELF',
   exploreUrl: 'https://testnet.aelfscan.io/AELF/',
+  exploreDomain: 'https://testnet.aelfscan.io/',
   rpcUrl: 'https://aelf-test-node.aelf.io',
 };
 

@@ -13,7 +13,7 @@ import { TRecordsContentProps } from 'pageComponents/HistoryContent';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
 import moment from 'moment';
 import { useHistoryFilter } from 'hooks/history';
-import SimpleTipModal from 'pageComponents/Modal/SimpleTipModal';
+import SimpleTipModal from 'components/Modal/SimpleTipModal';
 import { END_TIME_FORMAT, START_TIME_FORMAT } from 'constants/records';
 import { DATE_FORMATE } from 'constants/misc';
 import HeaderTab from 'pageComponents/HistoryContent/HeaderTab';

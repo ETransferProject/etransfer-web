@@ -1,6 +1,7 @@
 export const CHAIN_INFO = {
   chainId: 'AELF',
   exploreUrl: 'http://192.168.67.156:8000',
+  exploreDomain: '',
   rpcUrl: 'http://192.168.66.3:8000',
 };
 

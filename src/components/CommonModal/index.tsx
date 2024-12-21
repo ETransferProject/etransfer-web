@@ -6,7 +6,7 @@ import styles from './styles.module.scss';
 
 export type CommonModalProps = Omit<
   ModalProps,
-  'footer' | 'closeIcon' | 'confirmLoading' | 'okButtonProps' | 'okType'
+  'footer' | 'confirmLoading' | 'okButtonProps' | 'okType'
 > & {
   footerClassName?: string;
   cancelText?: string;
@@ -32,11 +32,11 @@ export default function CommonModal({
       width={props.width || 480}
       centered
       zIndex={299}
+      closeIcon={<CloseIcon />}
       {...props}
       className={clsx(styles['common-modal'], className)}
       // To keep the title height by default
       title={props.title || ' '}
-      closeIcon={<CloseIcon />}
       footer={null}>
       {props.children}
       {(!hideCancelButton || !hideOkButton) && (

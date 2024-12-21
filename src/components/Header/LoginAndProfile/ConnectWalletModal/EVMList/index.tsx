@@ -21,8 +21,14 @@ import { isMobileDevices } from 'utils/isMobile';
 import { useAfterDisconnect } from 'hooks/wallet';
 import { useSetWalletType } from 'hooks/crossChainTransfer';
 
-export default function EVMWalletList() {
-  const { account, connect, connectors, connector, disconnect, isConnected } = useEVM();
+export default function EVMWalletList({
+  connectedCallback,
+  disConnectedCallback,
+}: {
+  connectedCallback?: (walletType: WalletTypeEnum) => void;
+  disConnectedCallback?: (walletType: WalletTypeEnum) => void;
+}) {
+  const { account, connect, connectors, connector, disconnect, isConnected, walletType } = useEVM();
   const setWalletType = useSetWalletType();
   const [isConnectLoading, setIsConnectLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -32,7 +38,8 @@ export default function EVMWalletList() {
     async (id: string, index: number) => {
       try {
         if (isConnected) {
-          setWalletType(WalletTypeEnum.EVM);
+          setWalletType(walletType);
+          connectedCallback?.(walletType);
           return;
         }
         const connector = connectors.find((item) => item.id === id);
@@ -41,8 +48,9 @@ export default function EVMWalletList() {
         setActiveIndex(index);
         setIsConnectLoading(true);
         await connect({ connector: connector });
-        setWalletType(WalletTypeEnum.EVM);
+        setWalletType(walletType);
         setIsConnectLoading(false);
+        connectedCallback?.(walletType);
       } catch (error) {
         setIsConnectLoading(false);
         if (
@@ -53,7 +61,7 @@ export default function EVMWalletList() {
         }
       }
     },
-    [connect, connectors, isConnected, setWalletType],
+    [connect, connectedCallback, connectors, isConnected, setWalletType, walletType],
   );
 
   const afterDisconnect = useAfterDisconnect();
@@ -65,9 +73,10 @@ export default function EVMWalletList() {
       // disconnect wallet
       await disconnect();
 
-      afterDisconnect(_account, WalletTypeEnum.EVM);
+      afterDisconnect(_account, walletType);
+      disConnectedCallback?.(walletType);
     },
-    [account, afterDisconnect, disconnect],
+    [account, afterDisconnect, disConnectedCallback, disconnect, walletType],
   );
 
   const handleMouseEnter = useCallback((event: any) => {

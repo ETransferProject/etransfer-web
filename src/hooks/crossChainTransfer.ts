@@ -27,7 +27,7 @@ import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase'
 import { InsufficientAllowanceMessage } from 'constants/withdraw';
 import { WalletInfo } from 'types/wallet';
 import { timesDecimals } from 'utils/calculate';
-import useAelf, { useGetAccount } from './wallet/useAelf';
+import useAelf, { useGetAelfAccount } from './wallet/useAelf';
 import { ADDRESS_MAP, SupportedELFChainId } from 'constants/index';
 import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { ContractType } from 'constants/chain';
@@ -63,7 +63,7 @@ export function useSendTxnFromAelfChain() {
   const getBalanceDivDecimals = useGetBalanceDivDecimals();
   const { setLoading } = useLoading();
   const { walletInfo, connector, callSendMethod, signMessage } = useAelf();
-  const accounts = useGetAccount();
+  const accounts = useGetAelfAccount();
   const { fromNetwork, toNetwork, tokenSymbol, totalTokenList } = useCrossChainTransfer();
   const chainId = useMemo(() => {
     return fromNetwork?.network as SupportedELFChainId;

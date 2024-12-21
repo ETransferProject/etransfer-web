@@ -13,6 +13,7 @@ module.exports = {
       'raw.githubusercontent.com',
       'd.cobo.com',
       'forest-mainnet.s3.ap-northeast-1.amazonaws.com',
+      'forest-testnet.s3.ap-northeast-1.amazonaws.com',
       'cms.etransfer.exchange',
     ],
   },

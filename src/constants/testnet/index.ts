@@ -70,12 +70,12 @@ export const AELF_NODES = {
   tDVW: tDVW_Test.CHAIN_INFO,
 };
 
-// testnet-jenkins
 export const ETransferHost = 'https://test-app.etransfer.exchange';
 export const ETransferAuthHost = 'https://test-app.etransfer.exchange';
 export const WebLoginGraphqlUrl = 'https://test-indexer-api.aefinder.io/api/app/graphql/portkey';
 export const WebLoginServiceUrl = 'https://aa-portkey-test.portkey.finance';
 export const WebLoginConnectUrl = 'https://auth-aa-portkey-test.portkey.finance';
+export const AwakenHost = 'https://test-app.awaken.finance/';
 
 export const ADDRESS_MAP = {
   [SupportedELFChainId.AELF]: {
@@ -93,6 +93,11 @@ export const ADDRESS_MAP = {
 export const EXPLORE_CONFIG = {
   [SupportedChainId.mainChain]: AELF_NODES.AELF.exploreUrl,
   [SupportedChainId.sideChain]: AELF_NODES.tDVW.exploreUrl,
+};
+
+export const EXPLORE_DOMAIN_CONFIG = {
+  [SupportedChainId.mainChain]: AELF_NODES.AELF.exploreDomain,
+  [SupportedChainId.sideChain]: AELF_NODES.tDVW.exploreDomain,
 };
 
 export const SHOW_V_CONSOLE = true;

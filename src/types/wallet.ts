@@ -47,7 +47,7 @@ export interface SendEVMTransactionParams {
   network: string;
   tokenContractAddress: `0x${string}`;
   toAddress: string;
-  tokenAbi: Abi | unknown[];
+  tokenAbi?: Abi | unknown[];
   amount: string;
   decimals: number;
 }
@@ -72,4 +72,18 @@ export interface SendTRONTransactionParams {
   tokenContractAddress: string;
   toAddress: string;
   amount: number; // unit is SUN，1 TRX = 1,000,000 SUN
+}
+
+export interface CreateTokenOnEVMParams {
+  network: string;
+  contractAddress: `0x${string}`;
+  contractAbi?: Abi | unknown[];
+  name: string;
+  symbol: string;
+  initialSupply: number;
+}
+
+export interface GetTransactionOnEVM {
+  txHash: `0x${string}`;
+  network: string;
 }

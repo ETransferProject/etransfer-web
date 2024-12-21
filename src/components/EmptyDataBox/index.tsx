@@ -10,7 +10,7 @@ export default function EmptyDataBox({ emptyText = 'No found' }: TEmptyDataBoxPr
   return (
     <div className={clsx(styles['empty-data-box'])}>
       <EmptyBox />
-      {emptyText}
+      <span className={styles['empty-data-box-text']}>{emptyText}</span>
     </div>
   );
 }

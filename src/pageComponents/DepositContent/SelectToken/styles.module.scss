@@ -42,6 +42,7 @@
         font-size: 18px;
         line-height: 28px;
         @extend .font-family-medium;
+        margin-left: 8px;
         margin-right: 8px;
 
         @include media-web {

@@ -2,7 +2,9 @@ import { TonConnectButton } from '@tonconnect/ui-react';
 import { Button } from 'antd';
 import { useCallback } from 'react';
 import useTON from 'hooks/wallet/useTON';
-import { TON_TO_ADDRESS, TON_USDT_CONTRACT_ADDRESS } from 'constants/wallet/TON';
+
+const TON_TO_ADDRESS = 'UQCNNZ0MlArFSp43oJFkiL37qifa1yZGf9jMnM41gUU35UZV';
+const TON_USDT_CONTRACT_ADDRESS = 'EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs';
 
 export default function TONWallet() {
   const { connect, disconnect, getBalance, sendTransaction } = useTON();

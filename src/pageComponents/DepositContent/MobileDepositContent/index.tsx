@@ -21,7 +21,7 @@ import { FAQ_DEPOSIT } from 'constants/footer';
 import DepositTip from '../DepositTip';
 import CommonButton, { CommonButtonSize } from 'components/CommonButton';
 import { CopySize } from 'components/Copy';
-import useAelf, { useLogin, useShowLoginButtonLoading } from 'hooks/wallet/useAelf';
+import useAelf, { useAelfLogin, useShowLoginButtonLoading } from 'hooks/wallet/useAelf';
 import { CONNECT_AELF_WALLET, UNLOCK } from 'constants/wallet/index';
 import { SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE, TokenType } from 'constants/index';
 import TransferTip from '../TransferTip';
@@ -39,7 +39,6 @@ export default function MobileDepositContent({
   qrCodeValue,
   tokenLogoUrl,
   showRetry = false,
-  isShowNetworkLoading = false,
   fromTokenSelected,
   toTokenSelected,
   isCheckTxnLoading,
@@ -67,7 +66,7 @@ export default function MobileDepositContent({
 
   // login info
   const { isConnected, isLocking } = useAelf();
-  const handleLogin = useLogin();
+  const handleAelfLogin = useAelfLogin();
   // Fix: It takes too long to obtain NightElf walletInfo, and the user mistakenly clicks the login button during this period.
   const isLoginButtonLoading = useShowLoginButtonLoading();
 
@@ -221,7 +220,6 @@ export default function MobileDepositContent({
             tokenSelected={fromTokenSelected}
             tokenSelectCallback={fromTokenChanged}
             networkSelected={fromNetworkSelected}
-            isShowNetworkLoading={isShowNetworkLoading}
             networkSelectCallback={fromNetworkChanged}
           />
 
@@ -269,7 +267,7 @@ export default function MobileDepositContent({
               <CommonSpace direction="vertical" size={24} />
               <CommonButton
                 className={styles['next-button']}
-                onClick={handleLogin}
+                onClick={() => handleAelfLogin()}
                 loading={isLoginButtonLoading}>
                 {isLocking ? UNLOCK : CONNECT_AELF_WALLET}
               </CommonButton>

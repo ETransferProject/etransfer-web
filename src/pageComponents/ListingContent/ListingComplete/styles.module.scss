@@ -1,0 +1,38 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+
+.listing-complete-body {
+  padding: 48px 24px;
+}
+
+.component-title {
+  @extend .font-family-medium;
+  font-size: 20px;
+  line-height: 28px;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 16px;
+  line-height: 24px;
+  @extend .font-family-medium;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.content {
+  font-size: 14px;
+  line-height: 22px;
+  color: $secondary-text;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.transfer-button {
+  padding: 9px 20px;
+  span {
+    font-size: 14px;
+    line-height: 22px;
+    color: $brand;
+  }
+}

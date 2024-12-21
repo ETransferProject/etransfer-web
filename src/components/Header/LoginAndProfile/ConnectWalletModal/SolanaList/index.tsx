@@ -13,8 +13,14 @@ import { TelegramNotice } from '../TelegramNotice';
 import { useAfterDisconnect } from 'hooks/wallet';
 import { useSetWalletType } from 'hooks/crossChainTransfer';
 
-export default function SolanaWalletList() {
-  const { account, connect, isConnected, isConnecting, disconnect } = useSolana();
+export default function SolanaWalletList({
+  connectedCallback,
+  disConnectedCallback,
+}: {
+  connectedCallback?: (walletType: WalletTypeEnum) => void;
+  disConnectedCallback?: (walletType: WalletTypeEnum) => void;
+}) {
+  const { account, connect, isConnected, isConnecting, disconnect, walletType } = useSolana();
   const [isShowCopy, setIsShowCopy] = useState(false);
   const isTelegramPlatform = TelegramPlatform.isTelegramPlatform();
   const setWalletType = useSetWalletType();
@@ -23,20 +29,22 @@ export default function SolanaWalletList() {
     async (name: any) => {
       try {
         if (isConnected || isTelegramPlatform) {
-          setWalletType(WalletTypeEnum.SOL);
+          setWalletType(walletType);
+          connectedCallback?.(walletType);
           return;
         }
         await connect(name);
+        connectedCallback?.(walletType);
       } catch (error) {
         console.log('>>>>>> SolanaWalletList onConnect error', error);
       }
     },
-    [connect, isConnected, isTelegramPlatform, setWalletType],
+    [connect, connectedCallback, isConnected, isTelegramPlatform, setWalletType, walletType],
   );
 
   useEffect(() => {
-    if (isConnected) setWalletType(WalletTypeEnum.SOL);
-  }, [isConnected, setWalletType]);
+    if (isConnected) setWalletType(walletType);
+  }, [isConnected, setWalletType, walletType]);
 
   const afterDisconnect = useAfterDisconnect();
   const onDisconnect = useCallback(
@@ -45,9 +53,10 @@ export default function SolanaWalletList() {
 
       const _account = account || '';
       await disconnect();
-      afterDisconnect(_account, WalletTypeEnum.SOL);
+      afterDisconnect(_account, walletType);
+      disConnectedCallback?.(walletType);
     },
-    [account, afterDisconnect, disconnect],
+    [account, afterDisconnect, disConnectedCallback, disconnect, walletType],
   );
 
   const renderAccount = useCallback(
