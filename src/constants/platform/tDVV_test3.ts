@@ -1,6 +1,7 @@
 export const CHAIN_INFO = {
   chainId: 'tDVV',
   exploreUrl: 'http://192.168.66.113:8000',
+  exploreDomain: '',
   rpcUrl: 'http://192.168.66.241:8000',
 };
 

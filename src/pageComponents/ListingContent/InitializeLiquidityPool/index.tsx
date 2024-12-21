@@ -100,9 +100,12 @@ export default function InitializeLiquidityPool({
     ) : null;
   }, [isPadPX, tokenInfo.limit24HInUsd, tokenInfo.symbol]);
 
-  const handleGoExplore = useCallback((network: string, symbol?: string, address?: string) => {
-    viewTokenAddressInExplore(network, symbol as TChainId, address);
-  }, []);
+  const handleGoExplore = useCallback(
+    (network: string, symbol: string, chainId?: string, address?: string) => {
+      viewTokenAddressInExplore(network, symbol, chainId as TChainId, address);
+    },
+    [],
+  );
 
   const checkIsInitCompleted = useCallback(
     (status: ApplicationChainStatusEnum, balanceAmount: string, minAmount: string) => {
@@ -171,7 +174,12 @@ export default function InitializeLiquidityPool({
                       <span
                         className={styles['action-bold']}
                         onClick={() =>
-                          handleGoExplore(item.chainId, item.symbol, item.tokenContractAddress)
+                          handleGoExplore(
+                            item.chainId,
+                            item.symbol,
+                            item.chainId,
+                            item.tokenContractAddress,
+                          )
                         }>
                         {formatSymbolDisplay(item.symbol)}
                       </span>

@@ -1,6 +1,7 @@
 export const CHAIN_INFO = {
   chainId: 'tDVV',
   exploreUrl: 'https://aelfscan.io/tDVV/',
+  exploreDomain: 'https://aelfscan.io/',
   rpcUrl: 'https://tdvv-public-node.aelf.io',
   // rpcUrl: 'https://aelfscan.io/tDVV/chain',
 };

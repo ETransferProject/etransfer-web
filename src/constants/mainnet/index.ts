@@ -95,6 +95,11 @@ export const EXPLORE_CONFIG = {
   [SupportedChainId.sideChain]: AELF_NODES.tDVV.exploreUrl,
 };
 
+export const EXPLORE_DOMAIN_CONFIG = {
+  [SupportedChainId.mainChain]: AELF_NODES.AELF.exploreDomain,
+  [SupportedChainId.sideChain]: AELF_NODES.tDVV.exploreDomain,
+};
+
 export const SHOW_V_CONSOLE = false;
 
 export enum TransferAllowanceTokens {

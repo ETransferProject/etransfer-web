@@ -1,6 +1,6 @@
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { devices, sleep } from '@portkey/utils';
-import { EXPLORE_CONFIG } from 'constants/index';
+import { EXPLORE_CONFIG, EXPLORE_DOMAIN_CONFIG } from 'constants/index';
 import {
   AelfExploreType,
   BlockchainNetworkType,
@@ -13,12 +13,13 @@ import { TelegramPlatform } from './telegram';
 
 export function getAelfExploreLink(data: string, type: AelfExploreType, chainId: TChainId): string {
   const prefix = EXPLORE_CONFIG[chainId];
+  const domainPrefix = EXPLORE_DOMAIN_CONFIG[chainId];
   switch (type) {
     case AelfExploreType.transaction: {
       return `${prefix}tx/${data}`;
     }
     case AelfExploreType.token: {
-      return `${prefix}multiChain/token/${data}`;
+      return `${domainPrefix}multiChain/token/${data}`;
     }
     case AelfExploreType.block: {
       return `${prefix}block/${data}`;
@@ -104,11 +105,12 @@ export const getTxExploreHref = (
 
 export const getTokenAddressExploreHref = (
   network: string,
+  symbol: string,
   chainId?: TChainId,
   address?: string,
 ) => {
   if (isAelfChain(network) && chainId) {
-    return getAelfExploreLink(chainId, AelfExploreType.token, chainId);
+    return getAelfExploreLink(symbol, AelfExploreType.token, chainId);
   }
   if (address) {
     return getOtherExploreLink(
@@ -122,10 +124,11 @@ export const getTokenAddressExploreHref = (
 
 export const viewTokenAddressInExplore = (
   network: string,
+  symbol: string,
   chainId?: TChainId,
   address?: string,
 ) => {
-  openWithBlank(getTokenAddressExploreHref(network, chainId, address));
+  openWithBlank(getTokenAddressExploreHref(network, symbol, chainId, address));
 };
 
 export const handleInputFocus = async (id: string) => {
