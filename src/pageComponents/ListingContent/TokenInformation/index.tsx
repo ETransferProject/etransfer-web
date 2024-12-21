@@ -146,10 +146,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
             newFormValues[TokenInformationFormKeys.TELEGRAM_HANDLER] = res.telegramHandler;
             newFormValues[TokenInformationFormKeys.EMAIL] = res.email;
           }
-          const newFormValidateData = {
-            ...TOKEN_INFORMATION_FORM_INITIAL_VALIDATE_DATA,
-            [TokenInformationFormKeys.TOKEN]: formValidateData[TokenInformationFormKeys.TOKEN],
-          };
+          const newFormValidateData = TOKEN_INFORMATION_FORM_INITIAL_VALIDATE_DATA;
           setFormValues(newFormValues);
           setFormValidateData(newFormValidateData);
           judgeIsButtonDisabled(newFormValues, newFormValidateData, _tokenConfig);
@@ -158,7 +155,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
         console.error(error);
       }
     },
-    [formValidateData, judgeIsButtonDisabled],
+    [judgeIsButtonDisabled],
   );
 
   const init = useCallback(async () => {
@@ -220,7 +217,8 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
     async (item: TTokenItem) => {
       setLoading(true);
       const list = await getTokenList();
-      const newItem = list.find((v) => v.symbol === item.symbol);
+      const currentList = list.length > 0 ? list : tokenList;
+      const newItem = currentList.find((v) => v.symbol === item.symbol);
       if (newItem) {
         handleFormDataChange({
           formKey: TokenInformationFormKeys.TOKEN,
@@ -230,10 +228,10 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
             errorMessage: '',
           },
         });
-        router.replace(getListingUrl(ListingStep.TOKEN_INFORMATION, { symbol: item.symbol }));
-        const config = await getTokenConfig(item.symbol);
+        router.replace(getListingUrl(ListingStep.TOKEN_INFORMATION, { symbol: newItem.symbol }));
+        const config = await getTokenConfig(newItem.symbol);
         if (config) {
-          await getTokenInfo(item.symbol, list, config);
+          await getTokenInfo(newItem.symbol, currentList, config);
         }
       } else {
         handleFormDataChange({
@@ -245,9 +243,18 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
           },
         });
       }
+      setTokenList(currentList);
       setLoading(false);
     },
-    [handleFormDataChange, router, setLoading, getTokenConfig, getTokenInfo, getTokenList],
+    [
+      router,
+      tokenList,
+      setLoading,
+      getTokenList,
+      getTokenConfig,
+      getTokenInfo,
+      handleFormDataChange,
+    ],
   );
 
   const handleCommonInputChange = useCallback(
