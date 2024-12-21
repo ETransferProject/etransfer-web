@@ -63,7 +63,7 @@
   margin-top: 16px;
   :global {
     .ant-steps-item-title {
-      font-size: 14px;
+      font-size: 14px !important;
     }
   }
 }
