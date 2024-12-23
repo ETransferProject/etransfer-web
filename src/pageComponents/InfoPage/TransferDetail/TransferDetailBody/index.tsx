@@ -64,13 +64,11 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
       )}
 
       <div className={styles['detail-item']}>
-        <div className={styles['detail-label']}>Transaction Fee</div>
+        <div className={styles['detail-label']}>Fee</div>
         <div className={clsx(styles['detail-value'], styles['detail-value-fee'])}>
           {props.status === TOrderStatus.Failed
             ? DEFAULT_NULL_VALUE
-            : props.orderType === BusinessType.Withdraw || props.orderType === BusinessType.Transfer
-            ? `${props.toFeeInfo[0]?.amount} ${formatSymbolDisplay(props.toFeeInfo[0]?.symbol)}`
-            : 'Free'}
+            : `${props.toFeeInfo[0]?.amount} ${formatSymbolDisplay(props.toFeeInfo[0]?.symbol)}`}
         </div>
       </div>
 

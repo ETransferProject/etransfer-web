@@ -1,4 +1,4 @@
-import { GOT_IT } from 'constants/misc';
+import { GOT_IT, TIPS } from 'constants/misc';
 import styles from './styles.module.scss';
 import CommonModalTip from 'components/Tips/CommonModalTip';
 
@@ -23,7 +23,7 @@ export default function SynchronizingChainModal({
       getContainer="body"
       open={open}
       closable={true}
-      title="Tips"
+      title={TIPS}
       okText={GOT_IT}
       onOk={onOk}
       onCancel={onCancel}>

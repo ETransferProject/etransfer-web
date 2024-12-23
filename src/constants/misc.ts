@@ -33,3 +33,7 @@ export const BUTTON_TEXT_NEXT = 'Next';
 export const BUTTON_TEXT_SUBMIT = 'Submit';
 
 export const BUTTON_TEXT_BACK = 'Back';
+
+export const TIPS = 'Tips';
+
+export const NOTICE = 'Notice';

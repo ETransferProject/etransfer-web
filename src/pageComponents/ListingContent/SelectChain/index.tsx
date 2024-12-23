@@ -14,7 +14,7 @@ import CommonTooltipSwitchModal, {
   ICommonTooltipSwitchModalRef,
 } from 'components/CommonTooltipSwitchModal';
 import TokenRow from '../TokenRow';
-import ListingTip from '../ListingTip';
+import CommonTip from '../../../components/CommonTip';
 import CreationProgressModal, { ICreationProgressModalProps } from './CreationProgressModal';
 import {
   TSelectChainFormValues,
@@ -70,7 +70,7 @@ import { CONNECT_WALLET, MY_WALLET } from 'constants/wallet';
 import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
 import { WalletTypeEnum } from 'context/Wallet/types';
 import { isEVMChain, isSolanaChain, isTONChain, isTRONChain } from 'utils/wallet';
-import { BUTTON_TEXT_BACK, SELECT_CHAIN } from 'constants/misc';
+import { BUTTON_TEXT_BACK, SELECT_CHAIN, TIPS } from 'constants/misc';
 import { getListingUrl } from 'utils/listing';
 import { LANG_MAX, ZERO } from 'constants/calculate';
 import { handleInputFocus } from 'utils/common';
@@ -706,11 +706,11 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
           <span className={styles['select-chain-title']}>
             {LISTING_STEP_ITEMS[ListingStep.SELECT_CHAIN].title}
           </span>
-          <ListingTip
+          <CommonTip
             title="Chain Guide"
             tip={
               <>
-                <p>Tips:</p>
+                <p>{TIPS}:</p>
                 <ul className="list-style-decimal">
                   <li>Please select at least one aelf chain and one other chain.</li>
                   <li>

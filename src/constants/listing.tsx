@@ -20,6 +20,9 @@ export const WALLET_CONNECTION_REQUIRED = 'Wallet connection required';
 
 export const SERVICE_BUSY_TIP = 'The service is busy. Please try again later.';
 
+export const LISTING_TOKEN_TIP =
+  'Only tokens owned by your connected aelf wallet are displayed here.';
+
 export enum ListingStep {
   TOKEN_INFORMATION = 0,
   SELECT_CHAIN = 1,

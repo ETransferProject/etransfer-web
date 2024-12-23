@@ -8,6 +8,7 @@ import { CheckFilled16, CloseFilled16 } from 'assets/images';
 import { TTokenConfig, TTokenItem } from 'types/listing';
 import { AwakenHost } from 'constants/index';
 import styles from './styles.module.scss';
+import { LISTING_TOKEN_TIP } from 'constants/listing';
 
 interface ITokenSelectProps {
   className?: string;
@@ -88,6 +89,7 @@ export default function TokenSelect({
         hideAddToken
         open={isShowTokenSelectModal}
         tokenList={tokenList}
+        remindContent={LISTING_TOKEN_TIP}
         onSelect={onSelectToken}
         onClose={() => setIsShowTokenSelectModal(false)}
       />

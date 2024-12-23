@@ -10,6 +10,7 @@ import { AddBlueIcon, SearchIcon } from 'assets/images';
 import { useCommonState } from 'store/Provider/hooks';
 import { useRouter } from 'next/navigation';
 import styles from './styles.module.scss';
+import Remind, { RemindType } from 'components/Remind';
 
 type TToken<T> = T & {
   name: string;
@@ -22,6 +23,7 @@ export interface TokenSelectModalProps<T> {
   open: boolean;
   hideAddToken?: boolean;
   tokenList: TToken<T>[];
+  remindContent?: string;
   onSelect: (item: TToken<T>) => Promise<void>;
   onClose: () => void;
 }
@@ -34,6 +36,7 @@ export default function TokenSelectModal<T>({
   open = false,
   hideAddToken = false,
   tokenList,
+  remindContent,
   onSelect,
   onClose,
 }: TokenSelectModalProps<T>) {
@@ -70,6 +73,11 @@ export default function TokenSelectModal<T>({
             onChange={(e) => setSearchKeyword(e.target.value)}
           />
         </div>
+        {remindContent && (
+          <Remind className={styles['token-tip']} type={RemindType.INFO} isCard isBorder={false}>
+            {remindContent}
+          </Remind>
+        )}
         <div className={styles['token-list']}>
           {filteredTokenList.map((item, index) => {
             return (

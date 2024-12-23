@@ -147,3 +147,10 @@
     color: $brand;
   }
 }
+
+.token-tip {
+  margin: 0 24px;
+  @include media-mobile {
+    margin: 0 16px;
+  }
+}

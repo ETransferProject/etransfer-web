@@ -1,20 +1,20 @@
 @import '/src/assets/theme/color.scss';
 @import '/src/assets/theme/font.scss';
 
-.tip-title {
+.common-tip-title {
   display: flex;
   align-items: center;
   gap: 4px;
   cursor: pointer;
 }
 
-.tip-title-icon {
+.common-tip-title-icon {
   path {
     fill: $secondary-text;
   }
 }
 
-.tip-title-text {
+.common-tip-title-text {
   font-size: 14px;
   line-height: 22px;
   font-weight: $font-family-medium-weight;
