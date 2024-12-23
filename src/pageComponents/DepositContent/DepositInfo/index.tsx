@@ -40,7 +40,7 @@ export default function DepositInfo({
   return (
     <div className={'flex-column'}>
       {!!serviceFee && (
-        <div className={clsx('flex', styles['info-line'])}>
+        <div className={clsx('flex-row-start', styles['info-line'])}>
           <div className={clsx('flex-row-center gap-4', styles['info-title'])}>
             {SERVICE_FEE}
             <CommonTip
