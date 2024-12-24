@@ -202,7 +202,7 @@ export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProp
         dataIndex: 'feeInfo',
         key: 'feeInfo',
         render: (feeInfo: TFeeInfoType[], record: TRecordsTableListType) => {
-          return <FeeInfo feeInfo={feeInfo} status={record.status} />;
+          return <FeeInfo feeInfo={feeInfo} status={record.status} orderType={record.orderType} />;
         },
       },
     ];
