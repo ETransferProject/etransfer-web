@@ -49,7 +49,7 @@ export default function Address() {
     <div className={styles['wallet-aelf-address']}>
       <div className={styles['wallet-aelf-address-divider']} />
       <div className="flex-column gap-4">
-        {accountsList.map((item, index) => (
+        {accountsList?.map((item, index) => (
           <div
             className={clsx('flex-column', styles['wallet-aelf-address-item'])}
             key={item.key + index}

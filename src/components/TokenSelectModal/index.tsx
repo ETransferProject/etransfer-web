@@ -79,7 +79,7 @@ export default function TokenSelectModal<T>({
           </Remind>
         )}
         <div className={styles['token-list']}>
-          {filteredTokenList.map((item, index) => {
+          {filteredTokenList?.map((item, index) => {
             return (
               <div
                 key={'TokenSelectModal-item-' + index}
@@ -105,7 +105,7 @@ export default function TokenSelectModal<T>({
         )}
       </>
     );
-  }, [filteredTokenList, onSelect, searchKeyword, handleAddToken, hideAddToken]);
+  }, [searchKeyword, remindContent, filteredTokenList, hideAddToken, handleAddToken, onSelect]);
 
   if (isPadPX) {
     return (

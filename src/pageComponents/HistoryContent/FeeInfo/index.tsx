@@ -13,7 +13,7 @@ type TFeeInfoProps = {
   orderType: BusinessType;
 };
 
-export default function FeeInfo({ feeInfo, status, orderType }: TFeeInfoProps) {
+export default function FeeInfo({ feeInfo = [], status, orderType }: TFeeInfoProps) {
   const { isPadPX } = useCommonState();
 
   if (status === TOrderStatus.Failed) {
@@ -30,7 +30,7 @@ export default function FeeInfo({ feeInfo, status, orderType }: TFeeInfoProps) {
         styles['fee-info-wrapper'],
         isPadPX ? styles['mobile-fee-info-wrapper'] : styles['web-fee-info-wrapper'],
       )}>
-      {feeInfo.map((item, index) => {
+      {feeInfo?.map((item, index) => {
         return (
           <span className={styles['fee-info-item-wrapper']} key={item.symbol}>
             {index !== 0 && <span className={styles['fee-info-item-add']}>+</span>}
