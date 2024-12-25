@@ -292,6 +292,8 @@ export default function WebContent({
           contractAddress={contractAddress}
           contractAddressLink={contractAddressLink}
           minAmountUsd={depositInfo.minAmountUsd || ''}
+          serviceFee={depositInfo.serviceFee || ''}
+          serviceFeeUsd={depositInfo.serviceFeeUsd || ''}
         />
         <CommonSpace direction="vertical" size={24} />
         {renderDepositDescription}

@@ -3,7 +3,7 @@ import { Form, Input, InputProps } from 'antd';
 import { useRouter } from 'next/navigation';
 import ConnectWalletAndAddress from 'components/ConnectWalletAndAddress';
 import CommonButton, { CommonButtonSize } from 'components/CommonButton';
-import ListingTip from '../ListingTip';
+import CommonTip from '../../../components/CommonTip';
 import TokenSelect from './TokenSelect';
 import useAelf, { useAelfLogin } from 'hooks/wallet/useAelf';
 import { TCommitTokenInfoRequest } from 'types/api';
@@ -427,7 +427,7 @@ export default function TokenInformation({ symbol, handleNextStep }: ITokenInfor
           {LISTING_STEP_ITEMS[ListingStep.TOKEN_INFORMATION].title}
         </span>
         {tokenConfig?.liquidityInUsd && typeof tokenConfig?.holders !== 'undefined' && (
-          <ListingTip
+          <CommonTip
             title="Token Requirements"
             tip={
               <>

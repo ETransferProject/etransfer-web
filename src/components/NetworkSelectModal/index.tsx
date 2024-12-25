@@ -69,7 +69,7 @@ export default function NetworkSelectModal<T extends TNetwork | TNetworkItem>({
           </Remind>
         )}
         <div className={styles['network-list']}>
-          {filteredNetworkList.map((item, index) => {
+          {filteredNetworkList?.map((item, index) => {
             return (
               <div
                 key={'NetworkSelectModal-item-' + index}

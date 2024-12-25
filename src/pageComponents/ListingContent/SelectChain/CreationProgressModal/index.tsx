@@ -6,7 +6,7 @@ import CommonModal from 'components/CommonModal';
 import CommonSteps, { ICommonStepsProps } from 'components/CommonSteps';
 import Remind, { RemindType } from 'components/Remind';
 import CommonButton, { CommonButtonType } from 'components/CommonButton';
-import ListingTip from 'pageComponents/ListingContent/ListingTip';
+import CommonTip from 'components/CommonTip';
 import { useCommonState } from 'store/Provider/hooks';
 import { useGetAllConnectedWalletAccount } from 'hooks/wallet';
 import useEVM from 'hooks/wallet/useEVM';
@@ -20,6 +20,7 @@ import {
 } from 'types/api';
 import { EVM_CREATE_TOKEN_CONTRACT_ADDRESS } from 'constants/wallet/EVM';
 import styles from './styles.module.scss';
+import { TIPS } from 'constants/misc';
 
 export interface ICreationProgressModalProps {
   open: boolean;
@@ -376,11 +377,11 @@ export default function CreationProgressModal({
       title: (
         <div className={styles['creation-progress-title-wrapper']}>
           <span className={styles['creation-progress-title']}>Token Creation in Progress</span>
-          <ListingTip
-            modalTitle={isPadPX ? 'Tips' : ''}
+          <CommonTip
+            modalTitle={isPadPX ? TIPS : ''}
             tip={
               <>
-                {!isPadPX && <p>Tips:</p>}
+                {!isPadPX && <p>{TIPS}:</p>}
                 <ul className="list-style-decimal">
                   <li>
                     Please approve the transaction in your wallet to create tokens on each chain.

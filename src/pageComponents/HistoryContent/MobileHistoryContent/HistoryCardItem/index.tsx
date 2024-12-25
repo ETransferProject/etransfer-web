@@ -196,7 +196,7 @@ export default function HistoryCardItem({ requestRecordsList }: TRecordsBodyProp
                   />
                 </div>
                 <div className={styles['records-card-item-Fee']}>
-                  <span className={styles['records-card-item-label']}>Transaction Fee</span>
+                  <span className={styles['records-card-item-label']}>Fee</span>
                   <FeeInfo
                     feeInfo={recordItem.feeInfo}
                     status={recordItem.status}

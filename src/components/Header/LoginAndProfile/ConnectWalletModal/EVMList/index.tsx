@@ -135,7 +135,7 @@ export default function EVMWalletList({
   return (
     <div>
       <div className={styles['wallet-list-title']}>{CONNECT_EVM_LIST_CONFIG.section}</div>
-      {walletList.map((item, index) => {
+      {walletList?.map((item, index) => {
         const Icon = item.icon;
         return (
           <div

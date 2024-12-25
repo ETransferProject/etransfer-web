@@ -30,7 +30,7 @@ import {
 import PartialLoading from 'components/PartialLoading';
 import CommonSpace from 'components/CommonSpace';
 import { BUTTON_TEXT_SUBMIT } from 'constants/misc';
-import ListingTip from '../ListingTip';
+import CommonTip from '../../../components/CommonTip';
 import DisplayImage from 'components/DisplayImage';
 import { SingleMessage } from '@etransfer/ui-react';
 
@@ -81,7 +81,7 @@ export default function InitializeLiquidityPool({
 
   const tipNode = useMemo(() => {
     return tokenInfo.symbol && tokenInfo.limit24HInUsd ? (
-      <ListingTip
+      <CommonTip
         title="Transfer limits"
         tip={
           <>

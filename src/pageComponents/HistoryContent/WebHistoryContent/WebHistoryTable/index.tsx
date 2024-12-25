@@ -198,7 +198,7 @@ export default function WebRecordsTable({ requestRecordsList }: TRecordsBodyProp
         },
       },
       {
-        title: 'Transaction Fee',
+        title: 'Fee',
         dataIndex: 'feeInfo',
         key: 'feeInfo',
         render: (feeInfo: TFeeInfoType[], record: TRecordsTableListType) => {
