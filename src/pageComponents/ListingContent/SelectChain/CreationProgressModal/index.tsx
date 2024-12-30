@@ -191,7 +191,7 @@ export default function CreationProgressModal({
           contractAddress: EVM_CREATE_TOKEN_CONTRACT_ADDRESS[chain.chainId],
           name: chain.tokenName,
           symbol: chain.symbol,
-          initialSupply: Number(supply),
+          initialSupply: supply,
         });
         if (!txHash) {
           throw new Error('Failed to create token');

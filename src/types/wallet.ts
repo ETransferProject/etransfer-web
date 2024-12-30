@@ -80,7 +80,7 @@ export interface CreateTokenOnEVMParams {
   contractAbi?: Abi | unknown[];
   name: string;
   symbol: string;
-  initialSupply: number;
+  initialSupply: string;
 }
 
 export interface GetTransactionOnEVM {

@@ -259,21 +259,19 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
 
   const judgeIsButtonDisabled = useCallback(() => {
     const isDisabled =
-      (judgeIsTokenError() ||
-        judgeIsChainsError({
-          aelfChains: formData[SelectChainFormKeys.AELF_CHAINS],
-          otherChains: formData[SelectChainFormKeys.OTHER_CHAINS],
-        }) ||
-        judgeIsInitialSupplyError({
-          _isShowInitialSupplyFormItem: isShowInitialSupplyFormItem,
-          value: formData[SelectChainFormKeys.INITIAL_SUPPLY],
-          validateStatus: formValidateData[SelectChainFormKeys.INITIAL_SUPPLY].validateStatus,
-        })) &&
-      unconnectedWallets.length === 0;
+      judgeIsTokenError() ||
+      judgeIsChainsError({
+        aelfChains: formData[SelectChainFormKeys.AELF_CHAINS],
+        otherChains: formData[SelectChainFormKeys.OTHER_CHAINS],
+      }) ||
+      judgeIsInitialSupplyError({
+        _isShowInitialSupplyFormItem: isShowInitialSupplyFormItem,
+        value: formData[SelectChainFormKeys.INITIAL_SUPPLY],
+        validateStatus: formValidateData[SelectChainFormKeys.INITIAL_SUPPLY].validateStatus,
+      });
 
     setIsButtonDisabled(isDisabled);
   }, [
-    unconnectedWallets,
     formData,
     judgeIsTokenError,
     judgeIsChainsError,
@@ -531,7 +529,7 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
     };
 
     if (unissuedOtherChains.length !== 0 || issuingOtherChains.length !== 0) {
-      if (unconnectedWallets.length > 0) {
+      if (unconnectedWallets.length > 0 && !isButtonDisabled) {
         props = {
           children: `Connect ${unconnectedWallets.join(', ')} Wallet${
             unconnectedWallets.length > 1 ? 's' : ''
@@ -559,10 +557,11 @@ export default function SelectChain({ symbol, handleNextStep, handlePrevStep }: 
   }, [
     unissuedOtherChains.length,
     issuingOtherChains.length,
+    formData,
     rejectedEnabledOtherChains.length,
     issuedChains,
-    formData,
     unconnectedWallets,
+    isButtonDisabled,
     handleConnectWallets,
     handleCreateToken,
     handleAddChain,
