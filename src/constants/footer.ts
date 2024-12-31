@@ -6,7 +6,7 @@ import {
   // DiscordIcon,
   FooterLogo,
   LegalIcon,
-  ListingIcon,
+  // ListingIcon,
   QuestionMarkLarge,
   TelegramBigIcon,
   TelegramIcon,
@@ -83,20 +83,20 @@ export const FOOTER_CONFIG: TFooterConfig = {
         },
       ],
     },
-    {
-      group: 'Listing',
-      icon: ListingIcon,
-      items: [
-        {
-          name: 'Listing Application',
-          link: '/listing/token-information',
-        },
-        {
-          name: 'My Applications',
-          link: '/my-applications',
-        },
-      ],
-    },
+    // {
+    //   group: 'Listing',
+    //   icon: ListingIcon,
+    //   items: [
+    //     {
+    //       name: 'Listing Application',
+    //       link: '/listing/token-information',
+    //     },
+    //     {
+    //       name: 'My Applications',
+    //       link: '/my-applications',
+    //     },
+    //   ],
+    // },
     {
       group: 'Contact Us',
       icon: ContactsIcon,

@@ -34,7 +34,7 @@ const SearchByTokenName = 'Search by token name';
 export default function TokenSelectModal<T>({
   className,
   open = false,
-  hideAddToken = false,
+  hideAddToken = true,
   tokenList,
   remindContent,
   onSelect,
