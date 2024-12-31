@@ -1,6 +1,7 @@
 import { Button } from 'antd';
 import { useCallback } from 'react';
 import useSolana from 'hooks/wallet/useSolana';
+import SolanaCreateToken from 'components/SolCreateToken';
 
 const SOL_USDT_TOKEN_ADDRESS = 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'; // Mainnet USDT
 const SOL_TO_ADDRESS = 'E4dh4YjnEihsu8MnfnnCmK16ADd9BNcwDoE1Y6jtdmeV';
@@ -57,6 +58,7 @@ export default function SolanaWallet() {
 
   return (
     <div>
+      <SolanaCreateToken />
       {!isConnected ? (
         <>
           {/* <WalletMultiButton />

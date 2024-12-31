@@ -16,13 +16,14 @@ import { SingleMessage } from '@etransfer/ui-react';
 import { handleErrorMessage } from '@etransfer/utils';
 import { USER_REJECT_CONNECT_WALLET_TIP } from 'constants/wallet';
 import { devices } from '@portkey/utils';
+import { clusterApiUrl } from '@solana/web3.js';
 
 export default function SolanaProvider({ children }: { children: React.ReactNode }) {
-  const network = WalletAdapterNetwork.Mainnet;
+  const network = WalletAdapterNetwork.Devnet; // WalletAdapterNetwork.Mainnet;
 
   // You can also provide a custom RPC endpoint.
-  // const endpoint = useMemo(() => clusterApiUrl(network), [network]);
-  const endpoint = useMemo(() => process.env.NEXT_PUBLIC_SOL_ENDPOINT || '', []);
+  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+  // const endpoint = useMemo(() => process.env.NEXT_PUBLIC_SOL_ENDPOINT || '', []);
 
   const wallets = useMemo(
     () => [new PhantomWalletAdapter()],
