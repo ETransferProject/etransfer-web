@@ -13,7 +13,7 @@ export const CONTRACT_ADDRESS = 'Contract Address';
 export const DEPOSIT_RETRY_TEXT = 'The deposit service is busy. Please try again later.';
 
 export const SERVICE_FEE_TIP =
-  'This is an estimated fee charged by Cobo to cover the costs of asset consolidation. The actual fee will be determined based on the deposit time.';
+  'This is an estimated fee charged by Cobo to cover the costs of asset consolidation.';
 
 export const RECEIVED_0_TIP = 'Less than the minimum deposit amount.';
 

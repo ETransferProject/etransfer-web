@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 import { CONTRACT_ADDRESS, MINIMUM_DEPOSIT, SERVICE_FEE, SERVICE_FEE_TIP } from 'constants/deposit';
@@ -37,6 +37,24 @@ export default function DepositInfo({
   const { fromTokenSymbol } = useDepositState();
   const [openAddressModal, setOpenAddressModal] = useState(false);
 
+  const serviceFeeTip = useMemo(() => {
+    return (
+      <div>
+        <div>{SERVICE_FEE_TIP}</div>
+        <div>
+          {`• Deposit amount ≥ ${minimumDeposit} ${formatSymbolDisplay(
+            fromTokenSymbol,
+          )}: No service fee`}
+        </div>
+        <div>
+          {`• Deposit amount < ${minimumDeposit} ${formatSymbolDisplay(
+            fromTokenSymbol,
+          )}: Max service fee ${serviceFee} ${formatSymbolDisplay(fromTokenSymbol)}`}
+        </div>
+      </div>
+    );
+  }, [fromTokenSymbol, minimumDeposit, serviceFee]);
+
   return (
     <div className={'flex-column'}>
       {!!serviceFee && serviceFee !== '0' && (
@@ -44,7 +62,7 @@ export default function DepositInfo({
           <div className={clsx('flex-row-center gap-4', styles['info-title'])}>
             {SERVICE_FEE}
             <CommonTip
-              tip={SERVICE_FEE_TIP}
+              tip={serviceFeeTip}
               className={styles['service-fee-tip']}
               modalTitle={NOTICE}
               icon={<QuestionMark16 />}
@@ -52,10 +70,10 @@ export default function DepositInfo({
           </div>
           <div className={clsx('flex-1')}>
             <div className={clsx('text-right', styles['info-value'])}>
-              {serviceFee} {formatSymbolDisplay(fromTokenSymbol)}
+              {`0~${serviceFee}`} {formatSymbolDisplay(fromTokenSymbol)}
             </div>
             <div className={clsx('text-right', styles['info-exhibit'])}>
-              {valueFixed2LessThanMin(serviceFeeUsd, '$ ')}
+              {`$ 0~${valueFixed2LessThanMin(serviceFeeUsd, '')}`}
             </div>
           </div>
         </div>
