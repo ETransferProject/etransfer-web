@@ -294,6 +294,7 @@ export default function WebContent({
           minAmountUsd={depositInfo.minAmountUsd || ''}
           serviceFee={depositInfo.serviceFee || ''}
           serviceFeeUsd={depositInfo.serviceFeeUsd || ''}
+          threshold={depositInfo.currentThreshold || ''}
         />
         <CommonSpace direction="vertical" size={24} />
         {renderDepositDescription}
@@ -302,9 +303,12 @@ export default function WebContent({
   }, [
     contractAddress,
     contractAddressLink,
+    depositInfo.currentThreshold,
     depositInfo.depositAddress,
     depositInfo.minAmount,
     depositInfo.minAmountUsd,
+    depositInfo.serviceFee,
+    depositInfo.serviceFeeUsd,
     fromTokenSymbol,
     isCheckTxnLoading,
     onCheckTxnClick,

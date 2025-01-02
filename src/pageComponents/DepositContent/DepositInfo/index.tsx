@@ -20,6 +20,7 @@ export interface DepositInfoProps {
   minAmountUsd: string;
   serviceFee: string;
   serviceFeeUsd: string;
+  threshold: string;
   modalContainer?: CommonModalProps['getContainer'];
 }
 
@@ -31,6 +32,7 @@ export default function DepositInfo({
   minAmountUsd,
   serviceFee,
   serviceFeeUsd,
+  threshold,
   modalContainer,
 }: DepositInfoProps) {
   const { isPadPX } = useCommonState();
@@ -42,18 +44,18 @@ export default function DepositInfo({
       <div>
         <div>{SERVICE_FEE_TIP}</div>
         <div>
-          {`• Deposit amount ≥ ${minimumDeposit} ${formatSymbolDisplay(
+          {`• Deposit amount ≥ ${threshold} ${formatSymbolDisplay(
             fromTokenSymbol,
           )}: No service fee`}
         </div>
         <div>
-          {`• Deposit amount < ${minimumDeposit} ${formatSymbolDisplay(
+          {`• Deposit amount < ${threshold} ${formatSymbolDisplay(
             fromTokenSymbol,
           )}: Max service fee ${serviceFee} ${formatSymbolDisplay(fromTokenSymbol)}`}
         </div>
       </div>
     );
-  }, [fromTokenSymbol, minimumDeposit, serviceFee]);
+  }, [fromTokenSymbol, serviceFee, threshold]);
 
   return (
     <div className={'flex-column'}>
@@ -86,7 +88,7 @@ export default function DepositInfo({
               {minimumDeposit} {formatSymbolDisplay(fromTokenSymbol)}
             </div>
             <div className={clsx('text-right', styles['info-exhibit'])}>
-              {valueFixed2LessThanMin(minAmountUsd, '$ ')}
+              {minAmountUsd === '0' ? '$ 0' : valueFixed2LessThanMin(minAmountUsd, '$ ')}
             </div>
           </div>
         </div>

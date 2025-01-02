@@ -165,6 +165,7 @@ export default function MobileDepositContent({
               minAmountUsd={depositInfo.minAmountUsd}
               serviceFee={depositInfo.serviceFee || ''}
               serviceFeeUsd={depositInfo.serviceFeeUsd || ''}
+              threshold={depositInfo.currentThreshold || ''}
             />
             <CommonSpace direction="vertical" size={24} />
             {renderDepositDescription}
@@ -175,9 +176,12 @@ export default function MobileDepositContent({
   }, [
     contractAddress,
     contractAddressLink,
+    depositInfo.currentThreshold,
     depositInfo?.depositAddress,
     depositInfo.minAmount,
     depositInfo.minAmountUsd,
+    depositInfo.serviceFee,
+    depositInfo.serviceFeeUsd,
     fromNetworkSelected,
     fromTokenSelected,
     fromTokenSymbol,
