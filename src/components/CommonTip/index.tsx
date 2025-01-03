@@ -27,8 +27,10 @@ export default function CommonTip({
         tooltipSwitchModalsRef.current = ref;
       }}
       modalProps={{ title: modalTitle || title, zIndex: 300 }}
-      tip={tip}>
+      tip={tip}
+      tooltipElementId="commonTipTitle">
       <div
+        id="commonTipTitle"
         className={clsx(styles['common-tip-title'], className)}
         onClick={() => tooltipSwitchModalsRef.current?.open()}>
         {icon ? icon : <InfoLineIcon className={styles['common-tip-title-icon']} />}
