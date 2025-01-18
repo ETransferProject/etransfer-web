@@ -16,6 +16,7 @@ import { metaMask, coinbaseWallet, walletConnect } from 'wagmi/connectors';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BRAND_NAME } from 'constants/index';
 import { ETRANSFER_LOGO } from 'constants/misc';
+import { EVM_MAINNET_RPC } from 'constants/wallet/EVM';
 
 export const queryClient = new QueryClient();
 
@@ -33,7 +34,7 @@ export const EVMProviderConfig = createConfig({
     walletConnect({ projectId: WalletConnectProjectId }),
   ],
   transports: {
-    [mainnet.id]: http(),
+    [mainnet.id]: http(EVM_MAINNET_RPC),
     [bsc.id]: http(),
     [base.id]: http(),
     [polygon.id]: http(),
