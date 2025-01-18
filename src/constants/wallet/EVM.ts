@@ -1,6 +1,8 @@
 import { Coinbase, Metamask, WalletConnect } from 'assets/images';
 import { BlockchainNetworkType } from 'constants/network';
 
+export const EVM_MAINNET_RPC = 'https://eth-mainnet.token.im';
+
 export const EVM_CREATE_TOKEN_CONTRACT_ADDRESS: Record<string, `0x${string}`> = {
   [BlockchainNetworkType.Arbitrum]: '0xFe10E8D171E0F5D4984cd9fF391Fe6c3BC36f240',
   [BlockchainNetworkType.Avax]: '0xFe10E8D171E0F5D4984cd9fF391Fe6c3BC36f240',
