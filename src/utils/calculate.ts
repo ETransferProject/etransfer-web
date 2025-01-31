@@ -46,7 +46,9 @@ export function zeroFill(str: string | BN) {
  * @param currency currency type
  * @returns string
  */
-export function valueFixed2LessThanMin(strValue: string, currency?: string): string {
+export function valueFixed2LessThanMin(strValue?: string, currency?: string): string {
+  if (!strValue) return DEFAULT_NULL_VALUE;
+
   let valueBigNumber = new BigNumber(strValue);
   if (valueBigNumber.isNaN()) {
     return DEFAULT_NULL_VALUE;

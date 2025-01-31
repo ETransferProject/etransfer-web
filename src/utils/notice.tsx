@@ -35,7 +35,7 @@ export const browserNotification = ({ title, content }: { title: string; content
   }
 };
 
-const enum TTxnStatus {
+export const enum TTxnNoticeStatus {
   Successful = 'Successful',
   Failed = 'Failed',
 }
@@ -49,7 +49,7 @@ export const showNotice = ({
   isShowBrowserNotice = true,
   noticeProps,
 }: {
-  status: TTxnStatus;
+  status: TTxnNoticeStatus;
   type: BusinessType;
   amount: string;
   symbol: string;
@@ -66,11 +66,11 @@ export const showNotice = ({
   const action = 'received';
 
   const content =
-    type === BusinessType.Deposit && status === TTxnStatus.Successful && isSwapFail
+    type === BusinessType.Deposit && status === TTxnNoticeStatus.Successful && isSwapFail
       ? amount === '0'
         ? `Swap ${formatSymbolDisplay(symbol)} failed, the USDT ${typeText} has been processed.`
         : `Swap failed, the ${typeText} of ${amount} USDT has been received.`
-      : status === TTxnStatus.Successful
+      : status === TTxnNoticeStatus.Successful
       ? amount === '0'
         ? `The ${typeText} has been processed successfully.`
         : `The ${typeText} of ${amount} ${formatSymbolDisplay(symbol)} has been ${action}.`
@@ -82,7 +82,7 @@ export const showNotice = ({
     ...noticeProps,
     className: clsx(
       'etransfer-txn-notification',
-      status === TTxnStatus.Successful
+      status === TTxnNoticeStatus.Successful
         ? 'etransfer-txn-notification-success'
         : 'etransfer-txn-notification-error',
     ),
@@ -120,7 +120,7 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
       !eTransferInstance.showNoticeIds.includes(item.id)
     ) {
       showNotice({
-        status: TTxnStatus.Successful,
+        status: TTxnNoticeStatus.Successful,
         type: BusinessType.Deposit,
         amount: item.amount,
         symbol: item.symbol,
@@ -135,7 +135,7 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
       !eTransferInstance.showNoticeIds.includes(item.id)
     ) {
       showNotice({
-        status: TTxnStatus.Successful,
+        status: TTxnNoticeStatus.Successful,
         type: BusinessType.Transfer,
         amount: item.amount,
         symbol: item.symbol,
@@ -151,7 +151,7 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
       !eTransferInstance.showNoticeIds.includes(item.id)
     ) {
       showNotice({
-        status: TTxnStatus.Failed,
+        status: TTxnNoticeStatus.Failed,
         type: BusinessType.Deposit,
         amount: item.amount,
         symbol: item.symbol,
@@ -165,7 +165,7 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
       !eTransferInstance.showNoticeIds.includes(item.id)
     ) {
       showNotice({
-        status: TTxnStatus.Failed,
+        status: TTxnNoticeStatus.Failed,
         type: BusinessType.Transfer,
         amount: item.amount,
         symbol: item.symbol,

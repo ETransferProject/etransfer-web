@@ -1,7 +1,10 @@
-/// <reference types="vitest/config" />
-import { defineConfig } from 'vite';
+/// <reference types="vitest" />
+import { defineConfig, configDefaults } from 'vitest/config';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  plugins: [tsconfigPaths(), react()],
   test: {
     environment: 'happy-dom',
     coverage: {
@@ -10,7 +13,7 @@ export default defineConfig({
       provider: 'v8',
       include: ['src/utils/**/*.[jt]s?(x)'],
       exclude: [
-        'node_modules',
+        ...configDefaults.exclude,
         '**/dist/*.*',
         '**/.*',
         '**/*.setup.*',
@@ -37,10 +40,18 @@ export default defineConfig({
           include: [],
         },
       },
+      moduleDirectories: ['node_modules'],
     },
+    server: {
+      deps: {
+        inline: ['@aelf-web-login', '@etransfer/ui-react'],
+      },
+    },
+    globals: true,
     css: false,
     isolate: true, // only safe with the poolOptions above
     reporters: ['default'],
+    // include: ['./src/**/*(*.)?{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
   },
   worker: {
     format: 'es',

@@ -2,9 +2,10 @@ import { describe, it, expect, vi } from 'vitest';
 import { getAuthPlainText } from '../auth';
 
 describe('getAuthPlainText', () => {
+  const mockTimestamp = 1680000000000;
+
   it('should generate plainTextOrigin with the expected format', () => {
     // Mock the Date.now() method so the value of the nonce is predictable
-    const mockTimestamp = 1680000000000;
     vi.spyOn(Date, 'now').mockReturnValue(mockTimestamp);
 
     const result = getAuthPlainText();
@@ -31,7 +32,6 @@ describe('getAuthPlainText', () => {
 
   it('should generate plainTextHex as a correct hexadecimal representation of plainTextOrigin', () => {
     // Mock the Date.now() method to control the output of the nonce
-    const mockTimestamp = 1680000000000;
     vi.spyOn(Date, 'now').mockReturnValue(mockTimestamp);
 
     const result = getAuthPlainText();
@@ -46,7 +46,6 @@ describe('getAuthPlainText', () => {
 
   it('should include the correct nonce (current timestamp) in the plainTextOrigin', () => {
     // Mock the Date.now() method to control the output of the nonce
-    const mockTimestamp = 1680000000000;
     vi.spyOn(Date, 'now').mockReturnValue(mockTimestamp);
 
     const result = getAuthPlainText();
@@ -60,7 +59,6 @@ describe('getAuthPlainText', () => {
 
   it('should have a consistent plainTextHex length for the same input', () => {
     // Mock the Date.now() to generate a fixed timestamp
-    const mockTimestamp = 1680000000000;
     vi.spyOn(Date, 'now').mockReturnValue(mockTimestamp);
 
     const result1 = getAuthPlainText();

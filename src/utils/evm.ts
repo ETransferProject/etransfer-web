@@ -2,6 +2,7 @@ import { sleep } from '@etransfer/utils';
 import { handleErrorMessage } from '@portkey/did-ui-react';
 import { getTransactionReceipt, GetTransactionReceiptParameters } from '@wagmi/core';
 import { EVMProviderConfig } from 'provider/wallet/EVM';
+
 const PENDING_MESSAGE = 'The Transaction may not be processed on a block yet.';
 
 export async function getTransactionReceiptAutoRetry(
