@@ -1,0 +1,25 @@
+name: Test Badge
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - dev
+      - master
+      - feature/ut
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run frontend ci action
+        uses: AElfProject/frontend-ci-action@v0.0.2
+        with:
+          commit-token: ${{ secrets.COMMIT_TOKEN }}
+          branch-name: 'feature/ut-badge'

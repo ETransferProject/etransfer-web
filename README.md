@@ -2,6 +2,10 @@
 
 Your Universal Gateway to Seamless Transfers Securely between aelf and beyond
 
+<p>
+  <img alt="UNIT TESTS" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/ETransferProject/etransfer-web/feature/ut-badge/unit-test-results.json" />
+</p>
+
 ## Online experience
 
 Open [https://etransfer.exchange](https://etransfer.exchange) to connect with ETransfer and get involved in the future of digital asset management.
