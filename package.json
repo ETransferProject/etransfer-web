@@ -15,7 +15,9 @@
     "prepare": "husky install",
     "test": "vitest",
     "test:not-watch": "vitest run",
-    "coverage": "vitest run --coverage"
+    "test:update": "vitest -u",
+    "test:coverage": "vitest --coverage",
+    "test:ci": "vitest --coverage"
   },
   "dependencies": {
     "@aelf-web-login/utils": "^0.2.2-alpha.5",

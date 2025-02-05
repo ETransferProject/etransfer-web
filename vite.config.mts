@@ -50,7 +50,10 @@ export default defineConfig({
     globals: true,
     css: false,
     isolate: true, // only safe with the poolOptions above
-    reporters: ['default'],
+    reporters: ['junit', 'default'],
+    outputFile: {
+      junit: './jest-report.xml',
+    },
     // include: ['./src/**/*(*.)?{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
   },
   worker: {
