@@ -1,0 +1,95 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+@import '/src/assets/theme/breakpoint.scss';
+
+.withdraw-body {
+  :global {
+    .ant-form-item-label {
+      padding-bottom: 4px;
+      label {
+        width: 100%;
+        font-size: 14px;
+        line-height: 22px;
+        color: $secondary-text;
+      }
+    }
+    .ant-form-item-explain-error,
+    .ant-form-item-explain-warning {
+      margin-top: 4px;
+      font-size: 14px;
+      line-height: 22px;
+    }
+    .ant-form-item-explain-error {
+      color: $error;
+    }
+    .ant-form-item-explain-warning {
+      color: $warning;
+    }
+  }
+
+  @include media-mobile {
+    padding-bottom: calc(96px + constant(safe-area-inset-bottom));
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  }
+}
+
+.network-section {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.withdraw-swap-icon {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 8px;
+  border: 3px solid #fff;
+  background-color: $normal-bg;
+  cursor: pointer;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+}
+
+.form-item {
+  margin-top: 24px;
+  margin-bottom: 0;
+}
+
+.form-input {
+  border-radius: 8px;
+  background-color: $normal-bg !important;
+  height: 48px;
+  border: none;
+  font-size: 16px;
+  @extend .font-family-medium;
+
+  &::placeholder {
+    color: $disable-text;
+  }
+}
+
+.user-balance {
+  font-size: 14px;
+  line-height: 22px;
+  margin-top: 12px;
+}
+
+.user-balance-label {
+  color: $secondary-text;
+  margin-right: 8px;
+}
+
+.user-balance-value {
+  color: $primary-text;
+}
+
+.limit-section {
+  margin-top: 8px;
+}

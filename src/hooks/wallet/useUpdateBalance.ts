@@ -1,20 +1,18 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useGetAelfAccount } from './useAelf';
 import { TTokenItem } from 'types/api';
-// import { SingleMessage } from '@etransfer/ui-react';
-// import { handleErrorMessage } from '@etransfer/utils';
 import { divDecimals } from 'utils/calculate';
-import { useCrossChainTransfer } from 'store/Provider/hooks';
 import { InitialCrossChainTransferState } from 'store/reducers/crossChainTransfer/slice';
 import { isAelfChain, isEVMChain, isSolanaChain, isTONChain } from 'utils/wallet';
-import { getBalance as getAelfBalance } from 'utils/contract';
 import { SupportedELFChainId } from 'constants/index';
-import { useWallet } from 'context/Wallet';
-import { ZERO } from 'utils/format';
+import { ZERO } from 'constants/calculate';
+import { IWallet } from 'context/Wallet/types';
 
-export function useUpdateBalance() {
-  const { tokenSymbol, totalTokenList } = useCrossChainTransfer();
-  const [{ fromWallet }] = useWallet();
+export function useUpdateBalance(
+  tokenSymbol: string,
+  totalTokenList: TTokenItem[],
+  fromWallet: IWallet | undefined,
+) {
   const [balance, setBalance] = useState('');
   const [decimalsFromWallet, setDecimalsFromWallet] = useState<string | number>('');
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
@@ -41,22 +39,21 @@ export function useUpdateBalance() {
       try {
         const symbol = item?.symbol || tokenSymbol;
         const decimal = item?.decimals || currentTokenDecimal;
-        let _balance = '';
         let _formatBalance = '';
         let _walletDecimals: string | number = decimal;
         if (isAelfChain(network)) {
-          console.log('>>>>>> getBalance', item?.symbol);
-
+          // aelf
           const chainId = network as SupportedELFChainId;
           const caAddress = accounts?.[chainId];
           if (!caAddress) return { value: '0' };
           isLoading && setIsBalanceLoading(true);
-          _balance = await getAelfBalance({
-            symbol: symbol,
+          const _balanceRes = await fromWallet?.getBalance({
+            tokenSymbol: symbol,
             chainId: chainId,
-            caAddress,
+            address: caAddress,
           });
-          _formatBalance = divDecimals(_balance, decimal).toFixed(6);
+
+          _formatBalance = divDecimals(_balanceRes.value, decimal).toFixed(6);
         } else if (isEVMChain(network)) {
           // EVM
           const _balanceRes = await fromWallet?.getBalance({

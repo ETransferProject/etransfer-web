@@ -14,8 +14,9 @@ import { formatSymbolDisplay } from 'utils/format';
 import CommonLink from 'components/CommonLink';
 import { getTxExploreHref } from 'utils/common';
 import { Fingerprint } from 'assets/images';
-import { useCommonState, useCrossChainTransfer } from 'store/Provider/hooks';
+import { useCommonState } from 'store/Provider/hooks';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
+import { TNetworkItem } from 'types/api';
 
 export interface SuccessModalProps {
   amount: string;
@@ -23,6 +24,8 @@ export interface SuccessModalProps {
   receiveAmount: string;
   receiveAmountUsd: string;
   txHash: string;
+  fromNetwork?: TNetworkItem;
+  toNetwork?: TNetworkItem;
   modalProps: CommonModalSwitchDrawerProps;
 }
 
@@ -42,10 +45,11 @@ export default function SuccessModal({
   receiveAmount,
   receiveAmountUsd,
   txHash,
+  fromNetwork,
+  toNetwork,
   modalProps,
 }: SuccessModalProps) {
   const { isPadPX } = useCommonState();
-  const { fromNetwork, toNetwork } = useCrossChainTransfer();
   const arrivalTime = useMemo(() => {
     const _symbol = symbol as TokenType;
     const chainId = toNetwork?.network as unknown as AllSupportedELFChainId;

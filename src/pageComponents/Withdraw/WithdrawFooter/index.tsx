@@ -4,18 +4,17 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
 import {
   BUTTON_TEXT_INSUFFICIENT_FUNDS,
-  BUTTON_TEXT_TRANSFER,
   DEFAULT_SEND_TRANSFER_ERROR,
   ErrorNameType,
   SEND_TRANSFER_ERROR_CODE_LIST,
   TRANSACTION_APPROVE_LOADING,
 } from 'constants/crossChainTransfer';
+import { BUTTON_TEXT_WITHDRAW } from 'constants/withdraw';
 import { handleErrorMessage, sleep, ZERO } from '@etransfer/utils';
 import { Form } from 'antd';
 import clsx from 'clsx';
-import { useCrossChainTransfer, useLoading } from 'store/Provider/hooks';
-import { useWallet } from 'context/Wallet';
-import { useAuthToken } from 'hooks/wallet/authToken';
+import { useWithdrawNewState, useLoading } from 'store/Provider/hooks';
+import { useGetOneWallet } from 'hooks/wallet';
 import {
   createTransferOrder,
   updateTransferOrder as updateTransferOrderApi,
@@ -27,10 +26,9 @@ import {
   SendTONTransactionParams,
   SendTRONTransactionParams,
 } from 'types/wallet';
-import { EVM_TOKEN_ABI } from 'constants/wallet/EVM';
-import DoubleCheckModal from './DoubleCheckModal';
-import SuccessModal from './SuccessModal';
-import FailModal from './FailModal';
+import DoubleCheckModal from 'pageComponents/CrossChainTransferPage/CrossChainTransferFooter/DoubleCheckModal';
+import SuccessModal from 'pageComponents/CrossChainTransferPage/CrossChainTransferFooter/SuccessModal';
+import FailModal from 'pageComponents/CrossChainTransferPage/CrossChainTransferFooter/FailModal';
 import {
   TCreateTransferOrderResult,
   TCrossChainTransferInfo,
@@ -38,31 +36,34 @@ import {
 } from 'types/api';
 import myEvents from 'utils/myEvent';
 import { useSendTxnFromAelfChain } from 'hooks/crossChainTransfer';
-import { isAuthTokenError } from 'utils/api/error';
 import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
 import { computeWalletType, getConnectWalletText, isAelfChain } from 'utils/wallet';
-import { TransferFormKeys, TransferValidateStatus, TTransferFormValidateData } from '../types';
+import { WithdrawFormKeys, TWithdrawFormValidateData } from '../types';
 import { formatSymbolDisplay } from 'utils/format';
-import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
 import { getAelfMaxBalance } from '../utils';
+import FeeInfo from './FeeInfo';
+import PartialLoading from 'components/PartialLoading';
+import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
+import { isAuthTokenError } from 'utils/api/error';
+import { useAuthToken } from 'hooks/wallet/authToken';
+import { EVM_TOKEN_ABI } from 'constants/wallet/EVM';
 
-export interface CrossChainTransferFooterProps {
+export interface WithdrawFooterProps {
   className?: string;
-  isUseRecipientAddress?: boolean;
-  recipientAddress?: string;
+  withdrawAddress?: string;
   comment?: string;
   amount?: string;
   fromBalance?: string;
   decimalsFromWallet?: string | number;
+  tokenContractAddress?: string;
   transferInfo: TCrossChainTransferInfo;
   estimateReceive?: string;
   estimateReceiveUnit?: string;
   transactionFee?: string;
   transactionFeeUnit?: string;
-  tokenContractAddress?: string;
   isSubmitDisabled: boolean;
   isTransactionFeeLoading: boolean;
-  formValidateData: TTransferFormValidateData;
+  formValidateData: TWithdrawFormValidateData;
   clickFailedOk: () => void;
   clickSuccessOk: () => void;
 }
@@ -74,31 +75,30 @@ interface ISuccessData {
   receiveAmountUsd: string;
 }
 
-const DefaultTransferOrderResponse: TCreateTransferOrderResult = { orderId: '' };
+const DefaultWithdrawOrderResponse: TCreateTransferOrderResult = { orderId: '' };
 
-export default function CrossChainTransferFooter({
+export default function WithdrawFooter({
   className,
-  isUseRecipientAddress = false,
-  recipientAddress = '',
+  withdrawAddress = '',
   comment,
   amount,
   fromBalance,
   decimalsFromWallet,
+  tokenContractAddress,
   transferInfo,
   estimateReceive = DEFAULT_NULL_VALUE,
   estimateReceiveUnit = '',
   transactionFee = DEFAULT_NULL_VALUE,
   transactionFeeUnit = '',
-  tokenContractAddress,
   isSubmitDisabled,
   isTransactionFeeLoading,
   formValidateData,
   clickFailedOk,
   clickSuccessOk,
-}: CrossChainTransferFooterProps) {
+}: WithdrawFooterProps) {
   const { setLoading } = useLoading();
-  const { fromNetwork, tokenSymbol, toNetwork, toWalletType } = useCrossChainTransfer();
-  const [{ fromWallet, toWallet }] = useWallet();
+  const { fromNetwork, tokenSymbol, toNetwork } = useWithdrawNewState();
+  const fromWallet = useGetOneWallet(fromNetwork?.network || '');
   const { getAuthToken, queryAuthToken } = useAuthToken();
   const [firstTxnHash, setFirstTxnHash] = useState('');
   const firstTxnHashRef = useRef('');
@@ -125,41 +125,13 @@ export default function CrossChainTransferFooter({
     receiveAmountUsd: transferInfo.receiveAmountUsd,
   });
 
-  const toAddress = useMemo(() => {
-    const toWalletAccount =
-      toWalletType && toWallet?.isConnected && toWallet?.account ? toWallet?.account : '';
-    return isUseRecipientAddress ? recipientAddress : toWalletAccount;
-  }, [
-    isUseRecipientAddress,
-    recipientAddress,
-    toWallet?.account,
-    toWallet?.isConnected,
-    toWalletType,
-  ]);
-
   const isFromWalletConnected = useMemo(
     () => !!(fromWallet?.isConnected && fromWallet?.account),
     [fromWallet?.isConnected, fromWallet?.account],
   );
 
-  const isToWalletConnected = useMemo(
-    () =>
-      !!(toWallet?.isConnected && toWallet?.account) ||
-      (isUseRecipientAddress &&
-        recipientAddress &&
-        formValidateData[TransferFormKeys.RECIPIENT].validateStatus !==
-          TransferValidateStatus.Error),
-    [
-      toWallet?.isConnected,
-      toWallet?.account,
-      isUseRecipientAddress,
-      recipientAddress,
-      formValidateData,
-    ],
-  );
-
   const onConnectWallet = useCallback(() => {
-    if (!isFromWalletConnected && !isToWalletConnected) {
+    if (!isFromWalletConnected) {
       setConnectWalletModalProps({
         open: true,
         title: getConnectWalletText(),
@@ -184,7 +156,7 @@ export default function CrossChainTransferFooter({
       allowList: [walletType],
     });
     return;
-  }, [isFromWalletConnected, isToWalletConnected, fromNetwork?.network, toNetwork?.network]);
+  }, [isFromWalletConnected, fromNetwork?.network, toNetwork?.network]);
 
   const handleSuccessCallback = useCallback((res: TCreateTransferOrderResult) => {
     if (res?.transactionId) {
@@ -196,21 +168,21 @@ export default function CrossChainTransferFooter({
   }, []);
 
   const handleFailCallback = useCallback(() => {
-    orderResultRef.current = DefaultTransferOrderResponse;
+    orderResultRef.current = DefaultWithdrawOrderResponse;
     setFirstTxnHash('');
     firstTxnHashRef.current = '';
     setFailModalReason(DEFAULT_SEND_TRANSFER_ERROR);
     setIsFailModalOpen(true);
   }, []);
 
-  const orderResultRef = useRef(DefaultTransferOrderResponse);
+  const orderResultRef = useRef(DefaultWithdrawOrderResponse);
   const updateTransferOrder = useCallback(
     async (status?: UpdateTransferOrderStatus) => {
       if (
         !fromWallet ||
         !fromWallet?.isConnected ||
         !fromWallet?.account ||
-        !toAddress ||
+        !withdrawAddress ||
         !fromNetwork?.network ||
         !toNetwork?.network ||
         !amount ||
@@ -225,7 +197,7 @@ export default function CrossChainTransferFooter({
           fromSymbol: tokenSymbol,
           toSymbol: tokenSymbol,
           fromAddress: fromWallet?.account,
-          toAddress,
+          toAddress: withdrawAddress,
           address: orderResultRef.current?.address,
           txId: firstTxnHashRef.current,
           status,
@@ -236,7 +208,7 @@ export default function CrossChainTransferFooter({
       );
       console.log('>>>>>> sendTransferResult updateOrderResult', updateOrderResult);
     },
-    [amount, fromNetwork?.network, fromWallet, toAddress, toNetwork?.network, tokenSymbol],
+    [amount, fromNetwork?.network, fromWallet, toNetwork?.network, tokenSymbol, withdrawAddress],
   );
 
   const updateTransferOrderRejected = useCallback(
@@ -267,7 +239,7 @@ export default function CrossChainTransferFooter({
         !fromWallet ||
         !fromWallet?.isConnected ||
         !fromWallet?.account ||
-        !toAddress ||
+        !withdrawAddress ||
         !fromNetwork?.network ||
         !toNetwork?.network ||
         !amount
@@ -275,13 +247,13 @@ export default function CrossChainTransferFooter({
         return;
 
       setLoading(true);
-      orderResultRef.current = DefaultTransferOrderResponse;
+      orderResultRef.current = DefaultWithdrawOrderResponse;
       firstTxnHashRef.current = '';
       if (fromWallet.walletType === WalletTypeEnum.AELF) {
         // aelf logic
         await sendTransferTokenTransaction({
           amount,
-          address: toAddress,
+          address: withdrawAddress,
           memo: comment,
           successCallback: handleSuccessCallback,
           failCallback: handleFailCallback,
@@ -308,13 +280,15 @@ export default function CrossChainTransferFooter({
           fromAddress: isDIDAddressSuffix(fromWallet?.account)
             ? removeELFAddressSuffix(fromWallet?.account)
             : fromWallet?.account,
-          toAddress: isDIDAddressSuffix(toAddress) ? removeELFAddressSuffix(toAddress) : toAddress,
+          toAddress: isDIDAddressSuffix(withdrawAddress)
+            ? removeELFAddressSuffix(withdrawAddress)
+            : withdrawAddress,
         };
 
         try {
           orderResultRef.current = await createTransferOrder(createTransferOrderParams, authToken);
         } catch (error) {
-          orderResultRef.current = DefaultTransferOrderResponse;
+          orderResultRef.current = DefaultWithdrawOrderResponse;
           if (isAuthTokenError(error)) {
             const _authToken = await queryAuthToken(true);
             authTokenRef.current = _authToken;
@@ -342,11 +316,7 @@ export default function CrossChainTransferFooter({
         }
         console.log('>>>>>> orderResult', orderResultRef.current);
 
-        let params:
-          | SendEVMTransactionParams
-          | SendSolanaTransactionParams
-          | SendTONTransactionParams
-          | SendTRONTransactionParams;
+        let params: any;
         if (fromWallet.walletType === WalletTypeEnum.EVM) {
           params = {
             network: fromNetwork?.network,
@@ -379,7 +349,6 @@ export default function CrossChainTransferFooter({
             amount: Number(amount),
           } as SendTRONTransactionParams;
         }
-
         if (!fromWallet?.sendTransaction) return;
         const sendTransferResult = await fromWallet?.sendTransaction(params);
         setFirstTxnHash(sendTransferResult);
@@ -430,7 +399,6 @@ export default function CrossChainTransferFooter({
     queryAuthToken,
     sendTransferTokenTransaction,
     setLoading,
-    toAddress,
     toNetwork?.network,
     tokenContractAddress,
     tokenSymbol,
@@ -439,13 +407,14 @@ export default function CrossChainTransferFooter({
     transferInfo.receiveAmountUsd,
     updateTransferOrder,
     updateTransferOrderRejected,
+    withdrawAddress,
   ]);
 
   const onClickSuccess = useCallback(() => {
     setIsSuccessModalOpen(false);
     clickSuccessOk();
 
-    orderResultRef.current = DefaultTransferOrderResponse;
+    orderResultRef.current = DefaultWithdrawOrderResponse;
     setFirstTxnHash('');
     firstTxnHashRef.current = '';
   }, [clickSuccessOk]);
@@ -454,7 +423,7 @@ export default function CrossChainTransferFooter({
     setIsFailModalOpen(false);
     clickFailedOk();
 
-    orderResultRef.current = DefaultTransferOrderResponse;
+    orderResultRef.current = DefaultWithdrawOrderResponse;
     setFirstTxnHash('');
     firstTxnHashRef.current = '';
   }, [clickFailedOk]);
@@ -486,17 +455,9 @@ export default function CrossChainTransferFooter({
     const disabled = true,
       loading = false;
 
-    if (!isFromWalletConnected || !isToWalletConnected) {
-      let children = '';
-      if (!isFromWalletConnected && !isToWalletConnected) {
-        children = getConnectWalletText();
-      } else if (!isFromWalletConnected) {
-        children = getConnectWalletText(fromNetwork?.network);
-      } else {
-        children = getConnectWalletText(toNetwork?.network);
-      }
+    if (!isFromWalletConnected) {
       return {
-        children,
+        children: getConnectWalletText(fromNetwork?.network),
         onClick: onConnectWallet,
         disabled: false,
         loading,
@@ -504,7 +465,7 @@ export default function CrossChainTransferFooter({
     }
 
     checkMaxBalance();
-    if (isBalanceNotEnoughTip || formValidateData[TransferFormKeys.AMOUNT].errorMessage) {
+    if (isBalanceNotEnoughTip || formValidateData[WithdrawFormKeys.AMOUNT].errorMessage) {
       return {
         children: BUTTON_TEXT_INSUFFICIENT_FUNDS,
         onClick: undefined,
@@ -514,49 +475,54 @@ export default function CrossChainTransferFooter({
     }
 
     return {
-      children: BUTTON_TEXT_TRANSFER,
+      children: BUTTON_TEXT_WITHDRAW,
       onClick: () => setIsDoubleCheckModalOpen(true),
       disabled: isSubmitDisabled,
       loading,
     };
   }, [
     isFromWalletConnected,
-    isToWalletConnected,
     checkMaxBalance,
     isBalanceNotEnoughTip,
     formValidateData,
     isSubmitDisabled,
     onConnectWallet,
     fromNetwork?.network,
-    toNetwork?.network,
   ]);
 
   return (
     <>
-      <div className={clsx(styles['cross-chain-transfer-footer'], className)}>
-        <div className={styles['cross-chain-transfer-footer-info']}>
-          <div className={clsx('flex-row-center', styles['you-will-receive'])}>
-            <span>{`You'll receive:`}&nbsp;</span>
-            <span className={styles['you-will-receive-value']}>
-              {estimateReceive
-                ? `${estimateReceive} ${formatSymbolDisplay(estimateReceiveUnit)}`
-                : DEFAULT_NULL_VALUE}
-            </span>
+      <div
+        className={clsx(styles['withdraw-footer'], styles['withdraw-footer-safe-area'], className)}>
+        <div className={clsx('flex-1', 'flex-column', styles['withdraw-footer-info-wrapper'])}>
+          <div className={clsx('flex-column', styles['receive-amount-wrapper'])}>
+            <div className={styles['info-label']}>Receive Amount</div>
+            <div
+              className={clsx(
+                'flex-row-center',
+                styles['info-value'],
+                styles['info-value-big-font'],
+              )}>
+              {isTransactionFeeLoading && <PartialLoading />}
+              {!isTransactionFeeLoading &&
+                `${(!isSuccessModalOpen && estimateReceive) || DEFAULT_NULL_VALUE} `}
+              <span className={clsx(styles['info-unit'])}>{estimateReceiveUnit}</span>
+            </div>
           </div>
-          <div className={clsx('flex-row-center', styles['transaction-fee'])}>
-            <span>{`Transaction fee:`}&nbsp;</span>
-            <span className={styles['transaction-fee-value']}>
-              {transactionFee
-                ? `${transactionFee} ${formatSymbolDisplay(transactionFeeUnit)}`
-                : DEFAULT_NULL_VALUE}
-            </span>
-          </div>
+          <FeeInfo
+            isTransactionFeeLoading={isTransactionFeeLoading}
+            isSuccessModalOpen={isSuccessModalOpen}
+            transactionFee={transactionFee}
+            transactionUnit={formatSymbolDisplay(transactionFeeUnit)}
+            aelfTransactionFee={transferInfo.aelfTransactionFee}
+            aelfTransactionUnit={transferInfo.aelfTransactionUnit}
+          />
         </div>
 
         <Form.Item
           shouldUpdate
-          className={clsx('flex-none', styles['transfer-submit-button-wrapper'])}>
-          <CommonButton className={styles['transfer-submit-button']} {...btnProps}>
+          className={clsx('flex-none', styles['withdraw-submit-button-wrapper'])}>
+          <CommonButton className={styles['withdraw-submit-button']} {...btnProps}>
             {btnProps.children}
           </CommonButton>
         </Form.Item>
@@ -570,7 +536,7 @@ export default function CrossChainTransferFooter({
       <DoubleCheckModal
         transferInfo={transferInfo}
         amount={amount || ''}
-        toAddress={toAddress}
+        toAddress={withdrawAddress}
         toNetwork={toNetwork}
         memo={comment}
         modalProps={{

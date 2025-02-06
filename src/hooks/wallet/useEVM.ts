@@ -1,4 +1,9 @@
-import { IGetEVMBalanceRequest, ISignMessageResult, WalletTypeEnum } from 'context/Wallet/types';
+import {
+  IGetBalanceResult,
+  IGetEVMBalanceRequest,
+  TSignMessageMethod,
+  WalletTypeEnum,
+} from 'context/Wallet/types';
 import { useCallback, useMemo, useState } from 'react';
 import { getAuthPlainText } from 'utils/auth';
 import { ethers } from 'ethers';
@@ -73,7 +78,11 @@ export default function useEVM() {
   const { signMessageAsync } = useSignMessage();
 
   const onGetBalance = useCallback(
-    async ({ tokenContractAddress, network, tokenSymbol }: IGetEVMBalanceRequest) => {
+    async ({
+      tokenContractAddress,
+      network,
+      tokenSymbol,
+    }: IGetEVMBalanceRequest): Promise<IGetBalanceResult> => {
       if (!accountInfo.address) return { value: '0' };
       const chain = getEVMChainInfo(network);
       if (!chain) return { value: '0' };
@@ -90,7 +99,7 @@ export default function useEVM() {
     [accountInfo.address],
   );
 
-  const signMessage = useCallback<() => Promise<ISignMessageResult>>(async () => {
+  const signMessage = useCallback<TSignMessageMethod>(async () => {
     const plainText = getAuthPlainText();
     const res = await signMessageAsync({
       message: plainText.plainTextOrigin,
@@ -191,8 +200,8 @@ export default function useEVM() {
     return {
       isConnected:
         isConnected &&
-        accountInfo.connector &&
-        accountInfo?.connector?.id &&
+        !!accountInfo.connector &&
+        !!accountInfo?.connector?.id &&
         evmWalletAllowance.includes(accountInfo.connector.id),
       walletType: WalletTypeEnum.EVM,
       provider: accountInfo.connector?.getProvider,

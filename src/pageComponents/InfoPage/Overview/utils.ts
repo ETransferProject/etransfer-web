@@ -1,4 +1,4 @@
-import { ZERO } from 'utils/format';
+import { ZERO } from 'constants/calculate';
 
 export const computePlus = (deposit?: number | string, transfer?: number | string) => {
   return ZERO.plus(String(deposit) || '')

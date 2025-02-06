@@ -1,10 +1,16 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks';
-import { IGetBalanceRequest, ISignMessageResult, WalletTypeEnum } from 'context/Wallet/types';
+import {
+  IGetBalanceRequest,
+  IGetBalanceResult,
+  TSignMessageMethod,
+  WalletTypeEnum,
+} from 'context/Wallet/types';
 import { getAuthPlainText } from 'utils/auth';
 import { AuthTokenSource } from 'types/api';
 import { stringToHex } from 'utils/format';
 import { SendTRONTransactionParams } from 'types/wallet';
+import { ZERO } from 'constants/calculate';
 
 export default function useTRON() {
   const {
@@ -29,9 +35,9 @@ export default function useTRON() {
     await connect();
   }, [connect]);
 
-  const getBalance = useCallback(
-    async ({ tokenContractAddress }: IGetBalanceRequest) => {
-      if (!window.tronLink || !address) return {};
+  const onGetBalance = useCallback(
+    async ({ tokenContractAddress }: IGetBalanceRequest): Promise<IGetBalanceResult> => {
+      if (!window.tronLink || !address) return { value: '0' };
 
       const tronWeb = window.tronLink.tronWeb;
       const contract = await tronWeb.contract().at(tokenContractAddress);
@@ -40,14 +46,14 @@ export default function useTRON() {
       const balanceFromSun = tronWeb.fromSun(balanceInSun);
       console.log('>>>>>> TRON balance', balanceFromSun);
       return {
-        value: balanceFromSun,
+        value: ZERO.plus(balanceFromSun).toString(),
         decimals: '',
       };
     },
     [address],
   );
 
-  const getSignMessage = useCallback<() => Promise<ISignMessageResult>>(async () => {
+  const getSignMessage = useCallback<TSignMessageMethod>(async () => {
     if (!signMessage) throw new Error('No signature method found, please reconnect your wallet');
 
     const plainText = getAuthPlainText();
@@ -83,11 +89,11 @@ export default function useTRON() {
       isConnected: connected,
       walletType: WalletTypeEnum.TRON,
       account: address,
-      accounts: [address],
+      accounts: address ? [address] : [],
       connector: wallet?.adapter,
       connect: onConnect,
       disconnect: disconnect,
-      getBalance,
+      getBalance: onGetBalance,
       signMessage: getSignMessage,
       sendTransaction,
     };
@@ -96,9 +102,9 @@ export default function useTRON() {
     connected,
     connecting,
     disconnect,
-    getBalance,
     getSignMessage,
     onConnect,
+    onGetBalance,
     sendTransaction,
     wallet?.adapter,
   ]);

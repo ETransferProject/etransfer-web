@@ -6,7 +6,12 @@ import {
   Wallet,
   TonConnectError,
 } from '@tonconnect/ui-react';
-import { IGetBalanceRequest, WalletTypeEnum } from 'context/Wallet/types';
+import {
+  IGetBalanceRequest,
+  IGetBalanceResult,
+  TSignMessageMethod,
+  WalletTypeEnum,
+} from 'context/Wallet/types';
 import { useCallback, useEffect, useMemo } from 'react';
 import TonWeb from 'tonweb';
 import { Address as CoreAddress, beginCell, toNano } from '@ton/core';
@@ -29,9 +34,9 @@ export default function useTON() {
     return res;
   }, [address]);
 
-  const getBalance = useCallback(
-    async ({ tokenContractAddress }: IGetBalanceRequest) => {
-      if (!address) return;
+  const onGetBalance = useCallback(
+    async ({ tokenContractAddress }: IGetBalanceRequest): Promise<IGetBalanceResult> => {
+      if (!address) return { value: '0' };
       const jettonMinter = getTONJettonMinter(tokenContractAddress);
       const jettonWalletAddress = await jettonMinter.getJettonWalletAddress(
         new TonWeb.utils.Address(address),
@@ -74,7 +79,7 @@ export default function useTON() {
     [userFriendlyAddress],
   );
 
-  const signMessage = useCallback(() => {
+  const signMessage = useCallback<TSignMessageMethod>(async () => {
     const plainText = getAuthPlainText();
     return {
       plainTextOrigin: plainText.plainTextOrigin,
@@ -159,18 +164,18 @@ export default function useTON() {
       connector: tonConnectUI.connector,
       provider: wallet?.provider,
       connect: async (name: string) => await tonConnectUI.openSingleWalletModal(name),
-      disconnect: () => {
-        tonConnectUI.disconnect();
+      disconnect: async () => {
+        await tonConnectUI.disconnect();
       },
       getAccountInfo: () => tonConnectUI.account,
-      getBalance,
+      getBalance: onGetBalance,
       signMessage,
       signMessageByMnemonic,
       sendTransaction,
     };
   }, [
     address,
-    getBalance,
+    onGetBalance,
     sendTransaction,
     signMessage,
     signMessageByMnemonic,

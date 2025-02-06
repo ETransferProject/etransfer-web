@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import { divDecimals } from './calculate';
 import { BlockchainNetworkType } from 'constants/network';
 import { ChainNamePrefix } from 'constants/index';
+import { ZERO } from 'constants/calculate';
 
 /**
  * this function is to format address,just like "formatStr2EllipsisStr" ---> "for...Str"
@@ -43,7 +44,7 @@ export interface IFormatWithCommasProps {
 export const DEFAULT_AMOUNT = 0;
 export const DEFAULT_DECIMAL = 6;
 export const DEFAULT_DIGITS = 6;
-export const ZERO = new BigNumber(0);
+
 /**
  * formatAmount with prefix and thousand mark, not unit
  * @example $11.1  +11.1  -11.1  9,999.9

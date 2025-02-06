@@ -3,8 +3,8 @@ import CommonModalSwitchDrawer, {
   CommonModalSwitchDrawerProps,
 } from 'components/CommonModalSwitchDrawer';
 import PartialLoading from 'components/PartialLoading';
-import { useCommonState, useCrossChainTransfer } from 'store/Provider/hooks';
-import { TCrossChainTransferInfo } from 'types/api';
+import { useCommonState } from 'store/Provider/hooks';
+import { TCrossChainTransferInfo, TNetworkItem } from 'types/api';
 import styles from './styles.module.scss';
 import { valueFixed2LessThanMin } from 'utils/calculate';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
@@ -14,6 +14,7 @@ export interface DoubleCheckModalProps {
   transferInfo: TCrossChainTransferInfo;
   amount: string;
   toAddress: string;
+  toNetwork?: TNetworkItem;
   memo?: string;
   modalProps: CommonModalSwitchDrawerProps;
   isTransactionFeeLoading: boolean;
@@ -23,12 +24,12 @@ export default function DoubleCheckModal({
   transferInfo,
   amount,
   toAddress,
+  toNetwork,
   memo,
   modalProps,
   isTransactionFeeLoading,
 }: DoubleCheckModalProps) {
   const { isPadPX } = useCommonState();
-  const { toNetwork } = useCrossChainTransfer();
 
   const renderAmountToBeReceived = () => {
     return (

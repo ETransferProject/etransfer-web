@@ -9,19 +9,25 @@ import CommonTooltip from 'components/CommonTooltip';
 import CommonSpace from 'components/CommonSpace';
 
 export interface RemainingLimitProps {
+  labelClassName?: string;
+  valueClassName?: string;
+  isLabelLeft?: boolean;
   remainingLimit?: string;
   totalLimit?: string;
   limitCurrency: string;
 }
 
 export default function RemainingLimit({
+  labelClassName,
+  valueClassName,
+  isLabelLeft = true,
   remainingLimit,
   totalLimit,
   limitCurrency,
 }: RemainingLimitProps) {
   const label = useMemo(() => {
     return (
-      <span className={styles['remaining-limit-label']}>
+      <span className={clsx(styles['remaining-limit-label'], labelClassName)}>
         <CommonTooltip
           className={clsx(styles['question-label'])}
           placement="top"
@@ -34,7 +40,7 @@ export default function RemainingLimit({
 
   const value = useMemo(() => {
     return (
-      <span className={styles['remaining-limit-value']}>
+      <span className={clsx(styles['remaining-limit-value'], valueClassName)}>
         {remainingLimit && totalLimit ? (
           <>
             {`${new BigNumber(remainingLimit).toFormat()} /
@@ -57,9 +63,19 @@ export default function RemainingLimit({
           remainingLimit !== '' &&
           new BigNumber(remainingLimit).isEqualTo(0),
       })}>
-      {label}
-      <CommonSpace direction={'horizontal'} size={8} />
-      {value}
+      {isLabelLeft ? (
+        <>
+          {label}
+          <CommonSpace direction={'horizontal'} size={8} />
+          {value}
+        </>
+      ) : (
+        <>
+          {value}
+          <CommonSpace direction={'horizontal'} size={8} />
+          {label}
+        </>
+      )}
     </div>
   );
 }

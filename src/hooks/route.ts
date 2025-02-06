@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { stringifyUrl } from 'query-string';
 import { TWithdrawEntryConfig } from 'types';
-import { useGoTransfer } from './crossChainTransfer';
+// import { useGoTransfer } from './crossChainTransfer';
 
 export function useRouteParamType(): { type: SideMenuKey } {
   const pathname = usePathname();
@@ -13,7 +13,7 @@ export function useRouteParamType(): { type: SideMenuKey } {
   const routeType = useMemo(() => searchParams.get('type') as SideMenuKey, [searchParams]);
   const dispatch = useAppDispatch();
   const { activeMenuKey } = useCommonState();
-  const goTransfer = useGoTransfer();
+  // const goTransfer = useGoTransfer();
 
   const currentActiveMenuKey = useMemo(
     () => routeType || activeMenuKey,
@@ -21,15 +21,16 @@ export function useRouteParamType(): { type: SideMenuKey } {
   );
 
   useEffect(() => {
-    if (pathname === '/withdraw') {
-      const chainId = searchParams.get('chainId');
-      const tokenSymbol = searchParams.get('tokenSymbol');
-      goTransfer(tokenSymbol || '', chainId || '');
-    }
+    // TODO
+    // if (pathname === '/withdraw') {
+    //   const chainId = searchParams.get('chainId');
+    //   const tokenSymbol = searchParams.get('tokenSymbol');
+    //   goTransfer(tokenSymbol || '', chainId || '');
+    // }
     if (routeType && pathname === '/') {
       dispatch(setActiveMenuKey(routeType));
     }
-  }, [activeMenuKey, dispatch, goTransfer, pathname, routeType, searchParams]);
+  }, [dispatch, pathname, routeType]);
 
   return { type: currentActiveMenuKey };
 }
@@ -136,6 +137,7 @@ export function useCheckAllowSearch() {
             searchObject.calculatePay = searchParams.get('calculatePay');
           break;
 
+        // TODO
         case '/withdraw':
           if (searchParams.get('chainId')) searchObject.chainId = searchParams.get('chainId');
           if (searchParams.get('tokenSymbol'))

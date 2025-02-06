@@ -1,6 +1,6 @@
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
-import { WalletTypeEnum } from 'context/Wallet/types';
+import { IGetAelfBalanceRequest, IGetBalanceResult, WalletTypeEnum } from 'context/Wallet/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { eTransferInstance } from 'utils/etransferInstance';
 import myEvents from 'utils/myEvent';
@@ -15,6 +15,7 @@ import { AuthTokenSource } from 'types/api';
 import { removeOneLocalJWT } from 'api/utils';
 import { useLoading } from 'store/Provider/hooks';
 import { useSetWalletType } from 'hooks/crossChainTransfer';
+import { getBalance as getAelfBalance } from 'utils/contract';
 
 export default function useAelf() {
   const {
@@ -28,28 +29,60 @@ export default function useAelf() {
     ...props
   } = useConnectWallet();
 
+  const onGetBalance = useCallback(
+    async ({
+      tokenSymbol,
+      chainId,
+      address,
+    }: IGetAelfBalanceRequest): Promise<IGetBalanceResult> => {
+      const res = await getAelfBalance({ symbol: tokenSymbol, chainId, caAddress: address });
+      return { value: res };
+    },
+    [],
+  );
+  const isConnectedTransform = useMemo(
+    () => isConnected && !!walletInfo,
+    [isConnected, walletInfo],
+  );
+
+  // WalletInfo TAelfAccounts ExtraInfoForDiscover | ExtraInfoForPortkeyAA | ExtraInfoForNightElf;
+  const accounts = useMemo(() => {
+    if (!isConnectedTransform) return undefined;
+
+    const accounts: TAelfAccounts = {
+      [SupportedChainId.mainChain]: 'ELF_' + walletInfo?.address + '_' + SupportedChainId.mainChain,
+      [SupportedChainId.sideChain]: 'ELF_' + walletInfo?.address + '_' + SupportedChainId.sideChain,
+    };
+
+    return accounts;
+  }, [isConnectedTransform, walletInfo]);
+
   const aelfContext = useMemo(() => {
     return {
       ...props,
       isConnecting: connecting,
-      isConnected: isConnected && !!walletInfo,
+      isConnected: isConnectedTransform,
       walletType: WalletTypeEnum.AELF,
       walletInfo: walletInfo,
       provider: walletInfo?.extraInfo?.provider,
       account: walletInfo?.address,
-      accounts: [walletInfo?.address],
+      accounts: accounts,
       connector: walletType,
       connect: connectWallet,
       disconnect: async () => await disConnectWallet(),
       getAccountInfo: () => walletInfo?.extraInfo,
       signMessage: getSignature,
+      getBalance: onGetBalance,
+      // sendTransaction: null,
     };
   }, [
+    accounts,
     connectWallet,
     connecting,
     disConnectWallet,
     getSignature,
-    isConnected,
+    isConnectedTransform,
+    onGetBalance,
     props,
     walletInfo,
     walletType,

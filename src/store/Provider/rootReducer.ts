@@ -5,6 +5,7 @@ import {
   commonPersistConfig,
   depositPersistConfig,
   withdrawPersistConfig,
+  withdrawNewPersistConfig,
   crossChainTransferPersistConfig,
   infoDashboardPersistConfig,
 } from './config';
@@ -13,10 +14,15 @@ import WithdrawSlice from 'store/reducers/withdraw/slice';
 import RecordsSlice from 'store/reducers/records/slice';
 import InfoDashboardSlice from 'store/reducers/infoDashboard/slice';
 import CrossChainTransferSlice from 'store/reducers/crossChainTransfer/slice';
+import WithdrawNewSlice from 'store/reducers/withdrawNew/slice';
 
 export const commonReducer = persistReducer(commonPersistConfig, CommonSlice.reducer);
 export const depositReducer = persistReducer(depositPersistConfig, DepositSlice.reducer);
 export const withdrawReducer = persistReducer(withdrawPersistConfig, WithdrawSlice.reducer);
+export const withdrawNewReducer = persistReducer(
+  withdrawNewPersistConfig,
+  WithdrawNewSlice.reducer,
+);
 export const crossChainTransferReducer = persistReducer(
   crossChainTransferPersistConfig,
   CrossChainTransferSlice.reducer,
@@ -30,6 +36,7 @@ const rootReducer = customCombineReducers({
   [CommonSlice.name]: CommonSlice.reducer,
   [DepositSlice.name]: DepositSlice.reducer,
   [WithdrawSlice.name]: WithdrawSlice.reducer,
+  [WithdrawNewSlice.name]: WithdrawNewSlice.reducer,
   [CrossChainTransferSlice.name]: CrossChainTransferSlice.reducer,
   [RecordsSlice.name]: RecordsSlice.reducer,
   [InfoDashboardSlice.name]: InfoDashboardSlice.reducer,

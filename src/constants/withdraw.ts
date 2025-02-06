@@ -3,6 +3,10 @@ import { NetworkStatus, TWithdrawInfo } from 'types/api';
 import { TArrivalTimeConfig, TWithdrawInfoSuccess } from 'types/deposit';
 import { AllSupportedELFChainId } from './chain';
 
+export const WITHDRAW_PAGE_TITLE = 'Withdraw Assets';
+
+export const BUTTON_TEXT_WITHDRAW = 'Withdraw';
+
 export const WithdrawAddressErrorCodeList = ['40100', '40101'];
 
 export const WithdrawSendTxErrorCodeList = [

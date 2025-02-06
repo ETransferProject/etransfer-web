@@ -4,13 +4,14 @@ import useEVM from './useEVM';
 import useSolana from './useSolana';
 import useTON from './useTON';
 import useTRON from './useTRON';
-import { WalletTypeEnum } from 'context/Wallet/types';
+import { IWallet, WalletTypeEnum } from 'context/Wallet/types';
 import { AuthTokenSource } from 'types/api';
 import { TOrderRecordsNoticeRequestAddressItem } from '@etransfer/socket';
 import { useAppDispatch, useCrossChainTransfer } from 'store/Provider/hooks';
 import { removeOneLocalJWT } from 'api/utils';
 import { setFromWalletType, setToWalletType } from 'store/reducers/crossChainTransfer/slice';
 import myEvents from 'utils/myEvent';
+import { isAelfChain, isEVMChain, isSolanaChain, isTONChain, isTRONChain } from 'utils/wallet';
 
 export function useCheckHasConnectedWallet() {
   const { isConnected: isAelfConnected } = useAelf();
@@ -126,4 +127,20 @@ export function useAfterDisconnect() {
     },
     [dispatch, fromWalletType, toWalletType],
   );
+}
+
+export function useGetOneWallet(network: string): IWallet | undefined {
+  const evmWallet = useEVM();
+  const solanaWallet = useSolana();
+  const tonWallet = useTON();
+  const tronWallet = useTRON();
+  const aelfWallet = useAelf();
+
+  if (isEVMChain(network)) return evmWallet;
+  if (isSolanaChain(network)) return solanaWallet;
+  if (isTONChain(network)) return tonWallet;
+  if (isTRONChain(network)) return tronWallet;
+  if (isAelfChain(network)) return aelfWallet;
+
+  return undefined;
 }
