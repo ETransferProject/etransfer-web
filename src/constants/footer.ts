@@ -135,18 +135,6 @@ export const DOCUMENTATION_LINK: Record<string, TFooterMenuItem> = {
     name: 'How to deposit to aelf by ETransfer?',
     link: 'https://etransfer.gitbook.io/docs/faq#how-to-deposit-to-aelf-by-etransfer',
   },
-  withdrawProcess: {
-    name: 'How to withdraw from aelf by ETransfer?',
-    link: 'https://etransfer.gitbook.io/docs/faq#how-to-withdraw-from-aelf-by-etransfer',
-  },
-  notArrived: {
-    name: 'The assets have not arrived.',
-    link: 'https://etransfer.gitbook.io/docs/faq#my-assets-have-not-arrived',
-  },
-  completedTime: {
-    name: 'How long does it take for the transfer to be completed?',
-    link: 'https://etransfer.gitbook.io/docs/faq#how-long-does-it-take-for-the-transfer-to-be-completed',
-  },
 };
 
 export const FAQ_DEPOSIT: TFrequentlyAskedQuestionsSection = {
@@ -160,13 +148,7 @@ export const FAQ_DEPOSIT: TFrequentlyAskedQuestionsSection = {
 
 export const FAQ_WITHDRAW: TFrequentlyAskedQuestionsSection = {
   title: 'FAQ',
-  list: [
-    DOCUMENTATION_LINK.aboutETransfer,
-    DOCUMENTATION_LINK.secure,
-    DOCUMENTATION_LINK.withdrawProcess,
-    DOCUMENTATION_LINK.notArrived,
-    DOCUMENTATION_LINK.completedTime,
-  ],
+  list: [DOCUMENTATION_LINK.aboutETransfer, DOCUMENTATION_LINK.secure],
 };
 
 export const FAQ_CROSS_CHAIN_TRANSFER: TFrequentlyAskedQuestionsSection = {

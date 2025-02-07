@@ -126,7 +126,8 @@ export default function NetworkSelectModal<T extends TNetwork | TNetworkItem>({
       open={open}
       onCancel={onClose}
       hideCancelButton
-      hideOkButton>
+      hideOkButton
+      centered={false}>
       {content}
     </CommonModal>
   );
