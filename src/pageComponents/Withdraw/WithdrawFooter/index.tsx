@@ -10,7 +10,7 @@ import {
   TRANSACTION_APPROVE_LOADING,
 } from 'constants/crossChainTransfer';
 import { BUTTON_TEXT_WITHDRAW } from 'constants/withdraw';
-import { handleErrorMessage, sleep, ZERO } from '@etransfer/utils';
+import { handleErrorMessage, sleep } from '@etransfer/utils';
 import { Form } from 'antd';
 import clsx from 'clsx';
 import { useWithdrawNewState, useLoading } from 'store/Provider/hooks';
@@ -37,16 +37,16 @@ import {
 import myEvents from 'utils/myEvent';
 import { useSendTxnFromAelfChain } from 'hooks/crossChainTransfer';
 import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletModal';
-import { computeWalletType, getConnectWalletText, isAelfChain } from 'utils/wallet';
+import { computeWalletType, getConnectWalletText } from 'utils/wallet';
 import { WithdrawFormKeys, TWithdrawFormValidateData } from '../types';
 import { formatSymbolDisplay } from 'utils/format';
-import { getAelfMaxBalance } from 'pageComponents/CrossChainTransferPage/utils';
 import FeeInfo from './FeeInfo';
 import PartialLoading from 'components/PartialLoading';
 import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
 import { isAuthTokenError } from 'utils/api/error';
 import { useAuthToken } from 'hooks/wallet/authToken';
 import { EVM_TOKEN_ABI } from 'constants/wallet/EVM';
+import { useCheckMaxBalance } from '../hooks';
 
 export interface WithdrawFooterProps {
   className?: string;
@@ -428,28 +428,7 @@ export default function WithdrawFooter({
     firstTxnHashRef.current = '';
   }, [clickFailedOk]);
 
-  const [isBalanceNotEnoughTip, setIsBalanceNotEnoughTip] = useState(false);
-  const checkMaxBalance = useCallback(async () => {
-    let _maxBalance = fromBalance;
-    if (isAelfChain(fromNetwork?.network || '') && tokenSymbol === 'ELF') {
-      _maxBalance = await getAelfMaxBalance({
-        balance: fromBalance || '',
-        aelfFee: transferInfo.aelfTransactionFee,
-        fromNetwork: fromNetwork?.network,
-        tokenSymbol,
-        account: fromWallet?.account || '',
-      });
-    }
-    const res = !!amount && (!_maxBalance || ZERO.plus(_maxBalance).lt(amount));
-    setIsBalanceNotEnoughTip(res);
-  }, [
-    amount,
-    fromBalance,
-    fromNetwork?.network,
-    fromWallet?.account,
-    tokenSymbol,
-    transferInfo.aelfTransactionFee,
-  ]);
+  const { isBalanceNotEnoughTip, checkMaxBalance } = useCheckMaxBalance();
 
   const btnProps = useMemo(() => {
     const disabled = true,
@@ -464,7 +443,14 @@ export default function WithdrawFooter({
       };
     }
 
-    checkMaxBalance();
+    checkMaxBalance({
+      tokenSymbol,
+      amount,
+      fromBalance,
+      fromNetwork: fromNetwork?.network,
+      aelfTransactionFee: transferInfo.aelfTransactionFee,
+      fromAccount: fromWallet?.account,
+    });
     if (isBalanceNotEnoughTip || formValidateData[WithdrawFormKeys.AMOUNT].errorMessage) {
       return {
         children: BUTTON_TEXT_INSUFFICIENT_FUNDS,
@@ -483,11 +469,16 @@ export default function WithdrawFooter({
   }, [
     isFromWalletConnected,
     checkMaxBalance,
+    tokenSymbol,
+    amount,
+    fromBalance,
+    fromNetwork?.network,
+    transferInfo.aelfTransactionFee,
+    fromWallet?.account,
     isBalanceNotEnoughTip,
     formValidateData,
     isSubmitDisabled,
     onConnectWallet,
-    fromNetwork?.network,
   ]);
 
   return (
