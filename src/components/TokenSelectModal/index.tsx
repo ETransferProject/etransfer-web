@@ -126,6 +126,7 @@ export default function TokenSelectModal<T>({
 
   return (
     <CommonModal
+      wrapClassName={styles['token-select-modal-wrap']}
       className={clsx(styles['token-select-modal'], className)}
       title={SelectSourceChain}
       open={open}
