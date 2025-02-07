@@ -36,7 +36,7 @@ export default function RemainingLimit({
         </CommonTooltip>
       </span>
     );
-  }, []);
+  }, [labelClassName]);
 
   const value = useMemo(() => {
     return (
@@ -52,7 +52,7 @@ export default function RemainingLimit({
         )}
       </span>
     );
-  }, [limitCurrency, remainingLimit, totalLimit]);
+  }, [limitCurrency, remainingLimit, totalLimit, valueClassName]);
 
   return (
     <div

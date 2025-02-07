@@ -40,7 +40,7 @@ import ConnectWalletModal from 'components/Header/LoginAndProfile/ConnectWalletM
 import { computeWalletType, getConnectWalletText, isAelfChain } from 'utils/wallet';
 import { WithdrawFormKeys, TWithdrawFormValidateData } from '../types';
 import { formatSymbolDisplay } from 'utils/format';
-import { getAelfMaxBalance } from '../utils';
+import { getAelfMaxBalance } from 'pageComponents/CrossChainTransferPage/utils';
 import FeeInfo from './FeeInfo';
 import PartialLoading from 'components/PartialLoading';
 import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
@@ -497,16 +497,13 @@ export default function WithdrawFooter({
         <div className={clsx('flex-1', 'flex-column', styles['withdraw-footer-info-wrapper'])}>
           <div className={clsx('flex-column', styles['receive-amount-wrapper'])}>
             <div className={styles['info-label']}>Receive Amount</div>
-            <div
-              className={clsx(
-                'flex-row-center',
-                styles['info-value'],
-                styles['info-value-big-font'],
-              )}>
+            <div className={clsx('flex-row-center', styles['info-value-big-font'])}>
               {isTransactionFeeLoading && <PartialLoading />}
               {!isTransactionFeeLoading &&
                 `${(!isSuccessModalOpen && estimateReceive) || DEFAULT_NULL_VALUE} `}
-              <span className={clsx(styles['info-unit'])}>{estimateReceiveUnit}</span>
+              <span className={clsx(styles['info-unit'])}>
+                &nbsp;{formatSymbolDisplay(estimateReceiveUnit)}
+              </span>
             </div>
           </div>
           <FeeInfo
@@ -515,7 +512,7 @@ export default function WithdrawFooter({
             transactionFee={transactionFee}
             transactionUnit={formatSymbolDisplay(transactionFeeUnit)}
             aelfTransactionFee={transferInfo.aelfTransactionFee}
-            aelfTransactionUnit={transferInfo.aelfTransactionUnit}
+            aelfTransactionUnit={formatSymbolDisplay(transferInfo.aelfTransactionUnit || '')}
           />
         </div>
 

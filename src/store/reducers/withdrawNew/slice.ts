@@ -11,7 +11,6 @@ import { TGetTokenNetworkRelationResult, TNetworkItem, TTokenItem } from 'types/
 export type TWithdrawNewState = {
   tokenSymbol: string;
   tokenList: TTokenItem[];
-  totalTokenList: TTokenItem[];
 
   fromNetwork?: TNetworkItem;
   fromNetworkList?: TNetworkItem[];
@@ -30,7 +29,6 @@ export type TWithdrawNewState = {
 export const InitialWithdrawNewState: TWithdrawNewState = {
   tokenSymbol: TokenType.USDT,
   tokenList: [TOKEN_INFO_USDT],
-  totalTokenList: [TOKEN_INFO_USDT],
   fromNetwork: TRANSFER_DEFAULT_FROM_NETWORK,
   toNetwork: TRANSFER_DEFAULT_TO_NETWORK,
   withdrawAddress: '',
@@ -45,9 +43,6 @@ export const WithdrawNewSlice = createSlice({
     },
     setTokenList: (state, action: PayloadAction<TTokenItem[]>) => {
       state.tokenList = action.payload;
-    },
-    setTotalTokenList: (state, action: PayloadAction<TTokenItem[]>) => {
-      state.totalTokenList = action.payload;
     },
     setFromNetwork: (state, action: PayloadAction<TNetworkItem | undefined>) => {
       state.fromNetwork = action.payload;
@@ -85,7 +80,6 @@ export const WithdrawNewSlice = createSlice({
 export const {
   setTokenSymbol,
   setTokenList,
-  setTotalTokenList,
   setFromNetwork,
   setFromNetworkList,
   setToNetwork,

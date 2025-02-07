@@ -4,6 +4,7 @@ import styles from './styles.module.scss';
 import { useMemo } from 'react';
 import clsx from 'clsx';
 import CommonSpace from 'components/CommonSpace';
+import { useCommonState } from 'store/Provider/hooks';
 
 type TFeeInfo = {
   isTransactionFeeLoading?: boolean;
@@ -22,6 +23,8 @@ export default function FeeInfo({
   aelfTransactionFee,
   aelfTransactionUnit,
 }: TFeeInfo) {
+  const { isPadPX } = useCommonState();
+
   const estimatedGasFeeElement = useMemo(() => {
     return (
       <span className={clsx('flex-row-center', styles['fee-item'])}>
@@ -75,7 +78,7 @@ export default function FeeInfo({
   return (
     <div>
       {estimatedGasFeeElement}
-      <CommonSpace direction={'vertical'} size={2} />
+      <CommonSpace direction={'vertical'} size={isPadPX ? 2 : 8} />
       {transactionFeeElement}
     </div>
   );

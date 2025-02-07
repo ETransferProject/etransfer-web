@@ -38,7 +38,6 @@ import {
   setToNetwork,
   setToNetworkList,
   setTotalNetworkList,
-  setTotalTokenList,
   setToWalletType,
 } from 'store/reducers/withdrawNew/slice';
 import { SingleMessage } from '@etransfer/ui-react';
@@ -65,7 +64,8 @@ import {
   TWithdrawFormValues,
 } from './types';
 import { isDIDAddressSuffix } from 'utils/aelf/aelfBase';
-import { computeTokenList, computeToNetworkList, getAelfMaxBalance } from './utils';
+import { computeFromNetworkList, computeToNetworkList } from './utils';
+import { getAelfMaxBalance } from 'pageComponents/CrossChainTransferPage/utils';
 import { computeWalletType, getWalletSourceType, isAelfChain, isTONChain } from 'utils/wallet';
 import { useUpdateBalance } from 'hooks/wallet/useUpdateBalance';
 import { useGetAuthTokenFromStorage } from 'hooks/wallet/authToken';
@@ -83,8 +83,9 @@ export default function WithdrawContent() {
     fromNetwork,
     toNetwork,
     tokenSymbol,
-    totalTokenList,
+    tokenList,
     tokenChainRelation,
+    totalNetworkList,
   } = useWithdrawNewState();
   const fromNetworkRef = useRef<TNetworkItem | undefined>(fromNetwork);
   const toNetworkRef = useRef<TNetworkItem | undefined>(toNetwork);
@@ -92,8 +93,7 @@ export default function WithdrawContent() {
   const tokenChainRelationRef = useRef<TGetTokenNetworkRelationResult | undefined>(
     tokenChainRelation,
   );
-  const tokenSymbolRef = useRef(tokenSymbol);
-  const totalTokenListRef = useRef<TTokenItem[]>([]);
+  const tokenListRef = useRef<TTokenItem[]>([]);
   const [form] = Form.useForm<TWithdrawFormValues>();
   const [formValidateData, setFormValidateData] = useState<{
     [key in WithdrawFormKeys]: { validateStatus: WithdrawValidateStatus; errorMessage: string };
@@ -109,7 +109,7 @@ export default function WithdrawContent() {
   const amountRef = useRef('');
   const { balance, decimalsFromWallet, getBalance, getBalanceInterval } = useUpdateBalance(
     tokenSymbol,
-    totalTokenList,
+    tokenList,
     fromWallet,
   );
   const getAuthTokenFromStorage = useGetAuthTokenFromStorage();
@@ -130,12 +130,12 @@ export default function WithdrawContent() {
   }, [amount, minAmount, transferInfo.receiveAmount]);
 
   const currentToken = useMemo(() => {
-    const item = totalTokenList?.find((item) => item.symbol === tokenSymbol);
+    const item = tokenList?.find((item) => item.symbol === tokenSymbol);
     return item?.symbol ? item : InitialWithdrawNewState.tokenList[0];
-  }, [tokenSymbol, totalTokenList]);
+  }, [tokenSymbol, tokenList]);
   const currentTokenRef = useRef(currentToken);
 
-  const getRecipientAddressInput = useCallback(() => {
+  const getWithdrawAddressInput = useCallback(() => {
     return form.getFieldValue(WithdrawFormKeys.ADDRESS)?.trim();
   }, [form]);
 
@@ -152,11 +152,11 @@ export default function WithdrawContent() {
           WithdrawValidateStatus.Error ||
         currentFormValidateData[WithdrawFormKeys.AMOUNT].validateStatus ===
           WithdrawValidateStatus.Error ||
-        isValueUndefined(getRecipientAddressInput()) ||
+        isValueUndefined(getWithdrawAddressInput()) ||
         isValueUndefined(form.getFieldValue(WithdrawFormKeys.AMOUNT));
       setIsSubmitDisabled(isDisabled);
     },
-    [form, getRecipientAddressInput, receiveAmount],
+    [form, getWithdrawAddressInput, receiveAmount],
   );
 
   const handleFormValidateDataChange = useCallback(
@@ -170,20 +170,64 @@ export default function WithdrawContent() {
     [judgeIsSubmitDisabled],
   );
 
+  // TODO
   const searchParams = useSearchParams();
   const routeQuery = useMemo(
     () => ({
+      tokenSymbol: searchParams.get('tokenSymbol'),
       fromNetwork: searchParams.get('fromNetwork'),
       toNetwork: searchParams.get('toNetwork'),
-      tokenSymbol: searchParams.get('tokenSymbol'),
     }),
     [searchParams],
   );
 
+  const getTotalTokenList = useCallback(
+    async (isInitCurrentSymbol?: boolean) => {
+      try {
+        const res = await getTokenList({
+          type: BusinessType.Transfer,
+        });
+
+        dispatch(setTokenList(res.tokenList));
+        tokenListRef.current = res.tokenList;
+
+        if (isInitCurrentSymbol && !tokenSymbol) {
+          dispatch(setTokenSymbol(res.tokenList[0].symbol));
+          currentTokenRef.current = res.tokenList[0];
+        } else {
+          const exitToken = res.tokenList.find(
+            (item) => item.symbol === (routeQuery.tokenSymbol || tokenSymbol),
+          );
+          if (exitToken) {
+            dispatch(setTokenSymbol(exitToken.symbol));
+            currentTokenRef.current = exitToken;
+          } else {
+            dispatch(setTokenSymbol(res.tokenList[0].symbol));
+            currentTokenRef.current = res.tokenList[0];
+          }
+        }
+      } catch (error) {
+        console.log('getTotalTokenList error', error);
+      }
+    },
+    [dispatch, routeQuery.tokenSymbol, tokenSymbol],
+  );
+
+  const getTokenChainRelation = useCallback(async () => {
+    try {
+      const authToken = await getAuthTokenFromStorage(fromWalletType);
+      const tokenChainRelation = await getTokenNetworkRelation({}, authToken);
+      tokenChainRelationRef.current = tokenChainRelation;
+      dispatch(setTokenChainRelation(tokenChainRelation));
+    } catch (error) {
+      console.log('getTokenChainRelation error', error);
+    }
+  }, [dispatch, fromWalletType, getAuthTokenFromStorage]);
+
   const getTransferData = useCallback(
     async (amount?: string) => {
       try {
-        const _symbol = tokenSymbolRef.current || tokenSymbol;
+        const _symbol = currentTokenRef.current.symbol || tokenSymbol;
         const _fromNetworkKey = fromNetworkRef.current?.network;
         const _toNetworkKey = toNetworkRef.current?.network;
         if (!_fromNetworkKey) return;
@@ -192,7 +236,7 @@ export default function WithdrawContent() {
         const params: TGetTransferInfoRequest = {
           fromNetwork: _fromNetworkKey,
           toNetwork: _toNetworkKey,
-          toAddress: getRecipientAddressInput(),
+          toAddress: getWithdrawAddressInput(),
           symbol: _symbol,
         };
         if (amount) params.amount = amount;
@@ -216,7 +260,7 @@ export default function WithdrawContent() {
         });
         setIsTransactionFeeLoading(false);
 
-        const tokenItem = totalTokenList.find((item) => item.symbol === _symbol);
+        const tokenItem = tokenList.find((item) => item.symbol === _symbol);
         getBalanceInterval(
           transferInfoRef.current?.contractAddress || '',
           _fromNetworkKey,
@@ -232,8 +276,8 @@ export default function WithdrawContent() {
         // when network error, transactionUnit should as the same with symbol
         setTransferInfo({
           ...InitialCrossChainTransferInfo,
-          limitCurrency: formatSymbolDisplay(tokenSymbolRef.current),
-          transactionUnit: formatSymbolDisplay(tokenSymbolRef.current),
+          limitCurrency: formatSymbolDisplay(currentTokenRef.current.symbol),
+          transactionUnit: formatSymbolDisplay(currentTokenRef.current.symbol),
         });
         setIsTransactionFeeLoading(false);
 
@@ -269,76 +313,74 @@ export default function WithdrawContent() {
       getBalance,
       getBalanceInterval,
       getCommentInput,
-      getRecipientAddressInput,
+      getWithdrawAddressInput,
       handleFormValidateDataChange,
+      tokenList,
       tokenSymbol,
-      totalTokenList,
     ],
   );
   const getTransferDataRef = useRef(getTransferData);
   getTransferDataRef.current = getTransferData;
 
-  const getTokenData = useCallback(
-    async (isInitCurrentSymbol?: boolean) => {
-      try {
-        if (!fromNetworkRef.current || !toNetworkRef.current) return;
-        const allowTokenList = computeTokenList({
-          fromNetwork: fromNetworkRef.current,
-          toNetwork: toNetworkRef.current,
-          totalTokenList: totalTokenListRef.current,
-          tokenChainRelation: tokenChainRelationRef.current,
-        });
-        dispatch(setTokenList(allowTokenList));
+  const computeToNetwork = useCallback(
+    async (networkList?: TNetworkItem[]) => {
+      if (!networkList || !fromNetworkRef.current?.network) return;
+      const _toNetworkKey = routeQuery.toNetwork || toNetworkRef.current?.network;
 
-        if (isInitCurrentSymbol && !tokenSymbol) {
-          dispatch(setTokenSymbol(allowTokenList[0].symbol));
-          currentTokenRef.current = allowTokenList[0];
-        } else {
-          const exitToken = allowTokenList.find(
-            (item) => item.symbol === (routeQuery.tokenSymbol || tokenSymbol),
-          );
-          if (exitToken) {
-            dispatch(setTokenSymbol(exitToken.symbol));
-            currentTokenRef.current = exitToken;
-          } else {
-            dispatch(setTokenSymbol(allowTokenList[0].symbol));
-            currentTokenRef.current = allowTokenList[0];
-          }
-        }
+      const _toNetworkList = computeToNetworkList(
+        fromNetworkRef.current,
+        currentTokenRef.current.symbol,
+        networkList,
+        tokenChainRelationRef.current,
+      );
+      console.log('computeToNetworkList _toNetworkList', _toNetworkList);
+      dispatch(setToNetworkList(_toNetworkList));
 
-        // to get minAmount and contractAddress
-        tokenSymbolRef.current = currentTokenRef.current.symbol;
-        await getTransferDataRef.current('');
-      } catch (error) {
-        console.log('getTokenData error', error);
-        // SingleMessage.error(handleErrorMessage(error));
+      const _exitToNetwork = _toNetworkList.find((item) => item.network === _toNetworkKey);
+      if (_exitToNetwork && _exitToNetwork.status !== NetworkStatus.Offline) {
+        dispatch(setToNetwork(_exitToNetwork));
+        toNetworkRef.current = _exitToNetwork;
+      } else {
+        dispatch(setToNetwork(_toNetworkList[0]));
+        toNetworkRef.current = _toNetworkList[0];
       }
+
+      // set to wallet logic
+      const _toWalletType = computeWalletType(toNetworkRef.current.network);
+      if (_toWalletType) {
+        dispatch(setToWalletType(_toWalletType));
+      } else {
+        dispatch(setToWalletType(undefined));
+      }
+
+      // to get minAmount and contractAddress
+      await getTransferDataRef.current('');
     },
-    [dispatch, routeQuery.tokenSymbol, tokenSymbol],
+    [dispatch, routeQuery.toNetwork],
   );
 
-  const getNetworkData = useCallback(async () => {
-    try {
-      const authToken = await getAuthTokenFromStorage(fromWalletType);
-      const { networkList } = await getTransferNetworkList(
-        { type: BusinessType.Transfer },
-        authToken,
+  const computeFromAndToNetwork = useCallback(
+    async (networkList?: TNetworkItem[]) => {
+      if (!networkList) return;
+      const _fromNetworkKey = routeQuery.fromNetwork || fromNetworkRef.current?.network;
+
+      // 1. from logic
+      const _fromNetworkList = computeFromNetworkList(
+        currentTokenRef.current.symbol,
+        networkList,
+        tokenChainRelationRef.current,
       );
 
-      dispatch(setTotalNetworkList(networkList));
-      dispatch(setFromNetworkList(networkList));
+      dispatch(setFromNetworkList(_fromNetworkList));
 
-      if (networkList?.length > 0) {
-        // from logic
-        const exitFromNetwork = networkList.find(
-          (item) => item.network === (routeQuery.fromNetwork || fromNetwork?.network),
-        );
+      if (_fromNetworkList?.length > 0) {
+        const exitFromNetwork = _fromNetworkList.find((item) => item.network === _fromNetworkKey);
         if (exitFromNetwork && exitFromNetwork.status !== NetworkStatus.Offline) {
           dispatch(setFromNetwork(exitFromNetwork));
           fromNetworkRef.current = exitFromNetwork;
         } else {
-          dispatch(setFromNetwork(networkList[0]));
-          fromNetworkRef.current = networkList[0];
+          dispatch(setFromNetwork(_fromNetworkList[0]));
+          fromNetworkRef.current = _fromNetworkList[0];
         }
         // set from wallet logic
         const _fromWalletType = computeWalletType(fromNetworkRef.current.network);
@@ -348,58 +390,28 @@ export default function WithdrawContent() {
           dispatch(setFromWalletType(undefined));
         }
 
-        // to logic
-        const toNetworkList = computeToNetworkList(
-          fromNetworkRef.current,
-          networkList,
-          totalTokenListRef.current,
-          tokenChainRelationRef.current,
-        );
-        console.log('computeToNetworkList toNetworkList', toNetworkList);
-        dispatch(setToNetworkList(toNetworkList));
-
-        const exitToNetwork = toNetworkList.find(
-          (item) => item.network === (routeQuery.toNetwork || toNetwork?.network),
-        );
-        if (exitToNetwork && exitToNetwork.status !== NetworkStatus.Offline) {
-          dispatch(setToNetwork(exitToNetwork));
-          toNetworkRef.current = exitToNetwork;
-        } else {
-          dispatch(setToNetwork(toNetworkList[0]));
-          toNetworkRef.current = toNetworkList[0];
-        }
-
-        // set to wallet logic
-        const _toWalletType = computeWalletType(toNetworkRef.current.network);
-        if (_toWalletType) {
-          dispatch(setToWalletType(_toWalletType));
-        } else {
-          dispatch(setToWalletType(undefined));
-        }
+        // 2. to logic
+        await computeToNetwork(networkList);
       }
-    } catch (error: any) {
-      console.log('getNetworkData error', error);
-    }
-  }, [
-    dispatch,
-    fromNetwork?.network,
-    fromWalletType,
-    getAuthTokenFromStorage,
-    routeQuery.fromNetwork,
-    routeQuery.toNetwork,
-    toNetwork?.network,
-  ]);
+    },
+    [computeToNetwork, dispatch, routeQuery.fromNetwork],
+  );
 
-  const getTokenChainRelation = useCallback(async () => {
+  const getNetworkList = useCallback(async () => {
     try {
       const authToken = await getAuthTokenFromStorage(fromWalletType);
-      const tokenChainRelation = await getTokenNetworkRelation({}, authToken);
-      tokenChainRelationRef.current = tokenChainRelation;
-      dispatch(setTokenChainRelation(tokenChainRelation));
-    } catch (error) {
-      console.log('getTokenChainRelation error', error);
+      const { networkList } = await getTransferNetworkList(
+        { type: BusinessType.Transfer },
+        authToken,
+      );
+
+      dispatch(setTotalNetworkList(networkList));
+
+      await computeFromAndToNetwork(networkList);
+    } catch (error: any) {
+      console.log('getNetworkList error', error);
     }
-  }, [dispatch, fromWalletType, getAuthTokenFromStorage]);
+  }, [computeFromAndToNetwork, dispatch, fromWalletType, getAuthTokenFromStorage]);
 
   const handleWithdrawAddressChange = useCallback(
     (value: string | null) => {
@@ -411,7 +423,7 @@ export default function WithdrawContent() {
   );
 
   const handleWithdrawAddressBlur = useCallback(async () => {
-    const addressInput = getRecipientAddressInput();
+    const addressInput = getWithdrawAddressInput();
     const isSolanaNetwork = toNetworkRef.current?.network === BlockchainNetworkType.Solana;
     const isAddressShorterThanUsual =
       addressInput && addressInput?.length >= 32 && addressInput?.length <= 39;
@@ -457,10 +469,10 @@ export default function WithdrawContent() {
       });
       await getTransferDataRef.current(amountRef.current);
     } catch (error) {
-      console.log('handleRecipientAddressBlur error', error);
+      console.log('handleWithdrawAddressBlur error', error);
       // SingleMessage.error(handleErrorMessage(error));
     }
-  }, [form, getRecipientAddressInput, handleFormValidateDataChange]);
+  }, [form, getWithdrawAddressInput, handleFormValidateDataChange]);
 
   const judgeAmountValidateStatus = useCallback(async () => {
     if (isAelfChain(fromNetwork?.network || '') && tokenSymbol === 'ELF') {
@@ -555,7 +567,7 @@ export default function WithdrawContent() {
     }
   }, [fromWallet?.isConnected, handleAmountChange, form]);
 
-  const resetRecipientAndComment = useCallback(() => {
+  const resetWithdrawAddressAndComment = useCallback(() => {
     form.setFieldValue(WithdrawFormKeys.ADDRESS, '');
     handleWithdrawAddressChange('');
     handleFormValidateDataChange({
@@ -568,51 +580,60 @@ export default function WithdrawContent() {
     form.setFieldValue(WithdrawFormKeys.COMMENT, '');
   }, [form, handleFormValidateDataChange, handleWithdrawAddressChange]);
 
-  const handleFromNetworkChanged = useCallback(
-    async (item: TNetworkItem, toNetworkNew: TNetworkItem, newSymbol: string) => {
-      try {
-        fromNetworkRef.current = item;
-        toNetworkRef.current = toNetworkNew;
-        tokenSymbolRef.current = newSymbol;
-        form.setFieldValue(WithdrawFormKeys.AMOUNT, '');
-        handleAmountChange('');
-        resetRecipientAndComment();
-
-        await getTransferDataRef.current('');
-      } catch (error) {
-        console.log('handleFromNetworkChanged error', error);
-      }
-    },
-    [form, handleAmountChange, resetRecipientAndComment],
-  );
-
-  const handleToNetworkChanged = useCallback(
-    async (item: TNetworkItem, newSymbol: string) => {
-      toNetworkRef.current = item;
-      tokenSymbolRef.current = newSymbol;
-      form.setFieldValue(WithdrawFormKeys.AMOUNT, '');
-      handleAmountChange('');
-      resetRecipientAndComment();
-
-      await getTransferDataRef.current('');
-    },
-    [form, handleAmountChange, resetRecipientAndComment],
-  );
-
   const handleTokenChanged = useCallback(
     async (item: TTokenItem) => {
       try {
+        currentTokenRef.current = item;
         form.setFieldValue(WithdrawFormKeys.AMOUNT, '');
         handleAmountChange('');
+        resetWithdrawAddressAndComment();
 
-        currentTokenRef.current = item;
-        tokenSymbolRef.current = item.symbol;
-        await getTransferDataRef.current('');
+        await computeFromAndToNetwork(totalNetworkList);
+      } catch (error) {
+        console.log('handleTokenChanged error', error);
+      }
+    },
+    [
+      computeFromAndToNetwork,
+      form,
+      handleAmountChange,
+      resetWithdrawAddressAndComment,
+      totalNetworkList,
+    ],
+  );
+
+  const handleFromNetworkChanged = useCallback(
+    async (item: TNetworkItem) => {
+      try {
+        fromNetworkRef.current = item;
+        form.setFieldValue(WithdrawFormKeys.AMOUNT, '');
+        handleAmountChange('');
+        resetWithdrawAddressAndComment();
+
+        await computeFromAndToNetwork(totalNetworkList);
       } catch (error) {
         console.log('handleFromNetworkChanged error', error);
       }
     },
-    [form, handleAmountChange],
+    [
+      computeFromAndToNetwork,
+      form,
+      handleAmountChange,
+      resetWithdrawAddressAndComment,
+      totalNetworkList,
+    ],
+  );
+
+  const handleToNetworkChanged = useCallback(
+    async (item: TNetworkItem) => {
+      toNetworkRef.current = item;
+      form.setFieldValue(WithdrawFormKeys.AMOUNT, '');
+      handleAmountChange('');
+      resetWithdrawAddressAndComment();
+
+      await computeToNetwork(totalNetworkList);
+    },
+    [computeToNetwork, form, handleAmountChange, resetWithdrawAddressAndComment, totalNetworkList],
   );
 
   const handleAmountBlur = useCallback(async () => {
@@ -676,31 +697,17 @@ export default function WithdrawContent() {
     router.push('/history');
   }, [router]);
 
-  const getTotalTokenList = useCallback(async () => {
-    try {
-      const res = await getTokenList({
-        type: BusinessType.Transfer,
-      });
-
-      dispatch(setTotalTokenList(res.tokenList));
-      totalTokenListRef.current = res.tokenList;
-    } catch (error) {
-      console.log('getTotalTokenList error', error);
-    }
-  }, [dispatch]);
-
   const init = useCallback(async () => {
     await getTotalTokenList();
     await getTokenChainRelation();
-    await getNetworkData();
-    await getTokenData();
+    await getNetworkList();
 
     getBalanceInterval(
       transferInfoRef.current?.contractAddress || '',
       fromNetworkRef.current?.network || '',
       currentTokenRef.current,
     );
-  }, [getBalanceInterval, getNetworkData, getTokenChainRelation, getTokenData, getTotalTokenList]);
+  }, [getBalanceInterval, getNetworkList, getTokenChainRelation, getTotalTokenList]);
   const initRef = useRef(init);
   initRef.current = init;
 
