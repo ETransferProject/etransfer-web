@@ -7,7 +7,6 @@ import {
   DEFAULT_SEND_TRANSFER_ERROR,
   ErrorNameType,
   SEND_TRANSFER_ERROR_CODE_LIST,
-  TRANSACTION_APPROVE_LOADING,
 } from 'constants/crossChainTransfer';
 import { BUTTON_TEXT_WITHDRAW } from 'constants/withdraw';
 import { handleErrorMessage, sleep } from '@etransfer/utils';
@@ -15,17 +14,9 @@ import { Form } from 'antd';
 import clsx from 'clsx';
 import { useWithdrawNewState, useLoading } from 'store/Provider/hooks';
 import { useGetOneWallet } from 'hooks/wallet';
-import {
-  createTransferOrder,
-  updateTransferOrder as updateTransferOrderApi,
-} from 'utils/api/transfer';
+import { updateTransferOrder as updateTransferOrderApi } from 'utils/api/transfer';
 import { WalletTypeEnum } from 'context/Wallet/types';
-import {
-  SendEVMTransactionParams,
-  SendSolanaTransactionParams,
-  SendTONTransactionParams,
-  SendTRONTransactionParams,
-} from 'types/wallet';
+
 import DoubleCheckModal from 'pageComponents/CrossChainTransferPage/CrossChainTransferFooter/DoubleCheckModal';
 import SuccessModal from 'pageComponents/CrossChainTransferPage/CrossChainTransferFooter/SuccessModal';
 import FailModal from 'pageComponents/CrossChainTransferPage/CrossChainTransferFooter/FailModal';
@@ -42,11 +33,12 @@ import { WithdrawFormKeys, TWithdrawFormValidateData } from '../types';
 import { formatSymbolDisplay } from 'utils/format';
 import FeeInfo from './FeeInfo';
 import PartialLoading from 'components/PartialLoading';
-import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
-import { isAuthTokenError } from 'utils/api/error';
-import { useAuthToken } from 'hooks/wallet/authToken';
-import { EVM_TOKEN_ABI } from 'constants/wallet/EVM';
-import { useCheckMaxBalance } from '../hooks';
+import {
+  DefaultWithdrawOrderResponse,
+  useCheckMaxBalance,
+  useCreateOrderOtherNetwork,
+} from '../hooks';
+import { InitialWithdrawNewState } from 'store/reducers/withdrawNew/slice';
 
 export interface WithdrawFooterProps {
   className?: string;
@@ -75,8 +67,6 @@ interface ISuccessData {
   receiveAmountUsd: string;
 }
 
-const DefaultWithdrawOrderResponse: TCreateTransferOrderResult = { orderId: '' };
-
 export default function WithdrawFooter({
   className,
   withdrawAddress = '',
@@ -97,9 +87,8 @@ export default function WithdrawFooter({
   clickSuccessOk,
 }: WithdrawFooterProps) {
   const { setLoading } = useLoading();
-  const { fromNetwork, tokenSymbol, toNetwork } = useWithdrawNewState();
+  const { fromNetwork, tokenSymbol, toNetwork, tokenList } = useWithdrawNewState();
   const fromWallet = useGetOneWallet(fromNetwork?.network || '');
-  const { getAuthToken, queryAuthToken } = useAuthToken();
   const [firstTxnHash, setFirstTxnHash] = useState('');
   const firstTxnHashRef = useRef('');
 
@@ -167,15 +156,19 @@ export default function WithdrawFooter({
     setIsSuccessModalOpen(true);
   }, []);
 
+  // const authTokenRef = useRef('');
+  // const orderResultRef = useRef(DefaultWithdrawOrderResponse);
+  const { authTokenRef, orderResultRef, createOtherNetworkOrder, sendOtherNetworkTransfer } =
+    useCreateOrderOtherNetwork();
+
   const handleFailCallback = useCallback(() => {
     orderResultRef.current = DefaultWithdrawOrderResponse;
     setFirstTxnHash('');
     firstTxnHashRef.current = '';
     setFailModalReason(DEFAULT_SEND_TRANSFER_ERROR);
     setIsFailModalOpen(true);
-  }, []);
+  }, [orderResultRef]);
 
-  const orderResultRef = useRef(DefaultWithdrawOrderResponse);
   const updateTransferOrder = useCallback(
     async (status?: UpdateTransferOrderStatus) => {
       if (
@@ -208,7 +201,16 @@ export default function WithdrawFooter({
       );
       console.log('>>>>>> sendTransferResult updateOrderResult', updateOrderResult);
     },
-    [amount, fromNetwork?.network, fromWallet, toNetwork?.network, tokenSymbol, withdrawAddress],
+    [
+      amount,
+      authTokenRef,
+      fromNetwork?.network,
+      fromWallet,
+      orderResultRef,
+      toNetwork?.network,
+      tokenSymbol,
+      withdrawAddress,
+    ],
   );
 
   const updateTransferOrderRejected = useCallback(
@@ -231,8 +233,13 @@ export default function WithdrawFooter({
     [fromWallet?.walletType, updateTransferOrder],
   );
 
-  const authTokenRef = useRef('');
-  const { sendTransferTokenTransaction } = useSendTxnFromAelfChain();
+  const { sendTransferTokenTransaction } = useSendTxnFromAelfChain({
+    fromNetwork,
+    toNetwork,
+    tokenSymbol,
+    totalTokenList: tokenList,
+    InitialTransferState: InitialWithdrawNewState,
+  });
   const onTransfer = useCallback(async () => {
     try {
       if (
@@ -265,41 +272,15 @@ export default function WithdrawFooter({
           receiveAmountUsd: transferInfo.receiveAmountUsd,
         });
       } else {
-        // get etransfer jwt
-        const authToken = await getAuthToken(true);
-        authTokenRef.current = authToken;
-
-        setLoading(true, { text: TRANSACTION_APPROVE_LOADING });
-        // create order id
-        const createTransferOrderParams = {
-          amount: amount,
+        // other network logic
+        await createOtherNetworkOrder({
+          amount,
           fromNetwork: fromNetwork?.network,
           toNetwork: toNetwork?.network,
-          fromSymbol: tokenSymbol,
-          toSymbol: tokenSymbol,
-          fromAddress: isDIDAddressSuffix(fromWallet?.account)
-            ? removeELFAddressSuffix(fromWallet?.account)
-            : fromWallet?.account,
-          toAddress: isDIDAddressSuffix(withdrawAddress)
-            ? removeELFAddressSuffix(withdrawAddress)
-            : withdrawAddress,
-        };
-
-        try {
-          orderResultRef.current = await createTransferOrder(createTransferOrderParams, authToken);
-        } catch (error) {
-          orderResultRef.current = DefaultWithdrawOrderResponse;
-          if (isAuthTokenError(error)) {
-            const _authToken = await queryAuthToken(true);
-            authTokenRef.current = _authToken;
-            orderResultRef.current = await createTransferOrder(
-              createTransferOrderParams,
-              _authToken,
-            );
-          } else {
-            throw error;
-          }
-        }
+          tokenSymbol,
+          fromAddress: fromWallet?.account,
+          toAddress: withdrawAddress,
+        });
 
         setSuccessData({
           amount: amount,
@@ -316,41 +297,13 @@ export default function WithdrawFooter({
         }
         console.log('>>>>>> orderResult', orderResultRef.current);
 
-        let params: any;
-        if (fromWallet.walletType === WalletTypeEnum.EVM) {
-          params = {
-            network: fromNetwork?.network,
-            tokenContractAddress: tokenContractAddress,
-            toAddress: orderResultRef.current.address,
-            tokenAbi: EVM_TOKEN_ABI,
-            amount: amount,
-            decimals: Number(decimalsFromWallet),
-          } as SendEVMTransactionParams;
-        } else if (fromWallet.walletType === WalletTypeEnum.SOL) {
-          params = {
-            tokenContractAddress: tokenContractAddress,
-            toAddress: orderResultRef.current.address,
-            amount: amount,
-            decimals: decimalsFromWallet,
-          } as SendSolanaTransactionParams;
-        } else if (fromWallet.walletType === WalletTypeEnum.TON) {
-          params = {
-            tokenContractAddress: tokenContractAddress,
-            toAddress: orderResultRef.current.address,
-            amount: Number(amount),
-            decimals: decimalsFromWallet,
-            orderId: orderResultRef.current.orderId,
-          } as SendTONTransactionParams;
-        } else {
-          // TRON
-          params = {
-            tokenContractAddress: tokenContractAddress,
-            toAddress: orderResultRef.current.address,
-            amount: Number(amount),
-          } as SendTRONTransactionParams;
-        }
-        if (!fromWallet?.sendTransaction) return;
-        const sendTransferResult = await fromWallet?.sendTransaction(params);
+        const sendTransferResult = await sendOtherNetworkTransfer({
+          amount,
+          fromNetwork: fromNetwork?.network,
+          fromWallet,
+          decimalsFromWallet,
+          tokenContractAddress,
+        });
         setFirstTxnHash(sendTransferResult);
         firstTxnHashRef.current = sendTransferResult;
         console.log('>>>>>> sendTransferResult', sendTransferResult);
@@ -390,13 +343,14 @@ export default function WithdrawFooter({
   }, [
     amount,
     comment,
+    createOtherNetworkOrder,
     decimalsFromWallet,
     fromNetwork?.network,
     fromWallet,
-    getAuthToken,
     handleFailCallback,
     handleSuccessCallback,
-    queryAuthToken,
+    orderResultRef,
+    sendOtherNetworkTransfer,
     sendTransferTokenTransaction,
     setLoading,
     toNetwork?.network,
@@ -417,7 +371,7 @@ export default function WithdrawFooter({
     orderResultRef.current = DefaultWithdrawOrderResponse;
     setFirstTxnHash('');
     firstTxnHashRef.current = '';
-  }, [clickSuccessOk]);
+  }, [clickSuccessOk, orderResultRef]);
 
   const onClickFailed = useCallback(() => {
     setIsFailModalOpen(false);
@@ -426,7 +380,7 @@ export default function WithdrawFooter({
     orderResultRef.current = DefaultWithdrawOrderResponse;
     setFirstTxnHash('');
     firstTxnHashRef.current = '';
-  }, [clickFailedOk]);
+  }, [clickFailedOk, orderResultRef]);
 
   const { isBalanceNotEnoughTip, checkMaxBalance } = useCheckMaxBalance();
 

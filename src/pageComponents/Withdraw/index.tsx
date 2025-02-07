@@ -104,7 +104,6 @@ export default function WithdrawContent() {
   );
   const transferInfoRef = useRef(InitialCrossChainTransferInfo);
   const [isTransactionFeeLoading, setIsTransactionFeeLoading] = useState(false);
-  const [withdrawAddressInput, setWithdrawAddressInput] = useState('');
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [amount, setAmount] = useState('');
   const amountRef = useRef('');
@@ -476,8 +475,6 @@ export default function WithdrawContent() {
   const handleWithdrawAddressChange = useCallback(
     (value: string | null) => {
       dispatch(setWithdrawAddress(value || ''));
-
-      setWithdrawAddressInput(value || '');
     },
     [dispatch],
   );
@@ -816,7 +813,7 @@ export default function WithdrawContent() {
       decimalsFromWallet={decimalsFromWallet}
       isSubmitDisabled={isSubmitDisabled}
       isTransactionFeeLoading={isTransactionFeeLoading}
-      withdrawAddress={withdrawAddressInput}
+      withdrawAddress={getWithdrawAddressInput()}
       comment={getCommentInput()}
       onFromNetworkChanged={handleFromNetworkChanged}
       onToNetworkChanged={handleToNetworkChanged}
@@ -842,7 +839,7 @@ export default function WithdrawContent() {
       decimalsFromWallet={decimalsFromWallet}
       isSubmitDisabled={isSubmitDisabled}
       isTransactionFeeLoading={isTransactionFeeLoading}
-      withdrawAddress={withdrawAddressInput}
+      withdrawAddress={getWithdrawAddressInput()}
       comment={getCommentInput()}
       onFromNetworkChanged={handleFromNetworkChanged}
       onToNetworkChanged={handleToNetworkChanged}

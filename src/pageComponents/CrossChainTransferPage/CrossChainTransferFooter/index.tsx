@@ -45,6 +45,7 @@ import { TransferFormKeys, TransferValidateStatus, TTransferFormValidateData } f
 import { formatSymbolDisplay } from 'utils/format';
 import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
 import { getAelfMaxBalance } from '../utils';
+import { InitialCrossChainTransferState } from 'store/reducers/crossChainTransfer/slice';
 
 export interface CrossChainTransferFooterProps {
   className?: string;
@@ -97,7 +98,8 @@ export default function CrossChainTransferFooter({
   clickSuccessOk,
 }: CrossChainTransferFooterProps) {
   const { setLoading } = useLoading();
-  const { fromNetwork, tokenSymbol, toNetwork, toWalletType } = useCrossChainTransfer();
+  const { fromNetwork, tokenSymbol, toNetwork, toWalletType, totalTokenList } =
+    useCrossChainTransfer();
   const [{ fromWallet, toWallet }] = useWallet();
   const { getAuthToken, queryAuthToken } = useAuthToken();
   const [firstTxnHash, setFirstTxnHash] = useState('');
@@ -260,7 +262,13 @@ export default function CrossChainTransferFooter({
   );
 
   const authTokenRef = useRef('');
-  const { sendTransferTokenTransaction } = useSendTxnFromAelfChain();
+  const { sendTransferTokenTransaction } = useSendTxnFromAelfChain({
+    fromNetwork,
+    toNetwork,
+    tokenSymbol,
+    totalTokenList,
+    InitialTransferState: InitialCrossChainTransferState,
+  });
   const onTransfer = useCallback(async () => {
     try {
       if (

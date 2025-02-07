@@ -3,12 +3,16 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 import { useAppDispatch, useCrossChainTransfer, useLoading } from 'store/Provider/hooks';
 import {
-  InitialCrossChainTransferState,
   setFromNetwork,
   setToNetwork,
   setTokenSymbol,
 } from 'store/reducers/crossChainTransfer/slice';
-import { TCreateTransferOrderRequest, TCreateTransferOrderResult, TNetworkItem } from 'types/api';
+import {
+  TCreateTransferOrderRequest,
+  TCreateTransferOrderResult,
+  TNetworkItem,
+  TTokenItem,
+} from 'types/api';
 import {
   getCaHashAndOriginChainIdByWallet,
   getManagerAddressByWallet,
@@ -63,19 +67,30 @@ export function useGoTransfer() {
   );
 }
 
-export function useSendTxnFromAelfChain() {
+export function useSendTxnFromAelfChain({
+  fromNetwork,
+  toNetwork,
+  tokenSymbol,
+  totalTokenList,
+  InitialTransferState,
+}: {
+  fromNetwork?: TNetworkItem;
+  toNetwork?: TNetworkItem;
+  tokenSymbol: string;
+  totalTokenList: TTokenItem[];
+  InitialTransferState: any;
+}) {
   const getBalanceDivDecimals = useGetBalanceDivDecimals();
   const { setLoading } = useLoading();
   const { walletInfo, connector, callSendMethod, signMessage } = useAelf();
   const accounts = useGetAelfAccount();
-  const { fromNetwork, toNetwork, tokenSymbol, totalTokenList } = useCrossChainTransfer();
   const chainId = useMemo(() => {
     return fromNetwork?.network as SupportedELFChainId;
   }, [fromNetwork?.network]);
   const currentToken = useMemo(() => {
     const item = totalTokenList?.find((item) => item.symbol === tokenSymbol);
-    return item?.symbol ? item : InitialCrossChainTransferState.tokenList[0];
-  }, [tokenSymbol, totalTokenList]);
+    return item?.symbol ? item : InitialTransferState.tokenList[0];
+  }, [InitialTransferState.tokenList, tokenSymbol, totalTokenList]);
   const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
   const currentEtransferContractAddress = useMemo(
     () => ADDRESS_MAP[chainId]?.[ContractType.ETRANSFER] || '',
