@@ -6,9 +6,23 @@
   height: 24px;
 }
 
+.network-selected-disable{
+  cursor: not-allowed;
+}
+
 .select-network-value-selected-name {
   font-size: 16px;
   @extend .font-family-medium;
   line-height: 24px;
   @include text-overflow;
+}
+
+.no-network {
+  color: $disable-text;
+}
+
+.dynamic-arrow-disable {
+  path {
+    fill: $disable-text;
+  }
 }

@@ -511,8 +511,6 @@ export default function WithdrawFooter({
             isSuccessModalOpen={isSuccessModalOpen}
             transactionFee={transactionFee}
             transactionUnit={formatSymbolDisplay(transactionFeeUnit)}
-            aelfTransactionFee={transferInfo.aelfTransactionFee}
-            aelfTransactionUnit={formatSymbolDisplay(transferInfo.aelfTransactionUnit || '')}
           />
         </div>
 

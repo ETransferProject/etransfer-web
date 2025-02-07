@@ -142,6 +142,7 @@ export default function WithdrawForm({
           className={styles['form-input']}
           placeholder="Enter an address"
           autoComplete="off"
+          maxLength={100}
           onChange={(e) => onWithdrawAddressChange?.(e.target.value)}
           onBlur={onWithdrawAddressBlur}
         />

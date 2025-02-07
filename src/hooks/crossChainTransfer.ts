@@ -20,7 +20,11 @@ import {
 } from 'utils/wallet';
 import { useGetBalanceDivDecimals } from './contract';
 import { ZERO } from '@etransfer/utils';
-import { ErrorNameType, TRANSACTION_APPROVE_LOADING } from 'constants/crossChainTransfer';
+import {
+  ADDRESS_NOT_CORRECT,
+  ErrorNameType,
+  TRANSACTION_APPROVE_LOADING,
+} from 'constants/crossChainTransfer';
 import { checkTokenAllowanceAndApprove, createTransferTokenTransaction } from 'utils/contract';
 import { createTransferOrder } from 'utils/api/transfer';
 import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
@@ -184,7 +188,7 @@ export function useSendTxnFromAelfChain() {
       failCallback: () => void;
     }) => {
       setLoading(true, { text: TRANSACTION_APPROVE_LOADING });
-      if (!address) throw new Error('Please enter a correct address.');
+      if (!address) throw new Error(ADDRESS_NOT_CORRECT);
 
       // get etransfer jwt
       await getAelfAuthToken(true, false);

@@ -86,6 +86,7 @@ export default function WithdrawContent() {
     tokenList,
     tokenChainRelation,
     totalNetworkList,
+    withdrawAddress,
   } = useWithdrawNewState();
   const fromNetworkRef = useRef<TNetworkItem | undefined>(fromNetwork);
   const toNetworkRef = useRef<TNetworkItem | undefined>(toNetwork);
@@ -135,7 +136,7 @@ export default function WithdrawContent() {
   }, [tokenSymbol, tokenList]);
   const currentTokenRef = useRef(currentToken);
 
-  const getWithdrawAddressInput = useCallback(() => {
+  const getWithdrawAddressInput = useCallback((): string => {
     return form.getFieldValue(WithdrawFormKeys.ADDRESS)?.trim();
   }, [form]);
 
@@ -170,13 +171,13 @@ export default function WithdrawContent() {
     [judgeIsSubmitDisabled],
   );
 
-  // TODO
   const searchParams = useSearchParams();
   const routeQuery = useMemo(
     () => ({
       tokenSymbol: searchParams.get('tokenSymbol'),
-      fromNetwork: searchParams.get('fromNetwork'),
+      fromNetwork: searchParams.get('fromNetwork') || searchParams.get('chainId'),
       toNetwork: searchParams.get('toNetwork'),
+      withdrawAddress: searchParams.get('withdrawAddress'),
     }),
     [searchParams],
   );
@@ -224,6 +225,54 @@ export default function WithdrawContent() {
     }
   }, [dispatch, fromWalletType, getAuthTokenFromStorage]);
 
+  const checkWithdrawAddress = useCallback(
+    (address: string) => {
+      const isSolanaNetwork = toNetworkRef.current?.network === BlockchainNetworkType.Solana;
+      const isAddressShorterThanUsual = address && address?.length >= 32 && address?.length <= 39;
+
+      if (!address) {
+        handleFormValidateDataChange({
+          [WithdrawFormKeys.ADDRESS]: {
+            validateStatus: WithdrawValidateStatus.Normal,
+            errorMessage: '',
+          },
+        });
+        return true;
+      } else if (isSolanaNetwork && isAddressShorterThanUsual) {
+        // Only the Solana network has this warning
+        handleFormValidateDataChange({
+          [WithdrawFormKeys.ADDRESS]: {
+            validateStatus: WithdrawValidateStatus.Warning,
+            errorMessage: ADDRESS_SHORTER_THAN_USUAL,
+          },
+        });
+        return false;
+      } else if (address.length < 32 || address.length > 59) {
+        // Check address length
+        handleFormValidateDataChange({
+          [WithdrawFormKeys.ADDRESS]: {
+            validateStatus: WithdrawValidateStatus.Error,
+            errorMessage: ADDRESS_NOT_CORRECT,
+          },
+        });
+        return false;
+      }
+
+      if (isDIDAddressSuffix(address)) {
+        form.setFieldValue(WithdrawFormKeys.ADDRESS, removeELFAddressSuffix(address));
+      }
+      handleFormValidateDataChange({
+        [WithdrawFormKeys.ADDRESS]: {
+          validateStatus: WithdrawValidateStatus.Normal,
+          errorMessage: '',
+        },
+      });
+
+      return true;
+    },
+    [form, handleFormValidateDataChange],
+  );
+
   const getTransferData = useCallback(
     async (amount?: string) => {
       try {
@@ -236,9 +285,16 @@ export default function WithdrawContent() {
         const params: TGetTransferInfoRequest = {
           fromNetwork: _fromNetworkKey,
           toNetwork: _toNetworkKey,
-          toAddress: getWithdrawAddressInput(),
           symbol: _symbol,
         };
+
+        // set toAddress into api params
+        const _toAddress = getWithdrawAddressInput();
+        if (_toAddress && checkWithdrawAddress(_toAddress)) {
+          params.toAddress = _toAddress;
+        }
+
+        // set amount into api params
         if (amount) params.amount = amount;
 
         // Check from wallet type is reasonable.
@@ -247,6 +303,7 @@ export default function WithdrawContent() {
           if (fromWallet?.account) params.fromAddress = fromWallet?.account;
         }
 
+        // set comment into api params
         const comment = getCommentInput();
         if (_toNetworkKey && isTONChain(_toNetworkKey) && comment) params.memo = comment;
 
@@ -289,12 +346,14 @@ export default function WithdrawContent() {
             },
           });
         } else {
-          handleFormValidateDataChange({
-            [WithdrawFormKeys.ADDRESS]: {
-              validateStatus: WithdrawValidateStatus.Normal,
-              errorMessage: '',
-            },
-          });
+          if (error.name !== CommonErrorNameType.CANCEL) {
+            handleFormValidateDataChange({
+              [WithdrawFormKeys.ADDRESS]: {
+                validateStatus: WithdrawValidateStatus.Normal,
+                errorMessage: '',
+              },
+            });
+          }
 
           if (
             error.name !== CommonErrorNameType.CANCEL &&
@@ -308,6 +367,7 @@ export default function WithdrawContent() {
       }
     },
     [
+      checkWithdrawAddress,
       fromWallet?.account,
       fromWallet?.walletType,
       getBalance,
@@ -424,55 +484,15 @@ export default function WithdrawContent() {
 
   const handleWithdrawAddressBlur = useCallback(async () => {
     const addressInput = getWithdrawAddressInput();
-    const isSolanaNetwork = toNetworkRef.current?.network === BlockchainNetworkType.Solana;
-    const isAddressShorterThanUsual =
-      addressInput && addressInput?.length >= 32 && addressInput?.length <= 39;
 
     try {
-      if (!addressInput) {
-        handleFormValidateDataChange({
-          [WithdrawFormKeys.ADDRESS]: {
-            validateStatus: WithdrawValidateStatus.Normal,
-            errorMessage: '',
-          },
-        });
+      if (checkWithdrawAddress(addressInput)) {
         await getTransferDataRef.current(amountRef.current);
-        return;
-      } else if (isSolanaNetwork && isAddressShorterThanUsual) {
-        // Only the Solana network has this warning
-        handleFormValidateDataChange({
-          [WithdrawFormKeys.ADDRESS]: {
-            validateStatus: WithdrawValidateStatus.Warning,
-            errorMessage: ADDRESS_SHORTER_THAN_USUAL,
-          },
-        });
-        return;
-      } else if (addressInput.length < 32 || addressInput.length > 59) {
-        handleFormValidateDataChange({
-          [WithdrawFormKeys.ADDRESS]: {
-            validateStatus: WithdrawValidateStatus.Error,
-            errorMessage: ADDRESS_NOT_CORRECT,
-          },
-        });
-        return;
       }
-
-      if (isDIDAddressSuffix(addressInput)) {
-        form.setFieldValue(WithdrawFormKeys.ADDRESS, removeELFAddressSuffix(addressInput));
-      }
-
-      handleFormValidateDataChange({
-        [WithdrawFormKeys.ADDRESS]: {
-          validateStatus: WithdrawValidateStatus.Normal,
-          errorMessage: '',
-        },
-      });
-      await getTransferDataRef.current(amountRef.current);
     } catch (error) {
       console.log('handleWithdrawAddressBlur error', error);
-      // SingleMessage.error(handleErrorMessage(error));
     }
-  }, [form, getWithdrawAddressInput, handleFormValidateDataChange]);
+  }, [checkWithdrawAddress, getWithdrawAddressInput]);
 
   const judgeAmountValidateStatus = useCallback(async () => {
     if (isAelfChain(fromNetwork?.network || '') && tokenSymbol === 'ELF') {
@@ -584,6 +604,8 @@ export default function WithdrawContent() {
     async (item: TTokenItem) => {
       try {
         currentTokenRef.current = item;
+
+        // reset form data
         form.setFieldValue(WithdrawFormKeys.AMOUNT, '');
         handleAmountChange('');
         resetWithdrawAddressAndComment();
@@ -606,6 +628,8 @@ export default function WithdrawContent() {
     async (item: TNetworkItem) => {
       try {
         fromNetworkRef.current = item;
+
+        // reset form data
         form.setFieldValue(WithdrawFormKeys.AMOUNT, '');
         handleAmountChange('');
         resetWithdrawAddressAndComment();
@@ -627,6 +651,8 @@ export default function WithdrawContent() {
   const handleToNetworkChanged = useCallback(
     async (item: TNetworkItem) => {
       toNetworkRef.current = item;
+
+      // reset form data
       form.setFieldValue(WithdrawFormKeys.AMOUNT, '');
       handleAmountChange('');
       resetWithdrawAddressAndComment();
@@ -646,6 +672,7 @@ export default function WithdrawContent() {
 
   const handleClickMax = useCallback(async () => {
     if (isAelfChain(fromNetwork?.network || '') && tokenSymbol === 'ELF') {
+      // aelf chain and token=ELF, check aelf fee and approve fee
       try {
         setLoading(true);
         await getTransferDataRef.current(amountRef.current);
@@ -698,16 +725,39 @@ export default function WithdrawContent() {
   }, [router]);
 
   const init = useCallback(async () => {
+    // Initialization withdrawal address
+    const _address = routeQuery.withdrawAddress || withdrawAddress || '';
+    const _formatAddress = isDIDAddressSuffix(_address)
+      ? removeELFAddressSuffix(_address)
+      : _address;
+    form.setFieldValue(WithdrawFormKeys.ADDRESS, _formatAddress);
+    dispatch(setWithdrawAddress(_address));
+
+    // Initialization api data
     await getTotalTokenList();
     await getTokenChainRelation();
     await getNetworkList();
 
+    // Check address: It takes a while to take effect, so it is placed after the interface request.
+    checkWithdrawAddress(_formatAddress);
+
+    // Poll to obtain user token balance
     getBalanceInterval(
       transferInfoRef.current?.contractAddress || '',
       fromNetworkRef.current?.network || '',
       currentTokenRef.current,
     );
-  }, [getBalanceInterval, getNetworkList, getTokenChainRelation, getTotalTokenList]);
+  }, [
+    checkWithdrawAddress,
+    dispatch,
+    form,
+    getBalanceInterval,
+    getNetworkList,
+    getTokenChainRelation,
+    getTotalTokenList,
+    routeQuery.withdrawAddress,
+    withdrawAddress,
+  ]);
   const initRef = useRef(init);
   initRef.current = init;
 
@@ -739,13 +789,13 @@ export default function WithdrawContent() {
       if (new Date().getTime() > transferInfo.expiredTimestamp && fromNetworkRef.current?.network) {
         await getTransferDataRef.current(amountRef.current);
       }
-    }, 10000);
+    }, 1000);
     return () => {
       if (getTransactionFeeTimerRef.current) {
         clearInterval(getTransactionFeeTimerRef.current);
       }
     };
-  }, [transferInfo.expiredTimestamp, getTransferData, amount]);
+  }, [transferInfo.expiredTimestamp, amount]);
 
   // If fromWallet.account changed, update transferInfo data.
   useEffect(() => {

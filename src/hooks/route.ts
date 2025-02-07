@@ -21,12 +21,6 @@ export function useRouteParamType(): { type: SideMenuKey } {
   );
 
   useEffect(() => {
-    // TODO
-    // if (pathname === '/withdraw') {
-    //   const chainId = searchParams.get('chainId');
-    //   const tokenSymbol = searchParams.get('tokenSymbol');
-    //   goTransfer(tokenSymbol || '', chainId || '');
-    // }
     if (routeType && pathname === '/') {
       dispatch(setActiveMenuKey(routeType));
     }
@@ -137,13 +131,19 @@ export function useCheckAllowSearch() {
             searchObject.calculatePay = searchParams.get('calculatePay');
           break;
 
-        // TODO
         case '/withdraw':
-          if (searchParams.get('chainId')) searchObject.chainId = searchParams.get('chainId');
-          if (searchParams.get('tokenSymbol'))
-            searchObject.tokenSymbol = searchParams.get('tokenSymbol');
+          // Compatible with the old withdraw page routing parameters
+          if (searchParams.get('chainId')) searchObject.fromNetwork = searchParams.get('chainId');
           if (searchParams.get('withdrawAddress'))
             searchObject.withdrawAddress = searchParams.get('withdrawAddress');
+
+          // New withdraw page routing parameters
+          if (searchParams.get('fromNetwork'))
+            searchObject.fromNetwork = searchParams.get('fromNetwork');
+          if (searchParams.get('toNetwork'))
+            searchObject.withdrawAddress = searchParams.get('toNetwork');
+          if (searchParams.get('tokenSymbol'))
+            searchObject.tokenSymbol = searchParams.get('tokenSymbol');
           break;
 
         case '/cross-chain-transfer':

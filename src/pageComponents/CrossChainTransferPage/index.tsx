@@ -141,7 +141,7 @@ export default function CrossChainTransferPage() {
   }, [tokenSymbol, totalTokenList]);
   const currentTokenRef = useRef(currentToken);
 
-  const getRecipientAddressInput = useCallback(() => {
+  const getRecipientAddressInput = useCallback((): string => {
     return form.getFieldValue(TransferFormKeys.RECIPIENT)?.trim();
   }, [form]);
 
@@ -186,6 +186,55 @@ export default function CrossChainTransferPage() {
     [searchParams],
   );
 
+  const checkRecipientAddress = useCallback(
+    (address: string) => {
+      // const addressInput = getRecipientAddressInput();
+      const isSolanaNetwork = toNetworkRef.current?.network === BlockchainNetworkType.Solana;
+      const isAddressShorterThanUsual = address && address?.length >= 32 && address?.length <= 39;
+
+      if (!address) {
+        handleFormValidateDataChange({
+          [TransferFormKeys.RECIPIENT]: {
+            validateStatus: TransferValidateStatus.Normal,
+            errorMessage: '',
+          },
+        });
+        return true;
+      } else if (isSolanaNetwork && isAddressShorterThanUsual) {
+        // Only the Solana network has this warning
+        handleFormValidateDataChange({
+          [TransferFormKeys.RECIPIENT]: {
+            validateStatus: TransferValidateStatus.Warning,
+            errorMessage: ADDRESS_SHORTER_THAN_USUAL,
+          },
+        });
+        return false;
+      } else if (address.length < 32 || address.length > 59) {
+        handleFormValidateDataChange({
+          [TransferFormKeys.RECIPIENT]: {
+            validateStatus: TransferValidateStatus.Error,
+            errorMessage: ADDRESS_NOT_CORRECT,
+          },
+        });
+        return false;
+      }
+
+      if (isDIDAddressSuffix(address)) {
+        form.setFieldValue(TransferFormKeys.RECIPIENT, removeELFAddressSuffix(address));
+      }
+
+      handleFormValidateDataChange({
+        [TransferFormKeys.RECIPIENT]: {
+          validateStatus: TransferValidateStatus.Normal,
+          errorMessage: '',
+        },
+      });
+
+      return true;
+    },
+    [form, handleFormValidateDataChange],
+  );
+
   const getTransferData = useCallback(
     async (amount?: string) => {
       try {
@@ -200,6 +249,8 @@ export default function CrossChainTransferPage() {
           toNetwork: _toNetworkKey,
           symbol: _symbol,
         };
+
+        // set amount into api params
         if (amount) params.amount = amount;
 
         // Check from wallet type is reasonable.
@@ -210,8 +261,9 @@ export default function CrossChainTransferPage() {
 
         // Used to check whether the recipient address is reasonable.
         const _toAddress = isUseRecipientAddressRef.current ? getRecipientAddressInput() : '';
-        if (_toAddress) params.toAddress = _toAddress;
+        if (_toAddress && checkRecipientAddress(_toAddress)) params.toAddress = _toAddress;
 
+        // set comment into api params
         const comment = getCommentInput();
         if (_toNetworkKey && isTONChain(_toNetworkKey) && comment) params.memo = comment;
 
@@ -254,12 +306,14 @@ export default function CrossChainTransferPage() {
             },
           });
         } else {
-          handleFormValidateDataChange({
-            [TransferFormKeys.RECIPIENT]: {
-              validateStatus: TransferValidateStatus.Normal,
-              errorMessage: '',
-            },
-          });
+          if (error.name !== CommonErrorNameType.CANCEL) {
+            handleFormValidateDataChange({
+              [TransferFormKeys.RECIPIENT]: {
+                validateStatus: TransferValidateStatus.Normal,
+                errorMessage: '',
+              },
+            });
+          }
 
           if (
             error.name !== CommonErrorNameType.CANCEL &&
@@ -273,6 +327,7 @@ export default function CrossChainTransferPage() {
       }
     },
     [
+      checkRecipientAddress,
       fromWallet?.account,
       fromWallet?.walletType,
       getBalance,
@@ -421,55 +476,15 @@ export default function CrossChainTransferPage() {
 
   const handleRecipientAddressBlur = useCallback(async () => {
     const addressInput = getRecipientAddressInput();
-    const isSolanaNetwork = toNetworkRef.current?.network === BlockchainNetworkType.Solana;
-    const isAddressShorterThanUsual =
-      addressInput && addressInput?.length >= 32 && addressInput?.length <= 39;
 
     try {
-      if (!addressInput) {
-        handleFormValidateDataChange({
-          [TransferFormKeys.RECIPIENT]: {
-            validateStatus: TransferValidateStatus.Normal,
-            errorMessage: '',
-          },
-        });
+      if (checkRecipientAddress(addressInput)) {
         await getTransferDataRef.current(amountRef.current);
-        return;
-      } else if (isSolanaNetwork && isAddressShorterThanUsual) {
-        // Only the Solana network has this warning
-        handleFormValidateDataChange({
-          [TransferFormKeys.RECIPIENT]: {
-            validateStatus: TransferValidateStatus.Warning,
-            errorMessage: ADDRESS_SHORTER_THAN_USUAL,
-          },
-        });
-        return;
-      } else if (addressInput.length < 32 || addressInput.length > 59) {
-        handleFormValidateDataChange({
-          [TransferFormKeys.RECIPIENT]: {
-            validateStatus: TransferValidateStatus.Error,
-            errorMessage: ADDRESS_NOT_CORRECT,
-          },
-        });
-        return;
       }
-
-      if (isDIDAddressSuffix(addressInput)) {
-        form.setFieldValue(TransferFormKeys.RECIPIENT, removeELFAddressSuffix(addressInput));
-      }
-
-      handleFormValidateDataChange({
-        [TransferFormKeys.RECIPIENT]: {
-          validateStatus: TransferValidateStatus.Normal,
-          errorMessage: '',
-        },
-      });
-      await getTransferDataRef.current(amountRef.current);
     } catch (error) {
       console.log('handleRecipientAddressBlur error', error);
-      // SingleMessage.error(handleErrorMessage(error));
     }
-  }, [form, getRecipientAddressInput, handleFormValidateDataChange]);
+  }, [checkRecipientAddress, getRecipientAddressInput]);
 
   const judgeAmountValidateStatus = useCallback(async () => {
     if (isAelfChain(fromNetwork?.network || '') && tokenSymbol === 'ELF') {

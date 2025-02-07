@@ -3,6 +3,8 @@ import { TCrossChainTransferInfo } from 'types/api';
 
 export const CROSS_CHAIN_TRANSFER_PAGE_TITLE = 'Cross-chain Transfer';
 
+export const NO_MATCHING_NETWORK = 'No matching network';
+
 export const BUTTON_TEXT_CONNECT_WALLET = 'Connect wallet';
 export const BUTTON_TEXT_INSUFFICIENT_FUNDS = 'Insufficient funds';
 export const BUTTON_TEXT_NOT_ENOUGH_NATIVE_FOR_GAS = 'Not enough native for gas';

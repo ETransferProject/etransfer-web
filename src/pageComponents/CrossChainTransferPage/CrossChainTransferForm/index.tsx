@@ -404,6 +404,7 @@ export default function CrossChainTransferForm({
             className={styles['recipient-address-input']}
             placeholder="Recipient address"
             autoComplete="off"
+            maxLength={100}
             onChange={(e) => onRecipientAddressChange?.(e.target.value)}
             onBlur={onRecipientAddressBlur}
           />
