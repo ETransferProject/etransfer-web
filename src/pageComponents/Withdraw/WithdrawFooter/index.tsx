@@ -476,6 +476,9 @@ export default function WithdrawFooter({
       />
 
       <DoubleCheckModal
+        title="Withdrawal Information"
+        toNetworkLabel="Withdrawal to Network"
+        amountLabel="Withdrawal Amount"
         transferInfo={transferInfo}
         amount={amount || ''}
         toAddress={withdrawAddress}
@@ -492,6 +495,8 @@ export default function WithdrawFooter({
         isTransactionFeeLoading={isTransactionFeeLoading}
       />
       <SuccessModal
+        title="Withdrawal Submitted"
+        amountLabel="Withdrawal Amount"
         amount={successData.amount}
         symbol={successData.symbol}
         receiveAmount={successData.receiveAmount}

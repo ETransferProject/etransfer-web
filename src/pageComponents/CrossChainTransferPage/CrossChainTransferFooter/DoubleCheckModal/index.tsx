@@ -11,6 +11,9 @@ import { DEFAULT_NULL_VALUE } from 'constants/index';
 import { formatSymbolDisplay } from 'utils/format';
 
 export interface DoubleCheckModalProps {
+  title?: string;
+  toNetworkLabel?: string;
+  amountLabel?: string;
   transferInfo: TCrossChainTransferInfo;
   amount: string;
   toAddress: string;
@@ -21,6 +24,9 @@ export interface DoubleCheckModalProps {
 }
 
 export default function DoubleCheckModal({
+  title = 'Transfer Information',
+  toNetworkLabel = 'Transfer to Network',
+  amountLabel = 'Transfer Amount',
   transferInfo,
   amount,
   toAddress,
@@ -47,7 +53,7 @@ export default function DoubleCheckModal({
     <CommonModalSwitchDrawer
       {...modalProps}
       modalClassName={styles['cross-chain-transfer-double-check-modal']}
-      title="Transfer Information"
+      title={title}
       isOkButtonDisabled={isTransactionFeeLoading || !transferInfo.receiveAmount}>
       <div>
         <div className={clsx('flex-column-center', styles['receive-amount-wrapper'])}>
@@ -72,7 +78,7 @@ export default function DoubleCheckModal({
             </div>
           )}
           <div className={clsx(styles['detail-row'], styles['transfer-network-wrapper'])}>
-            <div className={styles['label']}>Transfer to Network</div>
+            <div className={styles['label']}>{toNetworkLabel}</div>
             <div className={clsx('flex-row-center', styles['value'])}>
               {isPadPX ? (
                 toNetwork?.name
@@ -85,7 +91,7 @@ export default function DoubleCheckModal({
             </div>
           </div>
           <div className={styles['detail-row']}>
-            <div className={styles['label']}>Transfer Amount</div>
+            <div className={styles['label']}>{amountLabel}</div>
             <div className={styles['value']}>
               <div className={styles['value-content']}>
                 {`${amount || DEFAULT_NULL_VALUE}`}
