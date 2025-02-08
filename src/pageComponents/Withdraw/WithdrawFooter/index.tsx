@@ -122,17 +122,8 @@ export default function WithdrawFooter({
   );
 
   const onConnectWallet = useCallback(() => {
-    if (!isFromWalletConnected) {
-      setConnectWalletModalProps({
-        open: true,
-        title: getConnectWalletText(),
-      });
-      return;
-    }
+    const walletType = computeWalletType(fromNetwork?.network || '');
 
-    const network = !isFromWalletConnected ? fromNetwork?.network : toNetwork?.network;
-
-    const walletType = computeWalletType(network || '');
     if (!walletType) {
       setConnectWalletModalProps({
         open: true,
@@ -143,9 +134,10 @@ export default function WithdrawFooter({
 
     setConnectWalletModalProps({
       open: true,
-      title: getConnectWalletText(network),
+      title: getConnectWalletText(fromNetwork?.network),
       allowList: [walletType],
     });
+
     return;
   }, [isFromWalletConnected, fromNetwork?.network, toNetwork?.network]);
 
