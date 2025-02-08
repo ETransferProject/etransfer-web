@@ -29,8 +29,8 @@ export type TWithdrawNewState = {
 export const InitialWithdrawNewState: TWithdrawNewState = {
   tokenSymbol: TokenType.USDT,
   tokenList: [TOKEN_INFO_USDT],
-  fromNetwork: TRANSFER_DEFAULT_FROM_NETWORK,
-  toNetwork: TRANSFER_DEFAULT_TO_NETWORK,
+  fromNetwork: TRANSFER_DEFAULT_TO_NETWORK,
+  toNetwork: TRANSFER_DEFAULT_FROM_NETWORK,
   withdrawAddress: '',
 };
 

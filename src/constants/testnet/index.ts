@@ -187,7 +187,7 @@ export const TRANSFER_DEFAULT_FROM_NETWORK: TNetworkItem = {
   network: 'SETH',
   specialWithdrawFee: '',
   specialWithdrawFeeDisplay: false,
-  status: NetworkStatus.Offline,
+  status: NetworkStatus.Health,
 };
 
 export const TRANSFER_DEFAULT_TO_NETWORK: TNetworkItem = {
