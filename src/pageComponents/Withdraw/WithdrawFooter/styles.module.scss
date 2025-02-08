@@ -78,6 +78,9 @@
     margin-right: 8px;
   }
   .receive-amount-wrapper {
+    @include media-web {
+      gap: 4px;
+    }
     .info-value {
       gap: 8px;
     }
