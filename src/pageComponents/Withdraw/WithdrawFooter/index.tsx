@@ -3,6 +3,7 @@ import styles from './styles.module.scss';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
 import {
+  BUTTON_TEXT_CONNECT,
   BUTTON_TEXT_INSUFFICIENT_FUNDS,
   DEFAULT_SEND_TRANSFER_ERROR,
   ErrorNameType,
@@ -12,7 +13,7 @@ import { BUTTON_TEXT_WITHDRAW } from 'constants/withdraw';
 import { handleErrorMessage, sleep } from '@etransfer/utils';
 import { Form } from 'antd';
 import clsx from 'clsx';
-import { useWithdrawNewState, useLoading } from 'store/Provider/hooks';
+import { useWithdrawNewState, useLoading, useCommonState } from 'store/Provider/hooks';
 import { useGetOneWallet } from 'hooks/wallet';
 import { updateTransferOrder as updateTransferOrderApi } from 'utils/api/transfer';
 import { WalletTypeEnum } from 'context/Wallet/types';
@@ -86,6 +87,7 @@ export default function WithdrawFooter({
   clickFailedOk,
   clickSuccessOk,
 }: WithdrawFooterProps) {
+  const { isPadPX } = useCommonState();
   const { setLoading } = useLoading();
   const { fromNetwork, tokenSymbol, toNetwork, tokenList } = useWithdrawNewState();
   const fromWallet = useGetOneWallet(fromNetwork?.network || '');
@@ -390,7 +392,7 @@ export default function WithdrawFooter({
 
     if (!isFromWalletConnected) {
       return {
-        children: getConnectWalletText(fromNetwork?.network),
+        children: isPadPX ? BUTTON_TEXT_CONNECT : getConnectWalletText(fromNetwork?.network),
         onClick: onConnectWallet,
         disabled: false,
         loading,
