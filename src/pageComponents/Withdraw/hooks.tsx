@@ -58,9 +58,9 @@ export function useCheckMaxBalance() {
 
 export const DefaultWithdrawOrderResponse: TCreateTransferOrderResult = { orderId: '' };
 
-export function useCreateOrderOtherNetwork() {
+export function useCreateOrderOtherNetwork(fromWallet?: IWallet, fromWalletType?: WalletTypeEnum) {
   const { setLoading } = useLoading();
-  const { getAuthToken, queryAuthToken } = useAuthToken();
+  const { getAuthToken, queryAuthToken } = useAuthToken(fromWallet, fromWalletType);
 
   const authTokenRef = useRef('');
   const orderResultRef = useRef(DefaultWithdrawOrderResponse);

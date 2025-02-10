@@ -98,10 +98,10 @@ export default function CrossChainTransferFooter({
   clickSuccessOk,
 }: CrossChainTransferFooterProps) {
   const { setLoading } = useLoading();
-  const { fromNetwork, tokenSymbol, toNetwork, toWalletType, totalTokenList } =
+  const { fromNetwork, tokenSymbol, toNetwork, toWalletType, totalTokenList, fromWalletType } =
     useCrossChainTransfer();
   const [{ fromWallet, toWallet }] = useWallet();
-  const { getAuthToken, queryAuthToken } = useAuthToken();
+  const { getAuthToken, queryAuthToken } = useAuthToken(fromWallet, fromWalletType);
   const [firstTxnHash, setFirstTxnHash] = useState('');
   const firstTxnHashRef = useRef('');
 

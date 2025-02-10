@@ -139,7 +139,7 @@ export default function WithdrawFooter({
     });
 
     return;
-  }, [isFromWalletConnected, fromNetwork?.network, toNetwork?.network]);
+  }, [fromNetwork?.network]);
 
   const handleSuccessCallback = useCallback((res: TCreateTransferOrderResult) => {
     if (res?.transactionId) {
@@ -150,10 +150,8 @@ export default function WithdrawFooter({
     setIsSuccessModalOpen(true);
   }, []);
 
-  // const authTokenRef = useRef('');
-  // const orderResultRef = useRef(DefaultWithdrawOrderResponse);
   const { authTokenRef, orderResultRef, createOtherNetworkOrder, sendOtherNetworkTransfer } =
-    useCreateOrderOtherNetwork();
+    useCreateOrderOtherNetwork(fromWallet, fromWallet?.walletType);
 
   const handleFailCallback = useCallback(() => {
     orderResultRef.current = DefaultWithdrawOrderResponse;
@@ -426,6 +424,7 @@ export default function WithdrawFooter({
     isBalanceNotEnoughTip,
     formValidateData,
     isSubmitDisabled,
+    isPadPX,
     onConnectWallet,
   ]);
 

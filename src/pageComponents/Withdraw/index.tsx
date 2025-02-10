@@ -112,7 +112,7 @@ export default function WithdrawContent() {
     tokenList,
     fromWallet,
   );
-  const getAuthTokenFromStorage = useGetAuthTokenFromStorage();
+  const getAuthTokenFromStorage = useGetAuthTokenFromStorage(fromWallet);
 
   const minAmount = useMemo(() => {
     return transferInfo?.minAmount || '0.2';

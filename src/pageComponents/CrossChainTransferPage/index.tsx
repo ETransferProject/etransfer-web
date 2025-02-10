@@ -118,7 +118,7 @@ export default function CrossChainTransferPage() {
     totalTokenList,
     fromWallet,
   );
-  const getAuthTokenFromStorage = useGetAuthTokenFromStorage();
+  const getAuthTokenFromStorage = useGetAuthTokenFromStorage(fromWallet);
 
   const minAmount = useMemo(() => {
     return transferInfo?.minAmount || '0.2';
