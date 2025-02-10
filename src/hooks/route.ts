@@ -117,6 +117,9 @@ export function useCheckAllowSearch() {
           if (searchParams.get('status')) searchObject.status = searchParams.get('status');
           if (searchParams.get('start')) searchObject.start = searchParams.get('start');
           if (searchParams.get('end')) searchObject.end = searchParams.get('end');
+          if (searchParams.get('fromNetwork'))
+            searchObject.fromNetwork = searchParams.get('fromNetwork');
+          if (searchParams.get('toNetwork')) searchObject.toNetwork = searchParams.get('toNetwork');
           break;
 
         case '/deposit':
@@ -140,8 +143,7 @@ export function useCheckAllowSearch() {
           // New withdraw page routing parameters
           if (searchParams.get('fromNetwork'))
             searchObject.fromNetwork = searchParams.get('fromNetwork');
-          if (searchParams.get('toNetwork'))
-            searchObject.withdrawAddress = searchParams.get('toNetwork');
+          if (searchParams.get('toNetwork')) searchObject.toNetwork = searchParams.get('toNetwork');
           if (searchParams.get('tokenSymbol'))
             searchObject.tokenSymbol = searchParams.get('tokenSymbol');
           break;
