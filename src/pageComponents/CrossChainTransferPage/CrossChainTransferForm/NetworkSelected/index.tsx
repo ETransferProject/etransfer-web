@@ -42,9 +42,9 @@ export default function NetworkSelected({
   );
 
   const openModal = useCallback(() => {
-    if (!selected?.network) return;
+    if (!networkList || networkList.length === 0) return;
     setIsShowNetworkSelectModal(true);
-  }, [selected?.network]);
+  }, [networkList]);
 
   const renderNetworkLogo = useMemo(() => {
     return (
@@ -73,7 +73,7 @@ export default function NetworkSelected({
         className={clsx(
           'flex-row-center-between gap-8 cursor-pointer',
           styles['network-selected'],
-          !selected?.network && styles['network-selected-disable'],
+          (!networkList || networkList.length === 0) && styles['network-selected-disable'],
           className,
         )}
         onClick={openModal}>

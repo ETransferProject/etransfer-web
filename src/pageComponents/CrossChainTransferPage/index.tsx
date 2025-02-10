@@ -362,9 +362,11 @@ export default function CrossChainTransferPage() {
             (item) => item.symbol === (routeQuery.tokenSymbol || tokenSymbol),
           );
           if (exitToken) {
+            // Restore the token from cache
             dispatch(setTokenSymbol(exitToken.symbol));
             currentTokenRef.current = exitToken;
           } else {
+            // Set up first token info
             dispatch(setTokenSymbol(allowTokenList[0].symbol));
             currentTokenRef.current = allowTokenList[0];
           }
@@ -398,11 +400,14 @@ export default function CrossChainTransferPage() {
           (item) => item.network === (routeQuery.fromNetwork || fromNetwork?.network),
         );
         if (exitFromNetwork && exitFromNetwork.status !== NetworkStatus.Offline) {
+          // Restore the network from cache
           dispatch(setFromNetwork(exitFromNetwork));
           fromNetworkRef.current = exitFromNetwork;
         } else {
-          dispatch(setFromNetwork(networkList[0]));
-          fromNetworkRef.current = networkList[0];
+          // Set up the first healthy network
+          const _healthNetwork = networkList?.find((item) => item.status !== NetworkStatus.Offline);
+          dispatch(setFromNetwork(_healthNetwork || ({ network: '', name: '' } as TNetworkItem)));
+          fromNetworkRef.current = _healthNetwork || ({ network: '', name: '' } as TNetworkItem);
         }
         // set from wallet logic
         const _fromWalletType = computeWalletType(fromNetworkRef.current.network);
@@ -426,11 +431,16 @@ export default function CrossChainTransferPage() {
           (item) => item.network === (routeQuery.toNetwork || toNetwork?.network),
         );
         if (exitToNetwork && exitToNetwork.status !== NetworkStatus.Offline) {
+          // Restore the network from cache
           dispatch(setToNetwork(exitToNetwork));
           toNetworkRef.current = exitToNetwork;
         } else {
-          dispatch(setToNetwork(toNetworkList[0]));
-          toNetworkRef.current = toNetworkList[0];
+          // Set up the first healthy network
+          const _healthNetwork = toNetworkList?.find(
+            (item) => item.status !== NetworkStatus.Offline,
+          );
+          dispatch(setToNetwork(_healthNetwork || ({ network: '', name: '' } as TNetworkItem)));
+          toNetworkRef.current = _healthNetwork || ({ network: '', name: '' } as TNetworkItem);
         }
 
         // set to wallet logic

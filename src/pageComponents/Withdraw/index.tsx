@@ -397,11 +397,16 @@ export default function WithdrawContent() {
 
       const _exitToNetwork = _toNetworkList.find((item) => item.network === _toNetworkKey);
       if (_exitToNetwork && _exitToNetwork.status !== NetworkStatus.Offline) {
+        // Restore the network from cache
         dispatch(setToNetwork(_exitToNetwork));
         toNetworkRef.current = _exitToNetwork;
       } else {
-        dispatch(setToNetwork(_toNetworkList[0]));
-        toNetworkRef.current = _toNetworkList[0];
+        // Set up the first healthy network
+        const _healthNetwork = _toNetworkList?.find(
+          (item) => item.status !== NetworkStatus.Offline,
+        );
+        dispatch(setToNetwork(_healthNetwork || ({ network: '', name: '' } as TNetworkItem)));
+        toNetworkRef.current = _healthNetwork || ({ network: '', name: '' } as TNetworkItem);
       }
 
       // set to wallet logic
@@ -435,11 +440,16 @@ export default function WithdrawContent() {
       if (_fromNetworkList?.length > 0) {
         const exitFromNetwork = _fromNetworkList.find((item) => item.network === _fromNetworkKey);
         if (exitFromNetwork && exitFromNetwork.status !== NetworkStatus.Offline) {
+          // Restore the network from cache
           dispatch(setFromNetwork(exitFromNetwork));
           fromNetworkRef.current = exitFromNetwork;
         } else {
-          dispatch(setFromNetwork(_fromNetworkList[0]));
-          fromNetworkRef.current = _fromNetworkList[0];
+          // Set up the first healthy network
+          const _healthNetwork = _fromNetworkList?.find(
+            (item) => item.status !== NetworkStatus.Offline,
+          );
+          dispatch(setFromNetwork(_healthNetwork || ({ network: '', name: '' } as TNetworkItem)));
+          fromNetworkRef.current = _healthNetwork || ({ network: '', name: '' } as TNetworkItem);
         }
         // set from wallet logic
         const _fromWalletType = computeWalletType(fromNetworkRef.current.network);
