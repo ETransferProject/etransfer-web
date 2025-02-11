@@ -12,7 +12,7 @@ import {
   TSignMessageMethod,
   WalletTypeEnum,
 } from 'context/Wallet/types';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import TonWeb from 'tonweb';
 import { Address as CoreAddress, beginCell, toNano } from '@ton/core';
 import { sign, mnemonicToPrivateKey } from '@ton/crypto';
@@ -26,6 +26,7 @@ import { timesDecimals } from 'utils/calculate';
 export default function useTON() {
   const wallet = useTonWallet();
   const [tonConnectUI] = useTonConnectUI();
+  const jettonWalletAddressRef = useRef<any>();
 
   const address = useMemo(() => wallet?.account.address || '', [wallet?.account.address]);
   const userFriendlyAddress = useMemo(() => {
@@ -34,27 +35,37 @@ export default function useTON() {
     return res;
   }, [address]);
 
+  const getJettonWalletAddress = useCallback(
+    async (tokenContractAddress: string) => {
+      if (!jettonWalletAddressRef.current) {
+        const jettonMinter = getTONJettonMinter(tokenContractAddress);
+        jettonWalletAddressRef.current = await jettonMinter.getJettonWalletAddress(
+          new TonWeb.utils.Address(address),
+        );
+      }
+
+      return jettonWalletAddressRef.current;
+    },
+    [address],
+  );
+
   const onGetBalance = useCallback(
     async ({ tokenContractAddress }: IGetBalanceRequest): Promise<IGetBalanceResult> => {
       if (!address) return { value: '0' };
-      const jettonMinter = getTONJettonMinter(tokenContractAddress);
-      const jettonWalletAddress = await jettonMinter.getJettonWalletAddress(
-        new TonWeb.utils.Address(address),
-      );
+
+      const jettonWalletAddress = await getJettonWalletAddress(tokenContractAddress);
+
       const jettonWallet = new TonWeb.token.jetton.JettonWallet(tonWeb.provider, {
         address: jettonWalletAddress,
       });
+
       const res = await jettonWallet.getData();
       return {
         value: res.balance.toString(),
         decimals: '',
       };
-      // const tonBalance = await tonWeb.getBalance(
-      //   new TonWeb.utils.Address(address),
-      // );
-      // console.log('>>>>>> TON get ton balance', fromNano(tonBalance));
     },
-    [address],
+    [address, getJettonWalletAddress],
   );
 
   const signMessageByMnemonic = useCallback(
@@ -100,15 +111,9 @@ export default function useTON() {
       forwardTonAmount = '0.01',
     }: SendTONTransactionParams) => {
       if (!address) return;
-      const jettonMinter = getTONJettonMinter(tokenContractAddress);
-      const jettonWalletAddress = await jettonMinter.getJettonWalletAddress(
-        new TonWeb.utils.Address(address),
-      );
-      // const forwardPayload = beginCell()
-      //   .storeUint(0, 32) // 0 opcode means we have a comment
-      //   .storeStringTail(orderId)
-      //   .endCell();
-      // const orderIdParse = orderId.replace(/-/g, '');
+
+      const jettonWalletAddress = await getJettonWalletAddress(tokenContractAddress);
+
       const payload = beginCell()
         .storeUint(0xf8a7ea5, 32) // op transfer
         .storeUint(0, 64) // queryId
@@ -119,12 +124,7 @@ export default function useTON() {
         .storeCoins(toNano(forwardTonAmount)) // forward_ton_amount:(VarUInteger 16) - if >0, will send notification message
         .storeUint(0, 1) // forward_payload:(Either Cell ^Cell)
         .storeMaybeRef(beginCell().storeStringTail(orderId).endCell())
-        // .storeRef(forwardPayload)
         .endCell();
-      // .storeMaybeRef(null) // custom_payload
-      // .storeCoins(toNano(forwardTonAmount)) // forward_ton_amount
-      // .storeMaybeRef(beginCell().storeStringTail('').endCell()) // forward_payload_amount if receiver is a smart contract
-      // .endCell();
 
       const base64Boc = payload.toBoc().toString('base64');
       const transaction: SendTransactionRequest = {
@@ -151,7 +151,7 @@ export default function useTON() {
 
       return hashBase64;
     },
-    [address, tonConnectUI],
+    [address, getJettonWalletAddress, tonConnectUI],
   );
 
   const tonContext = useMemo(() => {
@@ -163,8 +163,12 @@ export default function useTON() {
       address,
       connector: tonConnectUI.connector,
       provider: wallet?.provider,
-      connect: async (name: string) => await tonConnectUI.openSingleWalletModal(name),
+      connect: async (name: string) => {
+        jettonWalletAddressRef.current = undefined;
+        await tonConnectUI.openSingleWalletModal(name);
+      },
       disconnect: async () => {
+        jettonWalletAddressRef.current = undefined;
         await tonConnectUI.disconnect();
       },
       getAccountInfo: () => tonConnectUI.account,
