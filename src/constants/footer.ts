@@ -138,8 +138,8 @@ export const DOCUMENTATION_LINK: Record<string, TFooterMenuItem> = {
     link: `${ETRANSFER_GIT_BOOK_FAQ_URL}#how-to-deposit-to-aelf-by-etransfer`,
   },
   withdrawProcess: {
-    name: 'How do I initiate a cross-chain withdraw on ETransfer?',
-    link: `${ETRANSFER_GIT_BOOK_FAQ_URL}#how-do-i-initiate-a-cross-chain-withdraw-on-etransfer`,
+    name: 'How do I initiate a withdrawal on ETransfer?',
+    link: `${ETRANSFER_GIT_BOOK_FAQ_URL}#how-do-i-initiate-a-withdrawal-on-etransfer`,
   },
 };
 
