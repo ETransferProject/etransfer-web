@@ -80,7 +80,7 @@ export default function CrossChainTransferPage() {
   const dispatch = useAppDispatch();
   const { isPadPX } = useCommonState();
   const { setLoading } = useLoading();
-  const [{ fromWallet }] = useWallet();
+  const [{ fromWallet, toWallet }] = useWallet();
   const {
     fromWalletType,
     fromNetwork,
@@ -126,14 +126,44 @@ export default function CrossChainTransferPage() {
 
   const receiveAmount = useMemo(() => {
     let result = '';
-    if (!amount || ZERO.plus(amount).isLessThan(ZERO.plus(minAmount))) {
+    const _toAddress = isUseRecipientAddressRef.current ? recipientAddressInput : toWallet?.account;
+    const _recipientAddressError =
+      isUseRecipientAddressRef.current &&
+      formValidateData[TransferFormKeys.RECIPIENT].validateStatus === TransferValidateStatus.Error;
+
+    if (
+      _recipientAddressError ||
+      !amount ||
+      !_toAddress ||
+      !fromNetwork?.network ||
+      !toNetwork ||
+      !tokenSymbol
+    ) {
       result = '';
     } else {
-      result = transferInfo.receiveAmount;
+      let _res = '';
+      if (transferInfo.transactionFee) {
+        const _resTemp = BigNumber(amount).minus(BigNumber(transferInfo.transactionFee));
+        _res = _resTemp.lte(ZERO) ? '0' : _resTemp.toFixed();
+      } else {
+        _res = transferInfo.receiveAmount;
+      }
+
+      result = _res;
     }
 
     return result;
-  }, [amount, minAmount, transferInfo.receiveAmount]);
+  }, [
+    amount,
+    formValidateData,
+    fromNetwork?.network,
+    recipientAddressInput,
+    toNetwork,
+    toWallet?.account,
+    tokenSymbol,
+    transferInfo.receiveAmount,
+    transferInfo.transactionFee,
+  ]);
 
   const currentToken = useMemo(() => {
     const item = totalTokenList?.find((item) => item.symbol === tokenSymbol);
@@ -188,7 +218,6 @@ export default function CrossChainTransferPage() {
 
   const checkRecipientAddress = useCallback(
     (address: string) => {
-      // const addressInput = getRecipientAddressInput();
       const isSolanaNetwork = toNetworkRef.current?.network === BlockchainNetworkType.Solana;
       const isAddressShorterThanUsual = address && address?.length >= 32 && address?.length <= 39;
 
