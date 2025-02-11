@@ -127,6 +127,7 @@ export default function WithdrawContent() {
     if (
       _toAddressError ||
       !amount ||
+      !fromWallet?.account ||
       !withdrawAddress ||
       !fromNetwork?.network ||
       !toNetwork ||
@@ -150,6 +151,7 @@ export default function WithdrawContent() {
     amount,
     formValidateData,
     fromNetwork?.network,
+    fromWallet?.account,
     toNetwork,
     tokenSymbol,
     transferInfo.receiveAmount,

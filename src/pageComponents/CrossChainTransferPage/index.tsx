@@ -126,6 +126,7 @@ export default function CrossChainTransferPage() {
 
   const receiveAmount = useMemo(() => {
     let result = '';
+    const _fromAddress = fromWallet?.account;
     const _toAddress = isUseRecipientAddressRef.current ? recipientAddressInput : toWallet?.account;
     const _recipientAddressError =
       isUseRecipientAddressRef.current &&
@@ -134,6 +135,7 @@ export default function CrossChainTransferPage() {
     if (
       _recipientAddressError ||
       !amount ||
+      !_fromAddress ||
       !_toAddress ||
       !fromNetwork?.network ||
       !toNetwork ||
@@ -157,6 +159,7 @@ export default function CrossChainTransferPage() {
     amount,
     formValidateData,
     fromNetwork?.network,
+    fromWallet?.account,
     recipientAddressInput,
     toNetwork,
     toWallet?.account,
