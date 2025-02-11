@@ -115,6 +115,8 @@ export default function CrossChainTransferPage() {
   const [amountPriceUsd, setAmountPriceUSD] = useState<number>(0);
   const { balance, decimalsFromWallet, getBalance, getBalanceInterval, resetBalance } =
     useUpdateBalance(tokenSymbol, totalTokenList, fromWallet);
+  const resetBalanceRef = useRef(resetBalance);
+  resetBalanceRef.current = resetBalance;
   const getAuthTokenFromStorage = useGetAuthTokenFromStorage(fromWallet);
 
   const minAmount = useMemo(() => {
@@ -308,7 +310,6 @@ export default function CrossChainTransferPage() {
         setIsTransactionFeeLoading(false);
 
         const tokenItem = totalTokenList.find((item) => item.symbol === _symbol);
-        resetBalance();
         getBalanceInterval(
           transferInfoRef.current?.contractAddress || '',
           _fromNetworkKey,
@@ -366,7 +367,6 @@ export default function CrossChainTransferPage() {
       getCommentInput,
       getRecipientAddressInput,
       handleFormValidateDataChange,
-      resetBalance,
       tokenSymbol,
       totalTokenList,
     ],
@@ -653,6 +653,9 @@ export default function CrossChainTransferPage() {
         handleAmountChange('');
         resetRecipientAndComment();
 
+        // reset balance
+        resetBalanceRef.current();
+
         await getTransferDataRef.current('');
       } catch (error) {
         console.log('handleFromNetworkChanged error', error);
@@ -679,6 +682,9 @@ export default function CrossChainTransferPage() {
       try {
         form.setFieldValue(TransferFormKeys.AMOUNT, '');
         handleAmountChange('');
+
+        // reset balance
+        resetBalanceRef.current();
 
         currentTokenRef.current = item;
         tokenSymbolRef.current = item.symbol;
@@ -823,6 +829,9 @@ export default function CrossChainTransferPage() {
 
   useEffect(() => {
     if (!fromWallet?.isConnected) {
+      // reset balance
+      resetBalanceRef.current();
+
       setFormValidateData(JSON.parse(JSON.stringify(TRANSFER_FORM_VALIDATE_DATA)));
     }
   }, [fromWallet?.isConnected]);

@@ -110,6 +110,8 @@ export default function WithdrawContent() {
   const amountRef = useRef('');
   const { balance, decimalsFromWallet, getBalance, getBalanceInterval, resetBalance } =
     useUpdateBalance(tokenSymbol, tokenList, fromWallet);
+  const resetBalanceRef = useRef(resetBalance);
+  resetBalanceRef.current = resetBalance;
   const getAuthTokenFromStorage = useGetAuthTokenFromStorage(fromWallet);
 
   const minAmount = useMemo(() => {
@@ -344,7 +346,6 @@ export default function WithdrawContent() {
         setIsTransactionFeeLoading(false);
 
         const tokenItem = tokenList.find((item) => item.symbol === _symbol);
-        resetBalance();
         getBalanceInterval(
           transferInfoRef.current?.contractAddress || '',
           _fromNetworkKey,
@@ -402,7 +403,6 @@ export default function WithdrawContent() {
       getCommentInput,
       getWithdrawAddressInput,
       handleFormValidateDataChange,
-      resetBalance,
       tokenList,
       tokenSymbol,
     ],
@@ -646,6 +646,9 @@ export default function WithdrawContent() {
         handleAmountChange('');
         resetWithdrawAddressAndComment();
 
+        // reset balance
+        resetBalanceRef.current();
+
         await computeFromAndToNetwork(totalNetworkList);
       } catch (error) {
         console.log('handleTokenChanged error', error);
@@ -669,6 +672,9 @@ export default function WithdrawContent() {
         form.setFieldValue(WithdrawFormKeys.AMOUNT, '');
         handleAmountChange('');
         resetWithdrawAddressAndComment();
+
+        // reset balance
+        resetBalanceRef.current();
 
         await computeFromAndToNetwork(totalNetworkList);
       } catch (error) {
@@ -808,6 +814,9 @@ export default function WithdrawContent() {
 
   useEffect(() => {
     if (!fromWallet?.isConnected) {
+      // reset balance
+      resetBalanceRef.current();
+
       setFormValidateData(JSON.parse(JSON.stringify(WITHDRAW_FORM_VALIDATE_DATA)));
     }
   }, [fromWallet?.isConnected]);
