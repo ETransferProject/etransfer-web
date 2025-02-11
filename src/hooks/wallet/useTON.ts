@@ -12,12 +12,12 @@ import {
   TSignMessageMethod,
   WalletTypeEnum,
 } from 'context/Wallet/types';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import TonWeb from 'tonweb';
 import { Address as CoreAddress, beginCell, toNano } from '@ton/core';
 import { sign, mnemonicToPrivateKey } from '@ton/crypto';
 import { getAuthPlainText } from 'utils/auth';
-import { getTONJettonMinter, tonWeb } from 'utils/wallet/TON';
+import { getJettonWalletAddress, tonWeb } from 'utils/wallet/TON';
 import { AuthTokenSource } from 'types/api';
 import { SendTONTransactionParams } from 'types/wallet';
 import { stringToHex } from 'utils/format';
@@ -27,7 +27,6 @@ import myEvents from 'utils/myEvent';
 export default function useTON() {
   const wallet = useTonWallet();
   const [tonConnectUI] = useTonConnectUI();
-  const jettonWalletAddressRef = useRef<any>();
 
   const address = useMemo(() => wallet?.account.address || '', [wallet?.account.address]);
   const userFriendlyAddress = useMemo(() => {
@@ -36,39 +35,11 @@ export default function useTON() {
     return res;
   }, [address]);
 
-  useEffect(() => {
-    const { remove: removeTONConnectListener } = myEvents.TONConnect.addListener(() => {
-      jettonWalletAddressRef.current = undefined;
-    });
-    const { remove: removeTONDisconnectListener } = myEvents.TONDisconnect.addListener(() => {
-      jettonWalletAddressRef.current = undefined;
-    });
-
-    return () => {
-      removeTONConnectListener();
-      removeTONDisconnectListener();
-    };
-  }, []);
-
-  const getJettonWalletAddress = useCallback(
-    async (tokenContractAddress: string) => {
-      if (!jettonWalletAddressRef.current) {
-        const jettonMinter = getTONJettonMinter(tokenContractAddress);
-        jettonWalletAddressRef.current = await jettonMinter.getJettonWalletAddress(
-          new TonWeb.utils.Address(address),
-        );
-      }
-
-      return jettonWalletAddressRef.current;
-    },
-    [address],
-  );
-
   const onGetBalance = useCallback(
     async ({ tokenContractAddress }: IGetBalanceRequest): Promise<IGetBalanceResult> => {
       if (!address) return { value: '0' };
 
-      const jettonWalletAddress = await getJettonWalletAddress(tokenContractAddress);
+      const jettonWalletAddress = await getJettonWalletAddress(address, tokenContractAddress);
 
       const jettonWallet = new TonWeb.token.jetton.JettonWallet(tonWeb.provider, {
         address: jettonWalletAddress,
@@ -80,7 +51,7 @@ export default function useTON() {
         decimals: '',
       };
     },
-    [address, getJettonWalletAddress],
+    [address],
   );
 
   const signMessageByMnemonic = useCallback(
@@ -127,7 +98,7 @@ export default function useTON() {
     }: SendTONTransactionParams) => {
       if (!address) return;
 
-      const jettonWalletAddress = await getJettonWalletAddress(tokenContractAddress);
+      const jettonWalletAddress = await getJettonWalletAddress(address, tokenContractAddress);
 
       const payload = beginCell()
         .storeUint(0xf8a7ea5, 32) // op transfer
@@ -166,7 +137,7 @@ export default function useTON() {
 
       return hashBase64;
     },
-    [address, getJettonWalletAddress, tonConnectUI],
+    [address, tonConnectUI],
   );
 
   const tonContext = useMemo(() => {
