@@ -22,6 +22,7 @@ import { AuthTokenSource } from 'types/api';
 import { SendTONTransactionParams } from 'types/wallet';
 import { stringToHex } from 'utils/format';
 import { timesDecimals } from 'utils/calculate';
+import myEvents from 'utils/myEvent';
 
 export default function useTON() {
   const wallet = useTonWallet();
@@ -34,6 +35,20 @@ export default function useTON() {
     const res = new TonWeb.utils.Address(address).toString(true, true, false);
     return res;
   }, [address]);
+
+  useEffect(() => {
+    const { remove: removeTONConnectListener } = myEvents.TONConnect.addListener(() => {
+      jettonWalletAddressRef.current = undefined;
+    });
+    const { remove: removeTONDisconnectListener } = myEvents.TONDisconnect.addListener(() => {
+      jettonWalletAddressRef.current = undefined;
+    });
+
+    return () => {
+      removeTONConnectListener();
+      removeTONDisconnectListener();
+    };
+  }, []);
 
   const getJettonWalletAddress = useCallback(
     async (tokenContractAddress: string) => {
@@ -164,12 +179,12 @@ export default function useTON() {
       connector: tonConnectUI.connector,
       provider: wallet?.provider,
       connect: async (name: string) => {
-        jettonWalletAddressRef.current = undefined;
         await tonConnectUI.openSingleWalletModal(name);
+        myEvents.TONConnect.emit();
       },
       disconnect: async () => {
-        jettonWalletAddressRef.current = undefined;
         await tonConnectUI.disconnect();
+        myEvents.TONDisconnect.emit();
       },
       getAccountInfo: () => tonConnectUI.account,
       getBalance: onGetBalance,

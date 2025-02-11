@@ -113,11 +113,8 @@ export default function CrossChainTransferPage() {
   const amountRef = useRef('');
   const [amountUSD, setAmountUSD] = useState('');
   const [amountPriceUsd, setAmountPriceUSD] = useState<number>(0);
-  const { balance, decimalsFromWallet, getBalance, getBalanceInterval } = useUpdateBalance(
-    tokenSymbol,
-    totalTokenList,
-    fromWallet,
-  );
+  const { balance, decimalsFromWallet, getBalance, getBalanceInterval, resetBalance } =
+    useUpdateBalance(tokenSymbol, totalTokenList, fromWallet);
   const getAuthTokenFromStorage = useGetAuthTokenFromStorage(fromWallet);
 
   const minAmount = useMemo(() => {
@@ -311,6 +308,7 @@ export default function CrossChainTransferPage() {
         setIsTransactionFeeLoading(false);
 
         const tokenItem = totalTokenList.find((item) => item.symbol === _symbol);
+        resetBalance();
         getBalanceInterval(
           transferInfoRef.current?.contractAddress || '',
           _fromNetworkKey,
@@ -368,6 +366,7 @@ export default function CrossChainTransferPage() {
       getCommentInput,
       getRecipientAddressInput,
       handleFormValidateDataChange,
+      resetBalance,
       tokenSymbol,
       totalTokenList,
     ],

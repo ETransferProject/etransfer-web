@@ -14,6 +14,8 @@ const EventList = [
   'HideWebTransferDashboardDetailPage',
   'GlobalTxnNotice',
   'TRONNotSelectWallet',
+  'TONConnect',
+  'TONDisconnect',
 ] as const;
 
 // eslint-disable-next-line no-new-func

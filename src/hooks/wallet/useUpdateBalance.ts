@@ -112,10 +112,17 @@ export function useUpdateBalance(
     [],
   );
 
+  const resetBalance = useCallback(() => {
+    setBalance('');
+  }, []);
+
   useEffect(() => {
     return () => {
-      if (getBalanceTimerRef.current) clearInterval(getBalanceTimerRef.current);
-      getBalanceTimerRef.current = null;
+      if (getBalanceTimerRef.current) {
+        clearInterval(getBalanceTimerRef.current);
+        getBalanceTimerRef.current = null;
+        setBalance('');
+      }
     };
   }, []);
 
@@ -125,5 +132,6 @@ export function useUpdateBalance(
     decimalsFromWallet,
     getBalance,
     getBalanceInterval,
+    resetBalance,
   };
 }

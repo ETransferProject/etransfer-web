@@ -108,11 +108,8 @@ export default function WithdrawContent() {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [amount, setAmount] = useState('');
   const amountRef = useRef('');
-  const { balance, decimalsFromWallet, getBalance, getBalanceInterval } = useUpdateBalance(
-    tokenSymbol,
-    tokenList,
-    fromWallet,
-  );
+  const { balance, decimalsFromWallet, getBalance, getBalanceInterval, resetBalance } =
+    useUpdateBalance(tokenSymbol, tokenList, fromWallet);
   const getAuthTokenFromStorage = useGetAuthTokenFromStorage(fromWallet);
 
   const minAmount = useMemo(() => {
@@ -347,6 +344,7 @@ export default function WithdrawContent() {
         setIsTransactionFeeLoading(false);
 
         const tokenItem = tokenList.find((item) => item.symbol === _symbol);
+        resetBalance();
         getBalanceInterval(
           transferInfoRef.current?.contractAddress || '',
           _fromNetworkKey,
@@ -404,6 +402,7 @@ export default function WithdrawContent() {
       getCommentInput,
       getWithdrawAddressInput,
       handleFormValidateDataChange,
+      resetBalance,
       tokenList,
       tokenSymbol,
     ],
