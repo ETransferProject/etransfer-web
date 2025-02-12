@@ -19,7 +19,7 @@ export const getTransactionOverview = async (
     const res = await request.infoDashboard.getTransactionOverview({ params });
     return res.data;
   } catch (error) {
-    throw formatApiError(error, 'getTokenList error', false);
+    throw formatApiError(error, 'getTransactionOverview error', false);
   }
 };
 
@@ -50,7 +50,7 @@ export const getTransferFilterOption = async (): Promise<TTransferDashboardFilte
     const res = await request.infoDashboard.getNetworkOption();
     return res.data;
   } catch (error) {
-    throw formatApiError(error, 'getNetworkOption error', false);
+    throw formatApiError(error, 'getTransferFilterOption error', false);
   }
 };
 
@@ -61,6 +61,6 @@ export const getTransferDashboard = async (
     const res = await request.infoDashboard.geTransfers({ params });
     return res.data;
   } catch (error) {
-    throw formatApiError(error, 'geTransfers error', false);
+    throw formatApiError(error, 'getTransferDashboard error', false);
   }
 };

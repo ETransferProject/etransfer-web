@@ -11,7 +11,7 @@ export const getTONJettonMinter = (tokenContractAddress: string) => {
 
 type TCacheJettonWalletAddress = { [key: string]: AddressType };
 
-const CacheJettonWalletAddress: TCacheJettonWalletAddress = {};
+export const CacheJettonWalletAddress: TCacheJettonWalletAddress = {};
 
 export const getJettonWalletAddress = async (address: string, tokenContractAddress: string) => {
   const key = tokenContractAddress + address;

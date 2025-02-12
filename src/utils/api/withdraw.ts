@@ -30,7 +30,7 @@ export const createWithdrawOrder = async (
     const _config: RequestConfig = { data: params };
     if (authToken) {
       _config.headers = {
-        Authorization: authToken || '',
+        Authorization: authToken,
       };
     }
     const res = await request.withdraw.createWithdrawOrder(_config);
