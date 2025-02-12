@@ -10,7 +10,7 @@ interface IHeaderTabProps {
 
 const HEADER_TAB_LIST = [
   {
-    label: 'Transfer',
+    label: 'Transactions',
     value: TRecordsRequestType.Transfer,
   },
   {

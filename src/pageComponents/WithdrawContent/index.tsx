@@ -55,7 +55,7 @@ import { CommonErrorNameType } from 'api/types';
 import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
 import { handleErrorMessage } from '@etransfer/utils';
 import useAelf, { useGetAelfAccount } from 'hooks/wallet/useAelf';
-import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
+import FormInput from 'pageComponents/Withdraw/WithdrawForm/FormAmountInput';
 import {
   formatSymbolDisplay,
   formatWithCommas,

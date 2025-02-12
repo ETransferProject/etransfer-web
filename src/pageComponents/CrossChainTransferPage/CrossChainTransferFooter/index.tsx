@@ -45,6 +45,7 @@ import { TransferFormKeys, TransferValidateStatus, TTransferFormValidateData } f
 import { formatSymbolDisplay } from 'utils/format';
 import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
 import { getAelfMaxBalance } from '../utils';
+import { InitialCrossChainTransferState } from 'store/reducers/crossChainTransfer/slice';
 
 export interface CrossChainTransferFooterProps {
   className?: string;
@@ -97,9 +98,10 @@ export default function CrossChainTransferFooter({
   clickSuccessOk,
 }: CrossChainTransferFooterProps) {
   const { setLoading } = useLoading();
-  const { fromNetwork, tokenSymbol, toNetwork, toWalletType } = useCrossChainTransfer();
+  const { fromNetwork, tokenSymbol, toNetwork, toWalletType, totalTokenList, fromWalletType } =
+    useCrossChainTransfer();
   const [{ fromWallet, toWallet }] = useWallet();
-  const { getAuthToken, queryAuthToken } = useAuthToken();
+  const { getAuthToken, queryAuthToken } = useAuthToken(fromWallet, fromWalletType);
   const [firstTxnHash, setFirstTxnHash] = useState('');
   const firstTxnHashRef = useRef('');
 
@@ -260,7 +262,13 @@ export default function CrossChainTransferFooter({
   );
 
   const authTokenRef = useRef('');
-  const { sendTransferTokenTransaction } = useSendTxnFromAelfChain();
+  const { sendTransferTokenTransaction } = useSendTxnFromAelfChain({
+    fromNetwork,
+    toNetwork,
+    tokenSymbol,
+    totalTokenList,
+    InitialTransferState: InitialCrossChainTransferState,
+  });
   const onTransfer = useCallback(async () => {
     try {
       if (
@@ -380,6 +388,7 @@ export default function CrossChainTransferFooter({
           } as SendTRONTransactionParams;
         }
 
+        if (!fromWallet?.sendTransaction) return;
         const sendTransferResult = await fromWallet?.sendTransaction(params);
         setFirstTxnHash(sendTransferResult);
         firstTxnHashRef.current = sendTransferResult;
@@ -570,6 +579,7 @@ export default function CrossChainTransferFooter({
         transferInfo={transferInfo}
         amount={amount || ''}
         toAddress={toAddress}
+        toNetwork={toNetwork}
         memo={comment}
         modalProps={{
           open: isDoubleCheckModalOpen,
@@ -587,6 +597,8 @@ export default function CrossChainTransferFooter({
         receiveAmount={successData.receiveAmount}
         receiveAmountUsd={successData.receiveAmountUsd}
         txHash={firstTxnHash}
+        fromNetwork={fromNetwork}
+        toNetwork={toNetwork}
         modalProps={{
           open: isSuccessModalOpen,
           onClose: onClickSuccess,

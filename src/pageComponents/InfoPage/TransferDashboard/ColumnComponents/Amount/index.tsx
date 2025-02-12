@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import styles from './styles.module.scss';
-import { ZERO } from 'utils/format';
+import { ZERO } from 'constants/calculate';
 import { useMemo } from 'react';
 
 interface AmountProps {

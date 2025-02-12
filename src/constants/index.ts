@@ -19,6 +19,8 @@ export enum TokenType {
   SGR = 'SGR-1',
   ELF = 'ELF',
   ACORNS = 'ACORNS',
+  AGENT = 'AGENT',
+  ETH = 'ETH',
 }
 
 export const SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE = [TokenType.USDT, TokenType.ELF];

@@ -10,6 +10,7 @@ import DepositSlice from 'store/reducers/deposit/slice';
 import WithdrawSlice from 'store/reducers/withdraw/slice';
 import InfoDashboardSlice from 'store/reducers/infoDashboard/slice';
 import CrossChainTransferSlice from 'store/reducers/crossChainTransfer/slice';
+import WithdrawNewSlice from 'store/reducers/withdrawNew/slice';
 
 interface ThunkOptions<E = any> {
   extraArgument: E;
@@ -43,6 +44,11 @@ export const crossChainTransferPersistConfig = {
   storage,
 };
 
+export const withdrawNewPersistConfig = {
+  key: WithdrawNewSlice.name,
+  storage,
+};
+
 export const infoDashboardPersistConfig = {
   key: InfoDashboardSlice.name,
   storage,
@@ -61,6 +67,7 @@ const reduxPersistConfig = {
     CommonSlice.name,
     DepositSlice.name,
     WithdrawSlice.name,
+    WithdrawNewSlice.name,
     CrossChainTransferSlice.name,
   ],
   // More info here:  https://shift.infinite.red/shipping-persistant-reducers-7341691232b1

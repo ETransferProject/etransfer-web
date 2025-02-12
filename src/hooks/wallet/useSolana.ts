@@ -1,6 +1,11 @@
 import { useCallback, useMemo } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { IGetBalanceRequest, ISignMessageResult, WalletTypeEnum } from 'context/Wallet/types';
+import {
+  IGetBalanceRequest,
+  IGetBalanceResult,
+  TSignMessageMethod,
+  WalletTypeEnum,
+} from 'context/Wallet/types';
 import { getAuthPlainText } from 'utils/auth';
 import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
 import {
@@ -50,9 +55,9 @@ export default function useSolana() {
     [select, wallets],
   );
 
-  const getBalance = useCallback(
-    async ({ tokenContractAddress }: IGetBalanceRequest) => {
-      if (!publicKey) return '';
+  const onGetBalance = useCallback(
+    async ({ tokenContractAddress }: IGetBalanceRequest): Promise<IGetBalanceResult> => {
+      if (!publicKey) return { value: '0' };
       const tokenAddress = new PublicKey(tokenContractAddress);
       const senderTokenAccount = await getAssociatedTokenAddress(
         tokenAddress,
@@ -69,7 +74,7 @@ export default function useSolana() {
     [connection, publicKey],
   );
 
-  const getSignMessage = useCallback<() => Promise<ISignMessageResult>>(async () => {
+  const getSignMessage = useCallback<TSignMessageMethod>(async () => {
     if (!signMessage) throw new Error('No signature method found, please reconnect your wallet');
 
     const plainText = getAuthPlainText();
@@ -144,12 +149,12 @@ export default function useSolana() {
       isConnected: connected,
       walletType: WalletTypeEnum.SOL,
       account: publicKey?.toString(),
-      accounts: [publicKey?.toString()],
+      accounts: publicKey?.toString() ? [publicKey?.toString()] : [],
       connector: wallet?.adapter,
       connect: onConnect,
       disconnect: disconnect,
       getAccountInfo: connection.getAccountInfo,
-      getBalance: getBalance,
+      getBalance: onGetBalance,
       signMessage: getSignMessage,
       sendTransaction,
     };
@@ -158,9 +163,9 @@ export default function useSolana() {
     connecting,
     connection.getAccountInfo,
     disconnect,
-    getBalance,
     getSignMessage,
     onConnect,
+    onGetBalance,
     publicKey,
     sendTransaction,
     wallet?.adapter,

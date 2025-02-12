@@ -1,4 +1,4 @@
-import { Deposit, Records, InfoDashboard, Transfer } from 'assets/images';
+import { Deposit, Records, InfoDashboard, Transfer, Withdraw } from 'assets/images';
 
 // SideMenuKey must bind BusinessType
 export enum SideMenuKey {
@@ -22,12 +22,12 @@ export const MENU_ITEMS = [
     label: SideMenuKey.Deposit,
     pathname: '/deposit',
   },
-  // {
-  //   icon: Withdraw,
-  //   key: SideMenuKey.Withdraw,
-  //   label: SideMenuKey.Withdraw,
-  //   pathname: '/withdraw',
-  // },
+  {
+    icon: Withdraw,
+    key: SideMenuKey.Withdraw,
+    label: SideMenuKey.Withdraw,
+    pathname: '/withdraw',
+  },
   {
     icon: Records,
     key: SideMenuKey.History,
