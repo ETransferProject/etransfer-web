@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { TNetworkItem } from 'types/api';
 import DynamicArrow from 'components/DynamicArrow';
 import NetworkSelectModal from 'components/NetworkSelectModal';
+import { NO_MATCHING_NETWORK } from 'constants/crossChainTransfer';
 
 export interface NetworkSelectedProps {
   className?: string;
@@ -41,8 +42,9 @@ export default function NetworkSelected({
   );
 
   const openModal = useCallback(() => {
+    if (!networkList || networkList.length === 0) return;
     setIsShowNetworkSelectModal(true);
-  }, []);
+  }, [networkList]);
 
   const renderNetworkLogo = useMemo(() => {
     return (
@@ -53,13 +55,15 @@ export default function NetworkSelected({
   }, [selected?.network]);
 
   const renderSelected = useMemo(() => {
-    return (
-      selected?.network && (
-        <span className={clsx('flex-row-center gap-8', styles['select-network-value-selected'])}>
-          {renderNetworkLogo}
-          <span className={styles['select-network-value-selected-name']}>{selected?.name}</span>
-        </span>
-      )
+    return selected?.network ? (
+      <span className={clsx('flex-row-center gap-8', styles['select-network-value-selected'])}>
+        {renderNetworkLogo}
+        <span className={styles['select-network-value-selected-name']}>{selected?.name}</span>
+      </span>
+    ) : (
+      <span className={clsx(styles['select-network-value-selected-name'], styles['no-network'])}>
+        {NO_MATCHING_NETWORK}
+      </span>
     );
   }, [renderNetworkLogo, selected?.name, selected?.network]);
 
@@ -69,11 +73,16 @@ export default function NetworkSelected({
         className={clsx(
           'flex-row-center-between gap-8 cursor-pointer',
           styles['network-selected'],
+          (!networkList || networkList.length === 0) && styles['network-selected-disable'],
           className,
         )}
         onClick={openModal}>
         {renderSelected}
-        <DynamicArrow size={'Normal'} isExpand={isShowNetworkSelectModal} />
+        <DynamicArrow
+          size={'Normal'}
+          isExpand={isShowNetworkSelectModal}
+          iconClassName={selected?.network ? '' : styles['dynamic-arrow-disable']}
+        />
       </div>
 
       <NetworkSelectModal

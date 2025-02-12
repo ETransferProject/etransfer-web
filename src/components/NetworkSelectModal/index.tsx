@@ -121,6 +121,7 @@ export default function NetworkSelectModal<T extends TNetwork | TNetworkItem>({
 
   return (
     <CommonModal
+      wrapClassName={styles['network-select-modal-wrap']}
       className={clsx(styles['network-select-modal'], className)}
       title={modalTitle}
       open={open}

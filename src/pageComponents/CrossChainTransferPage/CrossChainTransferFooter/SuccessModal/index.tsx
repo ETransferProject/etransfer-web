@@ -14,15 +14,20 @@ import { formatSymbolDisplay } from 'utils/format';
 import CommonLink from 'components/CommonLink';
 import { getTxExploreHref } from 'utils/common';
 import { Fingerprint } from 'assets/images';
-import { useCommonState, useCrossChainTransfer } from 'store/Provider/hooks';
+import { useCommonState } from 'store/Provider/hooks';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
+import { TNetworkItem } from 'types/api';
 
 export interface SuccessModalProps {
+  title?: string;
+  amountLabel?: string;
   amount: string;
   symbol: string;
   receiveAmount: string;
   receiveAmountUsd: string;
   txHash: string;
+  fromNetwork?: TNetworkItem;
+  toNetwork?: TNetworkItem;
   modalProps: CommonModalSwitchDrawerProps;
 }
 
@@ -37,15 +42,18 @@ const isNeedQuota = (symbol: TokenType, chainId: AllSupportedELFChainId) => {
 };
 
 export default function SuccessModal({
+  title = 'Transfer Submitted',
+  amountLabel = 'Transfer Amount',
   amount,
   symbol,
   receiveAmount,
   receiveAmountUsd,
   txHash,
+  fromNetwork,
+  toNetwork,
   modalProps,
 }: SuccessModalProps) {
   const { isPadPX } = useCommonState();
-  const { fromNetwork, toNetwork } = useCrossChainTransfer();
   const arrivalTime = useMemo(() => {
     const _symbol = symbol as TokenType;
     const chainId = toNetwork?.network as unknown as AllSupportedELFChainId;
@@ -84,7 +92,7 @@ export default function SuccessModal({
           <div className={clsx('flex-center', styles['title-icon'])}>
             <CheckFilledIcon />
           </div>
-          <div className={styles['title']}>Transfer Submitted</div>
+          <div className={styles['title']}>{title}</div>
         </div>
         <div className={clsx('flex-column-center', styles['main-info-wrapper'])}>
           <div className={styles['label']}>Amount to Be Received on {toNetwork?.name}</div>
@@ -100,7 +108,7 @@ export default function SuccessModal({
         <div className={styles['divider']} />
         <div className={clsx('flex-column', styles['detail-wrapper'])}>
           <div className={styles['detail-row']}>
-            <div className={styles['label']}>Transfer Amount</div>
+            <div className={styles['label']}>{amountLabel}</div>
             <div className={styles['value']}>
               {amount} {formatSymbolDisplay(symbol)}
             </div>

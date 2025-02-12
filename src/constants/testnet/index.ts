@@ -100,7 +100,7 @@ export const EXPLORE_DOMAIN_CONFIG = {
   [SupportedChainId.sideChain]: AELF_NODES.tDVW.exploreDomain,
 };
 
-export const SHOW_V_CONSOLE = true;
+export const SHOW_V_CONSOLE = false;
 
 export enum TransferAllowanceTokens {
   USDT = 'USDT',
@@ -187,7 +187,7 @@ export const TRANSFER_DEFAULT_FROM_NETWORK: TNetworkItem = {
   network: 'SETH',
   specialWithdrawFee: '',
   specialWithdrawFeeDisplay: false,
-  status: NetworkStatus.Offline,
+  status: NetworkStatus.Health,
 };
 
 export const TRANSFER_DEFAULT_TO_NETWORK: TNetworkItem = {

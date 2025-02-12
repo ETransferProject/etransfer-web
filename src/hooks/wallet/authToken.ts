@@ -1,10 +1,9 @@
 import { SingleMessage } from '@etransfer/ui-react';
 import { getLocalJWT, QueryAuthApiExtraRequestV3, queryAuthApiV3 } from 'api/utils';
 import { ReCaptchaType } from 'components/GoogleRecaptcha/types';
-import { useWallet } from 'context/Wallet';
-import { WalletTypeEnum } from 'context/Wallet/types';
+import { IWallet, WalletTypeEnum } from 'context/Wallet/types';
 import { useCallback, useEffect, useState } from 'react';
-import { useCrossChainTransfer, useLoading } from 'store/Provider/hooks';
+import { useLoading } from 'store/Provider/hooks';
 import { checkRegistration } from 'utils/api/user';
 import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
 import myEvents from 'utils/myEvent';
@@ -23,9 +22,7 @@ import useSolana from './useSolana';
 import useTON from './useTON';
 import useTRON from './useTRON';
 
-export function useAuthToken() {
-  const { fromWalletType } = useCrossChainTransfer();
-  const [{ fromWallet }] = useWallet();
+export function useAuthToken(fromWallet?: IWallet, fromWalletType?: WalletTypeEnum) {
   const { setLoading } = useLoading();
 
   const [isReCaptchaLoading, setIsReCaptchaLoading] = useState(true);
@@ -133,9 +130,8 @@ export function useAuthToken() {
   };
 }
 
-export function useGetAuthTokenFromStorage() {
+export function useGetAuthTokenFromStorage(fromWallet?: IWallet) {
   const { isConnected: isAelfConnected, connector: aelfConnector, walletInfo } = useAelf();
-  const [{ fromWallet }] = useWallet();
 
   return useCallback(
     async (walletType?: WalletTypeEnum): Promise<string> => {
@@ -191,10 +187,12 @@ export function useGetAuthTokenFromStorage() {
   );
 }
 
-export function useGetAnyoneAuthTokenFromStorage() {
-  const { queryAuthToken } = useAuthToken();
-  const getAuthTokenFromStorage = useGetAuthTokenFromStorage();
-  const [{ fromWallet }] = useWallet();
+export function useGetAnyoneAuthTokenFromStorage(
+  fromWallet?: IWallet,
+  fromWalletType?: WalletTypeEnum,
+) {
+  const { queryAuthToken } = useAuthToken(fromWallet, fromWalletType);
+  const getAuthTokenFromStorage = useGetAuthTokenFromStorage(fromWallet);
   const { isConnected: isEVMConnected, account: evmAccount, walletType: evmWalletType } = useEVM();
   const {
     isConnected: isSolanaConnected,

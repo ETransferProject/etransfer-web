@@ -3,12 +3,16 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 import { useAppDispatch, useCrossChainTransfer, useLoading } from 'store/Provider/hooks';
 import {
-  InitialCrossChainTransferState,
   setFromNetwork,
   setToNetwork,
   setTokenSymbol,
 } from 'store/reducers/crossChainTransfer/slice';
-import { TCreateTransferOrderRequest, TCreateTransferOrderResult, TNetworkItem } from 'types/api';
+import {
+  TCreateTransferOrderRequest,
+  TCreateTransferOrderResult,
+  TNetworkItem,
+  TTokenItem,
+} from 'types/api';
 import {
   getCaHashAndOriginChainIdByWallet,
   getManagerAddressByWallet,
@@ -20,7 +24,11 @@ import {
 } from 'utils/wallet';
 import { useGetBalanceDivDecimals } from './contract';
 import { ZERO } from '@etransfer/utils';
-import { ErrorNameType, TRANSACTION_APPROVE_LOADING } from 'constants/crossChainTransfer';
+import {
+  ADDRESS_NOT_CORRECT,
+  ErrorNameType,
+  TRANSACTION_APPROVE_LOADING,
+} from 'constants/crossChainTransfer';
 import { checkTokenAllowanceAndApprove, createTransferTokenTransaction } from 'utils/contract';
 import { createTransferOrder } from 'utils/api/transfer';
 import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
@@ -59,19 +67,30 @@ export function useGoTransfer() {
   );
 }
 
-export function useSendTxnFromAelfChain() {
+export function useSendTxnFromAelfChain({
+  fromNetwork,
+  toNetwork,
+  tokenSymbol,
+  totalTokenList,
+  InitialTransferState,
+}: {
+  fromNetwork?: TNetworkItem;
+  toNetwork?: TNetworkItem;
+  tokenSymbol: string;
+  totalTokenList: TTokenItem[];
+  InitialTransferState: any;
+}) {
   const getBalanceDivDecimals = useGetBalanceDivDecimals();
   const { setLoading } = useLoading();
   const { walletInfo, connector, callSendMethod, signMessage } = useAelf();
   const accounts = useGetAelfAccount();
-  const { fromNetwork, toNetwork, tokenSymbol, totalTokenList } = useCrossChainTransfer();
   const chainId = useMemo(() => {
     return fromNetwork?.network as SupportedELFChainId;
   }, [fromNetwork?.network]);
   const currentToken = useMemo(() => {
     const item = totalTokenList?.find((item) => item.symbol === tokenSymbol);
-    return item?.symbol ? item : InitialCrossChainTransferState.tokenList[0];
-  }, [tokenSymbol, totalTokenList]);
+    return item?.symbol ? item : InitialTransferState.tokenList[0];
+  }, [InitialTransferState.tokenList, tokenSymbol, totalTokenList]);
   const currentTokenDecimal = useMemo(() => currentToken.decimals, [currentToken.decimals]);
   const currentEtransferContractAddress = useMemo(
     () => ADDRESS_MAP[chainId]?.[ContractType.ETRANSFER] || '',
@@ -184,7 +203,7 @@ export function useSendTxnFromAelfChain() {
       failCallback: () => void;
     }) => {
       setLoading(true, { text: TRANSACTION_APPROVE_LOADING });
-      if (!address) throw new Error('Please enter a correct address.');
+      if (!address) throw new Error(ADDRESS_NOT_CORRECT);
 
       // get etransfer jwt
       await getAelfAuthToken(true, false);

@@ -29,8 +29,20 @@
   }
 }
 
+.network-select-modal-wrap {
+  text-align: unset;
+}
+
 .network-select-modal {
   height: 80%;
+
+  @include media-huge-web {
+    margin-left: calc((100vw - 260px) / 3 - 20px);
+  }
+
+  @include media-huge-screen {
+    margin-left: calc(50vw - 427px);
+  }
 
   :global {
     .ant-modal-content {

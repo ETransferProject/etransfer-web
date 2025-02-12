@@ -143,11 +143,14 @@ export default function CrossChainTransferForm({
       const exitToNetwork = toNetworkList.find((item) => item.network === _toNetwork?.network);
       let toNetworkNew = _toNetwork;
       if (exitToNetwork && exitToNetwork.status !== NetworkStatus.Offline) {
+        // Restore the network from cache
         dispatch(setToNetwork(exitToNetwork));
         toNetworkNew = exitToNetwork;
       } else {
-        dispatch(setToNetwork(toNetworkList[0]));
-        toNetworkNew = toNetworkList[0];
+        // Set up the first healthy network
+        const _healthNetwork = toNetworkList?.find((item) => item.status !== NetworkStatus.Offline);
+        dispatch(setToNetwork(_healthNetwork || ({ network: '', name: '' } as TNetworkItem)));
+        toNetworkNew = _healthNetwork || ({ network: '', name: '' } as TNetworkItem);
       }
       toNetworkRef.current = toNetworkNew;
 
@@ -170,9 +173,11 @@ export default function CrossChainTransferForm({
       const exitToken = allowTokenList.find((item) => item.symbol === tokenSymbol);
       let _tokenNew;
       if (exitToken) {
+        // Restore the network from cache
         dispatch(setTokenSymbol(exitToken.symbol));
         _tokenNew = exitToken.symbol;
       } else {
+        // Set up the first toke info
         dispatch(setTokenSymbol(allowTokenList[0].symbol));
         _tokenNew = allowTokenList[0].symbol;
       }
@@ -404,6 +409,7 @@ export default function CrossChainTransferForm({
             className={styles['recipient-address-input']}
             placeholder="Recipient address"
             autoComplete="off"
+            maxLength={100}
             onChange={(e) => onRecipientAddressChange?.(e.target.value)}
             onBlur={onRecipientAddressBlur}
           />
