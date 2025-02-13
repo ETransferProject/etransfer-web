@@ -275,7 +275,7 @@ describe('prepareBindIssue', () => {
   const params = {
     address: '0x',
     symbol: USDT_MOCK,
-    chainId: 'EVM',
+    chainId: 'ETH',
     contractAddress: '0x',
     supply: '100',
   };

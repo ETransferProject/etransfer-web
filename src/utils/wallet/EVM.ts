@@ -15,7 +15,6 @@ export const getEVMChainInfo = (network: string) => {
   switch (network) {
     case BlockchainNetworkType.Arbitrum:
       return arbitrum;
-
     case BlockchainNetworkType.Avax:
       return avalanche;
     case BlockchainNetworkType.BASE:

@@ -168,10 +168,6 @@ export const computeWalletType = (network: string) => {
   return '';
 };
 
-export const isAelfWalletType = (walletType: WalletTypeEnum) => {
-  return walletType && walletType !== WalletTypeEnum.AELF;
-};
-
 export function getWalletSourceType(walletType: WalletTypeEnum) {
   switch (walletType) {
     case WalletTypeEnum.EVM:

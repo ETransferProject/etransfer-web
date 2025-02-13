@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [tsconfigPaths(), react()],
   test: {
     environment: 'happy-dom',
+    setupFiles: ['./vitest.setup'],
     coverage: {
       all: false,
       enabled: true,
@@ -44,7 +45,7 @@ export default defineConfig({
     },
     server: {
       deps: {
-        inline: ['@aelf-web-login', '@etransfer/ui-react'],
+        inline: ['@aelf-web-login', '@etransfer/ui-react', '@portkey/did-ui-react'],
       },
     },
     globals: true,

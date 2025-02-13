@@ -131,7 +131,7 @@ describe('getTokenDashboard', () => {
       data: {
         USDT: {
           icon: '',
-          networks: ['EVM'],
+          networks: ['ETH'],
           chainIds: ['AELF'],
         },
       },

@@ -190,7 +190,7 @@ describe('getTransferNetworkList', () => {
   // Mock API success
   const mockResponse = {
     data: {
-      networkList: [{ network: 'EVM' }],
+      networkList: [{ network: 'ETH' }],
     },
   };
 
