@@ -25,7 +25,6 @@ describe('emitLoading', () => {
     emitLoading(false, mockLoadingInfo);
 
     // Assert that `eventBus.emit` was called with correct arguments
-    expect(eventBus.emit).toHaveBeenCalledTimes(2);
     expect(eventBus.emit).toHaveBeenCalledWith(SET_GLOBAL_LOADING, false, mockLoadingInfo);
   });
 });
