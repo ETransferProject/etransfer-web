@@ -12,7 +12,12 @@
     "start": "next start",
     "lint": "next lint",
     "prettier": "prettier -c --write '**/*'",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "vitest",
+    "test:not-watch": "vitest run",
+    "test:update": "vitest -u",
+    "test:coverage": "vitest --coverage",
+    "test:ci": "vitest --coverage"
   },
   "dependencies": {
     "@aelf-web-login/utils": "^0.2.2-alpha.5",
@@ -77,14 +82,21 @@
     "@commitlint/config-conventional": "^17.0.2",
     "@portkey/provider-types": "^2.3.4",
     "@svgr/webpack": "^8.0.1",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/react-hooks": "^8.0.1",
     "@types/elliptic": "^6.4.18",
     "@types/jest": "^26.0.15",
     "@types/node": "18.0.1",
     "@types/react": "18.0.14",
     "@types/react-dom": "18.0.5",
+    "@types/testing-library__jest-dom": "^6.0.0",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.30.4",
     "@typescript-eslint/parser": "^5.30.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/coverage-v8": "3.0.4",
     "aelf-lint": "0.0.1-alpha.1",
     "autoprefixer": "^10.4.14",
     "eslint": "^8.23.1",
@@ -93,6 +105,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.31.8",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "happy-dom": "^16.7.2",
     "husky": "^8.0.3",
     "lint-staged": "13.2.2",
     "next-compose-plugins": "^2.2.1",
@@ -103,7 +116,9 @@
     "stylelint": "^14.9.1",
     "stylelint-config-prettier": "^9.0.3",
     "stylelint-config-standard": "^26.0.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.0.4"
   },
   "engines": {
     "node": ">=18.0.0"

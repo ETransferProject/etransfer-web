@@ -33,7 +33,7 @@ export const getDepositTokenList = async (
     });
     return res.data;
   } catch (error: any) {
-    throw formatApiError(error, 'getDepositCalculate error', false);
+    throw formatApiError(error, 'getDepositTokenList error', false);
   }
 };
 

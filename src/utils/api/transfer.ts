@@ -70,7 +70,7 @@ export const getTransferNetworkList = async (
     });
     return res.data;
   } catch (error: any) {
-    throw formatApiError(error, 'getNetworkList error', true);
+    throw formatApiError(error, 'getTransferNetworkList error', true);
   }
 };
 
@@ -97,7 +97,7 @@ export const createTransferOrder = async (
 ): Promise<TCreateTransferOrderResult> => {
   const _params: RequestConfig = { data: params };
   if (authToken) {
-    _params.headers = { Authorization: authToken || '' };
+    _params.headers = { Authorization: authToken };
   }
 
   try {

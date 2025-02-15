@@ -12,7 +12,7 @@ import { useGetAllConnectedWalletAccount } from 'hooks/wallet';
 import useEVM from 'hooks/wallet/useEVM';
 import { getApplicationIssue, prepareBindIssue } from 'utils/api/application';
 import { computeWalletSourceType } from 'utils/wallet';
-import { getTransactionReceiptAutoRetry } from 'utils/evm';
+import { getTransactionReceiptAutoRetry } from 'utils/wallet/EVM';
 import {
   ApplicationChainStatusEnum,
   TApplicationChainStatusItem,

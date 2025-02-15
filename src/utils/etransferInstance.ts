@@ -1,4 +1,4 @@
-class ETransferInstance {
+export class ETransferInstance {
   public unauthorized: boolean;
   public obtainingSignature: boolean;
   public showNoticeIds: string[]; // already show notice

@@ -103,7 +103,7 @@ export const createTokenTransfer = async ({
   return protoInputType.encode(message).finish();
 };
 
-class TXError extends Error {
+export class TXError extends Error {
   public TransactionId?: string;
   public transactionId?: string;
   constructor(message: string, id?: string) {
@@ -116,10 +116,10 @@ class TXError extends Error {
 export function handleContractErrorMessage(error?: any) {
   if (typeof error === 'string') return error;
   if (error?.message) return error.message;
-  if (error.Error) {
-    return error.Error.Details || error.Error.Message || error.Error || error.Status;
+  if (error?.Error) {
+    return error.Error.Details || error.Error.Message || error.Error;
   }
-  return `Transaction: ${error.Status}`;
+  return `Transaction: ${error?.Status}`;
 }
 
 export async function getTxResult(
@@ -132,7 +132,7 @@ export async function getTxResult(
   let txResult;
   try {
     txResult = await txFun(TransactionId);
-    console.log(txResult, TransactionId, 'compBalanceMetadata====txResult');
+    // console.log(txResult, TransactionId, 'compBalanceMetadata====txResult');
   } catch (error) {
     console.log('getTxResult:error', error);
     throw new TXError(handleContractErrorMessage(error), TransactionId);
