@@ -5,7 +5,7 @@ Your Universal Gateway to Seamless Transfers Securely between aelf and beyond
 <p>
   <img alt="UNIT TESTS" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/ETransferProject/etransfer-web/feature/ut-badge/feature-ut-utils-test-results.json" />
   <span>&nbsp;&nbsp;</span>
-  <img alt="UNIT TESTS COVERAGE" src="https://codecov.io/gh/ETransferProject/etransfer-web/branch/master/graph/badge.svg" />
+  <img alt="UNIT TESTS COVERAGE" src="https://codecov.io/gh/ETransferProject/etransfer-web/branch/master/graph/badge.svg?precision=2" />
 </p>
 
 ## Online experience
