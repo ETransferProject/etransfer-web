@@ -22,5 +22,4 @@ jobs:
         uses: AElfProject/frontend-ci-action@v0.0.2
         with:
           commit-token: ${{ secrets.COMMIT_TOKEN }}
-          codecov-token: ${{ secrets.CODECOV_TOKEN }}
           branch-name: 'feature/ut-badge'
