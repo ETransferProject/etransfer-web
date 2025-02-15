@@ -15,7 +15,7 @@ const correctAelfAddress = 'ELF_Py2TJpjTtt29zAtqLWyLEU1DEzBFPz1LJU594hy6evPF8Cvf
 describe('encodedTransfer', () => {
   const AELF_TESTNET_CA_CONTRACT = '238X6iw1j8YKcHvkDYVtYVbuYk2gJnK8UoNpVCtssynSpVC8hb';
 
-  it('1', async () => {
+  it('should return correct encoded value', async () => {
     // Mock AElf utils
     AElf.mockImplementation((provider: any) => {
       provider.send = vi.fn();
@@ -81,7 +81,7 @@ describe('encodedTransfer', () => {
 describe('getFileDescriptorsSet', () => {
   const AELF_TESTNET_CA_CONTRACT = '238X6iw1j8YKcHvkDYVtYVbuYk2gJnK8UoNpVCtssynSpVC8hb';
 
-  it('1', async () => {
+  it('should return correct encoded value', async () => {
     // Mock AElf utils
     AElf.mockImplementation((provider: any) => {
       provider.send = vi.fn();
@@ -144,17 +144,3 @@ describe('getServicesFromFileDescriptors', () => {
     expect(result).toEqual(['service1']);
   });
 });
-
-// export type GetFileDescriptorsSet = {
-//   contractAddress: string;
-//   chainId: SupportedELFChainId;
-// };
-
-// export const getFileDescriptorsSet = async ({
-//   contractAddress,
-//   chainId,
-// }: GetFileDescriptorsSet) => {
-//   const aelf = getAElf(chainId as unknown as AllSupportedELFChainId);
-//   const fds = await aelf.chain.getContractFileDescriptorSet(contractAddress);
-//   return getServicesFromFileDescriptors(fds);
-// };
