@@ -13,14 +13,14 @@ type TFeeInfoProps = {
   orderType: BusinessType;
 };
 
-export default function FeeInfo({ feeInfo, status, orderType }: TFeeInfoProps) {
+export default function FeeInfo({ feeInfo = [], status, orderType }: TFeeInfoProps) {
   const { isPadPX } = useCommonState();
 
   if (status === TOrderStatus.Failed) {
     return <div className={styles['fee-info-wrapper']}>{DEFAULT_NULL_VALUE}</div>;
   }
 
-  if (orderType === BusinessType.Deposit) {
+  if (orderType === BusinessType.Deposit && Array.isArray(feeInfo) && feeInfo.length === 0) {
     return <div className={styles['fee-info-wrapper']}>Free</div>;
   }
 
@@ -30,12 +30,29 @@ export default function FeeInfo({ feeInfo, status, orderType }: TFeeInfoProps) {
         styles['fee-info-wrapper'],
         isPadPX ? styles['mobile-fee-info-wrapper'] : styles['web-fee-info-wrapper'],
       )}>
-      {feeInfo.map((item, index) => {
+      {feeInfo?.map((item, index) => {
         return (
           <span className={styles['fee-info-item-wrapper']} key={item.symbol}>
             {index !== 0 && <span className={styles['fee-info-item-add']}>+</span>}
-            <span> {item.amount} </span>
-            <span> {formatSymbolDisplay(item.symbol)} </span>
+            {index === 0 ? (
+              item.amount ? (
+                orderType === BusinessType.Deposit && item.amount === '0' ? (
+                  'Free'
+                ) : (
+                  <>
+                    <span> {item.amount} </span>
+                    <span> {formatSymbolDisplay(item.symbol)} </span>
+                  </>
+                )
+              ) : (
+                DEFAULT_NULL_VALUE
+              )
+            ) : (
+              <>
+                <span> {item.amount} </span>
+                <span> {formatSymbolDisplay(item.symbol)} </span>
+              </>
+            )}
           </span>
         );
       })}

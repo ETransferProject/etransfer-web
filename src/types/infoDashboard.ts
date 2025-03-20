@@ -27,6 +27,7 @@ export type TTokenDashboardItemDetail = TTokenDashboardItemVolume & {
 export type TTransferDashboardData = {
   id: string;
   orderType: BusinessType;
+  secondOrderType: BusinessType;
   status: TOrderStatus;
   createTime: number;
   fromNetwork: string;

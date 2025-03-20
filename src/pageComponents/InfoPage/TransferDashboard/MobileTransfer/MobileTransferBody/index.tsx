@@ -9,12 +9,13 @@ import Amount from '../../ColumnComponents/Amount';
 import Time from '../../ColumnComponents/Time';
 import WalletAddress from '../../ColumnComponents/WalletAddress';
 import clsx from 'clsx';
-import EmptyDataBox from 'pageComponents/EmptyDataBox';
+import EmptyDataBox from 'components/EmptyDataBox';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { setSelectedTransfer } from 'store/reducers/infoDashboard/slice';
 import myEvents from 'utils/myEvent';
 import { InfoBusinessTypeLabel } from 'constants/infoDashboard';
 import { BusinessType } from 'types/api';
+import { LOADING_TEXT } from 'constants/misc';
 
 const NoDataText = '-- No Data --';
 
@@ -55,6 +56,11 @@ export default function MobileTransferBody({
 
   const renderTransferCard = useCallback(
     (item: TTransferDashboardData) => {
+      const _orderType = item?.secondOrderType
+        ? item?.secondOrderType
+        : item?.orderType === BusinessType.Withdraw
+        ? InfoBusinessTypeLabel.Withdraw
+        : item?.orderType;
       return (
         <div className={styles['transfer-card-container']}>
           <div
@@ -65,11 +71,7 @@ export default function MobileTransferBody({
               'flex-row-between',
             )}>
             <FromToToken fromSymbol={item.fromSymbol} toSymbol={item.toSymbol} />
-            <div className={styles['transfer-card-type']}>
-              {item.orderType === BusinessType.Withdraw
-                ? InfoBusinessTypeLabel.Withdraw
-                : item.orderType}
-            </div>
+            <div className={styles['transfer-card-type']}>{_orderType}</div>
           </div>
           <div className={clsx('flex-row-between', styles['transfer-card-row'])}>
             <div>From - To</div>
@@ -125,7 +127,7 @@ export default function MobileTransferBody({
           scrollableTarget={'etransferWebWrapper'}
           loader={
             <h4 className={clsx(styles['transfer-loader-message'])}>
-              {hasMore ? ' Loading... ' : NoDataText}
+              {hasMore ? LOADING_TEXT : NoDataText}
             </h4>
           }
           endMessage={<p className={clsx(styles['transfer-end-message'])}>{NoDataText}</p>}>

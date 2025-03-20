@@ -1,9 +1,8 @@
 import { useInfoDashboardState } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { Table } from 'antd';
-import EmptyDataBox from 'pageComponents/EmptyDataBox';
+import EmptyDataBox from 'components/EmptyDataBox';
 import TokenBox from '../../ColumnComponents/TokenBox';
-import AelfChain from '../../ColumnComponents/AelfChain';
 import Networks from '../../ColumnComponents/Networks';
 import Volume from '../../ColumnComponents/Volume';
 import { TTokenDashboardItem, TTokenDashboardItemDetail } from 'types/infoDashboard';
@@ -12,6 +11,8 @@ import DynamicArrow from 'components/DynamicArrow';
 import Network from '../../ColumnComponents/Network';
 import { useCallback, useMemo, useState } from 'react';
 import { ZERO } from 'constants/calculate';
+import { formatNetworkName } from 'utils/format';
+import { isAelfChain } from 'utils/wallet';
 
 interface ExpandedTableData extends TTokenDashboardItemDetail {
   symbol: string;
@@ -29,26 +30,19 @@ const WebTokensTableExpandedColumns = [
     },
   },
   {
-    title: 'aelfChainEmpty',
-    dataIndex: 'aelfChain',
-    key: 'aelfChain',
-    width: 120,
-    render: (aelfChain: TChainId[]) => {
-      return (
-        <div style={{ visibility: 'hidden' }}>
-          <AelfChain list={aelfChain} />
-        </div>
-      );
-    },
-  },
-  {
     title: 'Network',
     dataIndex: 'name',
     key: 'name',
-    width: 170,
+    width: 220,
     showSorterTooltip: false,
     render: (name: string) => {
-      return <Network network={name} size="big" />;
+      return (
+        <Network
+          network={name}
+          size="big"
+          name={isAelfChain(name) ? formatNetworkName(name) : ''}
+        />
+      );
     },
   },
   {
@@ -122,19 +116,10 @@ export default function WebTokensTable() {
         },
       },
       {
-        title: 'aelf Chain',
-        dataIndex: 'aelfChain',
-        key: 'aelfChain',
-        width: 120,
-        render: (aelfChain: TChainId[]) => {
-          return <AelfChain list={aelfChain} />;
-        },
-      },
-      {
-        title: 'Multiple Networks',
+        title: 'Networks',
         dataIndex: 'networks',
         key: 'networks',
-        width: 170,
+        width: 220,
         render: (networks: string[]) => {
           return <Networks list={networks} />;
         },
@@ -216,7 +201,7 @@ export default function WebTokensTable() {
       <Table
         size={'large'}
         rowKey={'key'}
-        scroll={{ x: 864 }}
+        scroll={{ x: 994 }}
         columns={WebTokensTableExpandedColumns}
         dataSource={handleExpandedTableData(activeRowData)}
         showHeader={false}
@@ -233,7 +218,7 @@ export default function WebTokensTable() {
         rowKey={(row) => row.symbol}
         dataSource={tokens}
         columns={WebTokensTableColumns}
-        scroll={{ x: 1020 }}
+        scroll={{ x: 994 }}
         expandable={{
           expandedRowRender,
           showExpandColumn: false,

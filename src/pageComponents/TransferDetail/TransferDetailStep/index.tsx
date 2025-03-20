@@ -1,14 +1,13 @@
 import { BusinessType, TransactionRecordStep } from 'types/api';
 import styles from './styles.module.scss';
-import { Steps } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
 import { useMemo } from 'react';
-import { useCommonState } from 'store/Provider/hooks';
 import { formatSymbolDisplay } from 'utils/format';
 import { BlockchainNetworkType } from 'constants/network';
+import CommonSteps, { ICommonStepsProps } from 'components/CommonSteps';
 
 export interface TransferDetailStepProps {
   orderType: BusinessType;
+  secondOrderType: BusinessType;
   currentStep: TransactionRecordStep;
   fromTransfer: {
     confirmingThreshold: number;
@@ -26,15 +25,15 @@ export interface TransferDetailStepProps {
 
 export default function TransferDetailStep({
   orderType,
+  secondOrderType,
   currentStep,
   fromTransfer,
   toTransfer,
 }: TransferDetailStepProps) {
-  const { isPadPX } = useCommonState();
   const stepItems = useMemo(() => {
-    const items = [
+    const items: ICommonStepsProps['stepItems'] = [
       {
-        title: `${orderType} submitted`,
+        title: `${secondOrderType || orderType} submitted`,
         description: `${fromTransfer.amount} ${formatSymbolDisplay(fromTransfer.symbol)}`,
       },
       {
@@ -49,16 +48,16 @@ export default function TransferDetailStep({
         } Chain in progress`,
       },
       {
-        title: 'Received',
+        title: (secondOrderType || orderType) === BusinessType.Transfer ? 'Success' : 'Received',
         description:
           fromTransfer.symbol !== toTransfer.symbol
             ? `You will receive ${formatSymbolDisplay(toTransfer.symbol)}`
             : `${toTransfer.amount} ${formatSymbolDisplay(toTransfer.symbol)}`,
       },
     ];
-    items.forEach((item: any, index) => {
+    items.forEach((item, index) => {
       if (index === currentStep) {
-        item.icon = <LoadingOutlined />;
+        item.isLoading = true;
       }
     });
     return items;
@@ -70,6 +69,7 @@ export default function TransferDetailStep({
     fromTransfer.network,
     fromTransfer.symbol,
     orderType,
+    secondOrderType,
     toTransfer.amount,
     toTransfer.network,
     toTransfer.symbol,
@@ -77,18 +77,7 @@ export default function TransferDetailStep({
 
   return (
     <div className={styles['transfer-detail-step']}>
-      <Steps
-        className={
-          isPadPX
-            ? styles['transfer-detail-step-vertical']
-            : styles['transfer-detail-step-horizontal']
-        }
-        direction={isPadPX ? 'vertical' : 'horizontal'}
-        labelPlacement={isPadPX ? 'horizontal' : 'vertical'}
-        items={stepItems}
-        current={currentStep}
-        size="small"
-      />
+      <CommonSteps stepItems={stepItems} current={currentStep} />
     </div>
   );
 }

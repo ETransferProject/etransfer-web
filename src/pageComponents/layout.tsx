@@ -15,7 +15,6 @@ import { useRouteParamType } from 'hooks/route';
 import { useUpdateRecord } from 'hooks/updateRecord';
 import Footer from 'components/Footer';
 import { usePathname } from 'next/navigation';
-import { useInitWallet } from 'hooks/wallet';
 import { TelegramPlatform } from 'utils/telegram';
 import service from 'api/axios';
 import { API_VERSION } from 'constants/misc';
@@ -28,11 +27,13 @@ const Layout = ({
   isShowHeader = false,
   isShowSider = false,
   isShowFooter = false,
+  isFullWidth = false,
 }: {
   children: React.ReactNode;
   isShowHeader?: boolean;
   isShowSider?: boolean;
   isShowFooter?: boolean;
+  isFullWidth?: boolean;
 }) => {
   const pathname = usePathname();
   useEffect((): any => {
@@ -66,7 +67,6 @@ const Layout = ({
   const { isPadPX, isMobilePX } = useCommonState();
   const isTelegramPlatform = TelegramPlatform.isTelegramPlatform();
 
-  useInitWallet();
   useRouteParamType();
   useUpdateRecord();
   useNoticeSocket();
@@ -88,11 +88,12 @@ const Layout = ({
         )}>
         {isShowSider && !isPadPX && <Sider />}
         <div
-          className={
+          className={clsx(
             pathname !== '/'
               ? clsx('etransfer-web-content', !isTelegramPlatform && 'etransfer-web-content-not-tg')
-              : 'etransfer-web-notLogin'
-          }>
+              : 'etransfer-web-notLogin',
+            isFullWidth && 'etransfer-web-content-full-width',
+          )}>
           <Suspense fallback={<Loading />}>{children}</Suspense>
         </div>
       </div>

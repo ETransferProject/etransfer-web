@@ -1,0 +1,30 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+
+.token-selected {
+  height: 30px;
+  padding: 3px;
+  background-color: $click-bg;
+  border-radius: 30px;
+  border: 1px solid $border;
+  cursor: pointer;
+}
+
+.token-logo {
+  margin-right: 4px;
+}
+
+.token-selected-name {
+  margin-right: 4px;
+  font-size: 18px;
+  @extend .font-family-medium;
+}
+
+.token-arrow {
+  height: 20px;
+  width: 20px;
+
+  svg path {
+    fill: $primary-text;
+  }
+}

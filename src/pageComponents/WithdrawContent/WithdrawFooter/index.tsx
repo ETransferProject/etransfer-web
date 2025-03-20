@@ -9,7 +9,7 @@ import { TNetworkItem, TWithdrawInfo, BusinessType } from 'types/api';
 import { useCommonState, useLoading } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { ADDRESS_MAP, DEFAULT_NULL_VALUE } from 'constants/index';
-import { createWithdrawOrder } from 'utils/api/deposit';
+import { createWithdrawOrder } from 'utils/api/withdraw';
 import { TWithdrawInfoSuccess } from 'types/deposit';
 import { checkTokenAllowanceAndApprove, createTransferTokenTransaction } from 'utils/contract';
 import { timesDecimals } from 'utils/calculate';
@@ -25,7 +25,11 @@ import {
   InsufficientAllowanceMessage,
   WithdrawSendTxErrorCodeList,
 } from 'constants/withdraw';
-import { useGetAccount, useIsLogin, useLogin, useShowLoginButtonLoading } from 'hooks/wallet';
+import useAelf, {
+  useGetAelfAccount,
+  useAelfLogin,
+  useShowLoginButtonLoading,
+} from 'hooks/wallet/useAelf';
 import { formatSymbolDisplay } from 'utils/format';
 import { sleep } from '@portkey/utils';
 import { useWithdraw } from 'hooks/withdraw';
@@ -33,14 +37,13 @@ import { Fingerprint } from 'assets/images';
 import myEvents from 'utils/myEvent';
 import { isDIDAddressSuffix, removeELFAddressSuffix } from 'utils/aelf/aelfBase';
 import FeeInfo from '../FeeInfo';
-import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet';
-import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
+import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet/index';
 import { WalletInfo } from 'types/wallet';
-import { LOGIN, UNLOCK } from 'constants/wallet';
+import { LOGIN, UNLOCK } from 'constants/wallet/index';
 import CommonLink from 'components/CommonLink';
 import { AelfExploreType } from 'constants/network';
 import { getAelfExploreLink } from 'utils/common';
-import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
+import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import { useGetBalanceDivDecimals } from 'hooks/contract';
 
 export interface WithdrawFooterProps {
@@ -70,10 +73,9 @@ export default function WithdrawFooter({
 }: WithdrawFooterProps) {
   const { isPadPX } = useCommonState();
   const { setLoading } = useLoading();
-  const { walletInfo, walletType, isLocking, callSendMethod, getSignature } = useConnectWallet();
-  const isLogin = useIsLogin();
-  const handleLogin = useLogin();
-  const accounts = useGetAccount();
+  const { isConnected, walletInfo, connector, isLocking, callSendMethod, signMessage } = useAelf();
+  const handleAelfLogin = useAelfLogin();
+  const accounts = useGetAelfAccount();
   // Fix: It takes too long to obtain NightElf walletInfo, and the user mistakenly clicks the login button during this period.
   const isLoginButtonLoading = useShowLoginButtonLoading();
   const getBalanceDivDecimals = useGetBalanceDivDecimals();
@@ -214,15 +216,13 @@ export default function WithdrawFooter({
       if (approveRes) {
         const { caHash } = await getCaHashAndOriginChainIdByWallet(
           walletInfo as WalletInfo,
-          walletType,
+          connector,
         );
-        const managerAddress = await getManagerAddressByWallet(
-          walletInfo as WalletInfo,
-          walletType,
-        );
+        const managerAddress = await getManagerAddressByWallet(walletInfo as WalletInfo, connector);
         const ownerAddress = accounts?.[currentChainItem.key] || '';
         const transaction = await createTransferTokenTransaction({
-          walletType,
+          walletInfo,
+          walletType: connector,
           caContractAddress: ADDRESS_MAP[currentChainItem.key][ContractType.CA],
           eTransferContractAddress: currentTokenAddress,
           caHash: caHash,
@@ -230,9 +230,9 @@ export default function WithdrawFooter({
           amount: timesDecimals(balance, currentTokenDecimal).toFixed(),
           memo,
           chainId: currentChainItem.key,
-          fromManagerAddress: walletType === WalletTypeEnum.elf ? ownerAddress : managerAddress,
+          fromManagerAddress: connector === AelfWalletTypeEnum.elf ? ownerAddress : managerAddress,
           caAddress: ownerAddress,
-          getSignature,
+          getSignature: signMessage,
         });
         console.log(transaction, '=====transaction');
 
@@ -255,7 +255,22 @@ export default function WithdrawFooter({
     } finally {
       setIsDoubleCheckModalOpen(false);
     }
-  }, [balance, currentSymbol, currentTokenAddress, handleApproveToken, receiveAmount, setLoading]);
+  }, [
+    accounts,
+    address,
+    balance,
+    connector,
+    currentChainItem.key,
+    currentSymbol,
+    currentTokenAddress,
+    currentTokenDecimal,
+    handleApproveToken,
+    handleCreateWithdrawOrder,
+    memo,
+    setLoading,
+    signMessage,
+    walletInfo,
+  ]);
 
   const onSubmit = useCallback(() => {
     if (!currentNetwork) return;
@@ -299,7 +314,7 @@ export default function WithdrawFooter({
         />
       </div>
       <Form.Item shouldUpdate className={clsx('flex-none', styles['form-submit-button-wrapper'])}>
-        {isLogin ? (
+        {isConnected ? (
           <CommonButton
             className={styles['form-submit-button']}
             // htmlType="submit"
@@ -310,7 +325,7 @@ export default function WithdrawFooter({
         ) : (
           <CommonButton
             className={styles['form-submit-button']}
-            onClick={handleLogin}
+            onClick={() => handleAelfLogin()}
             loading={isLoginButtonLoading}>
             {isLocking ? UNLOCK : LOGIN}
           </CommonButton>
@@ -364,7 +379,7 @@ export default function WithdrawFooter({
             isTagA: true,
             children: (
               <div className={clsx(styles['link-wrap'], !isPadPX && styles['linkToExplore'])}>
-                <span className={styles['link-word']}>View on aelf Explorer</span>
+                <span className={styles['link-word']}>View on aelfscan</span>
                 <Fingerprint className={styles['link-explore-icon']} />
               </div>
             ),

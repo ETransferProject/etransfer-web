@@ -16,6 +16,8 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 export const useCommonState = () => useAppSelector((state) => state.common);
 export const useDepositState = () => useAppSelector((state) => state.deposit);
 export const useWithdrawState = () => useAppSelector((state) => state.withdraw);
+export const useWithdrawNewState = () => useAppSelector((state) => state.withdrawNew);
+export const useCrossChainTransfer = () => useAppSelector((state) => state.crossChainTransfer);
 export const useRecordsState = () => useAppSelector((state) => state.records);
 export const useInfoDashboardState = () => useAppSelector((state) => state.infoDashboard);
 

@@ -1,6 +1,6 @@
 import { useAppDispatch, useInfoDashboardState } from 'store/Provider/hooks';
 import { Table } from 'antd';
-import EmptyDataBox from 'pageComponents/EmptyDataBox';
+import EmptyDataBox from 'components/EmptyDataBox';
 import { TTransferDashboardData } from 'types/infoDashboard';
 import FromToToken from '../../ColumnComponents/FromToToken';
 import FromToChain from '../../ColumnComponents/FromToChain';
@@ -26,12 +26,13 @@ const WebTransferTableColumns = [
     title: 'Type',
     dataIndex: 'orderType',
     key: 'orderType',
-    render: (orderType: BusinessType) => {
-      return (
-        <div>
-          {orderType === BusinessType.Withdraw ? InfoBusinessTypeLabel.Withdraw : orderType}
-        </div>
-      );
+    render: (orderType: BusinessType, item: TTransferDashboardData) => {
+      const _orderType = item?.secondOrderType
+        ? item?.secondOrderType
+        : orderType === BusinessType.Withdraw
+        ? InfoBusinessTypeLabel.Withdraw
+        : orderType;
+      return <div>{_orderType}</div>;
     },
   },
   {

@@ -21,15 +21,15 @@ import { FAQ_DEPOSIT } from 'constants/footer';
 import DepositTip from '../DepositTip';
 import CommonButton, { CommonButtonSize } from 'components/CommonButton';
 import { CopySize } from 'components/Copy';
-import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
-import { useIsLogin, useLogin, useShowLoginButtonLoading } from 'hooks/wallet';
-import { LOGIN, UNLOCK } from 'constants/wallet';
+import useAelf, { useAelfLogin, useShowLoginButtonLoading } from 'hooks/wallet/useAelf';
+import { CONNECT_AELF_WALLET, UNLOCK } from 'constants/wallet/index';
 import { SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE, TokenType } from 'constants/index';
 import TransferTip from '../TransferTip';
-import { useGoWithdraw } from 'hooks/withdraw';
+import { useGoTransfer } from 'hooks/crossChainTransfer';
 import { AelfChainIdList } from 'constants/chain';
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import { ProcessingTip } from 'components/Tips/ProcessingTip';
+import { DEPOSIT_PAGE_TITLE } from 'constants/deposit';
 
 export default function MobileDepositContent({
   fromNetworkSelected,
@@ -39,12 +39,11 @@ export default function MobileDepositContent({
   qrCodeValue,
   tokenLogoUrl,
   showRetry = false,
-  isShowNetworkLoading = false,
   fromTokenSelected,
   toTokenSelected,
   isCheckTxnLoading,
   depositProcessingCount,
-  withdrawProcessingCount,
+  transferProcessingCount,
   onRetry,
   onCheckTxnClick,
   onClickProcessingTip,
@@ -66,9 +65,8 @@ export default function MobileDepositContent({
   const fromNetwork = useMemo(() => fromNetworkSelected, [fromNetworkSelected]);
 
   // login info
-  const { isLocking } = useConnectWallet();
-  const isLogin = useIsLogin();
-  const handleLogin = useLogin();
+  const { isConnected, isLocking } = useAelf();
+  const handleAelfLogin = useAelfLogin();
   // Fix: It takes too long to obtain NightElf walletInfo, and the user mistakenly clicks the login button during this period.
   const isLoginButtonLoading = useShowLoginButtonLoading();
 
@@ -87,15 +85,15 @@ export default function MobileDepositContent({
           )}
         </div>
         <CommonSpace direction="vertical" size={16} />
-        {isLogin && showRetry && <DepositRetryForMobile onClick={onRetry} />}
-        {isLogin && !showRetry && !!depositInfo?.depositAddress && (
+        {isConnected && showRetry && <DepositRetryForMobile onClick={onRetry} />}
+        {isConnected && !showRetry && !!depositInfo?.depositAddress && (
           <CommonAddress
             label={DEPOSIT_ADDRESS_LABEL}
             value={depositInfo.depositAddress}
             copySize={CopySize.Big}
           />
         )}
-        {isLogin && !showRetry && !!depositInfo.depositAddress && (
+        {isConnected && !showRetry && !!depositInfo.depositAddress && (
           <div className="flex-center">
             <CommonButton
               className={styles['check-txn-btn']}
@@ -111,7 +109,7 @@ export default function MobileDepositContent({
   }, [
     depositInfo.depositAddress,
     isCheckTxnLoading,
-    isLogin,
+    isConnected,
     onCheckTxnClick,
     onRetry,
     qrCodeValue,
@@ -165,6 +163,9 @@ export default function MobileDepositContent({
               contractAddress={contractAddress}
               contractAddressLink={contractAddressLink}
               minAmountUsd={depositInfo.minAmountUsd}
+              serviceFee={depositInfo.serviceFee || ''}
+              serviceFeeUsd={depositInfo.serviceFeeUsd || ''}
+              threshold={depositInfo.currentThreshold || ''}
             />
             <CommonSpace direction="vertical" size={24} />
             {renderDepositDescription}
@@ -175,9 +176,12 @@ export default function MobileDepositContent({
   }, [
     contractAddress,
     contractAddressLink,
+    depositInfo.currentThreshold,
     depositInfo?.depositAddress,
     depositInfo.minAmount,
     depositInfo.minAmountUsd,
+    depositInfo.serviceFee,
+    depositInfo.serviceFeeUsd,
     fromNetworkSelected,
     fromTokenSelected,
     fromTokenSymbol,
@@ -189,25 +193,25 @@ export default function MobileDepositContent({
 
   const isShowTransferTip = useMemo(() => {
     return (
-      isLogin &&
+      isConnected &&
       SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE.includes(fromTokenSymbol as TokenType) &&
       fromTokenSymbol === toTokenSymbol &&
       AelfChainIdList.includes(fromNetwork?.network as TChainId)
     );
-  }, [fromNetwork?.network, fromTokenSymbol, isLogin, toTokenSymbol]);
+  }, [fromNetwork?.network, fromTokenSymbol, isConnected, toTokenSymbol]);
 
-  const goWithdraw = useGoWithdraw();
-  const handleGoWithdraw = useCallback(async () => {
-    goWithdraw(toChainItem, fromTokenSymbol, fromNetwork);
-  }, [fromNetwork, fromTokenSymbol, goWithdraw, toChainItem]);
+  const goTransfer = useGoTransfer();
+  const handleGoTransfer = useCallback(async () => {
+    goTransfer(fromTokenSymbol, fromNetwork?.network, toChainItem.key);
+  }, [fromNetwork?.network, fromTokenSymbol, goTransfer, toChainItem.key]);
 
   return (
     <>
-      {isLogin && (
+      {isConnected && (
         <ProcessingTip
           depositProcessingCount={depositProcessingCount}
-          withdrawProcessingCount={withdrawProcessingCount}
-          marginBottom={isPadPX && !isMobilePX ? 24 : 0}
+          transferProcessingCount={transferProcessingCount}
+          marginBottom={0}
           borderRadius={0}
           onClick={onClickProcessingTip}
         />
@@ -215,12 +219,13 @@ export default function MobileDepositContent({
 
       <div className="main-content-container main-content-container-safe-area">
         <div className={clsx(styles['main-section'], styles['section'])}>
+          <div className="main-section-header">{DEPOSIT_PAGE_TITLE}</div>
+
           <SelectTokenNetwork
             label={'From'}
             tokenSelected={fromTokenSelected}
             tokenSelectCallback={fromTokenChanged}
             networkSelected={fromNetworkSelected}
-            isShowNetworkLoading={isShowNetworkLoading}
             networkSelectCallback={fromNetworkChanged}
           />
 
@@ -257,9 +262,9 @@ export default function MobileDepositContent({
 
           <CommonSpace direction="vertical" size={24} />
 
-          {!isShowTransferTip && isLogin && renderDepositInfo}
+          {!isShowTransferTip && isConnected && renderDepositInfo}
 
-          {!isLogin && (
+          {!isConnected && (
             <div
               className={clsx(
                 styles['next-button-wrapper'],
@@ -268,13 +273,13 @@ export default function MobileDepositContent({
               <CommonSpace direction="vertical" size={24} />
               <CommonButton
                 className={styles['next-button']}
-                onClick={handleLogin}
+                onClick={() => handleAelfLogin()}
                 loading={isLoginButtonLoading}>
-                {isLocking ? UNLOCK : LOGIN}
+                {isLocking ? UNLOCK : CONNECT_AELF_WALLET}
               </CommonButton>
             </div>
           )}
-          {isLogin && isShowTransferTip && (
+          {isConnected && isShowTransferTip && (
             <div
               className={clsx(
                 styles['next-button-wrapper'],
@@ -283,13 +288,13 @@ export default function MobileDepositContent({
               <CommonSpace direction="vertical" size={24} />
               <TransferTip
                 isShowIcon={false}
-                toChainItem={toChainItem}
                 symbol={fromTokenSymbol}
-                network={fromNetwork}
+                fromNetwork={fromNetwork?.network}
+                toNetwork={toChainItem.key}
               />
               <CommonSpace direction="vertical" size={24} />
-              <CommonButton className={styles['next-button']} onClick={handleGoWithdraw}>
-                Go to Withdraw Page
+              <CommonButton className={styles['next-button']} onClick={handleGoTransfer}>
+                Go to Transfer Page
               </CommonButton>
             </div>
           )}

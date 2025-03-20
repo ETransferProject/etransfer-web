@@ -1,4 +1,3 @@
-@import '~antd/dist/antd.variable.min.css';
 @import '/src/assets/theme/breakpoint.scss';
 @import '/src/assets/theme/common-class.scss';
 @import '/src/assets/theme/color.scss';
@@ -53,6 +52,11 @@ input[type='number'] {
   }
 }
 
+// input
+.ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
+  color: $brand;
+}
+
 .ant-select-focused:not(.ant-select-disable).ant-select:not(.ant-select-customize-input)
   .ant-select-selector {
   border: 1px solid $hover !important;
@@ -75,12 +79,14 @@ input[type='number'] {
   width: 100%;
   height: 100%;
 
-  @include media-huge-web {
-    max-width: calc($max-width - $sider-width);
-  }
-  @include media-huge-screen {
-    width: calc($max-width + 1px - $sider-width);
-    margin: unset;
+  &:not(&.etransfer-web-content-full-width) {
+    @include media-huge-web {
+      max-width: calc($max-width - $sider-width);
+    }
+    @include media-huge-screen {
+      width: calc($max-width + 1px - $sider-width);
+      margin: unset;
+    }
   }
 }
 
@@ -114,6 +120,24 @@ input[type='number'] {
   @include media-web {
     padding-top: 40px;
     margin-bottom: $web-content-padding-bottom;
+  }
+}
+
+.main-section-header {
+  @extend .font-family-medium;
+  margin-bottom: 24px;
+  font-size: 24px;
+  line-height: 32px;
+
+  @include media-pad {
+    margin-bottom: 24px;
+    font-size: 24px;
+    line-height: 32px;
+  }
+  @include media-mobile {
+    margin-bottom: 16px;
+    font-size: 20px;
+    line-height: 28px;
   }
 }
 

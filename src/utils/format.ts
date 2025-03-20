@@ -1,5 +1,8 @@
 import BigNumber from 'bignumber.js';
 import { divDecimals } from './calculate';
+import { BlockchainNetworkType } from 'constants/network';
+import { ChainNamePrefix } from 'constants/index';
+import { ZERO } from 'constants/calculate';
 
 /**
  * this function is to format address,just like "formatStr2EllipsisStr" ---> "for...Str"
@@ -41,7 +44,7 @@ export interface IFormatWithCommasProps {
 export const DEFAULT_AMOUNT = 0;
 export const DEFAULT_DECIMAL = 6;
 export const DEFAULT_DIGITS = 6;
-export const ZERO = new BigNumber(0);
+
 /**
  * formatAmount with prefix and thousand mark, not unit
  * @example $11.1  +11.1  -11.1  9,999.9
@@ -79,5 +82,52 @@ export const replaceCharacter = (str: string, replaced: string, replacedBy: stri
 };
 
 export const formatSymbolDisplay = (str: string) => {
-  return replaceCharacter(str, '-1', '');
+  if (!str) return '';
+
+  // Prevent malicious tampering of the token display issued by users
+  if (str?.includes('SGR-1')) return replaceCharacter(str, '-1', '');
+
+  return str;
+};
+
+export const formatNetworkName = (item: string) => {
+  switch (item) {
+    case BlockchainNetworkType.AELF:
+      return ChainNamePrefix.MainChain;
+    case BlockchainNetworkType.tDVV:
+      return ChainNamePrefix.SideChain;
+    case BlockchainNetworkType.tDVW:
+      return ChainNamePrefix.SideChain;
+    default:
+      return item;
+  }
+};
+
+export const formatNetworkKey = (network?: string) => {
+  if (!network) return '';
+  switch (network) {
+    case BlockchainNetworkType.tDVV:
+      return BlockchainNetworkType.AELF;
+    case BlockchainNetworkType.tDVW:
+      return BlockchainNetworkType.AELF;
+    default:
+      return network;
+  }
+};
+
+export function stringToHex(str: string) {
+  let val = '';
+  for (let i = 0; i < str.length; i++) {
+    if (val === '') val = str.charCodeAt(i).toString(16);
+    else val += str.charCodeAt(i).toString(16);
+  }
+  return val;
+}
+
+export const formatListWithAnd = (items: string[]): string => {
+  if (items.length > 1) {
+    const lastItem = items.pop();
+    return `${items.join(', ')} and ${lastItem}`;
+  }
+  return items.join(', ');
 };

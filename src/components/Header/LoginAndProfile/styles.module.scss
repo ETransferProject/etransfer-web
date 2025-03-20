@@ -1,10 +1,15 @@
 @import 'src/assets/theme/breakpoint.scss';
+@import 'src/assets/theme/color.scss';
 
 .connect-wallet-button {
   padding: 0 20px;
 
-  @include media-mobile {
-    height: 28px !important;
+  @include media-mobile-and-pad {
+    height: 32px !important;
     padding: 0 8px !important;
   }
+}
+
+.connected-wallet-button-text {
+  margin-left: 12px;
 }

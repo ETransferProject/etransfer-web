@@ -25,7 +25,8 @@ import {
 } from 'store/Provider/hooks';
 import styles from './styles.module.scss';
 import { CHAIN_LIST, IChainNameItem, DEFAULT_NULL_VALUE } from 'constants/index';
-import { getNetworkList, getTokenList, getWithdrawInfo } from 'utils/api/deposit';
+import { getNetworkList, getTokenList } from 'utils/api/transfer';
+import { getWithdrawInfo } from 'utils/api/withdraw';
 import { CONTRACT_ADDRESS } from 'constants/deposit';
 import { checkIsEnoughAllowance, getBalance } from 'utils/contract';
 import { SingleMessage } from '@etransfer/ui-react';
@@ -53,15 +54,15 @@ import {
 import { CommonErrorNameType } from 'api/types';
 import { ContractAddressForMobile, ContractAddressForWeb } from './ContractAddress';
 import { handleErrorMessage } from '@etransfer/utils';
-import { useGetAccount, useIsLogin } from 'hooks/wallet';
-import FormInput from 'pageComponents/WithdrawContent/FormAmountInput';
+import useAelf, { useGetAelfAccount } from 'hooks/wallet/useAelf';
+import FormInput from 'pageComponents/Withdraw/WithdrawForm/FormAmountInput';
 import {
   formatSymbolDisplay,
   formatWithCommas,
   parseWithCommas,
   parseWithStringCommas,
 } from 'utils/format';
-import { devices, sleep } from '@portkey/utils';
+import { sleep } from '@portkey/utils';
 import { useWithdraw } from 'hooks/withdraw';
 import { isAuthTokenError, isHtmlError, isWriteOperationError } from 'utils/api/error';
 import myEvents from 'utils/myEvent';
@@ -75,15 +76,15 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import FAQ from 'components/FAQ';
 import { FAQ_WITHDRAW } from 'constants/footer';
-import { PortkeyVersion } from 'constants/wallet';
-import { TelegramPlatform } from 'utils/telegram';
-import { useSetAuthFromStorage } from 'hooks/authToken';
+import { PortkeyVersion } from 'constants/wallet/index';
+import { useSetAelfAuthFromStorage } from 'hooks/wallet/aelfAuthToken';
 import WithdrawFooter from './WithdrawFooter';
 import RemainingLimit from './RemainingLimit';
 import CommentFormItemLabel from './CommentFormItemLabel';
 import { BlockchainNetworkType } from 'constants/network';
 import { MEMO_REG } from 'utils/reg';
 import { ProcessingTip } from 'components/Tips/ProcessingTip';
+import { handleInputFocus } from 'utils/common';
 
 enum ValidateStatus {
   Error = 'error',
@@ -116,14 +117,13 @@ const FORM_VALIDATE_DATA = {
 
 export default function WithdrawContent() {
   const dispatch = useAppDispatch();
-  const isAndroid = devices.isMobile().android;
   const { isPadPX, isMobilePX } = useCommonState();
   const { depositProcessingCount, withdrawProcessingCount } = useRecordsState();
-  const isLogin = useIsLogin();
-  const isLoginRef = useRef(isLogin);
-  isLoginRef.current = isLogin;
+  const { isConnected } = useAelf();
+  const isConnectedRef = useRef(isConnected);
+  isConnectedRef.current = isConnected;
   const withdraw = useWithdrawState();
-  const accounts = useGetAccount();
+  const accounts = useGetAelfAccount();
   const { currentSymbol, tokenList, currentChainItem } = useWithdraw();
   const currentChainItemRef = useRef<IChainNameItem>(currentChainItem || CHAIN_LIST[0]);
   const { setLoading } = useLoading();
@@ -349,7 +349,7 @@ export default function WithdrawContent() {
 
   const handleAmountValidate = useCallback(
     (newMinAmount?: string, newTransactionUnit?: string, newMaxBalance?: string) => {
-      if (!isLoginRef.current) return;
+      if (!isConnectedRef.current) return;
 
       const amount = form.getFieldValue(FormKeys.AMOUNT);
       if (!amount) {
@@ -417,8 +417,8 @@ export default function WithdrawContent() {
 
   const getWithdrawData = useCallback(
     async (optionSymbol?: string, newMaxBalance?: string): Promise<any> => {
-      console.log('getWithdrawData >>>>>> isLogin', isLoginRef.current);
-      if (!isLoginRef.current) return;
+      console.log('getWithdrawData >>>>>> isConnectedRef', isConnectedRef.current);
+      if (!isConnectedRef.current) return;
 
       const symbol = optionSymbol || currentSymbol;
       try {
@@ -809,10 +809,10 @@ export default function WithdrawContent() {
     [searchParams],
   );
 
-  const setAuthFromStorage = useSetAuthFromStorage();
+  const setAelfAuthFromStorage = useSetAelfAuthFromStorage();
   const init = useCallback(async () => {
     try {
-      await setAuthFromStorage();
+      await setAelfAuthFromStorage();
       await sleep(500);
 
       let newCurrentSymbol = currentSymbol;
@@ -877,7 +877,7 @@ export default function WithdrawContent() {
     routeQuery.chainId,
     routeQuery.tokenSymbol,
     routeQuery.withdrawAddress,
-    setAuthFromStorage,
+    setAelfAuthFromStorage,
     setLoading,
     tokenList,
     withdraw,
@@ -967,7 +967,7 @@ export default function WithdrawContent() {
   // }, [init]);
 
   useEffect(() => {
-    if (!isLogin) {
+    if (!isConnected) {
       setWithdrawInfo(InitialWithdrawInfo);
       setBalance('0');
       setMaxBalance('');
@@ -978,7 +978,7 @@ export default function WithdrawContent() {
         getMaxBalanceTimerRef.current = null;
       }
     }
-  }, [isLogin]);
+  }, [isConnected]);
 
   useEffect(() => {
     // log in
@@ -1003,7 +1003,7 @@ export default function WithdrawContent() {
         className={clsx('flex-row-center', styles['info-wrapper'], styles['balance-info-wrapper'])}>
         <div className={styles['info-label']}>Balance</div>
         <div className={styles['info-value']}>
-          {!isLogin ? (
+          {!isConnected ? (
             DEFAULT_NULL_VALUE
           ) : !maxBalance || isMaxBalanceLoading ? (
             <PartialLoading />
@@ -1013,7 +1013,7 @@ export default function WithdrawContent() {
         </div>
       </div>
     );
-  }, [currentSymbol, isLogin, isMaxBalanceLoading, maxBalance]);
+  }, [currentSymbol, isConnected, isMaxBalanceLoading, maxBalance]);
 
   const handleClickProcessingTip = useCallback(() => {
     router.push('/history');
@@ -1027,17 +1027,16 @@ export default function WithdrawContent() {
           'withdraw-content-container',
           !isPadPX && styles['main-content'],
         )}>
-        {!isPadPX && isLogin && (
+        {!isPadPX && isConnected && (
           <div className={styles['withdraw-processing-container']}>
             <ProcessingTip
               depositProcessingCount={depositProcessingCount}
-              withdrawProcessingCount={withdrawProcessingCount}
+              transferProcessingCount={withdrawProcessingCount}
               onClick={handleClickProcessingTip}
             />
           </div>
         )}
         <SelectChainWrapper
-          mobileTitle="Withdraw from"
           mobileLabel="from"
           webLabel={'Withdraw Assets from'}
           chainChanged={(item: IChainNameItem) => handleChainChanged(item)}
@@ -1142,7 +1141,7 @@ export default function WithdrawContent() {
                 label={
                   <div className={clsx('flex-row-between', styles['form-label-wrapper'])}>
                     <span className={styles['form-label']}>Withdrawal Amount</span>
-                    {isLogin && !isPadPX && (
+                    {isConnected && !isPadPX && (
                       <RemainingLimit
                         limitCurrency={withdrawInfo.limitCurrency}
                         totalLimit={withdrawInfo.totalLimit}
@@ -1157,14 +1156,14 @@ export default function WithdrawContent() {
                 <FormInput
                   unit={withdrawInfo.transactionUnit}
                   maxButtonConfig={
-                    isLogin
+                    isConnected
                       ? {
                           onClick: () => setMaxToken(),
                         }
                       : undefined
                   }
                   autoComplete="off"
-                  placeholder={isLogin ? `Minimum: ${minAmount}` : ''}
+                  placeholder={isConnected ? `Minimum: ${minAmount}` : ''}
                   onInput={(event: any) => {
                     const value = event.target?.value?.trim();
                     const oldValue = form.getFieldValue(FormKeys.AMOUNT);
@@ -1194,16 +1193,7 @@ export default function WithdrawContent() {
                       event.target.value = beforePoint + afterPoint;
                     }
                   }}
-                  onFocus={async () => {
-                    if (!TelegramPlatform.isTelegramPlatform() && isAndroid) {
-                      // The keyboard does not block the input box
-                      await sleep(200);
-                      document.getElementById('inputAmountWrapper')?.scrollIntoView({
-                        block: 'center',
-                        behavior: 'smooth',
-                      });
-                    }
-                  }}
+                  onFocus={() => handleInputFocus('inputAmountWrapper')}
                   onChange={(event: any) => {
                     const value = event.target?.value;
                     const valueNotComma = parseWithCommas(value);
@@ -1220,7 +1210,7 @@ export default function WithdrawContent() {
 
             {renderBalance}
 
-            {isLogin && isPadPX && (
+            {isConnected && isPadPX && (
               <RemainingLimit
                 limitCurrency={withdrawInfo.limitCurrency}
                 totalLimit={withdrawInfo.totalLimit}
@@ -1270,8 +1260,7 @@ export default function WithdrawContent() {
     handleClickProcessingTip,
     handleNetworkChanged,
     handleTokenChange,
-    isAndroid,
-    isLogin,
+    isConnected,
     isNetworkDisable,
     isPadPX,
     isShowNetworkLoading,
@@ -1292,10 +1281,10 @@ export default function WithdrawContent() {
 
   return (
     <>
-      {isPadPX && isLogin && (
+      {isPadPX && isConnected && (
         <ProcessingTip
           depositProcessingCount={depositProcessingCount}
-          withdrawProcessingCount={withdrawProcessingCount}
+          transferProcessingCount={withdrawProcessingCount}
           marginBottom={isPadPX && !isMobilePX ? 24 : 16}
           borderRadius={0}
           onClick={handleClickProcessingTip}

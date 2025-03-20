@@ -8,7 +8,7 @@ import { useCommonState } from 'store/Provider/hooks';
 import {
   NetworkListSkeletonForMobile,
   NetworkListSkeletonForWeb,
-} from 'pageComponents/Skeleton/NetworkListSkeleton';
+} from 'components/Skeleton/NetworkListSkeleton';
 
 export interface TNetworkSelectProps {
   className?: string;
@@ -78,7 +78,6 @@ export function NetworkSelectForMobile({
         )}
         {!isShowLoading &&
           networkList.map((item, idx) => {
-            console.log('🌈 🌈 🌈 🌈 🌈 🌈 item', item);
             return (
               <NetworkCardForMobile
                 key={'network-select' + item.network + idx}

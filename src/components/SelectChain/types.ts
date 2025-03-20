@@ -4,7 +4,7 @@ import { IChainNameItem } from 'constants/index';
 type TSelectChainCommon = {
   menuItems: IChainNameItem[];
   selectedItem: IChainNameItem;
-  getContainer: string;
+  getContainer?: string;
   className?: string;
   childrenClassName?: string;
   overlayClassName?: string;

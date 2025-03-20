@@ -6,6 +6,7 @@ import styles from './styles.module.scss';
 import { NETWORK_TYPE } from 'constants/index';
 import { useSearchParams } from 'next/navigation';
 import { BaseReCaptcha } from 'components/GoogleRecaptcha/types';
+import { NetworkEnum } from '@aelf-web-login/wallet-adapter-base';
 
 export default function ReCaptcha() {
   const searchParams = useSearchParams();
@@ -87,7 +88,9 @@ export default function ReCaptcha() {
     <div className={styles.reCaptchaContainer}>
       <GoogleReCaptcha
         siteKey={
-          NETWORK_TYPE === 'TESTNET' ? RECAPTCHA_SITE_KEY_TESTNET : RECAPTCHA_SITE_KEY_MAINNET
+          NETWORK_TYPE === NetworkEnum.TESTNET
+            ? RECAPTCHA_SITE_KEY_TESTNET
+            : RECAPTCHA_SITE_KEY_MAINNET
         }
         theme={(searchParams.get('theme') as BaseReCaptcha['theme']) || 'light'}
         size={(searchParams.get('size') as BaseReCaptcha['size']) || 'normal'}

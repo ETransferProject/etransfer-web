@@ -10,12 +10,12 @@ import { useCommonState } from 'store/Provider/hooks';
 import { getOmittedStr } from 'utils/calculate';
 import { formatTime } from 'pageComponents/InfoPage/TransferDashboard/utils';
 import { viewTxDetailInExplore } from 'utils/common';
-import { formatSymbolDisplay } from 'utils/format';
 import { InfoBusinessTypeLabel, TransferStatusType } from 'constants/infoDashboard';
 import { TOrderStatus } from 'types/records';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
 import { useMemo } from 'react';
 import { COBO_CUSTODY } from 'constants/misc';
+import FeeInfo from 'pageComponents/HistoryContent/FeeInfo';
 
 export type TTransferDetailBody = Omit<TTransferDashboardData, 'fromStatus' | 'toStatus'> & {
   fromStatus: TransferStatusType | TOrderStatus;
@@ -25,10 +25,12 @@ export type TTransferDetailBody = Omit<TTransferDashboardData, 'fromStatus' | 't
 export default function TransferDetailBody(props: TTransferDetailBody) {
   const { isMobilePX } = useCommonState();
   const orderType = useMemo(() => {
-    return props.orderType === BusinessType.Withdraw
+    return props?.secondOrderType
+      ? props?.secondOrderType
+      : props.orderType === BusinessType.Withdraw
       ? InfoBusinessTypeLabel.Withdraw
       : props.orderType;
-  }, [props.orderType]);
+  }, [props.orderType, props?.secondOrderType]);
 
   return (
     <div className={styles['transfer-detail-body']}>
@@ -48,9 +50,7 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
           <div className={styles['detail-item']}>
             <div className={styles['detail-label']}>Type</div>
             <div className={clsx(styles['detail-value'], styles['detail-value-type'])}>
-              {props.orderType === BusinessType.Withdraw
-                ? InfoBusinessTypeLabel.Withdraw
-                : props.orderType}
+              {orderType}
             </div>
           </div>
 
@@ -64,13 +64,9 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
       )}
 
       <div className={styles['detail-item']}>
-        <div className={styles['detail-label']}>Transaction Fee</div>
+        <div className={styles['detail-label']}>Fee</div>
         <div className={clsx(styles['detail-value'], styles['detail-value-fee'])}>
-          {props.status === TOrderStatus.Failed
-            ? DEFAULT_NULL_VALUE
-            : props.orderType === BusinessType.Withdraw
-            ? `${props.toFeeInfo[0].amount} ${formatSymbolDisplay(props.toFeeInfo[0].symbol)}`
-            : 'Free'}
+          <FeeInfo feeInfo={props.toFeeInfo} status={props.status} orderType={props.orderType} />
         </div>
       </div>
 
@@ -103,7 +99,7 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
       </div>
 
       <div className={styles['detail-item']}>
-        <div className={styles['detail-label']}>{`${props.orderType} Amount`}</div>
+        <div className={styles['detail-label']}>{`${orderType} Amount`}</div>
         <TokenAmount
           status={props.fromStatus}
           amount={props.fromAmount}
@@ -114,7 +110,7 @@ export default function TransferDetailBody(props: TTransferDetailBody) {
       </div>
 
       <div className={styles['detail-item']}>
-        <div className={styles['detail-label']}>{`${props.orderType} Address`}</div>
+        <div className={styles['detail-label']}>{`${orderType} Address`}</div>
         {props.fromAddress === COBO_CUSTODY ? (
           <span
             className={clsx(

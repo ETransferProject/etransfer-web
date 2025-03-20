@@ -3,8 +3,8 @@ import { BusinessType } from './api';
 
 export enum TRecordsRequestType {
   ALL = 0,
-  Deposits = 1,
-  Withdraws = 2,
+  Deposit = 1,
+  Transfer = 2,
 }
 
 export enum TRecordsRequestStatus {
@@ -22,6 +22,7 @@ export type TFromTransfer = {
   amount: string;
   amountUsd?: string;
   symbol: string;
+  icon: string;
   status: TOrderStatus;
   txId: string;
 };
@@ -39,6 +40,7 @@ export type TToTransfer = {
   amount: string;
   amountUsd?: string;
   symbol: string;
+  icon: string;
   status: TOrderStatus;
   feeInfo: TFeeInfo[];
   txId: string;
@@ -58,7 +60,9 @@ export interface TRecordsTableListType {
   orderType: BusinessType;
   status: TOrderStatus;
   arrivalTime: number;
+  createTime: number;
   symbol: string;
+  icon: string;
   sendingAmount: string;
   receivingAmount: string;
   fromNetwork: string;
@@ -83,6 +87,6 @@ export enum TOrderStatus {
 
 export enum TRecordsStatusI18n {
   Processing = 'Pending',
-  Succeed = 'Completed',
+  Succeed = 'Success',
   Failed = 'Failed',
 }

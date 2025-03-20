@@ -9,7 +9,7 @@ import {
   OtherExploreType,
   ExploreUrlNotAelf,
 } from 'constants/network';
-import { useGetAccount } from 'hooks/wallet';
+import { useGetAelfAccount } from 'hooks/wallet/useAelf';
 import { useCallback } from 'react';
 import { formatDIDAddress } from 'utils/aelf/aelfBase';
 import { getOmittedStr } from 'utils/calculate';
@@ -33,7 +33,7 @@ export default function WalletAddress({
   isOmitAddress = true,
   className,
 }: WalletAddressProps) {
-  const accounts = useGetAccount();
+  const accounts = useGetAelfAccount();
 
   const calcAddress = useCallback(() => {
     if (chainId && network === BlockchainNetworkType.AELF) {

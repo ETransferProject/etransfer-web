@@ -16,7 +16,7 @@ import { computePlus } from '../utils';
 type TCurrentItem = {
   date: string;
   deposit: string;
-  withdraw: string;
+  transfer: string;
   plus: string;
 };
 
@@ -38,7 +38,7 @@ export default function TransactionOverview() {
     return generateStackBarOption({
       data: chartData,
       depositKey: 'depositTx',
-      withdrawKey: 'withdrawTx',
+      transferKey: 'transferTx',
       stackName: 'transaction',
       opacity: opacity,
       emphasisOpacity: 1,
@@ -51,8 +51,8 @@ export default function TransactionOverview() {
     const dataItem = dataMapRef.current?.[event?.name] || {};
     setCurrentItem({
       deposit: String(dataItem.depositTx) || '',
-      withdraw: String(dataItem.withdrawTx) || '',
-      plus: computePlus(dataItem.depositTx, dataItem.withdrawTx),
+      transfer: String(dataItem.transferTx) || '',
+      plus: computePlus(dataItem.depositTx, dataItem.transferTx),
       date: event?.name,
     });
   }, []);
@@ -62,7 +62,7 @@ export default function TransactionOverview() {
 
     setCurrentItem({
       deposit: '',
-      withdraw: '',
+      transfer: '',
       plus: totalItem?.plus || '',
       date: totalItem?.date || '',
     });
@@ -74,7 +74,7 @@ export default function TransactionOverview() {
 
       setCurrentItem({
         deposit: '',
-        withdraw: '',
+        transfer: '',
         plus: totalItem?.plus || '',
         date: totalItem?.date || '',
       });
@@ -123,7 +123,7 @@ export default function TransactionOverview() {
       });
       setCurrentItem({
         deposit: '',
-        withdraw: '',
+        transfer: '',
         plus: String(res.transaction.totalTx),
         date: res.transaction.latest,
       });
@@ -155,7 +155,7 @@ export default function TransactionOverview() {
         plusCount={currentItem?.plus || ''}
         countUnit=" Txs"
         depositCount={currentItem?.deposit}
-        withdrawCount={currentItem?.withdraw}
+        transferCount={currentItem?.transfer}
         time={currentItem?.date || ''}
         switchPeriod={onSwitchPeriod}
       />

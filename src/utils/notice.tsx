@@ -2,11 +2,15 @@ import { notification } from 'antd';
 import { ArgsProps } from 'antd/lib/notification';
 import { CheckNoticeIcon, CloseMedium } from 'assets/images';
 import { eTransferInstance } from './etransferInstance';
-import { etransferCore, formatSymbolDisplay } from '@etransfer/ui-react';
+import { etransferCore } from '@etransfer/ui-react';
+import { formatSymbolDisplay } from 'utils/format';
 import clsx from 'clsx';
 import { BusinessType } from 'types/api';
 import { ETRANSFER_LOGO } from 'constants/misc';
-import { TOrderRecordsNoticeResponse } from '@etransfer/socket';
+import {
+  TOrderRecordsNoticeRequestAddressItem,
+  TOrderRecordsNoticeResponse,
+} from '@etransfer/socket';
 
 export const browserNotification = ({ title, content }: { title: string; content: string }) => {
   if (!('Notification' in window)) {
@@ -31,7 +35,7 @@ export const browserNotification = ({ title, content }: { title: string; content
   }
 };
 
-const enum TTxnStatus {
+export const enum TTxnNoticeStatus {
   Successful = 'Successful',
   Failed = 'Failed',
 }
@@ -45,7 +49,7 @@ export const showNotice = ({
   isShowBrowserNotice = true,
   noticeProps,
 }: {
-  status: TTxnStatus;
+  status: TTxnNoticeStatus;
   type: BusinessType;
   amount: string;
   symbol: string;
@@ -55,17 +59,21 @@ export const showNotice = ({
 }) => {
   if (!type || !status || !amount || !symbol) return;
 
-  const title = `${type === BusinessType.Withdraw ? 'Withdrawal' : type} ${status}`;
+  const title = `${type} ${status}`;
 
-  const typeText = type === BusinessType.Withdraw ? 'withdrawal' : type.toLowerCase();
+  const typeText = type.toLowerCase();
 
   const action = 'received';
 
   const content =
-    type === BusinessType.Deposit && status === TTxnStatus.Successful && isSwapFail
-      ? `Swap failed, the ${typeText} of ${amount} USDT has been received.`
-      : status === TTxnStatus.Successful
-      ? `The ${typeText} of ${amount} ${formatSymbolDisplay(symbol)} has been ${action}.`
+    type === BusinessType.Deposit && status === TTxnNoticeStatus.Successful && isSwapFail
+      ? amount === '0'
+        ? `Swap ${formatSymbolDisplay(symbol)} failed, the USDT ${typeText} has been processed.`
+        : `Swap failed, the ${typeText} of ${amount} USDT has been received.`
+      : status === TTxnNoticeStatus.Successful
+      ? amount === '0'
+        ? `The ${typeText} has been processed successfully.`
+        : `The ${typeText} of ${amount} ${formatSymbolDisplay(symbol)} has been ${action}.`
       : `The ${typeText} of ${amount} ${formatSymbolDisplay(
           symbol,
         )} failed; please check the transaction and contact customer service.`;
@@ -74,7 +82,7 @@ export const showNotice = ({
     ...noticeProps,
     className: clsx(
       'etransfer-txn-notification',
-      status === TTxnStatus.Successful
+      status === TTxnNoticeStatus.Successful
         ? 'etransfer-txn-notification-success'
         : 'etransfer-txn-notification-error',
     ),
@@ -99,7 +107,7 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
     }
   });
 
-  noticeData.processing.withdraw?.forEach((item) => {
+  noticeData.processing.transfer?.forEach((item) => {
     if (!eTransferInstance.processingIds.includes(item.id)) {
       eTransferInstance.processingIds.push(item.id);
     }
@@ -112,7 +120,7 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
       !eTransferInstance.showNoticeIds.includes(item.id)
     ) {
       showNotice({
-        status: TTxnStatus.Successful,
+        status: TTxnNoticeStatus.Successful,
         type: BusinessType.Deposit,
         amount: item.amount,
         symbol: item.symbol,
@@ -121,14 +129,14 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
       eTransferInstance.showNoticeIds.push(item.id);
     }
   });
-  noticeData.succeed?.withdraw?.forEach((item) => {
+  noticeData.succeed?.transfer?.forEach((item) => {
     if (
       eTransferInstance.processingIds.includes(item.id) &&
       !eTransferInstance.showNoticeIds.includes(item.id)
     ) {
       showNotice({
-        status: TTxnStatus.Successful,
-        type: BusinessType.Withdraw,
+        status: TTxnNoticeStatus.Successful,
+        type: BusinessType.Transfer,
         amount: item.amount,
         symbol: item.symbol,
       });
@@ -143,7 +151,7 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
       !eTransferInstance.showNoticeIds.includes(item.id)
     ) {
       showNotice({
-        status: TTxnStatus.Failed,
+        status: TTxnNoticeStatus.Failed,
         type: BusinessType.Deposit,
         amount: item.amount,
         symbol: item.symbol,
@@ -151,14 +159,14 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
       eTransferInstance.showNoticeIds.push(item.id);
     }
   });
-  noticeData.failed?.withdraw?.forEach((item) => {
+  noticeData.failed?.transfer?.forEach((item) => {
     if (
       eTransferInstance.processingIds.includes(item.id) &&
       !eTransferInstance.showNoticeIds.includes(item.id)
     ) {
       showNotice({
-        status: TTxnStatus.Failed,
-        type: BusinessType.Withdraw,
+        status: TTxnNoticeStatus.Failed,
+        type: BusinessType.Transfer,
         amount: item.amount,
         symbol: item.symbol,
       });
@@ -167,9 +175,11 @@ export const handleNoticeDataAndShow = (noticeData: TOrderRecordsNoticeResponse)
   });
 };
 
-export const unsubscribeUserOrderRecord = async (address: string) => {
+export const unsubscribeUserOrderRecord = async (
+  addressList?: TOrderRecordsNoticeRequestAddressItem[],
+) => {
   eTransferInstance.setProcessingIds([]);
   eTransferInstance.setShowNoticeIds([]);
-  await etransferCore.noticeSocket?.UnsubscribeUserOrderRecord(address);
+  await etransferCore.noticeSocket?.UnsubscribeUserOrderRecord('', addressList);
   await etransferCore.noticeSocket?.destroy();
 };

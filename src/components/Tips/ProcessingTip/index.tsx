@@ -3,7 +3,7 @@ import CommonWarningTip from 'components/Tips/CommonWarningTip';
 
 export interface ProcessingTipProps {
   depositProcessingCount?: number;
-  withdrawProcessingCount?: number;
+  transferProcessingCount?: number;
   marginBottom?: number;
   borderRadius?: number;
   className?: string;
@@ -11,26 +11,26 @@ export interface ProcessingTipProps {
 }
 export function ProcessingTip({
   depositProcessingCount,
-  withdrawProcessingCount,
+  transferProcessingCount,
   marginBottom = 16,
   borderRadius,
   className,
   onClick,
 }: ProcessingTipProps) {
-  if (!withdrawProcessingCount && !depositProcessingCount) return null;
+  if (!transferProcessingCount && !depositProcessingCount) return null;
 
   let text;
-  if (!withdrawProcessingCount && depositProcessingCount) {
+  if (!transferProcessingCount && depositProcessingCount) {
     text = `${depositProcessingCount} ${
       depositProcessingCount > 1 ? 'deposits' : 'deposit'
     } processing`;
-  } else if (!depositProcessingCount && withdrawProcessingCount) {
-    text = `${withdrawProcessingCount} ${
-      withdrawProcessingCount > 1 ? 'withdrawals' : 'withdrawal'
+  } else if (!depositProcessingCount && transferProcessingCount) {
+    text = `${transferProcessingCount} ${
+      transferProcessingCount > 1 ? 'transfers' : 'transfer'
     } processing`;
-  } else if (withdrawProcessingCount && depositProcessingCount) {
-    text = `${withdrawProcessingCount} ${
-      withdrawProcessingCount > 1 ? 'withdrawals' : 'withdrawal'
+  } else if (transferProcessingCount && depositProcessingCount) {
+    text = `${transferProcessingCount} ${
+      transferProcessingCount > 1 ? 'transfers' : 'transfer'
     } and ${depositProcessingCount} ${
       depositProcessingCount > 1 ? 'deposits' : 'deposit'
     } processing`;

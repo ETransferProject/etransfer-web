@@ -2,6 +2,12 @@
 
 .web-tokens-table {
   :global {
+    .ant-table-column-sorters {
+      justify-content: flex-start;
+      .ant-table-column-title {
+        flex: 0 0 auto;
+      }
+    }
     .ant-table-expanded-row {
       .ant-table-cell {
         background-color: #fff;

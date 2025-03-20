@@ -1,8 +1,8 @@
 export * from './testnet';
 
 export const ChainNamePrefix = {
-  MainChain: 'MainChain',
-  SideChain: 'SideChain',
+  MainChain: 'aelf MainChain',
+  SideChain: 'aelf dAppChain',
 };
 
 export const USDT_DECIMAL = 6;
@@ -19,6 +19,8 @@ export enum TokenType {
   SGR = 'SGR-1',
   ELF = 'ELF',
   ACORNS = 'ACORNS',
+  AGENT = 'AGENT',
+  ETH = 'ETH',
 }
 
 export const SUPPORT_DEPOSIT_ISOMORPHIC_CHAIN_GUIDE = [TokenType.USDT, TokenType.ELF];
@@ -32,3 +34,5 @@ export const TOKEN_INFO_USDT = {
 };
 
 export const ETRANSFER_WEBSITE_URL = 'https://etransfer.exchange';
+
+export const CONTACT_US_FORM_URL = 'https://form.etransfer.exchange/contact';

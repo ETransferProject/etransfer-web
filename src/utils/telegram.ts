@@ -14,6 +14,6 @@ export class TelegramPlatform {
 
   static isTelegramPlatform() {
     const Telegram = TelegramPlatform.getTelegram();
-    return !!(Telegram && Telegram.WebApp.platform && Telegram.WebApp.platform !== 'unknown');
+    return !!(Telegram && Telegram.WebApp?.platform && Telegram.WebApp?.platform !== 'unknown');
   }
 }

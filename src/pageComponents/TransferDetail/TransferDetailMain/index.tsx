@@ -1,17 +1,21 @@
 import TransferDetailBody from 'pageComponents/InfoPage/TransferDetail/TransferDetailBody';
 import TransferDetailStep from '../TransferDetailStep';
 import styles from './styles.module.scss';
-import { TGetRecordDetailResult } from 'types/api';
+import { BusinessType, TGetRecordDetailResult } from 'types/api';
 import { TOrderStatus } from 'types/records';
 import { CheckNoticeIcon, ErrorIcon } from 'assets/images';
 import clsx from 'clsx';
 import { formatSymbolDisplay } from 'utils/format';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
 import { useMemo } from 'react';
+import CommonTip from 'components/CommonTip';
+import { RECEIVED_0_TIP } from 'constants/deposit';
+import { NOTICE } from 'constants/misc';
 
 export default function TransferDetailMain({
   id,
   orderType,
+  secondOrderType,
   status,
   createTime,
   fromTransfer,
@@ -23,6 +27,7 @@ export default function TransferDetailMain({
       return (
         <TransferDetailStep
           orderType={orderType}
+          secondOrderType={secondOrderType}
           currentStep={step.currentStep}
           fromTransfer={{
             confirmingThreshold: step.fromTransfer.confirmingThreshold,
@@ -46,6 +51,7 @@ export default function TransferDetailMain({
     fromTransfer.network,
     fromTransfer.symbol,
     orderType,
+    secondOrderType,
     status,
     step.currentStep,
     step.fromTransfer.confirmedNum,
@@ -64,9 +70,16 @@ export default function TransferDetailMain({
             <span>Received</span>
           </div>
           {toTransfer.amount && toTransfer.symbol ? (
-            <div className={styles['detail-value-amount']}>{`${
-              toTransfer.amount
-            } ${formatSymbolDisplay(toTransfer.symbol)}`}</div>
+            <div className={clsx('flex-row-center gap-4', styles['detail-value-amount'])}>
+              {`${toTransfer.amount} ${formatSymbolDisplay(toTransfer.symbol)}`}
+              {orderType === BusinessType.Deposit && toTransfer.amount === '0' && (
+                <CommonTip
+                  tip={RECEIVED_0_TIP}
+                  className={styles['received-tip']}
+                  modalTitle={NOTICE}
+                />
+              )}
+            </div>
           ) : (
             <div>{DEFAULT_NULL_VALUE}</div>
           )}
@@ -121,6 +134,7 @@ export default function TransferDetailMain({
         id={id}
         status={status}
         orderType={orderType}
+        secondOrderType={secondOrderType}
         createTime={createTime}
         fromNetwork={fromTransfer.network}
         fromChainId={fromTransfer.chainId}

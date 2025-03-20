@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { TOverviewTimeType } from 'types/api';
 import moment from 'moment';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
+import { DATE_FORMATE, DATE_FORMATE_MMM_D_YYYY } from 'constants/misc';
 
 export interface BarChartHeaderProps {
   className?: string;
@@ -13,7 +14,7 @@ export interface BarChartHeaderProps {
   countUnit: string;
   unitPosition?: 'prefix' | 'suffix';
   depositCount?: string;
-  withdrawCount?: string;
+  transferCount?: string;
   time: string;
   legendList: ChartLegendItem[];
   switchPeriod: (item: TOverviewTimeType) => void;
@@ -35,7 +36,7 @@ export default function BarChartHeader({
   title,
   plusCount,
   depositCount,
-  withdrawCount,
+  transferCount,
   countUnit,
   unitPosition = 'suffix',
   time,
@@ -46,7 +47,7 @@ export default function BarChartHeader({
 
   const formatDate = useMemo(() => {
     if (!time) return DEFAULT_NULL_VALUE;
-    return moment(time, 'YYYY-MM-DD').format('MMM D, YYYY');
+    return moment(time, DATE_FORMATE).format(DATE_FORMATE_MMM_D_YYYY);
   }, [time]);
 
   const formatNumber = useCallback((num?: number | string): string => {
@@ -111,7 +112,7 @@ export default function BarChartHeader({
         <BarChartLegend
           legendList={legendList}
           depositCount={formatNumber(depositCount)}
-          withdrawCount={formatNumber(withdrawCount)}
+          transferCount={formatNumber(transferCount)}
           countUnit={countUnit}
           unitPosition={unitPosition}
         />

@@ -1,0 +1,15 @@
+@import '/src/assets/theme/color.scss';
+
+.empty-data-box {
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.empty-data-box-text {
+  color: $secondary-text;
+}

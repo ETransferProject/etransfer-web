@@ -1,7 +1,9 @@
 @import 'assets/theme/color.scss';
+@import 'assets/theme/breakpoint.scss';
 
 .divider-style {
   height: 12px;
+  margin: 0;
   background: $hover-bg;
   border: none;
 }

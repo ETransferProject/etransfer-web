@@ -23,7 +23,7 @@ export function useDepositNetworkList() {
 
 export function useCheckTxn() {
   const [isCheckTxnLoading, setIsCheckTxnLoading] = useState(false);
-  const { depositProcessingCount, withdrawProcessingCount } = useRecordsState();
+  const { depositProcessingCount, transferProcessingCount } = useRecordsState();
 
   const timerRef = useRef<NodeJS.Timer | number>();
 
@@ -36,11 +36,11 @@ export function useCheckTxn() {
   const resetTimer = useCallback(() => {
     timerRef.current = setTimeout(() => {
       stopTimer();
-      if (!depositProcessingCount && !withdrawProcessingCount) {
+      if (!depositProcessingCount && !transferProcessingCount) {
         SingleMessage.info(NO_TXN_FOUND);
       }
     }, CHECK_TXN_DURATION);
-  }, [depositProcessingCount, stopTimer, withdrawProcessingCount]);
+  }, [depositProcessingCount, stopTimer, transferProcessingCount]);
 
   const handleCheckTxnClick = useCallback(() => {
     setIsCheckTxnLoading(true);

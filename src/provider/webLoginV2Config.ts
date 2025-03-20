@@ -7,6 +7,7 @@ import {
   APP_NAME,
   AelfReact,
   NETWORK_TYPE,
+  SHOW_V_CONSOLE,
   SupportedChainId,
   TELEGRAM_BOT_ID,
   WebLoginConnectUrl,
@@ -17,7 +18,7 @@ import { ETRANSFER_PORTKEY_PROJECT_CODE } from 'constants/misc';
 import { TelegramPlatform } from 'utils/telegram';
 import { devices } from '@portkey/utils';
 
-const didConfig = {
+const didConfig: IConfigProps['didConfig'] = {
   graphQLUrl: WebLoginGraphqlUrl,
   connectUrl: WebLoginConnectUrl,
   serviceUrl: WebLoginServiceUrl,
@@ -37,10 +38,11 @@ const didConfig = {
   },
 };
 
-const baseConfig = {
-  showVconsole: false,
+const baseConfig: IConfigProps['baseConfig'] = {
+  showVconsole: SHOW_V_CONSOLE,
   networkType: NETWORK_TYPE,
   chainId: SupportedChainId.sideChain,
+  sideChainId: SupportedChainId.sideChain,
   keyboard: true,
   noCommonBaseModal: false,
   design: SignInDesignEnum.CryptoDesign,
@@ -52,6 +54,7 @@ const portkeyAAWallet = new PortkeyAAWallet({
   appName: APP_NAME,
   chainId: SupportedChainId.sideChain,
   autoShowUnlock: true,
+  enableAcceleration: true,
 });
 
 const isMobileDevices = devices.isMobileDevices();

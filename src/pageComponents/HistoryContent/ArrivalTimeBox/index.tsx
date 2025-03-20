@@ -5,6 +5,7 @@ import { TOrderStatus } from 'types/records';
 import moment from 'moment';
 import { useCommonState } from 'store/Provider/hooks';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
+import { DATE_FORMATE } from 'constants/misc';
 
 type TArrivalTimeBoxProps = {
   arrivalTime: number;
@@ -15,7 +16,7 @@ export default function ArrivalTimeBox({ arrivalTime, status }: TArrivalTimeBoxP
   const { isPadPX } = useCommonState();
 
   const content = useMemo(() => {
-    const yearMonthDay = moment(arrivalTime).format('YYYY-MM-DD');
+    const yearMonthDay = moment(arrivalTime).format(DATE_FORMATE);
     const hourMinuteSecond = moment(arrivalTime).format('HH:mm:ss');
     const now = moment();
     const targetTime = moment(arrivalTime);

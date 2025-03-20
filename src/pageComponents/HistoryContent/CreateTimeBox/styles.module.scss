@@ -1,0 +1,25 @@
+@import 'src/assets/theme/color.scss';
+
+.create-time-box {
+  min-width: 90px;
+  color: $primary-text;
+}
+
+.web-create-time-box {
+  text-align: left;
+}
+
+.mobile-create-time-box {
+  text-align: right;
+}
+
+.year-hour-wrapper {
+  .year {
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .hour {
+    display: inline-block;
+    white-space: nowrap;
+  }
+}

@@ -1,9 +1,8 @@
 import { InfoBrandIcon } from 'assets/images';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
-import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
-import { LOGIN, UNLOCK } from 'constants/wallet';
-import { useIsLogin, useLogin } from 'hooks/wallet';
+import { CONNECT_AELF_WALLET, UNLOCK } from 'constants/wallet/index';
+import useAelf, { useAelfLogin } from 'hooks/wallet/useAelf';
 
 export default function NotLoginTip({
   isShowIcon = true,
@@ -12,11 +11,10 @@ export default function NotLoginTip({
   isShowIcon?: boolean;
   isCard?: boolean;
 }) {
-  const { isLocking } = useConnectWallet();
-  const isLogin = useIsLogin();
-  const handleLogin = useLogin();
+  const { isConnected, isLocking } = useAelf();
+  const handleAelfLogin = useAelfLogin();
 
-  if (isLogin) return null;
+  if (isConnected) return null;
 
   return (
     <div
@@ -27,8 +25,8 @@ export default function NotLoginTip({
       {isShowIcon && <InfoBrandIcon className="flex-shrink-0" />}
       <span className={styles['text']}>
         <span>{`Please `}</span>
-        <span className={styles['action']} onClick={handleLogin}>
-          {isLocking ? UNLOCK : LOGIN}
+        <span className={styles['action']} onClick={() => handleAelfLogin()}>
+          {isLocking ? UNLOCK : CONNECT_AELF_WALLET.toLocaleLowerCase()}
         </span>
         <span>{` to get the deposit address.`}</span>
       </span>

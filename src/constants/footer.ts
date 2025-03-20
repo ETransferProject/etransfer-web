@@ -6,6 +6,7 @@ import {
   // DiscordIcon,
   FooterLogo,
   LegalIcon,
+  // ListingIcon,
   QuestionMarkLarge,
   TelegramBigIcon,
   TelegramIcon,
@@ -63,7 +64,7 @@ export const FOOTER_CONFIG: TFooterConfig = {
           link: 'https://doc.portkey.finance/docs/How-to-download-Portkey',
         },
         {
-          name: 'Explorer',
+          name: 'aelfscan',
           link: 'https://aelfscan.io',
         },
       ],
@@ -82,43 +83,63 @@ export const FOOTER_CONFIG: TFooterConfig = {
         },
       ],
     },
+    // {
+    //   group: 'Listing',
+    //   icon: ListingIcon,
+    //   items: [
+    //     {
+    //       name: 'Listing Application',
+    //       link: '/listing/token-information',
+    //     },
+    //     {
+    //       name: 'My Applications',
+    //       link: '/my-applications',
+    //     },
+    //   ],
+    // },
     {
-      group: 'Contacts',
+      group: 'Contact Us',
       icon: ContactsIcon,
       items: [
+        // {
+        //   name: 'Emails',
+        //   link: 'mailto:contact@etransfer.exchange',
+        // },
+        // {
+        //   name: 'Support',
+        //   link: 'https://t.me/etransfer_support',
+        // },
         {
-          name: 'Emails',
-          link: 'mailto:contact@etransfer.exchange',
-        },
-        {
-          name: 'Support',
-          link: 'https://t.me/etransfer_support',
+          name: 'Contact Form',
+          link: 'https://form.etransfer.exchange/contact',
         },
       ],
     },
   ],
 };
 
+export const ETRANSFER_GIT_BOOK_FAQ_URL = 'https://etransfer.gitbook.io/docs/faq';
+
 export const DOCUMENTATION_LINK: Record<string, TFooterMenuItem> = {
   aboutETransfer: {
     name: 'What is ETransfer?',
-    link: 'https://etransfer.gitbook.io/docs/faq#what-is-etransfer',
+    link: `${ETRANSFER_GIT_BOOK_FAQ_URL}#what-is-etransfer`,
+  },
+  secure: {
+    name: 'How Secure is ETransfer?',
+    link: `${ETRANSFER_GIT_BOOK_FAQ_URL}#how-secure-is-etransfer`,
+  },
+  transferProcess: {
+    name: 'How do I initiate a cross-chain transfer on ETransfer?',
+    link: `${ETRANSFER_GIT_BOOK_FAQ_URL}#how-do-i-initiate-a-cross-chain-transfer-on-etransfer`,
   },
   depositProcess: {
     name: 'How to deposit to aelf by ETransfer?',
-    link: 'https://etransfer.gitbook.io/docs/faq#how-to-deposit-to-aelf-by-etransfer',
+    link: `${ETRANSFER_GIT_BOOK_FAQ_URL}#how-to-deposit-to-aelf-by-etransfer`,
   },
   withdrawProcess: {
-    name: 'How to withdraw from aelf by ETransfer?',
-    link: 'https://etransfer.gitbook.io/docs/faq#how-to-withdraw-from-aelf-by-etransfer',
-  },
-  notArrived: {
-    name: 'The assets have not arrived.',
-    link: 'https://etransfer.gitbook.io/docs/faq#my-assets-have-not-arrived',
-  },
-  completedTime: {
-    name: 'How long does it take for the transfer to be completed?',
-    link: 'https://etransfer.gitbook.io/docs/faq#how-long-does-it-take-for-the-transfer-to-be-completed',
+    name: 'How do I initiate a withdrawal on ETransfer?',
+    link: `${ETRANSFER_GIT_BOOK_FAQ_URL}#how-do-i-initiate-a-withdrawal-on-etransfer`,
   },
 };
 
@@ -126,9 +147,8 @@ export const FAQ_DEPOSIT: TFrequentlyAskedQuestionsSection = {
   title: 'FAQ',
   list: [
     DOCUMENTATION_LINK.aboutETransfer,
+    DOCUMENTATION_LINK.secure,
     DOCUMENTATION_LINK.depositProcess,
-    DOCUMENTATION_LINK.notArrived,
-    DOCUMENTATION_LINK.completedTime,
   ],
 };
 
@@ -136,8 +156,16 @@ export const FAQ_WITHDRAW: TFrequentlyAskedQuestionsSection = {
   title: 'FAQ',
   list: [
     DOCUMENTATION_LINK.aboutETransfer,
+    DOCUMENTATION_LINK.secure,
     DOCUMENTATION_LINK.withdrawProcess,
-    DOCUMENTATION_LINK.notArrived,
-    DOCUMENTATION_LINK.completedTime,
+  ],
+};
+
+export const FAQ_CROSS_CHAIN_TRANSFER: TFrequentlyAskedQuestionsSection = {
+  title: 'FAQ',
+  list: [
+    DOCUMENTATION_LINK.aboutETransfer,
+    DOCUMENTATION_LINK.secure,
+    DOCUMENTATION_LINK.transferProcess,
   ],
 };

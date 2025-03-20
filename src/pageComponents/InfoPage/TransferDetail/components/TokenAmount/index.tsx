@@ -2,7 +2,8 @@ import styles from './styles.module.scss';
 import clsx from 'clsx';
 import useGetTokenIcon from 'hooks/infoDashboard';
 import DisplayImage from 'components/DisplayImage';
-import { ZERO, formatSymbolDisplay } from 'utils/format';
+import { formatSymbolDisplay } from 'utils/format';
+import { ZERO } from 'constants/calculate';
 import { useMemo } from 'react';
 import { DEFAULT_NULL_VALUE } from 'constants/index';
 import { TOrderStatus } from 'types/records';
@@ -29,6 +30,7 @@ export default function TokenAmount({
 
   const formatAmount = useMemo(() => {
     if (!amount) return '';
+    if (amount === '0') return '0';
     if (ZERO.plus(amount).isLessThan(ZERO.plus('0.0001'))) {
       return '<0.0001';
     }
@@ -37,6 +39,7 @@ export default function TokenAmount({
 
   const formatUsd = useMemo(() => {
     if (!amountUsd) return '';
+    if (amountUsd === '0') return '$0';
     if (ZERO.plus(amountUsd).isLessThan(ZERO.plus('0.01'))) {
       return '<$0.01';
     }

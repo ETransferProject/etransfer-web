@@ -48,3 +48,9 @@
     margin: 8px 0 24px;
   }
 }
+
+.received-tip {
+  svg path {
+    fill: $warning;
+  }
+}

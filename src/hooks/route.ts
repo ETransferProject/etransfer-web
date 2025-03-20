@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { setActiveMenuKey } from 'store/reducers/common/slice';
 import { stringifyUrl } from 'query-string';
 import { TWithdrawEntryConfig } from 'types';
+// import { useGoTransfer } from './crossChainTransfer';
 
 export function useRouteParamType(): { type: SideMenuKey } {
   const pathname = usePathname();
@@ -12,6 +13,7 @@ export function useRouteParamType(): { type: SideMenuKey } {
   const routeType = useMemo(() => searchParams.get('type') as SideMenuKey, [searchParams]);
   const dispatch = useAppDispatch();
   const { activeMenuKey } = useCommonState();
+  // const goTransfer = useGoTransfer();
 
   const currentActiveMenuKey = useMemo(
     () => routeType || activeMenuKey,
@@ -22,7 +24,7 @@ export function useRouteParamType(): { type: SideMenuKey } {
     if (routeType && pathname === '/') {
       dispatch(setActiveMenuKey(routeType));
     }
-  }, [activeMenuKey, dispatch, pathname, routeType]);
+  }, [dispatch, pathname, routeType]);
 
   return { type: currentActiveMenuKey };
 }
@@ -56,6 +58,9 @@ export function useRouterPush() {
         break;
       case `/${SideMenuKey.Info.toLocaleLowerCase()}`:
         result = SideMenuKey.Info;
+        break;
+      case `/cross-chain-transfer`:
+        result = SideMenuKey.CrossChainTransfer;
         break;
 
       default:
@@ -108,10 +113,13 @@ export function useCheckAllowSearch() {
             searchObject.calculatePay = searchParams.get('calculatePay');
           if (searchParams.get('withdrawAddress'))
             searchObject.withdrawAddress = searchParams.get('withdrawAddress');
-          if (searchParams.get('method')) searchObject.method = searchParams.get('method');
+          if (searchParams.get('type')) searchObject.type = searchParams.get('type');
           if (searchParams.get('status')) searchObject.status = searchParams.get('status');
           if (searchParams.get('start')) searchObject.start = searchParams.get('start');
           if (searchParams.get('end')) searchObject.end = searchParams.get('end');
+          if (searchParams.get('fromNetwork'))
+            searchObject.fromNetwork = searchParams.get('fromNetwork');
+          if (searchParams.get('toNetwork')) searchObject.toNetwork = searchParams.get('toNetwork');
           break;
 
         case '/deposit':
@@ -127,15 +135,30 @@ export function useCheckAllowSearch() {
           break;
 
         case '/withdraw':
-          if (searchParams.get('chainId')) searchObject.chainId = searchParams.get('chainId');
-          if (searchParams.get('tokenSymbol'))
-            searchObject.tokenSymbol = searchParams.get('tokenSymbol');
+          // Compatible with the old withdraw page routing parameters
+          if (searchParams.get('chainId')) searchObject.fromNetwork = searchParams.get('chainId');
           if (searchParams.get('withdrawAddress'))
             searchObject.withdrawAddress = searchParams.get('withdrawAddress');
+
+          // New withdraw page routing parameters
+          if (searchParams.get('fromNetwork'))
+            searchObject.fromNetwork = searchParams.get('fromNetwork');
+          if (searchParams.get('toNetwork')) searchObject.toNetwork = searchParams.get('toNetwork');
+          if (searchParams.get('tokenSymbol'))
+            searchObject.tokenSymbol = searchParams.get('tokenSymbol');
+          break;
+
+        case '/cross-chain-transfer':
+          if (searchParams.get('fromNetwork'))
+            searchObject.chainId = searchParams.get('fromNetwork');
+          if (searchParams.get('toNetwork'))
+            searchObject.withdrawAddress = searchParams.get('toNetwork');
+          if (searchParams.get('tokenSymbol'))
+            searchObject.tokenSymbol = searchParams.get('tokenSymbol');
           break;
 
         case '/history':
-          if (searchParams.get('method')) searchObject.method = searchParams.get('method');
+          if (searchParams.get('type')) searchObject.type = searchParams.get('type');
           if (searchParams.get('status')) searchObject.status = searchParams.get('status');
           if (searchParams.get('start')) searchObject.start = searchParams.get('start');
           if (searchParams.get('end')) searchObject.end = searchParams.get('end');
@@ -157,10 +180,10 @@ export function useChangeSideMenu() {
   routerRef.current = router.push;
 
   return useCallback(
-    (key: SideMenuKey) => {
+    (key: SideMenuKey, pathname: string) => {
       console.log('>>>useChangeSideMenu', key);
       dispatch(setActiveMenuKey(key));
-      routerRef.current(`/${key.toLocaleLowerCase()}`);
+      routerRef.current(pathname);
     },
     [dispatch],
   );

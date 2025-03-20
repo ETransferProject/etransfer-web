@@ -3,6 +3,10 @@ import { NetworkStatus, TWithdrawInfo } from 'types/api';
 import { TArrivalTimeConfig, TWithdrawInfoSuccess } from 'types/deposit';
 import { AllSupportedELFChainId } from './chain';
 
+export const WITHDRAW_PAGE_TITLE = 'Withdraw Assets';
+
+export const BUTTON_TEXT_WITHDRAW = 'Withdraw';
+
 export const WithdrawAddressErrorCodeList = ['40100', '40101'];
 
 export const WithdrawSendTxErrorCodeList = [
@@ -101,4 +105,4 @@ export const ARRIVAL_TIME_CONFIG: Record<string, TArrivalTimeConfig> = {
   },
 };
 
-export const APPROVE_ELF_FEE = '0.02';
+export const APPROVE_ELF_FEE = '0.05';

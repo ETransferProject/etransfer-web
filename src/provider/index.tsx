@@ -4,6 +4,12 @@ import StoreProvider from 'store/Provider/StoreProvider';
 import 'utils/firebase';
 import dynamic from 'next/dynamic';
 import CircleLoading from 'components/CircleLoading';
+import EVMProvider from './wallet/EVM';
+import SolanaProvider from './wallet/Solana';
+import TONProvider from './wallet/TON';
+import TRONProvider from './wallet/TRON';
+import WalletProvider from 'context/Wallet';
+
 const Loading = dynamic(() => import('components/Loading'), { ssr: false });
 const WebLoginProviderDynamic = dynamic(
   async () => {
@@ -25,8 +31,18 @@ export default function RootProviders({ children }: { children?: React.ReactNode
     <ConfigProvider autoInsertSpaceInButton={false}>
       <StoreProvider>
         <WebLoginProviderDynamic>
-          <Loading />
-          {children}
+          <EVMProvider>
+            <SolanaProvider>
+              <TONProvider>
+                <TRONProvider>
+                  <WalletProvider>
+                    <Loading />
+                    {children}
+                  </WalletProvider>
+                </TRONProvider>
+              </TONProvider>
+            </SolanaProvider>
+          </EVMProvider>
         </WebLoginProviderDynamic>
       </StoreProvider>
     </ConfigProvider>
