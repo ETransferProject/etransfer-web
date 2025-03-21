@@ -19,7 +19,8 @@ jobs:
 
     steps:
       - name: Run frontend ci action
-        uses: AElfProject/frontend-ci-action@v0.0.2
+        uses: ETransferProject/frontend-ci-action@v0.0.1
         with:
+          node-version: '20.18.2'
           commit-token: ${{ secrets.COMMIT_TOKEN }}
           branch-name: 'feature/ut-badge'
