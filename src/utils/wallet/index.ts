@@ -3,10 +3,10 @@ import {
   TChainId,
   WalletTypeEnum as AelfWalletTypeEnum,
 } from '@aelf-web-login/wallet-adapter-base';
-import { PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
+import { did } from '@portkey/did';
 import { SupportedChainId } from 'constants/index';
-import { pubKeyToAddress } from '../aelf/aelfBase';
-import { ExtraInfoForDiscover, ExtraInfoForPortkeyAA, WalletInfo } from 'types/wallet';
+import { pubKeyToAddress, recoverPubKey } from '../aelf/aelfBase';
+import { ExtraInfoForDiscoverAndWeb, WalletInfo } from 'types/wallet';
 import { WalletTypeEnum } from 'context/Wallet/types';
 import {
   Coinbase_16,
@@ -32,13 +32,16 @@ export const getManagerAddressByWallet = async (
 
   let managerAddress;
   if (walletType === AelfWalletTypeEnum.discover) {
-    const discoverInfo = walletInfo?.extraInfo as ExtraInfoForDiscover;
+    const discoverInfo = walletInfo?.extraInfo as ExtraInfoForDiscoverAndWeb;
     managerAddress = await discoverInfo?.provider?.request({
       method: 'wallet_getCurrentManagerAddress',
     });
-  } else if (walletType === AelfWalletTypeEnum.aa) {
-    const portkeyAAInfo = walletInfo?.extraInfo as ExtraInfoForPortkeyAA;
-    managerAddress = portkeyAAInfo.portkeyInfo.walletInfo.address;
+  } else if (walletType === AelfWalletTypeEnum.web) {
+    const _sdkWalletInfoString = localStorage.getItem('PortkeyWebWalletWalletInfo');
+    if (_sdkWalletInfoString) {
+      const _sdkWalletInfo = JSON.parse(_sdkWalletInfoString);
+      managerAddress = _sdkWalletInfo.managerAddress;
+    }
   } else {
     // AelfWalletTypeEnum.elf
     managerAddress = walletInfo.address;
@@ -63,21 +66,52 @@ export const getCaHashAndOriginChainIdByWallet = async (
 
   let caHash, originChainId;
   if (walletType === AelfWalletTypeEnum.discover) {
-    const res = await PortkeyDid.did.services.getHolderInfoByManager({
+    const res = await did.services.getHolderInfoByManager({
       caAddresses: [walletInfo?.address],
     } as unknown as GetCAHolderByManagerParams);
     const caInfo = res[0];
     caHash = caInfo?.caHash;
     originChainId = caInfo?.chainId as TChainId;
-  } else if (walletType === AelfWalletTypeEnum.aa) {
-    const portkeyAAInfo = walletInfo?.extraInfo as ExtraInfoForPortkeyAA;
-    caHash = portkeyAAInfo.portkeyInfo.caInfo.caHash;
-    originChainId = portkeyAAInfo.portkeyInfo.chainId;
+  } else if (walletType === AelfWalletTypeEnum.web) {
+    const _sdkWalletInfoString = localStorage.getItem('PortkeyWebWalletWalletInfo');
+    if (_sdkWalletInfoString) {
+      const _sdkWalletInfo = JSON.parse(_sdkWalletInfoString);
+      caHash = _sdkWalletInfo.caHash;
+      originChainId = _sdkWalletInfo.originChainId;
+    }
   }
+  // TODO new eoa
 
   return {
     caHash: caHash || '',
     originChainId: originChainId || SupportedChainId.sideChain,
+  };
+};
+
+export const getManagerAddressAndPubkeyByWallet = (
+  walletInfo: WalletInfo,
+  walletType: AelfWalletTypeEnum,
+  plainText: string,
+  signature: string,
+): { managerAddress: string; pubkey: string } => {
+  let managerAddress, pubkey;
+
+  if (walletType === AelfWalletTypeEnum.web) {
+    // TODO info error
+    const _sdkWalletInfoString = localStorage.getItem('PortkeyWebWalletWalletInfo');
+    if (_sdkWalletInfoString) {
+      const _sdkWalletInfo = JSON.parse(_sdkWalletInfoString);
+      managerAddress = _sdkWalletInfo.managerAddress;
+      pubkey = _sdkWalletInfo.managerPubkey;
+    }
+  } else {
+    pubkey = recoverPubKey(plainText, signature) + '';
+    managerAddress = getManagerAddressByWallet(walletInfo, walletType, pubkey);
+  }
+
+  return {
+    managerAddress,
+    pubkey,
   };
 };
 

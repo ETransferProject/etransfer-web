@@ -26,7 +26,7 @@ export default function WebHeader() {
         <Logo />
       </div>
       <div className={styles['right-wrapper']}>
-        {isConnected && connector === AelfWalletTypeEnum.aa && (
+        {isConnected && connector === AelfWalletTypeEnum.web && (
           <span className={styles['assets-wrapper']} onClick={() => handleOpenAssets()}>
             Assets
           </span>

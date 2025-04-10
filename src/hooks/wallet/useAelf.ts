@@ -28,7 +28,17 @@ export default function useAelf() {
     getSignature,
     ...props
   } = useConnectWallet();
-
+  console.log(
+    '====== walletInfo',
+    walletInfo,
+    walletType,
+    isConnected,
+    connecting,
+    connectWallet,
+    disConnectWallet,
+    getSignature,
+    props,
+  );
   const onGetBalance = useCallback(
     async ({
       tokenSymbol,
@@ -45,7 +55,7 @@ export default function useAelf() {
     [isConnected, walletInfo],
   );
 
-  // WalletInfo TAelfAccounts ExtraInfoForDiscover | ExtraInfoForPortkeyAA | ExtraInfoForNightElf;
+  // WalletInfo TAelfAccounts ExtraInfoForDiscoverAndWeb | ExtraInfoForNightElf;
   const accounts = useMemo(() => {
     if (!isConnectedTransform) return undefined;
 
@@ -195,7 +205,7 @@ export function useGetAelfAccount() {
   const { walletInfo } = useConnectWallet();
   const { isConnected } = useAelf();
 
-  // WalletInfo TAelfAccounts ExtraInfoForDiscover | ExtraInfoForPortkeyAA | ExtraInfoForNightElf;
+  // WalletInfo TAelfAccounts ExtraInfoForDiscoverAndWeb | ExtraInfoForNightElf;
   return useMemo(() => {
     if (!isConnected) return undefined;
 

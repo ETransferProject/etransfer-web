@@ -4,17 +4,20 @@ import { APP_NAME } from 'constants/index';
 import { useCallback, useEffect, useState } from 'react';
 import { useLoading } from 'store/Provider/hooks';
 import AElf from 'aelf-sdk';
-import { recoverPubKey } from 'utils/aelf/aelfBase';
 import service from 'api/axios';
 import { eTransferInstance } from 'utils/etransferInstance';
-import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet/index';
+import {
+  getCaHashAndOriginChainIdByWallet,
+  getManagerAddressAndPubkeyByWallet,
+  getManagerAddressByWallet,
+} from 'utils/wallet/index';
 import { AuthTokenSource } from 'types/api';
 import { ReCaptchaType } from 'components/GoogleRecaptcha/types';
 import { checkEOARegistration } from 'utils/api/user';
 import myEvents from 'utils/myEvent';
 import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
 import { SingleMessage } from '@etransfer/ui-react';
-import { ExtraInfoForDiscover, WalletInfo } from 'types/wallet';
+import { ExtraInfoForDiscoverAndWeb, WalletInfo } from 'types/wallet';
 import useAelf from './useAelf';
 import { getAuthPlainText } from 'utils/auth';
 import { zeroFill } from '@portkey/utils';
@@ -41,7 +44,7 @@ export function useAelfAuthToken() {
 
     if (connector === AelfWalletTypeEnum.discover) {
       // discover
-      const discoverInfo = walletInfo?.extraInfo as ExtraInfoForDiscover;
+      const discoverInfo = walletInfo?.extraInfo as ExtraInfoForDiscoverAndWeb;
       if ((discoverInfo?.provider as any).methodCheck('wallet_getManagerSignature')) {
         const sin = await discoverInfo?.provider?.request({
           method: 'wallet_getManagerSignature',
@@ -134,11 +137,12 @@ export function useAelfAuthToken() {
         );
         const signatureResult = await handleSignMessage();
         if (!signatureResult) throw Error('Signature error');
-        const pubkey = recoverPubKey(signatureResult.plainText, signatureResult.signature) + '';
-        const managerAddress = await getManagerAddressByWallet(
+
+        const { managerAddress, pubkey } = getManagerAddressAndPubkeyByWallet(
           walletInfo as WalletInfo,
           connector,
-          pubkey,
+          signatureResult.plainText,
+          signatureResult.signature,
         );
         const apiParams: QueryAuthApiExtraRequest = {
           pubkey,

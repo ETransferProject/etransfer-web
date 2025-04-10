@@ -4,11 +4,11 @@ import StoreProvider from 'store/Provider/StoreProvider';
 import 'utils/firebase';
 import dynamic from 'next/dynamic';
 import CircleLoading from 'components/CircleLoading';
-import EVMProvider from './wallet/EVM';
-import SolanaProvider from './wallet/Solana';
-import TONProvider from './wallet/TON';
-import TRONProvider from './wallet/TRON';
-import WalletProvider from 'context/Wallet';
+// import EVMProvider from './wallet/EVM';
+// import SolanaProvider from './wallet/Solana';
+// import TONProvider from './wallet/TON';
+// import TRONProvider from './wallet/TRON';
+// import WalletProvider from 'context/Wallet';
 
 const Loading = dynamic(() => import('components/Loading'), { ssr: false });
 const WebLoginProviderDynamic = dynamic(
@@ -26,23 +26,73 @@ const WebLoginProviderDynamic = dynamic(
   },
 );
 
+const EVMProviderDynamic = dynamic(
+  async () => {
+    const WalletProvider = await import('./wallet/EVM').then((module) => module);
+    return WalletProvider;
+  },
+  {
+    ssr: false,
+  },
+);
+
+const SolanaProviderDynamic = dynamic(
+  async () => {
+    const WalletProvider = await import('./wallet/Solana').then((module) => module);
+    return WalletProvider;
+  },
+  {
+    ssr: false,
+  },
+);
+
+const TONProviderDynamic = dynamic(
+  async () => {
+    const WalletProvider = await import('./wallet/TON').then((module) => module);
+    return WalletProvider;
+  },
+  {
+    ssr: false,
+  },
+);
+
+const TRONProviderDynamic = dynamic(
+  async () => {
+    const WalletProvider = await import('./wallet/TRON').then((module) => module);
+    return WalletProvider;
+  },
+  {
+    ssr: false,
+  },
+);
+
+const WalletProviderDynamic = dynamic(
+  async () => {
+    const WalletProvider = await import('context/Wallet').then((module) => module);
+    return WalletProvider;
+  },
+  {
+    ssr: false,
+  },
+);
+
 export default function RootProviders({ children }: { children?: React.ReactNode }) {
   return (
     <ConfigProvider autoInsertSpaceInButton={false}>
       <StoreProvider>
         <WebLoginProviderDynamic>
-          <EVMProvider>
-            <SolanaProvider>
-              <TONProvider>
-                <TRONProvider>
-                  <WalletProvider>
+          <EVMProviderDynamic>
+            <SolanaProviderDynamic>
+              <TONProviderDynamic>
+                <TRONProviderDynamic>
+                  <WalletProviderDynamic>
                     <Loading />
                     {children}
-                  </WalletProvider>
-                </TRONProvider>
-              </TONProvider>
-            </SolanaProvider>
-          </EVMProvider>
+                  </WalletProviderDynamic>
+                </TRONProviderDynamic>
+              </TONProviderDynamic>
+            </SolanaProviderDynamic>
+          </EVMProviderDynamic>
         </WebLoginProviderDynamic>
       </StoreProvider>
     </ConfigProvider>

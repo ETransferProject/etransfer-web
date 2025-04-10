@@ -26,7 +26,7 @@ import {
   getAllowance,
   getTokenInfo,
 } from '@etransfer/utils';
-import { ExtraInfoForDiscover } from 'types/wallet';
+import { ExtraInfoForDiscoverAndWeb } from 'types/wallet';
 
 type CreateHandleManagerForwardCall = {
   caContractAddress: string;
@@ -207,7 +207,7 @@ export const handleTransaction = async ({
   let signatureStr = '';
   if (walletType === AelfWalletTypeEnum.discover) {
     // discover
-    const discoverInfo = walletInfo?.extraInfo as ExtraInfoForDiscover;
+    const discoverInfo = walletInfo?.extraInfo as ExtraInfoForDiscoverAndWeb;
     if ((discoverInfo?.provider as any).methodCheck('wallet_getTransactionSignature')) {
       const sin = await discoverInfo?.provider?.request({
         method: 'wallet_getTransactionSignature',

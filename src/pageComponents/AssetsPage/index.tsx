@@ -6,18 +6,26 @@ import styles from './styles.module.scss';
 import { useClearStore } from 'hooks/common';
 import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import useAelf from 'hooks/wallet/useAelf';
-import { PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
-import { ExtraInfoForPortkeyAA } from 'types/wallet';
+import { Asset, PortkeyAssetProvider } from '@portkey/did-ui-react';
 // import { LoginStatusEnum } from '@portkey/types';
 // import { SingleMessage } from '@etransfer/ui-react';
 
 export default function MyAsset() {
   const router = useRouter();
-  const { connector, walletInfo } = useAelf();
+  const { connector } = useAelf();
   const clearStore = useClearStore();
-  const portkeyAAInfo = useMemo(() => {
-    return walletInfo?.extraInfo as ExtraInfoForPortkeyAA;
-  }, [walletInfo?.extraInfo]);
+  const portkeyWebInfo = useMemo(() => {
+    let chainId, pin;
+    const _sdkWalletInfoString = localStorage.getItem('PortkeyWebWalletWalletInfo');
+    if (_sdkWalletInfoString) {
+      const _sdkWalletInfo = JSON.parse(_sdkWalletInfoString);
+      chainId = _sdkWalletInfo.originChainId;
+    }
+    return {
+      chainId,
+      pin,
+    };
+  }, []);
 
   const handleDeleteAccount = useCallback(() => {
     clearStore();
@@ -25,7 +33,7 @@ export default function MyAsset() {
   }, [clearStore]);
 
   useEffect(() => {
-    if (connector !== AelfWalletTypeEnum.aa) {
+    if (connector !== AelfWalletTypeEnum.web) {
       router.push('/');
     }
   }, [connector, router]);
@@ -41,21 +49,17 @@ export default function MyAsset() {
   //   }
   // }, [loginOnChainStatus]);
 
-  if (
-    connector !== AelfWalletTypeEnum.aa ||
-    !portkeyAAInfo?.portkeyInfo?.pin ||
-    !portkeyAAInfo?.portkeyInfo?.chainId
-  ) {
+  if (connector !== AelfWalletTypeEnum.web || !portkeyWebInfo?.pin || !portkeyWebInfo?.chainId) {
     return null;
   }
 
   return (
     <div className={styles['my-asset-wrapper']}>
-      <PortkeyDid.PortkeyAssetProvider
-        originChainId={portkeyAAInfo?.portkeyInfo?.chainId}
-        pin={portkeyAAInfo?.portkeyInfo?.pin}
+      <PortkeyAssetProvider
+        originChainId={portkeyWebInfo?.chainId}
+        pin={portkeyWebInfo?.pin}
         isLoginOnChain={true}>
-        <PortkeyDid.Asset
+        <Asset
           isShowRamp={false}
           isShowRampBuy={false}
           isShowRampSell={false}
@@ -66,7 +70,7 @@ export default function MyAsset() {
           }}
           onDeleteAccount={handleDeleteAccount}
         />
-      </PortkeyDid.PortkeyAssetProvider>
+      </PortkeyAssetProvider>
     </div>
   );
 }
