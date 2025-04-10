@@ -20,20 +20,22 @@
     "test:ci": "vitest --coverage"
   },
   "dependencies": {
-    "@aelf-web-login/utils": "^0.2.2-alpha.5",
-    "@aelf-web-login/wallet-adapter-base": "^0.2.2-alpha.5",
-    "@aelf-web-login/wallet-adapter-bridge": "^0.2.2-alpha.5",
-    "@aelf-web-login/wallet-adapter-night-elf": "^0.2.2-alpha.5",
-    "@aelf-web-login/wallet-adapter-portkey-aa": "^0.2.2-alpha.5",
-    "@aelf-web-login/wallet-adapter-portkey-discover": "^0.2.2-alpha.5",
-    "@aelf-web-login/wallet-adapter-react": "^0.2.2-alpha.5",
+    "@aelf-web-login/utils": "^0.4.0-alpha.0",
+    "@aelf-web-login/wallet-adapter-base": "^0.4.0-alpha.0",
+    "@aelf-web-login/wallet-adapter-bridge": "^0.4.0-alpha.0",
+    "@aelf-web-login/wallet-adapter-fairy-vault-discover": "^0.4.0-alpha.0",
+    "@aelf-web-login/wallet-adapter-night-elf": "^0.3.2-alpha.4",
+    "@aelf-web-login/wallet-adapter-portkey-discover": "^0.3.2-alpha.4",
+    "@aelf-web-login/wallet-adapter-portkey-web": "0.3.2-alpha.3",
+    "@aelf-web-login/wallet-adapter-react": "^0.4.0-alpha.0",
     "@etransfer/socket": "^1.11.0-alpha.5",
     "@etransfer/ui-react": "^1.11.0-alpha.5",
     "@etransfer/utils": "^1.11.0-alpha.5",
-    "@portkey/contracts": "^2.15.10",
-    "@portkey/did-ui-react": "^2.15.10",
-    "@portkey/types": "^2.15.10",
-    "@portkey/utils": "^2.15.10",
+    "@portkey/contracts": "^2.19.0-alpha.10",
+    "@portkey/did": "^2.19.0-alpha.24",
+    "@portkey/did-ui-react": "^2.19.0-alpha.10",
+    "@portkey/types": "^2.19.0-alpha.10",
+    "@portkey/utils": "^2.19.0-alpha.10",
     "@reduxjs/toolkit": "^1.8.5",
     "@sentry/nextjs": "^7.19.0",
     "@solana/spl-token": "^0.4.9",
@@ -60,7 +62,7 @@
     "firebase": "^9.23.0",
     "i18next": "^23.7.6",
     "lightweight-charts": "4.1.1",
-    "next": "^14.0.3",
+    "next": "14.0.3",
     "qs": "^6.13.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -121,7 +123,7 @@
     "vitest": "^3.0.4"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20"
   },
   "license": "MIT",
   "lint-staged": {

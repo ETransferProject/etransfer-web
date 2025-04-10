@@ -28,6 +28,7 @@ export default function ConnectAelfWalletButton(props: CommonButtonProps) {
           {...props}
           loading={isLoginButtonLoading}
           ghost>
+          {/* TODO FairyVaultDiscover icon */}
           {connector === AelfWalletTypeEnum.elf ? <NightElf_16 /> : <PortkeyV2_16 />}
           {!isMobilePX && (
             <span className={styles['connected-wallet-button-text']}>{MY_AELF_WALLET}</span>

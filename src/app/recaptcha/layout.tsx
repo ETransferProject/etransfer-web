@@ -1,3 +1,4 @@
+'use client';
 const ReCaptchaLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">

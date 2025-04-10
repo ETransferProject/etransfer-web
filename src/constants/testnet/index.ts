@@ -100,7 +100,7 @@ export const EXPLORE_DOMAIN_CONFIG = {
   [SupportedChainId.sideChain]: AELF_NODES.tDVW.exploreDomain,
 };
 
-export const SHOW_V_CONSOLE = false;
+export const SHOW_V_CONSOLE = true;
 
 export enum TransferAllowanceTokens {
   USDT = 'USDT',

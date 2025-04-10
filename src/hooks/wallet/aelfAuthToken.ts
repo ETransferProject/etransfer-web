@@ -4,17 +4,20 @@ import { APP_NAME } from 'constants/index';
 import { useCallback, useEffect, useState } from 'react';
 import { useLoading } from 'store/Provider/hooks';
 import AElf from 'aelf-sdk';
-import { recoverPubKey } from 'utils/aelf/aelfBase';
 import service from 'api/axios';
 import { eTransferInstance } from 'utils/etransferInstance';
-import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet/index';
+import {
+  getCaHashAndOriginChainIdByWallet,
+  getManagerAddressAndPubkeyByWallet,
+  getManagerAddressByWallet,
+} from 'utils/wallet/index';
 import { AuthTokenSource } from 'types/api';
 import { ReCaptchaType } from 'components/GoogleRecaptcha/types';
 import { checkEOARegistration } from 'utils/api/user';
 import myEvents from 'utils/myEvent';
 import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
 import { SingleMessage } from '@etransfer/ui-react';
-import { ExtraInfoForDiscover, WalletInfo } from 'types/wallet';
+import { ExtraInfoForDiscoverAndWeb, WalletInfo } from 'types/wallet';
 import useAelf from './useAelf';
 import { getAuthPlainText } from 'utils/auth';
 import { zeroFill } from '@portkey/utils';
@@ -39,9 +42,9 @@ export function useAelfAuthToken() {
       from: string;
     } | null;
 
-    if (connector === AelfWalletTypeEnum.discover) {
+    if (connector === AelfWalletTypeEnum.discover || connector === ('FairyVaultDiscover' as any)) {
       // discover
-      const discoverInfo = walletInfo?.extraInfo as ExtraInfoForDiscover;
+      const discoverInfo = walletInfo?.extraInfo as ExtraInfoForDiscoverAndWeb;
       if ((discoverInfo?.provider as any).methodCheck('wallet_getManagerSignature')) {
         const sin = await discoverInfo?.provider?.request({
           method: 'wallet_getManagerSignature',
@@ -56,7 +59,7 @@ export function useAelfAuthToken() {
           error: 0,
           errorMessage: '',
           signature: signInfo,
-          from: AelfWalletTypeEnum.discover,
+          from: connector,
         };
       } else {
         const signInfo = AElf.utils.sha256(plainTextHex);
@@ -103,7 +106,7 @@ export function useAelfAuthToken() {
 
   const handleReCaptcha = useCallback(async (): Promise<string | undefined> => {
     if (!account) return;
-    if (connector === AelfWalletTypeEnum.elf) {
+    if (connector === AelfWalletTypeEnum.elf || connector === ('FairyVaultDiscover' as any)) {
       const isRegistered = await checkEOARegistration({ address: account });
       if (!isRegistered.result) {
         // change loading text
@@ -134,18 +137,19 @@ export function useAelfAuthToken() {
         );
         const signatureResult = await handleSignMessage();
         if (!signatureResult) throw Error('Signature error');
-        const pubkey = recoverPubKey(signatureResult.plainText, signatureResult.signature) + '';
-        const managerAddress = await getManagerAddressByWallet(
+
+        const { managerAddress, pubkey } = await getManagerAddressAndPubkeyByWallet(
           walletInfo as WalletInfo,
           connector,
-          pubkey,
+          signatureResult.plainText,
+          signatureResult.signature,
         );
         const apiParams: QueryAuthApiExtraRequest = {
           pubkey,
           signature: signatureResult.signature,
           plain_text: signatureResult.plainText,
           source:
-            connector === AelfWalletTypeEnum.elf
+            connector === AelfWalletTypeEnum.elf || connector === ('FairyVaultDiscover' as any)
               ? AuthTokenSource.NightElf
               : AuthTokenSource.Portkey,
           managerAddress: managerAddress,
@@ -153,7 +157,6 @@ export function useAelfAuthToken() {
           chain_id: originChainId || undefined,
           recaptchaToken: recaptchaResult || undefined,
         };
-
         const authToken = await queryAuthApi(apiParams);
         eTransferInstance.setUnauthorized(false);
         console.log('login status isConnected', isConnected);
@@ -200,7 +203,9 @@ export function useAelfAuthToken() {
         );
         const managerAddress = await getManagerAddressByWallet(walletInfo as WalletInfo, connector);
         const source =
-          connector === AelfWalletTypeEnum.elf ? AuthTokenSource.NightElf : AuthTokenSource.Portkey;
+          connector === AelfWalletTypeEnum.elf || connector === ('FairyVaultDiscover' as any)
+            ? AuthTokenSource.NightElf
+            : AuthTokenSource.Portkey;
         const key = (caHash || source) + managerAddress;
         const data = getLocalJWT(key);
         // 1: local storage has JWT token
@@ -236,7 +241,9 @@ export function useSetAelfAuthFromStorage() {
     const { caHash } = await getCaHashAndOriginChainIdByWallet(walletInfo as WalletInfo, connector);
     const managerAddress = await getManagerAddressByWallet(walletInfo as WalletInfo, connector);
     const source =
-      connector === AelfWalletTypeEnum.elf ? AuthTokenSource.NightElf : AuthTokenSource.Portkey;
+      connector === AelfWalletTypeEnum.elf || connector === ('FairyVaultDiscover' as any)
+        ? AuthTokenSource.NightElf
+        : AuthTokenSource.Portkey;
     const key = (caHash || source) + managerAddress;
     const data = getLocalJWT(key);
     // local storage has JWT token

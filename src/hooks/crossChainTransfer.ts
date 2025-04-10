@@ -229,7 +229,10 @@ export function useSendTxnFromAelfChain({
           amount: timesDecimals(amount, currentTokenDecimal).toFixed(),
           memo,
           chainId: chainId,
-          fromManagerAddress: connector === AelfWalletTypeEnum.elf ? ownerAddress : managerAddress,
+          fromManagerAddress:
+            connector === AelfWalletTypeEnum.elf || connector === ('FairyVaultDiscover' as any)
+              ? ownerAddress
+              : managerAddress,
           caAddress: ownerAddress,
           getSignature: signMessage,
         });

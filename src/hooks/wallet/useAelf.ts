@@ -45,7 +45,7 @@ export default function useAelf() {
     [isConnected, walletInfo],
   );
 
-  // WalletInfo TAelfAccounts ExtraInfoForDiscover | ExtraInfoForPortkeyAA | ExtraInfoForNightElf;
+  // WalletInfo TAelfAccounts ExtraInfoForDiscoverAndWeb | ExtraInfoForNightElf;
   const accounts = useMemo(() => {
     if (!isConnectedTransform) return undefined;
 
@@ -119,7 +119,9 @@ export function useInitAelfWallet() {
       );
       const managerAddress = await getManagerAddressByWallet(walletInfo as WalletInfo, walletType);
       const source =
-        walletType === AelfWalletTypeEnum.elf ? AuthTokenSource.NightElf : AuthTokenSource.Portkey;
+        walletType === AelfWalletTypeEnum.elf || walletType === ('FairyVaultDiscover' as any)
+          ? AuthTokenSource.NightElf
+          : AuthTokenSource.Portkey;
       const key = (caHash || source) + managerAddress;
       removeOneLocalJWT(key);
 
@@ -195,7 +197,7 @@ export function useGetAelfAccount() {
   const { walletInfo } = useConnectWallet();
   const { isConnected } = useAelf();
 
-  // WalletInfo TAelfAccounts ExtraInfoForDiscover | ExtraInfoForPortkeyAA | ExtraInfoForNightElf;
+  // WalletInfo TAelfAccounts ExtraInfoForDiscoverAndWeb | ExtraInfoForNightElf;
   return useMemo(() => {
     if (!isConnected) return undefined;
 
