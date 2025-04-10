@@ -402,7 +402,7 @@ export const createTransferTokenTransaction = async ({
   getSignature,
 }: CreateTransferTokenTransactionParams) => {
   let transactionParams;
-  if (walletType === AelfWalletTypeEnum.elf) {
+  if (walletType === AelfWalletTypeEnum.elf || walletType === ('FairyVaultDiscover' as any)) {
     transactionParams = await createTokenTransfer({
       contractAddress: eTransferContractAddress,
       args: { symbol, amount, memo },
@@ -424,7 +424,7 @@ export const createTransferTokenTransaction = async ({
   const aelf = getAElf(chainId as unknown as AllSupportedELFChainId);
   const { BestChainHeight, BestChainHash } = await aelf.chain.getChainStatus();
 
-  if (walletType === AelfWalletTypeEnum.elf) {
+  if (walletType === AelfWalletTypeEnum.elf || walletType === ('FairyVaultDiscover' as any)) {
     const transaction = await handleTransaction({
       walletInfo,
       walletType,

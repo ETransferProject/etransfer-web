@@ -138,7 +138,7 @@ export function useAelfAuthToken() {
         const signatureResult = await handleSignMessage();
         if (!signatureResult) throw Error('Signature error');
 
-        const { managerAddress, pubkey } = getManagerAddressAndPubkeyByWallet(
+        const { managerAddress, pubkey } = await getManagerAddressAndPubkeyByWallet(
           walletInfo as WalletInfo,
           connector,
           signatureResult.plainText,

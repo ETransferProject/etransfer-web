@@ -31,7 +31,7 @@ export const getManagerAddressByWallet = async (
   if (walletType === AelfWalletTypeEnum.unknown) return '';
 
   let managerAddress;
-  if (walletType === AelfWalletTypeEnum.discover || walletType === ('FairyVaultDiscover' as any)) {
+  if (walletType === AelfWalletTypeEnum.discover) {
     const discoverInfo = walletInfo?.extraInfo as ExtraInfoForDiscoverAndWeb;
     managerAddress = await discoverInfo?.provider?.request({
       method: 'wallet_getCurrentManagerAddress',
@@ -66,7 +66,7 @@ export const getCaHashAndOriginChainIdByWallet = async (
 
   let caHash, originChainId;
   // TODO new eoa
-  if (walletType === AelfWalletTypeEnum.discover || walletType === ('FairyVaultDiscover' as any)) {
+  if (walletType === AelfWalletTypeEnum.discover) {
     const res = await did.services.getHolderInfoByManager({
       caAddresses: [walletInfo?.address],
     } as unknown as GetCAHolderByManagerParams);
@@ -88,12 +88,12 @@ export const getCaHashAndOriginChainIdByWallet = async (
   };
 };
 
-export const getManagerAddressAndPubkeyByWallet = (
+export const getManagerAddressAndPubkeyByWallet = async (
   walletInfo: WalletInfo,
   walletType: AelfWalletTypeEnum,
   plainText: string,
   signature: string,
-): { managerAddress: string; pubkey: string } => {
+): Promise<{ managerAddress: string; pubkey: string }> => {
   let managerAddress, pubkey;
 
   if (walletType === AelfWalletTypeEnum.web) {
@@ -106,7 +106,7 @@ export const getManagerAddressAndPubkeyByWallet = (
     }
   } else {
     pubkey = recoverPubKey(plainText, signature) + '';
-    managerAddress = getManagerAddressByWallet(walletInfo, walletType, pubkey);
+    managerAddress = await getManagerAddressByWallet(walletInfo, walletType, pubkey);
   }
 
   return {
