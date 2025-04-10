@@ -123,7 +123,7 @@
     "vitest": "^3.0.4"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20"
   },
   "license": "MIT",
   "lint-staged": {

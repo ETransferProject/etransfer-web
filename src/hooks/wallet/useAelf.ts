@@ -28,17 +28,7 @@ export default function useAelf() {
     getSignature,
     ...props
   } = useConnectWallet();
-  console.log(
-    '====== walletInfo',
-    walletInfo,
-    walletType,
-    isConnected,
-    connecting,
-    connectWallet,
-    disConnectWallet,
-    getSignature,
-    props,
-  );
+
   const onGetBalance = useCallback(
     async ({
       tokenSymbol,
