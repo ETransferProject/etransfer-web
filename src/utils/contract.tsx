@@ -199,14 +199,14 @@ export const handleTransaction = async ({
     // nightElf
     signInfo = AElf.utils.sha256(ser);
   } else {
-    // portkey sdk and discover
+    // portkey sdk and discover and FairyVault
     signInfo = Buffer.from(ser).toString('hex');
   }
 
   // signature
   let signatureStr = '';
-  if (walletType === AelfWalletTypeEnum.discover) {
-    // discover
+  if (walletType === AelfWalletTypeEnum.discover || walletType === ('FairyVaultDiscover' as any)) {
+    // discover and FairyVault
     const discoverInfo = walletInfo?.extraInfo as ExtraInfoForDiscoverAndWeb;
     if ((discoverInfo?.provider as any).methodCheck('wallet_getTransactionSignature')) {
       const sin = await discoverInfo?.provider?.request({

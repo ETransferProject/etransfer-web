@@ -29,6 +29,7 @@ export default function ConnectOtherWalletButton(props: CommonButtonProps) {
   const walletLogoList = useMemo(() => {
     const walletLogoList = [];
     if (hasConnectedTypes.includes(WalletTypeEnum.AELF)) {
+      // TODO FairyVaultDiscover icon
       if (aelfConnector === AelfWalletTypeEnum.elf) {
         walletLogoList.push(NightElf_16);
       } else {

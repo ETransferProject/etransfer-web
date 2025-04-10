@@ -82,6 +82,7 @@ export default function AelfWalletList({
       <div className={styles['wallet-list-title']}>{CONNECT_AELF_LIST_CONFIG.section}</div>
       {CONNECT_AELF_LIST_CONFIG.list.map((item) => {
         let Icon = item.icon;
+        // TODO FairyVaultDiscover icon
         if (isConnected && connector === AelfWalletTypeEnum.elf) {
           Icon = NightElf;
         }
@@ -89,6 +90,8 @@ export default function AelfWalletList({
         if (isConnected) {
           if (connector === AelfWalletTypeEnum.elf) {
             name = 'Nightelf Wallet';
+          } else if (connector === ('FairyVaultDiscover' as any)) {
+            name = 'FairyVault Wallet';
           } else {
             name = 'Portkey Wallet';
           }

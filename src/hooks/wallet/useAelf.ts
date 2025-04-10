@@ -119,7 +119,9 @@ export function useInitAelfWallet() {
       );
       const managerAddress = await getManagerAddressByWallet(walletInfo as WalletInfo, walletType);
       const source =
-        walletType === AelfWalletTypeEnum.elf ? AuthTokenSource.NightElf : AuthTokenSource.Portkey;
+        walletType === AelfWalletTypeEnum.elf || walletType === ('FairyVaultDiscover' as any)
+          ? AuthTokenSource.NightElf
+          : AuthTokenSource.Portkey;
       const key = (caHash || source) + managerAddress;
       removeOneLocalJWT(key);
 

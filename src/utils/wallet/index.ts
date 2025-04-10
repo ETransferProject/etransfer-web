@@ -31,7 +31,7 @@ export const getManagerAddressByWallet = async (
   if (walletType === AelfWalletTypeEnum.unknown) return '';
 
   let managerAddress;
-  if (walletType === AelfWalletTypeEnum.discover) {
+  if (walletType === AelfWalletTypeEnum.discover || walletType === ('FairyVaultDiscover' as any)) {
     const discoverInfo = walletInfo?.extraInfo as ExtraInfoForDiscoverAndWeb;
     managerAddress = await discoverInfo?.provider?.request({
       method: 'wallet_getCurrentManagerAddress',
@@ -65,7 +65,8 @@ export const getCaHashAndOriginChainIdByWallet = async (
     };
 
   let caHash, originChainId;
-  if (walletType === AelfWalletTypeEnum.discover) {
+  // TODO new eoa
+  if (walletType === AelfWalletTypeEnum.discover || walletType === ('FairyVaultDiscover' as any)) {
     const res = await did.services.getHolderInfoByManager({
       caAddresses: [walletInfo?.address],
     } as unknown as GetCAHolderByManagerParams);
@@ -80,7 +81,6 @@ export const getCaHashAndOriginChainIdByWallet = async (
       originChainId = _sdkWalletInfo.originChainId;
     }
   }
-  // TODO new eoa
 
   return {
     caHash: caHash || '',
@@ -118,6 +118,7 @@ export const getManagerAddressAndPubkeyByWallet = (
 export const getWalletLogo = (walletType: WalletTypeEnum, connector?: any) => {
   switch (walletType) {
     case WalletTypeEnum.AELF:
+      // TODO FairyVaultDiscover icon
       if (connector === AelfWalletTypeEnum.elf) {
         return NightElf_16;
       } else {
