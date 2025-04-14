@@ -29,9 +29,7 @@ export default function CommonAddress({
         <div className={clsx('flex-1', styles['address-text-content'], valueClassName)}>
           {value}
         </div>
-        {showCopy && !!value && (
-          <Copy className={'flex-none'} toCopy={value || ''} size={copySize} />
-        )}
+        {showCopy && !!value && <Copy className={'flex-none'} toCopy={value} size={copySize} />}
       </div>
     </div>
   );

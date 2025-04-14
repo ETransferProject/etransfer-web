@@ -1,0 +1,12 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CommonButton Component > Snapshot Matching 1`] = `
+<DocumentFragment>
+  <button
+    class="mocked-classname"
+    data-testid="antd-button"
+  >
+    Submit
+  </button>
+</DocumentFragment>
+`;
