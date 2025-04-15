@@ -3,6 +3,7 @@ import { ContractType } from 'constants/chain';
 import { ADDRESS_MAP, SupportedELFChainId } from 'constants/index';
 import { APPROVE_ELF_FEE } from 'constants/withdraw';
 import {
+  NetworkStatus,
   TGetTokenNetworkRelationItem,
   TGetTokenNetworkRelationResult,
   TNetworkItem,
@@ -18,6 +19,22 @@ function removeDuplicate(arr: TGetTokenNetworkRelationItem[]) {
     }
   });
   return newArr;
+}
+
+export function computeFromNetworkList(networkList: TNetworkItem[]): TNetworkItem[] {
+  // Rewrite status
+  const _networkListCopy: TNetworkItem[] = JSON.parse(JSON.stringify(networkList));
+  _networkListCopy.forEach((network) => {
+    if (network?.multiStatus) {
+      const _tokens = Object.keys(network?.multiStatus);
+      const hasHealth = _tokens.filter(
+        (token: string) => network.multiStatus?.[token] !== NetworkStatus.Offline,
+      );
+      network.status = hasHealth.length > 0 ? NetworkStatus.Health : NetworkStatus.Offline;
+    }
+  });
+
+  return _networkListCopy;
 }
 
 export function computeToNetworkList(
@@ -40,13 +57,25 @@ export function computeToNetworkList(
   });
   const _networkList = removeDuplicate(repeatNetworkList);
 
-  const toNetworkList = totalNetworkList.filter((network) => {
+  const _toNetworkList = totalNetworkList.filter((network) => {
     if (network.network === currentFromNetwork.network) return false;
 
     return _networkList.includes(network.network);
   });
 
-  return toNetworkList;
+  // Rewrite status
+  const _toNetworkListCopy: TNetworkItem[] = JSON.parse(JSON.stringify(_toNetworkList));
+  _toNetworkListCopy.forEach((network) => {
+    if (network?.multiStatus) {
+      const _tokens = Object.keys(network?.multiStatus);
+      const hasHealth = _tokens.filter(
+        (token: string) => network.multiStatus?.[token] !== NetworkStatus.Offline,
+      );
+      network.status = hasHealth.length > 0 ? NetworkStatus.Health : NetworkStatus.Offline;
+    }
+  });
+
+  return _toNetworkListCopy;
 }
 
 export function computeTokenList({
@@ -75,7 +104,13 @@ export function computeTokenList({
     const _list: TGetTokenNetworkRelationItem[] = currentRelations[token];
     const _networkList: string[] = [];
     _list.forEach((item) => {
-      _networkList.push(item.network);
+      if (
+        fromNetwork?.multiStatus?.[token] &&
+        toNetwork?.multiStatus?.[token] &&
+        fromNetwork?.multiStatus?.[token] !== NetworkStatus.Offline &&
+        toNetwork?.multiStatus?.[token] !== NetworkStatus.Offline
+      )
+        _networkList.push(item.network);
     }, []);
     if (_networkList.includes(toNetwork.network)) {
       toNetworkTokens.push(token);

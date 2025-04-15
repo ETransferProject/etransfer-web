@@ -90,6 +90,7 @@ export type TNetworkItem = {
   contractAddress: string;
   explorerUrl: string;
   status: NetworkStatus;
+  multiStatus?: Record<string, NetworkStatus>;
   withdrawFee?: string;
   withdrawFeeUnit?: string;
   specialWithdrawFee?: string;

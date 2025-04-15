@@ -65,7 +65,12 @@ import {
   TTransferFormValues,
 } from './types';
 import { isDIDAddressSuffix } from 'utils/aelf/aelfBase';
-import { computeTokenList, computeToNetworkList, getAelfMaxBalance } from './utils';
+import {
+  computeFromNetworkList,
+  computeTokenList,
+  computeToNetworkList,
+  getAelfMaxBalance,
+} from './utils';
 import { getTokenPrices } from 'utils/api/user';
 import BigNumber from 'bignumber.js';
 import { computeWalletType, getWalletSourceType, isAelfChain, isTONChain } from 'utils/wallet';
@@ -422,13 +427,13 @@ export default function CrossChainTransferPage() {
         { type: BusinessType.Transfer },
         authToken,
       );
+      const _networkList = computeFromNetworkList(networkList);
+      dispatch(setTotalNetworkList(_networkList));
+      dispatch(setFromNetworkList(_networkList));
 
-      dispatch(setTotalNetworkList(networkList));
-      dispatch(setFromNetworkList(networkList));
-
-      if (networkList?.length > 0) {
+      if (_networkList?.length > 0) {
         // from logic
-        const exitFromNetwork = networkList.find(
+        const exitFromNetwork = _networkList.find(
           (item) => item.network === (routeQuery.fromNetwork || fromNetwork?.network),
         );
         if (exitFromNetwork && exitFromNetwork.status !== NetworkStatus.Offline) {
@@ -437,7 +442,9 @@ export default function CrossChainTransferPage() {
           fromNetworkRef.current = exitFromNetwork;
         } else {
           // Set up the first healthy network
-          const _healthNetwork = networkList?.find((item) => item.status !== NetworkStatus.Offline);
+          const _healthNetwork = _networkList?.find(
+            (item) => item.status !== NetworkStatus.Offline,
+          );
           dispatch(setFromNetwork(_healthNetwork || ({ network: '', name: '' } as TNetworkItem)));
           fromNetworkRef.current = _healthNetwork || ({ network: '', name: '' } as TNetworkItem);
         }
@@ -452,7 +459,7 @@ export default function CrossChainTransferPage() {
         // to logic
         const toNetworkList = computeToNetworkList(
           fromNetworkRef.current,
-          networkList,
+          _networkList,
           totalTokenListRef.current,
           tokenChainRelationRef.current,
         );
