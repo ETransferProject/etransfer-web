@@ -178,8 +178,8 @@ export default function CrossChainTransferForm({
         _tokenNew = exitToken.symbol;
       } else {
         // Set up the first toke info
-        dispatch(setTokenSymbol(allowTokenList[0].symbol));
-        _tokenNew = allowTokenList[0].symbol;
+        dispatch(setTokenSymbol(allowTokenList[0]?.symbol));
+        _tokenNew = allowTokenList[0]?.symbol;
       }
 
       onFromNetworkChanged?.(item, toNetworkNew, _tokenNew);

@@ -1,4 +1,4 @@
-import { TGetTokenNetworkRelationResult, TNetworkItem } from 'types/api';
+import { NetworkStatus, TGetTokenNetworkRelationResult, TNetworkItem } from 'types/api';
 
 function removeDuplicateAndReturnList(arr: TNetworkItem[]) {
   const newArr: TNetworkItem[] = [];
@@ -16,7 +16,7 @@ export function computeFromNetworkList(
   totalNetworkList?: TNetworkItem[],
   tokenChainRelation?: TGetTokenNetworkRelationResult,
 ): TNetworkItem[] {
-  if (!tokenChainRelation || !totalNetworkList) return [];
+  if (!tokenChainRelation || !totalNetworkList || !Array.isArray(totalNetworkList)) return [];
 
   const networkKeyList: string[] = [];
   Object.keys(tokenChainRelation).forEach((network) => {
@@ -26,7 +26,16 @@ export function computeFromNetworkList(
   });
 
   const networkList: TNetworkItem[] = [];
-  totalNetworkList.forEach((networkObj) => {
+  const _totalNetworkListCopy: TNetworkItem[] = JSON.parse(JSON.stringify(totalNetworkList));
+  _totalNetworkListCopy.forEach((networkObj) => {
+    // Rewrite status
+    const _rewriteStatus =
+      networkObj?.multiStatus?.[tokenSymbol] &&
+      networkObj?.multiStatus?.[tokenSymbol] !== NetworkStatus.Offline
+        ? NetworkStatus.Health
+        : NetworkStatus.Offline;
+    networkObj.status = _rewriteStatus;
+
     if (networkKeyList.includes(networkObj.network)) {
       networkList.push(networkObj);
     }
@@ -52,7 +61,16 @@ export function computeToNetworkList(
   });
 
   const toNetworkList: TNetworkItem[] = [];
-  totalNetworkList.forEach((networkObj) => {
+  const _totalNetworkListCopy: TNetworkItem[] = JSON.parse(JSON.stringify(totalNetworkList));
+  _totalNetworkListCopy.forEach((networkObj) => {
+    // Rewrite status
+    const _rewriteStatus =
+      networkObj?.multiStatus?.[tokenSymbol] &&
+      networkObj?.multiStatus?.[tokenSymbol] !== NetworkStatus.Offline
+        ? NetworkStatus.Health
+        : NetworkStatus.Offline;
+    networkObj.status = _rewriteStatus;
+
     if (networkKeyList.includes(networkObj.network)) {
       toNetworkList.push(networkObj);
     }
