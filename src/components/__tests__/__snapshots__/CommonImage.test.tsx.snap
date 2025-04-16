@@ -1,0 +1,15 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CommonImage Component > matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="mocked-class"
+  >
+    <img
+      alt="test-image"
+      data-testid="mock-image"
+      src="/test-image.jpg"
+    />
+  </div>
+</DocumentFragment>
+`;

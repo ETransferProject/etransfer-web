@@ -1,0 +1,26 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CommonDropdown Component > matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="mock-dropdown"
+    menu="[object Object]"
+    trigger="click"
+  >
+    <div
+      class="mocked-class"
+    >
+      <button
+        data-testid="trigger"
+      >
+        Trigger
+      </button>
+      <div
+        data-testid="mock-arrow"
+      >
+        ↓
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

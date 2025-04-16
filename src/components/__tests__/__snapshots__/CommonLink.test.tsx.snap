@@ -1,0 +1,18 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CommonLink Component > matches snapshot 1`] = `
+<DocumentFragment>
+  <button
+    class="mocked-class"
+    data-testid="antd-button"
+    href="https://valid.url"
+    target="_self"
+    type="link"
+  >
+    <span
+      data-testid="link-icon"
+    />
+    Test Link
+  </button>
+</DocumentFragment>
+`;

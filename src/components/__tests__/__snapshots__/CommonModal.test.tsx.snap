@@ -1,0 +1,36 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CommonModal Component > matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="mocked-class"
+    closeicon="[object Object]"
+    data-testid="mock-modal"
+    open=""
+    title=" "
+    width="480"
+    zindex="299"
+  >
+    <div
+      data-testid="modal-content"
+    />
+    <div
+      class="mocked-class"
+    >
+      <button
+        class="mocked-class"
+        data-testid="common-button"
+        type="secondary"
+      >
+        Cancel
+      </button>
+      <button
+        class="mocked-class"
+        data-testid="common-button"
+      >
+        Confirm
+      </button>
+    </div>
+  </div>
+</DocumentFragment>
+`;

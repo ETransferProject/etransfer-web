@@ -1,0 +1,16 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CommonDrawer Component > matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="mocked-class"
+    closeicon="[object Object]"
+    data-testid="mock-drawer"
+    height="88%"
+    open=""
+    placement="bottom"
+    width="100%"
+    zindex="300"
+  />
+</DocumentFragment>
+`;
