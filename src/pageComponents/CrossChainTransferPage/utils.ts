@@ -57,10 +57,28 @@ export function computeToNetworkList(
   });
   const _networkList = removeDuplicate(repeatNetworkList);
 
+  // filter from network healthy token
+  const _tokens = Object.keys(currentFromNetwork.multiStatus || {});
+  const _healthTokenList = _tokens?.filter(
+    (token) => currentFromNetwork.multiStatus?.[token] !== NetworkStatus.Offline,
+  );
   const _toNetworkList = totalNetworkList.filter((network) => {
     if (network.network === currentFromNetwork.network) return false;
 
-    return _networkList.includes(network.network);
+    if (_healthTokenList.length > 0) {
+      // Check: to-network healthy token is match from-network healthy token
+      const res = _healthTokenList.filter(
+        (token) =>
+          network.multiStatus?.[token] && network.multiStatus[token] !== NetworkStatus.Offline,
+      );
+      if (res.length > 0) {
+        return _networkList.includes(network.network);
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   });
 
   // Rewrite status
