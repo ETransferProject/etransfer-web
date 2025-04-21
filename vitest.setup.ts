@@ -3,6 +3,11 @@ import { cleanup } from '@testing-library/react';
 import { afterEach, beforeAll, vi } from 'vitest';
 import React from 'react';
 
+// Mock clsx for className verification
+vi.mock('clsx', () => ({
+  default: vi.fn((...args) => args.join(' ')),
+}));
+
 // JSDom + Vitest don't play well with each other. Long story short - default
 // TextEncoder produces Uint8Array objects that are _different_ from the global
 // Uint8Array objects, so some functions that compare their types explode.

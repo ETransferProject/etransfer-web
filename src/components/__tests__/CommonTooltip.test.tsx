@@ -10,10 +10,6 @@ vi.mock('antd', () => ({
   Tooltip: vi.fn(({ children }) => <div data-testid="tooltip">{children}</div>),
 }));
 
-vi.mock('clsx', () => ({
-  default: vi.fn((...args) => args.join(' ')),
-}));
-
 describe('CommonTooltip', () => {
   const mockTitle = 'Test tooltip content';
   const mockClassName = 'custom-class';

@@ -20,11 +20,6 @@ vi.mock('antd', () => ({
   )),
 }));
 
-// Mock clsx for className verification
-vi.mock('clsx', () => ({
-  default: vi.fn((...args) => args.join(' ')),
-}));
-
 // Mock PartialLoading component for isLoading verification
 vi.mock('../PartialLoading', () => ({
   default: vi.fn(() => <div data-testid="mock-partial-loading" />),

@@ -43,11 +43,6 @@ vi.mock('constants/misc', () => ({
   ETRANSFER_LOGO: 'mock-logo-url',
 }));
 
-vi.mock('clsx', () => ({
-  // Mock `clsx` to return joined class names
-  default: vi.fn((...args: string[]) => args.join(' ')),
-}));
-
 describe('browserNotification', () => {
   const mockTitle = 'Test Title';
   const mockContent = 'Test Content';
