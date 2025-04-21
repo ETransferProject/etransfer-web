@@ -6,6 +6,7 @@ import CommonButton, {
   CommonButtonType,
 } from '../CommonButton';
 import clsx from 'clsx';
+import styles from '../CommonButton/styles.module.scss';
 
 // Mock Antd Button
 vi.mock('antd', async (importOriginal) => {
@@ -89,28 +90,16 @@ describe('CommonButton Component', () => {
         </CommonButton>,
       );
 
-      // TODO random hash
       // Assert that the correct class names are generated
       expect(clsx).toHaveBeenCalledWith(
-        '_common-button_42d790',
-        '_large_42d790',
-        '_secondary_42d790',
+        styles['common-button'],
+        styles['large'],
+        styles['secondary'],
         {
-          _stretched_42d790: true,
+          [styles['stretched']]: true,
         },
         'extra-class',
       );
-      // expect(clsx).toHaveBeenCalledWith(
-      //   expect.stringMatching(/^_common-button_[0-9a-fA-F]{6}$/),
-      //   // expect.stringMatching(/^_large_[0-9a-fA-F]{6}$/),
-      //   expect.stringContaining('_large_'),
-      //   expect.stringContaining('large'),
-      //   expect.stringContaining('secondary'),
-      //   expect.objectContaining({
-      //     [expect.stringContaining('_stretched_')]: true,
-      //   }),
-      //   'extra-class',
-      // );
     });
   });
 
@@ -124,10 +113,10 @@ describe('CommonButton Component', () => {
     // TODO random hash
     // Assert that the correct class names are generated
     expect(clsx).toHaveBeenCalledWith(
-      '_common-button_42d790',
-      '_middle_42d790',
-      '_primary_42d790',
-      { ['_stretched_42d790']: false },
+      styles['common-button'],
+      styles['middle'],
+      styles['primary'],
+      { [styles['stretched']]: false },
       undefined,
     );
   });
