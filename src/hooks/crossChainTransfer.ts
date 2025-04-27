@@ -212,40 +212,38 @@ export function useSendTxnFromAelfChain({
       if (!approveRes) throw new Error(InsufficientAllowanceMessage);
       console.log('>>>>>> sendTransferTokenTransaction approveRes', approveRes);
 
-      if (approveRes) {
-        const { caHash } = await getCaHashAndOriginChainIdByWallet(
-          walletInfo as WalletInfo,
-          connector,
-        );
-        const managerAddress = await getManagerAddressByWallet(walletInfo as WalletInfo, connector);
-        const ownerAddress = accounts?.[chainId] || '';
-        const transaction = await createTransferTokenTransaction({
-          walletInfo,
-          walletType: connector,
-          caContractAddress: ADDRESS_MAP[chainId][ContractType.CA],
-          eTransferContractAddress: currentEtransferContractAddress,
-          caHash: caHash,
-          symbol: tokenSymbol,
-          amount: timesDecimals(amount, currentTokenDecimal).toFixed(),
-          memo,
-          chainId: chainId,
-          fromManagerAddress: connector === AelfWalletTypeEnum.elf ? ownerAddress : managerAddress,
-          caAddress: ownerAddress,
-          getSignature: signMessage,
-        });
-        console.log(transaction, '=====transaction');
+      // approve true
+      const { caHash } = await getCaHashAndOriginChainIdByWallet(
+        walletInfo as WalletInfo,
+        connector,
+      );
+      const managerAddress = await getManagerAddressByWallet(walletInfo as WalletInfo, connector);
+      const ownerAddress = accounts?.[chainId] || '';
+      const transaction = await createTransferTokenTransaction({
+        walletInfo,
+        walletType: connector,
+        caContractAddress: ADDRESS_MAP[chainId][ContractType.CA],
+        eTransferContractAddress: currentEtransferContractAddress,
+        caHash: caHash,
+        symbol: tokenSymbol,
+        amount: timesDecimals(amount, currentTokenDecimal).toFixed(),
+        memo,
+        chainId: chainId,
+        fromManagerAddress: connector === AelfWalletTypeEnum.elf ? ownerAddress : managerAddress,
+        caAddress: ownerAddress,
+        getSignature: signMessage,
+      });
+      console.log(transaction, '=====transaction');
 
-        await handleCreateWithdrawOrder({
-          amount,
-          address,
-          memo,
-          rawTransaction: transaction,
-          successCallback,
-          failCallback,
-        });
-      } else {
-        throw new Error('Approve Failed');
-      }
+      await handleCreateWithdrawOrder({
+        amount,
+        address,
+        memo,
+        rawTransaction: transaction,
+        successCallback,
+        failCallback,
+      });
+
       setLoading(false);
     },
     [

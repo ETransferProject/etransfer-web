@@ -2,7 +2,7 @@ import { describe, test, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import LinkForBlank from '../LinkForBlank';
 
-describe('LinkForBlank', () => {
+describe('LinkForBlank Component', () => {
   test('renders external link with _blank target', () => {
     const { container } = render(
       <LinkForBlank href="https://example.com" element={<span>External</span>} />,

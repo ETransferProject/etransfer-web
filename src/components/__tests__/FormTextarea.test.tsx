@@ -11,7 +11,7 @@ vi.mock('antd', () => ({
   },
 }));
 
-describe('FormTextarea', () => {
+describe('FormTextarea Component', () => {
   test('renders textarea with correct props', () => {
     const { container } = render(<FormTextarea autoSize={false} value="test value" />);
 

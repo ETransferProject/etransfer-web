@@ -8,7 +8,7 @@ vi.mock('assets/images', () => ({
   EmptyBox: () => <div data-testid={'empty-box'} />,
 }));
 
-describe('EmptyDataBox', () => {
+describe('EmptyDataBox Component', () => {
   test('renders default empty text', () => {
     render(<EmptyDataBox />);
 
