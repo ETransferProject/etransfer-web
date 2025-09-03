@@ -21,6 +21,7 @@ import {
   EVM_CREATE_TOKEN_ABI,
   EVM_TOKEN_ABI,
   EVM_WALLET_ALLOWANCE,
+  FAIRY_VAULT_WALLET_ALLOWANCE,
   MOBILE_EVM_WALLET_ALLOWANCE,
   PORTKEY_EVM_WALLET_ALLOWANCE,
   TELEGRAM_EVM_WALLET_ALLOWANCE,
@@ -40,6 +41,7 @@ import { isMobileDevices } from 'utils/isMobile';
 import { SingleMessage } from '@etransfer/ui-react';
 import { handleErrorMessage } from '@etransfer/utils';
 import { USER_REJECT_CONNECT_WALLET_TIP } from 'constants/wallet';
+import { isFairyVault } from 'utils';
 
 export default function useEVM() {
   const { connectAsync, connectors } = useConnect();
@@ -56,6 +58,9 @@ export default function useEVM() {
     }
     if (isPortkey()) {
       return PORTKEY_EVM_WALLET_ALLOWANCE;
+    }
+    if (isFairyVault()) {
+      return FAIRY_VAULT_WALLET_ALLOWANCE;
     }
     if (isMobileDevices()) {
       return MOBILE_EVM_WALLET_ALLOWANCE;

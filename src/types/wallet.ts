@@ -1,6 +1,5 @@
 import { TChainId } from '@aelf-web-login/wallet-adapter-base';
 import type { Accounts, IPortkeyProvider } from '@portkey/provider-types';
-import { PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
 import { Abi } from 'viem';
 
 export type TAelfAccounts = {
@@ -15,21 +14,13 @@ export type TChainType = 'ethereum' | 'aelf';
 export interface WalletInfo {
   name?: string;
   address: string;
-  extraInfo: ExtraInfoForDiscover | ExtraInfoForPortkeyAA | ExtraInfoForNightElf;
+  extraInfo: ExtraInfoForDiscoverAndWeb | ExtraInfoForNightElf;
 }
 
-export interface ExtraInfoForDiscover {
+export interface ExtraInfoForDiscoverAndWeb {
   accounts: Accounts;
   nickName: string;
   provider: IPortkeyProvider;
-}
-
-export interface ExtraInfoForPortkeyAA {
-  publicKey: string;
-  portkeyInfo: PortkeyDid.DIDWalletInfo & {
-    accounts: TAelfAccounts;
-    nickName: string;
-  };
 }
 
 export interface ExtraInfoForNightElf {

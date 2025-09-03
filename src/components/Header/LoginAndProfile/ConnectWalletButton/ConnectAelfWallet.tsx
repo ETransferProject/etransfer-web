@@ -1,4 +1,4 @@
-import { NightElf_16, PortkeyV2_16 } from 'assets/images';
+import { NightElf_16, PortkeyV2_16, FairyVault_16 } from 'assets/images';
 import CommonButton, { CommonButtonProps, CommonButtonType } from 'components/CommonButton';
 import { CONNECT_AELF_WALLET, MY_AELF_WALLET, UNLOCK } from 'constants/wallet/index';
 import useAelf, { useShowLoginButtonLoading } from 'hooks/wallet/useAelf';
@@ -28,7 +28,13 @@ export default function ConnectAelfWalletButton(props: CommonButtonProps) {
           {...props}
           loading={isLoginButtonLoading}
           ghost>
-          {connector === AelfWalletTypeEnum.elf ? <NightElf_16 /> : <PortkeyV2_16 />}
+          {connector === AelfWalletTypeEnum.elf ? (
+            <NightElf_16 />
+          ) : connector === AelfWalletTypeEnum.fairyVault ? (
+            <FairyVault_16 />
+          ) : (
+            <PortkeyV2_16 />
+          )}
           {!isMobilePX && (
             <span className={styles['connected-wallet-button-text']}>{MY_AELF_WALLET}</span>
           )}

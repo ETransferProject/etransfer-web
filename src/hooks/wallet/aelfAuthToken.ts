@@ -4,25 +4,27 @@ import { APP_NAME } from 'constants/index';
 import { useCallback, useEffect, useState } from 'react';
 import { useLoading } from 'store/Provider/hooks';
 import AElf from 'aelf-sdk';
-import { recoverPubKey } from 'utils/aelf/aelfBase';
 import service from 'api/axios';
 import { eTransferInstance } from 'utils/etransferInstance';
-import { getCaHashAndOriginChainIdByWallet, getManagerAddressByWallet } from 'utils/wallet/index';
+import {
+  getCaHashAndOriginChainIdByWallet,
+  getManagerAddressAndPubkeyByWallet,
+  getManagerAddressByWallet,
+} from 'utils/wallet/index';
 import { AuthTokenSource } from 'types/api';
 import { ReCaptchaType } from 'components/GoogleRecaptcha/types';
 import { checkEOARegistration } from 'utils/api/user';
 import myEvents from 'utils/myEvent';
 import googleReCaptchaModal from 'utils/modal/googleReCaptchaModal';
 import { SingleMessage } from '@etransfer/ui-react';
-import { ExtraInfoForDiscover, WalletInfo } from 'types/wallet';
+import { ExtraInfoForDiscoverAndWeb, WalletInfo } from 'types/wallet';
 import useAelf from './useAelf';
 import { getAuthPlainText } from 'utils/auth';
 import { zeroFill } from '@portkey/utils';
-
+import detectProvider from '@portkey/detect-provider';
 export function useAelfAuthToken() {
   const { account, disconnect, connector, isConnected, signMessage, walletInfo } = useAelf();
   const { setLoading } = useLoading();
-
   const loginSuccessActive = useCallback(() => {
     console.log('%c login success and emit event', 'color: green');
     myEvents.LoginSuccess.emit();
@@ -39,11 +41,14 @@ export function useAelfAuthToken() {
       from: string;
     } | null;
 
-    if (connector === AelfWalletTypeEnum.discover) {
+    const isFairyVault = connector === AelfWalletTypeEnum.fairyVault;
+
+    if (connector === AelfWalletTypeEnum.discover || isFairyVault) {
+      let provider: any = (walletInfo?.extraInfo as ExtraInfoForDiscoverAndWeb)?.provider;
+      if (isFairyVault) provider = await detectProvider({ providerName: 'FairyVault' });
       // discover
-      const discoverInfo = walletInfo?.extraInfo as ExtraInfoForDiscover;
-      if ((discoverInfo?.provider as any).methodCheck('wallet_getManagerSignature')) {
-        const sin = await discoverInfo?.provider?.request({
+      if (provider?.methodCheck?.('wallet_getManagerSignature') || isFairyVault) {
+        const sin = await provider?.request({
           method: 'wallet_getManagerSignature',
           payload: { hexData: plainTextHex },
         });
@@ -56,7 +61,7 @@ export function useAelfAuthToken() {
           error: 0,
           errorMessage: '',
           signature: signInfo,
-          from: AelfWalletTypeEnum.discover,
+          from: connector,
         };
       } else {
         const signInfo = AElf.utils.sha256(plainTextHex);
@@ -75,8 +80,8 @@ export function useAelfAuthToken() {
         signInfo,
       });
     } else {
-      // portkey sdk
-      const signInfo = Buffer.from(plainTextHex).toString('hex');
+      // portkey web wallet
+      const signInfo = plainTextHex;
       signResult = await signMessage({
         appName: APP_NAME,
         address: account,
@@ -103,7 +108,7 @@ export function useAelfAuthToken() {
 
   const handleReCaptcha = useCallback(async (): Promise<string | undefined> => {
     if (!account) return;
-    if (connector === AelfWalletTypeEnum.elf) {
+    if (connector === AelfWalletTypeEnum.elf || connector === AelfWalletTypeEnum.fairyVault) {
       const isRegistered = await checkEOARegistration({ address: account });
       if (!isRegistered.result) {
         // change loading text
@@ -134,18 +139,19 @@ export function useAelfAuthToken() {
         );
         const signatureResult = await handleSignMessage();
         if (!signatureResult) throw Error('Signature error');
-        const pubkey = recoverPubKey(signatureResult.plainText, signatureResult.signature) + '';
-        const managerAddress = await getManagerAddressByWallet(
+
+        const { managerAddress, pubkey } = await getManagerAddressAndPubkeyByWallet(
           walletInfo as WalletInfo,
           connector,
-          pubkey,
+          signatureResult.plainText,
+          signatureResult.signature,
         );
         const apiParams: QueryAuthApiExtraRequest = {
           pubkey,
           signature: signatureResult.signature,
           plain_text: signatureResult.plainText,
           source:
-            connector === AelfWalletTypeEnum.elf
+            connector === AelfWalletTypeEnum.elf || connector === AelfWalletTypeEnum.fairyVault
               ? AuthTokenSource.NightElf
               : AuthTokenSource.Portkey,
           managerAddress: managerAddress,
@@ -153,7 +159,6 @@ export function useAelfAuthToken() {
           chain_id: originChainId || undefined,
           recaptchaToken: recaptchaResult || undefined,
         };
-
         const authToken = await queryAuthApi(apiParams);
         eTransferInstance.setUnauthorized(false);
         console.log('login status isConnected', isConnected);
@@ -200,7 +205,9 @@ export function useAelfAuthToken() {
         );
         const managerAddress = await getManagerAddressByWallet(walletInfo as WalletInfo, connector);
         const source =
-          connector === AelfWalletTypeEnum.elf ? AuthTokenSource.NightElf : AuthTokenSource.Portkey;
+          connector === AelfWalletTypeEnum.elf || connector === AelfWalletTypeEnum.fairyVault
+            ? AuthTokenSource.NightElf
+            : AuthTokenSource.Portkey;
         const key = (caHash || source) + managerAddress;
         const data = getLocalJWT(key);
         // 1: local storage has JWT token
@@ -236,7 +243,9 @@ export function useSetAelfAuthFromStorage() {
     const { caHash } = await getCaHashAndOriginChainIdByWallet(walletInfo as WalletInfo, connector);
     const managerAddress = await getManagerAddressByWallet(walletInfo as WalletInfo, connector);
     const source =
-      connector === AelfWalletTypeEnum.elf ? AuthTokenSource.NightElf : AuthTokenSource.Portkey;
+      connector === AelfWalletTypeEnum.elf || connector === AelfWalletTypeEnum.fairyVault
+        ? AuthTokenSource.NightElf
+        : AuthTokenSource.Portkey;
     const key = (caHash || source) + managerAddress;
     const data = getLocalJWT(key);
     // local storage has JWT token

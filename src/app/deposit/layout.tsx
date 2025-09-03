@@ -1,3 +1,4 @@
+'use client';
 import Layout from 'pageComponents/layout';
 
 const DepositLayout = ({ children }: { children: React.ReactNode }) => {

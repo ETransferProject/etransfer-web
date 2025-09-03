@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, Mock } from 'vitest';
 import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
-import { PortkeyDid } from '@aelf-web-login/wallet-adapter-bridge';
+import { did } from '@portkey/did';
 import { BlockchainNetworkType } from 'constants/network';
 import { WalletTypeEnum } from 'context/Wallet/types';
 import {
@@ -40,12 +40,10 @@ vi.mock('../../aelf/aelfBase', () => ({
 }));
 
 // Mock dependencies
-vi.mock('@aelf-web-login/wallet-adapter-bridge', () => ({
-  PortkeyDid: {
-    did: {
-      services: {
-        getHolderInfoByManager: vi.fn(),
-      },
+vi.mock('@portkey/did', () => ({
+  did: {
+    services: {
+      getHolderInfoByManager: vi.fn(),
     },
   },
 }));
@@ -168,14 +166,14 @@ describe('getCaHashAndOriginChainIdByWallet', () => {
     const walletInfo = { address: 'mockWalletAddress' } as unknown as WalletInfo;
 
     // Mock getHolderInfoByManager response
-    (PortkeyDid.did.services.getHolderInfoByManager as Mock).mockResolvedValue([
+    (did.services.getHolderInfoByManager as Mock).mockResolvedValue([
       { caHash: 'mockCaHash', chainId: 'mockChainId' },
     ]);
 
     const result = await getCaHashAndOriginChainIdByWallet(walletInfo, AelfWalletTypeEnum.discover);
 
     // Assert service is called with correct parameters
-    expect(PortkeyDid.did.services.getHolderInfoByManager).toHaveBeenCalledWith({
+    expect(did.services.getHolderInfoByManager).toHaveBeenCalledWith({
       caAddresses: [walletInfo.address],
     });
 
@@ -186,16 +184,16 @@ describe('getCaHashAndOriginChainIdByWallet', () => {
     });
   });
 
-  it('should return defaults when PortkeyDid response is empty for walletType discover', async () => {
+  it('should return defaults when response is empty for walletType discover', async () => {
     const walletInfo = { address: 'mockWalletAddress' } as unknown as WalletInfo;
 
     // Mock getHolderInfoByManager to return an empty array
-    (PortkeyDid.did.services.getHolderInfoByManager as Mock).mockResolvedValue([]);
+    (did.services.getHolderInfoByManager as Mock).mockResolvedValue([]);
 
     const result = await getCaHashAndOriginChainIdByWallet(walletInfo, AelfWalletTypeEnum.discover);
 
     // Assert service is called as expected
-    expect(PortkeyDid.did.services.getHolderInfoByManager).toHaveBeenCalledWith({
+    expect(did.services.getHolderInfoByManager).toHaveBeenCalledWith({
       caAddresses: [walletInfo.address],
     });
 
