@@ -64,7 +64,7 @@ jobs:
     needs: build-and-push-image
     steps:
       - name: Deploy
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.TOK }}
           script: |
