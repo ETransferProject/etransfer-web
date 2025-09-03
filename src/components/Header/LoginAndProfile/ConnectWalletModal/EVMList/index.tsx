@@ -3,6 +3,7 @@ import styles from '../styles.module.scss';
 import clsx from 'clsx';
 import {
   CONNECT_EVM_LIST_CONFIG,
+  FAIRY_VAULT_WALLET_ALLOWANCE,
   MOBILE_EVM_WALLET_ALLOWANCE,
   PORTKEY_EVM_WALLET_ALLOWANCE,
   TELEGRAM_EVM_WALLET_ALLOWANCE,
@@ -20,6 +21,7 @@ import { isPortkey } from 'utils/portkey';
 import { isMobileDevices } from 'utils/isMobile';
 import { useAfterDisconnect } from 'hooks/wallet';
 import { useSetWalletType } from 'hooks/crossChainTransfer';
+import { isFairyVault } from 'utils';
 
 export default function EVMWalletList({
   connectedCallback,
@@ -113,6 +115,9 @@ export default function EVMWalletList({
     const totalList = CONNECT_EVM_LIST_CONFIG.list.filter((item) => {
       if (TelegramPlatform.isTelegramPlatform()) {
         return TELEGRAM_EVM_WALLET_ALLOWANCE.includes(item.key);
+      }
+      if (isFairyVault()) {
+        return FAIRY_VAULT_WALLET_ALLOWANCE.includes(item.key);
       }
       if (isPortkey()) {
         return PORTKEY_EVM_WALLET_ALLOWANCE.includes(item.key);

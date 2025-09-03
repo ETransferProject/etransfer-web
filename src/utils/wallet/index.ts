@@ -17,11 +17,13 @@ import {
   Tonkeeper_16,
   TronLink_16,
   WalletConnect_16,
+  FairyVault_16,
 } from 'assets/images';
 import { COINBASE_WALLET_ID, WALLET_CONNECT_ID } from 'constants/wallet/EVM';
 import { BlockchainNetworkType } from 'constants/network';
 import { WalletSourceType } from 'types/api';
 import { CONNECT_WALLET, WALLET_TYPE_TEXT } from 'constants/wallet';
+import { getPortkeyWebWalletInfo } from 'utils/portkey';
 
 export const getManagerAddressByWallet = async (
   walletInfo: WalletInfo,
@@ -37,10 +39,9 @@ export const getManagerAddressByWallet = async (
       method: 'wallet_getCurrentManagerAddress',
     });
   } else if (walletType === AelfWalletTypeEnum.web) {
-    const _sdkWalletInfoString = localStorage.getItem('PortkeyWebWalletWalletInfo');
+    const _sdkWalletInfoString = getPortkeyWebWalletInfo();
     if (_sdkWalletInfoString) {
-      const _sdkWalletInfo = JSON.parse(_sdkWalletInfoString);
-      managerAddress = _sdkWalletInfo.managerAddress;
+      managerAddress = _sdkWalletInfoString.managerAddress;
     }
   } else {
     // AelfWalletTypeEnum.elf
@@ -74,9 +75,8 @@ export const getCaHashAndOriginChainIdByWallet = async (
     caHash = caInfo?.caHash;
     originChainId = caInfo?.chainId as TChainId;
   } else if (walletType === AelfWalletTypeEnum.web) {
-    const _sdkWalletInfoString = localStorage.getItem('PortkeyWebWalletWalletInfo');
-    if (_sdkWalletInfoString) {
-      const _sdkWalletInfo = JSON.parse(_sdkWalletInfoString);
+    const _sdkWalletInfo = getPortkeyWebWalletInfo();
+    if (_sdkWalletInfo) {
       caHash = _sdkWalletInfo.caHash;
       originChainId = _sdkWalletInfo.originChainId;
     }
@@ -98,9 +98,10 @@ export const getManagerAddressAndPubkeyByWallet = async (
 
   if (walletType === AelfWalletTypeEnum.web) {
     // TODO info error
-    const _sdkWalletInfoString = localStorage.getItem('PortkeyWebWalletWalletInfo');
-    if (_sdkWalletInfoString) {
-      const _sdkWalletInfo = JSON.parse(_sdkWalletInfoString);
+    const _sdkWalletInfo = getPortkeyWebWalletInfo();
+    pubkey = '';
+    managerAddress = '';
+    if (_sdkWalletInfo) {
       managerAddress = _sdkWalletInfo.managerAddress;
       pubkey = _sdkWalletInfo.managerPubkey;
     }
@@ -118,9 +119,10 @@ export const getManagerAddressAndPubkeyByWallet = async (
 export const getWalletLogo = (walletType: WalletTypeEnum, connector?: any) => {
   switch (walletType) {
     case WalletTypeEnum.AELF:
-      // TODO FairyVaultDiscover icon
       if (connector === AelfWalletTypeEnum.elf) {
         return NightElf_16;
+      } else if (connector === AelfWalletTypeEnum.fairyVault) {
+        return FairyVault_16;
       } else {
         return PortkeyV2_16;
       }

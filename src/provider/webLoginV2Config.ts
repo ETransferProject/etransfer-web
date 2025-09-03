@@ -92,6 +92,7 @@ export const config: IConfigProps = {
       ]
     : [
         portkeyInnerWallet,
+        fairyVaultDiscoverWallet,
         new PortkeyDiscoverWallet({
           networkType: NETWORK_TYPE,
           chainId: SupportedChainId.sideChain,

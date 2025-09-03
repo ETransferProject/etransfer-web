@@ -149,7 +149,7 @@ export function useGetAuthTokenFromStorage(fromWallet?: IWallet) {
           );
           const source =
             aelfConnector === AelfWalletTypeEnum.elf ||
-            aelfConnector === ('FairyVaultDiscover' as any)
+            aelfConnector === AelfWalletTypeEnum.fairyVault
               ? AuthTokenSource.NightElf
               : AuthTokenSource.Portkey;
           const key = (caHash || source) + managerAddress;

@@ -7,6 +7,7 @@ import { useClearStore } from 'hooks/common';
 import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 import useAelf from 'hooks/wallet/useAelf';
 import { Asset, PortkeyAssetProvider } from '@portkey/did-ui-react';
+import { getPortkeyWebWalletInfo } from 'utils/portkey';
 // import { LoginStatusEnum } from '@portkey/types';
 // import { SingleMessage } from '@etransfer/ui-react';
 
@@ -16,10 +17,10 @@ export default function MyAsset() {
   const clearStore = useClearStore();
   const portkeyWebInfo = useMemo(() => {
     let chainId, pin;
-    const _sdkWalletInfoString = localStorage.getItem('PortkeyWebWalletWalletInfo');
-    if (_sdkWalletInfoString) {
-      const _sdkWalletInfo = JSON.parse(_sdkWalletInfoString);
-      chainId = _sdkWalletInfo.originChainId;
+
+    const sdkWalletInfo = getPortkeyWebWalletInfo();
+    if (sdkWalletInfo) {
+      chainId = sdkWalletInfo.originChainId;
     }
     return {
       chainId,

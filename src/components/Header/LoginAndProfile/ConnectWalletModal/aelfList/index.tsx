@@ -6,7 +6,7 @@ import { useCallback, useState } from 'react';
 import { SingleMessage } from '@etransfer/ui-react';
 import { handleWebLoginErrorMessage } from '@etransfer/utils';
 import DynamicArrow from 'components/DynamicArrow';
-import { Logout, NightElf } from 'assets/images';
+import { Logout, NightElf, FairyVault } from 'assets/images';
 import { useClearStore } from 'hooks/common';
 import service from 'api/axios';
 import myEvents from 'utils/myEvent';
@@ -51,8 +51,9 @@ export default function AelfWalletList({
     }
   }, [connect, connectedCallback, isConnected, setWalletType, walletType]);
 
-  const onDisconnect = useCallback(() => {
-    Promise.resolve(disconnect()).then(() => {
+  const onDisconnect = useCallback(async () => {
+    Promise.resolve(disconnect()).then((v) => {
+      if (!v) return;
       clearStore();
       service.defaults.headers.common['Authorization'] = '';
       // unbind wallet
@@ -85,12 +86,14 @@ export default function AelfWalletList({
         // TODO FairyVaultDiscover icon
         if (isConnected && connector === AelfWalletTypeEnum.elf) {
           Icon = NightElf;
+        } else if (isConnected && connector === AelfWalletTypeEnum.fairyVault) {
+          Icon = FairyVault;
         }
         let name = item.name;
         if (isConnected) {
           if (connector === AelfWalletTypeEnum.elf) {
             name = 'Nightelf Wallet';
-          } else if (connector === ('FairyVaultDiscover' as any)) {
+          } else if (connector === AelfWalletTypeEnum.fairyVault) {
             name = 'FairyVault Wallet';
           } else {
             name = 'Portkey Wallet';

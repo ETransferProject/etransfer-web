@@ -7,6 +7,7 @@ import {
   Tonkeeper_16,
   TronLink_16,
   WalletConnect_16,
+  FairyVault_16,
 } from 'assets/images';
 import CommonButton, { CommonButtonProps, CommonButtonType } from 'components/CommonButton';
 import { CONNECT_WALLET, MY_WALLET } from 'constants/wallet/index';
@@ -29,9 +30,10 @@ export default function ConnectOtherWalletButton(props: CommonButtonProps) {
   const walletLogoList = useMemo(() => {
     const walletLogoList = [];
     if (hasConnectedTypes.includes(WalletTypeEnum.AELF)) {
-      // TODO FairyVaultDiscover icon
       if (aelfConnector === AelfWalletTypeEnum.elf) {
         walletLogoList.push(NightElf_16);
+      } else if (aelfConnector === AelfWalletTypeEnum.fairyVault) {
+        walletLogoList.push(FairyVault_16);
       } else {
         walletLogoList.push(PortkeyV2_16);
       }

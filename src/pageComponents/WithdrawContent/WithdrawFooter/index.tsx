@@ -231,7 +231,7 @@ export default function WithdrawFooter({
           memo,
           chainId: currentChainItem.key,
           fromManagerAddress:
-            connector === AelfWalletTypeEnum.elf || connector === ('FairyVaultDiscover' as any)
+            connector === AelfWalletTypeEnum.elf || connector === AelfWalletTypeEnum.fairyVault
               ? ownerAddress
               : managerAddress,
           caAddress: ownerAddress,

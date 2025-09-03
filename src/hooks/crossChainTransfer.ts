@@ -207,7 +207,6 @@ export function useSendTxnFromAelfChain({
 
       // get etransfer jwt
       await getAelfAuthToken(true, false);
-
       const approveRes = await handleApproveToken({ amount, memo });
       if (!approveRes) throw new Error(InsufficientAllowanceMessage);
       console.log('>>>>>> sendTransferTokenTransaction approveRes', approveRes);
@@ -230,7 +229,7 @@ export function useSendTxnFromAelfChain({
           memo,
           chainId: chainId,
           fromManagerAddress:
-            connector === AelfWalletTypeEnum.elf || connector === ('FairyVaultDiscover' as any)
+            connector === AelfWalletTypeEnum.elf || connector === AelfWalletTypeEnum.fairyVault
               ? ownerAddress
               : managerAddress,
           caAddress: ownerAddress,

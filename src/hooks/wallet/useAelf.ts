@@ -69,7 +69,7 @@ export default function useAelf() {
       accounts: accounts,
       connector: walletType,
       connect: connectWallet,
-      disconnect: async () => await disConnectWallet(),
+      disconnect: disConnectWallet,
       getAccountInfo: () => walletInfo?.extraInfo,
       signMessage: getSignature,
       getBalance: onGetBalance,
@@ -119,7 +119,7 @@ export function useInitAelfWallet() {
       );
       const managerAddress = await getManagerAddressByWallet(walletInfo as WalletInfo, walletType);
       const source =
-        walletType === AelfWalletTypeEnum.elf || walletType === ('FairyVaultDiscover' as any)
+        walletType === AelfWalletTypeEnum.elf || walletType === AelfWalletTypeEnum.fairyVault
           ? AuthTokenSource.NightElf
           : AuthTokenSource.Portkey;
       const key = (caHash || source) + managerAddress;
