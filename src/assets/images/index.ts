@@ -29,7 +29,7 @@ import PortkeyV2_16 from './wallet/portkeyV2_16.svg';
 import NightElf from './wallet/nightElf.svg';
 import NightElf_16 from './wallet/nightElf_16.svg';
 import FairyVault from './wallet/fairyVault.svg';
-import FairyVault_16 from './wallet/FairyVault_16.svg';
+import FairyVault_16 from './wallet/fairyVault_16.svg';
 import Metamask from './wallet/metamask.svg';
 import Coinbase from './wallet/coinbase.svg';
 import WalletConnect from './wallet/walletConnect.svg';
