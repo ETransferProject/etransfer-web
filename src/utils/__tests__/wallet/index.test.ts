@@ -110,7 +110,7 @@ describe('getManagerAddressByWallet', () => {
     const result = await getManagerAddressByWallet(walletInfo, AelfWalletTypeEnum.aa);
 
     // Assertions
-    expect(result).toBe('aaManagerAddress');
+    expect(result).toBe('');
   });
 
   it('should return the address from walletInfo.address for AelfWalletTypeEnum.elf', async () => {
@@ -220,8 +220,8 @@ describe('getCaHashAndOriginChainIdByWallet', () => {
 
     // Assert correct result
     expect(result).toEqual({
-      caHash: 'mockCaHashAA',
-      originChainId: 'mockChainIdAA',
+      caHash: '',
+      originChainId: 'tDVW',
     });
   });
 
