@@ -1,5 +1,4 @@
-import { TChainId } from '@aelf-web-login/wallet-adapter-base';
-
+import { TChainId, WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 export function isPortkey() {
   if (typeof window === 'object') return window.navigator.userAgent.includes('Portkey');
   return false;
@@ -20,5 +19,14 @@ export function getPortkeyWebWalletInfo() {
     return JSON.parse(portkeyWebWalletInfo) as TPortkeyWebWalletWalletInfo;
   } catch (error) {
     return;
+  }
+}
+
+export function checkConnectedWallet() {
+  try {
+    if (localStorage.getItem('connectedWallet') === WalletTypeEnum.aa)
+      localStorage.removeItem('connectedWallet');
+  } catch (error) {
+    console.log(error, '====checkConnectedWallet');
   }
 }
