@@ -52,8 +52,9 @@ export default function AelfWalletList({
   }, [connect, connectedCallback, isConnected, setWalletType, walletType]);
 
   const onDisconnect = useCallback(async () => {
-    Promise.resolve(disconnect()).then((v) => {
-      if (!v) return;
+    try {
+      const req = await disconnect();
+      if (!req) return;
       clearStore();
       service.defaults.headers.common['Authorization'] = '';
       // unbind wallet
@@ -66,7 +67,9 @@ export default function AelfWalletList({
       myEvents.LogoutSuccess.emit();
       disConnectedCallback?.(WalletTypeEnum.AELF);
       console.warn('>>>>>> logout');
-    });
+    } catch (error) {
+      console.log(error, '====error');
+    }
   }, [clearStore, disConnectedCallback, disconnect, dispatch, fromWalletType, toWalletType]);
 
   const onViewDetail = useCallback(
