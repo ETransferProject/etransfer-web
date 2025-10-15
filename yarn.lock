@@ -49,13 +49,13 @@
   resolved "https://registry.npmjs.org/@adraffy/ens-normalize/-/ens-normalize-1.11.0.tgz#42cc67c5baa407ac25059fcd7d405cc5ecdb0c33"
   integrity sha512-/3DDPKHqqIqxUULp8yP4zODUY1i+2xvVWsv8A79xGWdCAG+8sb0hRh0Rk2QyOJUnnbyPUAZYcpBuRe3nS2OIUg==
 
-"@aelf-web-login/utils@^0.4.0-alpha.8":
-  version "0.4.0-alpha.8"
-  resolved "https://registry.yarnpkg.com/@aelf-web-login/utils/-/utils-0.4.0-alpha.8.tgz#0e08fca90740938dda796b8a4f46ef8293f465a8"
-  integrity sha512-jBUnMTtWTTCMVQfEpPXFtiAwkBCt/4BpY03MtwVAVG6gFzzv/JM5cyE43SZWF3sKcHY/Lv5jRK6b1BVH8A4sWw==
+"@aelf-web-login/utils@0.4.0-alpha9", "@aelf-web-login/utils@^0.4.0-alpha.9":
+  version "0.4.0-alpha9"
+  resolved "https://registry.yarnpkg.com/@aelf-web-login/utils/-/utils-0.4.0-alpha9.tgz#89ba88d79386647928217ab68efd335213278dc4"
+  integrity sha512-Re6c4XXgCSTNeyS1+n1Hx5kr0Iw/DFlAqJKAHr6KDMnOmJnOU2t20gq4BIKfwZDTsVLuYEEhNH009MoTvGubWA==
   dependencies:
-    "@aelf-web-login/wallet-adapter-base" "0.4.0-alpha.8"
-    "@aelf-web-login/wallet-adapter-react" "0.4.0-alpha.8"
+    "@aelf-web-login/wallet-adapter-base" "0.4.0-alpha9"
+    "@aelf-web-login/wallet-adapter-react" "0.4.0-alpha9"
     bignumber.js "^9.1.2"
     dayjs "^1.11.13"
     react "^18.3.1"
@@ -75,31 +75,31 @@
   dependencies:
     eventemitter3 "^5.0.1"
 
-"@aelf-web-login/wallet-adapter-base@0.4.0-alpha.8", "@aelf-web-login/wallet-adapter-base@^0.4.0-alpha.8":
-  version "0.4.0-alpha.8"
-  resolved "https://registry.yarnpkg.com/@aelf-web-login/wallet-adapter-base/-/wallet-adapter-base-0.4.0-alpha.8.tgz#eac5b0f855250dbd9e7842b4d9758bc7b9638063"
-  integrity sha512-q99/J/Jp84/AjW04nYu8QKHI18QRJiHiBDaOTMKjMIZVfTqyjvPIsId3jYf3KIiKYC+8B3f/NNcx3BHlSXq6ZA==
+"@aelf-web-login/wallet-adapter-base@0.4.0-alpha9", "@aelf-web-login/wallet-adapter-base@^0.4.0-alpha.9":
+  version "0.4.0-alpha9"
+  resolved "https://registry.yarnpkg.com/@aelf-web-login/wallet-adapter-base/-/wallet-adapter-base-0.4.0-alpha9.tgz#94804387178b64b128a97929e876b8c04dad4671"
+  integrity sha512-TreDflIb/YmqikWQ083Waut7j6g2pQSa2JcZgPEruUwkzmcvfx3o34MosOD+q997ztsAN0ugk1OFltZwGC8KOQ==
   dependencies:
     eventemitter3 "^5.0.1"
 
-"@aelf-web-login/wallet-adapter-bridge@0.4.0-alpha.8", "@aelf-web-login/wallet-adapter-bridge@^0.4.0-alpha.8":
-  version "0.4.0-alpha.8"
-  resolved "https://registry.yarnpkg.com/@aelf-web-login/wallet-adapter-bridge/-/wallet-adapter-bridge-0.4.0-alpha.8.tgz#2cb03cbc32544a7f2f00bf46d0201d72eaeb6e4f"
-  integrity sha512-o9drq7VSo0UAA/9Ko8ynzZ1A8AYtJ36LsPpzlsvgaGYrZYafiiuVHuzEK0jJbdzteSvC2+oPRGgSkYykzhi+Mg==
+"@aelf-web-login/wallet-adapter-bridge@0.4.0-alpha9", "@aelf-web-login/wallet-adapter-bridge@^0.4.0-alpha.9":
+  version "0.4.0-alpha9"
+  resolved "https://registry.yarnpkg.com/@aelf-web-login/wallet-adapter-bridge/-/wallet-adapter-bridge-0.4.0-alpha9.tgz#375595e141e4810c1de74a19941d71de6578774e"
+  integrity sha512-4MZ/4zxV24uZCwEATZqV6fDnVe5G4EKnEPJK7/3Q00IP5Dfqhi/3noRY/bGvxwFVrDt3Lh4LcAXnnpmuxBttRQ==
   dependencies:
-    "@aelf-web-login/wallet-adapter-base" "0.4.0-alpha.8"
-    "@aelf-web-login/wallet-adapter-portkey-web" "0.4.0-alpha.8"
+    "@aelf-web-login/wallet-adapter-base" "0.4.0-alpha9"
+    "@aelf-web-login/wallet-adapter-portkey-web" "0.4.0-alpha9"
     "@portkey/connect-web-wallet" "^2.20.0-alpha.3"
     "@portkey/contracts" "^2.20.0-alpha.3"
     "@portkey/services" "^2.20.0-alpha.3"
     "@reduxjs/toolkit" "^2.5.0"
 
-"@aelf-web-login/wallet-adapter-fairy-vault-discover@^0.4.0-alpha.8":
-  version "0.4.0-alpha.8"
-  resolved "https://registry.yarnpkg.com/@aelf-web-login/wallet-adapter-fairy-vault-discover/-/wallet-adapter-fairy-vault-discover-0.4.0-alpha.8.tgz#3a74eaea7130abde26e506dab58ec8592ac6fa71"
-  integrity sha512-4Fwy0B3aD8RvsalDPhGdhjs8LTVTuXeLiLgmA64EenHmOXb17wQTHPZ4BRxnwIo/6KOWTtRwI0nUqKuCfXHf2A==
+"@aelf-web-login/wallet-adapter-fairy-vault-discover@^0.4.0-alpha.9":
+  version "0.4.0-alpha9"
+  resolved "https://registry.yarnpkg.com/@aelf-web-login/wallet-adapter-fairy-vault-discover/-/wallet-adapter-fairy-vault-discover-0.4.0-alpha9.tgz#fbf53f055040187d01912c505a38d063d06d6190"
+  integrity sha512-GWPArGtvJrCjO2ThfYoXCZhPc5BEqpEXgZwkjNL7GPcQIjAhgvoD3IAE2ASTw2WlHvb3Vzm+61b5q8wsoxdCGQ==
   dependencies:
-    "@aelf-web-login/wallet-adapter-base" "0.4.0-alpha.8"
+    "@aelf-web-login/wallet-adapter-base" "0.4.0-alpha9"
     "@portkey/contracts" "^2.20.0-alpha.3"
     "@portkey/detect-provider" "2.4.0-alpha.12"
     "@portkey/provider-types" "2.4.0-alpha.12"
@@ -141,12 +141,12 @@
     "@portkey/utils" "^2.19.0-alpha.9"
     bn.js "^5.2.1"
 
-"@aelf-web-login/wallet-adapter-portkey-web@0.4.0-alpha.8":
-  version "0.4.0-alpha.8"
-  resolved "https://registry.yarnpkg.com/@aelf-web-login/wallet-adapter-portkey-web/-/wallet-adapter-portkey-web-0.4.0-alpha.8.tgz#625bd9c59966ac7e1ed110a161f298226033486d"
-  integrity sha512-5cVJ9JPmSGZWjPAARLGWIXxjnOd9ZWUMc8Su3mBgaPrH58CeNb73vDGfM1ywmQC1iGvLEIjJj9uus2x3M2/RoQ==
+"@aelf-web-login/wallet-adapter-portkey-web@0.4.0-alpha9":
+  version "0.4.0-alpha9"
+  resolved "https://registry.yarnpkg.com/@aelf-web-login/wallet-adapter-portkey-web/-/wallet-adapter-portkey-web-0.4.0-alpha9.tgz#306c473e3dc6879b24aa2a18ad3215f08636e227"
+  integrity sha512-dOvLB7hrl/J/4zPuAfjmcdgYq5zxNPNrAMq5TucX0ABCnHpy4oDOgKUiDWtEAZzMwgrImSaBzqv1Ws27YtLCaw==
   dependencies:
-    "@aelf-web-login/wallet-adapter-base" "0.4.0-alpha.8"
+    "@aelf-web-login/wallet-adapter-base" "0.4.0-alpha9"
     "@portkey/connect-web-wallet" "^2.20.0-alpha.3"
     "@portkey/contracts" "^2.20.0-alpha.3"
     "@portkey/detect-provider" "^2.4.0-alpha.6"
@@ -154,13 +154,14 @@
     "@portkey/utils" "^2.20.0-alpha.3"
     bn.js "^5.2.1"
 
-"@aelf-web-login/wallet-adapter-react@0.4.0-alpha.8", "@aelf-web-login/wallet-adapter-react@^0.4.0-alpha.8":
-  version "0.4.0-alpha.8"
-  resolved "https://registry.yarnpkg.com/@aelf-web-login/wallet-adapter-react/-/wallet-adapter-react-0.4.0-alpha.8.tgz#b1291a03914497957fbf3933d6a88e8d04774703"
-  integrity sha512-9I3rPIV7tVS0+Zg6p0BpTZ+I24TIEI7F3gK+iuu01nvQEDijQN79zQb7uoVenXrIVdZPViqn1ezQ1IBJFE0/6w==
+"@aelf-web-login/wallet-adapter-react@0.4.0-alpha9", "@aelf-web-login/wallet-adapter-react@^0.4.0-alpha.9":
+  version "0.4.0-alpha9"
+  resolved "https://registry.yarnpkg.com/@aelf-web-login/wallet-adapter-react/-/wallet-adapter-react-0.4.0-alpha9.tgz#d042dc69037f5c9450ad619a0b0234f0b8c92312"
+  integrity sha512-h1r8k364fvFGqOtwSSCzlVzcgTxEBa/2nzUYX8Z5Y8NbxTSUp4qZ3jZSsWBqBWI3LBXqa12oZ7hx8TMswQ2F6Q==
   dependencies:
-    "@aelf-web-login/wallet-adapter-base" "0.4.0-alpha.8"
-    "@aelf-web-login/wallet-adapter-bridge" "0.4.0-alpha.8"
+    "@aelf-web-login/utils" "0.4.0-alpha9"
+    "@aelf-web-login/wallet-adapter-base" "0.4.0-alpha9"
+    "@aelf-web-login/wallet-adapter-bridge" "0.4.0-alpha9"
     "@portkey/connect-web-wallet" "^2.20.0-alpha.3"
     "@portkey/utils" "^2.20.0-alpha.3"
     antd "4.24.14"

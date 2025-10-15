@@ -54,7 +54,7 @@ export default function AelfWalletList({
   const onDisconnect = useCallback(async () => {
     try {
       const req = await disconnect();
-      if (!req) return;
+      if (connector === AelfWalletTypeEnum.web && !req) return;
       clearStore();
       service.defaults.headers.common['Authorization'] = '';
       // unbind wallet
@@ -70,7 +70,15 @@ export default function AelfWalletList({
     } catch (error) {
       console.log(error, '====error');
     }
-  }, [clearStore, disConnectedCallback, disconnect, dispatch, fromWalletType, toWalletType]);
+  }, [
+    clearStore,
+    connector,
+    disConnectedCallback,
+    disconnect,
+    dispatch,
+    fromWalletType,
+    toWalletType,
+  ]);
 
   const onViewDetail = useCallback(
     (event: any) => {
