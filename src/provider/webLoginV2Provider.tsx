@@ -1,7 +1,7 @@
 'use client';
 import '../utils/telegram-web-app';
 import { WebLoginProvider } from '@aelf-web-login/wallet-adapter-react';
-import { config, didConfig } from './webLoginV2Config';
+import { getConfig, didConfig } from './webLoginV2Config';
 import { did } from '@portkey/did';
 import { useMemo } from 'react';
 import { checkConnectedWallet } from 'utils/portkey';
@@ -11,6 +11,8 @@ export default function WebLoginV2Providers({ children }: { children: React.Reac
     did.setConfig(didConfig);
     checkConnectedWallet();
   }, []);
+
+  const config = useMemo(() => getConfig(), []);
   return <WebLoginProvider config={config}>{children}</WebLoginProvider>;
 }
 

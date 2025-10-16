@@ -54,60 +54,64 @@ const baseConfig: IConfigProps['baseConfig'] = {
 
 const isTelegramPlatform = TelegramPlatform.isTelegramPlatform();
 
-const portkeyInnerWallet = new PortkeyInnerWallet({
-  networkType: NETWORK_TYPE,
-  chainId: SupportedChainId.sideChain,
-  disconnectConfirm: true,
-});
-
-const fairyVaultDiscoverWallet = new FairyVaultDiscoverWallet({
-  networkType: NETWORK_TYPE,
-  chainId: SupportedChainId.sideChain,
-  autoRequestAccount: true, // If set to true, please contact Portkey to add whitelist
-  autoLogoutOnDisconnected: true,
-  autoLogoutOnNetworkMismatch: true,
-  autoLogoutOnAccountMismatch: true,
-  autoLogoutOnChainMismatch: true,
-});
-
 const isMobileDevices = devices.isMobileDevices();
 
-export const config: IConfigProps = {
-  baseConfig,
-  wallets: isTelegramPlatform
-    ? [portkeyInnerWallet]
-    : isMobileDevices
-    ? [
-        portkeyInnerWallet,
-        fairyVaultDiscoverWallet,
-        new PortkeyDiscoverWallet({
-          networkType: NETWORK_TYPE,
-          chainId: SupportedChainId.sideChain,
-          autoRequestAccount: true,
-          autoLogoutOnDisconnected: true,
-          autoLogoutOnNetworkMismatch: true,
-          autoLogoutOnAccountMismatch: true,
-          autoLogoutOnChainMismatch: true,
-        }),
-      ]
-    : [
-        portkeyInnerWallet,
-        fairyVaultDiscoverWallet,
-        new PortkeyDiscoverWallet({
-          networkType: NETWORK_TYPE,
-          chainId: SupportedChainId.sideChain,
-          autoRequestAccount: true,
-          autoLogoutOnDisconnected: true,
-          autoLogoutOnNetworkMismatch: true,
-          autoLogoutOnAccountMismatch: true,
-          autoLogoutOnChainMismatch: true,
-        }),
-        new NightElfWallet({
-          chainId: SupportedChainId.sideChain,
-          appName: APP_NAME,
-          connectEagerly: true,
-          defaultRpcUrl: AelfReact[SupportedChainId.sideChain].rpcUrl,
-          nodes: AelfReact,
-        }),
-      ],
-};
+export function getConfig() {
+  const portkeyInnerWallet = new PortkeyInnerWallet({
+    networkType: NETWORK_TYPE,
+    chainId: SupportedChainId.sideChain,
+    disconnectConfirm: true,
+  });
+  const fairyVaultDiscoverWallet = new FairyVaultDiscoverWallet({
+    networkType: NETWORK_TYPE,
+    chainId: SupportedChainId.sideChain,
+    autoRequestAccount: true, // If set to true, please contact Portkey to add whitelist
+    autoLogoutOnDisconnected: true,
+    autoLogoutOnNetworkMismatch: true,
+    autoLogoutOnAccountMismatch: true,
+    autoLogoutOnChainMismatch: true,
+  });
+  setTimeout(() => {
+    (fairyVaultDiscoverWallet as any).detect();
+  }, 100);
+  const config: IConfigProps = {
+    baseConfig,
+    wallets: isTelegramPlatform
+      ? [portkeyInnerWallet]
+      : isMobileDevices
+      ? [
+          portkeyInnerWallet,
+          fairyVaultDiscoverWallet,
+          new PortkeyDiscoverWallet({
+            networkType: NETWORK_TYPE,
+            chainId: SupportedChainId.sideChain,
+            autoRequestAccount: true,
+            autoLogoutOnDisconnected: true,
+            autoLogoutOnNetworkMismatch: true,
+            autoLogoutOnAccountMismatch: true,
+            autoLogoutOnChainMismatch: true,
+          }),
+        ]
+      : [
+          portkeyInnerWallet,
+          fairyVaultDiscoverWallet,
+          new PortkeyDiscoverWallet({
+            networkType: NETWORK_TYPE,
+            chainId: SupportedChainId.sideChain,
+            autoRequestAccount: true,
+            autoLogoutOnDisconnected: true,
+            autoLogoutOnNetworkMismatch: true,
+            autoLogoutOnAccountMismatch: true,
+            autoLogoutOnChainMismatch: true,
+          }),
+          new NightElfWallet({
+            chainId: SupportedChainId.sideChain,
+            appName: APP_NAME,
+            connectEagerly: true,
+            defaultRpcUrl: AelfReact[SupportedChainId.sideChain].rpcUrl,
+            nodes: AelfReact,
+          }),
+        ],
+  };
+  return config;
+}
