@@ -26,7 +26,8 @@ import {
   getAllowance,
   getTokenInfo,
 } from '@etransfer/utils';
-import { ExtraInfoForDiscover } from 'types/wallet';
+import { ExtraInfoForDiscoverAndWeb } from 'types/wallet';
+import detectProvider from '@portkey/detect-provider';
 
 type CreateHandleManagerForwardCall = {
   caContractAddress: string;
@@ -199,17 +200,26 @@ export const handleTransaction = async ({
     // nightElf
     signInfo = AElf.utils.sha256(ser);
   } else {
-    // portkey sdk and discover
+    // portkey sdk and discover and FairyVault
     signInfo = Buffer.from(ser).toString('hex');
   }
 
   // signature
   let signatureStr = '';
-  if (walletType === AelfWalletTypeEnum.discover) {
-    // discover
-    const discoverInfo = walletInfo?.extraInfo as ExtraInfoForDiscover;
-    if ((discoverInfo?.provider as any).methodCheck('wallet_getTransactionSignature')) {
-      const sin = await discoverInfo?.provider?.request({
+  const isFairyVault = walletType === AelfWalletTypeEnum.fairyVault;
+  const isWebPortkey = walletType === AelfWalletTypeEnum.web;
+  const isDiscover = walletType === AelfWalletTypeEnum.discover;
+  if (isDiscover || isFairyVault || isWebPortkey) {
+    // discover and FairyVault
+    let provider: any = (walletInfo?.extraInfo as ExtraInfoForDiscoverAndWeb)?.provider;
+    if (isFairyVault) {
+      provider = await detectProvider({ providerName: 'FairyVault' });
+    } else if (isWebPortkey) {
+      provider = await detectProvider({ providerName: 'PortkeyWebWallet' });
+    }
+
+    if (provider?.methodCheck?.('wallet_getTransactionSignature') || isFairyVault || isWebPortkey) {
+      const sin = await provider?.request({
         method: 'wallet_getTransactionSignature',
         payload: { hexData: signInfo },
       });
@@ -402,7 +412,7 @@ export const createTransferTokenTransaction = async ({
   getSignature,
 }: CreateTransferTokenTransactionParams) => {
   let transactionParams;
-  if (walletType === AelfWalletTypeEnum.elf) {
+  if (walletType === AelfWalletTypeEnum.elf || walletType === AelfWalletTypeEnum.fairyVault) {
     transactionParams = await createTokenTransfer({
       contractAddress: eTransferContractAddress,
       args: { symbol, amount, memo },
@@ -424,7 +434,7 @@ export const createTransferTokenTransaction = async ({
   const aelf = getAElf(chainId as unknown as AllSupportedELFChainId);
   const { BestChainHeight, BestChainHash } = await aelf.chain.getChainStatus();
 
-  if (walletType === AelfWalletTypeEnum.elf) {
+  if (walletType === AelfWalletTypeEnum.elf || walletType === AelfWalletTypeEnum.fairyVault) {
     const transaction = await handleTransaction({
       walletInfo,
       walletType,

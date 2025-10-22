@@ -6,7 +6,7 @@ import { useCallback, useState } from 'react';
 import { SingleMessage } from '@etransfer/ui-react';
 import { handleWebLoginErrorMessage } from '@etransfer/utils';
 import DynamicArrow from 'components/DynamicArrow';
-import { Logout, NightElf } from 'assets/images';
+import { Logout, NightElf, FairyVault } from 'assets/images';
 import { useClearStore } from 'hooks/common';
 import service from 'api/axios';
 import myEvents from 'utils/myEvent';
@@ -51,8 +51,10 @@ export default function AelfWalletList({
     }
   }, [connect, connectedCallback, isConnected, setWalletType, walletType]);
 
-  const onDisconnect = useCallback(() => {
-    Promise.resolve(disconnect()).then(() => {
+  const onDisconnect = useCallback(async () => {
+    try {
+      const req = await disconnect();
+      if (connector === AelfWalletTypeEnum.web && !req) return;
       clearStore();
       service.defaults.headers.common['Authorization'] = '';
       // unbind wallet
@@ -65,8 +67,18 @@ export default function AelfWalletList({
       myEvents.LogoutSuccess.emit();
       disConnectedCallback?.(WalletTypeEnum.AELF);
       console.warn('>>>>>> logout');
-    });
-  }, [clearStore, disConnectedCallback, disconnect, dispatch, fromWalletType, toWalletType]);
+    } catch (error) {
+      console.log(error, '====error');
+    }
+  }, [
+    clearStore,
+    connector,
+    disConnectedCallback,
+    disconnect,
+    dispatch,
+    fromWalletType,
+    toWalletType,
+  ]);
 
   const onViewDetail = useCallback(
     (event: any) => {
@@ -82,13 +94,18 @@ export default function AelfWalletList({
       <div className={styles['wallet-list-title']}>{CONNECT_AELF_LIST_CONFIG.section}</div>
       {CONNECT_AELF_LIST_CONFIG.list.map((item) => {
         let Icon = item.icon;
+        // TODO FairyVaultDiscover icon
         if (isConnected && connector === AelfWalletTypeEnum.elf) {
           Icon = NightElf;
+        } else if (isConnected && connector === AelfWalletTypeEnum.fairyVault) {
+          Icon = FairyVault;
         }
         let name = item.name;
         if (isConnected) {
           if (connector === AelfWalletTypeEnum.elf) {
             name = 'Nightelf Wallet';
+          } else if (connector === AelfWalletTypeEnum.fairyVault) {
+            name = 'FairyVault Wallet';
           } else {
             name = 'Portkey Wallet';
           }

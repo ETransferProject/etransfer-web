@@ -228,3 +228,8 @@ input[type='number'] {
     }
   }
 }
+.web-login-connect-modal-root,
+.portkey-connect-modal-root {
+  position: relative;
+  z-index: 9999;
+}

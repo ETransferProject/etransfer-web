@@ -270,7 +270,7 @@ export default function TransferDashboard() {
         skip: skipPageCount + 1,
       });
     }
-  }, []);
+  }, [getTransferData, skipPageCount, totalCount, transferList.length]);
 
   const init = useCallback(async () => {
     getFilterData();

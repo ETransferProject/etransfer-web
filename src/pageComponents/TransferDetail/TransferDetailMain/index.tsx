@@ -88,7 +88,7 @@ export default function TransferDetailMain({
     } else {
       return null;
     }
-  }, [status, toTransfer.amount, toTransfer.symbol]);
+  }, [orderType, status, toTransfer.amount, toTransfer.symbol]);
 
   const renderTopFailed = useMemo(() => {
     const value = () => {

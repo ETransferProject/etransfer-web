@@ -79,7 +79,7 @@ export default function TransactionOverview() {
         date: totalItem?.date || '',
       });
     },
-    [],
+    [totalItem?.date, totalItem?.plus],
     100,
   );
 

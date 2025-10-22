@@ -1,3 +1,4 @@
+'use client';
 import Layout from 'pageComponents/layout';
 
 const WithdrawLayout = ({ children }: { children: React.ReactNode }) => {

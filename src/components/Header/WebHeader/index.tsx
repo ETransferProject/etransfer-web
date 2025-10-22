@@ -5,15 +5,13 @@ import { Logo } from 'assets/images';
 import styles from './styles.module.scss';
 import useAelf from 'hooks/wallet/useAelf';
 import { WalletTypeEnum as AelfWalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
-import { useRouter } from 'next/navigation';
 import { ETRANSFER_WEBSITE_URL } from 'constants/index';
 
 export default function WebHeader() {
-  const { isConnected, connector } = useAelf();
-  const router = useRouter();
+  const { isConnected, connector, goAssets } = useAelf();
 
   const handleOpenAssets = () => {
-    router.push('/assets');
+    goAssets();
   };
 
   const goWebsite = useCallback(() => {
@@ -26,7 +24,7 @@ export default function WebHeader() {
         <Logo />
       </div>
       <div className={styles['right-wrapper']}>
-        {isConnected && connector === AelfWalletTypeEnum.aa && (
+        {isConnected && connector === AelfWalletTypeEnum.web && (
           <span className={styles['assets-wrapper']} onClick={() => handleOpenAssets()}>
             Assets
           </span>
