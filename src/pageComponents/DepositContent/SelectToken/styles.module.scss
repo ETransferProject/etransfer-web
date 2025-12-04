@@ -1,0 +1,77 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/constants.scss';
+@import '/src/assets/theme/font.scss';
+@import '/src/assets/theme/breakpoint.scss';
+@import '/src/styles/common.scss';
+
+.deposit-select-token {
+  .select-token-result {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: pointer;
+  }
+
+  .select-token-not-selected {
+    gap: 8px;
+    .select-token-value-placeholder {
+      color: $brand;
+      font-size: 16px;
+      line-height: 24px;
+      user-select: none;
+      @extend .font-family-medium;
+
+      @include media-web {
+        font-size: 18px;
+        line-height: 28px;
+      }
+    }
+  }
+
+  .select-token-value-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    .select-token-value-selected {
+      .primary {
+        color: $primary-text;
+        font-size: 18px;
+        line-height: 28px;
+        @extend .font-family-medium;
+        margin-left: 8px;
+        margin-right: 8px;
+
+        @include media-web {
+          font-size: 16px;
+          line-height: 24px;
+        }
+      }
+      .secondary {
+        color: $secondary-text;
+        font-size: 14px;
+        line-height: 22px;
+        @include text-overflow;
+        word-break: break-all;
+      }
+      .icon {
+        width: 28px;
+        height: 28px;
+        margin-right: 8px;
+
+        @include media-web {
+          width: 24px;
+          height: 24px;
+        }
+      }
+    }
+  }
+
+  .deposit-token-select-dropdown {
+    top: 53px !important;
+    right: 0;
+  }
+}

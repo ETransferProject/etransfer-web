@@ -1,0 +1,29 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.transfer-tip-card {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid $disable;
+  background-color: $brand-bg;
+
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.transfer-tip-text {
+  color: $primary-text;
+}
+
+.text {
+  margin-left: 8px;
+}
+
+.bold-text {
+  @extend .font-family-medium;
+}
+
+.action {
+  color: $brand;
+  cursor: pointer;
+}

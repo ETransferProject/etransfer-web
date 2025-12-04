@@ -1,0 +1,23 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/breakpoint.scss';
+@import '/src/styles/common.scss';
+
+.dynamic-arrow {
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+}
+
+.dynamic-arrow-big {
+  width: 20px;
+  height: 20px;
+}
+
+.dynamic-arrow-small {
+  width: 12px;
+  height: 12px;
+}
+
+.dynamic-arrow-icon-rotate {
+  transform: rotate(180deg);
+}

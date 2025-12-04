@@ -1,0 +1,30 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+
+.network-and-wallet-card {
+  background-color: $normal-bg;
+  padding: 16px 30px 16px 12px;
+  border-radius: 8px;
+}
+
+.network-and-wallet-card-title-row {
+  margin-bottom: 16px;
+}
+
+.network-and-wallet-card-title {
+  color: $secondary-text;
+  font-size: 14px;
+  @extend .font-family-medium;
+  line-height: 22px;
+}
+
+.connect-wallet-link {
+  color: $brand;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.wallet-account {
+  color: $secondary-text;
+  font-size: 14px;
+}

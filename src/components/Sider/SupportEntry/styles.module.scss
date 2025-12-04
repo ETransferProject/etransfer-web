@@ -1,0 +1,13 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.supportEntry {
+  gap: 8px;
+  cursor: pointer;
+
+  .supportEntryValue {
+    font-size: 14px;
+    color: $brand;
+    @extend .font-family-medium;
+  }
+}

@@ -1,0 +1,20 @@
+@import 'src/assets/theme/breakpoint.scss';
+
+.info-overview {
+  width: 100%;
+  flex-direction: row;
+
+  gap: 24px;
+
+  @include media-mobile-and-pad {
+    flex-direction: column;
+  }
+
+  @include media-mobile {
+    gap: 12px;
+  }
+
+  @include media-pad {
+    gap: 16px;
+  }
+}

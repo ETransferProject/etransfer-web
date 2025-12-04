@@ -1,0 +1,45 @@
+@font-face {
+  font-family: Roboto-Bold;
+  font-display: swap;
+  src: url('/font/Roboto-Bold.ttf');
+}
+@font-face {
+  font-family: Roboto-Medium;
+  font-display: swap;
+  src: url('/font/Roboto-Medium.ttf');
+}
+@font-face {
+  font-family: Roboto-Regular;
+  font-display: swap;
+  src: url('/font/Roboto-Regular.ttf');
+}
+
+/* set list-style */
+ul,
+ol {
+  list-style: none;
+}
+
+/* set text-decoration */
+a,
+a:hover {
+  text-decoration: none;
+}
+
+/* clear margin & padding */
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, /* structural elements */
+  dl, dt, dd, ul, ol, li, /* list elements */
+  pre, /* text formatting elements */
+  fieldset, button, input, textarea, /* form elements */
+  th, td {
+  /* table elements */
+  margin: 0;
+  padding: 0;
+}
+.pointer-events-none {
+  pointer-events: none !important;
+}
+
+.ant-layout {
+  background-color: transparent;
+}

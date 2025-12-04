@@ -1,0 +1,93 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+@import '/src/assets/theme/breakpoint.scss';
+
+.withdraw-body {
+  :global {
+    .ant-form-item-label {
+      padding-bottom: 4px;
+      label {
+        width: 100%;
+        font-size: 14px;
+        line-height: 22px;
+        color: $secondary-text;
+      }
+    }
+    .ant-form-item-explain-error,
+    .ant-form-item-explain-warning {
+      margin-top: 4px;
+      font-size: 14px;
+      line-height: 22px;
+    }
+    .ant-form-item-explain-error {
+      color: $error;
+    }
+    .ant-form-item-explain-warning {
+      color: $warning;
+    }
+  }
+
+  @include media-mobile {
+    padding-bottom: calc(96px + constant(safe-area-inset-bottom));
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  }
+}
+
+.network-section {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.form-item {
+  margin-top: 24px;
+  margin-bottom: 0;
+}
+
+.form-input {
+  border-radius: 8px;
+  background-color: $normal-bg !important;
+  height: 48px;
+  border: none;
+  font-size: 16px;
+  @extend .font-family-medium;
+
+  &::placeholder {
+    color: $disable-text;
+  }
+}
+
+.form-label-wrapper {
+  width: 100%;
+}
+
+.user-balance {
+  font-size: 14px;
+  line-height: 22px;
+  margin-top: 12px;
+}
+
+.user-balance-label {
+  color: $secondary-text;
+  margin-right: 8px;
+}
+
+.user-balance-value {
+  color: $primary-text;
+}
+
+.limit-section {
+  margin-top: 8px;
+
+  .limit-label {
+    font-size: 14px !important;
+    line-height: 22px !important;
+  }
+
+  .limit-value {
+    font-size: 14px !important;
+    line-height: 22px !important;
+  }
+}

@@ -1,0 +1,26 @@
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/constants.scss';
+@import 'src/assets/theme/font.scss';
+
+.web-token-container {
+  text-align: left;
+}
+
+.mobil-token-container {
+  text-align: right;
+
+  .token-symbol {
+    font-size: 16px;
+    @extend .font-family-medium;
+  }
+}
+
+.token-symbol {
+  vertical-align: middle;
+  margin-left: 6px;
+
+  display: inline-block;
+  word-break: break-all;
+  @include text-overflow;
+}

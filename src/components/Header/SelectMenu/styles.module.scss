@@ -1,0 +1,132 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+
+.header-icon-wrapper {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+
+.header-icon {
+  font-size: 20px;
+}
+
+.menu-drawer.menu-drawer-weight {
+  :global {
+    .ant-drawer-content {
+      border-radius: 0;
+    }
+    .ant-drawer-body {
+      padding: 0 0 16px 0;
+    }
+  }
+}
+
+.menu-drawer-body {
+  height: 100%;
+}
+
+.menu-item {
+  gap: 12px;
+  height: 56px;
+  padding: 16px 12px;
+  color: $third-text;
+
+  &.menu-item-active {
+    color: $normal;
+    background-color: $hover-bg;
+    .menu-item-icon path {
+      fill: $normal;
+    }
+  }
+  .menu-item-icon path {
+    fill: $third-text;
+  }
+}
+
+.menu-item-label {
+  position: relative;
+  font-size: 16px;
+  line-height: 1.5;
+  @extend .font-family-medium;
+}
+
+.menu-item-red-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background-color: $error;
+  position: absolute;
+  top: 4px;
+  right: -8px;
+}
+
+.divider {
+  height: 0px;
+  border-top: 1px solid $dividers;
+  margin: 16px 0;
+}
+
+.footer {
+  color: $third-text;
+  font-size: 16px;
+  line-height: 24px;
+  padding-bottom: 24px;
+  @extend .font-family-medium;
+
+  :global {
+    .ant-collapse-header {
+      padding: 16px 16px 16px 16px !important;
+    }
+    .ant-collapse-content-box {
+      padding: 0 !important;
+    }
+  }
+  .arrow-down {
+    transform: rotate(180deg);
+  }
+}
+
+.footer-item-faq {
+  color: $third-text;
+  padding: 16px 44px 16px 16px;
+}
+
+.footer-item-faq-name {
+  margin-left: 12px;
+  font-size: 16px;
+  line-height: 24px;
+  @extend .font-family-medium;
+}
+
+.footer-item-group-name {
+  color: $third-text;
+  margin-left: 12px;
+  font-size: 16px;
+  line-height: 24px;
+  @extend .font-family-medium;
+}
+
+.footer-secondMenu-wrapper {
+  margin: 0;
+  padding: 0;
+}
+
+.footer-secondMenu-item {
+  cursor: pointer;
+  padding: 12px 16px 12px 32px;
+
+  svg path {
+    fill: $third-text;
+  }
+}
+
+.secondMenu-item-icon {
+  margin-right: 12px;
+}
+
+.secondMenu-item-name {
+  color: $third-text;
+  font-size: 16px;
+  line-height: 24px;
+}

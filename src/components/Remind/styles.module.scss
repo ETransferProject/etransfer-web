@@ -1,0 +1,69 @@
+@import 'src/assets/theme/color.scss';
+
+.remind-card {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 22px;
+
+  .icon {
+    margin: 3px 0;
+    path {
+      fill: $secondary-text;
+    }
+  }
+}
+
+.remind-text {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: $primary-text;
+}
+
+.remind-border {
+  border: 1px solid $dividers;
+}
+
+.text {
+  margin-left: 8px;
+  color: $secondary-text;
+}
+
+.remind-brand {
+  background-color: $brand-bg;
+  border-color: $disable;
+
+  .icon {
+    path {
+      fill: $brand;
+    }
+  }
+
+  .text {
+    color: $primary-text;
+  }
+}
+
+.remind-info {
+  background-color: $hover-bg;
+}
+
+.remind-warning {
+  background-color: $warning-bg;
+  border-color: $warning;
+
+  .icon {
+    path {
+      fill: $warning;
+    }
+  }
+
+  .text {
+    color: $primary-text;
+  }
+}
