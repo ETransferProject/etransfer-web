@@ -1,0 +1,135 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/constants.scss';
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/styles/variable.scss';
+
+.info-label,
+.info-value {
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.info-label {
+  color: $secondary-text;
+}
+
+.info-value {
+  color: $primary-text;
+  @extend .font-family-medium;
+}
+
+.info-value-big-font {
+  font-size: 24px;
+  line-height: 32px;
+}
+
+.info-unit {
+  max-width: 70px;
+  @include text-overflow;
+  @include media-web {
+    max-width: 106px;
+  }
+}
+
+.form-footer {
+  min-width: $page-min-width;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  @include media-mobile {
+    position: fixed;
+    bottom: 0;
+    border-top: 1px solid $dividers;
+    background-color: $page-bg;
+    width: 100vw;
+    margin-left: -16px;
+    padding: 20px 16px;
+    align-items: flex-end;
+  }
+  @include media-pad {
+    width: 100%;
+    margin-top: 64px;
+    align-items: flex-end;
+  }
+  @include media-web {
+    width: 100%;
+    margin-top: 64px;
+  }
+}
+
+// A separate class name is used here to avoid invalidation of the padding style by incorporating the padding property in the production css.
+.form-footer-safe-area {
+  @include media-mobile {
+    padding-bottom: calc(10px + constant(safe-area-inset-bottom));
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  }
+}
+
+.footer-info-wrapper {
+  min-width: 0;
+  .info-label {
+    flex: none;
+    margin-right: 8px;
+  }
+  .receive-amount-wrapper {
+    .info-value {
+      gap: 8px;
+    }
+  }
+  @include media-mobile-and-pad {
+    gap: 2px;
+    .info-label,
+    .info-value {
+      font-size: 12px;
+      line-height: 16px;
+    }
+    .info-value-big-font {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+  }
+  @include media-web {
+    gap: 24px;
+  }
+}
+
+.form-submit-button-wrapper {
+  margin-bottom: 0;
+  margin-top: 10px;
+}
+
+.form-submit-button {
+  @include media-mobile {
+    width: 108px;
+    padding: 0 !important;
+  }
+  @include media-pad {
+    width: 120px;
+  }
+  @include media-web {
+    width: 160px;
+  }
+}
+
+.link-wrap {
+  margin-top: 16px;
+}
+
+.link-word {
+  vertical-align: middle;
+  margin-right: 8px;
+  color: $normal;
+  font-size: 14px;
+  font-weight: $font-family-medium-weight;
+}
+
+.link-explore-icon {
+  position: relative;
+  top: 5px;
+}
+
+.linkToExplore {
+  margin-top: 16px;
+  text-align: center;
+}

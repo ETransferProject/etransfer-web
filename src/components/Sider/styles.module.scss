@@ -1,0 +1,58 @@
+@import '/src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+@import 'src/styles/variable.scss';
+@import 'src/assets/theme/breakpoint.scss';
+
+.menu-container {
+  width: $sider-width;
+  min-width: $sider-width;
+  padding-top: 40px;
+  background-color: $page-bg;
+  @include media-huge-screen {
+    position: relative;
+    margin-left: calc((100vw - $max-width) / 2);
+  }
+}
+.menu-container-not-tg {
+  min-height: $content-min-height;
+}
+.menu-items-wrapper {
+  width: 100%;
+}
+.menu-item {
+  height: 48px;
+  padding: 12px 40px;
+  border-radius: 0 6px 6px 0;
+  color: $secondary-text;
+  &:hover,
+  &.menu-item-active {
+    background-color: $normal-bg;
+  }
+  &.menu-item-active {
+    color: $normal;
+    .menu-item-icon path {
+      fill: $normal;
+    }
+  }
+}
+.menu-item-icon {
+  margin-right: 12px;
+  path {
+    fill: $secondary-text;
+  }
+}
+.menu-item-label {
+  font-size: 16px;
+  line-height: 1.5;
+  @extend .font-family-medium;
+}
+
+.menu-item-red-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background-color: $error;
+  position: relative;
+  top: -7px;
+  left: 2px;
+}

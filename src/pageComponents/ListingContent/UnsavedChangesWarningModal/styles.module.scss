@@ -1,0 +1,40 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+@import '/src/assets/theme/breakpoint.scss';
+
+.unsaved-changes-warning-modal {
+  :global {
+    .ant-modal-content {
+      height: 100%;
+      .ant-modal-close {
+        .ant-modal-close-x {
+          height: 68px;
+          padding-top: 8px;
+          svg path {
+            fill: $primary-text;
+          }
+        }
+      }
+      .ant-modal-header {
+        height: 68px;
+        padding-top: 24px;
+        padding-bottom: 16px;
+
+        .ant-modal-title {
+          font-size: 20px;
+          font-weight: $font-family-medium-weight;
+          font-family: $font-family-medium-family;
+          line-height: 28px;
+          text-align: left;
+        }
+      }
+      .ant-modal-body {
+        color: $primary-text;
+      }
+    }
+  }
+
+  .unsaved-changes-warning-modal-footer {
+    margin-top: 24px;
+  }
+}

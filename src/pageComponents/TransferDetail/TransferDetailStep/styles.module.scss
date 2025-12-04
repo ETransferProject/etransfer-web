@@ -1,0 +1,10 @@
+@import 'src/assets/theme/breakpoint.scss';
+
+.transfer-detail-step {
+  display: flex;
+  justify-content: center;
+
+  @include media-web {
+    width: 784px;
+  }
+}

@@ -1,0 +1,11 @@
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Icons/Network">
+<path id="Vector" d="M9.99607 0C15.5214 0 20 4.47855 20 10.0039C20 15.5293 15.5214 20.0039 10 20.0039C4.47462 20.0039 2.59168e-06 15.5254 2.59168e-06 10.0039C-0.00393287 4.47855 4.47462 0 9.99607 0Z" fill="#627EEA"/>
+<path id="Shape" d="M9.9989 3.00005V8.17525L14.3721 10.1298L9.9989 3.00005Z" fill="white" fill-opacity="0.602"/>
+<path id="Shape_2" d="M9.9988 3.00005L5.625 10.1298L9.9988 8.17525V3.00005Z" fill="white"/>
+<path id="Shape_3" d="M9.9989 13.4835V17L14.375 10.9443L9.9989 13.4835Z" fill="white" fill-opacity="0.602"/>
+<path id="Shape_4" d="M9.9988 17V13.4829L5.625 10.9443L9.9988 17Z" fill="white"/>
+<path id="Shape_5" d="M9.9989 12.6696L14.3721 10.1298L9.9989 8.17642V12.6696Z" fill="white" fill-opacity="0.3"/>
+<path id="Shape_6" d="M5.625 10.1298L9.9988 12.6696V8.17642L5.625 10.1298Z" fill="white" fill-opacity="0.7"/>
+</g>
+</svg>

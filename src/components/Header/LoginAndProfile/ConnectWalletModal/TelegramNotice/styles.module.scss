@@ -1,0 +1,15 @@
+@import '/src/assets/theme/font.scss';
+@import '/src/assets/theme/color.scss';
+
+.telegram-notice-title {
+  font-size: 14px;
+  line-height: 22px;
+  @extend .font-family-medium;
+}
+
+.telegram-notice-content {
+  font-size: 12px;
+  line-height: 16px;
+  color: #808080;
+  white-space: break-spaces;
+}

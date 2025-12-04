@@ -1,0 +1,15 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+
+.balance-and-usd {
+  .balance {
+    font-size: 16px;
+    line-height: 24px;
+    @extend .font-family-medium;
+  }
+  .usd {
+    font-size: 12px;
+    line-height: 20px;
+    color: $secondary-text;
+  }
+}

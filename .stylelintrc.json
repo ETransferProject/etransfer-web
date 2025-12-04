@@ -1,0 +1,21 @@
+{
+  "extends": ["stylelint-config-standard", "stylelint-config-prettier"],
+  "rules": {
+    "font-family-name-quotes": null,
+    "rule-empty-line-before": null,
+    "selector-pseudo-class-no-unknown": null,
+    "no-descending-specificity": null,
+    "font-family-no-missing-generic-family-keyword": [
+      true,
+      {
+        "ignoreFontFamilies": [
+          "Roboto-Regular",
+          "Roboto-Bold",
+          "Roboto-Medium",
+          "PingFangSC-Regular",
+          "PingFangSC-Medium"
+        ]
+      }
+    ]
+  }
+}

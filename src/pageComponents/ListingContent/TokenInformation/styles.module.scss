@@ -1,0 +1,50 @@
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/breakpoint.scss';
+
+.token-information-title-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .token-information-title {
+    @extend .font-family-medium;
+    font-size: 20px;
+    line-height: 28px;
+  }
+}
+
+.token-information-form {
+  padding: 32px 0 8px;
+
+  :global {
+    .ant-form-item:has(.ant-form-item-explain) {
+      margin-bottom: 0;
+    }
+  }
+
+  .token-information-form-label-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .token-information-form-label {
+    @extend .font-family-medium;
+  }
+}
+
+.token-information-footer-button {
+  width: 100%;
+}
+
+@include media-mobile {
+  .token-information-form {
+    padding: 24px 0 0;
+  }
+
+  .token-information-footer-button {
+    margin-bottom: 32px;
+  }
+}

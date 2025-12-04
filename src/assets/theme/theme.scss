@@ -1,0 +1,9 @@
+@import './color.scss';
+
+:root {
+  --brand: $brand;
+}
+
+.dark-theme {
+  --brand: $brand;
+}

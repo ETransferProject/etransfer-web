@@ -1,0 +1,172 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/constants.scss';
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/styles/variable.scss';
+
+.main-wrapper {
+  flex: 2;
+}
+
+.main-content {
+  padding: 0 11%;
+
+  @include media-web-2xl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 32px;
+  }
+}
+
+.section {
+  margin-top: 40px;
+  @include media-pad {
+    width: $content-width;
+    margin-top: 0;
+    margin: auto;
+  }
+  @include media-mobile {
+    margin-top: 0;
+  }
+}
+
+.divider {
+  margin-top: 40px;
+  margin-bottom: 40px;
+  width: 100%;
+  border-top: 1px solid $dividers;
+}
+
+.faq-wrapper {
+  margin-top: 48px;
+  flex: 1;
+  @include media-pad {
+    margin-top: 0;
+  }
+}
+
+.faq-left {
+  flex: 1;
+}
+
+.faq {
+  padding-left: 8%;
+  padding-bottom: 24px;
+  @include media-pad {
+    padding-left: 0;
+    padding-bottom: 80px;
+  }
+  @include media-huge-screen {
+    padding-right: 40px;
+  }
+}
+
+.form-container {
+  @include media-web {
+    min-width: 440px;
+  }
+
+  @include media-web-2xl {
+    max-width: 614px;
+    min-width: 440px;
+    width: 100%;
+  }
+}
+
+.withdraw-processing-container{
+  @include media-web {
+    min-width: 440px;
+  }
+
+  @include media-web-2xl {
+    max-width: 614px;
+    min-width: 440px;
+    width: 100%;
+  }
+}
+
+.form-wrapper {
+  :global {
+    .ant-form-item-label {
+      padding-bottom: 4px;
+      label {
+        width: 100%;
+        font-size: 14px;
+        line-height: 22px;
+        color: $secondary-text;
+      }
+    }
+    .ant-form-item-explain-error,
+    .ant-form-item-explain-warning {
+      margin-top: 4px;
+      font-size: 12px;
+      line-height: 16px;
+    }
+    .ant-form-item-explain-error {
+      color: $error;
+    }
+    .ant-form-item-explain-warning {
+      color: $warning;
+    }
+  }
+}
+
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.form-item-wrapper {
+  margin-bottom: 24px;
+}
+
+.amount-form-item-wrapper {
+  margin-bottom: 12px;
+}
+
+.form-item {
+  margin-bottom: 0;
+}
+
+.balance-info-wrapper {
+  margin-top: 12px;
+  @include media-mobile-and-pad {
+    .info-label,
+    .info-value {
+      font-size: 12px;
+      line-height: 16px;
+    }
+  }
+}
+
+.form-label-wrapper {
+  width: 100%;
+  align-items: flex-end;
+}
+
+.form-label {
+  font-size: 14px;
+  line-height: 22px;
+  color: $secondary-text;
+}
+
+.info-wrapper {
+  gap: 8px;
+}
+
+.info-label,
+.info-value {
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.info-label {
+  color: $secondary-text;
+}
+
+.info-value {
+  color: $primary-text;
+  @extend .font-family-medium;
+}

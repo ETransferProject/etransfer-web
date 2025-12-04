@@ -1,0 +1,15 @@
+.aelf-chain-tooltip {
+  :global {
+    .ant-tooltip-content {
+      .ant-tooltip-inner {
+        padding: 6px 8px !important;
+        border-radius: 6px !important;
+      }
+    }
+  }
+
+  .logo-container {
+    width: 24px;
+    height: 24px;
+  }
+}

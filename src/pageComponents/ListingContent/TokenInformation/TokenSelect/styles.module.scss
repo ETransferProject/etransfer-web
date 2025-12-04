@@ -1,0 +1,53 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+
+.token-selected-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.token-selected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid $border;
+  font-size: 14px;
+  line-height: 22px;
+  cursor: pointer;
+
+  .token-selected-placeholder {
+    color: $disable-text;
+  }
+}
+
+.token-selected-info-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: $normal-bg;
+
+  .token-selected-info-card-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .token-selected-info-card-row-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .token-selected-info-card-row-link {
+    color: $brand;
+    &:hover {
+      color: $hover;
+    }
+  }
+}

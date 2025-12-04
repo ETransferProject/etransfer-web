@@ -1,0 +1,33 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+
+.token-selected-label {
+  color: $secondary-text;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.token-selected {
+  height: 48px;
+  padding: 12px;
+  margin-top: 4px;
+  background-color: $normal-bg;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.token-logo {
+  margin-right: 8px;
+}
+
+.token-selected-symbol {
+  margin-right: 8px;
+  font-size: 16px;
+  @extend .font-family-medium;
+}
+
+.token-selected-name {
+  color: $secondary-text;
+  font-size: 14px;
+  @extend .font-family-medium;
+}

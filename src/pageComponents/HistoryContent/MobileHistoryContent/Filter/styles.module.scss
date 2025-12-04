@@ -1,0 +1,127 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
+
+.header-tab-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  @include media-pad {
+    margin: 0 24px;
+  }
+  @include media-mobile {
+    margin: 0 16px;
+  }
+}
+
+.filter-item-wrapper {
+  gap: 12px;
+  @include media-mobile {
+    padding: 0 16px 8px;
+  }
+  @include media-pad {
+    padding: 0 24px 8px;
+  }
+}
+
+.filter-icon {
+  cursor: pointer;
+}
+
+.filter-item {
+  padding: 6px 16px;
+  height: 34px;
+  line-height: 22px;
+  font-size: 14px;
+  border-radius: 6px;
+  background-color: $hover-bg;
+}
+
+.filter-reset {
+  font-size: 14px;
+  height: 22px;
+  line-height: 22px;
+  color: $normal;
+  cursor: pointer;
+}
+
+.filter-close-icon {
+  font-size: 12px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.filter-title {
+  text-align: left;
+  font-size: 20px;
+  font-weight: $font-family-medium-weight;
+}
+
+.filter-drawer-wrapper {
+  :global {
+    .ant-drawer-content-wrapper {
+      background-color: $page-bg;
+
+      .ant-drawer-content {
+        border-radius: 0 !important;
+      }
+    }
+    .ant-drawer-body {
+      border-top: 1px solid $border;
+
+      .ant-select,
+      .ant-picker {
+        width: 100%;
+        border-radius: 6px;
+        margin-bottom: 24px;
+      }
+    }
+    .ant-drawer-footer {
+      text-align: center;
+      padding: 20px 16px;
+      border: none;
+    }
+  }
+
+  .drawer-button-wrapper {
+    display: flex;
+    align-items: center;
+    .cancel-button {
+      font-size: 16px;
+      flex: 5;
+      margin-right: 12px;
+    }
+    .ok-button {
+      font-size: 16px;
+      flex: 5;
+    }
+  }
+}
+
+.filter-drawer-content {
+  padding: 24px 0px 12px;
+}
+
+.filter-drawer-label {
+  font-size: 14px;
+  color: $secondary-text;
+  margin-bottom: 8px;
+}
+
+// .mobile-records-select-type,
+// .mobile-records-select-status,
+// .mobile-records-range-picker {
+//   width: 100% !important;
+//   border-radius: 6px !important;
+//   margin-bottom: 24px !important;
+// }
+
+.border-change {
+  :global {
+    .ant-select-selector {
+      border-radius: 6px !important;
+    }
+  }
+}

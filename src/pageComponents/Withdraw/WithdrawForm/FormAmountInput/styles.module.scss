@@ -1,0 +1,55 @@
+@import 'src/assets/theme/font.scss';
+@import 'src/assets/theme/color.scss';
+@import 'src/assets/theme/breakpoint.scss';
+@import 'src/styles/common.scss';
+
+.input-amount-wrapper {
+  gap: 12px;
+  @extend .form-item-wrapper;
+  input {
+    height: 24px;
+    padding: 0;
+    @extend .form-item-value;
+  }
+}
+
+.input-amount {
+  width: 100%;
+}
+
+.input-amount-addon-after {
+  @include media-mobile-and-pad {
+    gap: 8px;
+  }
+  @include media-web {
+    gap: 16px;
+  }
+}
+
+.unit, .max {
+  @extend .font-family-medium;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.unit {
+  color: $primary-text;
+}
+
+.max {
+  color: $normal;
+  &:hover {
+    color: $hover;
+  }
+  &:checked {
+    color: $click;
+  }
+  &:focus {
+    color: $click;
+  }
+}
+
+.dividing-line {
+  height: 16px;
+  border-left: 1px solid $border;
+}

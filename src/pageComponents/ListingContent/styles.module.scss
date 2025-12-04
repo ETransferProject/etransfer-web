@@ -1,0 +1,146 @@
+@import '/src/assets/theme/color.scss';
+@import '/src/assets/theme/font.scss';
+@import '/src/assets/theme/breakpoint.scss';
+
+.listing-container {
+  height: 100%;
+  padding: 40px 0;
+  background-color: $hover-bg;
+}
+
+.listing-content {
+  width: calc(720px + 48px);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.listing-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+.listing-back-text {
+  @extend .font-family-medium;
+  font-size: 14px;
+  line-height: 22px;
+  color: $primary-text;
+}
+
+.listing-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.listing-card {
+  padding: 24px;
+  border-radius: 8px;
+  border: 1px solid $dividers;
+  background-color: $page-bg;
+}
+
+.listing-card-steps-title {
+  margin-bottom: 24px;
+  @extend .font-family-medium;
+  font-size: 24px;
+  line-height: 32px;
+}
+
+.listing-card-form-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  @extend .font-family-medium;
+  font-size: 20px;
+  line-height: 28px;
+}
+
+.listing-card-form-content {
+  :global {
+    .ant-form-item-label {
+      label {
+        width: 100%;
+        font-weight: $font-family-medium-weight;
+        font-family: $font-family-medium-family;
+        color: $primary-text;
+      }
+    }
+
+    .ant-input,
+    .ant-input-affix-wrapper {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border-color: $border;
+      font-size: 14px;
+      line-height: 22px;
+
+      &::placeholder {
+        color: $disable-text;
+      }
+
+      &:hover {
+        border-color: $brand;
+      }
+
+      &:focus,
+      &.ant-input-affix-wrapper-focused {
+        border-color: $brand;
+        box-shadow: none;
+        caret-color: $brand;
+      }
+    }
+
+    .ant-input-suffix {
+      margin-left: 16px;
+    }
+
+    .ant-form-item-margin-offset {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+
+@include media-pad {
+  .listing-container {
+    padding: 16px 0 24px;
+  }
+
+  .listing-content {
+    width: calc(720px + 32px);
+    padding: 0 16px;
+  }
+}
+
+@include media-mobile {
+  .listing-container {
+    padding: 0;
+    background-color: $page-bg;
+  }
+
+  .listing-content {
+    width: 100%;
+    padding: 0;
+  }
+
+  .listing-back {
+    margin: 16px 16px 12px;
+  }
+
+  .listing-card {
+    padding: 16px;
+    border: none;
+    border-radius: 0;
+  }
+
+  .listing-card-steps-title {
+    margin-bottom: 16px;
+  }
+
+  .listing-card-divider {
+    height: 8px;
+    background-color: $hover-bg;
+  }
+}

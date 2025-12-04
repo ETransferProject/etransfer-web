@@ -1,0 +1,20 @@
+@import 'src/assets/theme/breakpoint.scss';
+
+.aelf-chain-container {
+  gap: 12px;
+
+  @include media-web {
+    cursor: pointer;
+  }
+}
+
+.aelf-chain-tooltip {
+  :global {
+    .ant-tooltip-content {
+      .ant-tooltip-inner {
+        padding: 6px 8px !important;
+        border-radius: 6px !important;
+      }
+    }
+  }
+}
